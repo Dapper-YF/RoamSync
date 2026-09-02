@@ -1,0 +1,68 @@
+# RoamSync Agent architecture contract
+
+This document is the source of truth for the first Agent planning workflow. It
+defines boundaries before any LLM or LangGraph runtime is introduced.
+
+## Product boundary
+
+The Agent produces a reviewable `PlanRevision`; it never writes a formal trip
+directly. Formal `Activity` and `RouteLeg` rows are changed only by the existing
+transactional revision-acceptance service after deterministic validation and a
+user decision.
+
+The first intent vocabulary is deliberately small:
+
+- `create_plan`
+- `replan_trip`
+- `modify_day`
+- `unknown`
+
+The strict Pydantic contracts are `PlanningIntent`, `PlanningRequest`, and
+`CandidatePlanSnapshot`. Additional intents require fixtures and acceptance
+tests before they can be added.
+
+## Responsibilities and permissions
+
+| Component | May do | Must not do |
+| --- | --- | --- |
+| Intent parser | Convert text and UI context to a strict intent object | Search maps, write planning data, or choose approval |
+| Intent resolver | Resolve dates and known entity references; report ambiguity | Guess between multiple matching entities |
+| Research node | Query configured providers and persist verified candidates/sources | Invent POIs or silently use demo results |
+| Planner | Arrange only supplied candidate IDs into a structured snapshot | Query the database, invent prices, or write formal plans |
+| Route enrichment | Resolve adjacent route evidence through the configured map provider | Hide provider failures or fabricate production routes |
+| Validator | Enforce ownership, time, route, budget, lock, and version rules | Ask an LLM whether a hard constraint passed |
+| Reviewer | Return bounded correction advice from validation issues | Override validation or approve a revision |
+| Acceptance service | Atomically apply a valid, current revision after user approval | Accept stale or invalid revisions |
+
+## Candidate evidence
+
+Every candidate activity references a trip-owned `PlaceCandidate` and its
+`SourceRecord`. Every adjacent pair in the complete candidate day, including
+formal locked/active/completed activities that remain in place, has a
+`CandidateRouteLeg`. The route evidence is stored both in the immutable proposed
+snapshot and in normalized audit rows tied to the revision.
+
+Production requires the configured AMap Web Service key. Estimated routes are a
+test/development escape hatch controlled by `ALLOW_MAP_ESTIMATES`; they are not a
+silent production fallback.
+
+## Planned LangGraph boundary
+
+The future graph orchestrates deterministic nodes plus two bounded LLM nodes:
+Planner and Reviewer. `PlanningRun.id` will be its `thread_id`. PostgreSQL
+checkpoints will hold execution state, while `PlanningRun`, `PlanRevision`, and
+candidate evidence remain the product and audit source of truth.
+
+The graph state must contain JSON-serializable values only. Database sessions,
+ORM entities, API clients, secrets, and arbitrary executable objects are
+forbidden. Human clarification and final approval will use explicit interrupts;
+side effects before an interrupt must be idempotent.
+
+## Failure rules
+
+- Missing provider credentials produce a stable configuration error.
+- Provider rejection, timeout, or quota exhaustion remains visible to the run.
+- Unknown or ambiguous intent pauses for clarification instead of guessing.
+- Reviewer correction is bounded to one round in the first implementation.
+- A route-time, ownership, budget, protected-activity, or trip-version failure
+  prevents acceptance.

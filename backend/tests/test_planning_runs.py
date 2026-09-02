@@ -6,9 +6,11 @@ from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
 from app.main import app
-from app.database import session_factory
+from sqlalchemy import func, select
+
+from app.database import CandidateRouteLeg, session_factory
 from app.planning_run_repository import save_plan_revision
-from app.schemas import CandidatePlanSnapshot
+from app.schemas import CandidatePlanSnapshot, PlanningIntent, PlanningRequest
 
 
 def _create_trip(client: TestClient) -> dict:
@@ -83,6 +85,28 @@ def test_candidate_plan_requires_unique_structured_activities() -> None:
     assert parsed.activities[0].estimated_cost_fen == 5000
 
 
+def test_first_agent_intent_contract_is_strict() -> None:
+    trip_id = uuid.uuid4()
+    request = PlanningRequest.model_validate(
+        {
+            "trip_id": str(trip_id),
+            "user_request": "第二天下午放松一点",
+            "intent": {
+                "intent_type": "modify_day",
+                "source_text": "第二天下午放松一点",
+                "time_scope": {"day_number": 2, "period": "afternoon"},
+            },
+        }
+    )
+    assert request.intent.intent_type == "modify_day"
+    assert request.intent.time_scope is not None
+    assert request.intent.time_scope.day_number == 2
+    with pytest.raises(ValidationError):
+        PlanningIntent.model_validate(
+            {"intent_type": "delete_trip", "source_text": "删除整个旅行"}
+        )
+
+
 def _save_revision(run_id: str, snapshot: dict) -> str:
     async def save() -> str:
         async with session_factory() as session:
@@ -98,6 +122,21 @@ def _save_revision(run_id: str, snapshot: dict) -> str:
             )
             return str(revision.id)
     return asyncio.run(save())
+
+
+def _candidate_route_count(revision_id: str) -> int:
+    async def count() -> int:
+        async with session_factory() as session:
+            return int(
+                await session.scalar(
+                    select(func.count(CandidateRouteLeg.id)).where(
+                        CandidateRouteLeg.plan_revision_id == uuid.UUID(revision_id)
+                    )
+                )
+                or 0
+            )
+
+    return asyncio.run(count())
 
 
 def test_accept_revision_applies_once_and_invalidates_stale_routes() -> None:
@@ -128,21 +167,67 @@ def test_accept_revision_applies_once_and_invalidates_stale_routes() -> None:
                 "candidate_id": "second-stop",
                 "day_date": demo_days[0]["date"],
                 "place_candidate_id": candidates[1]["id"],
-                "planned_start_time": "12:00:00",
+                    "planned_start_time": "16:00:00",
                 "duration_minutes": 60,
                 "estimated_cost_fen": candidates[1]["estimated_cost_fen"],
                 "transport_mode_to_here": "walk",
                 "source_ids": [candidates[1]["source"]["id"]],
             }],
         })
+        revision = client.get(f"/api/v1/planning-runs/{run['id']}/revision")
+        assert revision.status_code == 200
+        assert len(revision.json()["proposed_snapshot"]["route_legs"]) == 1
+        assert _candidate_route_count(revision_id) == 1
         accepted = client.post(f"/api/v1/plan-revisions/{revision_id}/accept")
         assert accepted.status_code == 200
         assert accepted.json()["status"] == "accepted"
         updated_days = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}/days").json()
         assert sum(len(day["activities"]) for day in updated_days) == 2
-        assert all(not day["route_legs"] for day in updated_days)
+        assert len(updated_days[0]["route_legs"]) == 1
+        assert updated_days[0]["route_legs"][0]["provider"] == "RoamSync Estimate"
         assert client.post(f"/api/v1/plan-revisions/{revision_id}/accept").status_code == 200
         assert client.get(f"/api/v1/trips/{DEMO_TRIP_ID}").json()["version"] == run["base_trip_version"] + 1
+
+
+def test_accept_revision_rejects_insufficient_travel_time() -> None:
+    from app.demo_seed import DEMO_TRIP_ID
+
+    with TestClient(app) as client:
+        client.post("/api/v1/demo/reset")
+        candidates = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}/candidates").json()[:2]
+        day = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}/days").json()[0]
+        run = client.post(f"/api/v1/trips/{DEMO_TRIP_ID}/planning-runs", json={}).json()
+        revision_id = _save_revision(
+            run["id"],
+            {
+                "activities": [
+                    {
+                        "candidate_id": "first",
+                        "day_date": day["date"],
+                        "place_candidate_id": candidates[0]["id"],
+                        "planned_start_time": "10:00:00",
+                        "duration_minutes": 60,
+                        "estimated_cost_fen": candidates[0]["estimated_cost_fen"],
+                        "transport_mode_to_here": "walk",
+                        "source_ids": [candidates[0]["source"]["id"]],
+                    },
+                    {
+                        "candidate_id": "second",
+                        "day_date": day["date"],
+                        "place_candidate_id": candidates[1]["id"],
+                        "planned_start_time": "11:00:00",
+                        "duration_minutes": 60,
+                        "estimated_cost_fen": candidates[1]["estimated_cost_fen"],
+                        "transport_mode_to_here": "walk",
+                        "source_ids": [candidates[1]["source"]["id"]],
+                    },
+                ]
+            },
+        )
+        response = client.post(f"/api/v1/plan-revisions/{revision_id}/accept")
+        assert response.status_code == 422
+        codes = {item["code"] for item in response.json()["detail"]["errors"]}
+        assert "route_travel_time_conflict" in codes
 
 
 def test_accept_revision_rejects_budget_violation() -> None:
@@ -187,17 +272,18 @@ def test_accept_revision_rejects_a_stale_formal_trip() -> None:
         assert response.json()["detail"] == "formal trip changed after planning started"
 
 
-def test_accept_revision_keeps_completed_activities() -> None:
+def test_accept_revision_keeps_completed_activities_and_their_routes() -> None:
     from app.demo_seed import DEMO_TRIP_ID
     with TestClient(app) as client:
         client.post("/api/v1/demo/reset")
         day = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}/days").json()[0]
-        completed = day["activities"][0]
-        updated = client.put(
-            f"/api/v1/activities/{completed['id']}",
-            json={"version": completed["version"], "status": "completed"},
-        )
-        assert updated.status_code == 200
+        completed = day["activities"][:2]
+        for activity in completed:
+            updated = client.put(
+                f"/api/v1/activities/{activity['id']}",
+                json={"version": activity["version"], "status": "completed"},
+            )
+            assert updated.status_code == 200
         run = client.post(
             f"/api/v1/trips/{DEMO_TRIP_ID}/planning-runs",
             json={"run_type": "replan", "user_request": "删除剩余未完成活动"},
@@ -207,6 +293,7 @@ def test_accept_revision_keeps_completed_activities() -> None:
         assert accepted.status_code == 200
         remaining = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}/days").json()
         activities = [item for item in remaining for item in item["activities"]]
-        assert len(activities) == 1
-        assert activities[0]["id"] == completed["id"]
-        assert activities[0]["status"] == "completed"
+        assert len(activities) == 2
+        assert {item["id"] for item in activities} == {item["id"] for item in completed}
+        assert all(item["status"] == "completed" for item in activities)
+        assert len(remaining[0]["route_legs"]) == 1

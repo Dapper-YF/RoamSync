@@ -4,7 +4,8 @@ from datetime import UTC, datetime
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import PlanningRun, PlanRevision
+from app.candidate_route_service import enrich_candidate_routes
+from app.database import CandidateRouteLeg, PlanningRun, PlanRevision
 from app.repository import get_trip
 from app.schemas import CandidatePlanSnapshot, PlanningRunCreate
 
@@ -81,6 +82,9 @@ async def save_plan_revision(
     trip = await get_trip(session, run.trip_id)
     if trip.version != run.base_trip_version:
         raise StalePlanningRunError
+    proposed_snapshot = await enrich_candidate_routes(
+        session, run.trip_id, proposed_snapshot
+    )
 
     previous = await session.scalar(
         select(PlanRevision)
@@ -114,6 +118,23 @@ async def save_plan_revision(
         status="pending",
     )
     session.add(revision)
+    await session.flush()
+    for leg in proposed_snapshot.route_legs:
+        session.add(
+            CandidateRouteLeg(
+                plan_revision_id=revision.id,
+                day_date=leg.day_date,
+                from_activity_ref=leg.from_activity_ref,
+                to_activity_ref=leg.to_activity_ref,
+                position=leg.position,
+                mode=leg.mode,
+                distance_meters=leg.distance_meters,
+                duration_minutes=leg.duration_minutes,
+                provider=leg.provider,
+                is_estimated=leg.is_estimated,
+                calculated_at=leg.calculated_at,
+            )
+        )
     run.status = "awaiting_confirmation"
     await session.commit()
     await session.refresh(revision)

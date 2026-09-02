@@ -83,6 +83,7 @@ async def validate_candidate_plan(
     )
     errors: list[PlanValidationIssue] = []
     intervals: dict = defaultdict(list)
+    route_nodes: dict = defaultdict(list)
     daily_cost: dict = defaultdict(int)
 
     for activity in snapshot.activities:
@@ -119,6 +120,9 @@ async def validate_candidate_plan(
         if start < window_start or end > window_end:
             errors.append(PlanValidationIssue(code="outside_daily_window", message="候选活动超出每日可用时间窗", candidate_id=activity.candidate_id))
         intervals[activity.day_date].append((start, end, activity.candidate_id))
+        route_nodes[activity.day_date].append(
+            (start, end, activity.candidate_id, activity.transport_mode_to_here)
+        )
         daily_cost[activity.day_date] += activity.estimated_cost_fen
     represented_protected = {item.replaces_activity_id for item in snapshot.activities}
     final_place_ids = [item.place_candidate_id for item in snapshot.activities]
@@ -129,6 +133,14 @@ async def validate_candidate_plan(
         day = next(day for day in days if day.id == item.day_plan_id)
         start = item.scheduled_time.hour * 60 + item.scheduled_time.minute
         intervals[day.date].append((start, start + item.duration_minutes, f"protected:{item.id}"))
+        route_nodes[day.date].append(
+            (
+                start,
+                start + item.duration_minutes,
+                f"activity:{item.id}",
+                day.route_mode,
+            )
+        )
         if item.status != "skipped":
             daily_cost[day.date] += item.estimated_cost_fen
 
@@ -140,6 +152,47 @@ async def validate_candidate_plan(
         for previous, current in zip(ordered, ordered[1:], strict=False):
             if current[0] < previous[1]:
                 errors.append(PlanValidationIssue(code="time_overlap", message=f"{day_date} 存在活动时间重叠", candidate_id=current[2]))
+    actual_routes: dict = defaultdict(list)
+    for leg in snapshot.route_legs:
+        actual_routes[leg.day_date].append(leg)
+    for day_date in set(route_nodes) | set(actual_routes):
+        ordered_nodes = sorted(route_nodes.get(day_date, []))
+        expected_pairs = list(zip(ordered_nodes, ordered_nodes[1:], strict=False))
+        ordered_legs = sorted(actual_routes.get(day_date, []), key=lambda leg: leg.position)
+        if len(ordered_legs) != len(expected_pairs):
+            errors.append(
+                PlanValidationIssue(
+                    code="candidate_route_set_mismatch",
+                    message=f"{day_date} 的候选路线证据不完整",
+                )
+            )
+            continue
+        for position, ((origin, destination), leg) in enumerate(
+            zip(expected_pairs, ordered_legs, strict=True)
+        ):
+            if not (
+                leg.position == position
+                and leg.from_activity_ref == origin[2]
+                and leg.to_activity_ref == destination[2]
+                and leg.mode == destination[3]
+            ):
+                errors.append(
+                    PlanValidationIssue(
+                        code="candidate_route_structure_mismatch",
+                        message=f"{day_date} 的候选路线顺序与活动顺序不一致",
+                        candidate_id=destination[2],
+                    )
+                )
+                continue
+            if destination[0] < origin[1] + leg.duration_minutes:
+                errors.append(
+                    PlanValidationIssue(
+                        code="route_travel_time_conflict",
+                        message=f"{day_date} 的活动间隔不足以完成交通移动",
+                        candidate_id=destination[2],
+                    )
+                )
+
     for day_date, cost in daily_cost.items():
         if cost > trip.daily_budget_fen:
             errors.append(PlanValidationIssue(code="daily_budget_exceeded", message=f"{day_date} 的预计费用超过每日预算"))
@@ -191,10 +244,12 @@ async def accept_plan_revision(
     await session.flush()
 
     activities_by_day: dict = defaultdict(list)
+    activities_by_ref: dict[str, Activity] = {}
     for item in existing:
         if item.id in protected_ids and item.id not in replaced_ids:
             day = next(day for day in days if day.id == item.day_plan_id)
             activities_by_day[day.date].append(item)
+            activities_by_ref[f"activity:{item.id}"] = item
     for candidate_index, candidate in enumerate(snapshot.activities):
         activity = existing_by_id.get(candidate.replaces_activity_id) if candidate.replaces_activity_id else None
         if activity is None:
@@ -220,10 +275,27 @@ async def accept_plan_revision(
             activity.schedule_locked = candidate.locked
             activity.version += 1
         activities_by_day[candidate.day_date].append(activity)
+        activities_by_ref[candidate.candidate_id] = activity
     await session.flush()
     for day_date, activities in activities_by_day.items():
         for position, activity in enumerate(sorted(activities, key=lambda value: value.scheduled_time)):
             activity.position = position
+    await session.flush()
+    for leg in snapshot.route_legs:
+        session.add(
+            RouteLeg(
+                day_plan_id=day_by_date[leg.day_date].id,
+                from_activity_id=activities_by_ref[leg.from_activity_ref].id,
+                to_activity_id=activities_by_ref[leg.to_activity_ref].id,
+                position=leg.position,
+                mode=leg.mode,
+                distance_meters=leg.distance_meters,
+                duration_minutes=leg.duration_minutes,
+                provider=leg.provider,
+                is_estimated=leg.is_estimated,
+                calculated_at=leg.calculated_at,
+            )
+        )
 
     decided_at = datetime.now(UTC)
     trip.version += 1

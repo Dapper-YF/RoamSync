@@ -11,5 +11,10 @@ dependency lock files. Their respective licenses remain with their authors.
   proprietary source code or assets are included.
 - MapLibre and Organic Maps: public map-layer concepts were reviewed; neither
   project is currently bundled as a runtime dependency.
+- FloatTrip (MIT), Tripper (Apache-2.0), TravelPlanner (MIT), and LangGraph:
+  public Agent architecture and evaluation patterns were reviewed. No source
+  code, prompts, datasets, or assets from these projects are incorporated by
+  this change. Any future code adoption requires a pinned commit and a separate
+  attribution review.
 
 This file must be updated when a new dependency requiring attribution is added.

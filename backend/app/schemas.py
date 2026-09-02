@@ -12,6 +12,41 @@ InterestCategory = Literal[
     "history", "culture", "nature", "food", "photography", "shopping", "family", "nightlife"
 ]
 PreferenceTransportMode = Literal["walk", "transit", "driving"]
+PlanningIntentType = Literal["create_plan", "replan_trip", "modify_day", "unknown"]
+PlanningDayPeriod = Literal["morning", "afternoon", "evening", "full_day"]
+
+
+class PlanningTimeScope(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    day_number: int | None = Field(default=None, ge=1)
+    day_date: date | None = None
+    period: PlanningDayPeriod | None = None
+
+
+class PlanningIntent(BaseModel):
+    """Strict output contract for the future intent parser node."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    intent_type: PlanningIntentType
+    source_text: str = Field(max_length=4000)
+    time_scope: PlanningTimeScope | None = None
+    protected_activity_ids: list[uuid.UUID] = Field(default_factory=list, max_length=100)
+    missing_fields: list[str] = Field(default_factory=list, max_length=20)
+    ambiguities: list[str] = Field(default_factory=list, max_length=20)
+
+
+class PlanningRequest(BaseModel):
+    """Resolved command handed from intent parsing to a planning graph."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    trip_id: uuid.UUID
+    user_request: str = Field(max_length=4000)
+    intent: PlanningIntent
+    selected_day_id: uuid.UUID | None = None
+    selected_activity_id: uuid.UUID | None = None
 
 
 class TripCreate(BaseModel):
@@ -482,14 +517,31 @@ class CandidateActivity(BaseModel):
     locked: bool = False
 
 
+class CandidateRouteLeg(BaseModel):
+    day_date: date
+    from_activity_ref: str = Field(min_length=1, max_length=80)
+    to_activity_ref: str = Field(min_length=1, max_length=80)
+    position: int = Field(ge=0)
+    mode: PreferenceTransportMode
+    distance_meters: int = Field(ge=0)
+    duration_minutes: int = Field(ge=0)
+    provider: str = Field(min_length=1, max_length=40)
+    is_estimated: bool = False
+    calculated_at: datetime
+
+
 class CandidatePlanSnapshot(BaseModel):
     activities: list[CandidateActivity] = Field(max_length=100)
+    route_legs: list[CandidateRouteLeg] = Field(default_factory=list, max_length=200)
 
     @model_validator(mode="after")
     def require_unique_candidate_ids(self) -> "CandidatePlanSnapshot":
         ids = [item.candidate_id for item in self.activities]
         if len(ids) != len(set(ids)):
             raise ValueError("candidate_id values must be unique")
+        route_positions = [(leg.day_date, leg.position) for leg in self.route_legs]
+        if len(route_positions) != len(set(route_positions)):
+            raise ValueError("route leg positions must be unique within each day")
         return self
 
 

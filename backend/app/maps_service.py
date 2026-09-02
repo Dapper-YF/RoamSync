@@ -270,7 +270,7 @@ async def recalculate_day_route(
     for position, ((from_activity, origin), (to_activity, destination)) in enumerate(
         zip(rows, rows[1:], strict=False)
     ):
-        result = await _route_result(session, origin, destination, mode)
+        result = await resolve_route_result(session, origin, destination, mode)
         session.add(
             RouteLeg(
                 day_plan_id=day_plan_id,
@@ -294,7 +294,7 @@ async def recalculate_day_route(
             to_activity.scheduled_time = current.time().replace(second=0, microsecond=0)
 
 
-async def _route_result(
+async def resolve_route_result(
     session: AsyncSession,
     origin: PlaceCandidate,
     destination: PlaceCandidate,

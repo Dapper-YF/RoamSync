@@ -200,6 +200,50 @@ class PlanRevision(Base):
     decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
+class CandidateRouteLeg(Base):
+    __tablename__ = "candidate_route_legs"
+    __table_args__ = (
+        UniqueConstraint(
+            "plan_revision_id", "day_date", "position",
+            name="uq_candidate_route_legs_revision_day_position",
+        ),
+        CheckConstraint("position >= 0", name="ck_candidate_route_legs_position_nonnegative"),
+        CheckConstraint(
+            "distance_meters >= 0", name="ck_candidate_route_legs_distance_nonnegative"
+        ),
+        CheckConstraint(
+            "duration_minutes >= 0", name="ck_candidate_route_legs_duration_nonnegative"
+        ),
+        CheckConstraint(
+            "mode IN ('walk', 'transit', 'driving')",
+            name="ck_candidate_route_legs_mode_allowed",
+        ),
+        Index(
+            "ix_candidate_route_legs_revision_day",
+            "plan_revision_id", "day_date", "position",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    plan_revision_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("plan_revisions.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    day_date: Mapped[date] = mapped_column(Date, nullable=False)
+    from_activity_ref: Mapped[str] = mapped_column(String(80), nullable=False)
+    to_activity_ref: Mapped[str] = mapped_column(String(80), nullable=False)
+    position: Mapped[int] = mapped_column(Integer, nullable=False)
+    mode: Mapped[str] = mapped_column(String(12), nullable=False)
+    distance_meters: Mapped[int] = mapped_column(Integer, nullable=False)
+    duration_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
+    provider: Mapped[str] = mapped_column(String(40), nullable=False)
+    is_estimated: Mapped[bool] = mapped_column(nullable=False, default=False)
+    calculated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
 class Expense(Base):
     __tablename__ = "expenses"
     __table_args__ = (
