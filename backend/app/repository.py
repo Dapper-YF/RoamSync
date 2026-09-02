@@ -6,8 +6,15 @@ from sqlalchemy import delete, func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import Activity, DayPlan, Expense, PlaceCandidate, RouteLeg, SourceRecord, Trip
-from app.schemas import BudgetResponse, ExpenseCreate, TripCreate, TripDeletionPreviewResponse, TripUpdate
+from app.database import Activity, DayPlan, Expense, PlaceCandidate, RouteLeg, SourceRecord, Trip, TripPreferences
+from app.schemas import (
+    BudgetResponse,
+    ExpenseCreate,
+    TripCreate,
+    TripDeletionPreviewResponse,
+    TripPreferencesUpdate,
+    TripUpdate,
+)
 
 
 class TripNotFoundError(Exception):
@@ -26,10 +33,15 @@ class TripDateConflictError(Exception):
     pass
 
 
+class TripPreferencesVersionConflictError(Exception):
+    pass
+
+
 async def create_trip(session: AsyncSession, payload: TripCreate) -> Trip:
     trip = Trip(**payload.model_dump())
     session.add(trip)
     await session.flush()
+    session.add(TripPreferences(trip_id=trip.id))
     current = payload.start_date
     position = 0
     while current <= payload.end_date:
@@ -159,6 +171,22 @@ async def duplicate_trip(session: AsyncSession, trip_id: uuid.UUID) -> Trip:
     )
     session.add(duplicate)
     await session.flush()
+    source_preferences = await session.get(TripPreferences, trip_id)
+    if source_preferences is not None:
+        session.add(
+            TripPreferences(
+                trip_id=duplicate.id,
+                pace=source_preferences.pace,
+                interest_categories=list(source_preferences.interest_categories),
+                transport_modes=list(source_preferences.transport_modes),
+                daily_start_time=source_preferences.daily_start_time,
+                daily_end_time=source_preferences.daily_end_time,
+                meal_preferences=source_preferences.meal_preferences,
+                avoid_categories=list(source_preferences.avoid_categories),
+                max_walking_minutes=source_preferences.max_walking_minutes,
+                free_text_requirements=source_preferences.free_text_requirements,
+            )
+        )
 
     source_map: dict[uuid.UUID, SourceRecord] = {}
     for source in (
@@ -287,6 +315,36 @@ async def delete_trip(session: AsyncSession, trip_id: uuid.UUID) -> None:
     await get_trip(session, trip_id)
     await session.execute(delete(Trip).where(Trip.id == trip_id))
     await session.commit()
+
+
+async def get_trip_preferences(
+    session: AsyncSession, trip_id: uuid.UUID
+) -> TripPreferences:
+    await get_trip(session, trip_id)
+    preferences = await session.get(TripPreferences, trip_id)
+    if preferences is None:
+        # Defensive compatibility for databases imported without running migrations.
+        preferences = TripPreferences(trip_id=trip_id)
+        session.add(preferences)
+        await session.commit()
+        await session.refresh(preferences)
+    return preferences
+
+
+async def update_trip_preferences(
+    session: AsyncSession,
+    trip_id: uuid.UUID,
+    payload: TripPreferencesUpdate,
+) -> TripPreferences:
+    preferences = await get_trip_preferences(session, trip_id)
+    if preferences.version != payload.version:
+        raise TripPreferencesVersionConflictError
+    for key, value in payload.model_dump(exclude={"version"}).items():
+        setattr(preferences, key, value)
+    preferences.version += 1
+    await session.commit()
+    await session.refresh(preferences)
+    return preferences
 
 
 def _same_expense(existing: Expense, payload: ExpenseCreate) -> bool:

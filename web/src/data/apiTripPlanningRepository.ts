@@ -9,12 +9,15 @@ import type {
   PlaceCandidate,
   PlaceSearchResult,
   PlanningBudget,
+  PlanningContext,
   SourceRecord,
   Trip,
   TripCreateInput,
   TripDeletionPreview,
   TripPlanningRepository,
   TripUpdateInput,
+  TripPreferences,
+  TripPreferencesUpdateInput,
 } from "../domain/types";
 
 const API_BASE = "/api/v1";
@@ -162,6 +165,32 @@ interface ApiPlanningBudget {
   }>;
 }
 
+interface ApiTripPreferences {
+  trip_id: string;
+  pace: TripPreferences["pace"];
+  interest_categories: TripPreferences["interestCategories"];
+  transport_modes: TripPreferences["transportModes"];
+  daily_start_time: string;
+  daily_end_time: string;
+  meal_preferences: string;
+  avoid_categories: string[];
+  max_walking_minutes: number;
+  free_text_requirements: string;
+  version: number;
+  updated_at: string;
+}
+
+interface ApiActualBudget {
+  trip_id: string;
+  total_budget_fen: number;
+  total_spent_fen: number;
+  total_remaining_fen: number;
+  daily_budget_fen: number;
+  today_spent_fen: number;
+  today_remaining_fen: number;
+  local_date: string;
+}
+
 export class ApiRequestError extends Error {
   constructor(public readonly status: number, message: string) {
     super(message);
@@ -247,6 +276,59 @@ export class ApiTripPlanningRepository implements TripPlanningRepository {
     return mapTrip(await request<ApiTrip>(`${API_BASE}/trips/${tripId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }));
   }
 
+  async getTripPreferences(tripId: string): Promise<TripPreferences> {
+    return mapPreferences(await request<ApiTripPreferences>(`${API_BASE}/trips/${tripId}/preferences`));
+  }
+
+  async updateTripPreferences(tripId: string, input: TripPreferencesUpdateInput): Promise<TripPreferences> {
+    return mapPreferences(await request<ApiTripPreferences>(`${API_BASE}/trips/${tripId}/preferences`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        version: input.version,
+        pace: input.pace,
+        interest_categories: input.interestCategories,
+        transport_modes: input.transportModes,
+        daily_start_time: input.dailyStartTime,
+        daily_end_time: input.dailyEndTime,
+        meal_preferences: input.mealPreferences,
+        avoid_categories: input.avoidCategories,
+        max_walking_minutes: input.maxWalkingMinutes,
+        free_text_requirements: input.freeTextRequirements,
+      }),
+    }));
+  }
+
+  async getPlanningContext(tripId: string): Promise<PlanningContext> {
+    const dto = await request<{
+      trip: ApiTrip;
+      preferences: ApiTripPreferences;
+      days: ApiDayPlan[];
+      candidates: ApiPlaceCandidate[];
+      actual_budget: ApiActualBudget;
+      planning_budget: ApiPlanningBudget;
+      generated_at: string;
+    }>(`${API_BASE}/trips/${tripId}/planning-context`);
+    return {
+      trip: mapTrip(dto.trip),
+      preferences: mapPreferences(dto.preferences),
+      days: dto.days.map(mapDay),
+      candidates: dto.candidates.map(mapCandidate),
+      actualBudget: {
+        tripId: dto.actual_budget.trip_id,
+        totalBudgetFen: dto.actual_budget.total_budget_fen,
+        totalSpentFen: dto.actual_budget.total_spent_fen,
+        totalRemainingFen: dto.actual_budget.total_remaining_fen,
+        dailyBudgetFen: dto.actual_budget.daily_budget_fen,
+        todaySpentFen: dto.actual_budget.today_spent_fen,
+        todayRemainingFen: dto.actual_budget.today_remaining_fen,
+        localDate: dto.actual_budget.local_date,
+      },
+      planningBudget: mapPlanningBudget(dto.planning_budget),
+      generatedAt: dto.generated_at,
+    };
+  }
+
   async duplicateTrip(tripId: string): Promise<Trip> {
     return mapTrip(await request<ApiTrip>(`${API_BASE}/trips/${tripId}/duplicate`, { method: "POST" }));
   }
@@ -287,20 +369,7 @@ export class ApiTripPlanningRepository implements TripPlanningRepository {
   }
 
   async getPlanningBudget(tripId: string): Promise<PlanningBudget> {
-    const dto = await request<ApiPlanningBudget>(`${API_BASE}/trips/${tripId}/planning-budget`);
-    return {
-      tripId: dto.trip_id,
-      totalPlannedFen: dto.total_planned_fen,
-      totalRemainingFen: dto.total_remaining_fen,
-      days: dto.days.map((day) => ({
-        dayPlanId: day.day_plan_id,
-        date: day.date,
-        plannedFen: day.planned_fen,
-        remainingFen: day.remaining_fen,
-        ratio: day.ratio,
-        status: day.status,
-      })),
-    };
+    return mapPlanningBudget(await request<ApiPlanningBudget>(`${API_BASE}/trips/${tripId}/planning-budget`));
   }
 
   async addActivity(dayId: string, place: string | PlaceSearchResult): Promise<Activity> {
@@ -382,6 +451,39 @@ export class ApiTripPlanningRepository implements TripPlanningRepository {
     await request<void>(`${API_BASE}/activities/${activityId}`, { method: "DELETE" });
   }
 
+}
+
+function mapPreferences(dto: ApiTripPreferences): TripPreferences {
+  return {
+    tripId: dto.trip_id,
+    pace: dto.pace,
+    interestCategories: dto.interest_categories,
+    transportModes: dto.transport_modes,
+    dailyStartTime: dto.daily_start_time.slice(0, 5),
+    dailyEndTime: dto.daily_end_time.slice(0, 5),
+    mealPreferences: dto.meal_preferences,
+    avoidCategories: dto.avoid_categories,
+    maxWalkingMinutes: dto.max_walking_minutes,
+    freeTextRequirements: dto.free_text_requirements,
+    version: dto.version,
+    updatedAt: dto.updated_at,
+  };
+}
+
+function mapPlanningBudget(dto: ApiPlanningBudget): PlanningBudget {
+  return {
+    tripId: dto.trip_id,
+    totalPlannedFen: dto.total_planned_fen,
+    totalRemainingFen: dto.total_remaining_fen,
+    days: dto.days.map((day) => ({
+      dayPlanId: day.day_plan_id,
+      date: day.date,
+      plannedFen: day.planned_fen,
+      remainingFen: day.remaining_fen,
+      ratio: day.ratio,
+      status: day.status,
+    })),
+  };
 }
 
 function mapTrip(dto: ApiTrip): Trip {

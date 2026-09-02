@@ -7,6 +7,11 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 
 ExpenseCategory = Literal["food", "transport", "ticket", "lodging", "shopping", "other"]
+TripPace = Literal["relaxed", "balanced", "intensive"]
+InterestCategory = Literal[
+    "history", "culture", "nature", "food", "photography", "shopping", "family", "nightlife"
+]
+PreferenceTransportMode = Literal["walk", "transit", "driving"]
 
 
 class TripCreate(BaseModel):
@@ -100,6 +105,63 @@ class TripUpdate(BaseModel):
     daily_budget_fen: int | None = Field(default=None, gt=0)
     version: int = Field(ge=1)
     confirm_day_removal: bool = False
+
+
+class TripPreferencesResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    trip_id: uuid.UUID
+    pace: TripPace
+    interest_categories: list[InterestCategory]
+    transport_modes: list[PreferenceTransportMode]
+    daily_start_time: time
+    daily_end_time: time
+    meal_preferences: str
+    avoid_categories: list[str]
+    max_walking_minutes: int
+    free_text_requirements: str
+    version: int
+    created_at: datetime
+    updated_at: datetime
+
+
+class TripPreferencesUpdate(BaseModel):
+    version: int = Field(ge=1)
+    pace: TripPace
+    interest_categories: list[InterestCategory] = Field(max_length=8)
+    transport_modes: list[PreferenceTransportMode] = Field(min_length=1, max_length=3)
+    daily_start_time: time
+    daily_end_time: time
+    meal_preferences: str = Field(default="", max_length=500)
+    avoid_categories: list[str] = Field(default_factory=list, max_length=12)
+    max_walking_minutes: int = Field(gt=0, le=480)
+    free_text_requirements: str = Field(default="", max_length=2000)
+
+    @field_validator("interest_categories", "transport_modes", "avoid_categories")
+    @classmethod
+    def require_unique_items(cls, value: list[str]) -> list[str]:
+        if len(value) != len(set(value)):
+            raise ValueError("list items must be unique")
+        return value
+
+    @field_validator("meal_preferences", "free_text_requirements")
+    @classmethod
+    def normalize_text(cls, value: str) -> str:
+        return value.strip()
+
+    @field_validator("avoid_categories")
+    @classmethod
+    def normalize_avoid_categories(cls, value: list[str]) -> list[str]:
+        normalized = [item.strip() for item in value if item.strip()]
+        if len(normalized) != len(set(normalized)):
+            raise ValueError("avoid_categories items must be unique")
+        return normalized
+
+    @model_validator(mode="after")
+    def validate_daily_window(self) -> "TripPreferencesUpdate":
+        if self.daily_end_time <= self.daily_start_time:
+            raise ValueError("daily_end_time must be after daily_start_time")
+        return self
 
 
 class LocationPoiResponse(BaseModel):
@@ -357,6 +419,16 @@ class PlanningBudgetResponse(BaseModel):
     total_planned_fen: int
     total_remaining_fen: int
     days: list[PlanningBudgetDayResponse]
+
+
+class PlanningContextResponse(BaseModel):
+    trip: TripResponse
+    preferences: TripPreferencesResponse
+    days: list[DayPlanResponse]
+    candidates: list[PlaceCandidateResponse]
+    actual_budget: BudgetResponse
+    planning_budget: PlanningBudgetResponse
+    generated_at: datetime
 
 
 class DemoResetResponse(BaseModel):

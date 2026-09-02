@@ -87,6 +87,56 @@ class Trip(Base):
         return "completed"
 
 
+class TripPreferences(Base):
+    __tablename__ = "trip_preferences"
+    __table_args__ = (
+        CheckConstraint(
+            "pace IN ('relaxed', 'balanced', 'intensive')",
+            name="ck_trip_preferences_pace_allowed",
+        ),
+        CheckConstraint(
+            "daily_end_time > daily_start_time",
+            name="ck_trip_preferences_daily_window",
+        ),
+        CheckConstraint(
+            "max_walking_minutes > 0 AND max_walking_minutes <= 480",
+            name="ck_trip_preferences_max_walking_minutes",
+        ),
+        CheckConstraint("version > 0", name="ck_trip_preferences_version_positive"),
+    )
+
+    trip_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("trips.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    pace: Mapped[str] = mapped_column(String(16), nullable=False, default="balanced")
+    interest_categories: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    transport_modes: Mapped[list[str]] = mapped_column(
+        JSON, nullable=False, default=lambda: ["walk", "transit"]
+    )
+    daily_start_time: Mapped[time] = mapped_column(
+        Time, nullable=False, default=time(9, 0)
+    )
+    daily_end_time: Mapped[time] = mapped_column(
+        Time, nullable=False, default=time(21, 0)
+    )
+    meal_preferences: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    avoid_categories: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    max_walking_minutes: Mapped[int] = mapped_column(Integer, nullable=False, default=60)
+    free_text_requirements: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+
 class Expense(Base):
     __tablename__ = "expenses"
     __table_args__ = (

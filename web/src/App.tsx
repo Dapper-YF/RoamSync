@@ -32,11 +32,31 @@ import type {
   PlaceSearchResult,
   PlaceCategory,
   PlanningBudget,
+  InterestCategory,
+  PreferenceTransportMode,
+  TripPace,
   RouteLeg,
   Trip,
   TripPlanningRepository,
 } from "./domain/types";
 import { formatFen } from "./utils/planner";
+
+const INTEREST_OPTIONS: Array<{ value: InterestCategory; label: string }> = [
+  { value: "history", label: "历史" },
+  { value: "culture", label: "人文" },
+  { value: "nature", label: "自然" },
+  { value: "food", label: "美食" },
+  { value: "photography", label: "摄影" },
+  { value: "shopping", label: "购物" },
+  { value: "family", label: "亲子" },
+  { value: "nightlife", label: "夜游" },
+];
+
+const TRANSPORT_OPTIONS: Array<{ value: PreferenceTransportMode; label: string }> = [
+  { value: "walk", label: "步行" },
+  { value: "transit", label: "公交" },
+  { value: "driving", label: "驾车" },
+];
 
 export function App({ repository: injectedRepository }: { repository?: TripPlanningRepository }) {
   const repository = useMemo(
@@ -139,6 +159,16 @@ function CreateTripPage({ repository }: { repository: TripPlanningRepository }) 
   const [accommodationResults, setAccommodationResults] = useState<AccommodationPoi[]>([]);
   const [accommodationLoading, setAccommodationLoading] = useState(false);
   const [tripVersion, setTripVersion] = useState(1);
+  const [preferenceVersion, setPreferenceVersion] = useState(1);
+  const [pace, setPace] = useState<TripPace>("balanced");
+  const [interestCategories, setInterestCategories] = useState<InterestCategory[]>([]);
+  const [transportModes, setTransportModes] = useState<PreferenceTransportMode[]>(["walk", "transit"]);
+  const [dailyStartTime, setDailyStartTime] = useState("09:00");
+  const [dailyEndTime, setDailyEndTime] = useState("21:00");
+  const [mealPreferences, setMealPreferences] = useState("");
+  const [avoidCategories, setAvoidCategories] = useState("");
+  const [maxWalkingMinutes, setMaxWalkingMinutes] = useState("60");
+  const [freeTextRequirements, setFreeTextRequirements] = useState("");
   const [confirmDayRemoval, setConfirmDayRemoval] = useState(false);
   const [cityLoading, setCityLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -146,10 +176,13 @@ function CreateTripPage({ repository }: { repository: TripPlanningRepository }) 
 
   useEffect(() => {
     if (!tripId) return;
-    repository.getTrip(tripId).then((trip) => {
+    Promise.all([repository.getTrip(tripId), repository.getTripPreferences(tripId)]).then(([trip, preferences]) => {
       setTitle(trip.title); setCityQuery(trip.destination); setCity({ name: trip.destination, adcode: trip.destinationAdcode ?? "", citycode: trip.destinationCitycode ?? "", coordinates: trip.center ?? [116.397428, 39.90923] });
       setStartDate(trip.startDate); setEndDate(trip.endDate); setBudgetYuan(String(trip.totalBudgetFen / 100)); setAccommodation(trip.accommodation); setTripVersion(trip.version ?? 1);
       if (trip.accommodationPoiId && trip.accommodationCoordinates) setAccommodationPoi({ poiId: trip.accommodationPoiId, name: trip.accommodation, address: trip.accommodationAddress ?? "", district: trip.accommodationDistrict ?? "", coordinates: trip.accommodationCoordinates, typeName: "住宿服务" });
+      setPreferenceVersion(preferences.version); setPace(preferences.pace); setInterestCategories(preferences.interestCategories); setTransportModes(preferences.transportModes);
+      setDailyStartTime(preferences.dailyStartTime); setDailyEndTime(preferences.dailyEndTime); setMealPreferences(preferences.mealPreferences);
+      setAvoidCategories(preferences.avoidCategories.join("、")); setMaxWalkingMinutes(String(preferences.maxWalkingMinutes)); setFreeTextRequirements(preferences.freeTextRequirements);
     }).catch((cause) => setError(toOperationMessage(cause)));
   }, [repository, tripId]);
 
@@ -206,6 +239,18 @@ function CreateTripPage({ repository }: { repository: TripPlanningRepository }) 
       const trip = editing && tripId
         ? await repository.updateTrip(tripId, { ...input, version: tripVersion, confirmDayRemoval })
         : await repository.createTrip(input);
+      await repository.updateTripPreferences(trip.id, {
+        version: preferenceVersion,
+        pace,
+        interestCategories,
+        transportModes,
+        dailyStartTime,
+        dailyEndTime,
+        mealPreferences,
+        avoidCategories: avoidCategories.split(/[、,，]/).map((item) => item.trim()).filter(Boolean),
+        maxWalkingMinutes: Number(maxWalkingMinutes),
+        freeTextRequirements,
+      });
       navigate(`/trips/${trip.id}/planner`);
     } catch (cause) {
       const message = toOperationMessage(cause);
@@ -236,6 +281,16 @@ function CreateTripPage({ repository }: { repository: TripPlanningRepository }) 
           {accommodationPoi && <small className="verified-city"><Sparkles size={12} />已选择高德住宿 POI · {accommodationPoi.district} · {accommodationPoi.address}</small>}
         </label>
         <div className="form-row"><label><span>总预算（元）</span><input type="number" min="1" step="1" value={budgetYuan} onChange={(event) => setBudgetYuan(event.target.value)} required /></label><div className="form-summary"><small>住宿锚点</small><strong>{accommodationPoi?.name ?? "尚未选择"}</strong><span>{accommodationPoi ? "将保存 POI ID、地址与坐标" : "可以稍后在编辑旅行中补充"}</span></div></div>
+        <section className="preference-section" aria-labelledby="preference-title">
+          <div><span className="eyebrow">PLANNING PROFILE</span><h2 id="preference-title">智能规划偏好</h2><p>这些约束将作为后续 Planner 与 Replanner 的统一输入。</p></div>
+          <div className="form-row"><label><span>行程节奏</span><select value={pace} onChange={(event) => setPace(event.target.value as TripPace)}><option value="relaxed">轻松</option><option value="balanced">均衡</option><option value="intensive">紧凑</option></select></label><label><span>最长连续步行（分钟）</span><input type="number" min="1" max="480" value={maxWalkingMinutes} onChange={(event) => setMaxWalkingMinutes(event.target.value)} required /></label></div>
+          <fieldset><legend>兴趣方向</legend><div className="preference-options">{INTEREST_OPTIONS.map((item) => <label key={item.value}><input type="checkbox" checked={interestCategories.includes(item.value)} onChange={() => setInterestCategories((current) => current.includes(item.value) ? current.filter((value) => value !== item.value) : [...current, item.value])} />{item.label}</label>)}</div></fieldset>
+          <fieldset><legend>可接受交通方式</legend><div className="preference-options">{TRANSPORT_OPTIONS.map((item) => <label key={item.value}><input type="checkbox" checked={transportModes.includes(item.value)} onChange={() => setTransportModes((current) => current.includes(item.value) ? current.filter((value) => value !== item.value) : [...current, item.value])} />{item.label}</label>)}</div></fieldset>
+          <div className="form-row"><label><span>每日最早出发</span><input type="time" value={dailyStartTime} onChange={(event) => setDailyStartTime(event.target.value)} required /></label><label><span>每日最晚结束</span><input type="time" value={dailyEndTime} onChange={(event) => setDailyEndTime(event.target.value)} required /></label></div>
+          <label><span>饮食偏好</span><input value={mealPreferences} onChange={(event) => setMealPreferences(event.target.value)} maxLength={500} placeholder="例如：偏好本地小吃，不吃辣" /></label>
+          <label><span>希望避开的内容</span><input value={avoidCategories} onChange={(event) => setAvoidCategories(event.target.value)} placeholder="用逗号分隔，例如：大型乐园、拥挤商场" /></label>
+          <label><span>补充要求</span><textarea value={freeTextRequirements} onChange={(event) => setFreeTextRequirements(event.target.value)} maxLength={2000} placeholder="例如：每天下午保留一小时机动时间，晚上尽量回到住宿附近。" /></label>
+        </section>
         <button className="submit-trip" disabled={submitting || !city} type="submit">{submitting ? "正在保存…" : confirmDayRemoval ? "确认删除缩短日期并保存" : editing ? "保存旅行设置" : "创建并开始规划"}</button>
       </form>
     </main>

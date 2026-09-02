@@ -9,11 +9,14 @@ import type {
   PlaceCandidate,
   PlaceSearchResult,
   PlanningBudget,
+  PlanningContext,
   Trip,
   TripCreateInput,
   TripDeletionPreview,
   TripPlanningRepository,
   TripUpdateInput,
+  TripPreferences,
+  TripPreferencesUpdateInput,
 } from "../domain/types";
 import {
   DEMO_SCHEMA_VERSION,
@@ -35,6 +38,20 @@ const clone = <T,>(value: T): T => structuredClone(value);
 
 export class LocalTripPlanningRepository implements TripPlanningRepository {
   private days: DayPlan[];
+  private preferences: TripPreferences = {
+    tripId: DEMO_TRIP_UUID,
+    pace: "balanced",
+    interestCategories: ["culture", "food"],
+    transportModes: ["walk", "transit"],
+    dailyStartTime: "09:00",
+    dailyEndTime: "21:00",
+    mealPreferences: "",
+    avoidCategories: [],
+    maxWalkingMinutes: 60,
+    freeTextRequirements: "",
+    version: 1,
+    updatedAt: new Date(0).toISOString(),
+  };
 
   constructor(private readonly storage: Storage = window.localStorage) {
     this.days = this.loadDays();
@@ -72,6 +89,45 @@ export class LocalTripPlanningRepository implements TripPlanningRepository {
   async updateTrip(tripId: string, input: TripUpdateInput): Promise<Trip> {
     this.assertDemoTrip(tripId);
     return { ...clone(demoTrip), title: input.title ?? demoTrip.title, version: input.version + 1 };
+  }
+
+  async getTripPreferences(tripId: string): Promise<TripPreferences> {
+    this.assertDemoTrip(tripId);
+    return clone(this.preferences);
+  }
+
+  async updateTripPreferences(tripId: string, input: TripPreferencesUpdateInput): Promise<TripPreferences> {
+    this.assertDemoTrip(tripId);
+    this.preferences = {
+      ...clone(input),
+      tripId: DEMO_TRIP_UUID,
+      version: input.version + 1,
+      updatedAt: new Date().toISOString(),
+    };
+    return clone(this.preferences);
+  }
+
+  async getPlanningContext(tripId: string): Promise<PlanningContext> {
+    this.assertDemoTrip(tripId);
+    const planningBudget = await this.getPlanningBudget(tripId);
+    return {
+      trip: clone(demoTrip),
+      preferences: clone(this.preferences),
+      days: clone(this.days),
+      candidates: await this.getCandidates(tripId),
+      actualBudget: {
+        tripId,
+        totalBudgetFen: demoTrip.totalBudgetFen,
+        totalSpentFen: 0,
+        totalRemainingFen: demoTrip.totalBudgetFen,
+        dailyBudgetFen: demoTrip.dailyBudgetFen,
+        todaySpentFen: 0,
+        todayRemainingFen: demoTrip.dailyBudgetFen,
+        localDate: demoTrip.startDate,
+      },
+      planningBudget,
+      generatedAt: new Date().toISOString(),
+    };
   }
 
   async duplicateTrip(tripId: string): Promise<Trip> {

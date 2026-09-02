@@ -223,3 +223,68 @@ def test_accommodation_search_maps_amap_pois(monkeypatch) -> None:
             "type_name": "住宿服务;宾馆酒店",
             "rating": 4.6,
         }
+
+
+def test_trip_preferences_and_planning_context() -> None:
+    with TestClient(app) as client:
+        trip = _create_trip(client)
+        trip_id = trip["id"]
+
+        defaults = client.get(f"/api/v1/trips/{trip_id}/preferences")
+        assert defaults.status_code == 200
+        assert defaults.json()["pace"] == "balanced"
+        assert defaults.json()["transport_modes"] == ["walk", "transit"]
+        assert defaults.json()["daily_start_time"] == "09:00:00"
+
+        payload = {
+            "version": defaults.json()["version"],
+            "pace": "relaxed",
+            "interest_categories": ["history", "food", "photography"],
+            "transport_modes": ["walk", "transit"],
+            "daily_start_time": "09:30:00",
+            "daily_end_time": "20:30:00",
+            "meal_preferences": "Local food, no spicy dishes",
+            "avoid_categories": ["crowded theme parks"],
+            "max_walking_minutes": 45,
+            "free_text_requirements": "Keep one unplanned hour each afternoon.",
+        }
+        updated = client.put(f"/api/v1/trips/{trip_id}/preferences", json=payload)
+        assert updated.status_code == 200
+        assert updated.json()["version"] == defaults.json()["version"] + 1
+        assert updated.json()["interest_categories"] == ["history", "food", "photography"]
+
+        stale = client.put(f"/api/v1/trips/{trip_id}/preferences", json=payload)
+        assert stale.status_code == 409
+
+        context = client.get(f"/api/v1/trips/{trip_id}/planning-context")
+        assert context.status_code == 200
+        body = context.json()
+        assert body["trip"]["id"] == trip_id
+        assert body["preferences"]["pace"] == "relaxed"
+        assert len(body["days"]) == 1
+        assert body["actual_budget"]["total_remaining_fen"] == 80000
+        assert body["planning_budget"]["total_planned_fen"] == 0
+        assert body["generated_at"]
+
+
+def test_trip_preferences_validation_and_missing_trip() -> None:
+    with TestClient(app) as client:
+        trip = _create_trip(client)
+        trip_id = trip["id"]
+        version = client.get(f"/api/v1/trips/{trip_id}/preferences").json()["version"]
+        invalid = client.put(
+            f"/api/v1/trips/{trip_id}/preferences",
+            json={
+                "version": version,
+                "pace": "intensive",
+                "interest_categories": ["history", "history"],
+                "transport_modes": ["walk"],
+                "daily_start_time": "21:00:00",
+                "daily_end_time": "09:00:00",
+                "max_walking_minutes": 60,
+            },
+        )
+        assert invalid.status_code == 422
+        missing_id = uuid.uuid4()
+        assert client.get(f"/api/v1/trips/{missing_id}/preferences").status_code == 404
+        assert client.get(f"/api/v1/trips/{missing_id}/planning-context").status_code == 404

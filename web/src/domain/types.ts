@@ -2,6 +2,9 @@ export type Fen = number;
 export type Coordinates = readonly [longitude: number, latitude: number];
 export type ActivityStatus = "planned" | "active" | "completed" | "skipped";
 export type PlaceCategory = "sight" | "food" | "culture" | "nature" | "shopping";
+export type TripPace = "relaxed" | "balanced" | "intensive";
+export type InterestCategory = "history" | "culture" | "nature" | "food" | "photography" | "shopping" | "family" | "nightlife";
+export type PreferenceTransportMode = "walk" | "transit" | "driving";
 
 export interface SourceRecord {
   id: string;
@@ -74,6 +77,23 @@ export interface TripUpdateInput extends Partial<Omit<TripCreateInput, "center">
   version: number;
   confirmDayRemoval?: boolean;
 }
+
+export interface TripPreferences {
+  tripId: string;
+  pace: TripPace;
+  interestCategories: InterestCategory[];
+  transportModes: PreferenceTransportMode[];
+  dailyStartTime: string;
+  dailyEndTime: string;
+  mealPreferences: string;
+  avoidCategories: string[];
+  maxWalkingMinutes: number;
+  freeTextRequirements: string;
+  version: number;
+  updatedAt: string;
+}
+
+export type TripPreferencesUpdateInput = Omit<TripPreferences, "tripId" | "updatedAt">;
 
 export interface TripDeletionPreview {
   tripId: string;
@@ -206,12 +226,36 @@ export interface PlanningBudget {
   days: PlanningBudgetDay[];
 }
 
+export interface ActualBudget {
+  tripId: string;
+  totalBudgetFen: Fen;
+  totalSpentFen: Fen;
+  totalRemainingFen: Fen;
+  dailyBudgetFen: Fen;
+  todaySpentFen: Fen;
+  todayRemainingFen: Fen;
+  localDate: string;
+}
+
+export interface PlanningContext {
+  trip: Trip;
+  preferences: TripPreferences;
+  days: DayPlan[];
+  candidates: PlaceCandidate[];
+  actualBudget: ActualBudget;
+  planningBudget: PlanningBudget;
+  generatedAt: string;
+}
+
 export interface TripPlanningRepository {
   listTrips(): Promise<Trip[]>;
   createTrip(input: TripCreateInput): Promise<Trip>;
   searchCities(query: string): Promise<CitySuggestion[]>;
   searchAccommodationPois(query: string, city: string): Promise<AccommodationPoi[]>;
   updateTrip(tripId: string, input: TripUpdateInput): Promise<Trip>;
+  getTripPreferences(tripId: string): Promise<TripPreferences>;
+  updateTripPreferences(tripId: string, input: TripPreferencesUpdateInput): Promise<TripPreferences>;
+  getPlanningContext(tripId: string): Promise<PlanningContext>;
   duplicateTrip(tripId: string): Promise<Trip>;
   archiveTrip(tripId: string): Promise<Trip>;
   getTripDeletionPreview(tripId: string): Promise<TripDeletionPreview>;

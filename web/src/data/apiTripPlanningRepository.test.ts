@@ -41,6 +41,38 @@ describe("ApiTripPlanningRepository", () => {
     expect(cities[0]).toEqual({ name: "南昌市", adcode: "360100", citycode: "0791", coordinates: [115.857972, 28.682976] });
   });
 
+  it("maps and updates the structured planning profile", async () => {
+    const dto = {
+      trip_id: DEMO_TRIP_UUID,
+      pace: "relaxed",
+      interest_categories: ["history", "food"],
+      transport_modes: ["walk", "transit"],
+      daily_start_time: "09:30:00",
+      daily_end_time: "20:30:00",
+      meal_preferences: "不吃辣",
+      avoid_categories: ["大型乐园"],
+      max_walking_minutes: 45,
+      free_text_requirements: "下午保留机动时间",
+      version: 2,
+      updated_at: "2026-09-02T01:00:00Z",
+    };
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify(dto), { status: 200, headers: { "Content-Type": "application/json" } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ ...dto, version: 3 }), { status: 200, headers: { "Content-Type": "application/json" } }));
+    vi.stubGlobal("fetch", fetchMock);
+    const repository = new ApiTripPlanningRepository();
+
+    const preferences = await repository.getTripPreferences(DEMO_TRIP_UUID);
+    expect(preferences).toMatchObject({ pace: "relaxed", dailyStartTime: "09:30", maxWalkingMinutes: 45 });
+    const updated = await repository.updateTripPreferences(DEMO_TRIP_UUID, preferences);
+    expect(updated.version).toBe(3);
+    expect(JSON.parse(fetchMock.mock.calls[1][1]?.body as string)).toMatchObject({
+      interest_categories: ["history", "food"],
+      daily_start_time: "09:30",
+      max_walking_minutes: 45,
+    });
+  });
+
   it("returns the server-generated activity id after adding a place", async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({
       id: "activity-id",

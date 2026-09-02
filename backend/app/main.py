@@ -33,11 +33,13 @@ from app.planner_repository import (
     move_activity,
     update_activity,
 )
+from app.planning_context import build_planning_context
 from app.repository import (
     IdempotencyConflictError,
     TripDateConflictError,
     TripNotFoundError,
     TripVersionConflictError,
+    TripPreferencesVersionConflictError,
     archive_trip,
     create_expense,
     create_trip,
@@ -46,8 +48,10 @@ from app.repository import (
     get_budget,
     get_trip,
     get_trip_deletion_preview,
+    get_trip_preferences,
     list_trips,
     update_trip,
+    update_trip_preferences,
 )
 from app.schemas import (
     BudgetResponse,
@@ -67,10 +71,13 @@ from app.schemas import (
     PlaceCandidateResponse,
     PlaceSearchResultResponse,
     PlanningBudgetResponse,
+    PlanningContextResponse,
     RouteRecalculateRequest,
     TripCreate,
     TripDeletionPreviewResponse,
     TripResponse,
+    TripPreferencesResponse,
+    TripPreferencesUpdate,
     TripUpdate,
 )
 
@@ -177,6 +184,59 @@ async def get_trip_endpoint(
     except TripNotFoundError as exc:
         raise HTTPException(status_code=404, detail="trip not found") from exc
     return TripResponse.model_validate(trip)
+
+
+@app.get(
+    "/api/v1/trips/{trip_id}/preferences",
+    response_model=TripPreferencesResponse,
+    tags=["planning"],
+)
+async def get_trip_preferences_endpoint(
+    trip_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> TripPreferencesResponse:
+    try:
+        preferences = await get_trip_preferences(session, trip_id)
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+    return TripPreferencesResponse.model_validate(preferences)
+
+
+@app.put(
+    "/api/v1/trips/{trip_id}/preferences",
+    response_model=TripPreferencesResponse,
+    tags=["planning"],
+)
+async def update_trip_preferences_endpoint(
+    trip_id: uuid.UUID,
+    payload: TripPreferencesUpdate,
+    session: AsyncSession = Depends(get_session),
+) -> TripPreferencesResponse:
+    try:
+        preferences = await update_trip_preferences(session, trip_id, payload)
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+    except TripPreferencesVersionConflictError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail="trip preferences were updated elsewhere; reload and retry",
+        ) from exc
+    return TripPreferencesResponse.model_validate(preferences)
+
+
+@app.get(
+    "/api/v1/trips/{trip_id}/planning-context",
+    response_model=PlanningContextResponse,
+    tags=["planning"],
+)
+async def get_planning_context_endpoint(
+    trip_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> PlanningContextResponse:
+    try:
+        return await build_planning_context(session, trip_id)
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
 
 
 @app.put("/api/v1/trips/{trip_id}", response_model=TripResponse, tags=["trips"])

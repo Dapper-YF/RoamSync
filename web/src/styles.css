@@ -51,6 +51,9 @@
 .create-card > label, .form-row label { display: flex; flex-direction: column; gap: 7px; position: relative; margin-top: 15px; color: #536764; font-size: 10px; font-weight: 800; }
 .create-card input { width: 100%; height: 43px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; outline: 0; color: var(--navy-900); background: white; font: inherit; font-size: 11px; font-weight: 500; box-sizing: border-box; }
 .create-card input:focus { border-color: #78b9af; box-shadow: 0 0 0 3px rgb(39 143 132 / 10%); }
+.create-card select, .create-card textarea { width: 100%; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; outline: 0; color: var(--navy-900); background: white; font: inherit; font-size: 11px; font-weight: 500; box-sizing: border-box; }
+.create-card select { height: 43px; }.create-card textarea { min-height: 88px; padding-top: 11px; resize: vertical; line-height: 1.55; }
+.create-card select:focus, .create-card textarea:focus { border-color: #78b9af; box-shadow: 0 0 0 3px rgb(39 143 132 / 10%); }
 .input-with-icon { position: relative; }.input-with-icon svg { position: absolute; z-index: 2; left: 12px; top: 13px; color: var(--teal-700); }.input-with-icon input { padding-left: 36px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 .city-suggestions { position: absolute; z-index: 20; top: 70px; left: 0; right: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 11px; background: white; box-shadow: var(--shadow); }
@@ -60,6 +63,12 @@
 .poi-search-row { display: flex; gap: 8px; }.poi-search-row input { flex: 1; }.poi-search-row button { flex: none; padding: 0 13px; border: 0; border-radius: 9px; color: white; background: var(--navy-900); font-size: 9px; font-weight: 800; cursor: pointer; }.poi-search-row button:disabled { opacity: .45; cursor: not-allowed; }
 .accommodation-results { overflow: hidden; max-height: 210px; overflow-y: auto; border: 1px solid var(--line); border-radius: 11px; background: white; box-shadow: 0 8px 24px rgb(20 47 57 / 10%); }.accommodation-results button { width: 100%; display: flex; flex-direction: column; gap: 4px; padding: 11px 13px; border: 0; border-bottom: 1px solid #edf0ee; color: var(--navy-900); background: white; cursor: pointer; text-align: left; }.accommodation-results button:hover { background: #f0f7f4; }.accommodation-results small { color: var(--muted); font-size: 8px; font-weight: 500; }
 .form-summary { align-self: end; min-height: 43px; display: flex; flex-direction: column; justify-content: center; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: #f7f9f7; }.form-summary small { color: var(--muted); font-size: 7px; }.form-summary strong { font-size: 10px; }.form-summary span { color: var(--muted); font-size: 7px; }
+.preference-section { margin-top: 24px; padding: 20px; border: 1px solid #dbe6e2; border-radius: 16px; background: #f7faf8; }
+.preference-section h2 { margin: 4px 0; font-size: 18px; }.preference-section > div > p { margin: 0 0 4px; color: var(--muted); font-size: 9px; line-height: 1.5; }
+.preference-section > label, .preference-section .form-row label { display: flex; flex-direction: column; gap: 7px; margin-top: 15px; color: #536764; font-size: 10px; font-weight: 800; }
+.preference-section fieldset { margin: 16px 0 0; padding: 0; border: 0; }.preference-section legend { margin-bottom: 8px; color: #536764; font-size: 10px; font-weight: 800; }
+.preference-options { display: flex; flex-wrap: wrap; gap: 8px; }.preference-options label { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border: 1px solid #d7e4df; border-radius: 999px; background: white; color: #405753; font-size: 9px; font-weight: 700; cursor: pointer; }
+.create-card .preference-options input { width: 13px; height: 13px; margin: 0; accent-color: var(--teal-600); }
 .form-error { margin-bottom: 5px; padding: 10px 12px; border: 1px solid #efc4bd; border-radius: 9px; color: #9a473d; background: #fff6f4; font-size: 10px; }
 .submit-trip { width: 100%; margin-top: 25px; padding: 12px; border: 0; border-radius: 11px; color: white; background: var(--teal-600); font-size: 11px; font-weight: 800; cursor: pointer; }.submit-trip:disabled { opacity: .5; cursor: not-allowed; }
 

@@ -5,7 +5,7 @@ from decimal import Decimal
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import Activity, DayPlan, PlaceCandidate, SourceRecord, Trip
+from app.database import Activity, DayPlan, PlaceCandidate, SourceRecord, Trip, TripPreferences
 
 
 DEMO_TRIP_ID = uuid.UUID("00000000-0000-4000-8000-000000000001")
@@ -170,6 +170,16 @@ async def seed_demo_data(session: AsyncSession, *, reset: bool = False) -> bool:
     )
     session.add(trip)
     await session.flush()
+    session.add(
+        TripPreferences(
+            trip_id=DEMO_TRIP_ID,
+            pace="relaxed",
+            interest_categories=["culture", "nature", "food"],
+            transport_modes=["walk", "transit"],
+            max_walking_minutes=60,
+            free_text_requirements="保留湖滨夜景，并控制连续步行强度。",
+        )
+    )
 
     queried_at = datetime(2026, 8, 31, 2, 0, tzinfo=UTC)
     places: dict[str, PlaceCandidate] = {}

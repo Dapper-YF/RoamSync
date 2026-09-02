@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
+import { vi } from "vitest";
 import { App } from "./App";
 import { LocalTripPlanningRepository } from "./data/mockTripPlanningRepository";
 
@@ -41,6 +42,28 @@ describe("planner workbench", () => {
     await user.click(screen.getByRole("button", { name: "搜索住宿" }));
     await user.click(await screen.findByRole("button", { name: /中心酒店/ }));
     expect(screen.getByText(/已选择高德住宿 POI/)).toHaveTextContent("测试路 1 号");
+  });
+
+  it("loads and persists the structured planning profile", async () => {
+    const user = userEvent.setup();
+    const repository = new LocalTripPlanningRepository(localStorage);
+    const updatePreferences = vi.spyOn(repository, "updateTripPreferences");
+    render(<MemoryRouter initialEntries={["/trips/demo/edit"]}><App repository={repository} /></MemoryRouter>);
+
+    expect(await screen.findByRole("heading", { name: "智能规划偏好" })).toBeInTheDocument();
+    await user.selectOptions(screen.getByLabelText("行程节奏"), "relaxed");
+    await user.click(screen.getByLabelText("历史"));
+    await user.clear(screen.getByLabelText("最长连续步行（分钟）"));
+    await user.type(screen.getByLabelText("最长连续步行（分钟）"), "45");
+    await user.type(screen.getByLabelText("补充要求"), "下午保留机动时间");
+    await user.click(screen.getByRole("button", { name: "保存旅行设置" }));
+
+    await waitFor(() => expect(updatePreferences).toHaveBeenCalledWith("demo", expect.objectContaining({
+      pace: "relaxed",
+      interestCategories: expect.arrayContaining(["history"]),
+      maxWalkingMinutes: 45,
+      freeTextRequirements: "下午保留机动时间",
+    })));
   });
 
   it("edits an activity and moves it to another day", async () => {
