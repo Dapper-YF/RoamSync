@@ -7,10 +7,16 @@ from langgraph.types import Command
 
 from app.config import get_settings
 from app.database import PlanningRun, session_factory
+from app.openai_planner import OpenAIResponsesPlanner
+from app.planning_errors import (
+    PlannerConstraintsUnsatisfiedError,
+    PlannerNotConfiguredError,
+    PlannerProviderError,
+)
 from app.planning_graph import (
     DraftProvider,
-    PlannerNotConfiguredError,
     PlanningGraphState,
+    UnavailableDraftProvider,
     build_planning_graph,
 )
 from app.planning_run_repository import PlanningRunNotFoundError
@@ -62,13 +68,28 @@ async def execute_planning_run(
         resume = {"decision": decision.decision, "answer": decision.answer}
     settings = get_settings()
     try:
+        draft_provider = provider
+        if draft_provider is None:
+            try:
+                draft_provider = OpenAIResponsesPlanner(settings)
+            except PlannerNotConfiguredError:
+                # A resumed approval does not execute the planner node. Keep the
+                # explicit unavailable provider so that new planning still fails
+                # with planner_not_configured at the correct graph boundary.
+                draft_provider = UnavailableDraftProvider()
         async with AsyncPostgresSaver.from_conn_string(
             settings.checkpoint_database_url
         ) as checkpointer:
-            graph = build_planning_graph(checkpointer, provider)
+            graph = build_planning_graph(checkpointer, draft_provider)
             return await invoke_compiled_graph(graph, run, resume=resume)
     except PlannerNotConfiguredError as exc:
         await _mark_failed(run_id, "planner_not_configured", str(exc))
+        return PlanningExecutionResult(pending_interrupt=None)
+    except PlannerProviderError as exc:
+        await _mark_failed(run_id, exc.code, str(exc))
+        return PlanningExecutionResult(pending_interrupt=None)
+    except PlannerConstraintsUnsatisfiedError as exc:
+        await _mark_failed(run_id, "planner_constraints_unsatisfied", str(exc))
         return PlanningExecutionResult(pending_interrupt=None)
     except Exception as exc:
         await _mark_failed(run_id, "planning_graph_failed", str(exc))

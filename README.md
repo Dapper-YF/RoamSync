@@ -73,9 +73,13 @@ PostgreSQL checkpoint 持久化；即使 API 或 Worker 重启，仍可使用同
 `planning_run` 恢复。澄清最多两轮，审批只接受 `accept` 或 `reject`，正式计划仍然
 只能通过既有的事务化接受服务写入。
 
-当前刻意没有接入任何大模型：生产默认 Draft Provider 会以
-`planner_not_configured` 明确失败，测试使用注入的确定性 Provider。这样不会用 Mock
-结果冒充真实 Agent。下一步完成模型适配、结构化输出和评测后，才会启用 Worker。
+Planner 已接入 DeepSeek Responses API，默认模型标识为 `deepseek-v4-flash`。模型只
+能从后端提供的地点 ID 和旅行日期中编排时间；地点费用、来源和路线不会由模型生成，
+而是由后端回填并再次执行确定性校验。JSON Schema 输出还会经过 Pydantic 二次校验，
+未知地点、日期越界和重复地点均不能进入候选版本。调用的供应商、模型和 token 总量
+记录在 `planning_runs` 中，API Key 仅从被 Git 忽略的 `.env` 注入。首次候选未通过
+硬约束时，Reviewer 会把具体校验错误交给 Planner 修正一次；第二次仍失败则以
+`planner_constraints_unsatisfied` 结束，不会放宽或跳过校验。
 
 Checkpoint 初始化与 Worker 都是显式操作，不随默认 Compose 启动：
 
@@ -84,8 +88,8 @@ docker compose --profile agent run --rm agent-checkpoint-init
 docker compose --profile agent up -d agent-worker
 ```
 
-在尚未配置真实 Planner Provider 前，不建议启动 `agent-worker`。默认的
-`docker compose up -d --build` 行为保持不变。
+完成 `.env` 的 `PLANNER_API_KEY` 配置后才能启动 `agent-worker`。默认的
+`docker compose up -d --build` 仍不会自动启动 Worker。
 
 ### Android 客户端
 

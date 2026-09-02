@@ -1,5 +1,7 @@
 from functools import lru_cache
+from typing import Literal
 
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,6 +17,15 @@ class Settings(BaseSettings):
     allow_map_estimates: bool = False
     langgraph_database_url: str = ""
     agent_poll_seconds: float = 2.0
+    planner_provider: str = "openai"
+    planner_api_key: SecretStr = SecretStr("")
+    planner_base_url: str = "https://api.openai.com/v1"
+    planner_model: str = ""
+    planner_timeout_seconds: float = Field(default=60, gt=0, le=300)
+    planner_max_retries: int = Field(default=2, ge=0, le=5)
+    planner_max_output_tokens: int = Field(default=8000, ge=1000, le=100000)
+    planner_max_candidates: int = Field(default=40, ge=1, le=100)
+    planner_reasoning_effort: Literal["none", "low", "high", "max"] = "low"
 
     @property
     def checkpoint_database_url(self) -> str:

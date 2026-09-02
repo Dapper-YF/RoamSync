@@ -24,3 +24,5 @@ This file must be updated when a new dependency requiring attribution is added.
 - LangGraph (MIT) is used to model the resumable planning state machine.
 - LangGraph Checkpoint PostgreSQL (MIT) stores durable graph checkpoints in the
   existing RoamSync PostgreSQL database.
+- OpenAI Python SDK (Apache-2.0) provides the typed client used against the
+  configured Responses API endpoint, including DeepSeek's compatible endpoint.

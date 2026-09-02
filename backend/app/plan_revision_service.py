@@ -185,11 +185,23 @@ async def validate_candidate_plan(
                 )
                 continue
             if destination[0] < origin[1] + leg.duration_minutes:
+                required_start = origin[1] + leg.duration_minutes
                 errors.append(
                     PlanValidationIssue(
                         code="route_travel_time_conflict",
-                        message=f"{day_date} 的活动间隔不足以完成交通移动",
+                        message=(
+                            f"{day_date} 的后续活动最早应在 "
+                            f"{required_start // 60:02d}:{required_start % 60:02d} 开始"
+                        ),
                         candidate_id=destination[2],
+                        details={
+                            "from_candidate_id": origin[2],
+                            "to_candidate_id": destination[2],
+                            "route_duration_minutes": leg.duration_minutes,
+                            "previous_activity_end_minute": origin[1],
+                            "required_start_minute": required_start,
+                            "actual_start_minute": destination[0],
+                        },
                     )
                 )
 

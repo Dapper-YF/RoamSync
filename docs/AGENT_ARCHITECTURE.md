@@ -63,10 +63,14 @@ and approval. `PlanningRun.id` is its `thread_id`. PostgreSQL checkpoints hold
 recoverable execution state, while `PlanningRun`, `PlanRevision`, and candidate
 evidence remain the product and audit source of truth.
 
-The Draft Provider is an injected protocol. Production currently uses an
-unavailable provider that records `planner_not_configured`; deterministic test
-providers prove graph behavior without presenting Mock output to users. A real
-Planner and bounded Reviewer are the next model-facing additions.
+The Draft Provider is an injected protocol. Production uses the configured
+DeepSeek Responses API with JSON Schema output and a second local Pydantic
+validation pass. The model may select only supplied place IDs and dates; costs,
+sources, replacement IDs, and routes are resolved by backend code. Missing
+configuration records `planner_not_configured`. A failed deterministic
+validation may trigger exactly one correction pass containing the prior draft
+and explicit validation issues. A second failure records
+`planner_constraints_unsatisfied`; the Reviewer cannot override validation.
 
 The graph state must contain JSON-serializable values only. Database sessions,
 ORM entities, API clients, secrets, and arbitrary executable objects are

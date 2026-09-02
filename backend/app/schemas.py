@@ -612,6 +612,7 @@ class PlanValidationIssue(BaseModel):
     code: str
     message: str
     candidate_id: str | None = None
+    details: dict = Field(default_factory=dict)
 
 
 class PlanValidationResult(BaseModel):
