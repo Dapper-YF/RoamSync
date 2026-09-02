@@ -142,7 +142,7 @@ class PlanningRun(Base):
     __table_args__ = (
         CheckConstraint("run_type IN ('initial_plan', 'replan')", name="ck_planning_runs_type"),
         CheckConstraint(
-            "status IN ('queued', 'researching', 'planning', 'validating', "
+            "status IN ('queued', 'researching', 'awaiting_clarification', 'planning', 'validating', "
             "'awaiting_confirmation', 'accepted', 'rejected', 'failed', 'cancelled')",
             name="ck_planning_runs_status",
         ),

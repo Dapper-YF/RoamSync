@@ -1,7 +1,8 @@
 # RoamSync Agent architecture contract
 
 This document is the source of truth for the first Agent planning workflow. It
-defines boundaries before any LLM or LangGraph runtime is introduced.
+defines boundaries for the first LangGraph runtime before a real model provider
+is enabled.
 
 ## Product boundary
 
@@ -54,16 +55,22 @@ Production requires the configured AMap Web Service key. Estimated routes are a
 test/development escape hatch controlled by `ALLOW_MAP_ESTIMATES`; they are not a
 silent production fallback.
 
-## Planned LangGraph boundary
+## LangGraph runtime boundary
 
-The future graph orchestrates deterministic nodes plus two bounded LLM nodes:
-Planner and Reviewer. `PlanningRun.id` will be its `thread_id`. PostgreSQL
-checkpoints will hold execution state, while `PlanningRun`, `PlanRevision`, and
-candidate evidence remain the product and audit source of truth.
+The graph now orchestrates intent resolution, bounded clarification, draft
+generation, route enrichment, deterministic validation, revision persistence,
+and approval. `PlanningRun.id` is its `thread_id`. PostgreSQL checkpoints hold
+recoverable execution state, while `PlanningRun`, `PlanRevision`, and candidate
+evidence remain the product and audit source of truth.
+
+The Draft Provider is an injected protocol. Production currently uses an
+unavailable provider that records `planner_not_configured`; deterministic test
+providers prove graph behavior without presenting Mock output to users. A real
+Planner and bounded Reviewer are the next model-facing additions.
 
 The graph state must contain JSON-serializable values only. Database sessions,
 ORM entities, API clients, secrets, and arbitrary executable objects are
-forbidden. Human clarification and final approval will use explicit interrupts;
+forbidden. Human clarification and final approval use explicit interrupts;
 side effects before an interrupt must be idempotent.
 
 ## Failure rules

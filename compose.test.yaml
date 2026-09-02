@@ -25,6 +25,8 @@ services:
       APP_ENV: test
       ALLOW_MAP_ESTIMATES: "true"
       DATABASE_URL: postgresql+psycopg://roamsync_test:roamsync_test_password@postgres-test:5432/roamsync_test
+      LANGGRAPH_DATABASE_URL: postgresql://roamsync_test:roamsync_test_password@postgres-test:5432/roamsync_test
+      LANGGRAPH_STRICT_MSGPACK: "true"
     depends_on:
       postgres-test:
         condition: service_healthy

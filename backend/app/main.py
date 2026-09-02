@@ -35,6 +35,7 @@ from app.planner_repository import (
 )
 from app.planning_context import build_planning_context
 from app.planning_intent_service import IntentContextError, resolve_planning_intent
+from app.planning_graph_runtime import execute_planning_run
 from app.planning_run_repository import (
     InvalidPlanningRunStateError,
     PlanRevisionNotFoundError,
@@ -87,6 +88,8 @@ from app.schemas import (
     PlanningIntentParseRequest,
     PlanningIntentResolution,
     PlanningRunCreate,
+    PlanningRunDecision,
+    PlanningRunExecutionResponse,
     PlanningRunResponse,
     PlanRevisionResponse,
     RouteRecalculateRequest,
@@ -309,6 +312,30 @@ async def get_planning_run_endpoint(
     except PlanningRunNotFoundError as exc:
         raise HTTPException(status_code=404, detail="planning run not found") from exc
     return PlanningRunResponse.model_validate(run)
+
+
+@app.post(
+    "/api/v1/planning-runs/{run_id}/decision",
+    response_model=PlanningRunExecutionResponse,
+    tags=["planning"],
+)
+async def decide_planning_run_endpoint(
+    run_id: uuid.UUID,
+    payload: PlanningRunDecision,
+    session: AsyncSession = Depends(get_session),
+) -> PlanningRunExecutionResponse:
+    try:
+        execution = await execute_planning_run(run_id, decision=payload)
+        run = await get_planning_run(session, run_id)
+        await session.refresh(run)
+    except PlanningRunNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="planning run not found") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return PlanningRunExecutionResponse(
+        run=PlanningRunResponse.model_validate(run),
+        pending_interrupt=execution.pending_interrupt,
+    )
 
 
 @app.get(

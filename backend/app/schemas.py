@@ -497,7 +497,7 @@ class PlanningContextResponse(BaseModel):
 
 PlanningRunType = Literal["initial_plan", "replan"]
 PlanningRunStatus = Literal[
-    "queued", "researching", "planning", "validating", "awaiting_confirmation",
+    "queued", "researching", "awaiting_clarification", "planning", "validating", "awaiting_confirmation",
     "accepted", "rejected", "failed", "cancelled"
 ]
 PlanRevisionStatus = Literal["pending", "accepted", "rejected", "superseded"]
@@ -530,6 +530,22 @@ class PlanningRunResponse(BaseModel):
     created_at: datetime
     started_at: datetime | None
     completed_at: datetime | None
+
+
+class PlanningRunDecision(BaseModel):
+    decision: Literal["clarify", "accept", "reject"]
+    answer: str | None = Field(default=None, max_length=4000)
+
+    @model_validator(mode="after")
+    def require_clarification_answer(self) -> "PlanningRunDecision":
+        if self.decision == "clarify" and not (self.answer or "").strip():
+            raise ValueError("answer is required for clarification")
+        return self
+
+
+class PlanningRunExecutionResponse(BaseModel):
+    run: PlanningRunResponse
+    pending_interrupt: dict | None = None
 
 
 class CandidateActivity(BaseModel):

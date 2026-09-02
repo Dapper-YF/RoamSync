@@ -18,3 +18,9 @@ dependency lock files. Their respective licenses remain with their authors.
   attribution review.
 
 This file must be updated when a new dependency requiring attribution is added.
+
+## Runtime Agent dependencies
+
+- LangGraph (MIT) is used to model the resumable planning state machine.
+- LangGraph Checkpoint PostgreSQL (MIT) stores durable graph checkpoints in the
+  existing RoamSync PostgreSQL database.

@@ -42,7 +42,7 @@ RoamSync 将行前规划、旅中执行、预算管理和临时调整放在同�
 - 提供只读规划上下文，将正式行程、偏好、候选地点、实际预算和规划预算组装为统一契约。
 - 独立 PostgreSQL 测试环境，不复用开发数据库。
 
-### 智能规划边界（已完成基础契约）
+### 智能规划边界（已完成可恢复工作流骨架）
 
 ```text
 GET /api/v1/trips/{trip_id}/preferences
@@ -52,6 +52,7 @@ POST /api/v1/trips/{trip_id}/planning-intent/resolve
 POST /api/v1/trips/{trip_id}/planning-runs
 GET /api/v1/planning-runs/{run_id}
 GET /api/v1/planning-runs/{run_id}/revision
+POST /api/v1/planning-runs/{run_id}/decision
 POST /api/v1/plan-revisions/{revision_id}/reject
 POST /api/v1/plan-revisions/{revision_id}/accept
 ```
@@ -67,6 +68,25 @@ POST /api/v1/plan-revisions/{revision_id}/accept
 归属、来源、时间窗、活动重叠、交通时间、每日与总预算，以及已完成、进行中和锁定
 活动保护，然后在单个事务中应用活动与路线。重复接受保持幂等。
 
+LangGraph 负责串联意图解析、澄清、候选生成、确定性校验和用户审批。图状态通过
+PostgreSQL checkpoint 持久化；即使 API 或 Worker 重启，仍可使用同一个
+`planning_run` 恢复。澄清最多两轮，审批只接受 `accept` 或 `reject`，正式计划仍然
+只能通过既有的事务化接受服务写入。
+
+当前刻意没有接入任何大模型：生产默认 Draft Provider 会以
+`planner_not_configured` 明确失败，测试使用注入的确定性 Provider。这样不会用 Mock
+结果冒充真实 Agent。下一步完成模型适配、结构化输出和评测后，才会启用 Worker。
+
+Checkpoint 初始化与 Worker 都是显式操作，不随默认 Compose 启动：
+
+```powershell
+docker compose --profile agent run --rm agent-checkpoint-init
+docker compose --profile agent up -d agent-worker
+```
+
+在尚未配置真实 Planner Provider 前，不建议启动 `agent-worker`。默认的
+`docker compose up -d --build` 行为保持不变。
+
 ### Android 客户端
 
 - Kotlin + Jetpack Compose 原生应用。
@@ -80,6 +100,7 @@ POST /api/v1/plan-revisions/{revision_id}/accept
 flowchart LR
     Web[React Web<br/>规划与复核] --> API[FastAPI<br/>业务规则与 REST API]
     Android[Android<br/>旅中操作] --> API
+    Worker[LangGraph Worker<br/>可恢复规划] --> DB
     API --> DB[(PostgreSQL<br/>旅行状态与审计数据)]
     API --> AMap[高德地图服务<br/>POI 与路线]
     Web --> AMapJS[高德 JS API<br/>地图展示]
@@ -247,7 +268,8 @@ pnpm e2e
 
 以下内容来自一期产品策划，尚不代表当前版本已经完成：
 
-- [ ] 接入 LangGraph Planner、Reviewer、Checkpoint 与 Interrupt 工作流。
+- [x] 建立 LangGraph 状态图、PostgreSQL Checkpoint 与 Interrupt/Resume 骨架。
+- [ ] 接入真实 Planner/Reviewer 模型与严格结构化输出。
 - [ ] 生成受预算、日期、住宿、营业时间和路线约束的候选攻略。
 - [ ] 支持语音/文字消费解析，并在确认后幂等写入。
 - [ ] 根据午睡、天气、延迟或超支，仅重排尚未完成的活动。

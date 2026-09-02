@@ -29,6 +29,8 @@ services:
     environment:
       APP_ENV: development
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LANGGRAPH_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LANGGRAPH_STRICT_MSGPACK: "true"
       AMAP_REST_KEY: ${AMAP_REST_KEY:-}
       ROUTE_CACHE_TTL_SECONDS: ${ROUTE_CACHE_TTL_SECONDS:-86400}
       ALLOW_MAP_ESTIMATES: ${ALLOW_MAP_ESTIMATES:-false}
@@ -43,6 +45,42 @@ services:
       timeout: 3s
       retries: 6
       start_period: 10s
+
+  agent-checkpoint-init:
+    profiles: ["agent"]
+    build:
+      context: ./backend
+      target: production
+    restart: "no"
+    environment:
+      APP_ENV: development
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LANGGRAPH_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LANGGRAPH_STRICT_MSGPACK: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["uv", "run", "--no-sync", "python", "-m", "app.init_checkpoints"]
+
+  agent-worker:
+    profiles: ["agent"]
+    build:
+      context: ./backend
+      target: production
+    restart: "no"
+    environment:
+      APP_ENV: development
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LANGGRAPH_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LANGGRAPH_STRICT_MSGPACK: "true"
+      AMAP_REST_KEY: ${AMAP_REST_KEY:-}
+      ROUTE_CACHE_TTL_SECONDS: ${ROUTE_CACHE_TTL_SECONDS:-86400}
+      ALLOW_MAP_ESTIMATES: ${ALLOW_MAP_ESTIMATES:-false}
+      AGENT_POLL_SECONDS: ${AGENT_POLL_SECONDS:-2}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["uv", "run", "--no-sync", "python", "-m", "app.agent_worker"]
 
   web:
     build:

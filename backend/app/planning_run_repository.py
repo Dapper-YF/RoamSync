@@ -75,6 +75,7 @@ async def save_plan_revision(
     difference_summary: dict,
     validation_result: dict,
     source_ids: list[uuid.UUID],
+    enrich_routes: bool = True,
 ) -> PlanRevision:
     run = await get_planning_run(session, run_id)
     if run.status not in {"queued", "researching", "planning", "validating"}:
@@ -82,9 +83,10 @@ async def save_plan_revision(
     trip = await get_trip(session, run.trip_id)
     if trip.version != run.base_trip_version:
         raise StalePlanningRunError
-    proposed_snapshot = await enrich_candidate_routes(
-        session, run.trip_id, proposed_snapshot
-    )
+    if enrich_routes:
+        proposed_snapshot = await enrich_candidate_routes(
+            session, run.trip_id, proposed_snapshot
+        )
 
     previous = await session.scalar(
         select(PlanRevision)
