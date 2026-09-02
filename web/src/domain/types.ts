@@ -199,6 +199,14 @@ export interface RouteLeg {
   mode: "walk" | "transit" | "driving";
   provider?: string;
   isEstimated?: boolean;
+  path?: Coordinates[];
+  alternatives?: RouteAlternative[];
+}
+
+export interface RouteAlternative {
+  distanceMeters: number;
+  durationMinutes: number;
+  path: Coordinates[];
 }
 
 export interface ScheduleConflict {

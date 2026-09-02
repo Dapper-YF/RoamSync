@@ -128,7 +128,12 @@ describe("ApiTripPlanningRepository", () => {
     const dayDto = {
       id: "day-id", trip_id: DEMO_TRIP_UUID, date: "2026-09-05", label: "第 1 天", theme: "湖滨", position: 0,
       activities: [],
-      route_legs: [{ id: "leg", from_activity_id: "a", to_activity_id: "b", position: 0, mode: "driving", distance_meters: 1500, duration_minutes: 6, provider: "AMap Route", is_estimated: false }],
+      route_legs: [{
+        id: "leg", from_activity_id: "a", to_activity_id: "b", position: 0, mode: "driving",
+        distance_meters: 1500, duration_minutes: 6, provider: "AMap Route 2.0", is_estimated: false,
+        path: [[115.8, 28.6], [115.9, 28.7]],
+        alternatives: [{ distance_meters: 1700, duration_minutes: 7, path: [[115.8, 28.6], [115.85, 28.65], [115.9, 28.7]] }],
+      }],
       conflicts: [{ activity_id: "b", code: "late_finish", message: "将在 22:00 后结束" }],
     };
     const fetchMock = vi.fn()
@@ -143,7 +148,11 @@ describe("ApiTripPlanningRepository", () => {
     const repository = new ApiTripPlanningRepository();
 
     const day = await repository.recalculateRoute("day-id", "driving");
-    expect(day.routeLegs?.[0]).toMatchObject({ mode: "driving", provider: "AMap Route", isEstimated: false });
+    expect(day.routeLegs?.[0]).toMatchObject({
+      mode: "driving", provider: "AMap Route 2.0", isEstimated: false,
+      path: [[115.8, 28.6], [115.9, 28.7]],
+      alternatives: [{ distanceMeters: 1700, durationMinutes: 7 }],
+    });
     expect(day.conflicts?.[0].code).toBe("late_finish");
     const places = await repository.searchPlaces(DEMO_TRIP_UUID, "博物馆", "culture");
     expect(fetchMock.mock.calls[1][0]).toContain(`/api/v1/trips/${DEMO_TRIP_UUID}/places/search?q=`);

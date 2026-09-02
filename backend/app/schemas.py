@@ -382,6 +382,12 @@ class ActivityResponse(BaseModel):
 RouteMode = Literal["walk", "transit", "driving"]
 
 
+class RouteAlternativeResponse(BaseModel):
+    distance_meters: int
+    duration_minutes: int
+    path: list[tuple[float, float]]
+
+
 class RouteLegResponse(BaseModel):
     id: uuid.UUID
     from_activity_id: uuid.UUID
@@ -392,6 +398,8 @@ class RouteLegResponse(BaseModel):
     duration_minutes: int
     provider: str
     is_estimated: bool
+    path: list[tuple[float, float]] = []
+    alternatives: list[RouteAlternativeResponse] = []
 
 
 class ScheduleConflictResponse(BaseModel):
@@ -572,6 +580,8 @@ class CandidateRouteLeg(BaseModel):
     duration_minutes: int = Field(ge=0)
     provider: str = Field(min_length=1, max_length=40)
     is_estimated: bool = False
+    path: list[tuple[float, float]] = Field(default_factory=list)
+    alternatives: list[RouteAlternativeResponse] = Field(default_factory=list)
     calculated_at: datetime
 
 

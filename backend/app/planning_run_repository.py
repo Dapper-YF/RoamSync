@@ -134,6 +134,8 @@ async def save_plan_revision(
                 duration_minutes=leg.duration_minutes,
                 provider=leg.provider,
                 is_estimated=leg.is_estimated,
+                path=leg.path,
+                alternatives=[item.model_dump(mode="json") for item in leg.alternatives],
                 calculated_at=leg.calculated_at,
             )
         )

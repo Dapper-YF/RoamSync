@@ -222,6 +222,75 @@ def test_map_quota_error_has_stable_machine_code(monkeypatch) -> None:
         }
 
 
+def test_amap_route_parser_selects_shortest_path_and_keeps_alternatives(monkeypatch) -> None:
+    import asyncio
+    from types import SimpleNamespace
+
+    import app.maps_service as maps_service
+
+    monkeypatch.setattr(
+        maps_service,
+        "get_settings",
+        lambda: SimpleNamespace(amap_rest_key="test-key"),
+    )
+    monkeypatch.setattr(
+        maps_service,
+        "_get_json",
+        lambda url: {
+            "status": "1",
+            "route": {
+                "paths": [
+                    {
+                        "distance": "1900",
+                        "cost": {"duration": "900"},
+                        "steps": [{"polyline": "120.1,30.1;120.2,30.2"}],
+                    },
+                    {
+                        "distance": "1200",
+                        "cost": {"duration": "720"},
+                        "steps": [
+                            {"polyline": "120.1,30.1;120.15,30.12"},
+                            {"polyline": "120.15,30.12;120.2,30.2"},
+                        ],
+                    },
+                ]
+            },
+        },
+    )
+    origin = SimpleNamespace(longitude=120.1, latitude=30.1)
+    destination = SimpleNamespace(longitude=120.2, latitude=30.2)
+
+    result = asyncio.run(
+        maps_service._fetch_amap_route(origin, destination, "walk", "0571")
+    )
+
+    assert result[0:2] == (1200, 12)
+    assert result[4] == [[120.1, 30.1], [120.15, 30.12], [120.2, 30.2]]
+    assert result[5][0]["distance_meters"] == 1900
+
+
+def test_amap_route_parser_collects_nested_transit_geometry() -> None:
+    from app.maps_service import _parse_route_path
+
+    parsed = _parse_route_path(
+        {
+            "distance": "3200",
+            "cost": {"duration": "1080"},
+            "segments": [
+                {"walking": {"steps": [{"polyline": "120.1,30.1;120.11,30.11"}]}},
+                {"bus": {"buslines": [{"polyline": "120.11,30.11;120.2,30.2"}]}},
+            ],
+        },
+        {},
+    )
+
+    assert parsed == (
+        3200,
+        18,
+        [[120.1, 30.1], [120.11, 30.11], [120.2, 30.2]],
+    )
+
+
 def test_activity_create_requires_one_place_source() -> None:
     with TestClient(app) as client:
         days = _reset(client)

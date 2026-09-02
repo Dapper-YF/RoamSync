@@ -241,6 +241,8 @@ class CandidateRouteLeg(Base):
     duration_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
     provider: Mapped[str] = mapped_column(String(40), nullable=False)
     is_estimated: Mapped[bool] = mapped_column(nullable=False, default=False)
+    path: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    alternatives: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
     calculated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
 
@@ -448,6 +450,8 @@ class RouteLeg(Base):
     duration_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
     provider: Mapped[str] = mapped_column(String(40), nullable=False)
     is_estimated: Mapped[bool] = mapped_column(nullable=False, default=False)
+    path: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    alternatives: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
     calculated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
@@ -462,6 +466,8 @@ class RouteCache(Base):
     duration_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
     provider: Mapped[str] = mapped_column(String(40), nullable=False)
     is_estimated: Mapped[bool] = mapped_column(nullable=False, default=False)
+    path: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    alternatives: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()

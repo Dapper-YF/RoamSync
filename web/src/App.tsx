@@ -404,7 +404,7 @@ export function PlannerPage({ repository }: { repository: TripPlanningRepository
       <div className="workspace">
         {operationError && <div className="operation-toast" role="alert"><span>{operationError}</span><button type="button" onClick={() => setOperationError(null)}>关闭</button></div>}
         <PlannerSidebar days={days} selectedDay={selectedDay} selectedActivityId={selectedActivityId} budget={budget} routeLegs={routeLegs} conflicts={selectedDay.conflicts ?? []} onSelectDay={selectDay} onSelectActivity={selectActivity} onReorder={reorder} onMoveActivity={moveActivity} onOpenPlaces={() => setPlacesOpen(true)} />
-        <MapCanvas activities={selectedDay.activities} center={trip.center} accommodation={trip.accommodationCoordinates ? { name: trip.accommodation, coordinates: trip.accommodationCoordinates } : undefined} selectedActivityId={selectedActivityId} onSelectActivity={selectActivity} />
+        <MapCanvas activities={selectedDay.activities} center={trip.center} accommodation={trip.accommodationCoordinates ? { name: trip.accommodation, coordinates: trip.accommodationCoordinates } : undefined} routeLegs={routeLegs} selectedActivityId={selectedActivityId} onSelectActivity={selectActivity} />
         <Inspector activity={selectedActivity} days={days} currentDayId={selectedDay.id} busy={isMutating} onClose={() => setSelectedActivityId(null)} onRemove={removeActivity} onSave={updateActivity} onMove={moveActivity} />
       </div>
       <PlacesDrawer open={placesOpen} candidates={candidates} dayLabel={selectedDay.label} destination={trip.destination} onClose={() => setPlacesOpen(false)} onAdd={addActivity} onSearch={searchPlaces} />

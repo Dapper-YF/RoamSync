@@ -103,6 +103,12 @@ interface ApiDayPlan {
     duration_minutes: number;
     provider: string;
     is_estimated: boolean;
+    path: Array<[number, number]>;
+    alternatives: Array<{
+      distance_meters: number;
+      duration_minutes: number;
+      path: Array<[number, number]>;
+    }>;
   }>;
   conflicts: Array<{ activity_id: string; code: "late_finish"; message: string }>;
 }
@@ -595,6 +601,12 @@ function mapDay(dto: ApiDayPlan): DayPlan {
       mode: leg.mode,
       provider: leg.provider,
       isEstimated: leg.is_estimated,
+      path: leg.path ?? [],
+      alternatives: (leg.alternatives ?? []).map((alternative) => ({
+        distanceMeters: alternative.distance_meters,
+        durationMinutes: alternative.duration_minutes,
+        path: alternative.path,
+      })),
     })),
     conflicts: (dto.conflicts ?? []).map((conflict) => ({
       activityId: conflict.activity_id,

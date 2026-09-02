@@ -206,6 +206,8 @@ async def _day_response(session: AsyncSession, day: DayPlan) -> DayPlanResponse:
                 duration_minutes=leg.duration_minutes,
                 provider=leg.provider,
                 is_estimated=leg.is_estimated,
+                path=leg.path or [],
+                alternatives=leg.alternatives or [],
             )
             for leg in legs
         ],

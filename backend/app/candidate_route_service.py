@@ -119,6 +119,8 @@ async def enrich_candidate_routes(
                     duration_minutes=result.duration_minutes,
                     provider=result.provider,
                     is_estimated=result.is_estimated,
+                    path=result.path or [],
+                    alternatives=result.alternatives or [],
                     calculated_at=datetime.now(UTC),
                 )
             )
