@@ -14,6 +14,7 @@ InterestCategory = Literal[
 PreferenceTransportMode = Literal["walk", "transit", "driving"]
 PlanningIntentType = Literal["create_plan", "replan_trip", "modify_day", "unknown"]
 PlanningDayPeriod = Literal["morning", "afternoon", "evening", "full_day"]
+PlanningIntentEntryPoint = Literal["trip_planner", "day_planner", "activity_editor"]
 
 
 class PlanningTimeScope(BaseModel):
@@ -25,7 +26,7 @@ class PlanningTimeScope(BaseModel):
 
 
 class PlanningIntent(BaseModel):
-    """Strict output contract for the future intent parser node."""
+    """Strict output contract shared by rule parsing and future model fallback."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -33,6 +34,8 @@ class PlanningIntent(BaseModel):
     source_text: str = Field(max_length=4000)
     time_scope: PlanningTimeScope | None = None
     protected_activity_ids: list[uuid.UUID] = Field(default_factory=list, max_length=100)
+    requested_place_queries: list[str] = Field(default_factory=list, max_length=20)
+    requested_pace: TripPace | None = None
     missing_fields: list[str] = Field(default_factory=list, max_length=20)
     ambiguities: list[str] = Field(default_factory=list, max_length=20)
 
@@ -45,8 +48,34 @@ class PlanningRequest(BaseModel):
     trip_id: uuid.UUID
     user_request: str = Field(max_length=4000)
     intent: PlanningIntent
+    entry_point: PlanningIntentEntryPoint = "trip_planner"
     selected_day_id: uuid.UUID | None = None
     selected_activity_id: uuid.UUID | None = None
+    target_day_id: uuid.UUID | None = None
+
+
+class PlanningIntentParseRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    message: str = Field(min_length=1, max_length=4000)
+    entry_point: PlanningIntentEntryPoint = "trip_planner"
+    selected_day_id: uuid.UUID | None = None
+    selected_activity_id: uuid.UUID | None = None
+
+    @field_validator("message")
+    @classmethod
+    def normalize_message(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("message cannot be blank")
+        return normalized
+
+
+class PlanningIntentResolution(BaseModel):
+    request: PlanningRequest
+    requires_clarification: bool
+    clarification_questions: list[str] = Field(default_factory=list, max_length=20)
+    parser_version: Literal["rules-v1"] = "rules-v1"
 
 
 class TripCreate(BaseModel):

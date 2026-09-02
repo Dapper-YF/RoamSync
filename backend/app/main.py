@@ -34,6 +34,7 @@ from app.planner_repository import (
     update_activity,
 )
 from app.planning_context import build_planning_context
+from app.planning_intent_service import IntentContextError, resolve_planning_intent
 from app.planning_run_repository import (
     InvalidPlanningRunStateError,
     PlanRevisionNotFoundError,
@@ -83,6 +84,8 @@ from app.schemas import (
     PlaceSearchResultResponse,
     PlanningBudgetResponse,
     PlanningContextResponse,
+    PlanningIntentParseRequest,
+    PlanningIntentResolution,
     PlanningRunCreate,
     PlanningRunResponse,
     PlanRevisionResponse,
@@ -251,6 +254,27 @@ async def get_planning_context_endpoint(
         return await build_planning_context(session, trip_id)
     except TripNotFoundError as exc:
         raise HTTPException(status_code=404, detail="trip not found") from exc
+
+
+@app.post(
+    "/api/v1/trips/{trip_id}/planning-intent/resolve",
+    response_model=PlanningIntentResolution,
+    tags=["planning"],
+)
+async def resolve_planning_intent_endpoint(
+    trip_id: uuid.UUID,
+    payload: PlanningIntentParseRequest,
+    session: AsyncSession = Depends(get_session),
+) -> PlanningIntentResolution:
+    try:
+        return await resolve_planning_intent(session, trip_id, payload)
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+    except IntentContextError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail={"code": exc.code, "message": exc.message},
+        ) from exc
 
 
 @app.post(

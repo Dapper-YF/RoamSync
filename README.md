@@ -48,6 +48,7 @@ RoamSync 将行前规划、旅中执行、预算管理和临时调整放在同�
 GET /api/v1/trips/{trip_id}/preferences
 PUT /api/v1/trips/{trip_id}/preferences
 GET /api/v1/trips/{trip_id}/planning-context
+POST /api/v1/trips/{trip_id}/planning-intent/resolve
 POST /api/v1/trips/{trip_id}/planning-runs
 GET /api/v1/planning-runs/{run_id}
 GET /api/v1/planning-runs/{run_id}/revision
@@ -55,15 +56,16 @@ POST /api/v1/plan-revisions/{revision_id}/reject
 POST /api/v1/plan-revisions/{revision_id}/accept
 ```
 
-`planning-context` 是后续 Planner 与 Replanner 的统一只读输入。它不会调用模型，
-也不会让 Agent 直接修改正式活动；候选方案、规则校验、用户确认和事务写入将在
-后续里程碑实现。
+`planning-context` 是后续 Planner 与 Replanner 的统一只读输入。意图解析接口使用
+版本化的 `rules-v1` 高精度路由，结合页面选中项和数据库实体解析日期、时间段、
+地点查询及需要保护的活动；不支持、缺失或有歧义的请求会返回明确的澄清问题。
+它不会调用模型，也不会让 Agent 直接修改正式活动。
 
 `planning-runs` 与 `plan-revisions` 已建立持久化边界。运行会记录正式旅行的基础
 版本，经过严格结构校验的候选才能进入等待确认状态；旅行版本变化后，旧运行不能
-覆盖正式计划。接受时后端会再次检查日期、地点归属、来源、时间窗、活动重叠、每日
-与总预算，以及已完成、进行中和锁定活动保护，然后在单个事务中应用。重复接受保持
-幂等；活动集合变化时旧路线分段会被清除，避免显示与正式行程不一致的路线。
+覆盖正式计划。候选版本会保存相邻活动的路线证据；接受时后端会再次检查日期、地点
+归属、来源、时间窗、活动重叠、交通时间、每日与总预算，以及已完成、进行中和锁定
+活动保护，然后在单个事务中应用活动与路线。重复接受保持幂等。
 
 ### Android 客户端
 
@@ -259,6 +261,7 @@ pnpm e2e
 - [RoamSync 项目策划书](docs/RoamSync项目策划书.docx)
 - [RoamSync 用户需求分析](docs/RoamSync用户需求分析.docx)
 - [参考项目调研与许可边界](docs/REFERENCE_RESEARCH.md)
+- [Agent 架构与权限真源](docs/AGENT_ARCHITECTURE.md)
 - [第三方声明](THIRD_PARTY_NOTICES.md)
 
 ## 许可与第三方归属

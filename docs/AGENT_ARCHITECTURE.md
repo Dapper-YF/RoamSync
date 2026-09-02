@@ -21,6 +21,14 @@ The strict Pydantic contracts are `PlanningIntent`, `PlanningRequest`, and
 `CandidatePlanSnapshot`. Additional intents require fixtures and acceptance
 tests before they can be added.
 
+Intent parsing starts with the versioned, high-precision `rules-v1` router. It
+uses UI-selected IDs and persisted trip entities to resolve days and protected
+activities. Unsupported input returns `unknown`; invalid dates, missing target
+days, and non-unique activity names produce explicit clarification questions.
+The initial fixture suite contains more than sixty Chinese utterances. A future
+model parser may handle the `unknown` branch, but it must emit the same strict
+contract and pass the same resolver and clarification gates.
+
 ## Responsibilities and permissions
 
 | Component | May do | Must not do |
