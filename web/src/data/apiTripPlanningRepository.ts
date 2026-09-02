@@ -10,6 +10,8 @@ import type {
   PlaceSearchResult,
   PlanningBudget,
   PlanningContext,
+  PlanningRun,
+  PlanRevision,
   SourceRecord,
   Trip,
   TripCreateInput,
@@ -195,6 +197,43 @@ interface ApiActualBudget {
   today_spent_fen: number;
   today_remaining_fen: number;
   local_date: string;
+}
+
+interface ApiPlanningRun {
+  id: string;
+  trip_id: string;
+  run_type: "initial_plan" | "replan";
+  status: PlanningRun["status"];
+  user_request: string;
+  model_provider: string | null;
+  model_name: string | null;
+  token_usage: number;
+  error_code: string | null;
+  error_message: string | null;
+  pending_interrupt: PlanningRun["pendingInterrupt"] | null;
+}
+
+interface ApiPlanRevision {
+  id: string;
+  planning_run_id: string;
+  reason: string;
+  proposed_snapshot: {
+    activities: Array<{
+      candidate_id: string;
+      day_date: string;
+      place_candidate_id: string;
+      planned_start_time: string;
+      duration_minutes: number;
+      estimated_cost_fen: number;
+      transport_mode_to_here: "walk" | "transit" | "driving";
+      reason: string;
+      locked: boolean;
+    }>;
+  };
+  difference_summary: Record<string, unknown>;
+  validation_result: Record<string, unknown>;
+  source_ids: string[];
+  status: PlanRevision["status"];
 }
 
 export class ApiRequestError extends Error {
@@ -457,6 +496,72 @@ export class ApiTripPlanningRepository implements TripPlanningRepository {
     await request<void>(`${API_BASE}/activities/${activityId}`, { method: "DELETE" });
   }
 
+  async createPlanningRun(tripId: string, userRequest: string): Promise<PlanningRun> {
+    return mapPlanningRun(await request<ApiPlanningRun>(`${API_BASE}/trips/${tripId}/planning-runs`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ run_type: "replan", user_request: userRequest }),
+    }));
+  }
+
+  async getPlanningRun(runId: string): Promise<PlanningRun> {
+    return mapPlanningRun(await request<ApiPlanningRun>(`${API_BASE}/planning-runs/${runId}`));
+  }
+
+  async answerPlanningRun(runId: string, answer: string): Promise<PlanningRun> {
+    const result = await request<{ run: ApiPlanningRun }>(`${API_BASE}/planning-runs/${runId}/decision`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ decision: "clarify", answer }),
+    });
+    return mapPlanningRun(result.run);
+  }
+
+  async getPlanRevision(runId: string): Promise<PlanRevision> {
+    return mapPlanRevision(await request<ApiPlanRevision>(`${API_BASE}/planning-runs/${runId}/revision`));
+  }
+
+  async acceptPlanRevision(revisionId: string): Promise<PlanRevision> {
+    return mapPlanRevision(await request<ApiPlanRevision>(`${API_BASE}/plan-revisions/${revisionId}/accept`, { method: "POST" }));
+  }
+
+  async rejectPlanRevision(revisionId: string): Promise<PlanRevision> {
+    return mapPlanRevision(await request<ApiPlanRevision>(`${API_BASE}/plan-revisions/${revisionId}/reject`, { method: "POST" }));
+  }
+
+}
+
+function mapPlanningRun(dto: ApiPlanningRun): PlanningRun {
+  return {
+    id: dto.id, tripId: dto.trip_id, runType: dto.run_type, status: dto.status,
+    userRequest: dto.user_request, modelProvider: dto.model_provider ?? undefined,
+    modelName: dto.model_name ?? undefined, tokenUsage: dto.token_usage,
+    errorCode: dto.error_code ?? undefined, errorMessage: dto.error_message ?? undefined,
+    pendingInterrupt: dto.pending_interrupt ?? undefined,
+  };
+}
+
+function mapPlanRevision(dto: ApiPlanRevision): PlanRevision {
+  return {
+    id: dto.id,
+    planningRunId: dto.planning_run_id,
+    reason: dto.reason,
+    activities: dto.proposed_snapshot.activities.map((item) => ({
+      candidateId: item.candidate_id,
+      dayDate: item.day_date,
+      placeCandidateId: item.place_candidate_id,
+      plannedStartTime: item.planned_start_time.slice(0, 5),
+      durationMinutes: item.duration_minutes,
+      estimatedCostFen: item.estimated_cost_fen,
+      transportModeToHere: item.transport_mode_to_here,
+      reason: item.reason,
+      locked: item.locked,
+    })),
+    differenceSummary: dto.difference_summary,
+    validationResult: dto.validation_result,
+    sourceIds: dto.source_ids,
+    status: dto.status,
+  };
 }
 
 function mapPreferences(dto: ApiTripPreferences): TripPreferences {

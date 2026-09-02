@@ -81,7 +81,13 @@ async def execute_planning_run(
             settings.checkpoint_database_url
         ) as checkpointer:
             graph = build_planning_graph(checkpointer, draft_provider)
-            return await invoke_compiled_graph(graph, run, resume=resume)
+            result = await invoke_compiled_graph(graph, run, resume=resume)
+            async with session_factory() as session:
+                persisted = await session.get(PlanningRun, run_id)
+                if persisted is not None:
+                    persisted.pending_interrupt = result.pending_interrupt
+                    await session.commit()
+            return result
     except PlannerNotConfiguredError as exc:
         await _mark_failed(run_id, "planner_not_configured", str(exc))
         return PlanningExecutionResult(pending_interrupt=None)
@@ -104,6 +110,7 @@ async def _mark_failed(run_id: uuid.UUID, code: str, message: str) -> None:
         run.status = "failed"
         run.error_code = code
         run.error_message = message[:2000]
+        run.pending_interrupt = None
         run.completed_at = datetime.now(UTC)
         await session.commit()
 

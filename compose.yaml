@@ -56,7 +56,6 @@ services:
       start_period: 10s
 
   agent-checkpoint-init:
-    profiles: ["agent"]
     build:
       context: ./backend
       target: production
@@ -72,7 +71,6 @@ services:
     command: ["uv", "run", "--no-sync", "python", "-m", "app.init_checkpoints"]
 
   agent-worker:
-    profiles: ["agent"]
     build:
       context: ./backend
       target: production
@@ -98,6 +96,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      agent-checkpoint-init:
+        condition: service_completed_successfully
     command: ["uv", "run", "--no-sync", "python", "-m", "app.agent_worker"]
 
   web:

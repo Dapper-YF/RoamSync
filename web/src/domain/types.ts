@@ -255,6 +255,47 @@ export interface PlanningContext {
   generatedAt: string;
 }
 
+export type PlanningRunStatus =
+  | "queued" | "researching" | "awaiting_clarification" | "planning" | "validating"
+  | "awaiting_confirmation" | "accepted" | "rejected" | "failed" | "cancelled";
+
+export interface PlanningRun {
+  id: string;
+  tripId: string;
+  runType: "initial_plan" | "replan";
+  status: PlanningRunStatus;
+  userRequest: string;
+  modelProvider?: string;
+  modelName?: string;
+  tokenUsage: number;
+  errorCode?: string;
+  errorMessage?: string;
+  pendingInterrupt?: { kind?: string; questions?: string[]; revision_id?: string };
+}
+
+export interface CandidatePlanActivity {
+  candidateId: string;
+  dayDate: string;
+  placeCandidateId: string;
+  plannedStartTime: string;
+  durationMinutes: number;
+  estimatedCostFen: Fen;
+  transportModeToHere: PreferenceTransportMode;
+  reason: string;
+  locked: boolean;
+}
+
+export interface PlanRevision {
+  id: string;
+  planningRunId: string;
+  reason: string;
+  activities: CandidatePlanActivity[];
+  differenceSummary: Record<string, unknown>;
+  validationResult: Record<string, unknown>;
+  sourceIds: string[];
+  status: "pending" | "accepted" | "rejected" | "superseded";
+}
+
 export interface TripPlanningRepository {
   listTrips(): Promise<Trip[]>;
   createTrip(input: TripCreateInput): Promise<Trip>;
@@ -279,4 +320,10 @@ export interface TripPlanningRepository {
   reorderActivities(dayId: string, activityIds: string[]): Promise<DayPlan>;
   recalculateRoute(dayId: string, mode: RouteLeg["mode"]): Promise<DayPlan>;
   removeActivity(activityId: string): Promise<void>;
+  createPlanningRun(tripId: string, userRequest: string): Promise<PlanningRun>;
+  getPlanningRun(runId: string): Promise<PlanningRun>;
+  answerPlanningRun(runId: string, answer: string): Promise<PlanningRun>;
+  getPlanRevision(runId: string): Promise<PlanRevision>;
+  acceptPlanRevision(revisionId: string): Promise<PlanRevision>;
+  rejectPlanRevision(revisionId: string): Promise<PlanRevision>;
 }

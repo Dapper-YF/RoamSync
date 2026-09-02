@@ -535,6 +535,7 @@ class PlanningRunResponse(BaseModel):
     token_usage: int
     error_code: str | None
     error_message: str | None
+    pending_interrupt: dict | None
     created_at: datetime
     started_at: datetime | None
     completed_at: datetime | None

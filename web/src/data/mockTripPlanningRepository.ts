@@ -10,6 +10,8 @@ import type {
   PlaceSearchResult,
   PlanningBudget,
   PlanningContext,
+  PlanningRun,
+  PlanRevision,
   Trip,
   TripCreateInput,
   TripDeletionPreview,
@@ -303,6 +305,31 @@ export class LocalTripPlanningRepository implements TripPlanningRepository {
     day.activities = day.activities.filter((activity) => activity.id !== activityId);
     this.updateMockRoute(day);
     this.persist();
+  }
+
+  async createPlanningRun(tripId: string, userRequest: string): Promise<PlanningRun> {
+    this.assertDemoTrip(tripId);
+    return { id: "mock-run", tripId: DEMO_TRIP_UUID, runType: "replan", status: "awaiting_confirmation", userRequest, tokenUsage: 0 };
+  }
+
+  async getPlanningRun(): Promise<PlanningRun> {
+    return { id: "mock-run", tripId: DEMO_TRIP_UUID, runType: "replan", status: "awaiting_confirmation", userRequest: "", tokenUsage: 0 };
+  }
+
+  async answerPlanningRun(_runId: string, answer: string): Promise<PlanningRun> {
+    return { id: "mock-run", tripId: DEMO_TRIP_UUID, runType: "replan", status: "awaiting_confirmation", userRequest: answer, tokenUsage: 0 };
+  }
+
+  async getPlanRevision(): Promise<PlanRevision> {
+    return { id: "mock-revision", planningRunId: "mock-run", reason: "演示候选方案", activities: [], differenceSummary: {}, validationResult: {}, sourceIds: [], status: "pending" };
+  }
+
+  async acceptPlanRevision(): Promise<PlanRevision> {
+    return { ...(await this.getPlanRevision()), status: "accepted" };
+  }
+
+  async rejectPlanRevision(): Promise<PlanRevision> {
+    return { ...(await this.getPlanRevision()), status: "rejected" };
   }
 
   async resetDemo(): Promise<void> {

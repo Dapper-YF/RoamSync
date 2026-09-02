@@ -233,4 +233,35 @@ describe("ApiTripPlanningRepository", () => {
     const init = fetchMock.mock.calls[0][1] as RequestInit;
     expect(JSON.parse(String(init.body))).toEqual({ version: 1, target_day_plan_id: "day-2", target_position: 0 });
   });
+
+  it("maps a persisted Agent run and its candidate revision", async () => {
+    const runDto = {
+      id: "run-id", trip_id: DEMO_TRIP_UUID, run_type: "replan", status: "awaiting_confirmation",
+      user_request: "调整第2天下午", model_provider: "deepseek", model_name: "deepseek-v4-flash",
+      token_usage: 1200, error_code: null, error_message: null,
+      pending_interrupt: { kind: "approval", revision_id: "revision-id" },
+    };
+    const revisionDto = {
+      id: "revision-id", planning_run_id: "run-id", reason: "降低步行强度",
+      proposed_snapshot: { activities: [{
+        candidate_id: "candidate-1", day_date: "2026-09-06", place_candidate_id: "place-id",
+        planned_start_time: "14:30:00", duration_minutes: 90, estimated_cost_fen: 3000,
+        transport_mode_to_here: "transit", reason: "路线更从容", locked: false,
+      }], route_legs: [] },
+      difference_summary: { changed: 1 }, validation_result: { valid: true },
+      source_ids: ["source-id"], status: "pending",
+    };
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify(runDto), { status: 201, headers: { "Content-Type": "application/json" } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(revisionDto), { status: 200, headers: { "Content-Type": "application/json" } }));
+    vi.stubGlobal("fetch", fetchMock);
+    const repository = new ApiTripPlanningRepository();
+
+    const run = await repository.createPlanningRun(DEMO_TRIP_UUID, "调整第2天下午");
+    const revision = await repository.getPlanRevision(run.id);
+
+    expect(run).toMatchObject({ status: "awaiting_confirmation", modelProvider: "deepseek", pendingInterrupt: { kind: "approval" } });
+    expect(revision.activities[0]).toMatchObject({ plannedStartTime: "14:30", transportModeToHere: "transit" });
+    expect(JSON.parse(String(fetchMock.mock.calls[0][1]?.body))).toEqual({ run_type: "replan", user_request: "调整第2天下午" });
+  });
 });

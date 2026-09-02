@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   Archive,
+  BedDouble,
   CalendarDays,
   Compass,
   Copy,
@@ -16,9 +17,11 @@ import {
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { Link, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { Inspector } from "./components/Inspector";
+import { AiPlannerPanel } from "./components/AiPlannerPanel";
 import { MapCanvas } from "./components/MapCanvas";
 import { PlacesDrawer } from "./components/PlacesDrawer";
 import { PlannerSidebar } from "./components/PlannerSidebar";
+import { TripBriefingDrawer } from "./components/TripBriefingDrawer";
 import { ApiTripPlanningRepository } from "./data/apiTripPlanningRepository";
 import { LocalTripPlanningRepository } from "./data/mockTripPlanningRepository";
 import type {
@@ -65,6 +68,8 @@ export function App({ repository: injectedRepository }: { repository?: TripPlann
   );
   return (
     <Routes>
+      {!injectedRepository && <Route path="/demo" element={<Navigate to="/trips/00000000-0000-4000-8000-000000000001/planner" replace />} />}
+      {!injectedRepository && <Route path="/trips/demo/planner" element={<Navigate to="/trips/00000000-0000-4000-8000-000000000001/planner" replace />} />}
       <Route path="/trips" element={<TripListPage repository={repository} />} />
       <Route path="/trips/new" element={<CreateTripPage repository={repository} />} />
       <Route path="/trips/:tripId/edit" element={<CreateTripPage repository={repository} />} />
@@ -306,6 +311,8 @@ export function PlannerPage({ repository }: { repository: TripPlanningRepository
   const [selectedDayId, setSelectedDayId] = useState<string | null>(null);
   const [selectedActivityId, setSelectedActivityId] = useState<string | null>(null);
   const [placesOpen, setPlacesOpen] = useState(false);
+  const [aiOpen, setAiOpen] = useState(false);
+  const [briefingOpen, setBriefingOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [operationError, setOperationError] = useState<string | null>(null);
@@ -399,7 +406,10 @@ export function PlannerPage({ repository }: { repository: TripPlanningRepository
         <div className="trip-identity"><span>{trip.title}</span><small><CalendarDays size={13} />{formatDateRange(trip.startDate, trip.endDate)}</small></div><div className="topbar-spacer" />
         <label className="route-mode-control"><RouteIcon size={15} /><span>交通</span><select value={routeMode} disabled={isMutating} onChange={(event) => void changeRouteMode(event.target.value as RouteLeg["mode"])}><option value="walk">步行</option><option value="transit">公交</option><option value="driving">驾车</option></select></label>
         <div className="total-budget"><WalletCards size={17} /><span><small>预计支出</small><strong>{formatFen(totalPlannedFen)}</strong></span><i>/ {formatFen(trip.totalBudgetFen)}</i></div>
-        <span className="demo-badge"><Sparkles size={13} />真实高德 · PostgreSQL</span><Link className="topbar-button" to={`/trips/${trip.id}/edit`} aria-label="编辑旅行设置"><Settings2 size={17} /></Link>
+        <span className="demo-badge"><Sparkles size={13} />真实高德 · PostgreSQL</span>
+        <button className="topbar-button" type="button" onClick={() => setAiOpen(true)} aria-label="打开 AI 规划助手"><Sparkles size={17} /></button>
+        <button className="topbar-button" type="button" onClick={() => setBriefingOpen(true)} aria-label="旅行总览与预订预览"><BedDouble size={17} /></button>
+        <Link className="topbar-button" to={`/trips/${trip.id}/edit`} aria-label="编辑旅行设置"><Settings2 size={17} /></Link>
       </header>
       <div className="workspace">
         {operationError && <div className="operation-toast" role="alert"><span>{operationError}</span><button type="button" onClick={() => setOperationError(null)}>关闭</button></div>}
@@ -408,6 +418,8 @@ export function PlannerPage({ repository }: { repository: TripPlanningRepository
         <Inspector activity={selectedActivity} days={days} currentDayId={selectedDay.id} busy={isMutating} onClose={() => setSelectedActivityId(null)} onRemove={removeActivity} onSave={updateActivity} onMove={moveActivity} />
       </div>
       <PlacesDrawer open={placesOpen} candidates={candidates} dayLabel={selectedDay.label} destination={trip.destination} onClose={() => setPlacesOpen(false)} onAdd={addActivity} onSearch={searchPlaces} />
+      <AiPlannerPanel open={aiOpen} tripId={trip.id} days={days} candidates={candidates.filter((item): item is PlaceCandidate => !("kind" in item))} repository={repository} onClose={() => setAiOpen(false)} onAccepted={load} />
+      <TripBriefingDrawer open={briefingOpen} trip={trip} onClose={() => setBriefingOpen(false)} />
     </main>
   );
 }

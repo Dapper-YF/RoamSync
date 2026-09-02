@@ -4,7 +4,7 @@
 
 RoamSync 将行前规划、旅中执行、预算管理和临时调整放在同一份结构化旅行状态中。项目不只生成一次性攻略，而是持续记录行程、消费与计划变化，为后续的动态重排和多智能体协作建立可靠的数据基础。
 
-当前版本已完成可持久化的 Web 规划工作台、FastAPI/PostgreSQL 后端，以及可连接真实后端的原生 Android 客户端。Agent 工作流、语音输入、GPS 节点判断等能力仍在路线图中。
+当前版本已完成可持久化的 Web 规划工作台、FastAPI/PostgreSQL 后端、可人工确认的 LangGraph 智能规划闭环，以及可连接真实后端的原生 Android 客户端。语音输入、GPS 节点判断和真实酒店/票务交易仍在路线图中。
 
 ![RoamSync Web 规划工作台](docs/assets/roamsync-planner.png)
 
@@ -14,7 +14,7 @@ RoamSync 将行前规划、旅中执行、预算管理和临时调整放在同�
 - **预算优先**：预算是规划约束，而非行程完成后的附加统计。
 - **事实可追溯**：地图结果保留服务商标识、坐标和来源记录；外部服务失败时返回明确错误，不虚构结果。
 - **变更可控**：活动编辑、移动和旅行修改使用乐观并发控制，冲突不会静默覆盖新数据。
-- **用户确认**：未来的 Agent 输出将先形成候选方案，经规则校验和用户确认后再写入正式计划。
+- **用户确认**：Agent 输出先形成候选方案，经规则校验和用户确认后再写入正式计划。
 
 ## 当前能力
 
@@ -29,6 +29,8 @@ RoamSync 将行前规划、旅中执行、预算管理和临时调整放在同�
 - 将已跳过活动保留在时间线中，同时从规划预算汇总中排除。
 - 编辑结构化规划偏好，包括节奏、兴趣、交通方式、每日时间窗、步行强度和补充要求。
 - 提供桌面与横屏平板布局，并包含 Playwright 视觉回归基线。
+- 在规划页直接使用 AI 助手提出自然语言调整要求，查看候选方案后接受或拒绝。
+- 提供酒店、城际交通、天气、预约清单和全场景预算产品预览；未接入的交易能力均明确标注。
 
 ### 后端与数据
 
@@ -81,15 +83,8 @@ Planner 已接入 DeepSeek Responses API，默认模型标识为 `deepseek-v4-fl
 硬约束时，Reviewer 会把具体校验错误交给 Planner 修正一次；第二次仍失败则以
 `planner_constraints_unsatisfied` 结束，不会放宽或跳过校验。
 
-Checkpoint 初始化与 Worker 都是显式操作，不随默认 Compose 启动：
-
-```powershell
-docker compose --profile agent run --rm agent-checkpoint-init
-docker compose --profile agent up -d agent-worker
-```
-
-完成 `.env` 的 `PLANNER_API_KEY` 配置后才能启动 `agent-worker`。默认的
-`docker compose up -d --build` 仍不会自动启动 Worker。
+Checkpoint 初始化会幂等执行，Agent Worker 已纳入默认 Compose 启动。完成 `.env`
+的 `PLANNER_API_KEY` 配置后，`docker compose up -d --build` 即可启动完整闭环。
 
 ### Android 客户端
 
@@ -176,8 +171,11 @@ docker compose ps
 启动后可访问：
 
 - Web：<http://127.0.0.1:3000/trips>
+- 杭州演示：<http://127.0.0.1:3000/demo>
 - API：<http://127.0.0.1:8000>
 - OpenAPI：<http://127.0.0.1:8000/docs>
+
+汇报前的完整启动、演示顺序和异常预案见 [演示手册](docs/DEMO_RUNBOOK.md)。
 - PostgreSQL：`127.0.0.1:54329`
 
 容器默认不会开机自启。可手动控制服务：
