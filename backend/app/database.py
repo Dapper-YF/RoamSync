@@ -137,6 +137,69 @@ class TripPreferences(Base):
     )
 
 
+class PlanningRun(Base):
+    __tablename__ = "planning_runs"
+    __table_args__ = (
+        CheckConstraint("run_type IN ('initial_plan', 'replan')", name="ck_planning_runs_type"),
+        CheckConstraint(
+            "status IN ('queued', 'researching', 'planning', 'validating', "
+            "'awaiting_confirmation', 'accepted', 'rejected', 'failed', 'cancelled')",
+            name="ck_planning_runs_status",
+        ),
+        CheckConstraint("base_trip_version > 0", name="ck_planning_runs_base_version"),
+        CheckConstraint("token_usage >= 0", name="ck_planning_runs_token_usage"),
+        Index("ix_planning_runs_trip_created", "trip_id", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    trip_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("trips.id", ondelete="CASCADE"), nullable=False
+    )
+    run_type: Mapped[str] = mapped_column(String(16), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="queued")
+    user_request: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    base_trip_version: Mapped[int] = mapped_column(Integer, nullable=False)
+    model_provider: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    model_name: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    token_usage: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    error_code: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class PlanRevision(Base):
+    __tablename__ = "plan_revisions"
+    __table_args__ = (
+        UniqueConstraint("planning_run_id", "revision_number", name="uq_plan_revisions_run_number"),
+        CheckConstraint("revision_number > 0", name="ck_plan_revisions_number"),
+        CheckConstraint(
+            "status IN ('pending', 'accepted', 'rejected', 'superseded')",
+            name="ck_plan_revisions_status",
+        ),
+        Index("ix_plan_revisions_trip_created", "trip_id", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    planning_run_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("planning_runs.id", ondelete="CASCADE"), nullable=False
+    )
+    trip_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("trips.id", ondelete="CASCADE"), nullable=False
+    )
+    revision_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    before_snapshot: Mapped[dict] = mapped_column(JSON, nullable=False)
+    proposed_snapshot: Mapped[dict] = mapped_column(JSON, nullable=False)
+    difference_summary: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+    validation_result: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+    source_ids: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="pending")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
 class Expense(Base):
     __tablename__ = "expenses"
     __table_args__ = (

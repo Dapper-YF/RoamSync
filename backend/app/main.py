@@ -34,6 +34,15 @@ from app.planner_repository import (
     update_activity,
 )
 from app.planning_context import build_planning_context
+from app.planning_run_repository import (
+    InvalidPlanningRunStateError,
+    PlanRevisionNotFoundError,
+    PlanningRunNotFoundError,
+    create_planning_run,
+    get_latest_revision,
+    get_planning_run,
+    reject_revision,
+)
 from app.repository import (
     IdempotencyConflictError,
     TripDateConflictError,
@@ -72,6 +81,9 @@ from app.schemas import (
     PlaceSearchResultResponse,
     PlanningBudgetResponse,
     PlanningContextResponse,
+    PlanningRunCreate,
+    PlanningRunResponse,
+    PlanRevisionResponse,
     RouteRecalculateRequest,
     TripCreate,
     TripDeletionPreviewResponse,
@@ -237,6 +249,76 @@ async def get_planning_context_endpoint(
         return await build_planning_context(session, trip_id)
     except TripNotFoundError as exc:
         raise HTTPException(status_code=404, detail="trip not found") from exc
+
+
+@app.post(
+    "/api/v1/trips/{trip_id}/planning-runs",
+    response_model=PlanningRunResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["planning"],
+)
+async def create_planning_run_endpoint(
+    trip_id: uuid.UUID,
+    payload: PlanningRunCreate,
+    session: AsyncSession = Depends(get_session),
+) -> PlanningRunResponse:
+    try:
+        run = await create_planning_run(session, trip_id, payload)
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+    return PlanningRunResponse.model_validate(run)
+
+
+@app.get(
+    "/api/v1/planning-runs/{run_id}",
+    response_model=PlanningRunResponse,
+    tags=["planning"],
+)
+async def get_planning_run_endpoint(
+    run_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> PlanningRunResponse:
+    try:
+        run = await get_planning_run(session, run_id)
+    except PlanningRunNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="planning run not found") from exc
+    return PlanningRunResponse.model_validate(run)
+
+
+@app.get(
+    "/api/v1/planning-runs/{run_id}/revision",
+    response_model=PlanRevisionResponse,
+    tags=["planning"],
+)
+async def get_plan_revision_endpoint(
+    run_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> PlanRevisionResponse:
+    try:
+        revision = await get_latest_revision(session, run_id)
+    except PlanningRunNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="planning run not found") from exc
+    except PlanRevisionNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="planning revision not ready") from exc
+    return PlanRevisionResponse.model_validate(revision)
+
+
+@app.post(
+    "/api/v1/plan-revisions/{revision_id}/reject",
+    response_model=PlanRevisionResponse,
+    tags=["planning"],
+)
+async def reject_plan_revision_endpoint(
+    revision_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> PlanRevisionResponse:
+    try:
+        revision = await reject_revision(session, revision_id)
+    except PlanRevisionNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="planning revision not found") from exc
+    except InvalidPlanningRunStateError as exc:
+        raise HTTPException(status_code=409, detail="planning revision is no longer pending") from exc
+    return PlanRevisionResponse.model_validate(revision)
 
 
 @app.put("/api/v1/trips/{trip_id}", response_model=TripResponse, tags=["trips"])

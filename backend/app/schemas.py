@@ -431,6 +431,86 @@ class PlanningContextResponse(BaseModel):
     generated_at: datetime
 
 
+PlanningRunType = Literal["initial_plan", "replan"]
+PlanningRunStatus = Literal[
+    "queued", "researching", "planning", "validating", "awaiting_confirmation",
+    "accepted", "rejected", "failed", "cancelled"
+]
+PlanRevisionStatus = Literal["pending", "accepted", "rejected", "superseded"]
+
+
+class PlanningRunCreate(BaseModel):
+    run_type: PlanningRunType = "initial_plan"
+    user_request: str = Field(default="", max_length=4000)
+
+    @field_validator("user_request")
+    @classmethod
+    def normalize_request(cls, value: str) -> str:
+        return value.strip()
+
+
+class PlanningRunResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    trip_id: uuid.UUID
+    run_type: PlanningRunType
+    status: PlanningRunStatus
+    user_request: str
+    base_trip_version: int
+    model_provider: str | None
+    model_name: str | None
+    token_usage: int
+    error_code: str | None
+    error_message: str | None
+    created_at: datetime
+    started_at: datetime | None
+    completed_at: datetime | None
+
+
+class CandidateActivity(BaseModel):
+    candidate_id: str = Field(min_length=1, max_length=80)
+    day_date: date
+    place_candidate_id: uuid.UUID
+    planned_start_time: time
+    duration_minutes: int = Field(gt=0, le=1440)
+    estimated_cost_fen: int = Field(ge=0)
+    transport_mode_to_here: PreferenceTransportMode
+    reason: str = Field(default="", max_length=1000)
+    source_ids: list[uuid.UUID] = Field(default_factory=list, max_length=20)
+    replaces_activity_id: uuid.UUID | None = None
+    locked: bool = False
+
+
+class CandidatePlanSnapshot(BaseModel):
+    activities: list[CandidateActivity] = Field(max_length=100)
+
+    @model_validator(mode="after")
+    def require_unique_candidate_ids(self) -> "CandidatePlanSnapshot":
+        ids = [item.candidate_id for item in self.activities]
+        if len(ids) != len(set(ids)):
+            raise ValueError("candidate_id values must be unique")
+        return self
+
+
+class PlanRevisionResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    planning_run_id: uuid.UUID
+    trip_id: uuid.UUID
+    revision_number: int
+    reason: str
+    before_snapshot: dict
+    proposed_snapshot: CandidatePlanSnapshot
+    difference_summary: dict
+    validation_result: dict
+    source_ids: list[str]
+    status: PlanRevisionStatus
+    created_at: datetime
+    decided_at: datetime | None
+
+
 class DemoResetResponse(BaseModel):
     trip_id: uuid.UUID
     status: Literal["seeded", "reset"]

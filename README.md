@@ -48,11 +48,20 @@ RoamSync 将行前规划、旅中执行、预算管理和临时调整放在同�
 GET /api/v1/trips/{trip_id}/preferences
 PUT /api/v1/trips/{trip_id}/preferences
 GET /api/v1/trips/{trip_id}/planning-context
+POST /api/v1/trips/{trip_id}/planning-runs
+GET /api/v1/planning-runs/{run_id}
+GET /api/v1/planning-runs/{run_id}/revision
+POST /api/v1/plan-revisions/{revision_id}/reject
 ```
 
 `planning-context` 是后续 Planner 与 Replanner 的统一只读输入。它不会调用模型，
 也不会让 Agent 直接修改正式活动；候选方案、规则校验、用户确认和事务写入将在
 后续里程碑实现。
+
+`planning-runs` 与 `plan-revisions` 已建立持久化边界。运行会记录正式旅行的基础
+版本，经过严格结构校验的候选才能进入等待确认状态；旅行版本变化后，旧运行不能
+继续生成可确认候选。目前只开放拒绝操作，接受候选将在确定性校验与安全应用事务
+完成后开放，避免半成品接口覆盖正式行程。
 
 ### Android 客户端
 
