@@ -6,7 +6,7 @@ RoamSync 将行前规划、旅中执行、预算管理和临时调整放在同�
 
 当前版本已完成可持久化的 Web 规划工作台、FastAPI/PostgreSQL 后端，以及可连接真实后端的原生 Android 客户端。Agent 工作流、语音输入、GPS 节点判断等能力仍在路线图中。
 
-![RoamSync Web 规划工作台](web/e2e/planner.spec.ts-snapshots/planner-1440-win32.png)
+![RoamSync Web 规划工作台](docs/assets/roamsync-planner.png)
 
 ## 核心理念
 
