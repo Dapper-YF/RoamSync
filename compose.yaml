@@ -1,0 +1,70 @@
+name: roamsync
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: roamsync-postgres
+    restart: "no"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-54329}:5432"
+    volumes:
+      - roamsync_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+
+  api:
+    build:
+      context: ./backend
+      target: production
+    container_name: roamsync-api
+    restart: "no"
+    environment:
+      APP_ENV: development
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      AMAP_REST_KEY: ${AMAP_REST_KEY:-}
+      ROUTE_CACHE_TTL_SECONDS: ${ROUTE_CACHE_TTL_SECONDS:-86400}
+      ALLOW_MAP_ESTIMATES: ${ALLOW_MAP_ESTIMATES:-false}
+    ports:
+      - "${API_HOST_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/live', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 10s
+
+  web:
+    build:
+      context: ./web
+      target: production
+      args:
+        VITE_AMAP_WEB_KEY: ${AMAP_WEB_KEY:-}
+        VITE_AMAP_SECURITY_CODE: ${AMAP_SECURITY_CODE:-}
+    container_name: roamsync-web
+    restart: "no"
+    ports:
+      - "127.0.0.1:${WEB_HOST_PORT:-3000}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 5s
+
+volumes:
+  roamsync_postgres_data:
+    name: roamsync_postgres_data

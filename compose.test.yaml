@@ -1,0 +1,34 @@
+name: roamsync-test
+
+services:
+  postgres-test:
+    image: postgres:17-alpine
+    restart: "no"
+    environment:
+      POSTGRES_DB: roamsync_test
+      POSTGRES_USER: roamsync_test
+      POSTGRES_PASSWORD: roamsync_test_password
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U roamsync_test -d roamsync_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  api-test:
+    build:
+      context: ./backend
+      target: test
+    restart: "no"
+    environment:
+      APP_ENV: test
+      ALLOW_MAP_ESTIMATES: "true"
+      DATABASE_URL: postgresql+psycopg://roamsync_test:roamsync_test_password@postgres-test:5432/roamsync_test
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+    command:
+      - sh
+      - -c
+      - uv run --no-sync alembic upgrade head && uv run --no-sync pytest

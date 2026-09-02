@@ -1,0 +1,526 @@
+import uuid
+from contextlib import asynccontextmanager
+
+from fastapi import Depends, FastAPI, HTTPException, Query, Response, status
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.config import get_settings
+from app.database import engine, get_session
+from app.demo_seed import DEMO_TRIP_ID, seed_demo_data
+from app.maps_service import (
+    MapProviderError,
+    recalculate_day_route,
+    search_amap_cities,
+    search_amap_location_pois,
+    search_amap_places,
+)
+from app.planner_repository import (
+    ActivityNotFoundError,
+    ActivityVersionConflictError,
+    DayPlanNotFoundError,
+    DuplicatePlaceError,
+    InvalidActivityOrderError,
+    InvalidActivityMoveError,
+    PlaceCandidateNotFoundError,
+    add_activity,
+    delete_activity,
+    get_candidates,
+    get_day_plan,
+    get_day_plans,
+    get_planning_budget,
+    reorder_activities,
+    move_activity,
+    update_activity,
+)
+from app.repository import (
+    IdempotencyConflictError,
+    TripDateConflictError,
+    TripNotFoundError,
+    TripVersionConflictError,
+    archive_trip,
+    create_expense,
+    create_trip,
+    delete_trip,
+    duplicate_trip,
+    get_budget,
+    get_trip,
+    get_trip_deletion_preview,
+    list_trips,
+    update_trip,
+)
+from app.schemas import (
+    BudgetResponse,
+    CitySuggestionResponse,
+    ActivityCreate,
+    ActivityOrderUpdate,
+    ActivityResponse,
+    ActivityUpdate,
+    ActivityMoveRequest,
+    ActivityMoveResponse,
+    DayPlanResponse,
+    DemoResetResponse,
+    ExpenseCreate,
+    ExpenseResponse,
+    HealthResponse,
+    LocationPoiResponse,
+    PlaceCandidateResponse,
+    PlaceSearchResultResponse,
+    PlanningBudgetResponse,
+    RouteRecalculateRequest,
+    TripCreate,
+    TripDeletionPreviewResponse,
+    TripResponse,
+    TripUpdate,
+)
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    yield
+    await engine.dispose()
+
+
+settings = get_settings()
+app = FastAPI(title=settings.app_name, version="0.1.0", lifespan=lifespan)
+
+
+def map_provider_http_error(exc: MapProviderError) -> HTTPException:
+    return HTTPException(
+        status_code=exc.status_code,
+        detail={
+            "code": exc.code,
+            "message": str(exc),
+            "provider": "amap",
+            "provider_code": exc.provider_code,
+        },
+    )
+
+
+@app.get("/health/live", response_model=HealthResponse, tags=["health"])
+async def live() -> HealthResponse:
+    return HealthResponse(status="ok")
+
+
+@app.get("/health/ready", response_model=HealthResponse, tags=["health"])
+async def ready(session: AsyncSession = Depends(get_session)) -> HealthResponse:
+    try:
+        await session.execute(text("SELECT 1"))
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="database is unavailable",
+        ) from exc
+    return HealthResponse(status="ready")
+
+
+@app.post(
+    "/api/v1/trips",
+    response_model=TripResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["trips"],
+)
+async def create_trip_endpoint(
+    payload: TripCreate,
+    session: AsyncSession = Depends(get_session),
+) -> TripResponse:
+    trip = await create_trip(session, payload)
+    return TripResponse.model_validate(trip)
+
+
+@app.get("/api/v1/trips", response_model=list[TripResponse], tags=["trips"])
+async def list_trips_endpoint(
+    session: AsyncSession = Depends(get_session),
+) -> list[TripResponse]:
+    return [TripResponse.model_validate(trip) for trip in await list_trips(session)]
+
+
+@app.get(
+    "/api/v1/locations/cities",
+    response_model=list[CitySuggestionResponse],
+    tags=["locations"],
+)
+async def search_cities_endpoint(
+    keyword: str = Query(min_length=1, max_length=40),
+) -> list[CitySuggestionResponse]:
+    try:
+        return await search_amap_cities(keyword)
+    except MapProviderError as exc:
+        raise map_provider_http_error(exc) from exc
+
+
+@app.get(
+    "/api/v1/locations/pois",
+    response_model=list[LocationPoiResponse],
+    tags=["locations"],
+)
+async def search_location_pois_endpoint(
+    keyword: str = Query(min_length=1, max_length=80),
+    city: str = Query(min_length=1, max_length=40),
+    accommodation_only: bool = Query(default=False),
+) -> list[LocationPoiResponse]:
+    try:
+        return await search_amap_location_pois(keyword, city, accommodation_only)
+    except MapProviderError as exc:
+        raise map_provider_http_error(exc) from exc
+
+
+@app.get(
+    "/api/v1/trips/{trip_id}", response_model=TripResponse, tags=["trips"]
+)
+async def get_trip_endpoint(
+    trip_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> TripResponse:
+    try:
+        trip = await get_trip(session, trip_id)
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+    return TripResponse.model_validate(trip)
+
+
+@app.put("/api/v1/trips/{trip_id}", response_model=TripResponse, tags=["trips"])
+async def update_trip_endpoint(
+    trip_id: uuid.UUID,
+    payload: TripUpdate,
+    session: AsyncSession = Depends(get_session),
+) -> TripResponse:
+    try:
+        trip = await update_trip(session, trip_id, payload)
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+    except TripVersionConflictError as exc:
+        raise HTTPException(status_code=409, detail="trip was updated elsewhere; reload and retry") from exc
+    except TripDateConflictError as exc:
+        raise HTTPException(status_code=409, detail="date change would remove days containing activities") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return TripResponse.model_validate(trip)
+
+
+@app.post(
+    "/api/v1/trips/{trip_id}/duplicate",
+    response_model=TripResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["trips"],
+)
+async def duplicate_trip_endpoint(
+    trip_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> TripResponse:
+    try:
+        return TripResponse.model_validate(await duplicate_trip(session, trip_id))
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+
+
+@app.post("/api/v1/trips/{trip_id}/archive", response_model=TripResponse, tags=["trips"])
+async def archive_trip_endpoint(
+    trip_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> TripResponse:
+    try:
+        return TripResponse.model_validate(await archive_trip(session, trip_id))
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+
+
+@app.get(
+    "/api/v1/trips/{trip_id}/deletion-preview",
+    response_model=TripDeletionPreviewResponse,
+    tags=["trips"],
+)
+async def trip_deletion_preview_endpoint(
+    trip_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> TripDeletionPreviewResponse:
+    try:
+        return await get_trip_deletion_preview(session, trip_id)
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+
+
+@app.delete("/api/v1/trips/{trip_id}", status_code=204, tags=["trips"])
+async def delete_trip_endpoint(
+    trip_id: uuid.UUID,
+    confirm: bool = Query(default=False),
+    session: AsyncSession = Depends(get_session),
+) -> Response:
+    if not confirm:
+        raise HTTPException(status_code=400, detail="confirm=true is required")
+    try:
+        await delete_trip(session, trip_id)
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+    return Response(status_code=204)
+
+
+@app.post(
+    "/api/v1/trips/{trip_id}/expenses",
+    response_model=ExpenseResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["expenses"],
+)
+async def create_expense_endpoint(
+    trip_id: uuid.UUID,
+    payload: ExpenseCreate,
+    response: Response,
+    session: AsyncSession = Depends(get_session),
+) -> ExpenseResponse:
+    try:
+        expense, duplicate = await create_expense(session, trip_id, payload)
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+    except IdempotencyConflictError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="idempotency key was already used with a different payload",
+        ) from exc
+    if duplicate:
+        response.status_code = status.HTTP_200_OK
+    result = ExpenseResponse.model_validate(expense)
+    return result.model_copy(update={"duplicate": duplicate})
+
+
+@app.get(
+    "/api/v1/trips/{trip_id}/budget",
+    response_model=BudgetResponse,
+    tags=["budgets"],
+)
+async def get_budget_endpoint(
+    trip_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> BudgetResponse:
+    try:
+        return await get_budget(session, trip_id)
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+
+
+@app.get(
+    "/api/v1/trips/{trip_id}/days",
+    response_model=list[DayPlanResponse],
+    tags=["planner"],
+)
+async def get_day_plans_endpoint(
+    trip_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> list[DayPlanResponse]:
+    try:
+        return await get_day_plans(session, trip_id)
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+
+
+@app.get(
+    "/api/v1/trips/{trip_id}/candidates",
+    response_model=list[PlaceCandidateResponse],
+    tags=["planner"],
+)
+async def get_candidates_endpoint(
+    trip_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> list[PlaceCandidateResponse]:
+    try:
+        return await get_candidates(session, trip_id)
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+
+
+@app.get(
+    "/api/v1/trips/{trip_id}/places/search",
+    response_model=list[PlaceSearchResultResponse],
+    tags=["planner"],
+)
+async def search_places_endpoint(
+    trip_id: uuid.UUID,
+    q: str = Query(min_length=1, max_length=80),
+    category: str | None = Query(default=None),
+    session: AsyncSession = Depends(get_session),
+) -> list[PlaceSearchResultResponse]:
+    try:
+        trip = await get_trip(session, trip_id)
+        return await search_amap_places(
+            q,
+            trip.destination_adcode or trip.destination,
+            category,
+        )
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+    except MapProviderError as exc:
+        raise map_provider_http_error(exc) from exc
+
+
+@app.get(
+    "/api/v1/trips/{trip_id}/planning-budget",
+    response_model=PlanningBudgetResponse,
+    tags=["planner"],
+)
+async def get_planning_budget_endpoint(
+    trip_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> PlanningBudgetResponse:
+    try:
+        return await get_planning_budget(session, trip_id)
+    except TripNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="trip not found") from exc
+
+
+@app.post(
+    "/api/v1/day-plans/{day_plan_id}/activities",
+    response_model=ActivityResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["planner"],
+)
+async def add_activity_endpoint(
+    day_plan_id: uuid.UUID,
+    payload: ActivityCreate,
+    session: AsyncSession = Depends(get_session),
+) -> ActivityResponse:
+    try:
+        return await add_activity(
+            session,
+            day_plan_id,
+            payload.place_id,
+            payload.place_snapshot,
+        )
+    except DayPlanNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="day plan not found") from exc
+    except PlaceCandidateNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="place candidate not found") from exc
+    except DuplicatePlaceError as exc:
+        raise HTTPException(status_code=409, detail="place is already in this trip") from exc
+    except MapProviderError as exc:
+        raise map_provider_http_error(exc) from exc
+
+
+@app.put(
+    "/api/v1/day-plans/{day_plan_id}/activity-order",
+    response_model=DayPlanResponse,
+    tags=["planner"],
+)
+async def reorder_activities_endpoint(
+    day_plan_id: uuid.UUID,
+    payload: ActivityOrderUpdate,
+    session: AsyncSession = Depends(get_session),
+) -> DayPlanResponse:
+    try:
+        return await reorder_activities(session, day_plan_id, payload.activity_ids)
+    except DayPlanNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="day plan not found") from exc
+    except InvalidActivityOrderError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="activity_ids must exactly match the activities in this day",
+        ) from exc
+    except MapProviderError as exc:
+        raise map_provider_http_error(exc) from exc
+
+
+@app.put(
+    "/api/v1/activities/{activity_id}",
+    response_model=ActivityResponse,
+    tags=["planner"],
+)
+async def update_activity_endpoint(
+    activity_id: uuid.UUID,
+    payload: ActivityUpdate,
+    session: AsyncSession = Depends(get_session),
+) -> ActivityResponse:
+    try:
+        return await update_activity(session, activity_id, payload)
+    except ActivityNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="activity not found") from exc
+    except ActivityVersionConflictError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "activity_version_conflict",
+                "message": "活动已被其他操作修改，请重新加载后再保存",
+            },
+        ) from exc
+
+
+@app.post(
+    "/api/v1/activities/{activity_id}/move",
+    response_model=ActivityMoveResponse,
+    tags=["planner"],
+)
+async def move_activity_endpoint(
+    activity_id: uuid.UUID,
+    payload: ActivityMoveRequest,
+    session: AsyncSession = Depends(get_session),
+) -> ActivityMoveResponse:
+    try:
+        return await move_activity(session, activity_id, payload)
+    except ActivityNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="activity not found") from exc
+    except DayPlanNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="day plan not found") from exc
+    except ActivityVersionConflictError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "activity_version_conflict", "message": "活动已被其他操作修改，请重新加载后再移动"},
+        ) from exc
+    except DuplicatePlaceError as exc:
+        raise HTTPException(status_code=409, detail="place is already in the target day") from exc
+    except InvalidActivityMoveError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="target day or position is invalid for this activity",
+        ) from exc
+    except MapProviderError as exc:
+        raise map_provider_http_error(exc) from exc
+
+
+@app.post(
+    "/api/v1/day-plans/{day_plan_id}/route",
+    response_model=DayPlanResponse,
+    tags=["planner"],
+)
+async def recalculate_route_endpoint(
+    day_plan_id: uuid.UUID,
+    payload: RouteRecalculateRequest,
+    session: AsyncSession = Depends(get_session),
+) -> DayPlanResponse:
+    try:
+        await get_day_plan(session, day_plan_id)
+        await recalculate_day_route(session, day_plan_id, payload.mode)
+        await session.commit()
+        return await get_day_plan(session, day_plan_id)
+    except DayPlanNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="day plan not found") from exc
+    except MapProviderError as exc:
+        raise map_provider_http_error(exc) from exc
+
+
+@app.delete(
+    "/api/v1/activities/{activity_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    tags=["planner"],
+)
+async def delete_activity_endpoint(
+    activity_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> Response:
+    try:
+        await delete_activity(session, activity_id)
+    except ActivityNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="activity not found") from exc
+    except MapProviderError as exc:
+        raise map_provider_http_error(exc) from exc
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@app.post(
+    "/api/v1/demo/reset",
+    response_model=DemoResetResponse,
+    tags=["planner"],
+)
+async def reset_demo_endpoint(
+    session: AsyncSession = Depends(get_session),
+) -> DemoResetResponse:
+    if settings.app_env not in {"development", "test"}:
+        raise HTTPException(status_code=404, detail="not found")
+    await seed_demo_data(session, reset=True)
+    return DemoResetResponse(trip_id=DEMO_TRIP_ID, status="reset")
