@@ -52,6 +52,7 @@ POST /api/v1/trips/{trip_id}/planning-runs
 GET /api/v1/planning-runs/{run_id}
 GET /api/v1/planning-runs/{run_id}/revision
 POST /api/v1/plan-revisions/{revision_id}/reject
+POST /api/v1/plan-revisions/{revision_id}/accept
 ```
 
 `planning-context` 是后续 Planner 与 Replanner 的统一只读输入。它不会调用模型，
@@ -60,8 +61,9 @@ POST /api/v1/plan-revisions/{revision_id}/reject
 
 `planning-runs` 与 `plan-revisions` 已建立持久化边界。运行会记录正式旅行的基础
 版本，经过严格结构校验的候选才能进入等待确认状态；旅行版本变化后，旧运行不能
-继续生成可确认候选。目前只开放拒绝操作，接受候选将在确定性校验与安全应用事务
-完成后开放，避免半成品接口覆盖正式行程。
+覆盖正式计划。接受时后端会再次检查日期、地点归属、来源、时间窗、活动重叠、每日
+与总预算，以及已完成、进行中和锁定活动保护，然后在单个事务中应用。重复接受保持
+幂等；活动集合变化时旧路线分段会被清除，避免显示与正式行程不一致的路线。
 
 ### Android 客户端
 

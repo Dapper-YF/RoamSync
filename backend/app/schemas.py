@@ -511,6 +511,18 @@ class PlanRevisionResponse(BaseModel):
     decided_at: datetime | None
 
 
+class PlanValidationIssue(BaseModel):
+    code: str
+    message: str
+    candidate_id: str | None = None
+
+
+class PlanValidationResult(BaseModel):
+    valid: bool
+    errors: list[PlanValidationIssue] = Field(default_factory=list)
+    warnings: list[PlanValidationIssue] = Field(default_factory=list)
+
+
 class DemoResetResponse(BaseModel):
     trip_id: uuid.UUID
     status: Literal["seeded", "reset"]

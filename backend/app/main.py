@@ -38,11 +38,13 @@ from app.planning_run_repository import (
     InvalidPlanningRunStateError,
     PlanRevisionNotFoundError,
     PlanningRunNotFoundError,
+    StalePlanningRunError,
     create_planning_run,
     get_latest_revision,
     get_planning_run,
     reject_revision,
 )
+from app.plan_revision_service import InvalidPlanRevisionError, accept_plan_revision
 from app.repository import (
     IdempotencyConflictError,
     TripDateConflictError,
@@ -318,6 +320,28 @@ async def reject_plan_revision_endpoint(
         raise HTTPException(status_code=404, detail="planning revision not found") from exc
     except InvalidPlanningRunStateError as exc:
         raise HTTPException(status_code=409, detail="planning revision is no longer pending") from exc
+    return PlanRevisionResponse.model_validate(revision)
+
+
+@app.post(
+    "/api/v1/plan-revisions/{revision_id}/accept",
+    response_model=PlanRevisionResponse,
+    tags=["planning"],
+)
+async def accept_plan_revision_endpoint(
+    revision_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> PlanRevisionResponse:
+    try:
+        revision = await accept_plan_revision(session, revision_id)
+    except PlanRevisionNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="planning revision not found") from exc
+    except StalePlanningRunError as exc:
+        raise HTTPException(status_code=409, detail="formal trip changed after planning started") from exc
+    except InvalidPlanningRunStateError as exc:
+        raise HTTPException(status_code=409, detail="planning revision is no longer pending") from exc
+    except InvalidPlanRevisionError as exc:
+        raise HTTPException(status_code=422, detail=exc.result.model_dump(mode="json")) from exc
     return PlanRevisionResponse.model_validate(revision)
 
 
