@@ -14,9 +14,15 @@ import type {
   PlanRevision,
   SourceRecord,
   Trip,
+  TripExecution,
+  TripExecutionAction,
   TripCreateInput,
   TripDeletionPreview,
   TripPlanningRepository,
+  DynamicReplanTrigger,
+  ExecutionProgress,
+  PendingRecoveryRevisionSummary,
+  NavigationSessionSummary,
   TripUpdateInput,
   TripPreferences,
   TripPreferencesUpdateInput,
@@ -76,6 +82,12 @@ interface ApiActivity {
   latitude: number;
   scheduled_time: string;
   duration_minutes: number;
+  importance: Activity["importance"];
+  can_skip: boolean;
+  minimum_duration_minutes: number | null;
+  importance_source: string;
+  can_skip_source: string;
+  minimum_duration_source: string;
   estimated_cost_fen: number;
   status: Activity["status"];
   position: number;
@@ -122,8 +134,8 @@ interface ApiTrip {
   accommodation: string;
   start_date: string;
   end_date: string;
-  total_budget_fen: number;
-  daily_budget_fen: number;
+  total_budget_fen: number | null;
+  daily_budget_fen: number | null;
   currency: "CNY";
   destination_adcode: string;
   destination_citycode: string;
@@ -162,14 +174,14 @@ interface ApiCitySuggestion {
 interface ApiPlanningBudget {
   trip_id: string;
   total_planned_fen: number;
-  total_remaining_fen: number;
+  total_remaining_fen: number | null;
   days: Array<{
     day_plan_id: string;
     date: string;
     planned_fen: number;
-    remaining_fen: number;
-    ratio: number;
-    status: "comfortable" | "watch" | "over";
+    remaining_fen: number | null;
+    ratio: number | null;
+    status: "comfortable" | "watch" | "over" | "unconstrained";
   }>;
 }
 
@@ -190,16 +202,20 @@ interface ApiTripPreferences {
 
 interface ApiActualBudget {
   trip_id: string;
-  total_budget_fen: number;
+  total_budget_fen: number | null;
   total_spent_fen: number;
-  total_remaining_fen: number;
-  daily_budget_fen: number;
+  total_remaining_fen: number | null;
+  daily_budget_fen: number | null;
   today_spent_fen: number;
-  today_remaining_fen: number;
+  today_remaining_fen: number | null;
   local_date: string;
 }
 
 interface ApiPlanningRun {
+  trigger_snapshot?: { decision_context_summary?: { decision_memory?: { count?: number; feedback?: Array<{ source_revision_id: string; reason_code?: string | null; reason_text?: string | null }> } } } | null;
+  progress?: PlanningRun["progress"] | null;
+  heartbeat_at?: string | null;
+  response_text?: string | null;
   id: string;
   trip_id: string;
   run_type: "initial_plan" | "replan";
@@ -210,8 +226,39 @@ interface ApiPlanningRun {
   token_usage: number;
   error_code: string | null;
   error_message: string | null;
+  error_details?: PlanningRun["errorDetails"] | null;
   pending_interrupt: PlanningRun["pendingInterrupt"] | null;
+  created_at: string;
+  completed_at: string | null;
 }
+
+interface ApiTripExecution {
+  id: string | null;
+  trip_id: string;
+  status: TripExecution["status"];
+  current_date: string;
+  current_day_plan_id: string | null;
+  current_activity_id: string | null;
+  actual_started_at: string | null;
+  actual_ended_at: string | null;
+  paused_at: string | null;
+  schedule_delay_minutes: number;
+  remaining_activity_count: number;
+  remaining_estimated_cost_fen: number;
+  activities: Array<{
+    id: string | null; activity_id: string; day_plan_id: string; day_date: string; name: string;
+    scheduled_time: string; estimated_cost_fen: number; status: TripExecution["activities"][number]["status"];
+    actual_arrived_at: string | null; actual_started_at: string | null; actual_ended_at: string | null; delay_minutes: number;
+  }>;
+  events: Array<{ id: string; event_type: string; activity_id: string | null; occurred_at: string; details: Record<string, unknown> }>;
+}
+
+interface ApiDynamicReplanResponse { run: ApiPlanningRun; trigger_event_id: string; }
+
+// API contract is progressively rolled out; these opaque legacy JSON fragments
+// are narrowed at mapExecutionProgress instead of leaking into domain types.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface ApiExecutionProgress { trip_id: string; itinerary_version: number; execution: ApiTripExecution; navigation_session: null | { id: string; itinerary_version: number; from_activity_id: string; to_activity_id: string; planned_departure_at: string; planned_arrival_at: string; current_eta: string | null; remaining_distance_meters: number | null; status: NavigationSessionSummary["status"]; last_location_at: string | null; updated_at: string }; current_activity_name: string | null; current_activity_experience: any; experience_impact: any; navigation_target_name: string | null; risk_level: ExecutionProgress["riskLevel"]; minimum_downstream_slack_minutes: number | null; first_impacted_activity_id: string | null; active_disruption: any; active_recovery_run: any; recovery_revision: any; recovery_planning: any; generated_at: string; }
 
 interface ApiPlanRevision {
   id: string;
@@ -232,8 +279,12 @@ interface ApiPlanRevision {
   };
   difference_summary: Record<string, unknown>;
   validation_result: Record<string, unknown>;
+  planning_goals?: { target_days: string[]; hard_goals: { end_before?: string | null; max_walking_minutes?: number | null }; soft_goals: { pace?: "relaxed" | "balanced" | "packed" | null; minimize_walking: boolean; preserve_existing: boolean } } | null;
+  goal_satisfaction?: { results: Array<{ goal: string; type: "hard" | "soft"; status: "satisfied" | "unsatisfied" | "partially_satisfied" | "not_evaluable"; evidence: Record<string, unknown> }> } | null;
   source_ids: string[];
   status: PlanRevision["status"];
+  rejection_reason_code?: PlanRevision["rejectionReasonCode"] | null;
+  rejection_reason_text?: string | null;
 }
 
 export class ApiRequestError extends Error {
@@ -244,6 +295,21 @@ export class ApiRequestError extends Error {
 }
 
 export class ApiTripPlanningRepository implements TripPlanningRepository {
+  async getAssistantSession(tripId?: string): Promise<import("../domain/types").AssistantSession> {
+    return request(`${API_BASE}/assistant/sessions`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trip_id: tripId ?? null }) });
+  }
+
+  async resetAssistantSession(sessionId: string): Promise<import("../domain/types").AssistantSession> {
+    return request(`${API_BASE}/assistant/sessions/${sessionId}/reset`, { method: "POST" });
+  }
+
+  async sendAssistantMessage(sessionId: string, message: string, messageId: string, selectedDayId?: string, selectedActivityId?: string): Promise<import("../domain/types").AssistantSession> {
+    return request(`${API_BASE}/assistant/sessions/${sessionId}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message, message_id: messageId, selected_day_id: selectedDayId, selected_activity_id: selectedActivityId }) });
+  }
+
+  async decideAssistantAction(sessionId: string, actionId: string, accept: boolean): Promise<import("../domain/types").AssistantSession> {
+    return request(`${API_BASE}/assistant/sessions/${sessionId}/decision`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action_id: actionId, accept }) });
+  }
   async listTrips(): Promise<Trip[]> {
     return (await request<ApiTrip[]>(`${API_BASE}/trips`)).map(mapTrip);
   }
@@ -353,6 +419,7 @@ export class ApiTripPlanningRepository implements TripPlanningRepository {
       actual_budget: ApiActualBudget;
       planning_budget: ApiPlanningBudget;
       generated_at: string;
+      external_facts?: PlanningContext["externalFacts"];
     }>(`${API_BASE}/trips/${tripId}/planning-context`);
     return {
       trip: mapTrip(dto.trip),
@@ -371,6 +438,7 @@ export class ApiTripPlanningRepository implements TripPlanningRepository {
       },
       planningBudget: mapPlanningBudget(dto.planning_budget),
       generatedAt: dto.generated_at,
+      externalFacts: dto.external_facts ?? {},
     };
   }
 
@@ -456,6 +524,9 @@ export class ApiTripPlanningRepository implements TripPlanningRepository {
     if (input.customName !== undefined) body.custom_name = input.customName;
     if (input.scheduledTime !== undefined) body.scheduled_time = input.scheduledTime;
     if (input.durationMinutes !== undefined) body.duration_minutes = input.durationMinutes;
+    if (input.importance !== undefined) body.importance = input.importance;
+    if (input.canSkip !== undefined) body.can_skip = input.canSkip;
+    if (input.minimumDurationMinutes !== undefined) body.minimum_duration_minutes = input.minimumDurationMinutes;
     if (input.estimatedCostFen !== undefined) body.estimated_cost_fen = input.estimatedCostFen;
     if (input.status !== undefined) body.status = input.status;
     if (input.note !== undefined) body.note = input.note;
@@ -496,12 +567,16 @@ export class ApiTripPlanningRepository implements TripPlanningRepository {
     await request<void>(`${API_BASE}/activities/${activityId}`, { method: "DELETE" });
   }
 
-  async createPlanningRun(tripId: string, userRequest: string): Promise<PlanningRun> {
+  async createPlanningRun(tripId: string, userRequest: string, options?: { runType?: PlanningRun["runType"]; selectedDayId?: string; selectedActivityId?: string }): Promise<PlanningRun> {
     return mapPlanningRun(await request<ApiPlanningRun>(`${API_BASE}/trips/${tripId}/planning-runs`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ run_type: "replan", user_request: userRequest }),
+      body: JSON.stringify({ run_type: options?.runType ?? "replan", user_request: userRequest, selected_day_id: options?.selectedDayId, selected_activity_id: options?.selectedActivityId }),
     }));
+  }
+
+  async listPlanningRuns(tripId: string): Promise<PlanningRun[]> {
+    return (await request<ApiPlanningRun[]>(`${API_BASE}/trips/${tripId}/planning-runs`)).map(mapPlanningRun);
   }
 
   async getPlanningRun(runId: string): Promise<PlanningRun> {
@@ -517,6 +592,16 @@ export class ApiTripPlanningRepository implements TripPlanningRepository {
     return mapPlanningRun(result.run);
   }
 
+  async decidePlanningRun(runId: string, decision: "accept" | "reject"): Promise<{ run: PlanningRun; revision: PlanRevision }> {
+    const result = await request<{ run: ApiPlanningRun }>(`${API_BASE}/planning-runs/${runId}/decision`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ decision }),
+    });
+    const run = mapPlanningRun(result.run);
+    return { run, revision: await this.getPlanRevision(runId) };
+  }
+
   async getPlanRevision(runId: string): Promise<PlanRevision> {
     return mapPlanRevision(await request<ApiPlanRevision>(`${API_BASE}/planning-runs/${runId}/revision`));
   }
@@ -525,21 +610,115 @@ export class ApiTripPlanningRepository implements TripPlanningRepository {
     return mapPlanRevision(await request<ApiPlanRevision>(`${API_BASE}/plan-revisions/${revisionId}/accept`, { method: "POST" }));
   }
 
-  async rejectPlanRevision(revisionId: string): Promise<PlanRevision> {
-    return mapPlanRevision(await request<ApiPlanRevision>(`${API_BASE}/plan-revisions/${revisionId}/reject`, { method: "POST" }));
+  async rejectPlanRevision(revisionId: string, feedback?: { reasonCode?: PlanRevision["rejectionReasonCode"]; reasonText?: string }): Promise<PlanRevision> {
+    return mapPlanRevision(await request<ApiPlanRevision>(`${API_BASE}/plan-revisions/${revisionId}/reject`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reason_code: feedback?.reasonCode ?? null, reason_text: feedback?.reasonText?.trim() || null }),
+    }));
+  }
+
+  async getTripExecution(tripId: string): Promise<TripExecution> {
+    return mapTripExecution(await request<ApiTripExecution>(`${API_BASE}/trips/${tripId}/execution`));
+  }
+
+  async getExecutionProgress(tripId: string): Promise<ExecutionProgress> {
+    return mapExecutionProgress(await request<ApiExecutionProgress>(`${API_BASE}/trips/${tripId}/execution-progress`));
+  }
+
+  async startTripExecution(tripId: string, dayPlanId?: string): Promise<TripExecution> {
+    return mapTripExecution(await request<ApiTripExecution>(`${API_BASE}/trips/${tripId}/execution/start`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ day_plan_id: dayPlanId ?? null }),
+    }));
+  }
+
+  async applyTripExecutionAction(executionId: string, action: TripExecutionAction, activityId?: string): Promise<TripExecution> {
+    return mapTripExecution(await request<ApiTripExecution>(`${API_BASE}/trip-executions/${executionId}/actions`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, activity_id: activityId ?? null }),
+    }));
+  }
+
+  async extendStay(activityExecutionId: string, extensionMinutes: number, clientActionId: string): Promise<void> {
+    await request(`${API_BASE}/activity-executions/${activityExecutionId}/extend-stay`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ client_action_id: clientActionId, extension_minutes: extensionMinutes }) });
+  }
+
+  async leaveEarly(activityExecutionId: string, clientActionId: string): Promise<void> {
+    await request(`${API_BASE}/activity-executions/${activityExecutionId}/leave-early`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ client_action_id: clientActionId }) });
+  }
+
+  async requestDynamicReplan(tripId: string, trigger: DynamicReplanTrigger, details: string): Promise<PlanningRun> {
+    const result = await request<ApiDynamicReplanResponse>(`${API_BASE}/trips/${tripId}/execution/replan`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trigger, details }),
+    });
+    return mapPlanningRun(result.run);
   }
 
 }
 
 function mapPlanningRun(dto: ApiPlanningRun): PlanningRun {
+  const memory = dto.trigger_snapshot?.decision_context_summary?.decision_memory;
   return {
+    decisionMemory: memory ? {
+      count: memory.count ?? 0,
+      feedback: (memory.feedback ?? []).map((item) => ({
+        sourceRevisionId: item.source_revision_id,
+        reasonCode: item.reason_code ?? undefined,
+        reasonText: item.reason_text ?? undefined,
+      })),
+    } : undefined,
+    progress: dto.progress ?? undefined, heartbeatAt: dto.heartbeat_at ?? undefined,
+    responseText: dto.response_text ?? undefined,
     id: dto.id, tripId: dto.trip_id, runType: dto.run_type, status: dto.status,
     userRequest: dto.user_request, modelProvider: dto.model_provider ?? undefined,
     modelName: dto.model_name ?? undefined, tokenUsage: dto.token_usage,
     errorCode: dto.error_code ?? undefined, errorMessage: dto.error_message ?? undefined,
+    errorDetails: dto.error_details ?? undefined,
     pendingInterrupt: dto.pending_interrupt ?? undefined,
+    createdAt: dto.created_at, completedAt: dto.completed_at ?? undefined,
   };
 }
+
+function mapTripExecution(dto: ApiTripExecution): TripExecution {
+  return {
+    id: dto.id ?? undefined, tripId: dto.trip_id, status: dto.status, currentDate: dto.current_date,
+    currentDayPlanId: dto.current_day_plan_id ?? undefined, currentActivityId: dto.current_activity_id ?? undefined,
+    actualStartedAt: dto.actual_started_at ?? undefined, actualEndedAt: dto.actual_ended_at ?? undefined,
+    pausedAt: dto.paused_at ?? undefined, scheduleDelayMinutes: dto.schedule_delay_minutes,
+    remainingActivityCount: dto.remaining_activity_count, remainingEstimatedCostFen: dto.remaining_estimated_cost_fen,
+    activities: dto.activities.map((item) => ({
+      id: item.id ?? undefined, activityId: item.activity_id, dayPlanId: item.day_plan_id, dayDate: item.day_date,
+      name: item.name, scheduledTime: item.scheduled_time.slice(0, 5), estimatedCostFen: item.estimated_cost_fen,
+      status: item.status, actualArrivedAt: item.actual_arrived_at ?? undefined,
+      actualStartedAt: item.actual_started_at ?? undefined, actualEndedAt: item.actual_ended_at ?? undefined,
+      delayMinutes: item.delay_minutes,
+    })),
+    events: dto.events.map((item) => ({ id: item.id, eventType: item.event_type, activityId: item.activity_id ?? undefined, occurredAt: item.occurred_at, details: item.details })),
+  };
+}
+
+function mapExecutionProgress(dto: ApiExecutionProgress): ExecutionProgress {
+  const navigationSession = dto.navigation_session === null ? null : {
+    id: dto.navigation_session.id, itineraryVersion: dto.navigation_session.itinerary_version,
+    fromActivityId: dto.navigation_session.from_activity_id, toActivityId: dto.navigation_session.to_activity_id,
+    plannedDepartureAt: dto.navigation_session.planned_departure_at, plannedArrivalAt: dto.navigation_session.planned_arrival_at,
+    currentEta: dto.navigation_session.current_eta ?? undefined,
+    remainingDistanceMeters: dto.navigation_session.remaining_distance_meters ?? undefined,
+    status: dto.navigation_session.status, lastLocationAt: dto.navigation_session.last_location_at ?? undefined,
+    updatedAt: dto.navigation_session.updated_at,
+  };
+  return {
+    tripId: dto.trip_id, itineraryVersion: dto.itinerary_version, execution: mapTripExecution(dto.execution), navigationSession,
+    currentActivityName: dto.current_activity_name, currentActivityExperience: dto.current_activity_experience ? { activityExecutionId: dto.current_activity_experience.activity_execution_id, activityId: dto.current_activity_experience.activity_id, plannedDurationMinutes: dto.current_activity_experience.planned_duration_minutes, actualStartedAt: dto.current_activity_experience.actual_started_at ?? undefined, actualEndedAt: dto.current_activity_experience.actual_ended_at ?? undefined, elapsedExperienceMinutes: dto.current_activity_experience.elapsed_experience_minutes ?? undefined, totalExtensionMinutes: dto.current_activity_experience.total_extension_minutes, projectedEndAt: dto.current_activity_experience.projected_end_at ?? undefined } : null, experienceImpact: dto.experience_impact ? { impactState: dto.experience_impact.impact_state, minimumDownstreamSlackMinutes: dto.experience_impact.minimum_downstream_slack_minutes ?? undefined, timeShiftMinutes: dto.experience_impact.time_shift_minutes ?? undefined } : null, navigationTargetName: dto.navigation_target_name,
+    riskLevel: dto.risk_level, minimumDownstreamSlackMinutes: dto.minimum_downstream_slack_minutes,
+    firstImpactedActivityId: dto.first_impacted_activity_id, generatedAt: dto.generated_at,
+    activeDisruption: dto.active_disruption === null ? null : { id: dto.active_disruption.id, eventType: dto.active_disruption.event_type, impactedIdentity: dto.active_disruption.impacted_identity, impactSnapshot: dto.active_disruption.impact_snapshot, detectedAt: dto.active_disruption.detected_at, lastSeenAt: dto.active_disruption.last_seen_at, itineraryVersion: dto.active_disruption.itinerary_version },
+    activeRecoveryRun: dto.active_recovery_run === null ? null : { id: dto.active_recovery_run.id, status: dto.active_recovery_run.status, disruptionEventId: dto.active_recovery_run.disruption_event_id, baseTripVersion: dto.active_recovery_run.base_trip_version, errorCode: dto.active_recovery_run.error_code ?? undefined, errorMessage: dto.active_recovery_run.error_message ?? undefined },
+    recoveryRevision: dto.recovery_revision == null ? null : mapRecoveryRevision(dto.recovery_revision), recoveryPlanning: dto.recovery_planning == null ? null : { source: dto.recovery_planning.source, status: dto.recovery_planning.status, planningRunId: dto.recovery_planning.planning_run_id, reasonSummary: dto.recovery_planning.reason_summary, triggerActivityId: dto.recovery_planning.trigger_activity_id ?? undefined, triggerActivityName: dto.recovery_planning.trigger_activity_name ?? undefined, timeShiftMinutes: dto.recovery_planning.time_shift_minutes ?? undefined, minimumDownstreamSlackMinutes: dto.recovery_planning.minimum_downstream_slack_minutes ?? undefined, firstImpactedActivityId: dto.recovery_planning.first_impacted_activity_id ?? undefined, pendingRevision: dto.recovery_planning.pending_revision ? mapRecoveryRevision(dto.recovery_planning.pending_revision) : null, sourceDetail: dto.recovery_planning.source_detail ?? {} },
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapRecoveryRevision(dto: any): PendingRecoveryRevisionSummary { return { id: dto.id, status: dto.status, reason: dto.reason, differenceSummary: dto.difference_summary, proposedSnapshot: { explanation: dto.proposed_snapshot.explanation ?? "", activities: dto.proposed_snapshot.activities.map((item: any) => ({ candidateId: item.candidate_id, dayDate: item.day_date, placeCandidateId: item.place_candidate_id, placeName: item.place_name ?? undefined, plannedStartTime: item.planned_start_time.slice(0, 5), durationMinutes: item.duration_minutes, estimatedCostFen: item.estimated_cost_fen, transportModeToHere: item.transport_mode_to_here, reason: item.reason ?? "", replacesActivityId: item.replaces_activity_id ?? undefined, locked: item.locked ?? false })) }, changeSummary: { adjustedActivities: dto.change_summary.adjusted_activities.map((item: any) => ({ activityId: item.activity_id, name: item.name ?? undefined, beforeStartTime: item.before_start_time.slice(0, 5), afterStartTime: item.after_start_time.slice(0, 5), beforeDurationMinutes: item.before_duration_minutes, afterDurationMinutes: item.after_duration_minutes })) } }; }
 
 function mapPlanRevision(dto: ApiPlanRevision): PlanRevision {
   return {
@@ -559,8 +738,16 @@ function mapPlanRevision(dto: ApiPlanRevision): PlanRevision {
     })),
     differenceSummary: dto.difference_summary,
     validationResult: dto.validation_result,
+    planningGoals: dto.planning_goals ? {
+      targetDays: dto.planning_goals.target_days,
+      hardGoals: { endBefore: dto.planning_goals.hard_goals.end_before, maxWalkingMinutes: dto.planning_goals.hard_goals.max_walking_minutes },
+      softGoals: { pace: dto.planning_goals.soft_goals.pace, minimizeWalking: dto.planning_goals.soft_goals.minimize_walking, preserveExisting: dto.planning_goals.soft_goals.preserve_existing },
+    } : undefined,
+    goalSatisfaction: dto.goal_satisfaction ?? undefined,
     sourceIds: dto.source_ids,
     status: dto.status,
+    rejectionReasonCode: dto.rejection_reason_code ?? undefined,
+    rejectionReasonText: dto.rejection_reason_text ?? undefined,
   };
 }
 
@@ -678,6 +865,12 @@ function mapActivity(dto: ApiActivity): Activity {
     coordinates: [dto.longitude, dto.latitude],
     scheduledTime: dto.scheduled_time.slice(0, 5),
     durationMinutes: dto.duration_minutes,
+    importance: dto.importance,
+    canSkip: dto.can_skip,
+    minimumDurationMinutes: dto.minimum_duration_minutes,
+    importanceSource: dto.importance_source,
+    canSkipSource: dto.can_skip_source,
+    minimumDurationSource: dto.minimum_duration_source,
     estimatedCostFen: dto.estimated_cost_fen,
     status: dto.status,
     scheduleLocked: dto.schedule_locked,
@@ -722,7 +915,7 @@ function mapDay(dto: ApiDayPlan): DayPlan {
 }
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, init);
+  const response = await fetch(url, { cache: "no-store", ...init });
   if (!response.ok) {
     let detail = `请求失败（HTTP ${response.status}）`;
     try {

@@ -1,0 +1,35 @@
+import { expect, test } from "@playwright/test";
+import { readFileSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+test("real explanation distinguishes missing original rationale without formal mutation", async ({ page }) => {
+  const folder = resolve("../backend/evals/results/demo_acceptance_20261007");
+  const earlier = JSON.parse(readFileSync(resolve(folder, "execution.json"), "utf8"));
+  expect(earlier.status).toBe("execution_recovery_passed_explanation_pending");
+  const trip = earlier.trip_id;
+  const get = async (path: string) => (await page.request.get(`/api/v1/${path}`)).json();
+  const before = { trip: await get(`trips/${trip}`), days: await get(`trips/${trip}/days`), runs: await get(`trips/${trip}/planning-runs`) };
+  const place = before.days.flatMap((d: any) => d.activities).at(-1);
+  expect(place).toBeTruthy();
+  await page.goto(`/dev/agent-conversation/${trip}`);
+  await expect(page.getByLabel("告诉旅程总管")).toBeEnabled({ timeout: 30_000 });
+  const text = `为什么把${place.display_name}安排在这个时间？请区分当时保存的规划理由和现在的分析；如果没有可靠的原始理由记录，就明确说没有。`;
+  await page.getByLabel("告诉旅程总管").fill(text);
+  const pending = page.waitForResponse(r => r.url().endsWith("/messages") && r.request().method() === "POST", { timeout: 180_000 });
+  await page.getByRole("button", { name: "发送需求", exact: true }).click();
+  const response = await pending; const session = await response.json();
+  const last = session.messages.at(-1);
+  const after = { trip: await get(`trips/${trip}`), days: await get(`trips/${trip}/days`), runs: await get(`trips/${trip}/planning-runs`) };
+  writeFileSync(resolve(folder, "explanation.json"), JSON.stringify({ http_status: response.status(), text, last, before, after, accepted_recovery_summary: earlier.recovery.difference_summary.decision_summary }, null, 2));
+  expect(response.ok()).toBeTruthy();
+  expect(last.goal_routing.target_runtime).toBe("companion");
+  expect(last.goal_routing.mutation_requested).toBe(false);
+  expect(session.latest_run_id).toBeNull();
+  expect(last.companion_result.information_need.decision_history_required).toBe(true);
+  expect(last.companion_result.explanation.explanation_type).toBe("rationale_unavailable");
+  expect(last.companion_result.explanation.based_on_prior_decision).toBe(false);
+  expect(last.assistant).toMatch(/没有保存.*原始理由/);
+  expect(after).toEqual(before);
+  await expect(page.locator(".ai-message.agent").last()).toContainText(last.assistant);
+  await page.screenshot({ path: resolve(folder, "honest-explanation.png"), fullPage: true });
+});
