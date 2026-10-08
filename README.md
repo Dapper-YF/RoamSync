@@ -1,5 +1,9 @@
 # RoamSync
 
+2026-09-08 Web 重构：统一旅程入口、精简创建、活动直接完成/跳过与首次规划地点准备已落地。交付范围和未完成项见 [本轮重构记录](docs/WEB_REFACTOR_20260908.md)。
+
+后续已完成模型连接、完整日期覆盖和交通时间修正，并通过真实首次规划与局部调整的确认、刷新验收，见 [真实 AI 流程修复](docs/AI_FLOW_REFACTOR_20260908.md)。
+
 > 面向真实旅行过程的预算感知型双端旅行助手。
 
 RoamSync 将行前规划、旅中执行、预算管理和临时调整放在同一份结构化旅行状态中。项目不只生成一次性攻略，而是持续记录行程、消费与计划变化，为后续的动态重排和多智能体协作建立可靠的数据基础。
@@ -30,13 +34,16 @@ RoamSync 将行前规划、旅中执行、预算管理和临时调整放在同�
 - 编辑结构化规划偏好，包括节奏、兴趣、交通方式、每日时间窗、步行强度和补充要求。
 - 提供桌面与横屏平板布局，并包含 Playwright 视觉回归基线。
 - 在规划页直接使用 AI 助手提出自然语言调整要求，查看候选方案后接受或拒绝。
-- 提供酒店、城际交通、天气、预约清单和全场景预算产品预览；未接入的交易能力均明确标注。
+- 从“最近方案”恢复已持久化的 Planning Run、澄清或候选版本。
+- 在统一旅程内直接完成、跳过活动；默认按日期选择今天，不需要开始或暂停旅行。
+- 已移除静态酒店、城际交通、天气与预约预览入口，未接入的交易能力不作为可用功能展示。
 
 ### 后端与数据
 
 - FastAPI REST API、OpenAPI 文档和存活/就绪健康检查。
 - PostgreSQL 持久化与 Alembic 数据库迁移。
 - 旅行、日计划、活动、候选地点、来源、路线、预算与消费数据模型。
+- 独立的旅行执行、活动执行和事件日志模型，计划时间与实际时间不会相互覆盖。
 - 消费幂等写入、预算汇总和事务一致性。
 - 高德 POI/路线服务适配、稳定错误码与数据库缓存。
 - 旅行与活动的版本检查、跨日移动和事务化重排。
@@ -52,11 +59,15 @@ PUT /api/v1/trips/{trip_id}/preferences
 GET /api/v1/trips/{trip_id}/planning-context
 POST /api/v1/trips/{trip_id}/planning-intent/resolve
 POST /api/v1/trips/{trip_id}/planning-runs
+GET /api/v1/trips/{trip_id}/planning-runs
 GET /api/v1/planning-runs/{run_id}
 GET /api/v1/planning-runs/{run_id}/revision
 POST /api/v1/planning-runs/{run_id}/decision
 POST /api/v1/plan-revisions/{revision_id}/reject
 POST /api/v1/plan-revisions/{revision_id}/accept
+GET /api/v1/trips/{trip_id}/execution
+POST /api/v1/trips/{trip_id}/execution/start
+POST /api/v1/trip-executions/{execution_id}/actions
 ```
 
 `planning-context` 是后续 Planner 与 Replanner 的统一只读输入。意图解析接口使用
@@ -75,7 +86,8 @@ PostgreSQL checkpoint 持久化；即使 API 或 Worker 重启，仍可使用同
 `planning_run` 恢复。澄清最多两轮，审批只接受 `accept` 或 `reject`，正式计划仍然
 只能通过既有的事务化接受服务写入。
 
-Planner 已接入 DeepSeek Responses API，默认模型标识为 `deepseek-v4-flash`。模型只
+Planner 默认接入 BigModel 的 GLM Chat Completions API，模型标识为 `glm-5.3-flash`。
+GLM 使用 JSON Object 输出模式，结构要求作为模型指引发送，并由后端 Pydantic 与业务规则继续严格校验。模型只
 能从后端提供的地点 ID 和旅行日期中编排时间；地点费用、来源和路线不会由模型生成，
 而是由后端回填并再次执行确定性校验。JSON Schema 输出还会经过 Pydantic 二次校验，
 未知地点、日期越界和重复地点均不能进入候选版本。调用的供应商、模型和 token 总量
@@ -86,11 +98,21 @@ Planner 已接入 DeepSeek Responses API，默认模型标识为 `deepseek-v4-fl
 Checkpoint 初始化会幂等执行，Agent Worker 已纳入默认 Compose 启动。完成 `.env`
 的 `PLANNER_API_KEY` 配置后，`docker compose up -d --build` 即可启动完整闭环。
 
+### 旧执行接口（Web 已停用整趟旅行控制）
+
+旧执行协议仍使用 `trip_executions`、`activity_executions` 和 `travel_events` 保存实际执行状态。
+开始旅行后，用户可依次记录到达、开始、完成或跳过活动，也可暂停和恢复旅行。API 只允许
+更新当前活动，旅行暂停时拒绝活动操作，仍有未处理活动时拒绝提前结束。执行动作会同步
+现有活动的 `active/completed/skipped` 状态，但计划时间、路线和预计费用保持原始规划含义。
+这些接口保留供旧客户端兼容；新版 Web 通过活动接口记录完成/跳过，不再暴露该执行模式。GPS 自动判断及双端事件迁移尚未实现。
+
 ### Android 客户端
 
 - Kotlin + Jetpack Compose 原生应用。
 - Hilt 依赖注入、Retrofit 网络访问、StateFlow 状态管理和 DataStore 本地偏好。
-- 后端健康检查、旅行创建、预算设置、消费记录与余额刷新。
+- 0.2.0 重做原生行程首页、按天行程、活动编辑、高德地图、预算与记账页面。
+- 首页和行程内共用旅程总管：咨询、创建旅行、改期、候选方案预览、确认保存、澄清与历史恢复，与 Web 共用正式行程和会话接口。
+- AI 方案保存后重新读取正式行程；回到前台或点击刷新可同步 Web 更新。
 - Debug 构建支持通过 USB 设备访问本机 Docker API。
 
 ## 系统架构
@@ -156,6 +178,7 @@ Copy-Item .env.example .env
 | `AMAP_WEB_KEY` | 高德 Web JS API Key | 空 |
 | `AMAP_SECURITY_CODE` | 高德 Web 安全密钥 | 空 |
 | `AMAP_REST_KEY` | 高德 Web 服务 REST Key | 空 |
+| `ROAMSYNC_TAVILY_API_KEY` | 目的地网页检索密钥，优先于系统环境中的旧 `TAVILY_API_KEY` | 空 |
 | `ROUTE_CACHE_TTL_SECONDS` | 路线缓存有效期 | `86400` |
 | `ALLOW_MAP_ESTIMATES` | 是否允许测试性路线估算 | `false` |
 
@@ -197,7 +220,13 @@ docker compose exec api uv run --no-sync python -m app.seed_demo --reset
 
 ### Web
 
-保持 Docker API 运行，然后启动 Vite：
+日常使用只需启动 Docker Web，旅行工作台与 Agent 监控台统一在 3000。
+
+开发时保持 Docker API 运行，先停止占用 3000 的 Web 容器，再启动同一套源码的 Vite 服务（端口被占用会报错，不会切换到另一个端口）：
+
+```powershell
+docker compose stop web
+```
 
 ```powershell
 Set-Location web
@@ -205,7 +234,11 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-开发地址：<http://127.0.0.1:5173/trips>
+开发地址：<http://127.0.0.1:3000/trips>；监控台：<http://127.0.0.1:3000/dev/agent-monitor>。
+
+结束开发后停止 Vite，在项目根目录运行 `docker compose up -d --build web`，将最新源码更新到 3000 的正式页面。
+
+创建旅行前的旅程总管提供“清除对话”：清空本次咨询和待确认创建预览，以新会话重新讨论目的地。确认创建后，对话仍随旅行保存；该按钮不会删除已保存旅行的历史。
 
 如需真实地图底图，将 `web/.env.example` 复制为 `web/.env.local`，并填写：
 
@@ -218,7 +251,9 @@ VITE_AMAP_SECURITY_CODE=your_security_js_code
 
 ### Android
 
-使用 Android Studio 打开 `android/` 目录。Debug 构建默认连接 `http://127.0.0.1:8000`。
+使用 Android Studio 打开 `android/` 目录。Debug 构建从根目录 `.env` 的 `ANDROID_API_BASE_URL` 读取后端地址，未设置时连接 `http://127.0.0.1:8000/`。
+
+手机热点或同一局域网连接：将该配置设为电脑 Wi-Fi 网卡的 IPv4，例如 `ANDROID_API_BASE_URL=http://10.106.242.159:8000/`，然后重新构建并覆盖安装 Debug APK。电脑连接手机热点时，也使用电脑的地址，不使用手机热点网关地址。API 的 Docker 端口已监听电脑所有网卡；此方式不需要 USB 转发。热点重连后电脑 IP 可能变化，届时更新配置并重新安装。
 
 USB 调试设备可通过 ADB 反向代理访问本机 API：
 
@@ -232,6 +267,8 @@ adb reverse tcp:8000 tcp:8000
 Set-Location android
 ./gradlew.bat testDebugUnitTest assembleDebug
 ```
+
+0.2.0 移动端重构与验收记录见 [MOBILE_REFACTOR_20260909.md](docs/MOBILE_REFACTOR_20260909.md)。地图使用根目录 `.env` 中已有的 `AMAP_WEB_KEY` 和 `AMAP_SECURITY_CODE`（前端地图配置），不会把后端模型或 REST 密钥写入 APK。
 
 ## 测试与质量检查
 
@@ -271,10 +308,10 @@ pnpm e2e
 以下内容来自一期产品策划，尚不代表当前版本已经完成：
 
 - [x] 建立 LangGraph 状态图、PostgreSQL Checkpoint 与 Interrupt/Resume 骨架。
-- [ ] 接入真实 Planner/Reviewer 模型与严格结构化输出。
+- [x] 接入真实 DeepSeek Planner、确定性 Reviewer 与严格结构化输出。
 - [ ] 生成受预算、日期、住宿、营业时间和路线约束的候选攻略。
 - [ ] 支持语音/文字消费解析，并在确认后幂等写入。
-- [ ] 根据午睡、天气、延迟或超支，仅重排尚未完成的活动。
+- [x] 根据天气、延迟、疲劳或预算变化发起动态重规划，仅重排尚未完成的活动。
 - [ ] 在 Android 端结合地理围栏、停留时长和移动状态判断节点进度。
 - [ ] 引入 Web Search、天气和用户主动分享内容的来源复核流程。
 - [ ] 建立 Agent 约束评测、密钥扫描、许可证检查和持续集成。
