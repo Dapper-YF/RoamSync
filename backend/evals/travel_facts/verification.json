@@ -1,0 +1,80 @@
+{
+  "measured_at": "2026-09-29T03:17:44.0434166Z",
+  "baseline_snapshot": "1679be4d874b300c3ad1b484032eea1cbbfe5ac0",
+  "compose_project": "roamsync-travel-facts-test",
+  "worktree": "E:\\Study\\RoamSync-travel-facts",
+  "branch": "codex/travel-facts-phase-b",
+  "environment": {
+    "pytest": "8.4.2",
+    "image_id": "sha256:ee956c9c7fc8f48ecc25ad8f7dc6f518a0926791620027264f90f42b9c5fff89",
+    "postgres": "17-alpine",
+    "uv_lock_sha256": "c63f538f9d4137f7bbe5a04094adde7dfd8421e56b994ddabf81f1be1829e463",
+    "pydantic": "2.13.5",
+    "python": "3.11.16"
+  },
+  "command": "docker compose -p roamsync-travel-facts-test -f compose.test.yaml run --rm --volume E:/Study/RoamSync-travel-facts/backend/evals/travel_facts:/evidence api-test sh -c \"uv run --no-sync alembic upgrade head && uv run --no-sync pytest -ra --junitxml=/evidence/regression.xml\"",
+  "final": {
+    "warnings": 2,
+    "skipped": 0,
+    "baseline_failures": 0,
+    "errors": 0,
+    "baseline_passed": 405,
+    "failures": 0,
+    "passed": 492,
+    "junit_suite_seconds": 51.412,
+    "pytest_reported_seconds": 51.42,
+    "new_failures": 0,
+    "new_tests_passed": 87,
+    "tests": 492
+  },
+  "new_test_modules": [
+    {
+      "module": "tests.test_travel_facts",
+      "passed": 80
+    },
+    {
+      "module": "tests.test_travel_facts_eval",
+      "passed": 1
+    },
+    {
+      "module": "tests.test_travel_facts_execution",
+      "passed": 6
+    }
+  ],
+  "benchmark": {
+    "cases": 28,
+    "passed": 28,
+    "results": "results.json",
+    "unavailable_honesty": "16/16"
+  },
+  "warnings": [
+    "Existing StarletteDeprecationWarning: HTTP_422_UNPROCESSABLE_ENTITY in two planner tests"
+  ],
+  "tested_source_sha256": {
+    "backend/app/travel_facts/__init__.py": "e1ad6d991bed4e304deeaf6dc9db7508bc894704b395f54319a8d6fcf5410067",
+    "backend/app/travel_facts/adapters.py": "9afecd76de45911707074d5a128e2fc326dc7f879847f20a6785f96ec39cf1a6",
+    "backend/app/travel_facts/execution.py": "7394c0957e8109e385c0802848b71171afb9b55d8920d62c942966d26cd899ac",
+    "backend/app/travel_facts/interfaces.py": "46ec97f298b77ce33615f7bf4da3e7a0c2d6135b0e2188cfa13321ce631c4b62",
+    "backend/app/travel_facts/models.py": "c54e8f4cd1bb2cc8da0a921a74e3759f65415e87a7f2334f1bcd95bbaed6f2ad",
+    "backend/app/travel_facts/normalization.py": "7ed0c454ff84352d1f39d5fc19ea555207e99597e0c132da16e0f592a0e6c7a1",
+    "backend/app/travel_facts/policies.py": "2483a58614b76986449bbc501a836f83242bc54d1e24eb0cbc719cfee73fa17b",
+    "backend/app/travel_facts/repository.py": "d4c6356ea2e7e93608f315c32e6a75cd4e4841fa980146cc527c89552f286385",
+    "backend/app/travel_facts/resolution.py": "bcd2319e4f95772ed6d19128b85da0b3e379ca33af56c91986abf52447051e19",
+    "backend/app/travel_facts/search_evidence.py": "b47fb7697078a428e539fcfcb69499789cca986cb24dcbc515753f4b4c3b6b0f",
+    "backend/app/travel_facts/service.py": "597bbe58e76655e51d4bb5a65405cf1895a4d4538d60cb34841ebfc61c4b0d34",
+    "backend/evals/travel_facts/__init__.py": "2a1ca89edf517b0ce3d0df3b1e715b90b7eeb003c54f1c542fc7019419c643f0",
+    "backend/evals/travel_facts/cases.json": "90e2b2ab2ec5d08d13150e38d48cc86c3777eec3995e09782d02c036a8db0c7e",
+    "backend/evals/travel_facts/fixtures.py": "5043955865f7f64107b3a985c5e3e6448259316e2a145943273cf00e8dd4bc3b",
+    "backend/evals/travel_facts/run.py": "d4e1743dee5491ae7d91b7c9b53bd48eb1ac21bd3aceadfeb2f1c84be34437e8",
+    "backend/tests/test_travel_facts_eval.py": "cc1c9814417576ac3b44522755d77f04517cd7850596f45fcf5e2306fac209b2",
+    "backend/tests/test_travel_facts_execution.py": "cdfec40db70b7306c24f77daeea5e8bc397dfbb0da046ebf4275044382c89fcf",
+    "backend/tests/test_travel_facts.py": "b39d902cab35248f9735d507c781612dd7678916ce65d9356c2f3f1dfd6ba2c4"
+  },
+  "limitations": [
+    "No live Provider validation",
+    "Synthetic official notices and canonical observations",
+    "No Web/Android changes or tests",
+    "Snapshot regression does not verify later concurrent edits",
+    "Raw JUnit intentionally not committed"
+  ]
+}

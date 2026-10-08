@@ -3,16 +3,19 @@ import hashlib
 import json
 import logging
 import math
+import time as clock_time
 import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Any
 from urllib.parse import urlencode
+from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
+from app.agent_observation import observed
 from app.database import Activity, DayPlan, PlaceCandidate, RouteCache, RouteLeg, Trip
 from app.schemas import CitySuggestionResponse, LocationPoiResponse, PlaceSearchResultResponse
 
@@ -48,6 +51,8 @@ def _missing_key_error() -> MapProviderError:
 def _provider_response_error(payload: dict[str, Any], fallback: str) -> MapProviderError:
     provider_code = str(payload.get("infocode") or "") or None
     provider_message = str(payload.get("info") or fallback)
+    if "QPS" in provider_message:
+        return MapProviderError("高德查询频率暂时受限，请稍后重试", code="map_rate_limited", status_code=429, provider_code=provider_code)
     if provider_code in _QUOTA_CODES:
         return MapProviderError(
             "高德免费配额或并发额度已用尽，请稍后重试或检查控制台配额",
@@ -163,16 +168,31 @@ async def search_amap_location_pois(
 
 
 def _get_json(url: str) -> dict[str, Any]:
-    try:
-        with urlopen(url, timeout=8) as response:  # noqa: S310 - fixed AMap host
-            return json.loads(response.read().decode("utf-8"))
-    except Exception as exc:
-        raise MapProviderError(
-            "高德服务连接超时或暂时不可用，请稍后重试",
-            code="map_network_error",
-        ) from exc
+    for attempt in range(2):
+        try:
+            with urlopen(url, timeout=12) as response:  # noqa: S310 - fixed AMap host
+                payload = json.loads(response.read().decode("utf-8"))
+            if attempt == 0 and payload.get("status") != "1" and "QPS" in str(payload.get("info", "")):
+                clock_time.sleep(1.1)
+                continue
+            return payload
+        except HTTPError as exc:
+            # Do not retry rejected requests or provider quotas.
+            if attempt == 0 and exc.code >= 500:
+                continue
+            raise MapProviderError("高德服务暂时不可用，请稍后重试", code="map_network_error") from exc
+        except (URLError, OSError) as exc:
+            if attempt == 0:
+                continue
+            raise MapProviderError("高德服务连接超时或暂时不可用，请稍后重试", code="map_network_error") from exc
+        except (ValueError, UnicodeError) as exc:
+            raise MapProviderError("高德返回的数据暂时无法读取，请稍后重试", code="map_invalid_response") from exc
+    raise AssertionError("map retry loop exited unexpectedly")
 
 
+@observed("poi", provider="AMap", purpose="POI Search",
+    input_summary=lambda args, kwargs: {"query": args[0] if args else kwargs.get("query")},
+    output_summary=lambda result: {"result_count": len(result), "places": [{"name": item.name, "provider_place_id": item.provider_place_id} for item in result]})
 async def search_amap_places(
     query: str,
     city: str,
@@ -388,7 +408,7 @@ async def _fetch_amap_route(
     route = payload.get("route") or {}
     paths = route.get("paths") or route.get("transits") or []
     if not paths:
-        raise MapProviderError("高德未返回可用路线")
+        raise MapProviderError("高德未返回可用路线", code="map_route_unavailable")
     candidates = [_parse_route_path(item, route) for item in paths]
     candidates = [candidate for candidate in candidates if candidate is not None]
     if not candidates:
@@ -431,6 +451,8 @@ def _collect_geometry(value: Any) -> list[list[float]]:
     def visit(node: Any) -> None:
         if isinstance(node, dict):
             polyline = node.get("polyline")
+            if isinstance(polyline, dict):
+                polyline = polyline.get("polyline")
             if isinstance(polyline, str):
                 for pair in polyline.split(";"):
                     parts = pair.split(",")

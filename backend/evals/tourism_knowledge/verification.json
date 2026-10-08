@@ -1,0 +1,64 @@
+{
+  "recorded_at": "2026-09-29T02:38:01.256432+00:00",
+  "source_snapshot": "0fab28819abb48a177fbff3d3da5d2e806a487f1",
+  "branch": "codex/tourism-knowledge-phase-a",
+  "worktree": "E:\\Study\\RoamSync-tourism-knowledge",
+  "compose_project": "roamsync-tourism-knowledge-test",
+  "module_tests": {
+    "passed": 82,
+    "failed": 0,
+    "seconds": 0.75,
+    "command": "uv run --no-sync pytest tests/test_tourism_knowledge.py -ra",
+    "evidence": "observed Linux tool output"
+  },
+  "baseline_regression": {
+    "passed": 402,
+    "failed": 2,
+    "warnings": 2,
+    "seconds": 49.76,
+    "command": "uv run --no-sync pytest --ignore=tests/test_tourism_knowledge.py",
+    "evidence": "observed Linux tool output",
+    "failure_tests": [
+      "tests/test_assistant_tools.py::test_shrinking_populated_days_requires_resolution_and_cancel_is_read_only",
+      "tests/test_destination_research.py::test_rejection_clears_approval_and_next_request_uses_empty_formal_plan"
+    ]
+  },
+  "final_regression": {
+    "passed": 484,
+    "failed": 2,
+    "warnings": 2,
+    "seconds": 49.59,
+    "exit_code": 1,
+    "started_at": "2026-09-29T02:35:47.618633579Z",
+    "finished_at": "2026-09-29T02:36:46.421860745Z",
+    "image_id": "sha256:eab3e694afb9fd14a7e9a0ed2523c97871389a2ea47a200a2dc3804c5367fff3",
+    "command": "uv run --no-sync alembic upgrade head && uv run --no-sync pytest",
+    "failure_tests": [
+      "tests/test_assistant_tools.py::test_shrinking_populated_days_requires_resolution_and_cancel_is_read_only",
+      "tests/test_destination_research.py::test_rejection_clears_approval_and_next_request_uses_empty_formal_plan"
+    ],
+    "evidence": "parsed completed api-test container logs"
+  },
+  "new_regression_failures": [],
+  "baseline_files_modified": [],
+  "dependencies_added": [],
+  "web_android_tests_run": false,
+  "scope": "isolated foundation; no production corpus, persistence or real embedding integration",
+  "benchmarks": "results.json; synthetic only; semantic/hybrid use deterministic fake",
+  "tested_source_sha256": {
+    "backend/app/tourism_knowledge/boundary.py": "cec284c7881b6fc9e5d3616bf8ba05ff65577b62fc5692bb46a49b5b0486786c",
+    "backend/app/tourism_knowledge/ingestion.py": "77af79ec56b959a1bb39bdcd5c6cbd4f40f0c20ac5ef5b3610193a3cc7325af5",
+    "backend/app/tourism_knowledge/interfaces.py": "25c19b2c67165b2177b153630653048ac4036e084ef5fe8ecc4e2754472c6299",
+    "backend/app/tourism_knowledge/models.py": "f0e5e8b930dbb72f5a4890140267fed522c2102e1eb9f03e2aef239af513db86",
+    "backend/app/tourism_knowledge/ranking.py": "9223643f069724ba6895bcc6747e3476e688c5468bf7f070957d8b63976153fb",
+    "backend/app/tourism_knowledge/repository.py": "53ecf07a515ad2c18063174eb4821cbb85fa10060efc351b00632c204827a44a",
+    "backend/app/tourism_knowledge/service.py": "25c8e3a16ae94fa28553518bd70b4e186674209309724ac2cbf9e797cfc2d24d",
+    "backend/app/tourism_knowledge/__init__.py": "a0ce0c278a074b7daae0ddfccced296c5d276e04249b8db5fd552d23a2702120",
+    "backend/evals/tourism_knowledge/fixtures.py": "ec802854d2d6ff0c11148e2df7360f9f098bdaa4f8f048bf8e213af7c5c854d6",
+    "backend/evals/tourism_knowledge/run.py": "67ce960f934da1acaa79814e330b609952f9c9889ebf534ae79a08dfe7e6b1f2",
+    "backend/evals/tourism_knowledge/__init__.py": "59f325d91eebbc13296a061aab200a8e2494cf7fe003731d0a338de109f19954",
+    "backend/evals/tourism_knowledge/corpus.json": "ae9cf2d934f79c4c5e99eed35684b7a8bd4e10bfafc900af6e8fa11a9ee56ad3",
+    "backend/evals/tourism_knowledge/cases.json": "f4e83fdab62f8da6ba65d1596b7e6880c1600f0c6f3154e7589b54d876f5caf7",
+    "backend/tests/test_tourism_knowledge.py": "f3d5186d3df81c081bdb8411c0a54caf6763e5f72de88689ab8c81a41c9a7031"
+  }
+}

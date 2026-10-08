@@ -36,6 +36,10 @@ class ActivityVersionConflictError(Exception):
     pass
 
 
+class ActivityDecisionSemanticsError(Exception):
+    pass
+
+
 class PlaceCandidateNotFoundError(Exception):
     pass
 
@@ -97,6 +101,12 @@ def _activity_response(
         latitude=float(place.latitude),
         scheduled_time=activity.scheduled_time,
         duration_minutes=activity.duration_minutes,
+        importance=activity.importance,
+        can_skip=activity.can_skip,
+        minimum_duration_minutes=activity.minimum_duration_minutes,
+        importance_source=activity.importance_source,
+        can_skip_source=activity.can_skip_source,
+        minimum_duration_source=activity.minimum_duration_source,
         estimated_cost_fen=activity.estimated_cost_fen,
         status=activity.status,
         position=activity.position,
@@ -262,6 +272,11 @@ async def add_activity(
     day_plan_id: uuid.UUID,
     place_id: uuid.UUID | None = None,
     place_snapshot: PlaceSearchResultResponse | None = None,
+    importance: str = "normal",
+    can_skip: bool = True,
+    minimum_duration_minutes: int | None = None,
+    importance_explicit: bool = False,
+    can_skip_explicit: bool = False,
 ) -> ActivityResponse:
     day = await session.get(DayPlan, day_plan_id)
     if day is None:
@@ -289,11 +304,23 @@ async def add_activity(
     )
     route_mode = await _route_mode(session, day_plan_id)
     scheduled_time = _next_activity_time(existing)
+    if importance == "must_do":
+        if can_skip and can_skip_explicit:
+            raise ActivityDecisionSemanticsError("must_do activity cannot be skippable")
+        can_skip = False
+    if minimum_duration_minutes is not None and minimum_duration_minutes > place.suggested_duration_minutes:
+        raise ActivityDecisionSemanticsError("minimum duration exceeds planned duration")
     activity = Activity(
         day_plan_id=day_plan_id,
         place_candidate_id=place.id,
         scheduled_time=scheduled_time,
         duration_minutes=place.suggested_duration_minutes,
+        importance=importance,
+        can_skip=can_skip,
+        minimum_duration_minutes=minimum_duration_minutes,
+        importance_source="user_explicit" if importance_explicit else "system_default",
+        can_skip_source="user_explicit" if (can_skip_explicit or (importance == "must_do" and importance_explicit)) else "system_default",
+        minimum_duration_source="user_explicit" if minimum_duration_minutes is not None else "unknown",
         estimated_cost_fen=place.estimated_cost_fen,
         status="planned",
         position=len(existing),
@@ -322,18 +349,52 @@ async def update_activity(
     if activity.version != payload.version:
         raise ActivityVersionConflictError
 
+    day = await session.get(DayPlan, activity.day_plan_id)
+    if day is None:
+        raise DayPlanNotFoundError
+
     editable_fields = {
         "custom_name",
         "scheduled_time",
         "duration_minutes",
+        "importance",
+        "can_skip",
+        "minimum_duration_minutes",
         "estimated_cost_fen",
         "status",
         "note",
         "schedule_locked",
     }
     changed_fields = payload.model_fields_set & editable_fields
+    next_importance = payload.importance if "importance" in changed_fields else activity.importance
+    next_can_skip = payload.can_skip if "can_skip" in changed_fields else activity.can_skip
+    next_duration = payload.duration_minutes if "duration_minutes" in changed_fields else activity.duration_minutes
+    next_minimum = payload.minimum_duration_minutes if "minimum_duration_minutes" in changed_fields else activity.minimum_duration_minutes
+    if next_importance is None or next_can_skip is None or next_duration is None:
+        raise ActivityDecisionSemanticsError("importance, can_skip and duration cannot be null")
+    if next_importance == "must_do" and next_can_skip:
+        if "can_skip" in changed_fields:
+            raise ActivityDecisionSemanticsError("must_do activity cannot be skippable")
+        next_can_skip = False
+        activity.can_skip = False
+        activity.can_skip_source = "user_explicit"
+    if next_minimum is not None and next_minimum > next_duration:
+        raise ActivityDecisionSemanticsError("minimum duration exceeds planned duration")
     for field in changed_fields:
         setattr(activity, field, getattr(payload, field))
+    if "importance" in changed_fields:
+        activity.importance_source = "user_explicit"
+    if "can_skip" in changed_fields:
+        activity.can_skip_source = "user_explicit"
+    if "minimum_duration_minutes" in changed_fields:
+        activity.minimum_duration_source = "user_explicit" if next_minimum is not None else "unknown"
+    # PlanningRun fences candidate acceptance with Trip.version.  An Activity
+    # edit changes the formal itinerary too, so it must advance that same
+    # fence; Activity.version alone cannot prevent an old candidate from
+    # silently overwriting this edit.
+    if changed_fields:
+        trip = await get_trip(session, day.trip_id)
+        trip.version += 1
     activity.version += 1
     activity.updated_at = datetime.now(UTC)
     await session.flush()
@@ -448,10 +509,16 @@ async def _resolve_place(
     if snapshot is None:
         raise PlaceCandidateNotFoundError
 
+    return await save_candidate_snapshot(session, day.trip_id, snapshot)
+
+
+async def save_candidate_snapshot(
+    session: AsyncSession, trip_id: uuid.UUID, snapshot: PlaceSearchResultResponse
+) -> PlaceCandidate:
     slug = f"{snapshot.provider}-{snapshot.provider_place_id}"
     existing = await session.scalar(
         select(PlaceCandidate).where(
-            PlaceCandidate.trip_id == day.trip_id,
+            PlaceCandidate.trip_id == trip_id,
             PlaceCandidate.slug == slug,
         )
     )
@@ -459,7 +526,7 @@ async def _resolve_place(
         return existing
 
     source = SourceRecord(
-        trip_id=day.trip_id,
+        trip_id=trip_id,
         title=f"高德地点搜索：{snapshot.name}",
         url=snapshot.source_url,
         provider="AMap POI",
@@ -469,7 +536,7 @@ async def _resolve_place(
     session.add(source)
     await session.flush()
     place = PlaceCandidate(
-        trip_id=day.trip_id,
+        trip_id=trip_id,
         source_record_id=source.id,
         slug=slug,
         name=snapshot.name,
@@ -579,14 +646,14 @@ async def get_planning_budget(
             if activity.status != "skipped"
         )
         total_planned += planned
-        ratio = planned / trip.daily_budget_fen if trip.daily_budget_fen else 1.0
-        status = "over" if ratio > 1 else "watch" if ratio >= 0.8 else "comfortable"
+        ratio = planned / trip.daily_budget_fen if trip.daily_budget_fen is not None else None
+        status = ("over" if ratio > 1 else "watch" if ratio >= 0.8 else "comfortable") if ratio is not None else "unconstrained"
         day_responses.append(
             PlanningBudgetDayResponse(
                 day_plan_id=day.id,
                 date=day.date,
                 planned_fen=planned,
-                remaining_fen=trip.daily_budget_fen - planned,
+                remaining_fen=(trip.daily_budget_fen - planned) if trip.daily_budget_fen is not None else None,
                 ratio=ratio,
                 status=status,
             )
@@ -594,6 +661,6 @@ async def get_planning_budget(
     return PlanningBudgetResponse(
         trip_id=trip_id,
         total_planned_fen=total_planned,
-        total_remaining_fen=trip.total_budget_fen - total_planned,
+        total_remaining_fen=(trip.total_budget_fen - total_planned) if trip.total_budget_fen is not None else None,
         days=day_responses,
     )

@@ -37,7 +37,7 @@ class TripPreferencesVersionConflictError(Exception):
     pass
 
 
-async def create_trip(session: AsyncSession, payload: TripCreate) -> Trip:
+async def create_trip(session: AsyncSession, payload: TripCreate, *, commit: bool = True) -> Trip:
     trip = Trip(**payload.model_dump())
     session.add(trip)
     await session.flush()
@@ -57,7 +57,10 @@ async def create_trip(session: AsyncSession, payload: TripCreate) -> Trip:
         )
         current += timedelta(days=1)
         position += 1
-    await session.commit()
+    if commit:
+        await session.commit()
+    else:
+        await session.flush()
     await session.refresh(trip)
     return trip
 
@@ -89,11 +92,15 @@ async def update_trip(
         exclude_unset=True,
         exclude={"version", "confirm_day_removal"},
     )
+    if "total_budget_fen" in values and values["total_budget_fen"] is None:
+        values["daily_budget_fen"] = None
+    if "daily_budget_fen" in values and values["daily_budget_fen"] is None:
+        values["total_budget_fen"] = None
     start_date = values.get("start_date", trip.start_date)
     end_date = values.get("end_date", trip.end_date)
     total_budget = values.get("total_budget_fen", trip.total_budget_fen)
     daily_budget = values.get("daily_budget_fen", trip.daily_budget_fen)
-    if end_date < start_date or daily_budget > total_budget:
+    if end_date < start_date or (daily_budget is not None and total_budget is not None and daily_budget > total_budget):
         raise ValueError("invalid trip dates or budget")
 
     days = list(
@@ -147,7 +154,7 @@ async def update_trip(
     return trip
 
 
-async def duplicate_trip(session: AsyncSession, trip_id: uuid.UUID) -> Trip:
+async def duplicate_trip(session: AsyncSession, trip_id: uuid.UUID, *, commit: bool = True) -> Trip:
     source_trip = await get_trip(session, trip_id)
     duplicate = Trip(
         title=f"{source_trip.title}（副本）",
@@ -254,6 +261,12 @@ async def duplicate_trip(session: AsyncSession, trip_id: uuid.UUID) -> Trip:
                 place_candidate_id=place_map[activity.place_candidate_id].id,
                 scheduled_time=activity.scheduled_time,
                 duration_minutes=activity.duration_minutes,
+                importance=activity.importance,
+                can_skip=activity.can_skip,
+                minimum_duration_minutes=activity.minimum_duration_minutes,
+                importance_source=activity.importance_source,
+                can_skip_source=activity.can_skip_source,
+                minimum_duration_source=activity.minimum_duration_source,
                 estimated_cost_fen=activity.estimated_cost_fen,
                 status=activity.status,
                 position=activity.position,
@@ -283,7 +296,10 @@ async def duplicate_trip(session: AsyncSession, trip_id: uuid.UUID) -> Trip:
                 calculated_at=leg.calculated_at,
             )
         )
-    await session.commit()
+    if commit:
+        await session.commit()
+    else:
+        await session.flush()
     await session.refresh(duplicate)
     return duplicate
 
@@ -430,9 +446,9 @@ async def get_budget(session: AsyncSession, trip_id: uuid.UUID) -> BudgetRespons
         currency=trip.currency,
         total_budget_fen=trip.total_budget_fen,
         total_spent_fen=total_spent_fen,
-        total_remaining_fen=trip.total_budget_fen - total_spent_fen,
+        total_remaining_fen=(trip.total_budget_fen - total_spent_fen) if trip.total_budget_fen is not None else None,
         daily_budget_fen=trip.daily_budget_fen,
         today_spent_fen=today_spent_fen,
-        today_remaining_fen=trip.daily_budget_fen - today_spent_fen,
+        today_remaining_fen=(trip.daily_budget_fen - today_spent_fen) if trip.daily_budget_fen is not None else None,
         local_date=local_date,
     )

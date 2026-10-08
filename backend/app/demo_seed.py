@@ -9,6 +9,8 @@ from app.database import Activity, DayPlan, PlaceCandidate, SourceRecord, Trip, 
 
 
 DEMO_TRIP_ID = uuid.UUID("00000000-0000-4000-8000-000000000001")
+GOAL_AWARE_DEMO_TRIP_ID = uuid.UUID("00000000-0000-4000-8000-000000000002")
+TRAVEL_DECISION_DEMO_TRIP_ID = uuid.UUID("00000000-0000-4000-8000-000000000003")
 DEMO_NAMESPACE = uuid.UUID("f680b8be-1312-4fe4-8b4e-13613e5a024c")
 
 
@@ -238,6 +240,7 @@ async def seed_demo_data(session: AsyncSession, *, reset: bool = False) -> bool:
             Activity(
                 id=demo_uuid("activity", slug), day_plan_id=day.id, place_candidate_id=place.id,
                 scheduled_time=scheduled_time, duration_minutes=place.suggested_duration_minutes,
+                importance="normal",
                 estimated_cost_fen=place.estimated_cost_fen, status="planned", position=position,
                 schedule_locked=False, note=note,
             )
@@ -248,5 +251,208 @@ async def seed_demo_data(session: AsyncSession, *, reset: bool = False) -> bool:
 
     await recalculate_day_route(session, day_one.id)
     await recalculate_day_route(session, day_two.id)
+    await session.commit()
+    return True
+
+
+async def seed_goal_aware_demo_data(session: AsyncSession, *, reset: bool = False) -> bool:
+    """Create the independent, resettable formal itinerary used by Goal-Aware Demo.
+
+    This seed deliberately stops at formal itinerary and persisted AMap route
+    facts.  A live demo still has to queue a real PlanningRun, call the
+    configured Planner, enrich its route and create a reviewable revision.
+    """
+    existing = await session.get(Trip, GOAL_AWARE_DEMO_TRIP_ID)
+    if existing is not None and not reset:
+        return False
+    if existing is not None:
+        await session.execute(delete(Trip).where(Trip.id == GOAL_AWARE_DEMO_TRIP_ID))
+        await session.flush()
+
+    trip = Trip(
+        id=GOAL_AWARE_DEMO_TRIP_ID,
+        title="Goal-Aware Demo · 杭州从容一日游",
+        destination="杭州",
+        destination_adcode="330100",
+        destination_citycode="0571",
+        center_longitude=Decimal("120.155070"),
+        center_latitude=Decimal("30.274085"),
+        accommodation="杭州君悦酒店",
+        accommodation_poi_id="B023B02FMY",
+        accommodation_address="湖滨路28号",
+        accommodation_district="上城区",
+        accommodation_longitude=Decimal("120.161532"),
+        accommodation_latitude=Decimal("30.254794"),
+        start_date=date(2026, 10, 20),
+        end_date=date(2026, 10, 20),
+        total_budget_fen=180_000,
+        daily_budget_fen=180_000,
+        currency="CNY",
+        timezone="Asia/Shanghai",
+    )
+    session.add(trip)
+    await session.flush()
+    session.add(TripPreferences(
+        trip_id=trip.id,
+        pace="balanced",
+        interest_categories=["culture", "nature", "food"],
+        transport_modes=["walk", "transit"],
+        daily_start_time=time(8, 30),
+        daily_end_time=time(20, 0),
+        meal_preferences="希望有一顿杭帮菜，保留合理休息与交通缓冲。",
+        avoid_categories=["连续长距离步行"],
+        max_walking_minutes=80,
+        free_text_requirements="这是一份可调整的杭州一日正式行程。",
+    ))
+
+    queried_at = datetime(2026, 10, 1, 2, 0, tzinfo=UTC)
+    places: dict[str, PlaceCandidate] = {}
+    source_records: list[SourceRecord] = []
+    place_records: list[PlaceCandidate] = []
+    for item in PLACE_DATA:
+        slug = str(item["slug"])
+        source = SourceRecord(
+            id=demo_uuid("goal-aware-source", slug), trip_id=trip.id,
+            title=str(item["source_title"]), url=str(item["source_url"]),
+            provider=str(item["provider"]), queried_at=queried_at, confidence="high",
+        )
+        place = PlaceCandidate(
+            id=demo_uuid("goal-aware-place", slug), trip_id=trip.id, source_record_id=source.id,
+            slug=slug, name=str(item["name"]), category=str(item["category"]),
+            neighborhood=str(item["neighborhood"]), description=str(item["description"]),
+            longitude=Decimal(str(item["longitude"])), latitude=Decimal(str(item["latitude"])),
+            suggested_duration_minutes=int(item["duration"]), estimated_cost_fen=int(item["cost"]),
+            rating=Decimal(str(item["rating"])), tags=list(item["tags"]),
+        )
+        source_records.append(source)
+        place_records.append(place)
+        places[slug] = place
+    session.add_all(source_records)
+    await session.flush()
+    session.add_all(place_records)
+    await session.flush()
+
+    day = DayPlan(
+        id=demo_uuid("goal-aware-day", "2026-10-20"), trip_id=trip.id,
+        date=date(2026, 10, 20), label="10 月 20 日", theme="西湖人文与从容收尾",
+        position=0, route_mode="walk",
+    )
+    session.add(day)
+    await session.flush()
+    # The last stop intentionally ends after 18:00.  The real Planner has a
+    # feasible choice to reduce scope; no candidate is pre-computed by seed.
+    activities = [
+        # The formal day is deliberately just over the requested 18:00 end
+        # boundary. Starting at 08:30 leaves a real, non-synthetic recovery
+        # space for the Planner to make a smaller feasible adjustment.
+        ("west-lake", time(8, 30), 0, False),
+        ("china-art-academy", time(10, 45), 1, True),
+        ("green-tea", time(13, 15), 2, False),
+        ("leifeng-pagoda", time(15, 15), 3, False),
+        ("hefang-street", time(17, 0), 4, False),
+    ]
+    for slug, scheduled_time, position, schedule_locked in activities:
+        place = places[slug]
+        session.add(Activity(
+            id=demo_uuid("goal-aware-activity", slug), day_plan_id=day.id, place_candidate_id=place.id,
+            scheduled_time=scheduled_time, duration_minutes=place.suggested_duration_minutes,
+            importance="normal", estimated_cost_fen=place.estimated_cost_fen, status="planned",
+            position=position, schedule_locked=schedule_locked,
+            note="Goal-Aware Demo 的既有正式活动。",
+        ))
+    await session.flush()
+    from app.maps_service import recalculate_day_route
+
+    await recalculate_day_route(session, day.id)
+    await session.commit()
+    return True
+
+
+async def seed_travel_decision_demo_data(session: AsyncSession, *, reset: bool = False) -> bool:
+    """Reset only the dedicated Travel Decision Agent trip, using real route facts."""
+    existing = await session.get(Trip, TRAVEL_DECISION_DEMO_TRIP_ID)
+    if existing is not None and not reset:
+        return False
+    if existing is not None:
+        await session.execute(delete(Trip).where(Trip.id == TRAVEL_DECISION_DEMO_TRIP_ID))
+        await session.flush()
+
+    trip = Trip(
+        id=TRAVEL_DECISION_DEMO_TRIP_ID,
+        title="Travel Decision Agent Demo · 杭州人文一日游",
+        destination="杭州", destination_adcode="330100", destination_citycode="0571",
+        center_longitude=Decimal("120.155070"), center_latitude=Decimal("30.274085"),
+        accommodation="杭州君悦酒店", accommodation_poi_id="B023B02FMY",
+        accommodation_address="湖滨路28号", accommodation_district="上城区",
+        accommodation_longitude=Decimal("120.161532"), accommodation_latitude=Decimal("30.254794"),
+        start_date=date(2026, 10, 20), end_date=date(2026, 10, 20),
+        total_budget_fen=180_000, daily_budget_fen=180_000,
+        currency="CNY", timezone="Asia/Shanghai",
+    )
+    session.add(trip)
+    await session.flush()
+    session.add(TripPreferences(
+        trip_id=trip.id, pace="balanced", interest_categories=["culture", "nature", "food"],
+        transport_modes=["walk", "transit"], daily_start_time=time(8, 30),
+        daily_end_time=time(20, 0), meal_preferences="保留合理休息与交通缓冲。",
+        avoid_categories=["连续长距离步行"], max_walking_minutes=80,
+        free_text_requirements="杭州人文一日正式行程；需要用户确认后才修改。",
+    ))
+    places: dict[str, PlaceCandidate] = {}
+    demo_place_slugs = {"west-lake", "china-art-academy", "green-tea", "leifeng-pagoda", "hefang-street"}
+    for item in PLACE_DATA:
+        slug = str(item["slug"])
+        if slug not in demo_place_slugs:
+            continue
+        source = SourceRecord(
+            id=demo_uuid("travel-decision-source", slug), trip_id=trip.id,
+            title=str(item["source_title"]), url=str(item["source_url"]),
+            provider=str(item["provider"]), queried_at=datetime(2026, 10, 1, 2, 0, tzinfo=UTC),
+            confidence="high",
+        )
+        session.add(source)
+        await session.flush()
+        place = PlaceCandidate(
+            id=demo_uuid("travel-decision-place", slug), trip_id=trip.id, source_record_id=source.id,
+            slug=slug, name=str(item["name"]), category=str(item["category"]),
+            neighborhood=str(item["neighborhood"]), description=str(item["description"]),
+            longitude=Decimal(str(item["longitude"])), latitude=Decimal(str(item["latitude"])),
+            suggested_duration_minutes=int(item["duration"]), estimated_cost_fen=int(item["cost"]),
+            rating=Decimal(str(item["rating"])), tags=list(item["tags"]),
+        )
+        session.add(place)
+        places[slug] = place
+    await session.flush()
+    day = DayPlan(
+        id=demo_uuid("travel-decision-day", "2026-10-20"), trip_id=trip.id,
+        date=date(2026, 10, 20), label="10 月 20 日", theme="西湖与人文",
+        position=0, route_mode="walk",
+    )
+    session.add(day)
+    await session.flush()
+    activities = [
+        # slug, time, importance, can_skip, minimum duration, locked
+        ("west-lake", time(8, 30), "high", True, None, False),
+        ("china-art-academy", time(10, 45), "must_do", False, 60, False),
+        ("green-tea", time(13, 15), "normal", True, None, False),
+        ("leifeng-pagoda", time(15, 15), "normal", True, None, False),
+        ("hefang-street", time(17, 0), "low", True, None, False),
+    ]
+    for position, (slug, scheduled_time, importance, can_skip, minimum_duration, locked) in enumerate(activities):
+        place = places[slug]
+        session.add(Activity(
+            id=demo_uuid("travel-decision-activity", slug), day_plan_id=day.id,
+            place_candidate_id=place.id, scheduled_time=scheduled_time,
+            duration_minutes=place.suggested_duration_minutes, importance=importance,
+            can_skip=can_skip, minimum_duration_minutes=minimum_duration,
+            importance_source="user_confirmed", can_skip_source="user_confirmed",
+            minimum_duration_source="user_confirmed" if minimum_duration else "unknown",
+            estimated_cost_fen=place.estimated_cost_fen, status="planned", position=position,
+            schedule_locked=locked, note="Travel Decision Agent 独立演示的正式活动。",
+        ))
+    await session.flush()
+    from app.maps_service import recalculate_day_route
+
+    await recalculate_day_route(session, day.id)
     await session.commit()
     return True
