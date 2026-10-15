@@ -355,8 +355,8 @@ pnpm e2e
 
 ## 项目文档
 
-- [RoamSync 项目策划书](docs/RoamSync项目策划书.docx)
-- [RoamSync 用户需求分析](docs/RoamSync用户需求分析.docx)
+- RoamSync 项目策划书（原始课程文档未纳入公开版）
+- RoamSync 用户需求分析（原始课程文档未纳入公开版）
 - [参考项目调研与许可边界](docs/REFERENCE_RESEARCH.md)
 - [Agent 架构与权限真源](docs/AGENT_ARCHITECTURE.md)
 - [第三方声明](THIRD_PARTY_NOTICES.md)
