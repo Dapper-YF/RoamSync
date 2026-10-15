@@ -3,16 +3,19 @@ import hashlib
 import json
 import logging
 import math
+import time as clock_time
 import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Any
 from urllib.parse import urlencode
+from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
+from app.agent_observation import observed
 from app.database import Activity, DayPlan, PlaceCandidate, RouteCache, RouteLeg, Trip
 from app.schemas import CitySuggestionResponse, LocationPoiResponse, PlaceSearchResultResponse
 
@@ -48,6 +51,8 @@ def _missing_key_error() -> MapProviderError:
 def _provider_response_error(payload: dict[str, Any], fallback: str) -> MapProviderError:
     provider_code = str(payload.get("infocode") or "") or None
     provider_message = str(payload.get("info") or fallback)
+    if "QPS" in provider_message:
+        return MapProviderError("高德查询频率暂时受限，请稍后重试", code="map_rate_limited", status_code=429, provider_code=provider_code)
     if provider_code in _QUOTA_CODES:
         return MapProviderError(
             "高德免费配额或并发额度已用尽，请稍后重试或检查控制台配额",
@@ -163,16 +168,31 @@ async def search_amap_location_pois(
 
 
 def _get_json(url: str) -> dict[str, Any]:
-    try:
-        with urlopen(url, timeout=8) as response:  # noqa: S310 - fixed AMap host
-            return json.loads(response.read().decode("utf-8"))
-    except Exception as exc:
-        raise MapProviderError(
-            "高德服务连接超时或暂时不可用，请稍后重试",
-            code="map_network_error",
-        ) from exc
+    for attempt in range(2):
+        try:
+            with urlopen(url, timeout=12) as response:  # noqa: S310 - fixed AMap host
+                payload = json.loads(response.read().decode("utf-8"))
+            if attempt == 0 and payload.get("status") != "1" and "QPS" in str(payload.get("info", "")):
+                clock_time.sleep(1.1)
+                continue
+            return payload
+        except HTTPError as exc:
+            # Do not retry rejected requests or provider quotas.
+            if attempt == 0 and exc.code >= 500:
+                continue
+            raise MapProviderError("高德服务暂时不可用，请稍后重试", code="map_network_error") from exc
+        except (URLError, OSError) as exc:
+            if attempt == 0:
+                continue
+            raise MapProviderError("高德服务连接超时或暂时不可用，请稍后重试", code="map_network_error") from exc
+        except (ValueError, UnicodeError) as exc:
+            raise MapProviderError("高德返回的数据暂时无法读取，请稍后重试", code="map_invalid_response") from exc
+    raise AssertionError("map retry loop exited unexpectedly")
 
 
+@observed("poi", provider="AMap", purpose="POI Search",
+    input_summary=lambda args, kwargs: {"query": args[0] if args else kwargs.get("query")},
+    output_summary=lambda result: {"result_count": len(result), "places": [{"name": item.name, "provider_place_id": item.provider_place_id} for item in result]})
 async def search_amap_places(
     query: str,
     city: str,
@@ -270,7 +290,7 @@ async def recalculate_day_route(
     for position, ((from_activity, origin), (to_activity, destination)) in enumerate(
         zip(rows, rows[1:], strict=False)
     ):
-        result = await _route_result(session, origin, destination, mode)
+        result = await resolve_route_result(session, origin, destination, mode)
         session.add(
             RouteLeg(
                 day_plan_id=day_plan_id,
@@ -282,6 +302,8 @@ async def recalculate_day_route(
                 duration_minutes=result.duration_minutes,
                 provider=result.provider,
                 is_estimated=result.is_estimated,
+                path=result.path or [],
+                alternatives=result.alternatives or [],
             )
         )
         suggested_start = current + timedelta(
@@ -294,7 +316,7 @@ async def recalculate_day_route(
             to_activity.scheduled_time = current.time().replace(second=0, microsecond=0)
 
 
-async def _route_result(
+async def resolve_route_result(
     session: AsyncSession,
     origin: PlaceCandidate,
     destination: PlaceCandidate,
@@ -310,6 +332,7 @@ async def _route_result(
     if (
         cached is not None
         and cached.expires_at > now
+        and (cached.is_estimated or bool(cached.path))
         and (not cached.is_estimated or not settings.amap_rest_key)
     ):
         logger.info("amap route cache hit mode=%s", mode)
@@ -330,7 +353,7 @@ async def _route_result(
                 raise
     elif not settings.allow_map_estimates:
         raise _missing_key_error()
-    distance, duration, provider, estimated = result or _estimated_route(
+    distance, duration, provider, estimated, path, alternatives = result or _estimated_route(
         origin, destination, mode
     )
     if cached is None:
@@ -341,6 +364,8 @@ async def _route_result(
     cached.duration_minutes = duration
     cached.provider = provider
     cached.is_estimated = estimated
+    cached.path = path
+    cached.alternatives = alternatives
     cached.expires_at = now + timedelta(seconds=settings.route_cache_ttl_seconds)
     logger.info(
         "amap route resolved mode=%s provider=%s estimated=%s",
@@ -353,7 +378,7 @@ async def _route_result(
 
 async def _fetch_amap_route(
     origin: PlaceCandidate, destination: PlaceCandidate, mode: str, city: str
-) -> tuple[int, int, str, bool]:
+) -> tuple[int, int, str, bool, list[list[float]], list[dict[str, Any]]]:
     settings = get_settings()
     path = {
         "walk": "walking",
@@ -364,30 +389,95 @@ async def _fetch_amap_route(
         "key": settings.amap_rest_key,
         "origin": f"{origin.longitude},{origin.latitude}",
         "destination": f"{destination.longitude},{destination.latitude}",
+        "show_fields": "cost,navi,polyline",
     }
     if mode == "transit":
-        params.update({"city": city, "cityd": city, "strategy": 0})
+        params.update(
+            {"city1": city, "city2": city, "strategy": 0, "AlternativeRoute": 3}
+        )
+    elif mode == "walk":
+        params["alternative_route"] = 3
+    elif mode == "driving":
+        params["strategy"] = 32
     payload = await asyncio.to_thread(
         _get_json,
-        f"https://restapi.amap.com/v3/direction/{path}?{urlencode(params)}",
+        f"https://restapi.amap.com/v5/direction/{path}?{urlencode(params)}",
     )
     if payload.get("status") != "1":
         raise _provider_response_error(payload, "高德路线计算失败")
     route = payload.get("route") or {}
     paths = route.get("paths") or route.get("transits") or []
     if not paths:
-        raise MapProviderError("高德未返回可用路线")
-    item = paths[0]
-    distance = int(float(item.get("distance") or route.get("distance") or 0))
-    duration_seconds = int(float(item.get("duration") or 0))
-    if distance <= 0 or duration_seconds <= 0:
+        raise MapProviderError("高德未返回可用路线", code="map_route_unavailable")
+    candidates = [_parse_route_path(item, route) for item in paths]
+    candidates = [candidate for candidate in candidates if candidate is not None]
+    if not candidates:
         raise MapProviderError("高德路线数据不完整")
-    return distance, max(1, math.ceil(duration_seconds / 60)), "AMap Route", False
+    candidates.sort(key=lambda candidate: (candidate[0], candidate[1]))
+    distance, duration, geometry = candidates[0]
+    alternatives = [
+        {
+            "distance_meters": item_distance,
+            "duration_minutes": item_duration,
+            "path": item_geometry,
+        }
+        for item_distance, item_duration, item_geometry in candidates[1:3]
+    ]
+    return distance, duration, "AMap Route 2.0", False, geometry, alternatives
+
+
+def _parse_route_path(
+    item: dict[str, Any], route: dict[str, Any]
+) -> tuple[int, int, list[list[float]]] | None:
+    cost = item.get("cost") if isinstance(item.get("cost"), dict) else {}
+    distance = _positive_int(item.get("distance") or route.get("distance"))
+    duration_seconds = _positive_int(item.get("duration") or cost.get("duration"))
+    geometry = _collect_geometry(item)
+    if distance <= 0 or duration_seconds <= 0 or len(geometry) < 2:
+        return None
+    return distance, max(1, math.ceil(duration_seconds / 60)), geometry
+
+
+def _positive_int(value: Any) -> int:
+    try:
+        return max(0, int(float(value or 0)))
+    except (TypeError, ValueError):
+        return 0
+
+
+def _collect_geometry(value: Any) -> list[list[float]]:
+    points: list[list[float]] = []
+
+    def visit(node: Any) -> None:
+        if isinstance(node, dict):
+            polyline = node.get("polyline")
+            if isinstance(polyline, dict):
+                polyline = polyline.get("polyline")
+            if isinstance(polyline, str):
+                for pair in polyline.split(";"):
+                    parts = pair.split(",")
+                    if len(parts) != 2:
+                        continue
+                    try:
+                        point = [float(parts[0]), float(parts[1])]
+                    except ValueError:
+                        continue
+                    if not points or points[-1] != point:
+                        points.append(point)
+            for key, child in node.items():
+                if key != "polyline":
+                    visit(child)
+        elif isinstance(node, list):
+            for child in node:
+                visit(child)
+
+    visit(value)
+    return points
 
 
 def _estimated_route(
     origin: PlaceCandidate, destination: PlaceCandidate, mode: str
-) -> tuple[int, int, str, bool]:
+) -> tuple[int, int, str, bool, list[list[float]], list[dict[str, Any]]]:
     lat1, lat2 = map(math.radians, [float(origin.latitude), float(destination.latitude)])
     dlat = lat2 - lat1
     dlon = math.radians(float(destination.longitude) - float(origin.longitude))
@@ -396,7 +486,7 @@ def _estimated_route(
     factor = {"walk": 1.25, "transit": 1.45, "driving": 1.35}[mode]
     speed = {"walk": 75, "transit": 350, "driving": 500}[mode]
     distance = max(100, round(straight * factor))
-    return distance, max(2, math.ceil(distance / speed)), "RoamSync Estimate", True
+    return distance, max(2, math.ceil(distance / speed)), "RoamSync Estimate", True, [], []
 
 
 def _category_for_type(value: str) -> str:

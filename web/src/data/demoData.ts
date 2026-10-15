@@ -151,6 +151,7 @@ const activity = (
     coordinates: place.coordinates,
     scheduledTime,
     durationMinutes: durationMinutes ?? place.suggestedDurationMinutes,
+    importance: "normal" as const,
     estimatedCostFen: place.estimatedCostFen,
     status: "planned" as const,
     scheduleLocked: false,

@@ -34,4 +34,14 @@ describe("LocalTripPlanningRepository", () => {
     const days = await repository.getDays(DEMO_TRIP_ID);
     expect(days[0].activities[0].placeId).toBe("west-lake");
   });
+
+  it("records a travel event when requesting dynamic replanning", async () => {
+    const repository = new LocalTripPlanningRepository(localStorage);
+    const execution = await repository.startTripExecution(DEMO_TRIP_ID, "day-1");
+    const run = await repository.requestDynamicReplan(DEMO_TRIP_ID, "delay", "当前活动延误 45 分钟");
+    expect(run.status).toBe("awaiting_confirmation");
+    const state = await repository.getTripExecution(DEMO_TRIP_ID);
+    expect(state.events.at(-1)).toMatchObject({ eventType: "delay", details: { source: "dynamic_replan" } });
+    expect(execution.id).toBeTruthy();
+  });
 });

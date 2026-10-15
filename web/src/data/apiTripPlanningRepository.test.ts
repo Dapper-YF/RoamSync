@@ -3,7 +3,43 @@ import { ApiRequestError, ApiTripPlanningRepository } from "./apiTripPlanningRep
 import { DEMO_TRIP_UUID } from "./demoData";
 
 describe("ApiTripPlanningRepository", () => {
+  it("maps only the server-retrieved decision memory attached to a PlanningRun", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      id: "run-1", trip_id: "trip-1", run_type: "replan", status: "planning",
+      user_request: "请再调整一次。", model_provider: null, model_name: null, token_usage: 0,
+      error_code: null, error_message: null, pending_interrupt: null,
+      created_at: "2026-09-27T10:00:00Z", completed_at: null,
+      trigger_snapshot: { decision_context_summary: { decision_memory: {
+        count: 1, feedback: [{ source_revision_id: "revision-1", reason_code: "too_rushed", reason_text: "文化场馆太短" }],
+      } } },
+    }), { status: 200 })));
+    const run = await new ApiTripPlanningRepository().getPlanningRun("run-1");
+    expect(run.decisionMemory).toEqual({ count: 1, feedback: [{ sourceRevisionId: "revision-1", reasonCode: "too_rushed", reasonText: "文化场馆太短" }] });
+  });
+  it("maps the execution-progress BFF contract and preserves unknown risk", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      trip_id: "trip", itinerary_version: 7,
+      execution: { id: null, trip_id: "trip", status: "not_started", current_date: "2026-09-05", current_day_plan_id: null, current_activity_id: null, actual_started_at: null, actual_ended_at: null, paused_at: null, schedule_delay_minutes: 0, remaining_activity_count: 0, remaining_estimated_cost_fen: 0, activities: [], events: [] },
+      navigation_session: null, current_activity_name: null, navigation_target_name: null, risk_level: "unknown", minimum_downstream_slack_minutes: null, first_impacted_activity_id: null,
+      active_disruption: null, active_recovery_run: null, recovery_revision: null, generated_at: "2026-09-05T09:00:00Z",
+    }), { status: 200 })));
+    const value = await new ApiTripPlanningRepository().getExecutionProgress("trip");
+    expect(value).toMatchObject({ tripId: "trip", itineraryVersion: 7, riskLevel: "unknown", navigationSession: null });
+  });
   afterEach(() => vi.unstubAllGlobals());
+
+  it("sends all assistant operations as JSON including conversation and selection IDs", async () => {
+    const fetchMock = vi.fn().mockImplementation(async () => new Response(JSON.stringify({ id: "session", trip_id: null, messages: [], pending_action: null, latest_run_id: null }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const repository = new ApiTripPlanningRepository();
+    await repository.getAssistantSession();
+    await repository.sendAssistantMessage("session", "改期", "message-id", "day-id");
+    await repository.decideAssistantAction("session", "action-id", true);
+    for (const [, init] of fetchMock.mock.calls) expect(init.headers["Content-Type"]).toBe("application/json");
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({ trip_id: null });
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({ message: "改期", message_id: "message-id", selected_day_id: "day-id" });
+    expect(JSON.parse(fetchMock.mock.calls[2][1].body)).toEqual({ action_id: "action-id", accept: true });
+  });
 
   it("maps snake_case trip DTOs using the real trip UUID", async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({
@@ -27,7 +63,7 @@ describe("ApiTripPlanningRepository", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     const trip = await new ApiTripPlanningRepository().getTrip(DEMO_TRIP_UUID);
-    expect(fetchMock).toHaveBeenCalledWith(`/api/v1/trips/${DEMO_TRIP_UUID}`, undefined);
+    expect(fetchMock).toHaveBeenCalledWith(`/api/v1/trips/${DEMO_TRIP_UUID}`, { cache: "no-store" });
     expect(trip.startDate).toBe("2026-09-05");
     expect(trip.totalBudgetFen).toBe(120000);
     expect(trip.destinationAdcode).toBe("330100");
@@ -41,6 +77,38 @@ describe("ApiTripPlanningRepository", () => {
     expect(cities[0]).toEqual({ name: "南昌市", adcode: "360100", citycode: "0791", coordinates: [115.857972, 28.682976] });
   });
 
+  it("maps and updates the structured planning profile", async () => {
+    const dto = {
+      trip_id: DEMO_TRIP_UUID,
+      pace: "relaxed",
+      interest_categories: ["history", "food"],
+      transport_modes: ["walk", "transit"],
+      daily_start_time: "09:30:00",
+      daily_end_time: "20:30:00",
+      meal_preferences: "不吃辣",
+      avoid_categories: ["大型乐园"],
+      max_walking_minutes: 45,
+      free_text_requirements: "下午保留机动时间",
+      version: 2,
+      updated_at: "2026-09-02T01:00:00Z",
+    };
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify(dto), { status: 200, headers: { "Content-Type": "application/json" } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ ...dto, version: 3 }), { status: 200, headers: { "Content-Type": "application/json" } }));
+    vi.stubGlobal("fetch", fetchMock);
+    const repository = new ApiTripPlanningRepository();
+
+    const preferences = await repository.getTripPreferences(DEMO_TRIP_UUID);
+    expect(preferences).toMatchObject({ pace: "relaxed", dailyStartTime: "09:30", maxWalkingMinutes: 45 });
+    const updated = await repository.updateTripPreferences(DEMO_TRIP_UUID, preferences);
+    expect(updated.version).toBe(3);
+    expect(JSON.parse(fetchMock.mock.calls[1][1]?.body as string)).toMatchObject({
+      interest_categories: ["history", "food"],
+      daily_start_time: "09:30",
+      max_walking_minutes: 45,
+    });
+  });
+
   it("returns the server-generated activity id after adding a place", async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({
       id: "activity-id",
@@ -52,6 +120,7 @@ describe("ApiTripPlanningRepository", () => {
       latitude: 30.23111,
       scheduled_time: "20:05:00",
       duration_minutes: 75,
+      importance: "normal",
       estimated_cost_fen: 4000,
       status: "planned",
       position: 3,
@@ -96,7 +165,12 @@ describe("ApiTripPlanningRepository", () => {
     const dayDto = {
       id: "day-id", trip_id: DEMO_TRIP_UUID, date: "2026-09-05", label: "第 1 天", theme: "湖滨", position: 0,
       activities: [],
-      route_legs: [{ id: "leg", from_activity_id: "a", to_activity_id: "b", position: 0, mode: "driving", distance_meters: 1500, duration_minutes: 6, provider: "AMap Route", is_estimated: false }],
+      route_legs: [{
+        id: "leg", from_activity_id: "a", to_activity_id: "b", position: 0, mode: "driving",
+        distance_meters: 1500, duration_minutes: 6, provider: "AMap Route 2.0", is_estimated: false,
+        path: [[115.8, 28.6], [115.9, 28.7]],
+        alternatives: [{ distance_meters: 1700, duration_minutes: 7, path: [[115.8, 28.6], [115.85, 28.65], [115.9, 28.7]] }],
+      }],
       conflicts: [{ activity_id: "b", code: "late_finish", message: "将在 22:00 后结束" }],
     };
     const fetchMock = vi.fn()
@@ -111,7 +185,11 @@ describe("ApiTripPlanningRepository", () => {
     const repository = new ApiTripPlanningRepository();
 
     const day = await repository.recalculateRoute("day-id", "driving");
-    expect(day.routeLegs?.[0]).toMatchObject({ mode: "driving", provider: "AMap Route", isEstimated: false });
+    expect(day.routeLegs?.[0]).toMatchObject({
+      mode: "driving", provider: "AMap Route 2.0", isEstimated: false,
+      path: [[115.8, 28.6], [115.9, 28.7]],
+      alternatives: [{ distanceMeters: 1700, durationMinutes: 7 }],
+    });
     expect(day.conflicts?.[0].code).toBe("late_finish");
     const places = await repository.searchPlaces(DEMO_TRIP_UUID, "博物馆", "culture");
     expect(fetchMock.mock.calls[1][0]).toContain(`/api/v1/trips/${DEMO_TRIP_UUID}/places/search?q=`);
@@ -123,7 +201,7 @@ describe("ApiTripPlanningRepository", () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({
       id: "activity-id", place_id: "persisted-place-id", name: "滕王阁", category: "culture",
       neighborhood: "东湖区", longitude: 115.881, latitude: 28.683, scheduled_time: "09:00:00",
-      duration_minutes: 120, estimated_cost_fen: 5000, status: "planned", position: 0, note: null,
+      duration_minutes: 120, importance: "normal", estimated_cost_fen: 5000, status: "planned", position: 0, note: null,
       source: { id: "source-id", title: "高德地点搜索：滕王阁", url: "https://www.amap.com/search?id=B_TWG", provider: "AMap POI", queried_at: "2026-09-01T00:00:00Z", confidence: "high" },
     }), { status: 201, headers: { "Content-Type": "application/json" } }));
     vi.stubGlobal("fetch", fetchMock);
@@ -144,6 +222,7 @@ describe("ApiTripPlanningRepository", () => {
       id: "activity-id", place_id: "place-id", name: "滕王阁", custom_name: "滕王阁日落",
       display_name: "滕王阁日落", category: "culture", neighborhood: "东湖区",
       longitude: 115.881, latitude: 28.683, scheduled_time: "17:30:00", duration_minutes: 120,
+      importance: "must_do",
       estimated_cost_fen: 5000, status: "planned", position: 0, schedule_locked: true,
       version: 2, note: "提前购票", updated_at: "2026-09-01T12:00:00Z",
       source: { id: "source-id", title: "滕王阁", url: "https://www.amap.com/search?id=B_TWG", provider: "AMap POI", queried_at: "2026-09-01T00:00:00Z", confidence: "high" },
@@ -154,17 +233,18 @@ describe("ApiTripPlanningRepository", () => {
       customName: "滕王阁日落",
       scheduledTime: "17:30",
       durationMinutes: 120,
+      importance: "must_do",
       estimatedCostFen: 5000,
       note: "提前购票",
       scheduleLocked: true,
     });
     expect(activity).toMatchObject({
       name: "滕王阁日落", originalName: "滕王阁", customName: "滕王阁日落",
-      scheduleLocked: true, version: 2, updatedAt: "2026-09-01T12:00:00Z",
+      importance: "must_do", scheduleLocked: true, version: 2, updatedAt: "2026-09-01T12:00:00Z",
     });
     const init = fetchMock.mock.calls[0][1] as RequestInit;
     expect(JSON.parse(String(init.body))).toMatchObject({
-      version: 1, custom_name: "滕王阁日落", scheduled_time: "17:30", schedule_locked: true,
+      version: 1, custom_name: "滕王阁日落", scheduled_time: "17:30", importance: "must_do", schedule_locked: true,
     });
   });
 
@@ -191,5 +271,36 @@ describe("ApiTripPlanningRepository", () => {
     expect(result.targetDay.activities[0]).toMatchObject({ id: "activity-id", version: 2 });
     const init = fetchMock.mock.calls[0][1] as RequestInit;
     expect(JSON.parse(String(init.body))).toEqual({ version: 1, target_day_plan_id: "day-2", target_position: 0 });
+  });
+
+  it("maps a persisted Agent run and its candidate revision", async () => {
+    const runDto = {
+      id: "run-id", trip_id: DEMO_TRIP_UUID, run_type: "replan", status: "awaiting_confirmation",
+      user_request: "调整第2天下午", model_provider: "deepseek", model_name: "deepseek-v4-flash",
+      token_usage: 1200, error_code: null, error_message: null,
+      pending_interrupt: { kind: "approval", revision_id: "revision-id" },
+    };
+    const revisionDto = {
+      id: "revision-id", planning_run_id: "run-id", reason: "降低步行强度",
+      proposed_snapshot: { activities: [{
+        candidate_id: "candidate-1", day_date: "2026-09-06", place_candidate_id: "place-id",
+        planned_start_time: "14:30:00", duration_minutes: 90, estimated_cost_fen: 3000,
+        transport_mode_to_here: "transit", reason: "路线更从容", locked: false,
+      }], route_legs: [] },
+      difference_summary: { changed: 1 }, validation_result: { valid: true },
+      source_ids: ["source-id"], status: "pending",
+    };
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify(runDto), { status: 201, headers: { "Content-Type": "application/json" } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(revisionDto), { status: 200, headers: { "Content-Type": "application/json" } }));
+    vi.stubGlobal("fetch", fetchMock);
+    const repository = new ApiTripPlanningRepository();
+
+    const run = await repository.createPlanningRun(DEMO_TRIP_UUID, "调整第2天下午");
+    const revision = await repository.getPlanRevision(run.id);
+
+    expect(run).toMatchObject({ status: "awaiting_confirmation", modelProvider: "deepseek", pendingInterrupt: { kind: "approval" } });
+    expect(revision.activities[0]).toMatchObject({ plannedStartTime: "14:30", transportModeToHere: "transit" });
+    expect(JSON.parse(String(fetchMock.mock.calls[0][1]?.body))).toEqual({ run_type: "replan", user_request: "调整第2天下午" });
   });
 });

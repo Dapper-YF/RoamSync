@@ -16,6 +16,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import type { ReactNode } from "react";
 import { Clock3, GripVertical, MapPin, Plus, Route, WalletCards } from "lucide-react";
 import type { Activity, BudgetSummary, DayPlan, RouteLeg, ScheduleConflict } from "../domain/types";
 import { formatFen } from "../utils/planner";
@@ -32,6 +33,8 @@ interface PlannerSidebarProps {
   onReorder: (activityIds: string[]) => void;
   onMoveActivity: (activity: Activity, targetDayId: string, targetPosition: number) => Promise<void>;
   onOpenPlaces: () => void;
+  onOpenAi: () => void;
+  executionStatus?: ReactNode;
 }
 
 export function PlannerSidebar(props: PlannerSidebarProps) {
@@ -65,7 +68,12 @@ export function PlannerSidebar(props: PlannerSidebarProps) {
     <aside className="planner-sidebar">
       <div className="sidebar-heading">
         <div><span className="eyebrow">DAY PLAN</span><h1>{selectedDay.theme}</h1></div>
-        <button className="primary-icon-button" type="button" onClick={props.onOpenPlaces} aria-label="添加地点"><Plus size={20} /></button>
+      </div>
+      {props.executionStatus}
+      <div className={`planner-guidance${selectedDay.activities.length === 0 ? " is-empty" : ""}`}>
+        <strong>{selectedDay.activities.length === 0 ? "安排这一天的行程" : `当天已安排 ${selectedDay.activities.length} 项`}</strong>
+        <span>{selectedDay.activities.length === 0 ? "让旅程总管生成首版安排，也可以自己添加地点。" : "可以继续添加地点，也可以拖拽卡片调整顺序。路线和预算会同步更新。"}</span>
+        <div><button type="button" onClick={props.onOpenAi}>让旅程总管规划或调整</button></div>
       </div>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -74,14 +82,14 @@ export function PlannerSidebar(props: PlannerSidebarProps) {
         </div>
 
         <div className={`budget-strip budget-${budget.status}`} data-testid="budget-summary">
-          <div className="budget-copy"><WalletCards size={18} /><span>今日预计</span><strong>{formatFen(budget.plannedFen)}</strong><small>剩余 {formatFen(budget.remainingFen)}</small></div>
-          <div className="budget-progress"><i style={{ width: `${Math.min(budget.ratio * 100, 100)}%` }} /></div>
+          <div className="budget-copy"><WalletCards size={18} /><span>当天预计</span><strong>{formatFen(budget.plannedFen)}</strong><small>{budget.remainingFen == null ? "未设预算上限" : `剩余 ${formatFen(budget.remainingFen)}`}</small></div>
+          <div className="budget-progress"><i style={{ width: `${Math.min((budget.ratio ?? 0) * 100, 100)}%` }} /></div>
         </div>
         {conflicts.length > 0 && <div className="schedule-warning" role="status"><strong>时间提醒</strong><span>{conflicts[0].message}</span></div>}
 
         <div className="timeline-scroll">
           {selectedDay.activities.length === 0 ? (
-            <div className="empty-timeline"><MapPin size={28} /><strong>这一天还没有安排</strong><p>从候选地点中加入第一个节点。</p><button type="button" onClick={props.onOpenPlaces}><Plus size={16} />添加地点</button></div>
+            <div className="empty-timeline"><MapPin size={28} /><strong>这一天还没有安排</strong><p>点击下方添加地点，或让旅程总管帮你安排。</p></div>
           ) : (
             <SortableContext items={selectedDay.activities.map((item) => item.id)} strategy={verticalListSortingStrategy}>
               <ol className="timeline-list">
@@ -97,7 +105,7 @@ export function PlannerSidebar(props: PlannerSidebarProps) {
         </div>
       </DndContext>
 
-      <button className="add-place-button" type="button" onClick={props.onOpenPlaces}><Plus size={18} /> 从候选地点加入</button>
+      <button className="add-place-button" type="button" onClick={props.onOpenPlaces}><Plus size={18} /> 添加地点</button>
     </aside>
   );
 }
@@ -119,8 +127,8 @@ function SortableActivity({ activity, index, selected, onSelect }: { activity: A
       <button className="drag-handle" type="button" aria-label={`拖动 ${activity.name}`} {...attributes} {...listeners}><GripVertical size={17} /></button>
       <button className="timeline-card-main" type="button" onClick={onSelect}>
         <span className="timeline-number">{index + 1}</span>
-        <div className="timeline-card-content"><div className="timeline-meta"><span><Clock3 size={13} />{activity.scheduledTime}</span><span>{activity.durationMinutes} 分钟</span>{activity.scheduleLocked && <span>已锁定</span>}</div><strong>{activity.name}</strong><p><MapPin size={13} />{activity.neighborhood}</p></div>
-        <span className="cost-tag">{activity.status === "skipped" ? "已跳过" : activity.estimatedCostFen === 0 ? "免费" : formatFen(activity.estimatedCostFen)}</span>
+        <div className="timeline-card-content"><div className="timeline-meta"><span><Clock3 size={13} />{activity.scheduledTime}</span><span>{activity.durationMinutes} 分钟</span>{activity.scheduleLocked && <span>已锁定</span>}{activity.importance !== "normal" && <span className={`decision-tag importance-${activity.importance}`}>{({ low: "可选", high: "比较想去", must_do: "必去" })[activity.importance]}</span>}{activity.canSkip === false && activity.importance !== "must_do" && <span>需保留</span>}{activity.minimumDurationMinutes != null && <span>至少 {activity.minimumDurationMinutes} 分钟</span>}</div><strong>{activity.name}</strong><p><MapPin size={13} />{activity.neighborhood}</p></div>
+        <span className="cost-tag">{activity.status === "skipped" ? "已跳过" : activity.status === "completed" ? "已完成" : activity.estimatedCostFen === 0 ? "免费" : formatFen(activity.estimatedCostFen)}</span>
       </button>
     </article>
   );

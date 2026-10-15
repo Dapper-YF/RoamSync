@@ -27,6 +27,12 @@ data class TripResponse(
     @SerialName("daily_budget_fen") val dailyBudgetFen: Long,
     val currency: String,
     val timezone: String,
+    val destination: String = "",
+    val accommodation: String = "",
+    val status: String = "upcoming",
+    val version: Int = 1,
+    @SerialName("center_longitude") val longitude: Double? = null,
+    @SerialName("center_latitude") val latitude: Double? = null,
 )
 
 @Serializable

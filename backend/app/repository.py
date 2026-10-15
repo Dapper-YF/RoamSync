@@ -6,8 +6,15 @@ from sqlalchemy import delete, func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import Activity, DayPlan, Expense, PlaceCandidate, RouteLeg, SourceRecord, Trip
-from app.schemas import BudgetResponse, ExpenseCreate, TripCreate, TripDeletionPreviewResponse, TripUpdate
+from app.database import Activity, DayPlan, Expense, PlaceCandidate, RouteLeg, SourceRecord, Trip, TripPreferences
+from app.schemas import (
+    BudgetResponse,
+    ExpenseCreate,
+    TripCreate,
+    TripDeletionPreviewResponse,
+    TripPreferencesUpdate,
+    TripUpdate,
+)
 
 
 class TripNotFoundError(Exception):
@@ -26,10 +33,15 @@ class TripDateConflictError(Exception):
     pass
 
 
-async def create_trip(session: AsyncSession, payload: TripCreate) -> Trip:
+class TripPreferencesVersionConflictError(Exception):
+    pass
+
+
+async def create_trip(session: AsyncSession, payload: TripCreate, *, commit: bool = True) -> Trip:
     trip = Trip(**payload.model_dump())
     session.add(trip)
     await session.flush()
+    session.add(TripPreferences(trip_id=trip.id))
     current = payload.start_date
     position = 0
     while current <= payload.end_date:
@@ -45,7 +57,10 @@ async def create_trip(session: AsyncSession, payload: TripCreate) -> Trip:
         )
         current += timedelta(days=1)
         position += 1
-    await session.commit()
+    if commit:
+        await session.commit()
+    else:
+        await session.flush()
     await session.refresh(trip)
     return trip
 
@@ -77,11 +92,15 @@ async def update_trip(
         exclude_unset=True,
         exclude={"version", "confirm_day_removal"},
     )
+    if "total_budget_fen" in values and values["total_budget_fen"] is None:
+        values["daily_budget_fen"] = None
+    if "daily_budget_fen" in values and values["daily_budget_fen"] is None:
+        values["total_budget_fen"] = None
     start_date = values.get("start_date", trip.start_date)
     end_date = values.get("end_date", trip.end_date)
     total_budget = values.get("total_budget_fen", trip.total_budget_fen)
     daily_budget = values.get("daily_budget_fen", trip.daily_budget_fen)
-    if end_date < start_date or daily_budget > total_budget:
+    if end_date < start_date or (daily_budget is not None and total_budget is not None and daily_budget > total_budget):
         raise ValueError("invalid trip dates or budget")
 
     days = list(
@@ -135,7 +154,7 @@ async def update_trip(
     return trip
 
 
-async def duplicate_trip(session: AsyncSession, trip_id: uuid.UUID) -> Trip:
+async def duplicate_trip(session: AsyncSession, trip_id: uuid.UUID, *, commit: bool = True) -> Trip:
     source_trip = await get_trip(session, trip_id)
     duplicate = Trip(
         title=f"{source_trip.title}（副本）",
@@ -159,6 +178,22 @@ async def duplicate_trip(session: AsyncSession, trip_id: uuid.UUID) -> Trip:
     )
     session.add(duplicate)
     await session.flush()
+    source_preferences = await session.get(TripPreferences, trip_id)
+    if source_preferences is not None:
+        session.add(
+            TripPreferences(
+                trip_id=duplicate.id,
+                pace=source_preferences.pace,
+                interest_categories=list(source_preferences.interest_categories),
+                transport_modes=list(source_preferences.transport_modes),
+                daily_start_time=source_preferences.daily_start_time,
+                daily_end_time=source_preferences.daily_end_time,
+                meal_preferences=source_preferences.meal_preferences,
+                avoid_categories=list(source_preferences.avoid_categories),
+                max_walking_minutes=source_preferences.max_walking_minutes,
+                free_text_requirements=source_preferences.free_text_requirements,
+            )
+        )
 
     source_map: dict[uuid.UUID, SourceRecord] = {}
     for source in (
@@ -226,6 +261,12 @@ async def duplicate_trip(session: AsyncSession, trip_id: uuid.UUID) -> Trip:
                 place_candidate_id=place_map[activity.place_candidate_id].id,
                 scheduled_time=activity.scheduled_time,
                 duration_minutes=activity.duration_minutes,
+                importance=activity.importance,
+                can_skip=activity.can_skip,
+                minimum_duration_minutes=activity.minimum_duration_minutes,
+                importance_source=activity.importance_source,
+                can_skip_source=activity.can_skip_source,
+                minimum_duration_source=activity.minimum_duration_source,
                 estimated_cost_fen=activity.estimated_cost_fen,
                 status=activity.status,
                 position=activity.position,
@@ -255,7 +296,10 @@ async def duplicate_trip(session: AsyncSession, trip_id: uuid.UUID) -> Trip:
                 calculated_at=leg.calculated_at,
             )
         )
-    await session.commit()
+    if commit:
+        await session.commit()
+    else:
+        await session.flush()
     await session.refresh(duplicate)
     return duplicate
 
@@ -287,6 +331,36 @@ async def delete_trip(session: AsyncSession, trip_id: uuid.UUID) -> None:
     await get_trip(session, trip_id)
     await session.execute(delete(Trip).where(Trip.id == trip_id))
     await session.commit()
+
+
+async def get_trip_preferences(
+    session: AsyncSession, trip_id: uuid.UUID
+) -> TripPreferences:
+    await get_trip(session, trip_id)
+    preferences = await session.get(TripPreferences, trip_id)
+    if preferences is None:
+        # Defensive compatibility for databases imported without running migrations.
+        preferences = TripPreferences(trip_id=trip_id)
+        session.add(preferences)
+        await session.commit()
+        await session.refresh(preferences)
+    return preferences
+
+
+async def update_trip_preferences(
+    session: AsyncSession,
+    trip_id: uuid.UUID,
+    payload: TripPreferencesUpdate,
+) -> TripPreferences:
+    preferences = await get_trip_preferences(session, trip_id)
+    if preferences.version != payload.version:
+        raise TripPreferencesVersionConflictError
+    for key, value in payload.model_dump(exclude={"version"}).items():
+        setattr(preferences, key, value)
+    preferences.version += 1
+    await session.commit()
+    await session.refresh(preferences)
+    return preferences
 
 
 def _same_expense(existing: Expense, payload: ExpenseCreate) -> bool:
@@ -372,9 +446,9 @@ async def get_budget(session: AsyncSession, trip_id: uuid.UUID) -> BudgetRespons
         currency=trip.currency,
         total_budget_fen=trip.total_budget_fen,
         total_spent_fen=total_spent_fen,
-        total_remaining_fen=trip.total_budget_fen - total_spent_fen,
+        total_remaining_fen=(trip.total_budget_fen - total_spent_fen) if trip.total_budget_fen is not None else None,
         daily_budget_fen=trip.daily_budget_fen,
         today_spent_fen=today_spent_fen,
-        today_remaining_fen=trip.daily_budget_fen - today_spent_fen,
+        today_remaining_fen=(trip.daily_budget_fen - today_spent_fen) if trip.daily_budget_fen is not None else None,
         local_date=local_date,
     )

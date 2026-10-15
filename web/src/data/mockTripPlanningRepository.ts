@@ -9,11 +9,19 @@ import type {
   PlaceCandidate,
   PlaceSearchResult,
   PlanningBudget,
+  PlanningContext,
+  PlanningRun,
+  PlanRevision,
   Trip,
+  TripExecution,
+  TripExecutionAction,
   TripCreateInput,
   TripDeletionPreview,
   TripPlanningRepository,
+  DynamicReplanTrigger,
   TripUpdateInput,
+  TripPreferences,
+  TripPreferencesUpdateInput,
 } from "../domain/types";
 import {
   DEMO_SCHEMA_VERSION,
@@ -31,13 +39,32 @@ interface PersistedDemoState {
   days: DayPlan[];
 }
 
+const DEMO_EXECUTION_STORAGE_KEY = "roamsync-demo-execution-v1";
+
 const clone = <T,>(value: T): T => structuredClone(value);
 
 export class LocalTripPlanningRepository implements TripPlanningRepository {
   private days: DayPlan[];
+  private planningRuns: PlanningRun[] = [];
+  private execution: TripExecution | null;
+  private preferences: TripPreferences = {
+    tripId: DEMO_TRIP_UUID,
+    pace: "balanced",
+    interestCategories: ["culture", "food"],
+    transportModes: ["walk", "transit"],
+    dailyStartTime: "09:00",
+    dailyEndTime: "21:00",
+    mealPreferences: "",
+    avoidCategories: [],
+    maxWalkingMinutes: 60,
+    freeTextRequirements: "",
+    version: 1,
+    updatedAt: new Date(0).toISOString(),
+  };
 
   constructor(private readonly storage: Storage = window.localStorage) {
     this.days = this.loadDays();
+    this.execution = this.loadExecution();
   }
 
   async listTrips(): Promise<Trip[]> {
@@ -72,6 +99,46 @@ export class LocalTripPlanningRepository implements TripPlanningRepository {
   async updateTrip(tripId: string, input: TripUpdateInput): Promise<Trip> {
     this.assertDemoTrip(tripId);
     return { ...clone(demoTrip), title: input.title ?? demoTrip.title, version: input.version + 1 };
+  }
+
+  async getTripPreferences(tripId: string): Promise<TripPreferences> {
+    this.assertDemoTrip(tripId);
+    return clone(this.preferences);
+  }
+
+  async updateTripPreferences(tripId: string, input: TripPreferencesUpdateInput): Promise<TripPreferences> {
+    this.assertDemoTrip(tripId);
+    this.preferences = {
+      ...clone(input),
+      tripId: DEMO_TRIP_UUID,
+      version: input.version + 1,
+      updatedAt: new Date().toISOString(),
+    };
+    return clone(this.preferences);
+  }
+
+  async getPlanningContext(tripId: string): Promise<PlanningContext> {
+    this.assertDemoTrip(tripId);
+    const planningBudget = await this.getPlanningBudget(tripId);
+    return {
+      trip: clone(demoTrip),
+      preferences: clone(this.preferences),
+      days: clone(this.days),
+      candidates: await this.getCandidates(tripId),
+      actualBudget: {
+        tripId,
+        totalBudgetFen: demoTrip.totalBudgetFen,
+        totalSpentFen: 0,
+        totalRemainingFen: demoTrip.totalBudgetFen,
+        dailyBudgetFen: demoTrip.dailyBudgetFen,
+        todaySpentFen: 0,
+        todayRemainingFen: demoTrip.dailyBudgetFen,
+        localDate: demoTrip.startDate,
+      },
+      planningBudget,
+      generatedAt: new Date().toISOString(),
+    externalFacts: {},
+    };
   }
 
   async duplicateTrip(tripId: string): Promise<Trip> {
@@ -133,21 +200,21 @@ export class LocalTripPlanningRepository implements TripPlanningRepository {
     this.assertDemoTrip(tripId);
     const days = this.days.map((day) => {
       const plannedFen = day.activities.reduce((total, activity) => total + activity.estimatedCostFen, 0);
-      const ratio = plannedFen / demoTrip.dailyBudgetFen;
+      const ratio = demoTrip.dailyBudgetFen == null ? null : plannedFen / demoTrip.dailyBudgetFen;
       return {
         dayPlanId: day.id,
         date: day.date,
         plannedFen,
-        remainingFen: demoTrip.dailyBudgetFen - plannedFen,
+        remainingFen: demoTrip.dailyBudgetFen == null ? null : demoTrip.dailyBudgetFen - plannedFen,
         ratio,
-        status: ratio > 1 ? "over" as const : ratio >= 0.8 ? "watch" as const : "comfortable" as const,
+        status: ratio === null ? "unconstrained" as const : ratio > 1 ? "over" as const : ratio >= 0.8 ? "watch" as const : "comfortable" as const,
       };
     });
     const totalPlannedFen = days.reduce((total, day) => total + day.plannedFen, 0);
     return {
       tripId,
       totalPlannedFen,
-      totalRemainingFen: demoTrip.totalBudgetFen - totalPlannedFen,
+      totalRemainingFen: demoTrip.totalBudgetFen == null ? null : demoTrip.totalBudgetFen - totalPlannedFen,
       days,
     };
   }
@@ -170,6 +237,7 @@ export class LocalTripPlanningRepository implements TripPlanningRepository {
       coordinates: place.coordinates,
       scheduledTime: this.nextTime(day.activities),
       durationMinutes: place.suggestedDurationMinutes,
+      importance: "normal",
       estimatedCostFen: place.estimatedCostFen,
       status: "planned",
       scheduleLocked: false,
@@ -191,6 +259,11 @@ export class LocalTripPlanningRepository implements TripPlanningRepository {
     if (input.customName !== undefined) activity.name = activity.customName || activity.originalName;
     if (input.scheduledTime !== undefined) activity.scheduledTime = input.scheduledTime;
     if (input.durationMinutes !== undefined) activity.durationMinutes = input.durationMinutes;
+    if (input.importance !== undefined) activity.importance = input.importance;
+    if (input.canSkip !== undefined) activity.canSkip = input.canSkip;
+    if (input.minimumDurationMinutes !== undefined) activity.minimumDurationMinutes = input.minimumDurationMinutes;
+    if (activity.importance === "must_do") activity.canSkip = false;
+    if (activity.minimumDurationMinutes != null && activity.minimumDurationMinutes > activity.durationMinutes) throw new Error("最少停留时间不能超过停留时长");
     if (input.estimatedCostFen !== undefined) activity.estimatedCostFen = input.estimatedCostFen;
     if (input.status !== undefined) activity.status = input.status;
     if (input.note !== undefined) activity.note = input.note?.trim() || undefined;
@@ -249,8 +322,129 @@ export class LocalTripPlanningRepository implements TripPlanningRepository {
     this.persist();
   }
 
+  async createPlanningRun(tripId: string, userRequest: string): Promise<PlanningRun> {
+    this.assertDemoTrip(tripId);
+    const run = { id: `mock-run-${this.planningRuns.length + 1}`, tripId: DEMO_TRIP_UUID, runType: "replan" as const, status: "awaiting_confirmation" as const, userRequest, tokenUsage: 0, createdAt: new Date().toISOString() };
+    this.planningRuns.unshift(run);
+    return clone(run);
+  }
+
+  async listPlanningRuns(tripId: string): Promise<PlanningRun[]> {
+    this.assertDemoTrip(tripId);
+    return clone(this.planningRuns);
+  }
+
+  async getPlanningRun(): Promise<PlanningRun> {
+    return { id: "mock-run", tripId: DEMO_TRIP_UUID, runType: "replan", status: "awaiting_confirmation", userRequest: "", tokenUsage: 0 };
+  }
+
+  async answerPlanningRun(_runId: string, answer: string): Promise<PlanningRun> {
+    return { id: "mock-run", tripId: DEMO_TRIP_UUID, runType: "replan", status: "awaiting_confirmation", userRequest: answer, tokenUsage: 0 };
+  }
+
+  async decidePlanningRun(_runId: string, decision: "accept" | "reject"): Promise<{ run: PlanningRun; revision: PlanRevision }> {
+    const run: PlanningRun = { id: "mock-run", tripId: DEMO_TRIP_UUID, runType: "replan", status: decision === "accept" ? "accepted" : "rejected", userRequest: "", tokenUsage: 0 };
+    const revision = { ...(await this.getPlanRevision()), status: decision === "accept" ? "accepted" : "rejected" } as PlanRevision;
+    return { run, revision };
+  }
+
+  async getPlanRevision(): Promise<PlanRevision> {
+    return { id: "mock-revision", planningRunId: "mock-run", reason: "演示候选方案", activities: [], differenceSummary: {}, validationResult: {}, sourceIds: [], status: "pending" };
+  }
+
+  async acceptPlanRevision(): Promise<PlanRevision> {
+    return { ...(await this.getPlanRevision()), status: "accepted" };
+  }
+
+  async rejectPlanRevision(): Promise<PlanRevision> {
+    return { ...(await this.getPlanRevision()), status: "rejected" };
+  }
+
+  async getTripExecution(tripId: string): Promise<TripExecution> {
+    this.assertDemoTrip(tripId);
+    return clone(this.execution ?? this.buildExecution("not_started"));
+  }
+
+  async getExecutionProgress(tripId: string): Promise<import("../domain/types").ExecutionProgress> {
+    const execution = await this.getTripExecution(tripId);
+    return {
+      tripId, itineraryVersion: 1, execution, navigationSession: null,
+      currentActivityName: execution.activities.find((item) => item.activityId === execution.currentActivityId)?.name ?? null,
+      currentActivityExperience: null, experienceImpact: null,
+      navigationTargetName: null, riskLevel: "unknown", minimumDownstreamSlackMinutes: null,
+      firstImpactedActivityId: null, activeDisruption: null, activeRecoveryRun: null,
+      recoveryRevision: null, recoveryPlanning: null, generatedAt: new Date().toISOString(),
+    };
+  }
+
+  async startTripExecution(tripId: string, dayPlanId?: string): Promise<TripExecution> {
+    this.assertDemoTrip(tripId);
+    if (!this.execution) {
+      this.execution = this.buildExecution("in_progress", dayPlanId);
+      this.execution.id = "mock-execution";
+      this.execution.actualStartedAt = new Date().toISOString();
+      this.execution.events.push({ id: "mock-event-start", eventType: "trip_started", occurredAt: new Date().toISOString(), details: {} });
+      this.persistExecution();
+    } else if (this.execution.status === "not_started") {
+      this.execution.status = "in_progress";
+      this.execution.id = "mock-execution";
+      this.execution.actualStartedAt = new Date().toISOString();
+      this.execution.events.push({ id: "mock-event-start", eventType: "trip_started", occurredAt: new Date().toISOString(), details: {} });
+      this.persistExecution();
+    }
+    return clone(this.execution);
+  }
+
+  async applyTripExecutionAction(executionId: string, action: TripExecutionAction, activityId?: string): Promise<TripExecution> {
+    if (!this.execution || this.execution.id !== executionId) throw new Error("旅行执行不存在");
+    const now = new Date().toISOString();
+    if (action === "pause") this.execution.status = "paused";
+    else if (action === "resume") this.execution.status = "in_progress";
+    else if (action === "finish") this.execution.status = "completed";
+    else {
+      const current = this.execution.activities.find((item) => item.activityId === (activityId ?? this.execution!.currentActivityId));
+      if (!current) throw new Error("当前活动不存在");
+      if (action === "arrive") { current.status = "arrived"; current.actualArrivedAt = now; }
+      if (action === "start_activity") { current.status = "in_progress"; current.actualStartedAt = now; }
+      if (action === "complete" || action === "skip") {
+        current.status = action === "complete" ? "completed" : "skipped";
+        current.actualEndedAt = now;
+        const next = this.execution.activities.find((item) => item.status === "pending");
+        this.execution.currentActivityId = next?.activityId;
+        this.execution.currentDayPlanId = next?.dayPlanId;
+        if (next) this.execution.currentDate = next.dayDate;
+      }
+    }
+    this.execution.events.push({ id: `mock-event-${this.execution.events.length + 1}`, eventType: action, activityId, occurredAt: now, details: {} });
+    const remaining = this.execution.activities.filter((item) => item.dayDate === this.execution!.currentDate && !["completed", "skipped"].includes(item.status));
+    this.execution.remainingActivityCount = remaining.length;
+    this.execution.remainingEstimatedCostFen = remaining.reduce((sum, item) => sum + item.estimatedCostFen, 0);
+    this.persistExecution();
+    return clone(this.execution);
+  }
+
+  async extendStay(): Promise<void> { /* The mock does not synthesize server-owned experience projections. */ }
+  async leaveEarly(activityExecutionId: string): Promise<void> {
+    if (!this.execution?.id) throw new Error("旅行执行不存在");
+    const current = this.execution.activities.find((item) => item.id === activityExecutionId);
+    if (current) await this.applyTripExecutionAction(this.execution.id, "complete", current.activityId);
+  }
+
+  async requestDynamicReplan(tripId: string, trigger: DynamicReplanTrigger, details: string): Promise<PlanningRun> {
+    this.assertDemoTrip(tripId);
+    if (!this.execution || !["in_progress", "paused"].includes(this.execution.status)) throw new Error("只有进行中的旅行可以动态重规划");
+    const now = new Date().toISOString();
+    this.execution.events.push({ id: `mock-event-${this.execution.events.length + 1}`, eventType: trigger, occurredAt: now, details: { source: "dynamic_replan", details } });
+    const run: PlanningRun = { id: `mock-run-${this.planningRuns.length + 1}`, tripId, runType: "replan", status: "awaiting_confirmation", userRequest: details, tokenUsage: 0, createdAt: now };
+    this.planningRuns.unshift(run);
+    this.persist();
+    return clone(run);
+  }
+
   async resetDemo(): Promise<void> {
     this.days = clone(demoDays);
+    this.execution = null;
+    this.storage.removeItem(DEMO_EXECUTION_STORAGE_KEY);
     this.persist();
   }
 
@@ -277,6 +471,24 @@ export class LocalTripPlanningRepository implements TripPlanningRepository {
     day.routeLegs = buildRouteLegs(day.activities).map((leg) => ({ ...leg, mode: day.routeMode! }));
   }
 
+  private buildExecution(status: TripExecution["status"], dayPlanId?: string): TripExecution {
+    const startDay = this.days.find((day) => day.id === dayPlanId) ?? this.days[0];
+    const activities = this.days.flatMap((day) => day.activities.map((activity) => ({
+      activityId: activity.id, dayPlanId: day.id, dayDate: day.date, name: activity.name,
+      scheduledTime: activity.scheduledTime, estimatedCostFen: activity.estimatedCostFen,
+      status: "pending" as const, delayMinutes: 0,
+    })));
+    const current = activities.find((item) => item.dayPlanId === startDay.id);
+    const remaining = activities.filter((item) => item.dayPlanId === startDay.id);
+    return {
+      tripId: DEMO_TRIP_UUID, status, currentDate: startDay.date, currentDayPlanId: startDay.id,
+      currentActivityId: current?.activityId, scheduleDelayMinutes: 0,
+      remainingActivityCount: remaining.length,
+      remainingEstimatedCostFen: remaining.reduce((sum, item) => sum + item.estimatedCostFen, 0),
+      activities, events: [],
+    };
+  }
+
   private loadDays(): DayPlan[] {
     try {
       const raw = this.storage.getItem(DEMO_STORAGE_KEY);
@@ -287,6 +499,19 @@ export class LocalTripPlanningRepository implements TripPlanningRepository {
     } catch {
       return clone(demoDays);
     }
+  }
+
+  private loadExecution(): TripExecution | null {
+    try {
+      const raw = this.storage.getItem(DEMO_EXECUTION_STORAGE_KEY);
+      return raw ? JSON.parse(raw) as TripExecution : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private persistExecution() {
+    if (this.execution) this.storage.setItem(DEMO_EXECUTION_STORAGE_KEY, JSON.stringify(this.execution));
   }
 
   private persist() {

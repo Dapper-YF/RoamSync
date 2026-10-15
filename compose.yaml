@@ -29,9 +29,37 @@ services:
     environment:
       APP_ENV: development
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LANGGRAPH_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LANGGRAPH_STRICT_MSGPACK: "true"
       AMAP_REST_KEY: ${AMAP_REST_KEY:-}
+      TAVILY_API_KEY: ${ROAMSYNC_TAVILY_API_KEY:-${TAVILY_API_KEY:-}}
+      DECISION_LEDGER_VALIDATION_MODE: ${DECISION_LEDGER_VALIDATION_MODE:-shadow}
+      TAVILY_BASE_URL: ${TAVILY_BASE_URL:-https://api.tavily.com}
+      TAVILY_PROXY_URL: ${TAVILY_PROXY_URL:-}
+      # API can resume planning runs after a clarification or approval decision.
+      HTTP_PROXY: ${CONTAINER_HTTP_PROXY:-http://host.docker.internal:7897}
+      HTTPS_PROXY: ${CONTAINER_HTTPS_PROXY:-http://host.docker.internal:7897}
+      http_proxy: ${CONTAINER_HTTP_PROXY:-http://host.docker.internal:7897}
+      https_proxy: ${CONTAINER_HTTPS_PROXY:-http://host.docker.internal:7897}
+      NO_PROXY: ${CONTAINER_NO_PROXY:-localhost,127.0.0.1,::1,postgres,api,agent-worker,web}
+      no_proxy: ${CONTAINER_NO_PROXY:-localhost,127.0.0.1,::1,postgres,api,agent-worker,web}
+      SEARCH_TIMEOUT_SECONDS: ${SEARCH_TIMEOUT_SECONDS:-30}
+      WEATHER_PROVIDER: ${WEATHER_PROVIDER:-open_meteo}
+      WEATHER_BASE_URL: ${WEATHER_BASE_URL:-https://api.open-meteo.com/v1/forecast}
+      WEATHER_TIMEOUT_SECONDS: ${WEATHER_TIMEOUT_SECONDS:-10}
       ROUTE_CACHE_TTL_SECONDS: ${ROUTE_CACHE_TTL_SECONDS:-86400}
       ALLOW_MAP_ESTIMATES: ${ALLOW_MAP_ESTIMATES:-false}
+      PLANNER_PROVIDER: ${PLANNER_PROVIDER:-glm}
+      PLANNER_API_KEY: ${PLANNER_API_KEY:-}
+      PLANNER_BASE_URL: ${PLANNER_BASE_URL:-https://open.bigmodel.cn/api/paas/v4}
+      PLANNER_PROXY_URL: ${PLANNER_PROXY_URL:-}
+      PLANNER_MODEL: ${PLANNER_MODEL:-glm-5.3-flash}
+      PLANNER_TIMEOUT_SECONDS: ${PLANNER_TIMEOUT_SECONDS:-90}
+      PLANNER_MAX_RETRIES: ${PLANNER_MAX_RETRIES:-0}
+      PLANNER_MAX_OUTPUT_TOKENS: ${PLANNER_MAX_OUTPUT_TOKENS:-20000}
+      PLANNER_MAX_CANDIDATES: ${PLANNER_MAX_CANDIDATES:-40}
+      PLANNER_REASONING_EFFORT: ${PLANNER_REASONING_EFFORT:-high}
+      INTENT_REASONING_EFFORT: ${INTENT_REASONING_EFFORT:-max}
     ports:
       - "${API_HOST_PORT:-8000}:8000"
     depends_on:
@@ -43,6 +71,72 @@ services:
       timeout: 3s
       retries: 6
       start_period: 10s
+
+  agent-checkpoint-init:
+    build:
+      context: ./backend
+      target: production
+    restart: "no"
+    environment:
+      APP_ENV: development
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LANGGRAPH_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LANGGRAPH_STRICT_MSGPACK: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["uv", "run", "--no-sync", "python", "-m", "app.init_checkpoints"]
+
+  agent-worker:
+    build:
+      context: ./backend
+      target: production
+    restart: "no"
+    environment:
+      APP_ENV: development
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LANGGRAPH_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LANGGRAPH_STRICT_MSGPACK: "true"
+      AMAP_REST_KEY: ${AMAP_REST_KEY:-}
+      TAVILY_API_KEY: ${ROAMSYNC_TAVILY_API_KEY:-${TAVILY_API_KEY:-}}
+      DECISION_LEDGER_VALIDATION_MODE: ${DECISION_LEDGER_VALIDATION_MODE:-shadow}
+      TAVILY_BASE_URL: ${TAVILY_BASE_URL:-https://api.tavily.com}
+      TAVILY_PROXY_URL: ${TAVILY_PROXY_URL:-}
+      # Container egress needs an explicit application proxy in this Docker Desktop setup.
+      HTTP_PROXY: ${CONTAINER_HTTP_PROXY:-http://host.docker.internal:7897}
+      HTTPS_PROXY: ${CONTAINER_HTTPS_PROXY:-http://host.docker.internal:7897}
+      http_proxy: ${CONTAINER_HTTP_PROXY:-http://host.docker.internal:7897}
+      https_proxy: ${CONTAINER_HTTPS_PROXY:-http://host.docker.internal:7897}
+      NO_PROXY: ${CONTAINER_NO_PROXY:-localhost,127.0.0.1,::1,postgres,api,agent-worker,web}
+      no_proxy: ${CONTAINER_NO_PROXY:-localhost,127.0.0.1,::1,postgres,api,agent-worker,web}
+      SEARCH_TIMEOUT_SECONDS: ${SEARCH_TIMEOUT_SECONDS:-30}
+      WEATHER_PROVIDER: ${WEATHER_PROVIDER:-open_meteo}
+      WEATHER_BASE_URL: ${WEATHER_BASE_URL:-https://api.open-meteo.com/v1/forecast}
+      WEATHER_TIMEOUT_SECONDS: ${WEATHER_TIMEOUT_SECONDS:-10}
+      ROUTE_CACHE_TTL_SECONDS: ${ROUTE_CACHE_TTL_SECONDS:-86400}
+      ALLOW_MAP_ESTIMATES: ${ALLOW_MAP_ESTIMATES:-false}
+      AGENT_POLL_SECONDS: ${AGENT_POLL_SECONDS:-2}
+      AGENT_LEASE_SECONDS: ${AGENT_LEASE_SECONDS:-300}
+      AGENT_WORKER_CONCURRENCY: ${AGENT_WORKER_CONCURRENCY:-2}
+      AGENT_RUN_TIMEOUT_SECONDS: ${AGENT_RUN_TIMEOUT_SECONDS:-360}
+      RESEARCH_REASONING_EFFORT: ${RESEARCH_REASONING_EFFORT:-low}
+      PLANNER_PROVIDER: ${PLANNER_PROVIDER:-glm}
+      PLANNER_API_KEY: ${PLANNER_API_KEY:-}
+      PLANNER_BASE_URL: ${PLANNER_BASE_URL:-https://open.bigmodel.cn/api/paas/v4}
+      PLANNER_PROXY_URL: ${PLANNER_PROXY_URL:-}
+      PLANNER_MODEL: ${PLANNER_MODEL:-glm-5.3-flash}
+      PLANNER_TIMEOUT_SECONDS: ${PLANNER_TIMEOUT_SECONDS:-90}
+      PLANNER_MAX_RETRIES: ${PLANNER_MAX_RETRIES:-0}
+      PLANNER_MAX_OUTPUT_TOKENS: ${PLANNER_MAX_OUTPUT_TOKENS:-20000}
+      PLANNER_MAX_CANDIDATES: ${PLANNER_MAX_CANDIDATES:-40}
+      PLANNER_REASONING_EFFORT: ${PLANNER_REASONING_EFFORT:-high}
+      INTENT_REASONING_EFFORT: ${INTENT_REASONING_EFFORT:-max}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      agent-checkpoint-init:
+        condition: service_completed_successfully
+    command: ["uv", "run", "--no-sync", "python", "-m", "app.agent_worker"]
 
   web:
     build:

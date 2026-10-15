@@ -1,12 +1,13 @@
 import AMapLoader from "@amap/amap-jsapi-loader";
 import { LocateFixed, Map, Route, TriangleAlert } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type { Activity, Coordinates } from "../domain/types";
+import type { Activity, Coordinates, RouteLeg } from "../domain/types";
 
 interface MapCanvasProps {
   activities: Activity[];
   center?: Coordinates;
   accommodation?: { name: string; coordinates: Coordinates };
+  routeLegs: RouteLeg[];
   selectedActivityId: string | null;
   onSelectActivity: (activityId: string) => void;
 }
@@ -37,7 +38,7 @@ interface AMapNamespace {
   Polyline: new (options: Record<string, unknown>) => AMapOverlay;
 }
 
-export function MapCanvas({ activities, center, accommodation, selectedActivityId, onSelectActivity }: MapCanvasProps) {
+export function MapCanvas({ activities, center, accommodation, routeLegs, selectedActivityId, onSelectActivity }: MapCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<AMapInstance | null>(null);
   const amapRef = useRef<AMapNamespace | null>(null);
@@ -104,23 +105,33 @@ export function MapCanvas({ activities, center, accommodation, selectedActivityI
       zIndex: 90,
       content: `<div class="map-marker accommodation-marker" aria-label="住宿：${accommodation.name}">住</div>`,
     }) : null;
-    const path = activities.map((activity) => activity.coordinates);
-    const polyline =
-      path.length > 1
-        ? new AMap.Polyline({
-            path,
+    const alternativePolylines = routeLegs.flatMap((leg) =>
+      (leg.alternatives ?? []).map((alternative) => new AMap.Polyline({
+        path: alternative.path,
+        strokeColor: "#789d99",
+        strokeWeight: 3,
+        strokeOpacity: 0.34,
+        strokeStyle: "dashed",
+        lineJoin: "round",
+        zIndex: 40,
+      })),
+    );
+    const routePolylines = routeLegs
+      .filter((leg) => (leg.path?.length ?? 0) > 1)
+      .map((leg) => new AMap.Polyline({
+            path: leg.path,
             strokeColor: "#1b8f83",
             strokeWeight: 5,
             strokeOpacity: 0.82,
             strokeStyle: "solid",
             lineJoin: "round",
             showDir: true,
-          })
-        : null;
-    overlaysRef.current = [...markers, ...(accommodationMarker ? [accommodationMarker] : []), ...(polyline ? [polyline] : [])];
+            zIndex: 50,
+          }));
+    overlaysRef.current = [...alternativePolylines, ...routePolylines, ...markers, ...(accommodationMarker ? [accommodationMarker] : [])];
     mapRef.current.add(overlaysRef.current);
     if (activities.length > 0) mapRef.current.setFitView(overlaysRef.current, false, [92, 92, 92, 430], 15);
-  }, [accommodation, activities, onSelectActivity, selectedActivityId, status]);
+  }, [accommodation, activities, onSelectActivity, routeLegs, selectedActivityId, status]);
 
   useEffect(() => {
     if (status !== "ready" || !mapRef.current || !selectedActivityId) return;
@@ -136,7 +147,8 @@ export function MapCanvas({ activities, center, accommodation, selectedActivityI
       <div className="map-legend glass-panel">
         <span><i className="legend-dot planned" />计划节点</span>
         {accommodation && <span><i className="legend-dot accommodation" />住宿</span>}
-        <span><i className="legend-line" />高德路线</span>
+        <span><i className="legend-line" />高德最短路线</span>
+        {routeLegs.some((leg) => (leg.alternatives?.length ?? 0) > 0) && <span><i className="legend-line alternative" />备选路线</span>}
       </div>
       <button className="map-locate glass-button" type="button" aria-label="定位到行程">
         <LocateFixed size={18} />

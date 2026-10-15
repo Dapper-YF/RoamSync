@@ -33,6 +33,7 @@ def test_persisted_planner_crud_order_and_budget() -> None:
         assert created.status_code == 201
         assert created.json()["name"] == "雷峰塔"
         assert created.json()["position"] == 3
+        assert created.json()["importance"] == "normal"
 
         duplicate = client.post(
             f"/api/v1/day-plans/{days[1]['id']}/activities",
@@ -222,12 +223,115 @@ def test_map_quota_error_has_stable_machine_code(monkeypatch) -> None:
         }
 
 
+def test_amap_route_parser_selects_shortest_path_and_keeps_alternatives(monkeypatch) -> None:
+    import asyncio
+    from types import SimpleNamespace
+
+    import app.maps_service as maps_service
+
+    monkeypatch.setattr(
+        maps_service,
+        "get_settings",
+        lambda: SimpleNamespace(amap_rest_key="test-key"),
+    )
+    monkeypatch.setattr(
+        maps_service,
+        "_get_json",
+        lambda url: {
+            "status": "1",
+            "route": {
+                "paths": [
+                    {
+                        "distance": "1900",
+                        "cost": {"duration": "900"},
+                        "steps": [{"polyline": "120.1,30.1;120.2,30.2"}],
+                    },
+                    {
+                        "distance": "1200",
+                        "cost": {"duration": "720"},
+                        "steps": [
+                            {"polyline": "120.1,30.1;120.15,30.12"},
+                            {"polyline": "120.15,30.12;120.2,30.2"},
+                        ],
+                    },
+                ]
+            },
+        },
+    )
+    origin = SimpleNamespace(longitude=120.1, latitude=30.1)
+    destination = SimpleNamespace(longitude=120.2, latitude=30.2)
+
+    result = asyncio.run(
+        maps_service._fetch_amap_route(origin, destination, "walk", "0571")
+    )
+
+    assert result[0:2] == (1200, 12)
+    assert result[4] == [[120.1, 30.1], [120.15, 30.12], [120.2, 30.2]]
+    assert result[5][0]["distance_meters"] == 1900
+
+
+def test_amap_route_parser_collects_nested_transit_geometry() -> None:
+    from app.maps_service import _parse_route_path
+
+    parsed = _parse_route_path(
+        {
+            "distance": "3200",
+            "cost": {"duration": "1080"},
+            "segments": [
+                {"walking": {"steps": [{"polyline": {"polyline": "120.1,30.1;120.11,30.11"}}]}},
+                {"bus": {"buslines": [{"polyline": {"polyline": "120.11,30.11;120.2,30.2"}}]}},
+            ],
+        },
+        {},
+    )
+
+    assert parsed == (
+        3200,
+        18,
+        [[120.1, 30.1], [120.11, 30.11], [120.2, 30.2]],
+    )
+
+
 def test_activity_create_requires_one_place_source() -> None:
     with TestClient(app) as client:
         days = _reset(client)
         response = client.post(
             f"/api/v1/day-plans/{days[0]['id']}/activities",
             json={},
+        )
+        assert response.status_code == 422
+
+
+def test_activity_importance_defaults_updates_persists_and_bumps_trip_version() -> None:
+    with TestClient(app) as client:
+        days = _reset(client)
+        activity = days[0]["activities"][0]
+        assert activity["importance"] == "normal"
+        before_trip = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}").json()
+
+        updated = client.put(
+            f"/api/v1/activities/{activity['id']}",
+            json={"version": activity["version"], "importance": "must_do"},
+        )
+        assert updated.status_code == 200
+        assert updated.json()["importance"] == "must_do"
+
+        refreshed = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}/days").json()
+        assert refreshed[0]["activities"][0]["importance"] == "must_do"
+        after_trip = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}").json()
+        assert after_trip["version"] == before_trip["version"] + 1
+
+        context = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}/planning-context")
+        assert context.status_code == 200
+        assert context.json()["days"][0]["activities"][0]["importance"] == "must_do"
+
+
+def test_activity_importance_rejects_unknown_value() -> None:
+    with TestClient(app) as client:
+        activity = _reset(client)[0]["activities"][0]
+        response = client.put(
+            f"/api/v1/activities/{activity['id']}",
+            json={"version": activity["version"], "importance": "critical"},
         )
         assert response.status_code == 422
 

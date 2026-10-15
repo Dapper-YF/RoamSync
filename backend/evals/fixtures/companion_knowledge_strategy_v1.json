@@ -1,0 +1,24 @@
+{
+  "version": "companion-knowledge-strategy-v1",
+  "rules": {"accuracy": "0 incorrect / 1 partial or uncertain / 2 correct; check stable historical statements against independent sources", "completeness": "0 missed / 1 partial / 2 covers requested aspects", "relevance": "0 off-topic / 1 partly / 2 directly answers", "naturalness": "0 rigid / 1 usable / 2 fluent and context-aware", "citation_authenticity": "every attributed fact must use supplied canonical source and supported assertion; model knowledge is not retrieved evidence", "hallucination": "record unsupported factual statements and unverified dynamic assertions separately", "review": "scores remain null until a human reviews saved output; controlled responses never establish answer quality"},
+  "cases": [
+    {"id":"history", "text":"南京为什么叫六朝古都？", "decision":"general_knowledge"},
+    {"id":"culture", "text":"杭州有哪些文化特色？", "decision":"general_knowledge"},
+    {"id":"comparison", "text":"苏州和南京哪个更适合慢节奏旅行？", "decision":"context_required"},
+    {"id":"solo", "text":"一个人旅游有什么建议？", "decision":"context_required"},
+    {"id":"preferences", "text":"我不喜欢热门景点，有什么旅游思路？", "decision":"context_required"},
+    {"id":"followup", "text":"那有什么适合我的体验？", "decision":"context_required", "history":[{"id":"prior", "user":"我喜欢安静的街巷，不喜欢排队。准备去苏州。", "assistant":"可以从慢节奏的街巷体验开始。"}]},
+    {"id":"specialist_missing", "text":"西湖碑刻的训诂有什么特点？", "decision":"rag_candidate"},
+    {"id":"source_valid", "text":"西湖列入世界遗产是哪年？请给出来源。", "decision":"rag_candidate"},
+    {"id":"source_missing", "text":"南京为什么叫六朝古都？请给出文献来源。", "decision":"rag_candidate"},
+    {"id":"forecast", "text":"杭州明天下午天气怎么样？", "decision":"live_fact_required"},
+    {"id":"opening", "text":"南京博物院明天几点开门？", "decision":"live_fact_required"},
+    {"id":"dated_event", "text":"今年南京灯会具体举办时间和地点是什么？", "decision":"live_fact_required"},
+    {"id":"tradition", "text":"南京元宵灯会有什么文化特色？", "decision":"general_knowledge"},
+    {"id":"low_quality", "text":"西湖碑刻历史有什么特点？", "decision":"rag_candidate", "retrieval":"untrusted"},
+    {"id":"source_untrusted", "text":"西湖历史有什么特点？请给出处。", "decision":"rag_candidate", "retrieval":"untrusted"},
+    {"id":"rationale", "text":"为什么当前行程把西湖安排在18点？", "decision":"mixed"},
+    {"id":"planning", "text":"帮我规划南京三天行程", "runtime":"planning"},
+    {"id":"replanning", "text":"把当前行程第二天改得轻松一点", "runtime":"planning"}
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "version": "companion-independent-holdout-v1",
+  "rules": {"review": "Six dimensions 1-5; independently verify factual claims; do not rank incomplete real outputs. Frozen before real execution. No corpus expansion."},
+  "cases": [
+    {"id":"holdout_nanjing_wall", "text":"南京明城墙体现了哪些明代城市建设特点？"},
+    {"id":"holdout_suzhou_gardens", "text":"苏州古典园林的借景是什么意思？用容易理解的例子解释。"},
+    {"id":"holdout_craft_compare", "text":"昆曲和南京云锦分别能让我体验到什么文化特色？"},
+    {"id":"holdout_personal", "text":"按我之前的偏好，在苏州有哪些适合我的文化体验方向？不需要具体行程。", "history":[{"id":"h-pref", "user":"我喜欢园林和传统戏曲，不喜欢商业化打卡，也不想挤在热门街区。", "assistant":"可以先讨论文化体验的类型。"}]},
+    {"id":"holdout_specialist_source", "text":"请根据可靠文献解释苏州虎丘碑文的版本差异，材料不足请说明。"},
+    {"id":"holdout_live", "text":"苏州博物馆明天还有预约名额吗？"},
+    {"id":"holdout_source_negation", "text":"不用提供出处，介绍苏州园林为什么值得慢慢看。"}
+  ]
+}
