@@ -51,6 +51,17 @@ _OBJECT_BEFORE_ADD_PATTERN = re.compile(
 _REPLACE_PATTERN = re.compile(
     r"(?:把)?\s*([^，。；,;]+?)\s*(?:换成|替换成|改成)\s*([^，。；,;]+)"
 )
+_DURATION_VALUE_PATTERN = re.compile(
+    r"(?:(?:\d+(?:\.\d+)?|[一二三四五六七八九十百两]+)(?:个)?半?|半)(?:分钟|小时)(?:半|左右)?"
+)
+
+
+def _is_duration_change(match: re.Match) -> bool:
+    # A complete measured value changes an attribute, not venue identity.
+    # Names containing a duration (e.g. 45分钟咖啡馆) stay in place grounding.
+    return bool(_DURATION_VALUE_PATTERN.fullmatch(match.group(2).strip()))
+
+
 _REMOVE_PATTERN = re.compile(
     r"(?:删掉|删除|取消|不去)\s*([^，。；,;]+)"
 )
@@ -187,6 +198,8 @@ def classify_planning_intent(
         return "unknown"
     if is_advice_request(message):
         return "unknown"
+    if any(_is_duration_change(match) for match in _REPLACE_PATTERN.finditer(message)):
+        return "modify_day"
     has_day_reference = bool(
         _DAY_PATTERN.search(message)
         or _ISO_DATE_PATTERN.search(message)
@@ -838,7 +851,11 @@ def _build_rule_semantic_draft(
     elif legacy_intent == "replan_trip":
         add_operation("replan_trip")
 
-    replace_matches = list(_REPLACE_PATTERN.finditer(message))
+    all_replacements = list(_REPLACE_PATTERN.finditer(message))
+    duration_matches = [match for match in all_replacements if _is_duration_change(match)]
+    replace_matches = [match for match in all_replacements if not _is_duration_change(match)]
+    if duration_matches:
+        add_operation("replan_trip", activity_mentions=[match.group(1).strip() for match in duration_matches])
     if replace_matches:
         add_operation(
             "replace_activity",
