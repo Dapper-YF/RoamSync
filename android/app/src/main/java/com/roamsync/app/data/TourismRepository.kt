@@ -33,7 +33,16 @@ fun normalizedTourismUrl(value: String): String {
     @Volatile var accessToken: String? = null
     private val prefs = context.getSharedPreferences("tourism_connection", Context.MODE_PRIVATE)
     fun url() = prefs.getString("base_url", null) ?: BuildConfig.API_BASE_URL
-    fun save(value: String) { accessToken = null; prefs.edit().putString("base_url", normalizedTourismUrl(value)).remove("assistant_id").apply() }
+    fun save(value: String) {
+        val normalized = normalizedTourismUrl(value)
+        val changedServer = normalized != runCatching { normalizedTourismUrl(url()) }.getOrNull()
+        accessToken = null
+        val edit = prefs.edit().putString("base_url", normalized)
+        // Re-pairing the same service must not discard the user's conversation.
+        // The service still checks session ownership when it is read again.
+        if (changedServer) edit.remove("assistant_id").remove("assistant_topic_id")
+        edit.apply()
+    }
     fun sessionId(): String? = prefs.getString("assistant_id", null)
     fun saveSession(value: String) { prefs.edit().putString("assistant_id", value).apply() }
     fun topicId(): String = prefs.getString("assistant_topic_id", null) ?: run {

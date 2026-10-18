@@ -13,6 +13,37 @@ deferred and must not be presented as implemented Agent behavior.
 
 ## Scope and product boundary
 
+### Bounded decision evidence and requirement context (2026-10-18)
+
+Canonical follow-up separates complete provenance/visit-history statements from
+effective travel requirements without rewriting historical records. A complete
+duration on the right side of an activity edit is an attribute update; identity
+ambiguity still requires clarification and never grants mutation authority.
+
+Candidate comparison now records same-day, same-anchor walking tradeoffs and
+their evidenced competing benefits. Unknown exposure is not a weather benefit;
+reviewed landscape components can match current explicit interests even when a
+provider's broad category is `sight`. Neither changes the ranking to force the
+shortest route or proves whole-day optimality. Unknown actual spending remains
+not_evaluable, never implicitly zero. Bounded explanation contradiction checks
+reuse the existing output-repair budget and validation failure path; Graph
+rechecks before producing a reviewable revision. They are not general semantic
+truth verification or an automatic venue/weather follow-up capability.
+
+The additive free-form PlanValidationIssue code is
+`decision_explanation_unsupported`, with bounded contradiction details. It uses
+the existing review/final constraints-unsatisfied path; no PlanningRunErrorCode
+enum, state or acceptance endpoint is added. Old persisted revisions require no
+migration or retrospective explanation rewriting.
+
+No public Pydantic/DB schema, migration, graph node/state, tool authority or
+Accept/version fence changed. Existing persisted JSON remains compatible;
+comparison/read-model additions have no independent write authority. Acceptance
+and regressions: `B_REQUIREMENT_CONTEXT_20261018.md`,
+`DECISION_FOLLOWUP_20261018.md`, `test_requirement_context_boundary.py`,
+`test_duration_intent_boundary.py`, `test_decision_followup*.py`, and isolated
+PostgreSQL integration evidence in `evidence/integrated-followup-20261018/`.
+
 ### Companion knowledge strategy addendum (2026-10-11)
 
 InformationNeed retains the existing graph and permissions, adding optional

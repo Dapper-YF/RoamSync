@@ -19,6 +19,28 @@ Android build49 passes; current-position route/full interruption matrix remain
 open. See docs/ANDROID_NATIVE_DELIVERY_20261018.md. Source/mirror history below is historical. Full release report:
 docs/OFFICIAL_V2_RELEASE_20261018.md.
 
+## Comprehensive follow-up (2026-10-18)
+
+VERIFIED: B separates bounded provenance/visit-background statements from effective
+requirements while retaining historical records; complete duration edits bind
+activities rather than venue text. C records evidenced walking tradeoffs across
+provider categories, preserves unknown spending, and rejects bounded explanation
+contradictions before reviewable revisions. No DB/public schema, mutation tools or
+Accept/version authority expansion. D adds three attributed CC BY-SA photos:
+10 exact places/12 photos total. Canonical app is now the read-only source for
+isolated API/worker and canonical Web3016. New changes are not yet redeployed to3000.
+
+MEASURED: two actual GLM/Graph/AMap/Validator/Accept cases choose a28-minute leg for
+walking priority and a53-minute leg with evidenced landscape interest for explicit
+scenery priority; unknown budget stays not_evaluable. B real formal revision
+preserves out-of-scope business fields, but metadata touches are disclosed.
+Full isolated backend regression1218 passed/25 skipped. Web UI creates and adopts
+one dedicated Trip; a separately paired protocol client reads identical data,
+not physical Android. Final APK is built; user explicitly skipped unavailable
+phone, leaving execution/recovery/interruption/Web reread incomplete. Reports:
+COMPREHENSIVE_FOLLOWUP_DELIVERY_20261018.md, DECISION_FOLLOWUP_20261018.md,
+B_REQUIREMENT_CONTEXT_20261018.md. No production writes or public exposure.
+
 ## Prior Scope
 
 2026-10-15 V2 round-two review response/third-round candidate revision only:

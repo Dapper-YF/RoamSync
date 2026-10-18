@@ -363,7 +363,7 @@ class RoamSyncViewModel @Inject constructor(private val api: RoamSyncApi, privat
             catch (e: Exception) {
                 if (e is CancellationException) throw e
                 mutable.update { it.copy(locationObservation = observed.copy(routeStatus = "unavailable"),
-                    error = "前台定位成功；本次路线查询失败：${userError(e)}") }
+                    error = "前台定位成功；${currentLocationRouteFailure(e)}") }
                 return@operation
             }
         mutable.update { it.copy(currentRoutePreview = CurrentRoutePreview(

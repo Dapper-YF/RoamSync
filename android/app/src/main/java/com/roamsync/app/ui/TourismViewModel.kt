@@ -496,7 +496,7 @@ data class NearbyCenter(val longitude: Double, val latitude: Double, val label: 
                     activePromotion = operations.firstOrNull(), promotionPreview = null) }
             }
         }
-        mutable.update { it.copy(notice = if (code.isBlank()) "地址已保存；USB 本机代理无需 APK 密钥" else "已配对，临时授权仅保存在内存") }
+        mutable.update { it.copy(notice = if (code.isBlank()) "地址已保存；需要授权时请使用一次性配对码" else "已配对，临时授权仅保存在内存") }
     } }
     fun disconnect() { work { repo.disconnect(); mutable.update { it.copy(notice = "临时授权已撤销") } } }
     fun retry() { retry?.invoke() }

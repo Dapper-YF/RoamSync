@@ -1,0 +1,849 @@
+{
+  "created_at": "2026-10-18T12:43:06.658Z",
+  "base": "http://127.0.0.1:3016",
+  "isolated_database": "roamsync_v2_integration",
+  "source_commit": "4c9bbe2ae7916fe4fca6f47e4274a55f982546ad",
+  "title": "跨端同一旅行验收 1792327386754",
+  "checks": [
+    "Web UI create, actual model draft, exact Provider place selection and explicit save",
+    "Web UI real route and complete dated plan preview",
+    "Web UI explicit adoption and same formal Trip page read",
+    "Read-only Web reread resolves original Trip ID and title",
+    "Fresh paired device protocol sees identical Trip/day data; not physical Android evidence"
+  ],
+  "failures": [
+    {
+      "kind": "prepare",
+      "message": "expect(locator).toHaveCount(expected) failed\n\nLocator:  locator('.journeys-days > article').first().locator('ol.journeys-activities > li').nth(1).locator('.journeys-picker-body > article').filter({ has: locator('strong').filter({ hasText: /^河坊街$/ }) })\nExpected: 1\nReceived: 2\nTimeout:  45000ms\n\nCall log:\n  - Expect \"to.have.count\" with timeout 45000ms\n  - waiting for locator('.journeys-days > article').first().locator('ol.journeys-activities > li').nth(1).locator('.journeys-picker-body > article').filter({ has: locator('strong').filter({ hasText: /^河坊街$/ }) })\n    5 × locator resolved to 0 elements\n      - unexpected value \"0\"\n    87 × locator resolved to 2 elements\n       - unexpected value \"2\"\n"
+    }
+  ],
+  "physical_android": "not_run",
+  "cross_client_acceptance": "incomplete",
+  "fixture_semantics": "software only; not visited; opening and booking unknown",
+  "draft_id": "40fceb47-0c15-4bbc-be93-49d11d55137b",
+  "start_date": "2026-10-19",
+  "operation_id": "e7db8685-bc3b-48d3-92ef-09d74d9537ba",
+  "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+  "before_android": {
+    "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+    "version": 2,
+    "title": "跨端同一旅行验收 1792327386754",
+    "start_date": "2026-10-19",
+    "day_ids": [
+      "8550687e-9579-415b-9267-19aeba2765a1"
+    ],
+    "activities": [
+      {
+        "id": "3133eaf7-57c6-498c-bde8-f05ef00f7858",
+        "day_id": "8550687e-9579-415b-9267-19aeba2765a1",
+        "name": "杭州博物馆",
+        "start": "09:00:00",
+        "duration": 45
+      },
+      {
+        "id": "b69d5dda-e723-43ff-bebb-85b3d7252eb5",
+        "day_id": "8550687e-9579-415b-9267-19aeba2765a1",
+        "name": "河坊街",
+        "start": "09:52:00",
+        "duration": 45
+      }
+    ],
+    "execution": {
+      "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+      "itinerary_version": 2,
+      "execution": {
+        "id": null,
+        "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+        "status": "not_started",
+        "current_date": "2026-10-19",
+        "current_day_plan_id": "8550687e-9579-415b-9267-19aeba2765a1",
+        "current_activity_id": "3133eaf7-57c6-498c-bde8-f05ef00f7858",
+        "actual_started_at": null,
+        "actual_ended_at": null,
+        "paused_at": null,
+        "schedule_delay_minutes": 0,
+        "remaining_activity_count": 2,
+        "remaining_estimated_cost_fen": 20000,
+        "activities": [
+          {
+            "id": null,
+            "activity_id": "3133eaf7-57c6-498c-bde8-f05ef00f7858",
+            "day_plan_id": "8550687e-9579-415b-9267-19aeba2765a1",
+            "day_date": "2026-10-19",
+            "name": "杭州博物馆",
+            "scheduled_time": "09:00:00",
+            "estimated_cost_fen": 10000,
+            "status": "pending",
+            "actual_arrived_at": null,
+            "actual_started_at": null,
+            "actual_ended_at": null,
+            "delay_minutes": 0
+          },
+          {
+            "id": null,
+            "activity_id": "b69d5dda-e723-43ff-bebb-85b3d7252eb5",
+            "day_plan_id": "8550687e-9579-415b-9267-19aeba2765a1",
+            "day_date": "2026-10-19",
+            "name": "河坊街",
+            "scheduled_time": "09:52:00",
+            "estimated_cost_fen": 10000,
+            "status": "pending",
+            "actual_arrived_at": null,
+            "actual_started_at": null,
+            "actual_ended_at": null,
+            "delay_minutes": 0
+          }
+        ],
+        "events": []
+      },
+      "navigation_session": null,
+      "current_activity_name": "杭州博物馆",
+      "current_activity_experience": null,
+      "experience_impact": null,
+      "navigation_target_name": null,
+      "risk_level": "unknown",
+      "minimum_downstream_slack_minutes": null,
+      "first_impacted_activity_id": null,
+      "active_disruption": null,
+      "active_recovery_run": null,
+      "recovery_revision": null,
+      "recovery_planning": null,
+      "generated_at": "2026-10-18T12:46:22.694511Z"
+    },
+    "requirements": {
+      "version": 1,
+      "records": [
+        {
+          "id": "req_dc865ee2de075c94923b81e7e852b021",
+          "text": "喜欢了解杭州历史",
+          "key": "user_requirement",
+          "value": null,
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft:40fceb47-0c15-4bbc-be93-49d11d55137b:create"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "active",
+          "supersedes": []
+        },
+        {
+          "id": "req_911fd684270c5efc8ad081a95af11c8d",
+          "text": "节奏：轻松",
+          "key": "pace",
+          "value": "relaxed",
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft:40fceb47-0c15-4bbc-be93-49d11d55137b:create"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "superseded",
+          "supersedes": []
+        },
+        {
+          "id": "req_6a23de176235515b8031e2e1169da318",
+          "text": "每天步行不超过60分钟",
+          "key": "max_walking_minutes",
+          "value": 60,
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft:40fceb47-0c15-4bbc-be93-49d11d55137b:create"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "hard",
+          "status": "active",
+          "supersedes": []
+        },
+        {
+          "id": "req_1867ada4919c5ea4b6efce392f7ada2d",
+          "text": "只安排杭州博物馆和河坊街两个地点",
+          "key": "user_requirement",
+          "value": null,
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "active",
+          "supersedes": []
+        },
+        {
+          "id": "req_dfcc4e69c57d5e5fa0f7debe3ec3fb9c",
+          "text": "先了解城市历史再游览街区",
+          "key": "user_requirement",
+          "value": null,
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "active",
+          "supersedes": []
+        },
+        {
+          "id": "req_64793078246b5467bee9e23f793efce6",
+          "text": "节奏：轻松",
+          "key": "pace",
+          "value": "relaxed",
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "active",
+          "supersedes": [
+            "req_911fd684270c5efc8ad081a95af11c8d"
+          ]
+        },
+        {
+          "id": "req_940b16a3749f58539f4543846d08d628",
+          "text": "不安排其他地点",
+          "key": "user_requirement",
+          "value": null,
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "active",
+          "supersedes": []
+        }
+      ],
+      "effective_by_date": {
+        "2026-10-19": [
+          {
+            "id": "req_dc865ee2de075c94923b81e7e852b021",
+            "text": "喜欢了解杭州历史",
+            "key": "user_requirement",
+            "value": null,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft:40fceb47-0c15-4bbc-be93-49d11d55137b:create"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "active",
+            "supersedes": []
+          },
+          {
+            "id": "req_6a23de176235515b8031e2e1169da318",
+            "text": "每天步行不超过60分钟",
+            "key": "max_walking_minutes",
+            "value": 60,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft:40fceb47-0c15-4bbc-be93-49d11d55137b:create"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "hard",
+            "status": "active",
+            "supersedes": []
+          },
+          {
+            "id": "req_1867ada4919c5ea4b6efce392f7ada2d",
+            "text": "只安排杭州博物馆和河坊街两个地点",
+            "key": "user_requirement",
+            "value": null,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "active",
+            "supersedes": []
+          },
+          {
+            "id": "req_dfcc4e69c57d5e5fa0f7debe3ec3fb9c",
+            "text": "先了解城市历史再游览街区",
+            "key": "user_requirement",
+            "value": null,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "active",
+            "supersedes": []
+          },
+          {
+            "id": "req_64793078246b5467bee9e23f793efce6",
+            "text": "节奏：轻松",
+            "key": "pace",
+            "value": "relaxed",
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "active",
+            "supersedes": [
+              "req_911fd684270c5efc8ad081a95af11c8d"
+            ]
+          },
+          {
+            "id": "req_940b16a3749f58539f4543846d08d628",
+            "text": "不安排其他地点",
+            "key": "user_requirement",
+            "value": null,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "active",
+            "supersedes": []
+          }
+        ]
+      }
+    },
+    "days_sha256": "609fb6046cb67a238c26cef3b660dc3588539ef2b792a86f064b0752971bd124"
+  },
+  "web_preparation": "passed",
+  "next_required": "Missing matching final physical APK execution/Recovery/interruption receipt",
+  "after_read": {
+    "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+    "version": 2,
+    "title": "跨端同一旅行验收 1792327386754",
+    "start_date": "2026-10-19",
+    "day_ids": [
+      "8550687e-9579-415b-9267-19aeba2765a1"
+    ],
+    "activities": [
+      {
+        "id": "3133eaf7-57c6-498c-bde8-f05ef00f7858",
+        "day_id": "8550687e-9579-415b-9267-19aeba2765a1",
+        "name": "杭州博物馆",
+        "start": "09:00:00",
+        "duration": 45
+      },
+      {
+        "id": "b69d5dda-e723-43ff-bebb-85b3d7252eb5",
+        "day_id": "8550687e-9579-415b-9267-19aeba2765a1",
+        "name": "河坊街",
+        "start": "09:52:00",
+        "duration": 45
+      }
+    ],
+    "execution": {
+      "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+      "itinerary_version": 2,
+      "execution": {
+        "id": null,
+        "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+        "status": "not_started",
+        "current_date": "2026-10-19",
+        "current_day_plan_id": "8550687e-9579-415b-9267-19aeba2765a1",
+        "current_activity_id": "3133eaf7-57c6-498c-bde8-f05ef00f7858",
+        "actual_started_at": null,
+        "actual_ended_at": null,
+        "paused_at": null,
+        "schedule_delay_minutes": 0,
+        "remaining_activity_count": 2,
+        "remaining_estimated_cost_fen": 20000,
+        "activities": [
+          {
+            "id": null,
+            "activity_id": "3133eaf7-57c6-498c-bde8-f05ef00f7858",
+            "day_plan_id": "8550687e-9579-415b-9267-19aeba2765a1",
+            "day_date": "2026-10-19",
+            "name": "杭州博物馆",
+            "scheduled_time": "09:00:00",
+            "estimated_cost_fen": 10000,
+            "status": "pending",
+            "actual_arrived_at": null,
+            "actual_started_at": null,
+            "actual_ended_at": null,
+            "delay_minutes": 0
+          },
+          {
+            "id": null,
+            "activity_id": "b69d5dda-e723-43ff-bebb-85b3d7252eb5",
+            "day_plan_id": "8550687e-9579-415b-9267-19aeba2765a1",
+            "day_date": "2026-10-19",
+            "name": "河坊街",
+            "scheduled_time": "09:52:00",
+            "estimated_cost_fen": 10000,
+            "status": "pending",
+            "actual_arrived_at": null,
+            "actual_started_at": null,
+            "actual_ended_at": null,
+            "delay_minutes": 0
+          }
+        ],
+        "events": []
+      },
+      "navigation_session": null,
+      "current_activity_name": "杭州博物馆",
+      "current_activity_experience": null,
+      "experience_impact": null,
+      "navigation_target_name": null,
+      "risk_level": "unknown",
+      "minimum_downstream_slack_minutes": null,
+      "first_impacted_activity_id": null,
+      "active_disruption": null,
+      "active_recovery_run": null,
+      "recovery_revision": null,
+      "recovery_planning": null,
+      "generated_at": "2026-10-18T13:25:27.602947Z"
+    },
+    "requirements": {
+      "version": 1,
+      "records": [
+        {
+          "id": "req_dc865ee2de075c94923b81e7e852b021",
+          "text": "喜欢了解杭州历史",
+          "key": "user_requirement",
+          "value": null,
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft:40fceb47-0c15-4bbc-be93-49d11d55137b:create"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "active",
+          "supersedes": []
+        },
+        {
+          "id": "req_911fd684270c5efc8ad081a95af11c8d",
+          "text": "节奏：轻松",
+          "key": "pace",
+          "value": "relaxed",
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft:40fceb47-0c15-4bbc-be93-49d11d55137b:create"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "superseded",
+          "supersedes": []
+        },
+        {
+          "id": "req_6a23de176235515b8031e2e1169da318",
+          "text": "每天步行不超过60分钟",
+          "key": "max_walking_minutes",
+          "value": 60,
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft:40fceb47-0c15-4bbc-be93-49d11d55137b:create"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "hard",
+          "status": "active",
+          "supersedes": []
+        },
+        {
+          "id": "req_1867ada4919c5ea4b6efce392f7ada2d",
+          "text": "只安排杭州博物馆和河坊街两个地点",
+          "key": "user_requirement",
+          "value": null,
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "active",
+          "supersedes": []
+        },
+        {
+          "id": "req_dfcc4e69c57d5e5fa0f7debe3ec3fb9c",
+          "text": "先了解城市历史再游览街区",
+          "key": "user_requirement",
+          "value": null,
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "active",
+          "supersedes": []
+        },
+        {
+          "id": "req_64793078246b5467bee9e23f793efce6",
+          "text": "节奏：轻松",
+          "key": "pace",
+          "value": "relaxed",
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "active",
+          "supersedes": [
+            "req_911fd684270c5efc8ad081a95af11c8d"
+          ]
+        },
+        {
+          "id": "req_940b16a3749f58539f4543846d08d628",
+          "text": "不安排其他地点",
+          "key": "user_requirement",
+          "value": null,
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "active",
+          "supersedes": []
+        }
+      ],
+      "effective_by_date": {
+        "2026-10-19": [
+          {
+            "id": "req_dc865ee2de075c94923b81e7e852b021",
+            "text": "喜欢了解杭州历史",
+            "key": "user_requirement",
+            "value": null,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft:40fceb47-0c15-4bbc-be93-49d11d55137b:create"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "active",
+            "supersedes": []
+          },
+          {
+            "id": "req_6a23de176235515b8031e2e1169da318",
+            "text": "每天步行不超过60分钟",
+            "key": "max_walking_minutes",
+            "value": 60,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft:40fceb47-0c15-4bbc-be93-49d11d55137b:create"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "hard",
+            "status": "active",
+            "supersedes": []
+          },
+          {
+            "id": "req_1867ada4919c5ea4b6efce392f7ada2d",
+            "text": "只安排杭州博物馆和河坊街两个地点",
+            "key": "user_requirement",
+            "value": null,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "active",
+            "supersedes": []
+          },
+          {
+            "id": "req_dfcc4e69c57d5e5fa0f7debe3ec3fb9c",
+            "text": "先了解城市历史再游览街区",
+            "key": "user_requirement",
+            "value": null,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "active",
+            "supersedes": []
+          },
+          {
+            "id": "req_64793078246b5467bee9e23f793efce6",
+            "text": "节奏：轻松",
+            "key": "pace",
+            "value": "relaxed",
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "active",
+            "supersedes": [
+              "req_911fd684270c5efc8ad081a95af11c8d"
+            ]
+          },
+          {
+            "id": "req_940b16a3749f58539f4543846d08d628",
+            "text": "不安排其他地点",
+            "key": "user_requirement",
+            "value": null,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft-run:ac5dedaf-cd2a-4966-afe5-2108e075b884"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "active",
+            "supersedes": []
+          }
+        ]
+      }
+    },
+    "days_sha256": "609fb6046cb67a238c26cef3b660dc3588539ef2b792a86f064b0752971bd124"
+  },
+  "device_protocol_read": {
+    "passed": true,
+    "physical_device": false,
+    "trip_id": "6d056cb8-ba98-4ef6-9021-e4d9fd01df59",
+    "version": 2,
+    "days_sha256": "609fb6046cb67a238c26cef3b660dc3588539ef2b792a86f064b0752971bd124",
+    "authentication": "fresh short-lived paired bearer, revoked after read"
+  },
+  "expected_apk_sha256": "3a186b7a8d82a3b9ba8698e626c34986e2fb79edb93ebdddd7956f2212c1b319",
+  "last_attempt": {
+    "mode": "verify",
+    "started_at": "2026-10-18T13:25:27.519Z",
+    "status": "passed",
+    "finished_at": "2026-10-18T13:25:28.597Z"
+  },
+  "model_run": {
+    "id": "ac5dedaf-cd2a-4966-afe5-2108e075b884",
+    "status": "completed",
+    "source": "model"
+  }
+}

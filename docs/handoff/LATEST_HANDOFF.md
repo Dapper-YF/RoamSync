@@ -1,33 +1,38 @@
 # Latest Handoff
 
 ## Snapshot
-2026-10-18 正式 RoamSync 2.0 已整合到 E:/Study/RoamSync 并切换本机3000。
-3016仅保留开发预览身份；正式服务不依赖该工作区或18004。
+2026-10-18 从f9a5aaf继续原综合任务，B/C/D并行研发，root负责A/E和隔离集成。
+唯一正式源码E:/Study/RoamSync，3000继续此前已认可新版。新增代码进入canonical，
+3016和18004已绑定canonical；本轮未重新部署3000、未改生产数据库或网络暴露。
 
 ## Current Freeze / Rehearsal Status
-VERIFIED：正式API/Worker各201运行文件与正式源码一致；Web188及构建、后端1208通过。
-原数据库卷保留，0035/0036非破坏升级；19既有业务表指纹不变，179旅行读取通过。
-正式新产品表切换时为空，无预览测试数据/凭据导入。独立正式本机凭据，仅loopback。
-真实地点、路线、模型、草稿、明确采用、重试去重和执行推进在正式备份副本通过。
-3000浏览器只读验收通过，含旧planner地址进入新版，不在正式数据上制造测试Trip。
-
-## Latest shadow-mode evidence
-备份/镜像回退配置：backups/v2-official-20261018/（忽略提交）。
-回退应用保留新增Schema与当前数据，不自动降级或恢复旧数据库。
-证据及范围：docs/OFFICIAL_V2_RELEASE_20261018.md。
+VERIFIED：B背景/时长边界及C可信取舍、解释检查和D三图已统一隔离运行。
+最终后端全回归1218通过、25跳过、2既有弃用警告；Web类型检查/旅程回归通过。
+Android最终构建/单元回归通过，APK SHA256为
+3a186b7a8d82a3b9ba8698e626c34986e2fb79edb93ebdddd7956f2212c1b319。
+本轮用户明确无法连接手机并要求跳过，未安装或真机验证该APK。
+总报告：docs/COMPREHENSIVE_FOLLOWUP_DELIVERY_20261018.md。
 
 ## Prior milestone baseline (before shadow split)
-认可的新版产品源44ebea7及正式既有Streaming/天气修复已整合，Android未完成改造不迁入。
+f631504已将旧Android工作台主用户路径替换为原生旅程；本轮不重复重构页面。
+a412a81/6f45bb0正式3000升级、原179旅行与19表指纹保留属于此前交付。
 
 ## Prior verification
-迁移演练使用正式备份，运行写测试使用副本；不得把它描述成正式库写入验收。
-指纹不覆盖checkpoint内容；新requirements字段另核验空默认值。
+MEASURED：B真实GLM→Graph→Validator→Accept只改day2时长，背景/撤销要求不进
+有效Planner投影，day1/3业务字段保持；元数据触碰已披露。原“45分钟”地点澄清
+复现后修复，原已Accept测试Trip仅补读未重放。
+MEASURED：C两条真实完整链，少走路选28分钟腿；景观优先选53分钟腿，额外25分钟
+与UNESCO审核景观/当前偏好来源可核验；预算unknown保持not_evaluable，锁定活动保持。
+景观首测虽Accept但server摘要错误的反例保留，修后新Trip通过，未改历史reason。
+D新增三张CC BY-SA照片，目录10地点12照片，三处API/浏览器显示通过；无新增实价/开放事实。
 
 ## Prior blockers (historical)
-Android旧正式旅行组件已退出用户路径，新Compose正式页与四阶段旅程、探索/草稿/执行核心真机流程已通过。正式目录构建49通过，交付APK亦复跑真实探索。
-当前位置定位精度约30米network成功，但到下一站Provider路线失败；完整中断/断网/新UIReject矩阵未完成。
-详见docs/ANDROID_NATIVE_DELIVERY_20261018.md。
-精确GPS授权已由用户亲自选择，路线Provider范围与GPS能力仍需分开验收。
+同Trip Web真实页面规划/明确采用及短期设备协议读取一致通过，Trip6d056cb8…；
+这不是手机。缺最终APK执行→Recovery→下一站→中断→Web回读，完整闭环incomplete。
+当前位置路线原现场原因未确诊；公开地标Provider对照验证范围/距离错误分类，不能替代手机坐标。
+锁屏/进程死亡/断网/令牌失效/Reject/过期/并发手机矩阵待设备，用户本轮已要求跳过。
 
 ## Interview framing
-可陈述正式3000升级与已验证范围；不能陈述Android重构完成、多用户安全或全部智能决策可靠。
+可陈述两个有边界的实际决策情景经完整正式确认改善，以及有限B语言/背景修复。
+不得宣称任意语言、全程最优、现场到访/真实预约、全部可信解释或跨端真机全链通过。
+新增代码已合唯一源码但未发布到3000；不要把源码合入和正式运行升级混为一谈。
