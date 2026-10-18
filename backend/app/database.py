@@ -126,6 +126,7 @@ class TripPreferences(Base):
     avoid_categories: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
     max_walking_minutes: Mapped[int] = mapped_column(Integer, nullable=False, default=60)
     free_text_requirements: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    requirement_records: Mapped[list] = mapped_column(JSON, nullable=False, default=list, server_default="[]")
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()

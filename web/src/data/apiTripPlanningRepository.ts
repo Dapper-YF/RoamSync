@@ -29,6 +29,7 @@ import type {
 } from "../domain/types";
 
 const API_BASE = "/api/v1";
+import { readAssistantStream } from "./assistantStream";
 
 interface ApiSourceRecord {
   id: string;
@@ -305,6 +306,15 @@ export class ApiTripPlanningRepository implements TripPlanningRepository {
 
   async sendAssistantMessage(sessionId: string, message: string, messageId: string, selectedDayId?: string, selectedActivityId?: string): Promise<import("../domain/types").AssistantSession> {
     return request(`${API_BASE}/assistant/sessions/${sessionId}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message, message_id: messageId, selected_day_id: selectedDayId, selected_activity_id: selectedActivityId }) });
+  }
+
+  async streamAssistantMessage(sessionId: string, message: string, messageId: string,
+    onEvent: (event: import("../domain/types").AssistantStreamEvent) => void, selectedDayId?: string, selectedActivityId?: string): Promise<import("../domain/types").AssistantSession> {
+    const response = await fetch(`${API_BASE}/assistant/sessions/${sessionId}/messages/stream`, {
+      method: "POST", headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
+      body: JSON.stringify({ message, message_id: messageId, selected_day_id: selectedDayId, selected_activity_id: selectedActivityId }),
+    });
+    return readAssistantStream(response, onEvent);
   }
 
   async decideAssistantAction(sessionId: string, actionId: string, accept: boolean): Promise<import("../domain/types").AssistantSession> {

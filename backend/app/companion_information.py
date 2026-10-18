@@ -4,6 +4,9 @@ from app.companion_facts import forecast_intent, opening_intent
 
 from app.companion_contracts import CompanionContext, CompanionSuggestion, InformationNeed
 
+# A bounded specialist signal, not a claim to cover every rare cultural topic.
+SPECIALIST_PATTERN = r"碑刻|碑文|方志|考古|金石|训诂|版本学|题跋|史料|地方志|文物断代|营造法式"
+
 
 def is_formal_decision_question(text: str) -> bool:
     return bool(re.search(r"为什么|为何|理由|解释", text) and re.search(
@@ -80,7 +83,7 @@ def determine_information_need(context: CompanionContext, selected: list[Compani
     preference_only = bool(context.relevant_user_preferences and re.search(r"我.*(?:喜欢|偏好)|不喜欢", text)
                            and not re.search(r"[？?]|吗|为什么|有哪些|有什么", text))
     fact_patterns = {"weather": r"天气|下雨|降雨|气温|日落|日出", "opening_hours": r"开门|关门|几点关|开放时间|营业|闭馆|闭园",
-        "price": r"票价|门票|多少钱|价格|余票|预约", "traffic": r"路况|ETA|GPS|多久能到|堵车|班次",
+        "price": r"票价|门票|多少钱|价格|余票|预约", "traffic": r"路况|ETA|GPS|多久能到|堵车|班次|交通耗时|路线耗时|车程|从.{1,20}到.{1,20}(?:多久|多少分钟|多长时间)",
         "execution": r"玩.{0,5}多久|待.{0,5}多久|停留.{0,5}多久|走.{0,5}多久"}
     fact_types = [key for key, pattern in fact_patterns.items() if re.search(pattern, text, re.I)]
     if re.search(r"花况|今年.{0,12}(?:桂花季|桂花节|赏桂|活动).{0,8}(?:几点|什么时候|开始)", text):
@@ -89,6 +92,14 @@ def determine_information_need(context: CompanionContext, selected: list[Compani
         fact_types.append("current_seasonal_conditions")
     if re.search(r"今天.{0,8}(?:桂花|花开|开花|花况)|(?:桂花|花开|开花).{0,8}(?:今天|现在|当前)|今年.{0,8}(?:桂花季|活动).{0,8}(?:几点|什么时候)", text):
         fact_types.append("current_seasonal_conditions")
+    if (re.search(r"活动|节庆|节日|音乐节|展览|灯会|新闻|管制|停运", text)
+        and re.search(r"今天|明天|近期|最近|本周|今年|\d{4}年|\d{1,2}月\d{1,2}[日号]|具体.*(?:时间|地点)|什么时候举办|举办时间|举办地点|哪天举办|哪里举办", text)):
+        fact_types.append("dated_event")
+    if re.search(r"(?:实际|实时|现在|今天|明天).{0,16}(?:交通|路线|耗时)|(?:交通|路线|耗时).{0,16}(?:实际|实时|现在|今天|明天)|坐车.{0,8}多久|预约状态|关闭状态|临时关闭", text):
+        fact_types.append("current_conditions")
+    if (re.search(r"现在|今天|明天|此刻|现场|实时", text)
+        and re.search(r"人流|拥挤|人多|人少|排队.{0,8}(?:多久|分钟|小时)|预约名额", text)):
+        fact_types.append("current_conditions")
     if decision and re.search(r"\d{1,2}\s*(?:点|时|[:：]\d{2})", text):
         fact_types.append("timing_conditions")
     if forecast_intent(text) and "weather" not in fact_types:
@@ -98,6 +109,8 @@ def determine_information_need(context: CompanionContext, selected: list[Compani
     live = goal.live_fact_likely_required or bool(fact_types)
     if live and not fact_types:
         fact_types = ["current_conditions"]
+    explicit_personalization = bool(re.search(r"我(?:不喜欢|喜欢|偏好)|适合我|根据我的|结合我的", text))
+    prefs = explicit_personalization or (prefs and not live)
     seasons = [tag for tag, pattern in (("spring", "春天|春季"), ("summer", "夏天|夏季"),
         ("autumn", "秋天|秋季|秋日"), ("winter", "冬天|冬季")) if re.search(pattern, text)]
     senior = bool(re.search(r"父母|老人|长辈|老年", text) and not re.search(r"不带父母|不是带父母|不带老人", text))
@@ -138,6 +151,8 @@ def determine_information_need(context: CompanionContext, selected: list[Compani
         re.search(r"历史|文化|传统|民俗|习俗|影响|景观|组成|堤|岛|茶|游览|申遗|遗产|报道|页面", text))
     knowledge = (history or (goal.knowledge_required and destination_named) or bool(seasons) or senior
         or bool(requested_topics) or bool(re.search(r"当地生活|生活体验|市井|茶馆|来源|出处|资料|依据|核实", text))) and not preference_only and not decision and (not live or stable_in_live) and not general_knowledge_allowed
+    if not general_knowledge_allowed and not live and not decision and not preference_only:
+        knowledge = True  # A request for sources cannot bypass the evidence path.
     advice_intent = bool(re.search(r"推荐|建议|怎么游|怎么玩|怎么安排|适合|值得|轻松|摄影|体验", text)) or (not requested_topics and goal.goal_type in {"recommendation", "travel_advice"})
     if re.search(r"不(?:需要|要)(?:游玩)?建议|不要推荐|只接受.{0,6}证据|只按.{0,8}(?:证据|资料|出处)", text):
         advice_intent = False
@@ -147,7 +162,9 @@ def determine_information_need(context: CompanionContext, selected: list[Compani
         advice_intent = False
     requests_source_fact = bool(requested_topics)
     answer_mode = "mixed" if requests_source_fact and advice_intent else "factual" if requests_source_fact else "advisory"
-    return InformationNeed(knowledge_required=knowledge, general_knowledge_allowed=general_knowledge_allowed,
+    need = InformationNeed(knowledge_required=knowledge, general_knowledge_allowed=general_knowledge_allowed,
+        source_required=not general_knowledge_allowed and not decision and bool(re.search(
+            r"来源|出处|官方|证据|依据|引用|资料|文献|核实|确切|可靠材料|查证|核对|证实|核查|(?:按|据|依).{0,6}规范", source_text)),
         knowledge_types=list(dict.fromkeys(types)) if knowledge else [],
         live_fact_required=live, forecast_required=forecast_intent(text) and not decision,
         opening_hours_required=opening_intent(text) and not decision,
@@ -155,7 +172,40 @@ def determine_information_need(context: CompanionContext, selected: list[Compani
         # Preferences can be read directly; do not load the current Trip merely
         # to fill an exploration destination or missing planning slots.
         trip_context_required=itinerary,
-        preferences_required=prefs, itinerary_required=itinerary,
+        preferences_required=prefs or decision, itinerary_required=itinerary,
         season_tags=seasons, audience_tags=["senior"] if senior else [],
         filter_signals=(["explicit_season"] if seasons else []) + (["parent_word_to_senior_filter_not_age_fact"] if senior else []),
         answer_mode=answer_mode, requested_fact_topics=requested_topics)
+    specialist = bool(re.search(SPECIALIST_PATTERN, text)) and not decision and not live
+    if specialist and not need.source_required:
+        need = need.model_copy(update={"knowledge_required": True, "general_knowledge_allowed": False,
+            "optional_rag": True, "knowledge_types": ["history_culture"]})
+    return apply_knowledge_strategy(need, "selective")
+
+
+def apply_knowledge_strategy(need: InformationNeed, strategy: str) -> InformationNeed:
+    """A/B modes change stable retrieval only; no evaluation bypasses authority."""
+    updates = {"knowledge_strategy": strategy}
+    if strategy == "forced_rag" and not (need.live_fact_required or need.decision_history_required):
+        updates.update(knowledge_required=True, general_knowledge_allowed=False,
+            optional_rag=False, knowledge_types=need.knowledge_types or ["destination_profile", "history_culture", "travel_strategy"])
+    elif strategy == "general_only" and need.optional_rag:
+        updates.update(knowledge_required=False, general_knowledge_allowed=True, optional_rag=False, knowledge_types=[])
+    need = need.model_copy(update=updates)
+    reasons = []
+    sources = []
+    if need.live_fact_required:
+        sources.append("live")
+        reasons.append("dynamic_fact_requires_provider")
+    if need.decision_history_required or need.itinerary_required or need.preferences_required:
+        sources.append("context")
+        reasons.append("saved_context_read_only")
+    if need.knowledge_required:
+        sources.append("rag")
+        reasons.append("explicit_source_request" if need.source_required else "specialist_topic" if need.optional_rag else "forced_rag_baseline" if strategy == "forced_rag" else "stable_evidence_request")
+    if not sources:
+        reasons.append("stable_model_knowledge_no_retrieval")
+    if strategy == "general_only" and need.knowledge_required:
+        reasons.append("general_only_cannot_supply_sources")
+    decision = "mixed" if len(sources) > 1 else {"live": "live_fact_required", "context": "context_required", "rag": "rag_candidate"}.get(sources[0] if sources else "", "general_knowledge")
+    return need.model_copy(update={"knowledge_decision": decision, "knowledge_reasons": reasons})

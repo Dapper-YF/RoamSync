@@ -4,6 +4,7 @@ from typing import Literal, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from app.assistant_places import PlaceView
 from app.schemas import TravelGoalRouting
 from app.travel_facts.models import FactRequirement, ResolvedFact
 from app.companion_facts import ForecastPlan
@@ -41,6 +42,11 @@ class EntityReference(Contract):
 
 
 class InformationNeed(Contract):
+    knowledge_decision: Literal["general_knowledge", "context_required", "rag_candidate", "live_fact_required", "mixed"] = "general_knowledge"
+    knowledge_strategy: Literal["selective", "general_only", "forced_rag"] = "selective"
+    knowledge_reasons: list[str] = Field(default_factory=list, max_length=8)
+    source_required: bool = False
+    optional_rag: bool = False
     knowledge_required: bool = False
     general_knowledge_allowed: bool = False
     knowledge_types: list[KnowledgeType] = Field(default_factory=list, max_length=7)
@@ -148,6 +154,8 @@ class KnowledgeToolPort(Protocol):
 
 
 class KnowledgeRetrievalSummary(Contract):
+    quality_rejections: list[str] = Field(default_factory=list, max_length=10)
+    accepted_evidence_count: int = Field(default=0, ge=0, le=10)
     status: Literal["available", "unavailable"]
     outcome: str | None = None
     advisory: KnowledgeAdvisory | None = None
@@ -158,6 +166,7 @@ class KnowledgeRetrievalSummary(Contract):
 
 
 class CompanionSuggestion(Contract):
+    place_ref: PlaceView | None = None
     suggestion_id: str = Field(pattern=r"^suggestion_[0-9a-f]{32}$")
     suggestion_type: Literal["place", "destination", "experience", "strategy"]
     title: str = Field(min_length=1, max_length=160)
@@ -181,7 +190,7 @@ class SuggestionInteraction(Contract):
 class CompanionExplanation(Contract):
     subject_ref: EntityReference | None = None
     explanation_type: Literal["original_saved_suggestion", "original_validated_decision",
-        "current_reconstruction", "rationale_unavailable"]
+        "current_reconstruction", "rationale_unavailable", "saved_plan_notes"]
     reasons: list[str] = Field(default_factory=list, max_length=10)
     evidence_refs: list[str] = Field(default_factory=list, max_length=10)
     based_on_prior_decision: bool = False
@@ -201,6 +210,8 @@ class CompanionExplanation(Contract):
             raise ValueError("saved suggestion rationale requires a suggestion and originating turn")
         if self.explanation_type == "original_validated_decision" and (self.subject_ref.kind != "formal_activity" or not self.source_decision_ref):
             raise ValueError("validated decision rationale requires a formal activity and source decision")
+        if self.explanation_type == "saved_plan_notes" and (not self.source_decision_ref or not self.reasons or not self.fact_freshness_warning):
+            raise ValueError("saved plan notes require provenance and an explicit verification limitation")
         return self
 
 
@@ -242,9 +253,13 @@ class PlanningBrief(Contract):
     open_questions: list[str] = Field(default_factory=list, max_length=10)
     source_turn_refs: list[str] = Field(default_factory=list, max_length=60)
     suggestion_refs: list[str] = Field(default_factory=list, max_length=10)
+    effective_requirements: list[dict] = Field(default_factory=list, max_length=200)
 
 
 class CompanionContext(Contract):
+    read_tool_context: dict = Field(default_factory=dict)
+    assistant_context: dict | None = None
+    place_context: list[dict] = Field(default_factory=list, max_length=10)
     current_message: str
     travel_goal: TravelGoalRouting
     conversation_summary: str | None = None
@@ -257,6 +272,7 @@ class CompanionContext(Contract):
     saved_trip_preferences: dict | None = None
     relevant_prior_suggestions: list[CompanionSuggestion] = Field(default_factory=list, max_length=10)
     referenced_decision: CompanionExplanation | None = None
+    saved_plan_notes: dict | None = None
     knowledge_context: list[KnowledgeEvidence] = Field(default_factory=list, max_length=10)
     knowledge_retrieval: KnowledgeRetrievalSummary | None = None
     pending_planning_handoff: PlanningBrief | None = None
@@ -266,6 +282,7 @@ class CompanionContext(Contract):
 
 
 class CompanionResult(Contract):
+    analysis_summary: str = Field(default="", max_length=600)
     response_text: str = Field(min_length=1, max_length=5000)
     goal_type: CompanionGoal
     status: Literal["completed", "needs_information", "needs_clarification"] = "completed"
@@ -308,6 +325,7 @@ class SuggestionDraft(Contract):
 
 class CompanionDraft(Contract):
     """Model boundary excludes identity, authority, status, original rationale and handoff."""
+    analysis_summary: str = Field(default="", max_length=600)
     response_text: str = Field(min_length=1, max_length=3000)
     suggestions: list[SuggestionDraft] = Field(default_factory=list, max_length=10)
     comparison: CompanionComparison | None = None
@@ -324,6 +342,7 @@ class AgentAnswerText(Contract):
 
 class CompanionAnswerDraft(Contract):
     """Knowledge wire contract: source facts are selected and rendered by server."""
+    analysis_summary: str = Field(default="", max_length=600)
     agent_claims: list[AgentAnswerText] = Field(default_factory=list, max_length=8)
     suggestions: list[SuggestionDraft] = Field(default_factory=list, max_length=10)
     comparison: CompanionComparison | None = None

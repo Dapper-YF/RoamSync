@@ -16,6 +16,7 @@ from app.database import (
     SourceRecord,
     Trip,
     TripExecution,
+    TripPreferences,
     ActivityExecution,
     NavigationSession,
     TripDisruptionEvent,
@@ -492,12 +493,23 @@ async def validate_candidate_plan(
                     },
                 )
             )
+    # Re-read the current effective requirements here as well as in the Graph.
+    # A queued/pending candidate must not bypass requirements added or changed
+    # after generation. This also protects Draft promotion through the same
+    # formal Validator, without giving requirement edits itinerary authority.
+    from app.planning_context import build_planning_context
+    from app.candidate_decisions import review_candidate_decisions
+    current_context = (await build_planning_context(session, trip_id)).model_dump(mode="json")
+    review = review_candidate_decisions(current_context, snapshot)
+    errors.extend(PlanValidationIssue.model_validate(issue) for issue in review["hard_errors"])
     return PlanValidationResult(valid=not errors, errors=errors, warnings=[])
 
 
 async def accept_plan_revision(
-    session: AsyncSession, revision_id: uuid.UUID
+    session: AsyncSession, revision_id: uuid.UUID, *, commit: bool = True
 ) -> PlanRevision:
+    from app.draft_promotion.guard import authorize_accept
+    await authorize_accept(session, revision_id, commit=commit)
     revision = await session.scalar(
         select(PlanRevision).where(PlanRevision.id == revision_id).with_for_update()
     )
@@ -515,8 +527,12 @@ async def accept_plan_revision(
         raise PlanRevisionNotFoundError
     if trip.version != run.base_trip_version:
         raise StalePlanningRunError
+    # Serialize requirement edits with final validation/application. Changes to
+    # requirements have their own version and do not bump the itinerary.
+    await session.scalar(select(TripPreferences).where(
+        TripPreferences.trip_id == trip.id,
+    ).with_for_update())
     if run.trigger_type == "experience_impact":
-        from app.database import ActivityExecution
         from app.experience_replanning_service import _snapshot
         from app.activity_experience_impact import evaluate_activity_experience_time_impact
         trigger = run.trigger_snapshot or {}
@@ -555,7 +571,8 @@ async def accept_plan_revision(
     )
     revision.validation_result = result.model_dump(mode="json")
     if not result.valid:
-        await session.rollback()
+        if commit:
+            await session.rollback()
         raise InvalidPlanRevisionError(result)
 
     days = list((await session.scalars(select(DayPlan).where(DayPlan.trip_id == trip.id))).all())
@@ -638,10 +655,24 @@ async def accept_plan_revision(
     # itinerary version after this transaction commits.
     await supersede_navigation_sessions_for_itinerary(session, trip.id, trip.version)
     trip.version += 1
-    if run.trigger_type == "experience_impact":
-        execution = await session.scalar(select(TripExecution).where(TripExecution.trip_id == trip.id).with_for_update())
-        if execution is not None:
-            execution.itinerary_version = trip.version
+    execution = await session.scalar(select(TripExecution).where(TripExecution.trip_id == trip.id).with_for_update())
+    if execution is not None and execution.status in {"in_progress", "paused"}:
+        # A revision can introduce a new Activity identity. Without a pending
+        # execution row that stop disappears from the execution read model and
+        # completing the present stop skips it. Preserve every existing lived
+        # fact and initialize only newly accepted, unstarted activities.
+        tracked = set((await session.scalars(select(ActivityExecution.activity_id).where(
+            ActivityExecution.trip_execution_id == execution.id,
+        ))).all())
+        for activities in activities_by_day.values():
+            for activity in activities:
+                if activity.id not in tracked:
+                    session.add(ActivityExecution(
+                        trip_execution_id=execution.id, activity_id=activity.id, status="pending",
+                    ))
+                    tracked.add(activity.id)
+        execution.itinerary_version = trip.version
+        await session.flush()
     revision.status = "accepted"
     revision.decided_at = decided_at
     run.status = "accepted"
@@ -652,11 +683,15 @@ async def accept_plan_revision(
         ).with_for_update())
         # The event and the candidate are fenced by the same formal version.
         if disruption is None or disruption.status != "active" or disruption.itinerary_version != run.base_trip_version:
-            await session.rollback()
+            if commit:
+                await session.rollback()
             raise StalePlanningRunError
         disruption.status = "resolved"
         disruption.resolution_plan_revision_id = revision.id
         disruption.resolution_planning_run_id = run.id
-    await session.commit()
-    await session.refresh(revision)
+    if commit:
+        await session.commit()
+        await session.refresh(revision)
+    else:
+        await session.flush()
     return revision

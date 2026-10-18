@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, TypeAdapter,
 
 from app.config import Settings
 from app.decision_context import assert_decision_context_invariants, build_decision_context
+from app.candidate_decisions import compare_candidates
 from app.model_client import build_model_client, create_model_response
 from app.planner_entity_resolution import (PlannerEntityBindings, InvalidPlannerReference, parse_semantic_planner_output, resolve_planner_activity_references)
 from app.planning_errors import PlannerNotConfiguredError, PlannerProviderError, PlannerConstraintsUnsatisfiedError
@@ -390,17 +391,17 @@ def build_planner_input(
                 replaces_activity_id=uuid.UUID(activity["id"]),
             )
 
+    from app.place_content.experiences import candidate_experience
     research = context.get("destination_research", {}).get("places")
-    ranked_candidates = sorted(
-        [item for item in context["candidates"] if research is None or item["id"] in research],
-        key=lambda candidate: (
-            not (research or {}).get(candidate["id"], {}).get("requested", False),
-            list(research).index(candidate["id"]) if research and candidate["id"] in research else len(research or {}),
-            -float(candidate["rating"]),
-            candidate["name"],
-            candidate["id"],
-        ),
-    )[:max_candidates]
+    ranked_candidates, comparison = compare_candidates(
+        context, [item for item in context["candidates"] if research is None or item["id"] in research],
+        allowed_dates={day.isoformat() for day in allowed_dates},
+    )
+    context["candidate_comparison"] = comparison
+    excluded_requested = [row["place_candidate_id"] for row in comparison["candidates"] if row["requested"] and not row["eligible"]]
+    if excluded_requested:
+        raise PlannerConstraintsUnsatisfiedError(["requested_place_effective_requirement_conflict"])
+    ranked_candidates = ranked_candidates[:max_candidates]
     if research and sum(bool(item.get("requested")) for item in research.values()) > max_candidates:
         raise PlannerConstraintsUnsatisfiedError(["requested_places_exceed_candidate_limit"])
     candidate_data: list[dict] = []
@@ -434,6 +435,7 @@ def build_planner_input(
                 "tags": candidate["tags"],
                 "source_provider": candidate["source"]["provider"],
                 "source_confidence": candidate["source"]["confidence"],
+                "reviewed_experience": candidate_experience(candidate, context["trip"].get("destination", "")),
             }
         )
 
@@ -457,6 +459,10 @@ def build_planner_input(
         "user_preferences": decision_context.get("user_preferences"),
         "context_provenance": decision_context.get("provenance"),
         "previous_user_feedback": decision_context.get("decision_memory", []),
+        "effective_requirements": context.get("effective_requirements", []),
+        "effective_requirements_by_date": context.get("effective_requirements_by_date", {}),
+        "candidate_comparison": comparison,
+        "candidate_route_facts": context.get("candidate_route_facts", []),
         # Compatibility aliases retained while downstream consumers migrate.
         "planning_goals": context.get("planning_goals"),
         "formal_route_facts": context.get("formal_route_facts", {}),
@@ -780,4 +786,5 @@ def semantic_planner_instructions():
             .replace("place_candidate_id", "candidate_ref")
             .replace("editable_activity_ids", "editable_activity_refs")
             .replace("protected_activity_ids", "protected_activity_refs")
-            + "\n既有活动的地点身份由系统沿用，不重新选择地点；仅输出其 activity_ref 和调整后的时间、停留及交通方式。未输出的可编辑活动表示删除。新增活动仅从 new_place_candidates 选择 candidate_ref。不要输出 candidate_id、坐标、来源、成本、路线 ID 或 before/after。Decision Ledger 为 shadow，主输出不要求 Ledger。")
+            + "\n既有活动的地点身份由系统沿用，不重新选择地点；仅输出其 activity_ref 和调整后的时间、停留及交通方式。未输出的可编辑活动表示删除。新增活动仅从 new_place_candidates 选择 candidate_ref。不要输出 candidate_id、坐标、来源、成本、路线 ID 或 before/after。Decision Ledger 为 shadow，主输出不要求 Ledger。"
+            + "\neffective_requirements_by_date 是各日有效明确要求；hard 必须满足，soft 参与取舍而不是绝对排除。candidate_comparison 是服务器可检查的有限候选比较；逐日 eligible=false 不可安排该日。taxonomy inference 是低置信类别推断，不是可靠室内/无障碍保证，unknown 表示尚未核实。天气是代表坐标的逐小时预报概率，不是必然下雨；失效或缺覆盖不作天气决策。candidate_route_facts 仅是候选到一个固定活动的有向路线，不可当全天路线或最优证明。固定活动的来源为正式schedule_locked，不等同已预约成功。解释实际选择的权衡并承认unknown，不声称已经采用或获得预约。")

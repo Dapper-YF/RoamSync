@@ -10,7 +10,10 @@
     "typecheck": "tsc --noEmit --pretty false",
     "test": "vitest run",
     "test:watch": "vitest",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "dev:discovery": "vite --config vite.discovery.config.ts",
+    "build:discovery": "tsc --noEmit && vite build --config vite.discovery.config.ts",
+    "test:discovery": "node e2e/discovery-acceptance.mjs"
   },
   "dependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",

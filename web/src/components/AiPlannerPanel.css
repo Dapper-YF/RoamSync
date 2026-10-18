@@ -158,3 +158,9 @@
 .ai-panel .ai-thinking summary { cursor: pointer; }
 .ai-panel .ai-thinking p { margin: 8px 0; }
 .ai-panel .ai-thinking a { color: #315b47; }
+.ai-panel .ai-analysis { margin: 0 0 12px; padding: 0 0 10px; border-top: 0; border-bottom: 1px solid #dce5df; }
+.ai-panel .ai-stream-cursor { color: #315b47; animation: ai-cursor-blink 1s steps(2) infinite; }
+.ai-panel .ai-stream-preview { display: block; margin-top: 8px; color: #687d74; }
+.ai-panel .ai-stream-text { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.8; }
+@keyframes ai-cursor-blink { to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ai-panel .ai-stream-cursor { animation: none; } }

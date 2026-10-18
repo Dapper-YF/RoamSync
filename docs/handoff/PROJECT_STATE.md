@@ -1,8 +1,158 @@
 # RoamSync project state
 
-Last updated: 2026-09-30
+Last updated: 2026-10-18
 
-## Scope
+## Official RoamSync 2.0 release (2026-10-18)
+
+VERIFIED: user-authorized official source integration and localhost3000 cutover complete.
+E:/Study/RoamSync owns the approved DiscoveryApp, nearby, unified assistant, drafts,
+formal journeys/execution, scoped requirements and reviewed images. API/Worker201
+runtime files each match official source. Existing roamsync_postgres_data retained;
+0035/0036 add an empty requirements field and six empty product tables. No preview
+rows/credentials imported.19 historical business-table fingerprints unchanged;
+179 trips read through3000. Backend1208/Web188/typecheck/build pass. Real provider,
+model, adoption/idempotency/execution write smoke passed on restored backup only;
+production browser smoke is read-only. Local single-owner boundary, not multi-user
+isolation. Android mixed UI remains unaccepted and must be replaced against this
+official product. Source/mirror history below is historical. Full release report:
+docs/OFFICIAL_V2_RELEASE_20261018.md.
+
+## Prior Scope
+
+2026-10-15 V2 round-two review response/third-round candidate revision only:
+docs/restructuring-v2/ now contains the response, ADRs, readiness gates and revised
+product/architecture/lifecycle/parallel-vertical-slice roadmap. Await final user
+approval; no V2 business code, production data, schema, configuration, deployment,
+commit or worktree integration changed. Canonical309-file manifest has no drift;
+last MEASURED same-snapshot regression remains prior-round backend1002/2warnings,
+Web132/typecheck/build, Android35, not rerun this round. New isolated no-network,
+no-DB/model compatibility probes reject undated formal inputs; SDK cached symbols
+and manifest inspection are static only. Neither proves Draft/GPS success.
+Candidate changes: persist Instant only for controlled GPS, external handoff as
+local receipt; shared Draft primitives without copying formal Graph/Validator;
+one explicit composite promotion intent via recoverable P1 transactions, not an
+existing end-to-end atomic API; Read Context separated from Action authorization;
+legacy Session scope before SET NULL; unknown/timezone work and early feasibility
+checks in G0, followed by parallel A/B/C slices and continuous quality. These are
+NOT implemented/frozen capabilities. Existing formal acceptance/recovery remains.
+Historical deployed capability notes below retain their original scope.
+
+2026-10-15 forecast follow-ups (deployed): fixed the screenshot's 所以南昌
+misparse and added a one-call model extraction fallback only for a lexical city
+query with no exact evidence. Proposals must be literal current-message spans
+and pass provider location validation; no model weather, old-city substitution
+or formal writes. VERIFIED backend1002/2warnings,141 files match each backend
+container,7 business table fingerprints unchanged. MEASURED screenshot question
+succeeds without extraction, unfamiliar-prefix question succeeds with one real
+GLM extraction. See docs/agent/WEATHER_FOLLOWUP_20261015.md.
+
+2026-10-15 weather presentation (deployed): ordinary forecast questions now get
+a short server-grounded rain/temperature summary; explicit hourly requests keep
+the table. Scope gaps and individual-hour probability semantics are preserved;
+no model-generated weather or formal mutation added. Verified final backend984,
+Web132/typecheck/build, source binding and7-table data fingerprints. Real no-DB
+production forecast smoke completed for short and hourly replies. See
+docs/agent/WEATHER_PRESENTATION_20261015.md.
+
+2026-10-15 streaming release acceptance: canonical E:\Study\RoamSync SSE/visible
+model callbacks/Web progressive rendering/Nginx settings are deployed. Fixed
+terminal SSE failure when DB rollback itself fails; clients receive a sanitized
+error instead of indefinite keep-alives. Final backend976/2 existing warnings,
+Web132/typecheck/build, deployed-asset synthetic Chrome socket7 passed. Test
+image206 files match source; API/Worker140 each match. Seven business table
+fingerprints unchanged. One synthetic no-DB real GLM turn: first answer3.3049s,
+complete5.4304s. Canonical start script used; other worktrees not deployed.
+Source-grounded assembled text still waits for server validation; quality and
+long-term stability remain OPEN. See docs/agent/STREAMING_RELEASE_20261015.md.
+
+2026-10-15 forecast city resolution: removed the Hangzhou/Nanjing whitelist and
+deployed current API/Worker. Explicit Chinese city terms now undergo exact-name,
+country, administrative feature and optional-province provider validation.
+Missing city, ambiguity and failed lookup are distinguished; explicit new city
+does not inherit an old destination. VERIFIED backend976/2warnings,140 runtime
+files matched per backend container,7 business table fingerprints unchanged.
+MEASURED live Nanchang/Suzhou/Beijing forecast success and post-deployment
+Nanchang original-question success. No schema/Planning authority changes.
+See docs/agent/FORECAST_CITY_RESOLUTION_20261015.md.
+
+2026-10-15 canonical deployment: the user designated E:\Study\RoamSync as the sole
+official source. All five production Compose services now originate from its
+compose.yaml/.env. Rebuilt current directory API/Worker/Web; retained the existing
+Postgres data volume and backed it up. VERIFIED backend956/Web132/typecheck/build;
+API/Worker each140 runtime files match local source;7 recorded business table
+fingerprints unchanged; health checks pass. MEASURED one real GLM Companion smoke
+completed with synthetic context and no DB writes. Start-RoamSync.cmd rebuilds and
+starts current files; Docker Desktop Start runs the last built images. This
+supersedes older "not deployed" statements below for files now present in this
+directory, not historical test snapshots or outstanding quality blockers. Other
+worktrees remain unintegrated unless separately verified. See
+docs/CANONICAL_DEPLOYMENT.md and docs/evidence/canonical-deployment-20261015/.
+
+2026-10-12 public streaming/fresh explanation: source implementation complete,
+not deployed. Version-bound notes are now context for a fresh current_reconstruction
+reply; explicit original validated Ledger requests retain prior gates. Request-local
+SSE delivers public analysis summaries and checked live prose; Web smoothly reveals
+received text, keeps candidates, and separates answer basis. No hidden reasoning,
+DB migration or new formal mutation. VERIFIED isolated backend956/Web132/build and
+Chrome synthetic socket5; MEASURED final real synthetic GLM turn first analysis4.111s,
+answer6.158s, complete11.338s. Provider/fact quality OPEN; production still prior image.
+See docs/agent/COMPANION_STREAMING_20261012.md.
+
+2026-10-12 Chat continuity fix: implemented, isolated verification complete and
+API/Web deployed after explicit user approval. Current-source backend950 and Web129 pass; runtime-based API patch
+passes18 boundary tests; final Web129/typecheck/build and synthetic-API Chrome6
+checks pass. Restore/preserve current Run and confirmation; render version-bound
+saved notes with explicit unverified provenance, without weakening accepted
+Ledger explanations. Report docs/agent/CHAT_PLAN_CONSISTENCY_20261012.md.
+API/Web healthy,10 table fingerprints unchanged; Worker/Postgres IDs unchanged.
+Screenshot Run readonly verification returns saved_plan_notes for its currently
+accepted Revision,0 model calls/writes. Deployed-Web synthetic UI6 checks pass.
+This later evidence supersedes only the combined-test uncertainty in the
+historical closeout below; it does not resolve its production quality blockers.
+
+2026-10-12 task closeout: RAG repositioning ENGINEERING_TASK_COMPLETE;
+Answer Reliability Phase1 PHASE_IMPLEMENTATION_COMPLETE; production quality
+PARTIAL / OPEN. Feature development and model experiments stopped. Historical
+938 regression belongs to its163-file snapshot; current worktree has4 later
+changes and2 additions (saved_plan_notes). Current combined acceptance is not
+reverified. No changes reverted or production operations performed. See
+`docs/agent/COMPANION_TASK_CLOSEOUT_20261012.md`.
+
+2026-10-11 Companion knowledge strategy addendum (working tree, not deployed):
+ordinary stable conversation already used general knowledge. InformationNeed now
+records deterministic knowledge-source decisions/reasons; bounded specialist
+signals can request optional RAG. Selective mode applies reviewed assertion,
+provenance, subject/topic, expiry and narrow conflict gates, with general fallback
+only for optional stable needs. Source requests, live facts and original accepted
+Revision rationale retain strict boundaries. Explicit preferences remain in
+cultural turns; read-only Trip summaries include ID/version. BM25, embedding
+interfaces/cosine and RRF are preserved; Companion still uses lexical retrieval.
+No new live provider, corpus, profile service or Planning authority. MEASURED:
+controlled A/B/C 54/54 boundary checks, RAG0/12/5 across16 Companion cases.
+VERIFIED: isolated Linux/PostgreSQL backend891 passed/2warnings, Web125 plus
+typecheck/build passed. 2026-10-11 real evaluation addendum: native Windows
+proxy path diagnosed; process-local loopback restored production GLM client.
+Fixed54 attempted/53 answered; holdout21 answered;68 anonymous six-dimension
+ratings with independent core-fact checks, unverified accuracy left null.
+C source-supported questions improved; general quality near A, not universally
+better. Matched15 tokens A12984/C15116, latency5.456/5.439s. Explicit authorized
+cultural planning now keeps current named destination over comparison history;
+real histories replayed correctly. Final isolated backend909/Web125 and
+typecheck/build pass with source binding. Output price/crowding claims and
+provider filtering remain quality blockers; C retained recommendation, no
+production release. See docs/agent/COMPANION_REAL_QUALITY_20261011.md. See
+`docs/agent/COMPANION_KNOWLEDGE_STRATEGY_20261011.md` and its evidence directory.
+
+2026-10-12 Companion reliability addendum: newly generated free prose and
+saved suggestions receive bounded local dynamic-state controls; verified live
+rendering and original rationale remain separate. Incomplete provider results
+have explicit finish reasons and natural needs_information degradation, no
+filter retries. Isolated backend938/Web125/build pass with163-file image binding.
+32 real evaluation rows,24 completed model calls/1 length-incomplete; sensitive
+0/8 normal probes, not a solved filtering claim. Historical relationships,
+lexical coverage and partial-repair naturalness remain PARTIAL / OPEN. No
+production deployment; C knowledge strategy unchanged. See
+`docs/agent/COMPANION_ANSWER_RELIABILITY_PHASE1_20261011.md`.
 
 RoamSync is a local, single-user travel-planning prototype. Its primary product
 claim is not “generate a travel guide”; it keeps a formal itinerary and lets a

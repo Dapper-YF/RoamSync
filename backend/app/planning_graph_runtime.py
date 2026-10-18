@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 
 from app.destination_research import research_destination
+from app.initial_places_service import prepare_initial_candidates
 from app.planning_progress import track_progress
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.types import Command
@@ -132,6 +133,7 @@ async def _execute_planning_run(
                 draft_provider,
                 build_semantic_intent_provider(settings),
                 destination_researcher=research_destination if provider is None else None,
+                candidate_researcher=prepare_initial_candidates if provider is None else None,
             )
             result = await invoke_compiled_graph(graph, run, resume=resume)
             async with session_factory() as session:

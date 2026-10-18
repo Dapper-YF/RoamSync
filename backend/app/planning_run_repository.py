@@ -9,6 +9,8 @@ from app.candidate_route_service import enrich_candidate_routes
 from app.database import CandidateRouteLeg, PlanningRun, PlanRevision, TripDisruptionEvent
 from app.repository import get_trip
 from app.travel_goal_router import route_travel_goal
+from app.requirements import valid_records
+from app.repository import get_trip_preferences
 from app.planning_intent_service import (
     SemanticIntentProvider,
     UnsupportedPlanningIntentError,
@@ -101,6 +103,9 @@ async def create_planning_run(
             "我还不确定你希望我完成什么。可以问现有行程、路线或预算，也可以明确说明要修改哪部分；订票和删除整趟旅行请使用相应服务或页面。",
         )
     automatic_trigger_type = trigger_type or ("navigation_disruption" if disruption else None)
+    preferences = await get_trip_preferences(session, trip_id)
+    trigger_snapshot = {**(trigger_snapshot or {}), "effective_requirements":
+        valid_records(getattr(preferences, "requirement_records", []))}
     run = PlanningRun(
         trip_id=trip_id,
         run_type=payload.run_type,
@@ -181,6 +186,7 @@ async def save_plan_revision(
     validation_result: dict,
     source_ids: list[uuid.UUID],
     enrich_routes: bool = True,
+    commit: bool = True,
 ) -> PlanRevision:
     run = await get_planning_run(session, run_id)
     if run.status not in {"queued", "researching", "planning", "validating"}:
@@ -246,8 +252,11 @@ async def save_plan_revision(
             )
         )
     run.status = "awaiting_confirmation"
-    await session.commit()
-    await session.refresh(revision)
+    if commit:
+        await session.commit()
+        await session.refresh(revision)
+    else:
+        await session.flush()
     return revision
 
 
@@ -261,6 +270,11 @@ async def reject_revision(
     if revision.status != "pending":
         raise InvalidPlanningRunStateError
     run = await get_planning_run(session, revision.planning_run_id)
+    if run.trigger_type == "draft_promotion":
+        # Promotion cancellation shares the operation lock with authorization
+        # consumption. The legacy reject endpoint cannot overwrite accepted
+        # facts after reading an earlier pending revision.
+        raise InvalidPlanningRunStateError("请通过草稿转换操作撤回授权")
     revision.status = "rejected"
     revision.rejection_reason_code = reason_code
     revision.rejection_reason_text = reason_text

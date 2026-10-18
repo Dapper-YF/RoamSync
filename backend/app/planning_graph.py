@@ -19,6 +19,7 @@ from app.plan_revision_service import accept_plan_revision, validate_candidate_p
 from app.planning_context import build_planning_context
 from app.candidate_edit import candidate_base_from_context
 from app.decision_context import assert_decision_context_invariants, build_decision_context
+from app.candidate_decisions import collect_candidate_route_facts, compare_candidates, review_candidate_decisions
 from app.decision_memory import retrieve_decision_memory
 from app.decision_ledger import reconcile_route_repair_ledger, validate_decision_ledger
 from app.planning_explanation import describe_plan_changes
@@ -60,6 +61,7 @@ class PlanningGraphState(TypedDict, total=False):
     decision_summary: dict
     goal_review_count: int
     goal_feedback: list[dict]
+    decision_review: dict
     review_count: int
     revision_id: str
     outcome: str
@@ -280,6 +282,29 @@ def build_planning_graph(
                 context=context_data,
             )
             context_data["planning_goals"] = goals.model_dump(mode="json")
+            from app.requirements import project_requirements
+            requirement_records = context_data.get("preferences", {}).get("requirement_records")
+            if requirement_records is None:
+                requirement_records = (run.trigger_snapshot or {}).get("effective_requirements", [])
+            context_data["effective_requirements_by_date"] = {
+                day["date"]: project_requirements(
+                    requirement_records, trip_id=str(trip_id), city=context_data["trip"]["destination"],
+                    target_date=day["date"], day_index=context_data["days"].index(day) + 1,
+                    target_activity_ids=[str(item["id"]) for item in day.get("activities", [])],
+                ) for day in context_data["days"] if day["date"] in goals.target_days
+            }
+            context_data["effective_requirements"] = list({
+                item["id"]: item for items in context_data["effective_requirements_by_date"].values() for item in items
+            }.values())
+            context_data["weather_sensitive"] = bool(
+                resolution.grounded_intent and resolution.grounded_intent.constraints.weather_sensitive
+            )
+            context_data["candidate_route_facts"] = await collect_candidate_route_facts(
+                session, context_data, target_dates=set(goals.target_days),
+            )
+            _, context_data["candidate_comparison"] = compare_candidates(
+                context_data, context_data.get("candidates", []), allowed_dates=set(goals.target_days),
+            )
             context_data["formal_route_facts"] = formal_route_facts(context_data, goals)
             decision_memory = await retrieve_decision_memory(
                 session, trip_id=trip_id, target_days=goals.target_days,
@@ -298,6 +323,9 @@ def build_planning_graph(
             decision = context_data["decision_context"]
             execution = decision["execution_context"]
             existing_snapshot["decision_context_summary"] = {
+                "candidate_comparison": context_data["candidate_comparison"],
+                "candidate_route_fact_count": len(context_data["candidate_route_facts"]),
+                "effective_requirement_ids": [item["id"] for item in context_data["effective_requirements"]],
                 "target_days": goals.target_days,
                 "formal_activity_count": sum(
                     len(day["activities"])
@@ -553,6 +581,14 @@ def build_planning_graph(
                             message="已根据查询到的路线时长和每日时间窗调整活动时间，预留交通时间。",
                             details={"adjustments": adjustments},
                         ))
+        decision_review = review_candidate_decisions(state["planning_context"], snapshot)
+        if decision_review["hard_errors"]:
+            result.valid = False
+            result.errors.extend(PlanValidationIssue.model_validate(item) for item in decision_review["hard_errors"])
+        trace("candidate_decision_review", "deterministic_check", refs=("candidate_comparison", "effective_requirements", "route_facts"), data={
+            "status": decision_review["status"], "hard_error_count": len(decision_review["hard_errors"]),
+            "unknown_requirement_count": len(decision_review["uncheckable_requirement_ids"]),
+        })
         ledger_issues, decision_summary = validate_decision_ledger(
             context=state["planning_context"], snapshot=snapshot, schedule_adjustments=adjustments,
         )
@@ -570,6 +606,7 @@ def build_planning_graph(
             "validation_result": result.model_dump(mode="json"),
             "schedule_adjustments": adjustments,
             "decision_summary": decision_summary,
+            "decision_review": decision_review,
             "required_day_dates": [day.isoformat() for day in sorted(required_dates)],
         }
 
@@ -631,6 +668,8 @@ def build_planning_graph(
                     "recovery": state["planning_context"].get("execution_recovery"),
                     "planning_goals": state.get("planning_goals") or state["planning_context"].get("planning_goals"),
                     "goal_satisfaction": state.get("goal_satisfaction", {"results": []}),
+                    "candidate_comparison": state["planning_context"].get("candidate_comparison", {}),
+                    "decision_review": state.get("decision_review", {}),
                     "decision_summary": state.get("decision_summary", {"status": "unavailable", "entries": []}),
                     "decision_ledger_status": state.get("decision_summary", {}).get("status", "unavailable"),
                     "decision_ledger_errors": state.get("decision_summary", {}).get("error_codes", []),

@@ -1,29 +1,31 @@
-# RoamSync Handoff
+# Latest Handoff
 
 ## Snapshot
-
-2026-10-08. Goal ACTIVE. Git release preparation verified; real clean-ref Demo NOT READY. No production deployment, main merge or production DB changes authorized.
+2026-10-18 正式 RoamSync 2.0 已整合到 E:/Study/RoamSync 并切换本机3000。
+3016仅保留开发预览身份；正式服务不依赖该工作区或18004。
 
 ## Current Freeze / Rehearsal Status
-
-VERIFIED: branch codex/roamsync-demo-release-20261007 from main5572849. Human approved363→366 exact packaging amendment. Group SHAs Backend fbd65f2, Web93118dc, operator/docs8ee7dbf. Two explicit deletions; all366 blob hashes match. Historical work captured honestly; Android/raw/private/unrelated work excluded and retained. No blanket add/reset/clean/stash/rebase/push.
+VERIFIED：正式API/Worker各201运行文件与正式源码一致；Web188及构建、后端1208通过。
+原数据库卷保留，0035/0036非破坏升级；19既有业务表指纹不变，179旅行读取通过。
+正式新产品表切换时为空，无预览测试数据/凭据导入。独立正式本机凭据，仅loopback。
+真实地点、路线、模型、草稿、明确采用、重试去重和执行推进在正式备份副本通过。
+3000浏览器只读验收通过，含旧planner地址进入新版，不在正式数据上制造测试Trip。
 
 ## Latest shadow-mode evidence
-
-Clean checkout E:/Study/RoamSync-release-20261008, initial git clean. Source e7e22849869443bb73f96bce736fb86a1c4b3745f2a48f6f32da3273176622a6. API/Worker built images, no source mounts,175 runtime files exact. Built Nginx3001/isolated API8001/PG17 with real providers. Final documentation-only checkpoint SHA/manifests in git_release_20261008/release_final_binding.json.
+备份/镜像回退配置：backups/v2-official-20261018/（忽略提交）。
+回退应用保留新增Schema与当前数据，不自动降级或恢复旧数据库。
+证据及范围：docs/OFFICIAL_V2_RELEASE_20261018.md。
 
 ## Prior milestone baseline (before shadow split)
-
-Production accepted fc3a06ba… remains. Formal seven tables/Trip versions exactly unchanged. Previous isolated dirty-tree chain versions1→2→3, Recovery costs19000fen aligned, current reject/feedback and honest Explanation verified; those are historical evidence, not substitute for this clean-ref chain. Source Repair PARTIAL/NOT READY; date-specific published facts frozen. Ledger2.2 OPEN.
+认可的新版产品源44ebea7及正式既有Streaming/天气修复已整合，Android未完成改造不迁入。
 
 ## Prior verification
-
-MEASURED clean locked Linux/Python3.11/new empty PG17: migrations0→0034;854 passed,0fail/error/skip,2warnings. Web125/typecheck/build. Frozen clean-checkout controlled Knowledge60 and holdout50 summary unchanged; labels intact. Remove automatic demo reset; add three approved frozen inputs, keep raw result metadata outside Git.
+迁移演练使用正式备份，运行写测试使用副本；不得把它描述成正式库写入验收。
+指纹不覆盖checkpoint内容；新requirements字段另核验空默认值。
 
 ## Prior blockers (historical)
-
-Current blocker: first geocoding outage failed safely; second real conversation passed facts and explicit create. Research failed json_invalid; two normal UI retries failed planner_unavailable, last log RemoteProtocolError; direct model connectivity also failed. All failures retained. New fixture version1/formal activities0; Candidate/Accept/Reject/Execution/Disruption/Recovery/Explanation not passed on clean release.
+Android旧正式旅行UI未退出用户路径，产品重构和新UI真机闭环仍未通过。
+精确GPS授权已由用户亲自选择，路线Provider范围与GPS能力仍需分开验收。
 
 ## Interview framing
-
-NOT READY, not product complete. Evidence: backend/evals/results/git_release_20261008/clean_rehearsal_verdict.json and reports REPOSITORY_REPRODUCIBILITY_20261007.md / ROAMSYNC_DEMO_ACCEPTANCE_20261007.md. Next gate: stable actual model transport, unchanged complete clean-ref lifecycle, image/source bindings. Only after success report production differences and await final online confirmation. No new ordinary functionality/source expansion selected. Production rollback image/config references preserved; data/schema operations need separate approval. Goal stays ACTIVE.
+可陈述正式3000升级与已验证范围；不能陈述Android重构完成、多用户安全或全部智能决策可靠。

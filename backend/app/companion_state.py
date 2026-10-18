@@ -19,8 +19,8 @@ def stable_identity(kind: str, session_id: str, turn_id: str, index: int = 0) ->
     return f"{kind}_{uuid.uuid5(_NAMESPACE, f'{session_id}:{turn_id}:{index}').hex}"
 
 
-def destination_from_text(text: str) -> str | None:
-    if re.search(r"历史|文化|来历", text):
+def destination_from_text(text: str, *, planning_authorized: bool = False) -> str | None:
+    if not planning_authorized and re.search(r"历史|文化|来历", text):
         return None  # A named knowledge subject is not a resolved destination.
     planning_destination = re.search(r"(?:规划|安排)(?:一个)?([\u4e00-\u9fff]{2,8}?)(?=[一二三四五六七八九十两\d]+(?:天|日))", text)
     if planning_destination:
@@ -143,7 +143,7 @@ def build_planning_brief(session_id: str, turn_id: str, message: str,
     duration = trip_duration(message)
     return PlanningBrief(brief_id=stable_identity("brief", session_id, turn_id),
         status="needs_clarification" if gaps else "prepared", authorization_turn_id=turn_id,
-        user_request=message, destination=destination_from_text(message) or state.destination,
+        user_request=message, destination=destination_from_text(message, planning_authorized=True) or state.destination,
         date_request=latest(r"\d{1,4}[年月/-]|下周|出发|返程|国庆|元旦"),
         duration_days=duration if duration and 1 <= duration <= 31 else None,
         party_statement=latest(r"[一二三四五六七八九十两\d]+个人|两人|一个人|带父母"),

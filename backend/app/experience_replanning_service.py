@@ -9,7 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.activity_experience_impact import evaluate_activity_experience_time_impact
-from app.database import ActivityExecution, PlanRevision, PlanningRun, TripExecution
+from app.database import Activity, ActivityExecution, PlanRevision, PlanningRun, TripExecution
 from app.planning_run_repository import RecoveryPlanningConflictError, create_planning_run
 from app.schemas import PlanningRunCreate
 
@@ -24,6 +24,9 @@ async def ensure_experience_recovery(session: AsyncSession, activity_execution_i
         return None
     execution = await session.scalar(select(TripExecution).where(TripExecution.id == item.trip_execution_id))
     if execution is None:
+        return None
+    current_activity = await session.get(Activity, item.activity_id)
+    if current_activity is None:
         return None
     impact = await evaluate_activity_experience_time_impact(session, execution.id, item.id)
     if impact.impact_state != "infeasible":
@@ -63,7 +66,8 @@ async def ensure_experience_recovery(session: AsyncSession, activity_execution_i
     try:
         return await create_planning_run(
             session, execution.trip_id,
-            PlanningRunCreate(run_type="replan", user_request="用户选择继续体验当前活动，确定性时间投影显示后续正式行程不可行；保护当前活动，仅调整后续未开始活动。", entry_point="trip_planner"),
+            PlanningRunCreate(run_type="replan", user_request="用户选择继续体验当前活动，确定性时间投影显示后续正式行程不可行；保护当前活动，仅调整后续未开始活动。", entry_point="trip_planner",
+                selected_day_id=current_activity.day_plan_id),
             trigger_type="experience_impact", trigger_key=key, trigger_snapshot=snapshot,
             trigger_fingerprint=snapshot["fingerprint"],
         )

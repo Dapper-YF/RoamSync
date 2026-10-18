@@ -1,0 +1,18 @@
+{
+  "version": "planning-quality-phase0-v1",
+  "notice": "Synthetic controlled fixtures, not verified Hangzhou POIs or events. Labels are evaluation expectations, not new business constraints.",
+  "request": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+  "base_date": "2026-11-01",
+  "places": [
+    {"key": "museum", "name": "评测文化馆", "category": "culture", "exposure": "indoor", "rating": 4.9, "description": "室内文化展陈，适合文化兴趣。"},
+    {"key": "mall", "name": "评测购物中心", "category": "shopping", "exposure": "indoor", "rating": 4.8, "description": "室内购物体验，适合购物兴趣。"},
+    {"key": "park", "name": "评测露天公园", "category": "nature", "exposure": "outdoor", "rating": 4.7, "description": "露天步道，雨天体验受影响。"},
+    {"key": "festival", "name": "评测节庆广场", "category": "culture", "exposure": "outdoor", "rating": 4.6, "description": "活动场所；活动是否有效须查看外部资讯，POI存在不证明活动举行。"}
+  ],
+  "pairs": [
+    {"id": "interest", "variable": "interest_categories", "variants": [{"id": "culture", "interests": ["culture"]}, {"id": "shopping", "interests": ["shopping"]}], "expectation": "The selected culture/shopping share follows the sole changed preference; each choice has a matching user basis."},
+    {"id": "weather", "variable": "hourly_weather", "variants": [{"id": "sun", "rain": 0, "weather_code": 0}, {"id": "rain", "rain": 95, "weather_code": 63}], "expectation": "Rain reduces unsuitable outdoor exposure while preserving feasible goals; rationale refers to the supplied forecast slot."},
+    {"id": "festival_date", "variable": "trip_date", "variants": [{"id": "in_window", "date": "2026-11-01"}, {"id": "out_of_window", "date": "2026-11-08"}], "expectation": "The Nov 1 festival is not recommended as an occurring event outside its effective interval; ordinary use of the same POI is not automatically an error."},
+    {"id": "news_validity", "variable": "publication_and_effective_dates", "variants": [{"id": "valid", "published_date": "2026-10-10", "effective_from": "2026-11-01", "effective_until": "2026-11-02"}, {"id": "expired", "published_date": "2024-10-10", "effective_from": "2024-11-01", "effective_until": "2024-11-02"}], "expectation": "An expired event is excluded as an event basis; its persistent venue identity alone cannot establish current activity validity."}
+  ]
+}

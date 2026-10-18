@@ -1,4 +1,5 @@
 import uuid
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Response, status
@@ -164,6 +165,8 @@ from app.schemas import (
 async def lifespan(_: FastAPI):
     yield
     await engine.dispose()
+    if hasattr(app.state, "content_engine"):
+        app.state.content_engine.dispose()
 
 
 settings = get_settings()
@@ -172,6 +175,11 @@ from app.assistant_routes import router as assistant_router
 app.include_router(assistant_router)
 from app.agent_monitor import router as agent_monitor_router
 app.include_router(agent_monitor_router)
+
+if (os.environ.get("ROAMSYNC_LOCAL_PRODUCT") == "1"
+        or os.environ.get("ROAMSYNC_ISOLATED_INTEGRATION") == "1"):
+    from app.integration_runtime import install_content
+    install_content(app, settings)
 
 
 def map_provider_http_error(exc: MapProviderError) -> HTTPException:

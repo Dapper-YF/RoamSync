@@ -387,7 +387,7 @@ def test_formal_rationale_requires_accepted_validated_identity_and_current_versi
                 await db.commit()
                 row = await get_or_create_session(db, trip.id)
                 name = activity.custom_name or place.name
-                row = await send_message(db, row.id, f"为什么你之前把{name}安排到晚上？", uuid.uuid4(), companion_provider=Provider())
+                row = await send_message(db, row.id, f"为什么你之前把{name}安排到晚上？请提供原始保存理由。", uuid.uuid4(), companion_provider=Provider())
                 explanation = row.messages[-1]["companion_result"]["explanation"]
                 assert explanation["explanation_type"] == expected
                 if expected == "original_validated_decision":

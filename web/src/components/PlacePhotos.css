@@ -1,0 +1,20 @@
+.place-photo-cover,.place-photo-gallery figure{margin:0;overflow:hidden;background:#eef2e6}
+.discovery-card{align-self:start}
+.place-photo-cover img{display:block;width:100%;height:180px;object-fit:cover}
+.place-photo-credit{font-size:10px;line-height:1.65;padding:6px 12px;color:#68786c;background:#f5f6ed;overflow-wrap:anywhere}
+.place-photo-credit a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.place-photo-missing{min-height:100px;display:flex;align-items:center;justify-content:center;padding:18px;color:#718477;font-size:12px;background:linear-gradient(135deg,#eef2e6,#faf8ef)}
+.place-photo-gallery{border:1px solid #e3e2d8;border-radius:14px;overflow:hidden;margin-bottom:22px;background:#fffdf7}
+.place-photo-gallery img{display:block;width:100%;height:340px;object-fit:contain;background:#edf0e7}
+.place-photo-caption{padding:8px 12px;font-size:12px;color:#546f61}
+.place-photo-gallery nav{display:flex;align-items:center;gap:8px;padding:10px 12px}
+.place-photo-gallery nav button{border:1px solid #d3ddcc;border-radius:8px;background:#f4f6ec;padding:5px 12px;color:#326c59;cursor:pointer}
+.place-photo-gallery nav button[aria-pressed=true]{background:#287d70;color:white}
+.place-photo-gallery nav small{color:#718477;margin-left:auto}
+.place-photo-history{display:block;color:#839086;padding:8px 12px;font-size:11px}
+.nearby-place .place-photo-cover{border-radius:10px;margin:0 0 12px}
+.travel-assistant-suggestions .place-photo-cover{max-width:300px;border-radius:10px}
+.travel-assistant-suggestions > span:has(.place-photo-cover){flex-direction:column;align-items:flex-start;max-width:300px}
+.travel-assistant-suggestions > span:has(.place-photo-cover) > a{align-self:stretch}
+.travel-assistant-suggestions .place-photo-credit a{display:inline;padding:0;border:0;background:transparent}
+@media(max-width:640px){.place-photo-gallery img{height:240px}.place-photo-cover img{height:165px}}

@@ -41,6 +41,7 @@ class Settings(BaseSettings):
     intent_reasoning_effort: Literal["none", "low", "high", "max"] = "low"
     research_reasoning_effort: Literal["none", "low", "high", "max"] = "low"
     decision_ledger_validation_mode: Literal["shadow", "enforced"] = "shadow"
+    companion_knowledge_strategy: Literal["selective", "general_only", "forced_rag"] = "selective"
 
     @property
     def search_api_key(self) -> str:

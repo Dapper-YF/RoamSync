@@ -1,0 +1,45 @@
+{
+  "official_source": "E:\\Study\\RoamSync",
+  "preview_source_commit": "44ebea7",
+  "official_web": "http://127.0.0.1:3000",
+  "backend_test_passed": 1208,
+  "web_test_passed": 188,
+  "migration_from": "20260924_0034",
+  "migration_to": "20261018_0036",
+  "historical_business_tables_unchanged": 19,
+  "historical_trips_read": 179,
+  "new_product_tables_empty_at_cutover": 6,
+  "preview_rows_imported": 0,
+  "business_write_smoke": "official backup clone only; real provider/model and adoption/idempotency/execution passed",
+  "official_browser_verification": "real search/detail, all trip days/preferences/execution read, lifecycle pages and legacy planner URL, gateway/origin boundary",
+  "fingerprint_exclusions": [
+    "alembic_version",
+    "checkpoint tables",
+    "new requirement_records field separately checked empty"
+  ],
+  "rollback": "backups/v2-official-20261018/rollback.yaml; retain additive schema and current data",
+  "runtime": {
+    "roamsync-api": {
+      "image": "sha256:e45c5efd48beb9a6df15f7172dd89048da951ecafd9cb4336a8c0d2003415856",
+      "source": "E:\\Study\\RoamSync",
+      "mounts": []
+    },
+    "roamsync-agent-worker-1": {
+      "image": "sha256:1966e94789bfb25c442dba83f4bbc40bbc0e3c9211ac265ab70ae1941cb14f91",
+      "source": "E:\\Study\\RoamSync",
+      "mounts": []
+    },
+    "roamsync-web": {
+      "image": "sha256:ab22db3badb43d056fb77fec47cdbb79d62f7321157fc482773ee944ead38f0a",
+      "source": "E:\\Study\\RoamSync",
+      "mounts": []
+    },
+    "roamsync-postgres": {
+      "image": "sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73",
+      "source": "E:\\Study\\RoamSync",
+      "mounts": [
+        "roamsync_postgres_data"
+      ]
+    }
+  }
+}

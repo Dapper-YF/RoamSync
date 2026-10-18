@@ -396,6 +396,7 @@ export interface TripPlanningRepository {
   getAssistantSession?(tripId?: string): Promise<AssistantSession>;
   resetAssistantSession?(sessionId: string): Promise<AssistantSession>;
   sendAssistantMessage?(sessionId: string, message: string, messageId: string, selectedDayId?: string, selectedActivityId?: string): Promise<AssistantSession>;
+  streamAssistantMessage?(sessionId: string, message: string, messageId: string, onEvent: (event: AssistantStreamEvent) => void, selectedDayId?: string, selectedActivityId?: string): Promise<AssistantSession>;
   decideAssistantAction?(sessionId: string, actionId: string, accept: boolean): Promise<AssistantSession>;
   listTrips(): Promise<Trip[]>;
   createTrip(input: TripCreateInput): Promise<Trip>;
@@ -437,18 +438,33 @@ export interface TripPlanningRepository {
   requestDynamicReplan(tripId: string, trigger: DynamicReplanTrigger, details: string): Promise<PlanningRun>;
 }
 
+export type AssistantStreamEvent =
+  | { type: "analysis_delta" | "answer_delta"; delta: string }
+  | { type: "status"; message: string }
+  | { type: "reset" }
+  | { type: "done"; session: AssistantSession }
+  | { type: "error"; message: string };
+
 export interface AssistantSession {
   id: string;
   trip_id: string | null;
   latest_run_id: string | null;
   messages: Array<{
     id: string; user: string; assistant: string; run_id?: string | null;
+    context?: { version: "assistant-context-v1"; topic_id: string;
+      route_request?: { origin_place_id: string; destination_place_id: string; mode: "walk" | "driving" } | null };
+    read_tools?: { comparison?: { status: "available" | "unavailable"; items: Array<{place_id:string;name:string;city:string;address:string|null;rating:number|null;reference_cost_yuan:number|null;source:string;retrieved_at:string}>;missing_count:number;semantics:"provider_reference_not_live_quote" }; route?: { status: "available" | "unavailable"; result?: { mode: "walk" | "driving"; distance_meters: number; duration_seconds: number } } };
+    place_cards?: Array<{
+      place: { place_id: string; name: string; city: string; source: string; retrieved_at: string; images?: import('../data/placeContentRepository').ContentImage[] };
+      role: "discussed" | "recommendation"; suggestion_ids: string[];
+      detail_path: string; reason_kind: "assistant_advice_unverified";
+    }>;
     companion_result?: {
-      response_text: string; goal_type: string; status: "completed" | "needs_information" | "needs_clarification";
+      response_text: string; analysis_summary?: string; goal_type: string; status: "completed" | "needs_information" | "needs_clarification";
       suggestions: Array<{ suggestion_id: string; suggestion_type: string; title: string; summary: string;
         grounding: "unverified_proposal" | "knowledge_supported"; conversation_turn_id: string; status: string }>;
       resolved_suggestion_refs: string[];
-      explanation?: { explanation_type: string; based_on_prior_decision: boolean; source_turn_ref?: string | null } | null;
+      explanation?: { explanation_type: string; based_on_prior_decision: boolean; source_turn_ref?: string | null; source_decision_ref?: string | null; fact_freshness_warning?: string | null } | null;
       runtime_trace: string[];
       answer_evidence_refs?: string[];
       knowledge_evidence?: Array<{ evidence_ref: string; text: string; source_reference: string;

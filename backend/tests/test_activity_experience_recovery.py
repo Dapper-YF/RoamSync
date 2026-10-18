@@ -79,6 +79,20 @@ async def _impact(execution_id: str, activity_execution_id: str):
         return await evaluate_activity_experience_time_impact(session, uuid.UUID(execution_id), uuid.UUID(activity_execution_id))
 
 
+async def _unchanged_other_days(session, target_date):
+    rows = (await session.execute(select(Activity, DayPlan, PlaceCandidate)
+        .join(DayPlan, Activity.day_plan_id == DayPlan.id)
+        .join(PlaceCandidate, Activity.place_candidate_id == PlaceCandidate.id)
+        .where(DayPlan.trip_id == DEMO_TRIP_ID, DayPlan.date != target_date))).tuples()
+    return [CandidateActivity(
+        candidate_id=f"unchanged-{activity.id}", day_date=day.date,
+        place_candidate_id=place.id, planned_start_time=activity.scheduled_time,
+        duration_minutes=activity.duration_minutes, estimated_cost_fen=activity.estimated_cost_fen,
+        transport_mode_to_here=day.route_mode, source_ids=[place.source_record_id],
+        replaces_activity_id=activity.id, locked=activity.schedule_locked,
+    ) for activity, day, place in rows]
+
+
 def _extend(client: TestClient, activity_execution_id: str, minutes: int, action_id: uuid.UUID | None = None):
     return client.post(
         f"/api/v1/activity-executions/{activity_execution_id}/extend-stay",
@@ -123,6 +137,8 @@ def test_infeasible_experience_creates_fingerprinted_recovery_snapshot() -> None
         assert run.trigger_key == f"experience:{execution['id']}:{run.base_trip_version}:{current['id']}"
         assert run.trigger_fingerprint and run.trigger_fingerprint == snapshot["fingerprint"]
         assert run.base_trip_version == 1
+        assert str(run.selected_day_id) == current["day_plan_id"]
+        assert run.selected_activity_id is None
         assert snapshot["activity_execution_id"] == current["id"]
         assert snapshot["formal_itinerary_version"] == run.base_trip_version
         assert snapshot["impact"]["time_shift_minutes"] == 480
@@ -466,6 +482,7 @@ def test_accepted_experience_recovery_rebases_execution_without_rebuilding_facts
                     transport_mode_to_here="walk", source_ids=[place.source_record_id],
                     replaces_activity_id=activity.id,
                 )]
+                candidates.extend(await _unchanged_other_days(session, day.date))
                 revision = await save_plan_revision(
                     session, run.id, before_snapshot={},
                     proposed_snapshot=CandidatePlanSnapshot(activities=candidates),
@@ -536,6 +553,119 @@ def test_accepted_experience_recovery_rebases_execution_without_rebuilding_facts
         progress = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}/execution-progress")
         assert progress.status_code == 200
         assert progress.json()["recovery_planning"] is None
+
+
+def test_recovery_accept_new_stop_can_continue_without_recreating_lived_facts() -> None:
+    """Synthetic revision exercises the real Accept -> next-stop command path."""
+    with TestClient(app) as client:
+        execution, current = _start_current(client)
+        asyncio.run(_pin_current_start(current["id"]))
+        assert _extend(client, current["id"], 480).status_code == 200
+        [run] = asyncio.run(_run_rows())
+
+        async def prepare():
+            async with session_factory() as session:
+                present = await session.get(Activity, uuid.UUID(current["activity_id"]))
+                days = list((await session.scalars(select(DayPlan).where(
+                    DayPlan.trip_id == DEMO_TRIP_ID,
+                ).order_by(DayPlan.position))).all())
+                place = await session.scalar(select(PlaceCandidate).join(
+                    Activity, Activity.place_candidate_id == PlaceCandidate.id,
+                ).where(Activity.day_plan_id == present.day_plan_id,
+                    Activity.id != present.id).order_by(Activity.position))
+                current_place = await session.get(PlaceCandidate, present.place_candidate_id)
+                snapshot = CandidatePlanSnapshot(activities=[
+                    CandidateActivity(
+                        candidate_id="present", day_date=days[0].date,
+                        place_candidate_id=present.place_candidate_id,
+                        planned_start_time=present.scheduled_time,
+                        duration_minutes=present.duration_minutes,
+                        estimated_cost_fen=present.estimated_cost_fen,
+                        transport_mode_to_here="walk", source_ids=[current_place.source_record_id],
+                        replaces_activity_id=present.id,
+                    ),
+                    CandidateActivity(
+                        candidate_id="new-next", day_date=days[0].date,
+                        place_candidate_id=place.id, planned_start_time=time(19),
+                        duration_minutes=30, estimated_cost_fen=place.estimated_cost_fen,
+                        transport_mode_to_here="walk", source_ids=[place.source_record_id],
+                    ),
+                ])
+                snapshot.activities.extend(await _unchanged_other_days(session, days[0].date))
+                revision = await save_plan_revision(
+                    session, run.id, before_snapshot={}, proposed_snapshot=snapshot,
+                    reason="Synthetic recovery shortens the unstarted visit and retains other days",
+                    difference_summary={}, validation_result={}, source_ids=[],
+                )
+                return str(revision.id)
+
+        revision_id = asyncio.run(prepare())
+        before = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}/execution").json()
+        accepted = client.post(f"/api/v1/plan-revisions/{revision_id}/accept")
+        assert accepted.status_code == 200, accepted.text
+        progress = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}/execution").json()
+        today = [item for item in progress["activities"] if item["day_date"] == current["day_date"]]
+        assert len(today) == 2
+        present = next(item for item in progress["activities"] if item["activity_id"] == current["activity_id"])
+        original = next(item for item in before["activities"] if item["activity_id"] == current["activity_id"])
+        assert present == original
+        next_stop = next(item for item in today if item["activity_id"] != current["activity_id"])
+        assert next_stop["id"] is not None and next_stop["status"] == "pending"
+        # Idempotent acceptance must not duplicate pending execution state.
+        assert client.post(f"/api/v1/plan-revisions/{revision_id}/accept").status_code == 200
+        action_url = f"/api/v1/trip-executions/{execution['id']}/actions"
+        completed = client.post(action_url, json={"action": "complete", "activity_id": current["activity_id"]})
+        assert completed.status_code == 200, completed.text
+        assert completed.json()["current_activity_id"] == next_stop["activity_id"]
+        for action in ("arrive", "start_activity", "complete"):
+            response = client.post(action_url, json={"action": action, "activity_id": next_stop["activity_id"]})
+            assert response.status_code == 200, response.text
+        assert response.json()["current_activity_id"] not in {current["activity_id"], next_stop["activity_id"]}
+
+
+def test_accept_rechecks_requirements_changed_after_candidate_generation() -> None:
+    """A pending recovery cannot bypass a newer explicit hard constraint."""
+    from app.requirements import add_requirement
+    with TestClient(app) as client:
+        execution, current = _start_current(client)
+        asyncio.run(_pin_current_start(current["id"]))
+        assert _extend(client, current["id"], 480).status_code == 200
+        [run] = asyncio.run(_run_rows())
+
+        async def prepare():
+            async with session_factory() as session:
+                activity = await session.get(Activity, uuid.UUID(current["activity_id"]))
+                day = await session.get(DayPlan, activity.day_plan_id)
+                place = await session.get(PlaceCandidate, activity.place_candidate_id)
+                snapshot = CandidatePlanSnapshot(activities=[CandidateActivity(
+                    candidate_id="present", day_date=day.date, place_candidate_id=place.id,
+                    planned_start_time=activity.scheduled_time, duration_minutes=activity.duration_minutes,
+                    estimated_cost_fen=activity.estimated_cost_fen, transport_mode_to_here="walk",
+                    source_ids=[place.source_record_id], replaces_activity_id=activity.id,
+                ), *await _unchanged_other_days(session, day.date)])
+                revision = await save_plan_revision(session, run.id, before_snapshot={},
+                    proposed_snapshot=snapshot, reason="Synthetic legal candidate before requirement edit",
+                    difference_summary={}, validation_result={}, source_ids=[])
+                trip = await session.get(Trip, DEMO_TRIP_ID)
+                return revision.id, place.category, day.date, trip.version
+        revision, category, target_date, version = asyncio.run(prepare())
+
+        async def add_new_constraint():
+            async with session_factory() as session:
+                preferences = await session.get(TripPreferences, DEMO_TRIP_ID)
+                preferences.requirement_records = add_requirement([], text="New explicit hard constraint",
+                    scope={"kind": "day", "trip_id": str(DEMO_TRIP_ID), "city": "杭州", "date": target_date.isoformat()},
+                    source_ref="after-generation", key="avoid_category", value=category, strength="hard")
+                preferences.version += 1
+                await session.commit()
+        asyncio.run(add_new_constraint())
+        response = client.post(f"/api/v1/plan-revisions/{revision}/accept")
+        assert response.status_code == 422, response.text
+        assert any(issue["code"] == "effective_requirement_unsatisfied" for issue in response.json()["detail"]["errors"])
+        assert client.get(f"/api/v1/trips/{DEMO_TRIP_ID}").json()["version"] == version
+        progress = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}/execution").json()
+        assert progress["current_activity_id"] == current["activity_id"]
+        assert progress["status"] == "in_progress"
 
 
 def test_experience_recovery_serializes_later_navigation_disruption() -> None:

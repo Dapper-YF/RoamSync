@@ -136,10 +136,10 @@ it("saves completion without creating an execution session", async () => {
   expect(screen.queryByRole("button", { name: "开始旅行" })).not.toBeInTheDocument();
 });
 
-it("redirects the old assistant link to the unified trip directory", async () => {
+it("opens the global assistant without requiring a trip", async () => {
   render(<MemoryRouter initialEntries={["/assistant"]}><App repository={new LocalTripPlanningRepository(localStorage)} /></MemoryRouter>);
-  expect(await screen.findByRole("heading", { name: "从一座城市开始规划" })).toBeInTheDocument();
-  expect(screen.getByRole("button", { name: "旅程总管" })).toBeInTheDocument();
+  expect(await screen.findByRole("heading", { name: "下一站，想去哪里？" })).toBeInTheDocument();
+  expect(screen.getByRole("textbox", { name: "告诉助手你的旅行想法" })).toBeInTheDocument();
 });
 
 it("opens the monitor from the trip manager before a trip exists", async () => {

@@ -12,6 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.planning_errors import PlannerProviderError
 from app.config import get_settings
 from app.database import Activity, AssistantSession, DayPlan, PlanningRun, PlanRevision, Trip, TripPreferences
 from app.maps_service import search_amap_cities
@@ -177,7 +178,12 @@ def session_response(row: AssistantSession) -> dict:
         "latest_run_id": str(row.latest_run_id) if row.latest_run_id else None}
 
 
-async def get_or_create_session(db: AsyncSession, trip_id: uuid.UUID | None) -> AssistantSession:
+async def get_or_create_session(db: AsyncSession, trip_id: uuid.UUID | None, *, session_id: uuid.UUID | None = None) -> AssistantSession:
+    if session_id is not None:
+        row = await locked_session(db, session_id)
+        if trip_id is not None and row.trip_id != trip_id:
+            raise AssistantToolError("会话与目标旅行不匹配。")
+        return row
     if trip_id:
         await get_trip(db, trip_id)
     row = await db.scalar(select(AssistantSession).where(AssistantSession.trip_id == trip_id).order_by(AssistantSession.updated_at.desc()).limit(1))
@@ -266,14 +272,106 @@ async def prepare_action(db: AsyncSession, decision: ToolDecision, current: Trip
 
 
 @observe_message
-async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, message_id: uuid.UUID, *, router=None, companion_responder=None, companion_provider=None, companion_runtime=None, knowledge_tool=None, city_search=search_amap_cities, selected_day_id=None, selected_activity_id=None) -> AssistantSession:
+async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, message_id: uuid.UUID, *, router=None, companion_responder=None, companion_provider=None, companion_runtime=None, knowledge_tool=None, city_search=search_amap_cities, selected_day_id=None, selected_activity_id=None, context=None, place_port=None) -> AssistantSession:
     row = await locked_session(db, session_id)
     if any(m["id"] == str(message_id) for m in row.messages):
         return row
+    from app.assistant_context import ContextEnvelope, restore_context, check_action_target, capture_requirements, capture_effective_requirements
+    from app.assistant_places import load_places, place_cards, default_place_port, load_read_tools
+    effective_messages = list(row.messages)
+    envelope, focus, places, place_limitations = None, None, [], []
+    turn_metadata = {}
+    read_tools = {}
+    if context is not None:
+        envelope, effective_messages = restore_context(ContextEnvelope.model_validate(context), effective_messages)
+        # Client read IDs still pass the existing repository visibility boundary.
+        if envelope.read_trip_id:
+            await get_trip(db, envelope.read_trip_id)
+        active_place_port = place_port or default_place_port(db)
+        focus, places, place_limitations = await load_places(active_place_port, envelope, message)
+        read_tools = await load_read_tools(active_place_port, envelope)
+        if envelope.discussing_place_ids:
+            read_tools["comparison"] = {
+                "status": "available" if places else "unavailable",
+                "items": [
+                    {
+                        "place_id": str(p.place_id), "name": p.name, "city": p.city,
+                        "address": p.address, "rating": p.rating,
+                        "reference_cost_yuan": p.reference_cost_yuan,
+                        "source": p.source, "retrieved_at": p.retrieved_at,
+                    }
+                    for p in places if p.place_id in envelope.discussing_place_ids
+                ],
+                "missing_count": len(set(envelope.discussing_place_ids) - {p.place_id for p in places}),
+                "semantics": "provider_reference_not_live_quote",
+            }
+        if envelope.read_trip_id:
+            from app.navigation.execution_read_model import get_execution_read_model
+            progress = (await get_execution_read_model(db, envelope.read_trip_id)).model_dump(mode="json")
+            execution = progress["execution"]
+            execution["activities"] = execution.get("activities", [])[:40]
+            execution["events"] = execution.get("events", [])[-5:]
+            execution["experience_impact"] = progress.get("experience_impact")
+            execution["current_activity_name"] = progress.get("current_activity_name")
+            execution["recovery_planning"] = progress.get("recovery_planning")
+            execution["delay_semantics"] = "schedule_delay_minutes is recorded arrival delay only; experience_impact owns current stay projection and downstream feasibility"
+            read_tools["execution"] = {"status": "available", "result": execution}
+        if focus and envelope.browsing_city and focus.city.rstrip("市") != envelope.browsing_city.rstrip("市"):
+            # Moving to a different city's Place cannot carry the prior budget.
+            envelope = envelope.model_copy(update={"browsing_city": focus.city, "requirements": None})
+            effective_messages = []
+        elif focus and not envelope.browsing_city:
+            envelope = envelope.model_copy(update={"browsing_city": focus.city})
+        envelope = capture_requirements(envelope, message)
+        requirement_sync = None
+        if envelope.read_draft_id:
+            from app.draft_requirement_bridge import sync_draft_requirements
+            envelope, requirement_sync = await sync_draft_requirements(envelope, message,
+                message_id, row.messages, active_place_port)
+        elif envelope.read_trip_id:
+            from app.requirements import bind_topic_to_trip, valid_records
+            trip = await get_trip(db, envelope.read_trip_id)
+            pref = await db.scalar(select(TripPreferences).where(TripPreferences.trip_id == trip.id).with_for_update())
+            if pref and (not envelope.browsing_city or envelope.browsing_city.removesuffix("市") == trip.destination.removesuffix("市")):
+                # Canonical Trip state precedes capture, so an API edit/revoke
+                # wins over stale Topic context and the current turn supersedes
+                # the actual current requirement in this scope.
+                canonical = valid_records(pref.requirement_records)
+                for record in canonical:
+                    if record["scope"].get("date"):
+                        relative_day = (date.fromisoformat(record["scope"]["date"]) - trip.start_date).days + 1
+                        if 1 <= relative_day <= 31:
+                            record["scope"]["day_index"] = relative_day
+                            record["scope"]["date"] = None
+                envelope = envelope.model_copy(update={"requirement_records": canonical,
+                    "browsing_city": trip.destination})
+                envelope = capture_effective_requirements(envelope, message, message_id=message_id)
+                new_records = bind_topic_to_trip(envelope.requirement_records, trip_id=trip.id,
+                    city=trip.destination, start_date=trip.start_date)
+                if new_records != pref.requirement_records:
+                    pref.requirement_records = new_records
+                    pref.version += 1
+                envelope = envelope.model_copy(update={"requirement_records": new_records})
+        else:
+            envelope = capture_effective_requirements(envelope, message, message_id=message_id)
+        if requirement_sync:
+            read_tools["requirement_sync"] = {**requirement_sync,
+                "semantics": "explicit_requirement_records_only; activity_plan_unchanged"}
+        turn_metadata = {"context": envelope.model_dump(mode="json"), "read_tools": read_tools,
+            "requirement_sync": requirement_sync}
     # Route before trip enumeration, PlanningRun history or Planning Context.
     # Companion readers load only capabilities selected by InformationNeed.
     with observation_stage("travel_goal_routing"):
-        goal_routing = route_travel_goal(message, list(row.messages[-12:]), pending_action=row.pending_action)
+        goal_routing = route_travel_goal(message, list(effective_messages[-12:]), pending_action=row.pending_action)
+    requirement_sync = turn_metadata.get("requirement_sync") or {}
+    if requirement_sync.get("status") in {"scope_out_of_range", "version_conflict", "source_unavailable"}:
+        reply = {"scope_out_of_range": "话题要求包含草稿之外的日期或活动，本次没有导入。请调整要求范围后重试。",
+            "version_conflict": "草稿版本已变化，本次要求没有写入。请刷新草稿后重新明确要求。",
+            "source_unavailable": "没有找到当前话题中可明确导入的要求，本次没有写入。请重新选择来源或直接说明要求。"}[requirement_sync["status"]]
+        row.messages = [*row.messages, {**turn_metadata, "id": str(message_id), "user": message,
+            "assistant": reply, "tool": "reply", "run_id": None, "goal_routing": goal_routing.model_dump(mode="json")}]
+        await db.commit()
+        return row
     brief = None
     if goal_routing.target_runtime == "companion":
         if companion_responder:
@@ -284,17 +382,41 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
             companion_provider = ResponderProvider()
         if knowledge_tool is None and companion_runtime is None:
             knowledge_tool = _LazyDefaultKnowledgeTool()
-        runtime = companion_runtime or CompanionRuntime(CompanionContextReader(db, row.trip_id), companion_provider, knowledge_tool,
+        runtime = companion_runtime or CompanionRuntime(CompanionContextReader(db, envelope.read_trip_id if envelope else row.trip_id), companion_provider, knowledge_tool,
             get_default_fact_tool())
         try:
             result = await runtime.run(session_id=str(row.id), turn_id=str(message_id), message=message,
-                goal=goal_routing, messages=list(row.messages))
-        except (CompanionContractError, CompanionProviderError) as exc:
-            if isinstance(exc, CompanionProviderError):
+                goal=goal_routing, messages=list(effective_messages), **({"assistant_context": envelope.model_dump(mode="json"),
+                    "place_context": [p.model_dump(mode="json") for p in places], "read_tool_context": read_tools} if envelope else {}))
+        except (CompanionContractError, CompanionProviderError, PlannerProviderError) as exc:
+            if envelope:
+                from app.companion_contracts import CompanionResult, InformationNeed, InformationGap
+                result = CompanionResult(response_text="这次智能回答暂不可用。你仍可以打开已核实的地点详情，稍后重试。",
+                    goal_type=goal_routing.goal_type, status="needs_information", information_need=InformationNeed(),
+                    information_gaps=[InformationGap(code="provider_unavailable", message="智能回答暂不可用。")])
+            elif isinstance(exc, CompanionProviderError):
                 raise AssistantToolError(str(exc)) from exc
-            raise AssistantToolError("这次旅行回答未通过结构校验，请重试。") from exc
-        row.latest_run_id = None
-        row.messages = [*row.messages, {"id": str(message_id), "user": message, "assistant": result.response_text,
+            elif isinstance(exc, PlannerProviderError):
+                raise
+            else:
+                raise AssistantToolError("这次旅行回答未通过结构校验，请重试。") from exc
+        if envelope:
+            # Exact, unique names within the server-read result set bind identity.
+            # Duplicate names stay unbound rather than selecting a guessed POI.
+            bound = []
+            for suggestion in result.suggestions:
+                matches = [p for p in places if p.name == suggestion.title and suggestion.suggestion_type == "place"]
+                if len(matches) == 1:
+                    suggestion = suggestion.model_copy(update={"place_ref": matches[0]})
+                bound.append(suggestion)
+            result = result.model_copy(update={"suggestions": bound})
+            if focus and "当前营业状态、评论和酒店可用性" not in result.response_text:
+                place_limitations.append("尚未确认该地点的实时价格、当前营业状态、评论和酒店可用性。")
+            turn_metadata.update({"place_cards": place_cards(result, places, focus, envelope.discussing_place_ids),
+                "context_limitations": place_limitations, "continuity": "legacy_session_topic_json_v1"})
+            if place_limitations:
+                result = result.model_copy(update={"response_text": (result.response_text + "\n\n" + "\n".join(place_limitations))[:5000]})
+        row.messages = [*row.messages, {**turn_metadata, "id": str(message_id), "user": message, "assistant": result.response_text,
             "tool": "reply", "run_id": None, "goal_routing": goal_routing.model_dump(mode="json"),
             "companion_result": result.model_dump(mode="json")}]
         await db.commit()
@@ -303,11 +425,32 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
         action = "选择增加的停留时长" if re.search(r"再待|多待|延长停留|再停留|extend\s+(?:my\s+)?stay", message, re.I) else "结束游玩并前往下一站"
         reply = f"请在当前活动的执行卡片中操作“{action}”。这条对话尚未执行操作；卡片操作会将结果记录为执行事实。"
         row.latest_run_id = None
-        row.messages = [*row.messages, {"id": str(message_id), "user": message, "assistant": reply,
+        row.messages = [*row.messages, {**turn_metadata, "id": str(message_id), "user": message, "assistant": reply,
             "tool": "reply", "run_id": None, "goal_routing": goal_routing.model_dump(mode="json")}]
         await db.commit()
         return row
-    brief = build_planning_brief(str(row.id), str(message_id), message, goal_routing, list(row.messages))
+    if envelope:
+        try:
+            target_trip = await db.scalar(select(Trip).where(Trip.id == row.trip_id).with_for_update().execution_options(populate_existing=True)) if row.trip_id else None
+            requested_operation = "reschedule_trip" if re.search(r"改期|改到|日期", message) else "plan_trip"
+            if not goal_routing.mutation_requested:
+                raise ValueError("请明确说明需要执行的旅行操作；历史对话不授予本次操作权限。")
+            check_action_target(envelope, session_trip_id=row.trip_id, message_id=message_id,
+                trip_version=target_trip.version if target_trip else None, operation=requested_operation)
+            if (envelope.browsing_city and target_trip
+                and envelope.browsing_city.rstrip("市") != target_trip.destination.rstrip("市")):
+                # Local browsing requirements are not the formal Trip's budget
+                # or saved constraints, even after the user grants an action.
+                effective_messages = []
+        except ValueError as exc:
+            row.messages = [*row.messages, {**turn_metadata, "id": str(message_id), "user": message,
+                "assistant": str(exc), "tool": "reply", "run_id": None,
+                "action_status": "authorization_required", "goal_routing": goal_routing.model_dump(mode="json")}]
+            await db.commit()
+            return row
+    brief = build_planning_brief(str(row.id), str(message_id), message, goal_routing, list(effective_messages))
+    if brief and envelope:
+        brief = brief.model_copy(update={"effective_requirements": envelope.requirement_records})
     if brief and brief.status == "needs_clarification":
         # Pre-Phase-1 answered runs contain prose, not Suggestion identities.
         # Preserve their existing explicit-Planning continuation without
@@ -320,14 +463,14 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
             brief = None
         else:
             row.latest_run_id = None
-            row.messages = [*row.messages, {"id": str(message_id), "user": message,
+            row.messages = [*row.messages, {**turn_metadata, "id": str(message_id), "user": message,
                 "assistant": " ".join(brief.open_questions), "tool": "reply", "run_id": None,
                 "goal_routing": goal_routing.model_dump(mode="json"), "planning_brief": brief.model_dump(mode="json")}]
             await db.commit()
             return row
     trips = await list_trips(db)
     current = next((t for t in trips if t.id == row.trip_id), None)
-    history = list(row.messages[-12:])
+    history = list(effective_messages[-12:])
     previous = []
     if current:
         previous = list((await db.scalars(select(PlanningRun).where(PlanningRun.trip_id == current.id).order_by(PlanningRun.created_at.desc()).limit(12))).all())
@@ -353,6 +496,8 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
         context["current_plan"] = [{"date": str(day.date), "day_id": str(day.id), "activities": [{"name": a.display_name, "time": str(a.scheduled_time)} for a in day.activities]} for day in plan.days]
         context["selected_day_id"] = str(selected_day_id) if selected_day_id else None
         context["preferences"] = plan.preferences.model_dump(mode="json")
+        if brief:
+            brief = brief.model_copy(update={"effective_requirements": plan.effective_requirements})
     context["travel_goal"] = goal_routing.model_dump(mode="json")
     if brief:
         context["planning_brief"] = brief.model_dump(mode="json")
@@ -388,6 +533,11 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
         decision = await router.decide({**context, "tool_validation_error": "数据库中没有待确认的候选方案，上一条回复声称已就绪与事实冲突。请重新选择工具：用户要求调整就调用 plan_trip；缺少信息就明确追问。不得用口头承诺代替工具调用。"})
         if claims_missing_candidate(decision):
             raise AssistantToolError("当前尚未生成可确认的候选方案，这次回答未通过状态核对，请重试。")
+    if envelope and decision.tool != "reply":
+        expected = envelope.action_target
+        if decision.tool != expected.operation or (decision.source_trip_id is not None and decision.source_trip_id != expected.trip_id):
+            raise AssistantToolError("工具操作与本次授权目标不匹配，请重新明确目标旅行。")
+        decision.source_trip_id = expected.trip_id
     reply = decision.reply
     previous_run_id = row.latest_run_id
     row.latest_run_id = None
@@ -417,7 +567,7 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
                 await bind_initial_candidate(db, previous_run_id, run)
             row.trip_id, row.latest_run_id = target, run.id
             row.pending_action = None
-    row.messages = [*row.messages, {"id": str(message_id), "user": message, "assistant": reply, "tool": decision.tool,
+    row.messages = [*row.messages, {**turn_metadata, "id": str(message_id), "user": message, "assistant": reply, "tool": decision.tool,
         "run_id": str(row.latest_run_id) if row.latest_run_id else None,
         "goal_routing": goal_routing.model_dump(mode="json"),
         "planning_brief": brief.model_dump(mode="json") if brief else None}]

@@ -320,6 +320,7 @@ class TripPreferencesResponse(BaseModel):
     avoid_categories: list[str]
     max_walking_minutes: int
     free_text_requirements: str
+    requirement_records: list[dict] = Field(default_factory=list)
     version: int
     created_at: datetime
     updated_at: datetime
@@ -689,6 +690,7 @@ class PlanningContextResponse(BaseModel):
     execution_recovery: dict | None = None
     planning_goals: PlanningGoals | None = None
     formal_route_facts: dict = Field(default_factory=dict)
+    effective_requirements: list[dict] = Field(default_factory=list)
 
 
 PlanningRunType = Literal["initial_plan", "replan"]

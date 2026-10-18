@@ -35,6 +35,7 @@ async def create_model_response(
     max_output_tokens: int | None = None,
     temperature: float = 1.0,
     top_p: float = 0.95,
+    on_content=None,
 ) -> Any:
     """Use the provider's supported API and normalize its result for callers.
 
@@ -43,7 +44,7 @@ async def create_model_response(
     output guidance and the application continues to enforce its own schemas.
     """
     if settings.planner_provider.strip().lower() not in {"glm", "bigmodel", "zhipu"}:
-        return await client.responses.create(
+        response = await client.responses.create(
             model=model,
             instructions=instructions,
             input=input_text,
@@ -51,7 +52,23 @@ async def create_model_response(
             **({"reasoning": {"effort": reasoning_effort}} if reasoning_effort else {}),
             **({"max_output_tokens": max_output_tokens} if max_output_tokens else {}),
             store=False,
+            **({"stream": True} if on_content else {}),
         )
+        if not on_content:
+            return response
+        parts, final = [], None
+        try:
+            async for event in response:
+                if event.type == "response.output_text.delta":
+                    parts.append(event.delta)
+                    on_content(event.delta)
+                elif event.type in {"response.completed", "response.incomplete", "response.failed"}:
+                    final = event.response
+        finally:
+            await response.close()
+        return SimpleNamespace(status=getattr(final, "status", "incomplete"), output_text="".join(parts),
+            usage=getattr(final, "usage", None), model=getattr(final, "model", model),
+            finish_reason=None)
 
     glm_instructions = instructions
     if text_format and text_format.get("schema"):
@@ -92,6 +109,8 @@ async def create_model_response(
                     content = getattr(getattr(choice, "delta", None), "content", None)
                     if content:
                         parts.append(content)
+                        if on_content:
+                            on_content(content)
                     finish_reason = getattr(choice, "finish_reason", None) or finish_reason
         finally:
             await completion.close()

@@ -18,7 +18,7 @@ class NoModel:
 def tool_fixture(mode="success"):
     async def geocode(name):
         if mode=="location_failed": raise TimeoutError()
-        city,admin=("杭州","浙江省") if name=="Hangzhou" else ("南京","江苏省")
+        city,admin=("杭州","浙江省") if name=="杭州" else ("南京","江苏省")
         item=dict(id=1 if city=="杭州" else 2,name=city,admin1=admin,country_code="CN",feature_code="PPLA",timezone="Asia/Shanghai",latitude=30.2,longitude=120.1)
         return {"results":[item,item] if mode=="ambiguous_provider" else [item]}
     calls=[]
@@ -45,7 +45,8 @@ def test_future_forecast_typed_natural_and_readonly(text,hours):
         assert len(result.information_need.fact_requirements)==hours
         assert len(result.resolved_facts)==hours and all(r.usable_as_current for r in result.resolved_facts)
         assert not knowledge.calls and not result.planning_handoff
-        assert "预计气温" in result.response_text and "Open-Meteo" in result.response_text and "不是实测" in result.response_text
+        assert "预计气温" in result.response_text and "Open-Meteo" not in result.response_text
+        assert all(r.selected_evidence and r.selected_evidence[0].retrieved_at for r in result.resolved_facts)
         assert result.status=="completed" and len(calls)<=2
         assert all(r.requirement.time_scope.start.utcoffset()==timedelta(hours=8) for r in result.resolved_facts)
     asyncio.run(run())

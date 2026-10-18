@@ -1,5 +1,17 @@
 # RoamSync project instructions
 
+## Canonical source and deployment
+
+- The user-designated sole official source directory is `E:\Study\RoamSync`.
+- Production Compose project `roamsync` must be built and deployed from this
+  directory's `compose.yaml` and `.env`, including API, Worker, Web and Postgres.
+- Other checkouts/worktrees are development or historical copies. Do not deploy
+  them to project `roamsync`, or treat their unintegrated changes as released.
+- Use `Start-RoamSync.cmd` or `scripts/start-roamsync.ps1` for a rebuild and start.
+  Docker Desktop Start only starts the last built images; it does not rebuild code.
+- Preserve the existing `roamsync_postgres_data` volume. Never reset trip data
+  as part of a deployment.
+
 ## Web ChatGPT and local Codex handoff
 
 This repository uses a compact handoff protocol for decisions made in Web

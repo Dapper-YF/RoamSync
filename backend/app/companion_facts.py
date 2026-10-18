@@ -1,5 +1,6 @@
 """Thin forecast composition: typed requirements/results; no model weather guesses."""
 import asyncio
+import math
 import re
 from datetime import UTC, datetime, timedelta
 from functools import lru_cache
@@ -17,11 +18,41 @@ from app.travel_facts.normalization import evidence_record, fact_record
 from app.travel_facts.service import TravelFactService
 from app.travel_facts.adapters import WeatherForecastAdapter, _weather_gateway
 from app.travel_facts.opening_hours import OfficialOpeningHoursAdapter, VENUES, official_gateway
+from app.forecast_location_extraction import extract_forecast_city_mentions
 
 FORECAST_TTL = 900
 DAYPARTS = {"上午": (6,12), "早上": (6,12), "下午": (12,18), "晚上": (18,24), "傍晚": (18,24)}
-# Name aliases and administrative identity constraints, never coordinates.
-CITIES = {"杭州": ("Hangzhou", "浙江"), "南京": ("Nanjing", "江苏")}
+
+def city_parts(name: str) -> tuple[str, str]:
+    """Separate an explicit province qualifier; never supply a city identity."""
+    match = re.fullmatch(r"(.{2,12}?省)(.{2,12})", name)
+    province, city = (match[1][:-1], match[2]) if match else ("", name)
+    return city[:-1] if city.endswith("市") and len(city) > 2 else city, province
+
+
+def forecast_location_mentions(text: str, *, statement: bool = False) -> list[str]:
+    """Extract user-written search terms, which must still pass geocoding.
+
+    No city catalogue or coordinates live here. Unknown explicit terms must
+    not acquire a previous conversation's city when provider lookup fails.
+    """
+    mentions = []
+    for clause in re.split(r"[，,。？！?!；;\n]", text):
+        clause = clause.strip()
+        if not clause:
+            continue
+        if not forecast_intent(clause) and not re.search(r"今天|明天|后天", clause):
+            if not statement or not re.search(r"(?:去|在|到|目的地是)", clause):
+                continue
+        value = re.sub(r"(?:\d{4}年)?\d{1,2}月\d{1,2}[日号]|今天|明天|后天|上午|早上|下午|晚上|傍晚|全天|逐小时|每小时|按小时|详细|具体", "", clause)
+        value = re.split(r"天气|下雨|降雨|气温|温度|多少度|预报", value, maxsplit=1)[0]
+        value = re.sub(r"^(?:(?:所以|那么|那|你好|请问|麻烦|请|帮我|给我|查一下|查查|查询|看看|看一下|我想问一下|我想问|想知道|我想知道|我准备|我打算|我计划|准备|打算|计划|我要|我想|我|是在|在|去|到|目的地是)\s*)+", "", value)
+        value = re.sub(r"(?:的|这边|那边|附近|会不会|是否|是不是|有没有|会|可能|要|有|怎么样|如何|呢|吗|吧|旅游|旅行)+$", "", value).strip()
+        if value in {"这里", "那里", "这儿", "那儿", "当地", "这个城市", "哪个城市", "一个人", "我们"}:
+            continue
+        if re.fullmatch(r"[\u4e00-\u9fff]{2,24}", value):
+            mentions.append(value)
+    return list(dict.fromkeys(mentions))
 
 class ForecastPlan(BaseModel):
     requirements: list[FactRequirement] = Field(default_factory=list, max_length=24)
@@ -96,24 +127,34 @@ class CityLocationAdapter:
     name, read_through = "open_meteo_geocoding", False
     def __init__(self, freshness, gateway=geocode_gateway, clock=lambda: datetime.now(UTC)):
         self.freshness,self.gateway,self.clock=freshness,gateway,clock
-    def supports(self,req): return req.fact_type==FactType.PLACE_LOCATION and req.subject.name in CITIES
+    def supports(self,req):
+        return (req.fact_type == FactType.PLACE_LOCATION and isinstance(req.subject, PlaceSubject)
+            and req.subject.ref.startswith("city-search:") and bool(req.subject.name))
     async def fetch(self,req,*,now):
-        query,admin=CITIES[req.subject.name]
+        query,admin=city_parts(req.subject.name)
         payload=await self.gateway(query)
-        matches=[x for x in payload.get("results",[]) if x.get("name")==req.subject.name and
-            x.get("country_code")=="CN" and x.get("feature_code") in {"PPLA","PPLC"} and admin in x.get("admin1","")]
-        if len(matches)!=1: return FactBundle()
-        item=matches[0]; ZoneInfo(item["timezone"])
-        value=LocationValue(point=GeoPoint(latitude=item["latitude"],longitude=item["longitude"],coordinate_system="wgs84"))
-        evidence=evidence_record(provider=self.name,source_type="structured_api",source_reference="geonames:"+str(item["id"]),
-            retrieved_at=self.clock(),normalized_snapshot={"name":item["name"],"value":value.model_dump(mode="json")},
-            metadata={"timezone":item["timezone"],"geonames_id":str(item["id"]),"scope":"representative_city_location"},raw_payload=payload)
-        fact=fact_record(fact_type=req.fact_type,subject=req.subject,value=value,evidence=evidence,freshness=self.freshness,nature="provider_assertion")
-        return FactBundle(facts=(fact,),evidence=(evidence,))
+        matches=[x for x in payload.get("results",[]) if city_parts(str(x.get("name", "")))[0]==query and
+            x.get("country_code")=="CN" and x.get("feature_code") in {"PPLA","PPLC","PPLA2","PPLA3"}
+            and (not admin or admin == re.sub(r"省$", "", x.get("admin1", "")))]
+        if not matches or len({x.get("id") for x in matches}) != len(matches):
+            return FactBundle()
+        facts, evidence_rows = [], []
+        for item in matches:
+            ZoneInfo(item["timezone"])
+            value=LocationValue(point=GeoPoint(latitude=item["latitude"],longitude=item["longitude"],coordinate_system="wgs84"))
+            evidence=evidence_record(provider=self.name,source_type="structured_api",source_reference="geonames:"+str(item["id"]),
+                retrieved_at=self.clock(),normalized_snapshot={"name":item["name"],"value":value.model_dump(mode="json")},
+                metadata={"timezone":item["timezone"],"geonames_id":str(item["id"]),"scope":"representative_city_location",
+                    "city_name":item["name"],"admin1":item.get("admin1", "")},raw_payload=payload)
+            facts.append(fact_record(fact_type=req.fact_type,subject=req.subject,value=value,evidence=evidence,freshness=self.freshness,nature="provider_assertion"))
+            evidence_rows.append(evidence)
+        return FactBundle(facts=tuple(facts),evidence=tuple(evidence_rows))
 
 class CompanionFactAdapter:
-    def __init__(self, *, geocoder=geocode_gateway, weather_gateway=_weather_gateway, opening_gateway=official_gateway, clock=lambda:datetime.now(UTC)):
+    def __init__(self, *, geocoder=geocode_gateway, weather_gateway=_weather_gateway, opening_gateway=official_gateway,
+                 clock=lambda:datetime.now(UTC), location_extractor=extract_forecast_city_mentions):
         self.clock,self.weather_gateway=clock,weather_gateway
+        self.location_extractor=location_extractor
         self.opening_gateway=opening_gateway
         self.freshness=FactFreshnessPolicy({FactType.PLACE_LOCATION:FreshnessRule(max_age_seconds=86400),
             FactType.WEATHER_FORECAST:FreshnessRule(max_age_seconds=FORECAST_TTL),FactType.OPENING_HOURS:FreshnessRule(max_age_seconds=30)})
@@ -182,26 +223,51 @@ class CompanionFactAdapter:
         # Unsupported current/past/alert never consumes location/network tools.
         if re.search(r"现在|此刻|当前|实时|刚才|昨天|前天|预警|警报",text):
             return ForecastPlan(message="我目前只支持未来小时预报，不能核实当前实测天气、过去天气或气象预警。")
-        named=[city for city in CITIES if city in text]
-        if len(named)>1: return ForecastPlan(message="你想看杭州还是南京的预报？",clarification=True)
-        if "西湖区" in text and not named and destination not in CITIES:
+        named=forecast_location_mentions(text, statement=True)
+        if len(named)>1: return ForecastPlan(message="你提到了多个地点，请指定要查询天气的一个城市。",clarification=True)
+        if "西湖区" in text and named == ["西湖区"] and not destination:
             return ForecastPlan(message="你指的是哪个城市的西湖区？请先明确城市。",clarification=True)
-        city=named[0] if named else destination if destination in CITIES else None
+        city=named[0] if named else destination
         if not city:
             # Recover explicit destination statements, not assistant proposals.
             for turn in reversed(recent_turns):
-                matches=[c for c in CITIES if re.search(r"(?:准备|打算|计划)?去"+c,turn.get("user",""))]
+                matches=forecast_location_mentions(turn.get("user", ""), statement=True)
                 if len(matches)==1: city=matches[0];break
-        if not city and "西湖" in text and "西湖区" not in text: city="杭州"
-        if not city: return ForecastPlan(message="你想看哪个城市的天气预报？目前支持杭州和南京。",clarification=True)
+        if "西湖" in text and "西湖区" not in text and (not city or city.startswith("西湖")): city="杭州"
+        if not city: return ForecastPlan(message="你想看哪个城市的天气预报？",clarification=True)
         # Missing date is resolved before provider work; location timezone still owns relative date conversion.
         if not re.search(r"今天|明天|后天|\d{1,2}月\d{1,2}[日号]",text):
             return ForecastPlan(message="你想看哪一天的天气预报？",clarification=True)
-        req=FactRequirement(fact_type=FactType.PLACE_LOCATION,subject=PlaceSubject(ref="city-search:"+CITIES[city][0],name=city,destination=city),
-            required_freshness_seconds=86400,minimum_authority="specialist",allow_stale=False,reason="forecast internal location prerequisite")
-        place=await self.places.resolve_fact(req)
+        async def resolve_city(name):
+            req=FactRequirement(fact_type=FactType.PLACE_LOCATION,subject=PlaceSubject(ref="city-search:"+name,name=name,destination=name),
+                required_freshness_seconds=86400,minimum_authority="specialist",allow_stale=False,reason="forecast internal location prerequisite")
+            return await self.places.resolve_fact(req)
+        place=await resolve_city(city)
+        if place.resolution_status == "no_evidence":
+            # One bounded semantic extraction when lexical search has no exact
+            # provider match. Never substitute old context after an explicit
+            # new mention, or treat a model-proposed substring as a resolved city.
+            try:
+                candidates=await self.location_extractor(text)
+            except Exception:
+                candidates=[]
+            if not isinstance(candidates,list):
+                candidates=[]
+            candidates=list(dict.fromkeys(c for c in candidates if isinstance(c,str)
+                and 2<=len(c)<=24 and c in text and re.fullmatch(r"[\u4e00-\u9fff]+",c)
+                and ("省" not in city or "省" in c)))[:2]
+            if len(candidates)>1:
+                return ForecastPlan(message="你提到了多个地点，请指定要查询天气的一个城市。",clarification=True)
+            if candidates and candidates[0]!=city:
+                city=candidates[0]
+                place=await resolve_city(city)
+        if place.resolution_status == "conflicting":
+            options=list(dict.fromkeys(str(e.metadata.get("admin1", ""))+str(e.metadata.get("city_name", "")) for e in place.conflicting_evidence))
+            return ForecastPlan(place_result=place,message=f"“{city}”对应多个城市（{'、'.join(options)}），请补充省份。",clarification=True)
         if not place.usable_as_current or not isinstance(place.value,LocationValue):
-            return ForecastPlan(place_result=place,message="我现在没有拿到可靠的地点坐标，无法核实天气预报。")
+            if re.search(r"和|还是|或者|以及|与",city) and place.resolution_status == "no_evidence":
+                return ForecastPlan(place_result=place,message="你可能提到了多个地点，请指定要查询天气的一个城市。",clarification=True)
+            return ForecastPlan(place_result=place,message=f"已识别你提供的地点“{city}”，但我现在没有拿到可靠的地点坐标，无法核实天气预报。")
         meta=place.selected_evidence[0].metadata; timezone=str(meta["timezone"])
         window,message,clarify=time_window(text,timezone,self.clock())
         label=city+"（西湖附近的城市级预报）" if "西湖" in text and city=="杭州" else city+"（城市级预报）"
@@ -232,22 +298,68 @@ class CompanionFactAdapter:
             [OfficialOpeningHoursAdapter(self.freshness,self.opening_gateway,self.clock)],clock=self.clock)
         return [await (hours if r.fact_type==FactType.OPENING_HOURS else weather).resolve_fact(r) for r in requirements]
 
-def forecast_text(plan: ForecastPlan, results: Sequence[ResolvedFact]) -> str:
+def forecast_text(plan: ForecastPlan, results: Sequence[ResolvedFact], request: str = "") -> str:
     if plan.message: return plan.message
     good=[r for r in results if r.resolution_status=="resolved" and r.usable_as_current and r.freshness_status=="fresh" and
         r.selected_fact and r.selected_fact.nature=="provider_prediction" and r.value.kind=="weather"]
     if not good:
         return "当前天气预报数据存在冲突，无法给出可靠的单一预报。" if any(r.resolution_status=="conflicting" for r in results) else "我现在没有拿到可靠的天气预报数据，暂时无法确认这个时段。"
+    good=sorted(good,key=lambda r:r.requirement.time_scope.start)
     zone=ZoneInfo(plan.timezone)
-    rows=[]
-    for r in good:
-        start=r.selected_fact.effective_from.astimezone(zone);end=r.selected_fact.effective_until.astimezone(zone)
-        rows.append(f"{start:%H:%M}–{end:%H:%M}：预计气温{r.value.temperature_celsius:g}°C，降水概率{r.value.precipitation_probability_percent:g}%")
     retrieved=min(e.retrieved_at for r in good for e in r.selected_evidence).astimezone(zone)
     day=good[0].requirement.time_scope.start.astimezone(zone)
-    text=f"{plan.location_label}，{day:%Y年%m月%d日}的 Open-Meteo 小时预报（{plan.timezone}）：\n"+"\n".join(rows)
-    text+=f"\n这是{retrieved:%m月%d日 %H:%M}获取、通过15分钟新鲜度检查的预测，不是实测或保证；数据未提供模型发布时刻，临近出发时可再确认。"
-    if len(good)!=len(plan.requirements): text+="部分小时未取得可靠数据，以上只列出已核实的小时，不能代表整个时段。"
+    partial=len(good)!=len(plan.requirements)
+    if re.search(r"逐小时|每小时|按小时|小时明细|详细.*(?:天气|预报)|(?:天气|预报).*详细",request):
+        rows=[]
+        for r in good:
+            start=r.requirement.time_scope.start.astimezone(zone);end=r.requirement.time_scope.end.astimezone(zone)
+            rows.append(f"{start:%H:%M}–{end:%H:%M}：预计气温{r.value.temperature_celsius:g}°C，降水概率{r.value.precipitation_probability_percent:g}%")
+        text=f"{plan.location_label}，{day:%Y年%m月%d日}的逐小时预报（当地时间）：\n"+"\n".join(rows)
+    else:
+        offset=(day.date()-retrieved.date()).days
+        date_label={0:"今天",1:"明天",2:"后天"}.get(offset,f"{day.month}月{day.day}日")
+        part=next((p for p in DAYPARTS if p in request),None)
+        scope=date_label+(part if part else "接下来" if offset==0 else "")
+        location=plan.location_label.split("（",1)[0]
+        probabilities=[r.value.precipitation_probability_percent for r in good]
+        peak=max(probabilities)
+        # These are wording bands for individual hourly probabilities, never
+        # a calculated probability for the entire day or a rainfall intensity.
+        rain="下雨的可能性较大" if peak>=60 else "有可能下雨" if peak>=30 else "下雨的可能性较低"
+        temperatures=[r.value.temperature_celsius for r in good]
+        low,high=math.floor(min(temperatures)),math.ceil(max(temperatures))
+        temperature=f"预计气温约{low}–{high}°C" if low!=high else f"预计气温约{low}°C"
+        temp_only=bool(re.search(r"气温|温度|多少度",request) and not re.search(r"天气|下雨|降雨",request))
+        if temp_only:
+            text=f"{location}{scope}{temperature}。"
+        else:
+            advice="，出门建议带伞" if peak>=60 else "，出门可以备把伞" if peak>=30 else ""
+            text=f"{location}{scope}{rain}{advice}。"
+            # Only join adjacent verified hours, preserving gaps and multiple
+            # rain windows rather than implying uninterrupted coverage.
+            windows=[]
+            for r in good:
+                if r.value.precipitation_probability_percent<60:
+                    continue
+                start=r.requirement.time_scope.start.astimezone(zone)
+                end=r.requirement.time_scope.end.astimezone(zone)
+                if windows and windows[-1][1]==start:
+                    windows[-1]=(windows[-1][0],end)
+                else:
+                    windows.append((start,end))
+            focus=""
+            if 0<len(windows)<=2:
+                focus="其中"+"、".join(f"{start:%H:%M}–{end:%H:%M}" for start,end in windows)+"较容易下雨。"
+            elif len(windows)>2:
+                focus="有多个时段的降雨可能性较高。"
+            probability=""
+            if re.search(r"概率|几成|百分之",request):
+                low_probability,high_probability=min(probabilities),max(probabilities)
+                probability=(f"已查到的各小时降水概率为{low_probability:g}%–{high_probability:g}%。"
+                    if low_probability!=high_probability else f"已查到的各小时降水概率均为{high_probability:g}%。")
+            text+="\n\n"+focus+probability+temperature+"。"
+    if partial:
+        text="目前只查到了部分时段的预报。"+text+"缺失时段暂时无法判断。"
     return text
 
 @lru_cache

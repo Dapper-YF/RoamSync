@@ -13,6 +13,35 @@ deferred and must not be presented as implemented Agent behavior.
 
 ## Scope and product boundary
 
+### Companion knowledge strategy addendum (2026-10-11)
+
+InformationNeed retains the existing graph and permissions, adding optional
+source-decision/reason fields with defaults for persisted JSON compatibility.
+`COMPANION_KNOWLEDGE_STRATEGY` defaults to `selective`; `general_only` and
+`forced_rag` are comparison switches and retain live/decision/mutation boundaries.
+The independent quality gate checks reviewed assertions, provenance, direct
+support, subject/topic applicability, expiry and bounded conflicts; optional
+stable specialist retrieval may fall back to unverified general knowledge.
+Explicit source requests may not present that fallback as verified evidence.
+Provider diagnostics retain no private prose. No new schema migration, graph
+node or mutation/tool authority. Regression: isolated backend891/Web125 plus
+typecheck/build PASS; real model quality evaluation OPEN after first-call failure.
+Full change-control evidence: `agent/COMPANION_KNOWLEDGE_STRATEGY_20261011.md`.
+
+### Companion answer reliability addendum (2026-10-12)
+
+The existing generation node locally controls newly model-authored state
+assertions before suggestion identities and conversation persistence. Server
+Fact Resolver rendering and persisted original explanation bypass this control;
+no nearby evidence certifies arbitrary free prose. Existing claim-validation
+metadata records bounded static reasons; no new graph node, mutation authority,
+DB schema or unconditional second model request. Incomplete upstream output
+preserves finish_reason; sensitive/length are not schema failures and do not
+publish partial model content. Production logs do not capture visible prose;
+synthetic evaluation explicitly opts in. This lexical control is partial, not
+semantic fact validation. Quality remains OPEN; see
+`agent/COMPANION_ANSWER_RELIABILITY_PHASE1_20261011.md`.
+
 ### Travel Goal boundary (2026-09-29)
 
 Never escalate a conversational, exploratory, informational, recommendation,
@@ -619,6 +648,24 @@ Early network failures are retained as historical attempts; stale/unavailable
 responses still cannot be promoted as verified forecasts. Evidence and limitations:
 docs/agent/TRAVEL_FACTS_INTEGRATION_V1_20260930.md.
 
+2026-10-15 city resolution update (deployed): the initial Hangzhou/Nanjing list
+is removed. User-written Chinese city terms are geocoded through the existing
+Open-Meteo provider and checked for exact normalized name, CN country code,
+administrative city feature and optional province. New explicit terms override
+old destinations; missing terms, ambiguous identities and provider failures have
+distinct replies. WGS84/timezone, native Fact contracts, freshness and read-only
+authority remain unchanged. This is bounded lexical extraction plus verified
+geocoding, not a claim to understand every location expression. Evidence and
+regressions: docs/agent/FORECAST_CITY_RESOLUTION_20261015.md.
+
+2026-10-15 conversational forecast follow-up update (deployed): when a lexical
+city query has no exact location evidence, one schema-constrained model request
+may extract explicit city spans from the current user message. Literal substring
+and province checks precede another exact provider lookup; model output is never
+location/weather evidence. Successful lexical lookups and provider outages skip
+this request. Existing FactToolPort/Fact contracts, read-only authority and
+weather freshness remain unchanged. Evidence: docs/agent/WEATHER_FOLLOWUP_20261015.md.
+
 
 ## Initial candidate editing boundary (2026-10-07 acceptance work)
 
@@ -663,3 +710,40 @@ Acceptance still revalidates and preserves executed activities; it does not
 relax route completeness. Tests: test_recovery_route_enrichment.py, graph and
 existing navigation/experience recovery regressions. Real failed Recovery and
 incorrect210-versus240 cost evidence are preserved; full final rehearsal pending.
+
+## Chat continuity and persisted plan notes (2026-10-12)
+
+Companion replies preserve AssistantSession.latest_run_id; reply message run_id
+remains null and no PlanningRun is created. Web restores Run/Revision across
+navigation/refresh. Legacy planning sessions recover only one same-Trip active
+Run, never silently choose multiple matches. Companion replies retain candidates.
+CompanionContext.saved_plan_notes and explanation_type=saved_plan_notes add a
+SELECT-only record reader with autoflush disabled, Trip/Run/Revision/version and
+status binding, valid snapshot/validation and same-Trip place identity checks.
+It renders only persisted explanation/reason with Revision provenance and an
+explicit unverified-model-note warning; based_on_prior_decision=false. Ambiguous,
+stale, rejected, unknown explicit subjects and mismatched times fail closed.
+The original_validated_decision Ledger/Activity gate and Validator/acceptance
+authority remain unchanged. No migration or new model call. Live deployment
+pending; evidence docs/agent/CHAT_PLAN_CONSISTENCY_20261012.md.
+
+## Public conversation streaming and fresh explanation (2026-10-12)
+
+This supersedes the verbatim saved-note rendering behavior above. Version-bound
+notes remain SELECT-only context; normal itinerary follow-ups now generate a
+fresh CompanionDraft marked current_reconstruction. Exact original validated
+Ledger reasons remain available on explicit original-record requests, with the
+same identity/version gates. New prose never receives original-decision authority.
+Explicit preferences and itinerary duration/coordinates are available as context.
+
+Assistant messages add an optional SSE transport with request-local public
+analysis_summary and response_text previews, final validated session completion,
+format-repair reset and cancellation. Provider hidden thinking is never read.
+DB lifetime belongs to the stream iterator; message_id idempotency and formal
+Planning/approval boundaries are unchanged. Preview clauses keep existing
+dynamic-state controls; final JSON/reference/source validation remains mandatory.
+Web smooths received live text and stores only completed turns; answer-basis
+disclosures are separate from public analysis. No migration or new mutation
+permission. VERIFIED isolated backend956, Web132/build and Chrome socket5;
+MEASURED one final synthetic real-provider turn. Not deployed; factual/provider
+quality remains OPEN. See docs/agent/COMPANION_STREAMING_20261012.md.

@@ -11,7 +11,7 @@ describe("Companion answer presentation", () => {
     render(<CompanionThinking result={{ response_text: "最终回答", goal_type: "travel_chat", status: "completed",
       suggestions: [], resolved_suggestion_refs: [], runtime_trace: ["private_node"],
       grounding_limitations: ["model_general_knowledge_unverified"] }} />);
-    const toggle = screen.getByText("Thinking · 回答说明");
+    const toggle = screen.getByText("回答依据");
     const details = toggle.closest("details")!;
     expect(details.open).toBe(false);
     fireEvent.click(toggle);

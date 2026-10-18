@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent }
 import type { AssistantSession, DayPlan, ExternalFacts, PlaceCandidate, PlanRevision, PlanningRun, TripPlanningRepository } from "../domain/types";
 import { formatFen } from "../utils/planner";
 import { ResearchEvidence } from "./ResearchEvidence";
-import { CompanionThinking, companionAnswer } from "./CompanionThinking";
+import { CompanionThinking, ThinkingSummary, StreamingText, companionAnswer } from "./CompanionThinking";
 import { PlanningFailure } from "./PlanningFailure";
 import { PlanningProgress } from "./PlanningProgress";
 import { PlanningGoalCard } from "./PlanningGoalCard";
@@ -34,6 +34,7 @@ export function AiPlannerPanel({ open, tripId: requestedTripId, days, candidates
   const [revision, setRevision] = useState<PlanRevision | null>(null);
   const [answer, setAnswer] = useState("");
   const [busy, setBusy] = useState(false);
+  const [streaming, setStreaming] = useState({ analysis: "", answer: "", status: "" });
   const [error, setError] = useState<string | null>(null);
   const [savedPlanError, setSavedPlanError] = useState<string | null>(null);
   const [history, setHistory] = useState<PlanningRun[]>([]);
@@ -53,7 +54,7 @@ export function AiPlannerPanel({ open, tripId: requestedTripId, days, candidates
   const inputBlocked = Boolean(run && WORKING.has(run.status));
   const workingRunId = run && WORKING.has(run.status) ? run.id : undefined;
   const conversationEnd = useRef<HTMLDivElement>(null);
-  useEffect(() => { conversationEnd.current?.scrollIntoView?.({ block: "nearest" }); }, [submission?.text, assistantSession?.messages.length, run?.id, run?.progress?.stage]);
+  useEffect(() => { conversationEnd.current?.scrollIntoView?.({ block: "nearest" }); }, [submission?.text, assistantSession?.messages.length, run?.id, run?.progress?.stage, streaming]);
   const sendOnEnter = (event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>, send: () => void) => {
     if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing || composing.current || event.keyCode === 229) return;
     event.preventDefault();
@@ -88,8 +89,19 @@ export function AiPlannerPanel({ open, tripId: requestedTripId, days, candidates
         const session = await repository.getAssistantSession(requestedTripId);
         if (cancelled) return;
         setAssistantSession(session);
-        if (requestedTripId && session.latest_run_id) {
-          const restored = await repository.getPlanningRun(session.latest_run_id);
+        let restoredRunId = session.latest_run_id;
+        const hasPlanningMessage = session.messages.some((message) => Boolean(message.run_id)
+          || (message.user === "确认执行" && message.assistant.includes("候选行程")));
+        if (requestedTripId && !restoredRunId && hasPlanningMessage) {
+          const items = await repository.listPlanningRuns(requestedTripId);
+          if (cancelled) return;
+          const active = items.filter((item) => item.tripId === requestedTripId
+            && (WORKING.has(item.status) || ["awaiting_confirmation", "awaiting_clarification"].includes(item.status)));
+          if (active.length > 1) throw new Error("这趟旅行有多份待处理方案，请在对话与方案记录中选择要查看的一份。");
+          restoredRunId = active[0]?.id ?? null;
+        }
+        if (requestedTripId && restoredRunId) {
+          const restored = await repository.getPlanningRun(restoredRunId);
           if (cancelled) return;
           if (restored.tripId !== requestedTripId) throw new Error("规划任务不属于当前旅行，请重新读取对话。");
           let restoredRevision: PlanRevision | null = null;
@@ -165,8 +177,9 @@ export function AiPlannerPanel({ open, tripId: requestedTripId, days, candidates
   const start = async (retryRequest?: string, retryRun?: PlanningRun) => {
     const message = (retryRequest ?? request).trim();
     if (!message || busy || inputBlocked || checking || !historyReady) return;
-    setBusy(true); setError(null); setRevision(null);
+    setBusy(true); setError(null);
     setSubmission({ text: message }); setRequest("");
+    setStreaming({ analysis: "", answer: "", status: "" });
     const observationId = crypto.randomUUID();
     if (!retryRun && assistantSession && repository.sendAssistantMessage && lastSubmission.current?.text !== message) {
       lastSubmission.current = { text: message, id: crypto.randomUUID() };
@@ -177,15 +190,23 @@ export function AiPlannerPanel({ open, tripId: requestedTripId, days, candidates
     try {
       if (!retryRun && assistantSession && repository.sendAssistantMessage) {
         if (lastSubmission.current?.text !== message) lastSubmission.current = { text: message, id: crypto.randomUUID() };
-        const next = await repository.sendAssistantMessage(assistantSession.id, message, lastSubmission.current.id, selectedDayId, selectedActivityId);
+        const next = repository.streamAssistantMessage
+          ? await repository.streamAssistantMessage(assistantSession.id, message, lastSubmission.current.id, (event) => {
+            if (event.type === "reset") setStreaming({ analysis: "", answer: "", status: "正在重新组织回答…" });
+            else if (event.type === "status") setStreaming((value) => ({ ...value, status: event.message }));
+            else if (event.type === "analysis_delta") setStreaming((value) => ({ ...value, analysis: value.analysis + event.delta }));
+            else if (event.type === "answer_delta") setStreaming((value) => ({ ...value, answer: value.answer + event.delta }));
+          }, selectedDayId, selectedActivityId)
+          : await repository.sendAssistantMessage(assistantSession.id, message, lastSubmission.current.id, selectedDayId, selectedActivityId);
         const actualMessage = next.messages.find((item) => item.id === lastSubmission.current?.id);
         requestReturned = true;
         publishMonitor({ type: "request_completed", requestId: observationId, tripId: next.trip_id ?? undefined,
           runId: !actualMessage?.companion_result && ["plan_trip", "query_trip"].includes(String((actualMessage as unknown as { tool?: string })?.tool)) ? actualMessage?.run_id ?? undefined : undefined, assistant: actualMessage?.assistant,
           runtimeTrace: actualMessage?.companion_result?.runtime_trace });
-        setAssistantSession(next); setRun(null); setSubmission(null); lastSubmission.current = null;
+        setAssistantSession(next); setSubmission(null); lastSubmission.current = null;
+        if (!actualMessage?.companion_result || next.trip_id !== tripId) { setRun(null); setRevision(null); }
         if (next.trip_id && next.trip_id !== tripId) { await onTripChanged?.(next.trip_id); return; }
-        if (next.latest_run_id) {
+        if (next.latest_run_id && (!actualMessage?.companion_result || next.latest_run_id !== run?.id)) {
           await syncRun(await repository.getPlanningRun(next.latest_run_id));
           await loadPlanningContext();
         }
@@ -295,12 +316,12 @@ export function AiPlannerPanel({ open, tripId: requestedTripId, days, candidates
         <div className="ai-welcome"><span className="ai-welcome-mark" aria-hidden="true"><Sparkles size={17} /></span><div><strong>{hasPlan ? "这趟旅行，有什么想聊的？" : "今天想聊点什么？"}</strong><p>{hasPlan ? "可以聊目的地、旅行体验或目前安排；想调整行程时，再告诉我具体想法。" : "可以聊聊目的地、旅行灵感和出行方式，想规划时再告诉我。"}</p></div></div>
         {tripId && <details className="ai-history" onToggle={(event) => { if (event.currentTarget.open) void loadPlanningHistory(); }}><summary><History size={15} aria-hidden="true" /><span>对话与方案记录</span>{historyLoaded && <span className="ai-history-count">{history.length}</span>}<ChevronDown size={15} aria-hidden="true" /></summary>{historyLoading && <div className="directory-state"><span className="spinner" />正在读取方案记录…</div>}{historyLoaded && history.length === 0 && <p className="ai-history-empty">暂时没有规划记录。</p>}<div className="ai-history-items">{history.map((item) => <button type="button" key={item.id} disabled={busy || checking || (inputBlocked && item.id !== run?.id)} onClick={() => void restore(item)}><span>{item.userRequest || "生成完整行程"}</span><i>{statusText(item.status)}</i></button>)}</div></details>}
         {history.filter((item) => item.status === "answered" && item.id !== run?.id && !assistantSession?.messages.some((message) => message.run_id === item.id)).slice(0, 3).reverse().map((item) => <div className="ai-exchange" key={item.id}><div className="ai-message user">{item.userRequest}</div><div className="ai-message agent ai-answer"><AnswerText text={item.responseText ?? ""} /></div></div>)}
-        {assistantSession?.messages.slice(-10).map((item) => <div className="ai-exchange" key={item.id}><div className="ai-message user">{item.user}</div><div className="ai-message agent ai-answer"><AnswerText text={item.companion_result ? companionAnswer(item.assistant) : history.find((result) => result.id === item.run_id && result.status === "answered")?.responseText || item.assistant} />{item.companion_result && <CompanionThinking result={item.companion_result} />}</div></div>)}
+        {assistantSession?.messages.slice(-10).map((item) => <div className="ai-exchange" key={item.id}><div className="ai-message user">{item.user}</div><div className="ai-message agent ai-answer">{item.companion_result?.analysis_summary && <ThinkingSummary text={item.companion_result.analysis_summary} />}<AnswerText text={item.companion_result ? companionAnswer(item.assistant) : history.find((result) => result.id === item.run_id && result.status === "answered")?.responseText || item.assistant} />{item.companion_result && <CompanionThinking result={item.companion_result} />}</div></div>)}
         {assistantSession?.pending_action && <div className="ai-proposal assistant-action"><div className="proposal-heading"><span>{assistantSession.pending_action.tool === "reschedule_trip" ? "确认旅行改期" : "确认创建旅行"}</span><i>等待确认</i></div><h3>{assistantSession.pending_action.title}</h3><p>{assistantSession.pending_action.summary}</p>{assistantSession.pending_action.source_title && <p>参考旅行：{assistantSession.pending_action.source_title}</p>}<div className="proposal-impact"><span>目的地：{assistantSession.pending_action.city.name}</span><span>{assistantSession.pending_action.start_date} — {assistantSession.pending_action.end_date}</span><span>总预算：{formatFen(assistantSession.pending_action.total_budget_fen)}</span><span>每日预算：{formatFen(assistantSession.pending_action.daily_budget_fen)}</span></div>{assistantSession.pending_action.preferences && <p>{assistantSession.pending_action.preferences}</p>}<div className="proposal-actions"><button type="button" disabled={busy} onClick={() => void applyAssistantAction(false)}>暂不执行</button><button className="primary" type="button" disabled={busy} onClick={() => void applyAssistantAction(true)}>{assistantSession.pending_action.tool === "reschedule_trip" ? "确认改期" : "确认创建"}</button></div></div>}
         {run?.status === "awaiting_confirmation" && <p className="ai-pending-hint">方案等待确认期间，也可以继续提问或讨论理由。</p>}
         {run && !assistantSession?.messages.some((item) => item.run_id === run.id) && <div className="ai-message user">{run.userRequest || request}</div>}
         {run?.status === "answered" && !assistantSession?.messages.some((item) => item.run_id === run.id) && <div className="ai-message agent ai-answer"><AnswerText text={run.responseText ?? ""} /></div>}
-        {submission && <div className="ai-exchange"><div className="ai-message user">{submission.text}</div>{submission.failed ? <div className="ai-message agent">本次请求尚未确认成功，内容已保留，可重试发送。</div> : <div className="ai-message agent working" role="status"><LoaderCircle size={17} /><span>正在回复…</span></div>}</div>}
+        {submission && <div className="ai-exchange"><div className="ai-message user">{submission.text}</div>{submission.failed ? <div className="ai-message agent">本次请求尚未确认成功，内容已保留，可重试发送。</div> : <div className="ai-message agent ai-answer" aria-busy="true"><ThinkingSummary text={streaming.analysis} active={!streaming.answer} />{streaming.answer ? <><StreamingText text={streaming.answer} /><span className="ai-stream-cursor" aria-hidden="true">▍</span><small className="ai-stream-preview">正在生成，完成后保存回答</small></> : <div className="working" role="status"><LoaderCircle size={17} /><span>{streaming.status || "正在回复…"}</span></div>}</div>}</div>}
         {run && WORKING.has(run.status) && <PlanningProgress run={run} />}
         {run?.decisionMemory && run.decisionMemory.feedback.length > 0 && <div className="ai-facts" aria-label="已参考上次反馈"><strong>已参考上次反馈</strong>{run.decisionMemory.feedback.map((item) => <span key={item.sourceRevisionId}>{item.reasonText?.trim() || rejectionReasonLabel(item.reasonCode)}</span>)}<small>仅显示本次规划实际检索到的同一行程反馈。</small></div>}
         {(externalFacts.weather || externalFacts.search) && <div className="ai-facts"><strong>本次规划参考</strong><span>天气：{factStatus(externalFacts.weather?.status)}{externalFacts.weather?.temperatureC != null ? ` · ${externalFacts.weather.temperatureC}°C` : ""}</span><span>搜索：{factStatus(externalFacts.search?.status)}{externalFacts.search?.results?.length ? ` · ${externalFacts.search.results.length} 条来源` : ""}</span><small>外部事实仅作为建议依据，最终仍需你确认。</small></div>}

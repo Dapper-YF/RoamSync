@@ -44,6 +44,9 @@ _PROTECT_PATTERNS = (
 _PLACE_PATTERNS = (
     re.compile(r"(?:想去|加入|添加|增加)\s*([^，。；,;]+)"),
 )
+_OBJECT_BEFORE_ADD_PATTERN = re.compile(
+    r"(?:把|将)\s*([^，。；,;]+?)\s*(?:加入|添加到|放进)\s*(?:当前|这次|正式)?(?:行程|规划|草稿|计划|安排)"
+)
 
 _REPLACE_PATTERN = re.compile(
     r"(?:把)?\s*([^，。；,;]+?)\s*(?:换成|替换成|改成)\s*([^，。；,;]+)"
@@ -149,6 +152,7 @@ class _ActivityEntity:
     aliases: tuple[str, ...]
     category: str = ""
     scheduled_time: time | None = None
+    schedule_locked: bool = False
 
 
 def is_advice_request(message: str) -> bool:
@@ -250,6 +254,7 @@ async def resolve_planning_intent(
             day_date=day.date,
             category=place.category,
             scheduled_time=activity.scheduled_time,
+            schedule_locked=activity.schedule_locked,
             aliases=tuple(
                 value
                 for value in (activity.custom_name, place.name)
@@ -323,8 +328,9 @@ async def resolve_planning_intent(
         payload.selected_activity_id,
         ambiguities,
         target_day_id=target_day.id if target_day else None,
+        trip_start_date=trip.start_date,
     )
-    if target_day is None and protected_activity_ids:
+    if target_day is None and protected_activity_ids and intent_type not in {"create_plan", "replan_trip"}:
         protected_days = {
             entities_by_id[activity_id].day_id for activity_id in protected_activity_ids
         }
@@ -474,6 +480,12 @@ def _change_scope_text(message: str) -> str:
     parts = re.split(r"[，,。；;]", message)
     kept = []
     for part in parts:
+        # Remove preservation references before choosing a mutation date.
+        # They may share a clause with an actual change request.
+        part = re.sub(r"(?:保留|保持|维持|沿用)(?:其他|其余|剩余)(?:的)?(?:日期|天|日)(?:的)?(?:行程|安排|活动)?(?:不变|照旧|不要动|别动)?", "", part)
+        part = re.sub(r"(?:保留)?第[一二三四五六七八九十两\d]+天(?:的)?\d{1,2}(?:点|时)(?:\d{1,2}分?)?(?:的)?(?:固定|锁定|预约)(?:的)?活动(?:不要动|别动|不变|照旧)?", "", part)
+        if not part.strip():
+            continue
         boundary = re.search(r"不变|照旧|不调整|不要改动", part)
         remaining = re.sub(r"不调整|不要改动", "", part)
         if boundary and not re.search(r"调整|修改|加入|添加|增加|移到|替换|删除", remaining):
@@ -588,6 +600,7 @@ def _resolve_protected_activities(
     ambiguities: list[str],
     *,
     target_day_id: uuid.UUID | None = None,
+    trip_start_date: date | None = None,
 ) -> list[uuid.UUID]:
     mentions: list[str] = []
     for pattern in _PROTECT_PATTERNS:
@@ -612,6 +625,15 @@ def _resolve_protected_activities(
         if _trip_setting_kind(mention):
             continue
         normalized_mention = _normalize_entity(mention)
+        fixed = _resolve_fixed_activity_reference(normalized_mention, entities, trip_start_date)
+        if fixed is not None:
+            if len(fixed) == 1:
+                resolved.append(fixed[0])
+            elif not fixed:
+                ambiguities.append(f"activity_not_found:{mention}")
+            else:
+                ambiguities.append(f"activity_not_unique:{mention}")
+            continue
         meal_group = re.fullmatch(r"(?:原有的?|原来的?|现有的?|所有的?|全部的?)?(?:[一二三四五六七八九十两\d]+(?:个|处|顿|家)?)?(餐厅|用餐点|用餐安排|正餐|早餐|午餐|晚餐)", normalized_mention)
         if meal_group:
             # Group references are grounded in actual activities and the requested day.
@@ -659,10 +681,30 @@ def _resolve_protected_activities(
     return _deduplicate(resolved)
 
 
+def _resolve_fixed_activity_reference(value: str, entities: list[_ActivityEntity], trip_start_date: date | None) -> list[uuid.UUID] | None:
+    """Ground a dated locked appointment by persisted day and clock time."""
+    match = re.fullmatch(r"第([一二三四五六七八九十两\d]+)天(?:的)?(\d{1,2})(?:点|时)(?:(\d{1,2})分?)?(?:的)?(?:固定|锁定|预约)(?:的)?活动", value)
+    if match is None:
+        return None
+    day_number, hour = _parse_chinese_number(match[1]), int(match[2])
+    minute = int(match[3]) if match[3] is not None else None
+    if day_number < 1 or hour > 23 or (minute is not None and minute > 59):
+        return []
+    if trip_start_date is None:
+        return []
+    target_date = trip_start_date + timedelta(days=day_number - 1)
+    return [entity.id for entity in entities if entity.day_date == target_date
+            and entity.scheduled_time is not None and entity.scheduled_time.hour == hour
+            and (minute is None or entity.scheduled_time.minute == minute)
+            and entity.schedule_locked]
+
+
 def _is_plan_meta_activity_reference(value: str) -> bool:
     """Ignore ungrounded plan properties captured as if they were activity names."""
     if re.fullmatch(r"(?:已完成|已经完成|正在进行|执行中)(?:的)?活动", value):
         # Persisted execution state owns these groups; they are not venue names.
+        return True
+    if re.fullmatch(r"(?:其他|其余|剩余|非目标)(?:的)?(?:日期|天|日)(?:的)?(?:行程|安排|活动)?(?:不变|照旧)?", value):
         return True
     if value in {"顺序", "时长", "时间", "交通", "交通衔接", "安排", "内容", "要求", "上述要求"}:
         return True
@@ -685,10 +727,32 @@ def _is_plan_meta_activity_reference(value: str) -> bool:
 
 def _extract_place_queries(message: str) -> list[str]:
     values: list[str] = []
+    for match in _OBJECT_BEFORE_ADD_PATTERN.finditer(message):
+        if re.search(r"(?:不|别|不要|无需|不必|不再|无须)\s*$", message[:match.start()]):
+            continue
+        values.extend(_split_coordinated_mentions(match.group(1)))
     for pattern in _PLACE_PATTERNS:
         for match in pattern.finditer(message):
+            # An explicit prohibition is not a request to add that place.
+            if re.search(r"(?:不|别|不要|无需|不必|不再|无须)\s*$", message[:match.start()]):
+                continue
             values.extend(_split_coordinated_mentions(match.group(1)))
-    return _deduplicate([value for value in values if value and not is_generic_place_quantity(value)])
+    return _deduplicate([value for value in values if value and not is_generic_place_quantity(value)
+                         and not _is_non_place_reference(value)])
+
+
+def _is_non_place_reference(value: str) -> bool:
+    """Classify complete plan/requirement references, never a venue substring."""
+    normalized = _normalize_entity(value)
+    if re.fullmatch(r"(?:到|进)?(?:当前|这次|正式)?(?:行程|规划|草稿|计划|安排|候选)", normalized):
+        return True
+    if _trip_setting_kind(normalized) or _is_plan_meta_activity_reference(normalized):
+        return True
+    day = r"(?:第[一二三四五六七八九十两\d]+天|\d{4}-\d{1,2}-\d{1,2})"
+    prefix = rf"(?:(?:{day})(?:的)?)?"
+    state = r"(?:(?:已|已经|此前|之前)?(?:撤销|取消|废止|失效)(?:的)?|不再适用的?)?"
+    dimension = r"(?:步行|走路)(?:时间|距离)?(?:上限|限制|要求|偏好)|(?:每日|每天|总)?预算(?:上限|限制|要求)|(?:节奏|拍照|摄影|天气)(?:要求|偏好|限制)"
+    return bool(re.fullmatch(prefix + state + dimension + r"(?:不再适用|已撤销)?", normalized))
 
 
 def _split_coordinated_mentions(value: str) -> list[str]:
@@ -877,7 +941,10 @@ def _ground_semantic_intent(
     inherited_missing_fields: list[str],
     inherited_ambiguities: list[str],
 ) -> GroundedIntent:
-    target_activity_ids = list(protected_activity_ids)
+    # Protection is a prohibition, never an authorization to edit that activity
+    # or the other activities on its date. The request keeps protection separately.
+    target_activity_ids = [selected_activity_id] if (selected_activity_id is not None
+        and target_day is not None and selected_activity_id not in protected_activity_ids) else []
     unresolved_activities: list[str] = []
     candidate_place_ids: list[uuid.UUID] = []
     unresolved_places: list[str] = []
@@ -887,12 +954,13 @@ def _ground_semantic_intent(
         [mention for operation in draft.operations for mention in operation.activity_mentions]
     )
     for mention in activity_mentions:
-        if is_generic_place_quantity(mention) or _trip_setting_kind(mention):
+        if is_generic_place_quantity(mention) or _trip_setting_kind(mention) or _is_plan_meta_activity_reference(_normalize_entity(mention)):
             continue
         normalized = _normalize_entity(mention)
         if normalized in {"这个", "这个活动", "这个地方", "它", "该活动", "那个景点"}:
             if selected_activity_id is not None:
-                target_activity_ids.append(selected_activity_id)
+                if selected_activity_id not in protected_activity_ids:
+                    target_activity_ids.append(selected_activity_id)
             else:
                 unresolved_activities.append(mention)
             continue
@@ -907,7 +975,8 @@ def _ground_semantic_intent(
             )
         ]
         if len(matches) == 1:
-            target_activity_ids.append(matches[0])
+            if matches[0] not in protected_activity_ids:
+                target_activity_ids.append(matches[0])
         else:
             unresolved_activities.append(mention)
 
@@ -915,7 +984,7 @@ def _ground_semantic_intent(
         [mention for operation in draft.operations for mention in operation.place_mentions]
     )
     for mention in place_mentions:
-        if is_generic_place_quantity(mention):
+        if is_generic_place_quantity(mention) or _is_non_place_reference(mention):
             continue
         normalized = _normalize_entity(mention)
         # Existing formal activity identity wins over destination research.
@@ -923,7 +992,8 @@ def _ground_semantic_intent(
                             if (target_day is None or entity.day_id == target_day.id)
                             and (mention == str(entity.id) or any(normalized == _normalize_entity(alias) for alias in entity.aliases))]
         if len(existing_matches) == 1:
-            target_activity_ids.append(existing_matches[0])
+            if existing_matches[0] not in protected_activity_ids:
+                target_activity_ids.append(existing_matches[0])
             continue
         if len(existing_matches) > 1:
             inherited_ambiguities.append(f"activity_not_unique:{mention}")
@@ -965,7 +1035,10 @@ def _ground_semantic_intent(
     for activity_id in target_activity_ids:
         entity = entity_by_id.get(activity_id)
         if entity is not None:
-            target_days.append(entity.day_id)
+            if target_day is not None and entity.day_id != target_day.id:
+                inherited_ambiguities.append(f"activity_outside_target_day:{entity.id}")
+            elif target_day is None:
+                target_days.append(entity.day_id)
     grounded_missing_fields = list(inherited_missing_fields)
     operation_types = {operation.operation for operation in draft.operations}
     if (

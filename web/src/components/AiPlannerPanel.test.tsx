@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 import { AiPlannerPanel } from "./AiPlannerPanel";
 import { LocalTripPlanningRepository } from "../data/mockTripPlanningRepository";
-import type { AssistantSession, PlanningRun } from "../domain/types";
+import type { AssistantSession, AssistantStreamEvent, PlanningRun } from "../domain/types";
 
 const pending: PlanningRun = { id: "saved-run", tripId: "demo", runType: "initial_plan", status: "awaiting_clarification", userRequest: "规划周末旅行", tokenUsage: 0, pendingInterrupt: { questions: ["你更喜欢轻松还是紧凑？"] } };
 
@@ -16,6 +16,42 @@ async function openPlanningHistory() {
 }
 
 beforeEach(() => localStorage.clear());
+
+it("shows analysis then growing answer before the streaming request completes", async () => {
+  const session: AssistantSession = { id: "stream", trip_id: "demo", latest_run_id: null, pending_action: null, messages: [] };
+  let onEvent!: (event: AssistantStreamEvent) => void;
+  let finish!: (value: AssistantSession) => void;
+  const repository = Object.assign(new LocalTripPlanningRepository(localStorage), {
+    getAssistantSession: vi.fn().mockResolvedValue(session),
+    sendAssistantMessage: vi.fn(),
+    streamAssistantMessage: vi.fn((_id, _message, _messageId, callback) => {
+      onEvent = callback;
+      return new Promise<AssistantSession>((resolve) => { finish = resolve; });
+    }),
+  });
+  setup(repository);
+  await waitFor(() => expect(screen.getByRole("textbox", { name: "告诉旅程总管" })).toBeEnabled());
+  const input = screen.getByRole("textbox", { name: "告诉旅程总管" });
+  fireEvent.change(input, { target: { value: "为什么会这样安排？" } });
+  fireEvent.keyDown(input, { key: "Enter" });
+  await waitFor(() => expect(repository.streamAssistantMessage).toHaveBeenCalled());
+  act(() => onEvent({ type: "analysis_delta", delta: "结合区域与节奏。" }));
+  expect(screen.getByText("结合区域与节奏。")).toBeVisible();
+  expect(screen.getByText("Thinking · 正在分析")).toBeInTheDocument();
+  act(() => onEvent({ type: "answer_delta", delta: "第一天集中钟山。" }));
+  await waitFor(() => expect(screen.getByText("第一天集中钟山。")).toBeVisible());
+  expect(screen.getByRole("textbox", { name: "告诉旅程总管" })).toBeDisabled();
+  act(() => onEvent({ type: "answer_delta", delta: "下午转入室内。" }));
+  await waitFor(() => expect(screen.getByText("第一天集中钟山。下午转入室内。")).toBeVisible());
+  act(() => onEvent({ type: "reset" }));
+  expect(screen.queryByText("第一天集中钟山。下午转入室内。")).toBeNull();
+  await act(async () => finish({ ...session, messages: [{ id: "complete", user: "为什么会这样安排？", assistant: "完成后的解释。",
+    companion_result: { response_text: "完成后的解释。", analysis_summary: "结合区域与节奏。", goal_type: "explanation", status: "completed",
+      suggestions: [], resolved_suggestion_refs: [], runtime_trace: [] } }] }));
+  expect(screen.getByText("完成后的解释。")).toBeVisible();
+  expect(screen.getByText("Thinking · 分析摘要")).toBeInTheDocument();
+  expect(repository.sendAssistantMessage).not.toHaveBeenCalled();
+});
 
 it("renders a Companion reply with routing metadata and no planning run", async () => {
   const session: AssistantSession = { id: "companion", trip_id: "demo", latest_run_id: null, pending_action: null,
@@ -435,4 +471,67 @@ it("does not restore a saved run belonging to a different trip", async () => {
   expect(await screen.findByRole("alert")).toHaveTextContent("规划任务不属于当前旅行");
   expect(screen.queryByText("候选方案")).not.toBeInTheDocument();
   expect(getRevision).not.toHaveBeenCalled();
+});
+
+it("restores planning progress without opening developer monitoring", async () => {
+  const session: AssistantSession = { id: "created", trip_id: "demo", messages: [], pending_action: null, latest_run_id: "saved-run" };
+  const repository = Object.assign(new LocalTripPlanningRepository(localStorage), { getAssistantSession: vi.fn().mockResolvedValue(session) });
+  vi.spyOn(repository, "getPlanningRun").mockResolvedValue({ ...pending, status: "researching",
+    progress: { stage: "search", message: "正在搜索网页资料…", updated_at: new Date().toISOString() } });
+  setup(repository);
+  expect(await screen.findByText("正在搜索网页资料…")).toBeInTheDocument();
+  expect(screen.getByRole("status")).toHaveTextContent("本阶段已等待");
+});
+
+it("recovers a unique pending proposal after an old Companion reply cleared the session pointer", async () => {
+  const session: AssistantSession = { id: "created", trip_id: "demo", latest_run_id: null, pending_action: null,
+    messages: [{ id: "confirmed", user: "确认执行", assistant: "旅行已创建，正在准备候选行程。", run_id: null }] };
+  const repository = Object.assign(new LocalTripPlanningRepository(localStorage), { getAssistantSession: vi.fn().mockResolvedValue(session) });
+  vi.spyOn(repository, "listPlanningRuns").mockResolvedValue([{ ...pending, status: "awaiting_confirmation" }]);
+  vi.spyOn(repository, "getPlanningRun").mockResolvedValue({ ...pending, status: "awaiting_confirmation" });
+  vi.spyOn(repository, "getPlanRevision").mockResolvedValue({ id: "revision", planningRunId: "saved-run", status: "pending",
+    reason: "保存的候选", activities: [{ candidateId: "fixture", dayDate: "2026-10-11", placeCandidateId: "place",
+      plannedStartTime: "10:00", durationMinutes: 60, estimatedCostFen: 0, transportModeToHere: "walk", reason: "保存说明", locked: false }],
+    differenceSummary: {}, validationResult: { valid: true }, sourceIds: [] });
+  setup(repository);
+  await waitFor(() => expect(screen.getByRole("button", { name: "确认并应用" })).toBeEnabled());
+});
+
+it("does not silently choose between multiple pending proposals", async () => {
+  const session: AssistantSession = { id: "created", trip_id: "demo", latest_run_id: null, pending_action: null,
+    messages: [{ id: "confirmed", user: "确认执行", assistant: "旅行已创建，正在准备候选行程。", run_id: null }] };
+  const repository = Object.assign(new LocalTripPlanningRepository(localStorage), { getAssistantSession: vi.fn().mockResolvedValue(session) });
+  vi.spyOn(repository, "listPlanningRuns").mockResolvedValue([{ ...pending, status: "awaiting_confirmation" }, { ...pending, id: "other", status: "awaiting_confirmation" }]);
+  const getRevision = vi.spyOn(repository, "getPlanRevision");
+  setup(repository);
+  expect(await screen.findByRole("alert")).toHaveTextContent("多份待处理方案");
+  expect(getRevision).not.toHaveBeenCalled();
+});
+
+it("keeps the candidate visible while answering a Companion explanation", async () => {
+  const session: AssistantSession = { id: "created", trip_id: "demo", messages: [], pending_action: null, latest_run_id: "saved-run" };
+  const answer = { response_text: "生成时保存的安排说明", goal_type: "explanation" as const, status: "completed" as const,
+    suggestions: [], resolved_suggestion_refs: [], runtime_trace: [], explanation: {
+      explanation_type: "saved_plan_notes", reasons: ["文化兴趣"], based_on_prior_decision: false,
+      source_decision_ref: "revision:fixture", fact_freshness_warning: "尚未验证事实依据" } };
+  const repository = Object.assign(new LocalTripPlanningRepository(localStorage), {
+    getAssistantSession: vi.fn().mockResolvedValue(session),
+    sendAssistantMessage: vi.fn().mockResolvedValue({ ...session, messages: [{ id: "question", user: "为什么会这样安排？",
+      assistant: answer.response_text, companion_result: answer }] }),
+  });
+  vi.spyOn(repository, "getPlanningRun").mockResolvedValue({ ...pending, status: "awaiting_confirmation" });
+  vi.spyOn(repository, "getPlanRevision").mockResolvedValue({ id: "revision", planningRunId: "saved-run", status: "pending",
+    reason: "保存的候选", activities: [{ candidateId: "fixture", dayDate: "2026-10-11", placeCandidateId: "place",
+      plannedStartTime: "10:00", durationMinutes: 60, estimatedCostFen: 0, transportModeToHere: "walk", reason: "保存说明", locked: false }],
+    differenceSummary: {}, validationResult: { valid: true }, sourceIds: [] });
+  setup(repository);
+  await waitFor(() => expect(screen.getByRole("button", { name: "确认并应用" })).toBeEnabled());
+  const input = screen.getByRole("textbox", { name: "告诉旅程总管" });
+  fireEvent.change(input, { target: { value: "为什么会这样安排？" } });
+  fireEvent.keyDown(input, { key: "Enter" });
+  expect(await screen.findByText(answer.response_text)).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByRole("button", { name: "确认并应用" })).toBeEnabled());
+  expect(screen.getByText("候选方案")).toBeInTheDocument();
+  await userEvent.click(screen.getByText("回答依据"));
+  expect(screen.getByText("对应方案：fixture")).toBeInTheDocument();
 });

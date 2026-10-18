@@ -13,7 +13,10 @@ from app.companion_contracts import (AgentAnswerText, CompanionAnswerDraft, Comp
     SuggestionInteraction)
 from app.companion_state import (destination_from_text, interaction_status, project_conversation,
     resolve_suggestions, stable_identity)
-from app.companion_information import determine_information_need, explicit_destination, is_formal_decision_question
+from app.companion_information import apply_knowledge_strategy, determine_information_need, explicit_destination, is_formal_decision_question
+from app.companion_evidence_quality import gate_evidence
+from app.companion_answer_reliability import control_draft, live_gap_text, source_gap_text
+from app.companion_provider import CompanionProviderError
 from app.companion_grounding import (GroundingContractError, advice_issue, assemble_claims,
     validate_provided_refs)
 from app.companion_facts import FactToolPort, ForecastPlan, forecast_text, opening_text
@@ -70,7 +73,7 @@ def _stable_claim_id(session_id: str, turn_id: str, index: int) -> str:
 
 
 def _answer_text(claims: list[GroundedAnswerClaim], gaps: list[InformationGap],
-                 suggestions: list[CompanionSuggestion]) -> str:
+                 suggestions: list[CompanionSuggestion], request: str = "") -> str:
     sections = []
     facts = [c for c in claims if c.claim_type in {"retrieved_fact", "supported_summary"}]
     interpretations = [c for c in claims if c.claim_type == "curator_inference"]
@@ -98,7 +101,7 @@ def _answer_text(claims: list[GroundedAnswerClaim], gaps: list[InformationGap],
                 else:
                     sections.append(message)
         elif distinct:
-            sections.append("现有来源不足以核实这个问题。可以补充具体出处，或改为一般介绍。")
+            sections.append(source_gap_text(request))
     prose = "\n\n".join(sections) or "当前资料不足以给出有来源的确定回答。"
     # Known internal topic names are metadata, including when the model echoes
     # them parenthetically. Keep raw claims for audit; clean final prose only.
@@ -121,7 +124,8 @@ def _selected_assertions(context: CompanionContext, need: InformationNeed):
 
 
 def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider,
-                          knowledge_tool: KnowledgeToolPort | None = None, fact_tool: FactToolPort | None = None):
+                          knowledge_tool: KnowledgeToolPort | None = None, fact_tool: FactToolPort | None = None,
+                          knowledge_strategy: str = "selective"):
     async def interpret_goal(state):
         context = state["context"]
         if context.travel_goal.target_runtime != "companion":
@@ -143,7 +147,7 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
         with_current = project_conversation([*state["messages"], {"id": state["turn_id"], "user": context.current_message}])
         prior = selected or [conversation.suggestions[ref] for ref in conversation.current_batch][-10:]
         context = context.model_copy(update={
-            "current_destination": explicit_destination(context.current_message) or destination_from_text(context.current_message) or conversation.destination,
+            "current_destination": (context.assistant_context or {}).get("browsing_city") or explicit_destination(context.current_message) or destination_from_text(context.current_message) or conversation.destination,
             "relevant_user_preferences": with_current.preferences,
             "relevant_prior_suggestions": prior,
             "resolved_entities": [EntityReference(kind="suggestion", value=s.suggestion_id) for s in selected],
@@ -154,12 +158,15 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
 
     async def information_need(state):
         context = state["context"]
-        need = determine_information_need(context, state["selected"])
+        need = apply_knowledge_strategy(determine_information_need(context, state["selected"]), knowledge_strategy)
+        if (context.assistant_context or {}).get("read_trip_id"):
+            need = need.model_copy(update={"trip_context_required": True,
+                "itinerary_required": need.itinerary_required or bool(re.search(r"行程|旅行", context.current_message))})
         updates = {"pending_planning_handoff": None}
         if need.forecast_required and fact_tool is not None:
             try:
                 plan = await fact_tool.plan_forecast(context.current_message,
-                    project_conversation(state["messages"]).destination, context.recent_turns)
+                    (context.current_destination if context.assistant_context else project_conversation(state["messages"]).destination), context.recent_turns)
             except Exception:
                 plan = ForecastPlan(message="我现在没有拿到可靠的地点或天气预报数据。")
             updates["forecast_plan"] = plan
@@ -173,8 +180,6 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
                 hours = ForecastPlan(message="我现在没有拿到可靠的场馆开放公告。")
             updates["opening_hours_plan"] = hours
             need = need.model_copy(update={"fact_requirements": [*need.fact_requirements,*hours.requirements]})
-        if "history_culture" in need.knowledge_types and not state["selected"]:
-            updates.update(relevant_user_preferences=[], relevant_prior_suggestions=[])
         return {"need": need, "context": context.model_copy(update=updates),
                 "trace": [*state["trace"], "determine_information_need"]}
 
@@ -197,18 +202,20 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
             if context.forecast_plan:
                 weather_results=[r for r in context.resolved_facts if r.requirement in context.forecast_plan.requirements]
                 if context.forecast_plan.message or not weather_results or any(not r.usable_as_current for r in weather_results):
-                    gaps.append(InformationGap(code="live_fact_unavailable", message=forecast_text(context.forecast_plan,weather_results)))
+                    gaps.append(InformationGap(code="live_fact_unavailable", message=forecast_text(context.forecast_plan,weather_results,context.current_message)))
             if context.opening_hours_plan:
                 hours_results=[r for r in context.resolved_facts if r.requirement in context.opening_hours_plan.requirements]
                 if context.opening_hours_plan.message or not hours_results or any(not r.usable_as_current for r in hours_results):
                     gaps.append(InformationGap(code="live_fact_unavailable",message=opening_text(context.opening_hours_plan,hours_results)))
             handled=({"weather"} if context.forecast_plan else set())|({"opening_hours"} if context.opening_hours_plan else set())
+            if context.read_tool_context.get("route", {}).get("status") == "available":
+                handled.add("traffic")
             if need.live_fact_required and (not handled or any(t not in handled for t in need.fact_types)):
                 message = "实时部分目前无法核实；当天开放、天气、花况、价格或交通请以官方最新信息为准。" if not context.forecast_plan else "实时部分的开放、花况、价格或交通目前无法核实，请以官方最新信息为准。"
                 gaps.append(InformationGap(code="live_fact_unavailable", message=message))
             if need.knowledge_required:
                 result = KnowledgeToolResult(status="unavailable", outcome="retriever_unavailable")
-                if knowledge_tool:
+                if knowledge_tool and knowledge_strategy != "general_only":
                     try:
                         # Project only stable subjects into the knowledge query.
                         # Sending the live clause would correctly trip the
@@ -228,6 +235,14 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
                      "retrieved_document_refs": list(dict.fromkeys(e.document_id for e in result.evidence if e.document_id)),
                      "retrieved_chunk_refs": [e.chunk_id for e in result.evidence if e.chunk_id]})
                 context = context.model_copy(update={"knowledge_retrieval": summary})
+                if knowledge_strategy == "selective":
+                    accepted, rejections = gate_evidence(result, context, need)
+                    summary = summary.model_copy(update={"quality_rejections": rejections,
+                        "accepted_evidence_count": len(accepted)})
+                    context = context.model_copy(update={"knowledge_retrieval": summary})
+                    result = result.model_copy(update={"evidence": accepted,
+                        "status": "available" if accepted else "unavailable",
+                        "outcome": result.outcome if accepted or not result.evidence else "knowledge_insufficient"})
                 advisory = result.advisory
                 if advisory and (advisory.live_fact_verification_required or advisory.planning_decision_context_required):
                     need = need.model_copy(update={
@@ -271,16 +286,21 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
                         context = context.model_copy(update={"knowledge_context": matched})
                     elif not gaps:
                         code, text = {"no_results": ("knowledge_no_results", "知识库没有检索到与问题相关的资料。"),
-                            "unsupported_query": ("knowledge_unsupported_query", "当前小型知识库不覆盖这个目的地或主题。"),
+                            "unsupported_query": ("knowledge_unsupported_query", "目前没有适用于这个问题的可靠资料。"),
                             "knowledge_insufficient": ("knowledge_insufficient", "检索到了资料，但不足以支持这个问题。")}.get(
                                 result.outcome, ("knowledge_insufficient", "检索到了资料，但没有覆盖问题要求的具体事实。"))
                         gaps.append(InformationGap(code=code, message=text))
                 else:
                     code, text = {"no_results": ("knowledge_no_results", "知识库没有检索到与问题相关的资料。"),
-                        "unsupported_query": ("knowledge_unsupported_query", "当前小型知识库不覆盖这个目的地或主题。"),
+                        "unsupported_query": ("knowledge_unsupported_query", "目前没有适用于这个问题的可靠资料。"),
                         "knowledge_insufficient": ("knowledge_insufficient", "检索到了资料，但不足以支持这个问题。")}.get(
                             result.outcome, ("knowledge_unavailable", "当前没有可用的知识检索证据，检索服务不可用。"))
                     gaps.append(InformationGap(code=code, message=text))
+        if (need.optional_rag and not context.knowledge_context and not need.source_required
+            and not need.live_fact_required and not need.decision_history_required):
+            need = need.model_copy(update={"knowledge_required": False, "general_knowledge_allowed": True,
+                "knowledge_reasons": [*need.knowledge_reasons, "quality_gate_general_fallback"][:8]})
+            gaps = [g for g in gaps if not g.code.startswith("knowledge_")]
         return {"context": context, "need": need, "gaps": gaps, "trace": [*state["trace"], "gather_read_only_context"]}
 
     async def generate(state):
@@ -292,17 +312,40 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
         elif need.live_fact_required and not need.decision_history_required:
             # Server-owned degradation: an unsafe model is never asked to fill
             # this gap, so prompt compliance is not the only safety mechanism.
-            limitation = "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。"
-            if context.forecast_plan or context.opening_hours_plan or (context.knowledge_context and need.knowledge_required):
+            limitation = live_gap_text(context.current_message)
+            if (context.read_tool_context.get("route", {}).get("status") == "available"
+                and set(need.fact_types) <= {"traffic"} and not need.knowledge_required):
+                from app.assistant_places import route_summary
+                draft = CompanionDraft(response_text=route_summary(context.read_tool_context["route"]))
+            elif context.forecast_plan or context.opening_hours_plan or (context.knowledge_context and need.knowledge_required):
                 # Only stable server assertions; the model cannot fill live gaps.
                 draft = CompanionAnswerDraft()
             else:
                 draft = CompanionDraft(response_text=limitation)
         elif need.decision_history_required:
-            if context.referenced_decision and context.referenced_decision.explanation_type == "original_validated_decision":
+            if (context.referenced_decision and context.referenced_decision.explanation_type == "original_validated_decision"
+                and re.search(r"原始|原文|当时保存|原来保存", context.current_message)):
                 explanation = context.referenced_decision
                 draft = CompanionDraft(response_text="该已接受行程版本中验证并保存的原始决定理由是："
                     + "；".join(explanation.reasons) + "。这不代表实时事实已经核实。")
+            elif context.saved_plan_notes or context.referenced_decision:
+                notes = context.saved_plan_notes or {"reasons": context.referenced_decision.reasons,
+                    "revision_id": context.referenced_decision.source_decision_ref.removeprefix("revision:")}
+                explanation = CompanionExplanation(explanation_type="current_reconstruction", reasons=notes["reasons"],
+                    source_decision_ref="revision:" + notes["revision_id"],
+                    fact_freshness_warning="这是结合当前问题重新生成的解释；保存的规划说明仅作参考，天气、开放时间与交通仍需核实。")
+                try:
+                    generated = await provider.generate(context, need.model_copy(update={
+                        "general_knowledge_allowed": True, "knowledge_required": False}))
+                    draft = CompanionDraft.model_validate(generated)
+                    if draft.evidence_refs or draft.suggestions or draft.comparison:
+                        raise CompanionContractError("itinerary explanation cannot introduce suggestions or evidence")
+                    if _ATTRIBUTION_LANGUAGE.search(draft.response_text) or re.search(r"https?://|\[[^\]]+\]\(", draft.response_text):
+                        raise CompanionContractError("itinerary explanation cannot manufacture source attribution")
+                    draft, claim_issues = control_draft(draft, context.current_message)
+                except CompanionProviderError:
+                    draft = CompanionDraft(response_text="这次没能完成行程解释，请重试。已保存的行程仍然保留。")
+                    gaps.append(InformationGap(code="provider_unavailable", message="行程解释未完成。"))
             elif len(selected) == 1 and selected[0].reasons and not is_formal_decision_question(context.current_message):
                 suggestion = selected[0]
                 explanation = CompanionExplanation(subject_ref=EntityReference(kind="suggestion", value=suggestion.suggestion_id),
@@ -330,9 +373,15 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
         elif need.knowledge_required and not context.knowledge_context and (
             "history_culture" in need.knowledge_types or context.travel_goal.goal_type in {"destination_exploration", "explanation"}):
             detail = next((gap.message for gap in gaps if gap.code.startswith("knowledge_")), "当前没有可用的知识检索证据。")
-            draft = CompanionDraft(response_text=detail + "我不能给出有来源的确定回答，可以缩小或换一个主题再查询。")
+            draft = CompanionDraft(response_text=source_gap_text(context.current_message))
         else:
-            generated = await provider.generate(context, need)
+            try:
+                generated = await provider.generate(context, need)
+            except CompanionProviderError as exc:
+                # Do not retry or rewrite a request to bypass upstream filtering.
+                claim_issues.append("provider_filtered" if exc.finish_reason == "sensitive" else "provider_incomplete")
+                gaps.append(InformationGap(code="provider_unavailable", message="这次回答未能完成，没有可发布的模型结果。"))
+                generated = CompanionDraft(response_text="这次没能完成回答。我们可以继续聊旅行兴趣或具体担心的问题；我不会把未完成的内容当作已经回答。")
             try:
                 validate_provided_refs(generated, context.knowledge_context)
             except GroundingContractError as exc:
@@ -341,12 +390,20 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
                 draft = generated
             elif not need.knowledge_required and not context.knowledge_context:
                 draft = CompanionDraft.model_validate(generated)
+                if _ATTRIBUTION_LANGUAGE.search(draft.response_text) or re.search(r"https?://|\[[^\]]+\]\(", draft.response_text):
+                    # General model prose cannot manufacture a retrieved source.
+                    draft = CompanionDraft(response_text="这次回答包含无法核对的来源表述，我暂时无法提供有出处的确定回答。可以提供具体资料后继续讨论。")
+                    gaps.append(InformationGap(code="knowledge_insufficient", message="生成的来源表述未通过来源检查。"))
             else:
                 # Legacy free text cannot carry factual claims through a
                 # knowledge-required turn. Preserve only the deterministic
                 # server assertions and record an explicit degradation.
                 draft = CompanionAnswerDraft()
                 claim_issues.append("legacy_unstructured_answer_downgraded")
+            draft, output_issues = control_draft(draft, context.current_message)
+            claim_issues.extend(output_issues)
+            if "output_no_useful_content" in output_issues:
+                gaps.append(InformationGap(code="provider_unavailable", message="生成内容未留下足够可靠的建议。"))
             advice = list(draft.agent_claims) if isinstance(draft, CompanionAnswerDraft) else []
             suggestions_for_check = draft.suggestions if isinstance(draft, CompanionAnswerDraft) else []
             displayed_model_text = "\n".join([a.text for a in advice] + [
@@ -425,14 +482,14 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
             reasons=s.reasons, evidence_refs=s.evidence_refs,
             grounding="unverified_proposal" if structured else "knowledge_supported" if s.evidence_refs else "unverified_proposal",
             created_at=now, conversation_turn_id=state["turn_id"]) for index, s in enumerate(suggestion_drafts)]
-        if issues:
+        if any(not issue.startswith(("output_", "unsolicited_", "provider_")) for issue in issues):
             gaps.append(InformationGap(code="knowledge_insufficient", message="部分生成内容未通过来源或适用范围检查，已移除；其余建议仍是助手推断。"))
         if structured:
-            response = _answer_text(claims, gaps, suggestions)
+            response = _answer_text(claims, gaps, suggestions, context.current_message)
         else:
             response = draft.response_text
             if not state["need"].general_knowledge_allowed and (any(not s.evidence_refs for s in suggestions) or (state["need"].knowledge_required and not context.knowledge_context and not state["explanation"])):
-                response = "以下是待核实的讨论建议，不是正式规划决定。\n" + response
+                response = "这些建议需结合实际情况确认。\n" + response
             if suggestions and not state["need"].general_knowledge_allowed:
                 response = response[:2000] + "\n" + "\n".join(f"{index + 1}. {s.title}：{s.summary[:100]}" for index, s in enumerate(suggestions))
         if context.forecast_plan or context.opening_hours_plan:
@@ -442,7 +499,7 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
             extra = [g.message for g in gaps if g.code == "live_fact_unavailable" and g.message.startswith("实时部分")]
             sections=[stable_response]
             if context.forecast_plan:
-                sections.append(forecast_text(context.forecast_plan,[r for r in context.resolved_facts if r.requirement in context.forecast_plan.requirements]))
+                sections.append(forecast_text(context.forecast_plan,[r for r in context.resolved_facts if r.requirement in context.forecast_plan.requirements],context.current_message))
             if context.opening_hours_plan: sections.append(opening_text(context.opening_hours_plan,context.resolved_facts))
             response = "\n\n".join([x for x in [*sections,*extra] if x])
         grounding = "not_applicable"
@@ -462,7 +519,8 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
         elif suggestions:
             grounding = "unverified_proposal"
         status = "needs_clarification" if (context.forecast_plan and context.forecast_plan.clarification) or (context.opening_hours_plan and context.opening_hours_plan.clarification) or any(g.code in {"unknown_suggestion", "ambiguous_suggestion"} for g in gaps) else "needs_information" if gaps else "completed"
-        result = CompanionResult(response_text=response[:5000], goal_type=context.travel_goal.goal_type,
+        result = CompanionResult(response_text=response[:5000], analysis_summary=draft.analysis_summary,
+            goal_type=context.travel_goal.goal_type,
             status=status, suggestions=suggestions, resolved_suggestion_refs=[s.suggestion_id for s in state["selected"]],
             interactions=[SuggestionInteraction(suggestion_id=s.suggestion_id, status=interaction_status(context.current_message),
                 source_turn_id=state["turn_id"]) for s in state["selected"]], comparison=draft.comparison if not structured or (

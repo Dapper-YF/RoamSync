@@ -50,6 +50,9 @@ import type {
 } from "./domain/types";
 import { changedPlanDayIds, defaultDayId, tripPhase } from "./utils/journey";
 import { formatFen } from "./utils/planner";
+import { DraftPages } from "./drafts/DraftPages";
+import { TravelAssistantProvider, AssistantPage } from "./product/TravelAssistant";
+import { ProductLayout, ExplorePage, PlaceDetailPage, PlaceMapPage, RoutePage, FavoritesPage, MyPage } from "./product/ProductExperience";
 
 const INTEREST_OPTIONS: Array<{ value: InterestCategory; label: string }> = [
   { value: "history", label: "历史" },
@@ -74,21 +77,33 @@ export function App({ repository: injectedRepository }: { repository?: TripPlann
     [injectedRepository],
   );
   return (
+    <TravelAssistantProvider tripRepository={repository}>
     <Routes>
       <Route path="/dev/agent-monitor" element={<AgentMonitor />} />
       <Route path="/dev/agent-conversation" element={<AgentConversation repository={repository} />} />
       <Route path="/dev/agent-conversation/:tripId" element={<AgentConversation repository={repository} />} />
+      <Route element={<ProductLayout />}>
+      <Route path="/" element={<ExplorePage />} />
+      <Route path="/explore" element={<Navigate to="/" replace />} />
+      <Route path="/places/:placeId" element={<PlaceDetailPage />} />
+      <Route path="/places/:placeId/map" element={<PlaceMapPage />} />
+      <Route path="/places/:placeId/route" element={<RoutePage />} />
+      <Route path="/drafts/*" element={<DraftPages />} />
+      <Route path="/favorites" element={<FavoritesPage />} />
+      <Route path="/me" element={<MyPage />} />
       {!injectedRepository && <Route path="/demo" element={<Navigate to="/trips/00000000-0000-4000-8000-000000000001/planner" replace />} />}
       {!injectedRepository && <Route path="/trips/demo/planner" element={<Navigate to="/trips/00000000-0000-4000-8000-000000000001/planner" replace />} />}
       <Route path="/trips" element={<TripListPage repository={repository} />} />
       <Route path="/trips/new" element={<CreateTripPage repository={repository} />} />
       {/* Legacy deep link: AI now lives inside the trip workspace. */}
-      <Route path="/assistant" element={<Navigate to="/trips" replace />} />
+      <Route path="/assistant" element={<AssistantPage />} />
       <Route path="/trips/:tripId/edit" element={<CreateTripPage repository={repository} />} />
       <Route path="/trips/:tripId" element={<PlannerPage repository={repository} />} />
       <Route path="/trips/:tripId/planner" element={<PlannerPage repository={repository} />} />
-      <Route path="*" element={<Navigate to="/trips" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
     </Routes>
+    </TravelAssistantProvider>
   );
 }
 

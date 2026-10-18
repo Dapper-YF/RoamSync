@@ -21,12 +21,13 @@ class CompanionContextReader:
             return context
         changes = {}
         if need.trip_context_required:
-            row = (await self._select(select(Trip.title, Trip.destination)
+            row = (await self._select(select(Trip.id, Trip.version, Trip.title, Trip.destination)
                 .where(Trip.id == self._trip_id))).first()
             if row:
-                changes["trip_summary"] = {"title": row.title, "destination": row.destination}
+                changes["trip_summary"] = {"id": str(row.id), "version": row.version, "title": row.title, "destination": row.destination}
                 changes["current_destination"] = context.current_destination or row.destination
-        if need.preferences_required:
+        if need.preferences_required and not (context.assistant_context and context.assistant_context.get("browsing_city")
+            and context.assistant_context.get("browsing_city").rstrip("市") != changes.get("trip_summary", {}).get("destination", "").rstrip("市")):
             row = (await self._select(select(TripPreferences.pace, TripPreferences.interest_categories,
                 TripPreferences.avoid_categories, TripPreferences.free_text_requirements)
                 .where(TripPreferences.trip_id == self._trip_id))).first()
@@ -37,7 +38,8 @@ class CompanionContextReader:
             # remain a list. We never pick a guessed formal identity.
             mention = re.search(r"(?:把|将)(.{1,40}?)(?:安排|放|排|改)", context.current_message)
             query = select(Activity.id, Activity.custom_name, PlaceCandidate.name, DayPlan.date,
-                Activity.scheduled_time).join(DayPlan, Activity.day_plan_id == DayPlan.id)
+                Activity.scheduled_time, Activity.duration_minutes, PlaceCandidate.longitude,
+                PlaceCandidate.latitude).join(DayPlan, Activity.day_plan_id == DayPlan.id)
             query = query.join(PlaceCandidate, Activity.place_candidate_id == PlaceCandidate.id)
             query = query.where(DayPlan.trip_id == self._trip_id)
             if mention:
@@ -45,11 +47,18 @@ class CompanionContextReader:
                 query = query.where(or_(PlaceCandidate.name == name, Activity.custom_name == name))
             rows = (await self._select(query.order_by(DayPlan.date, Activity.scheduled_time).limit(10))).all()
             changes["formal_itinerary_summary"] = [{"subject_ref": EntityReference(kind="formal_activity", value=str(r.id)).model_dump(),
-                "name": r.custom_name or r.name, "date": str(r.date), "time": str(r.scheduled_time)} for r in rows]
-            if need.decision_history_required and len(rows) == 1:
+                "name": r.custom_name or r.name, "date": str(r.date), "time": str(r.scheduled_time),
+                "duration_minutes": r.duration_minutes, "longitude": float(r.longitude),
+                "latitude": float(r.latitude)} for r in rows]
+            if (need.decision_history_required and len(rows) == 1
+                and (rows[0].custom_name or rows[0].name) in context.current_message
+                and not re.search(r"候选|待确认|新方案", context.current_message)):
                 rationale = await self._validated_rationale(rows[0])
                 if rationale:
                     changes["referenced_decision"] = rationale
+        if need.decision_history_required and not context.resolved_entities:
+            from app.saved_plan_notes import read_saved_plan_notes
+            changes["saved_plan_notes"] = await read_saved_plan_notes(self._session, self._trip_id, context.current_message)
         return context.model_copy(update=changes)
 
     async def _validated_rationale(self, activity):

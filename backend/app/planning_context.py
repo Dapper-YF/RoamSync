@@ -7,6 +7,7 @@ from app.planner_repository import get_candidates, get_day_plans, get_planning_b
 from app.repository import get_budget, get_trip, get_trip_preferences
 from app.schemas import PlanningContextResponse, TripPreferencesResponse, TripResponse
 from app.navigation.execution_context import build_execution_recovery_context
+from app.requirements import valid_records
 
 
 async def build_planning_context(
@@ -14,6 +15,10 @@ async def build_planning_context(
 ) -> PlanningContextResponse:
     trip = await get_trip(session, trip_id)
     preferences = await get_trip_preferences(session, trip_id)
+    # Promotion may update preferences inside this same transaction. PostgreSQL
+    # expires its server-generated onupdate timestamp; load it asynchronously
+    # before Pydantic reads ORM attributes (no implicit async database I/O).
+    await session.refresh(preferences, attribute_names=["updated_at"])
     days = await get_day_plans(session, trip_id)
     candidates = await get_candidates(session, trip_id)
     actual_budget = await get_budget(session, trip_id)
@@ -33,4 +38,5 @@ async def build_planning_context(
         generated_at=datetime.now(UTC),
         external_facts={},
         execution_recovery=execution_recovery,
+        effective_requirements=valid_records(getattr(preferences, "requirement_records", [])),
     )

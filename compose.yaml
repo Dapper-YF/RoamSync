@@ -27,6 +27,10 @@ services:
     container_name: roamsync-api
     restart: "no"
     environment:
+      ROAMSYNC_LOCAL_PRODUCT: ${ROAMSYNC_LOCAL_PRODUCT:-1}
+      ROAMSYNC_INTEGRATION_TOKEN: ${ROAMSYNC_INTEGRATION_TOKEN:?Official local server token required}
+      ROAMSYNC_INTEGRATION_OWNER: ${ROAMSYNC_INTEGRATION_OWNER:-local-official-user}
+      ROAMSYNC_LOCAL_ORIGINS: http://127.0.0.1:3000,http://localhost:3000
       APP_ENV: development
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       LANGGRAPH_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
@@ -61,7 +65,7 @@ services:
       PLANNER_REASONING_EFFORT: ${PLANNER_REASONING_EFFORT:-high}
       INTENT_REASONING_EFFORT: ${INTENT_REASONING_EFFORT:-max}
     ports:
-      - "${API_HOST_PORT:-8000}:8000"
+      - "127.0.0.1:${API_HOST_PORT:-8000}:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -78,6 +82,10 @@ services:
       target: production
     restart: "no"
     environment:
+      ROAMSYNC_LOCAL_PRODUCT: ${ROAMSYNC_LOCAL_PRODUCT:-1}
+      ROAMSYNC_INTEGRATION_TOKEN: ${ROAMSYNC_INTEGRATION_TOKEN:?Official local server token required}
+      ROAMSYNC_INTEGRATION_OWNER: ${ROAMSYNC_INTEGRATION_OWNER:-local-official-user}
+      ROAMSYNC_LOCAL_ORIGINS: http://127.0.0.1:3000,http://localhost:3000
       APP_ENV: development
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       LANGGRAPH_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
@@ -93,6 +101,10 @@ services:
       target: production
     restart: "no"
     environment:
+      ROAMSYNC_LOCAL_PRODUCT: ${ROAMSYNC_LOCAL_PRODUCT:-1}
+      ROAMSYNC_INTEGRATION_TOKEN: ${ROAMSYNC_INTEGRATION_TOKEN:?Official local server token required}
+      ROAMSYNC_INTEGRATION_OWNER: ${ROAMSYNC_INTEGRATION_OWNER:-local-official-user}
+      ROAMSYNC_LOCAL_ORIGINS: http://127.0.0.1:3000,http://localhost:3000
       APP_ENV: development
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       LANGGRAPH_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
@@ -136,6 +148,8 @@ services:
         condition: service_healthy
       agent-checkpoint-init:
         condition: service_completed_successfully
+      api:
+        condition: service_healthy
     command: ["uv", "run", "--no-sync", "python", "-m", "app.agent_worker"]
 
   web:
@@ -145,7 +159,13 @@ services:
       args:
         VITE_AMAP_WEB_KEY: ${AMAP_WEB_KEY:-}
         VITE_AMAP_SECURITY_CODE: ${AMAP_SECURITY_CODE:-}
+        VITE_DISCOVERY_PRODUCT: "true"
+        VITE_TRAVEL_CONTENT_CONTRACT: place-content-v1
+        VITE_ASSISTANT_CONTEXT_CONTRACT: assistant-context-v1
     container_name: roamsync-web
+    environment:
+      ROAMSYNC_INTEGRATION_TOKEN: ${ROAMSYNC_INTEGRATION_TOKEN:?Official local server token required}
+      NGINX_ENVSUBST_FILTER: ROAMSYNC_INTEGRATION_TOKEN
     restart: "no"
     ports:
       - "127.0.0.1:${WEB_HOST_PORT:-3000}:80"

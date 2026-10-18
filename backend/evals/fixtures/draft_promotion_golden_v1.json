@@ -1,0 +1,166 @@
+{
+  "rule": "draft-promotion-v1",
+  "semantic": {
+    "draft_id": "00000000-0000-4000-8000-000000000001",
+    "draft_version": 2,
+    "city": "杭州",
+    "requirements": "",
+    "constraints": {
+      "expected_version": 2,
+      "start_date": "2026-11-01",
+      "total_budget_fen": null,
+      "daily_budget_fen": null,
+      "transport_mode": "walk",
+      "duration_minutes": 90,
+      "unknown_cost_estimate_fen": 10000,
+      "daily_start_time": "09:00:00",
+      "daily_end_time": "21:00:00",
+      "max_walking_minutes": 60
+    },
+    "end_date": "2026-11-01",
+    "activities": [
+      {
+        "ref": "day1:item0",
+        "day_date": "2026-11-01",
+        "position": 0,
+        "place_id": "00000000-0000-4000-8000-000000000002",
+        "planned_start_time": "09:00:00",
+        "duration_minutes": 90,
+        "transport_mode": "walk",
+        "estimated_cost_fen": 10000,
+        "cost_nature": "planning_estimate"
+      },
+      {
+        "ref": "day1:item1",
+        "day_date": "2026-11-01",
+        "position": 1,
+        "place_id": "00000000-0000-4000-8000-000000000003",
+        "planned_start_time": "10:40:00",
+        "duration_minutes": 90,
+        "transport_mode": "walk",
+        "estimated_cost_fen": 10000,
+        "cost_nature": "planning_estimate"
+      }
+    ],
+    "routes": [
+      {
+        "day": "2026-11-01",
+        "position": 0,
+        "from": "day1:item0",
+        "to": "day1:item1",
+        "mode": "walk",
+        "distance_meters": 600,
+        "duration_seconds": 600
+      }
+    ],
+    "coverage": {
+      "checked": [
+        "真实地点身份与来源时效",
+        "真实日期、顺序、时长和每日窗口",
+        "相邻地点真实路线和步行上限",
+        "已显示费用与所选预算"
+      ],
+      "missing": [
+        "营业时间与预约要求未核实",
+        "酒店、门票库存及实时可售报价未核实",
+        "交通费、住宿、餐饮等未列出项目不计入费用",
+        "其他自由文本特殊要求仅保留原文，未做语义可行性核验",
+        "正式Validator将在已授权创建Trip后再次校验"
+      ],
+      "blockers": []
+    }
+  },
+  "evidence": {
+    "places": [
+      {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "ref": {
+          "place_id": "00000000-0000-4000-8000-000000000002",
+          "external_ref": {
+            "provider": "amap",
+            "namespace": "poi",
+            "provider_place_id": "0"
+          }
+        },
+        "name": "测试地点0",
+        "city": "杭州",
+        "category": "attraction",
+        "location": {
+          "longitude": 120.0,
+          "latitude": 30.0,
+          "coordinate_system": "GCJ02"
+        },
+        "price": null,
+        "price_status": "unknown",
+        "provider": "amap",
+        "url": "https://fixture.invalid/0",
+        "provider_updated_at": null
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000003",
+        "ref": {
+          "place_id": "00000000-0000-4000-8000-000000000003",
+          "external_ref": {
+            "provider": "amap",
+            "namespace": "poi",
+            "provider_place_id": "1"
+          }
+        },
+        "name": "测试地点1",
+        "city": "杭州",
+        "category": "attraction",
+        "location": {
+          "longitude": 120.001,
+          "latitude": 30.0,
+          "coordinate_system": "GCJ02"
+        },
+        "price": null,
+        "price_status": "unknown",
+        "provider": "amap",
+        "url": "https://fixture.invalid/1",
+        "provider_updated_at": null
+      }
+    ],
+    "routes": [
+      {
+        "day": "2026-11-01",
+        "position": 0,
+        "from": "day1:item0",
+        "to": "day1:item1",
+        "origin": {
+          "longitude": 120.0,
+          "latitude": 30.0,
+          "coordinate_system": "GCJ02"
+        },
+        "destination": {
+          "longitude": 120.001,
+          "latitude": 30.0,
+          "coordinate_system": "GCJ02"
+        },
+        "mode": "walk",
+        "distance_meters": 600,
+        "duration_seconds": 600,
+        "path": [
+          {
+            "longitude": 120.0,
+            "latitude": 30.0,
+            "coordinate_system": "GCJ02"
+          },
+          {
+            "longitude": 120.001,
+            "latitude": 30.0,
+            "coordinate_system": "GCJ02"
+          }
+        ],
+        "duration_semantics": "provider_estimated_travel_time",
+        "is_estimated_fallback": false,
+        "navigation_available": false,
+        "provider": "amap",
+        "url": "https://fixture.invalid/route",
+        "provider_updated_at": null
+      }
+    ]
+  },
+  "content_hash": "13df9e0bf5c11acbf6bc953c40ae54c10a1d049afb7dafae1611a0e4f2d77904",
+  "evidence_hash": "bf1c119196f22290a92cb4f10f8f7fb687c954ce7316d510fb3a1696d68da210"
+}
