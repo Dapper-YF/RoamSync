@@ -1,0 +1,92 @@
+{
+  "status": "passed",
+  "source_app_commit": "67ecdf7",
+  "trip_id": "36cfd221-9e3a-40c4-8880-6ec3f43f41b8",
+  "run_id": "ffcb4822-795c-48d0-8ca4-62e7d9673e42",
+  "revision_id": "ca3a1d4c-816b-4ccb-9654-58fa1d6b0f5a",
+  "model": "glm-5.3-flash",
+  "token_usage": 6289,
+  "before_version": 3,
+  "after_version": 4,
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": []
+  },
+  "decision_status": "accepted",
+  "tradeoffs": [
+    {
+      "date": "2026-10-19",
+      "anchor_activity_id": "4217901f-7008-4ae0-93d2-fc0c3f8aea1b",
+      "longer_place_candidate_id": "2eaa8cda-5ada-4dc1-a754-799d10ffb96c",
+      "shorter_place_candidate_id": "8d570ee3-3cdf-428d-9eca-2e1b5fca6cdb",
+      "longer_walk_minutes": 53,
+      "shorter_walk_minutes": 28,
+      "extra_directed_walk_minutes": 25,
+      "longer_option_supported_advantages": [],
+      "status": "no_supplied_advantage_for_longer_leg",
+      "limit": "one_directed_leg_only_not_complete_day_or_verified_experience_quality",
+      "selected": "shorter",
+      "evaluation": "shorter_known_leg_selected"
+    }
+  ],
+  "requirements": [
+    {
+      "goal": "effective_requirement:req_0d10185ec9b55bea9dee1ffbc3d609fb:daily_budget_fen",
+      "type": "hard",
+      "status": "not_evaluable",
+      "evidence": {
+        "requirement_id": "req_0d10185ec9b55bea9dee1ffbc3d609fb",
+        "date": "2026-10-19",
+        "source": {
+          "kind": "user_explicit",
+          "ref": "explicit-control:2d6cd0cd-923a-4d1c-b24e-0e7418165f6f"
+        },
+        "limit_fen": 50000,
+        "limit_scope": "daily",
+        "candidate_remaining_estimated_cost_fen": 13000,
+        "actual_spent_fen": null,
+        "candidate_budget_exposure_fen": 13000,
+        "actual_coverage": "unknown_for_target_date",
+        "cost_semantics": "actual_plus_uncompleted_estimates_completed_estimates_excluded",
+        "limitation": "expenses_have_no_activity_link_prepaid_overlap_cannot_be_resolved"
+      }
+    }
+  ],
+  "explanation_errors": [],
+  "server_reason": "本次回应你的要求：重新规划第1天，只选一个现有候选地点作为上午游览，尽量少走路；14点锁定活动保持原样。预算按有效要求，实际消费未知时不要宣称预算合规。\n候选与正式行程相比：\n2026-10-19：增加中国丝绸博物馆；保留原有 1 个地点。\n2026-10-19选择中国丝绸博物馆，到同一固定活动的已查询步行腿比杭州西湖风景名胜区少25分钟；这不代表全天总步行或整体体验最优。\n预算尚无法完整核验：目标范围的实际消费未知，候选费用只是剩余活动估算，不能据此认定总预算合规。\n未核实的营业、预约和天气仍需在出行前确认；本次流程不承诺后续自动核验。\n具体时间与每项选择的理由见下方；预计费用按候选内容计算，确认后才写入正式行程。",
+  "model_explanation": "本次为第1天局部重排：按用户要求仅保留一个候选地点作为上午游览，选定中国丝绸博物馆，09:00开始参观约120分钟；14:00的锁定活动雷峰塔景区保持原样，未做任何改动。选择丝绸博物馆而非西湖的核心原因是少走路：在仅有的单段有向步行路线事实中，丝绸博物馆到雷峰塔的已知步行腿更短，且候选比较未提供更长步行腿可带来的具体收益，因此按更短已知腿原则取舍，直接回应了尽量少走路的要求。体验上，丝绸与纺织服饰文化的展陈参观与雷峰塔的历史景观形成互补，一馆一塔节奏宽松，符合仅安排一个上午地点的指示。预算方面，当天有效硬性要求为不超过500元；两个候选的估计费用加锁定活动的估计费用看似在限额内，但系统当前没有已记录的当日实际消费和经过核验的票价，因此不宣称预算合规，费用由后端按地点补齐后展示。承认以下未知：全天实际路线不可用，当前时间安排仅基于单段有向路线加软性缓冲，不承诺全天最优或确定交通时长；博物馆的实际开放与预约情况、实时拥挤程度均未核验，建议出发前用户自行确认。",
+  "final_activities": [
+    {
+      "display_name": "中国丝绸博物馆",
+      "scheduled_time": "09:00:00",
+      "duration_minutes": 120,
+      "schedule_locked": false
+    },
+    {
+      "display_name": "雷峰塔景区",
+      "scheduled_time": "14:00:00",
+      "duration_minutes": 60,
+      "schedule_locked": true
+    }
+  ],
+  "final_routes": [
+    {
+      "mode": "walk",
+      "duration_minutes": 28,
+      "distance_meters": 2028,
+      "provider": "AMap Route 2.0",
+      "is_estimated": false
+    }
+  ],
+  "checks": [
+    "real model produced candidate; Graph/Validator pass with budget unknown and persisted walking tradeoff",
+    "explicit Accept increments itinerary once; preserves fixed activity; formal reread contains chosen place and real route"
+  ],
+  "limits": [
+    "preparation_not_Web_UI",
+    "no_verified_booking_or_visit",
+    "taxonomy_cost_estimates_not_provider_prices",
+    "one_directed_anchor_leg_not_whole_day"
+  ]
+}

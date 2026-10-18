@@ -63,7 +63,7 @@ try:
         "day_count": 1, "requirements": ""})
     out["draft_id"] = draft["id"]
     path = "/drafts/" + draft["id"]
-    draft = api(path + "/edit", "POST", {"expected_version": draft["version"], "plan": {"days": [
+    draft = api(path + "/edit", "POST", {"expected_version": draft["version"], "title": draft["title"], "requirements": "", "plan": {"days": [
         {"day_index": 1, "title": "测试固定活动", "items": [{"name": anchor["name"], "place_id": anchor["ref"]["place_id"],
             "note": "软件验收指定活动，非预约或实际到访证明"}]}]}})
     draft = api(path + "/save", "POST", {"expected_version": draft["version"]})
@@ -79,7 +79,7 @@ try:
     trip_path = "/trips/" + trip_id
     context = api(trip_path + "/planning-context")
     fixed = context["days"][0]["activities"][0]
-    api("/activities/" + fixed["id"], "PATCH", {"version": fixed["version"], "schedule_locked": True})
+    api("/activities/" + fixed["id"], "PUT", {"version": fixed["version"], "schedule_locked": True})
     prefs = api(trip_path + "/preferences")
     fields = ("version", "pace", "interest_categories", "transport_modes", "daily_start_time", "daily_end_time",
               "meal_preferences", "avoid_categories", "max_walking_minutes", "free_text_requirements")

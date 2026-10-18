@@ -1,0 +1,75 @@
+{
+  "scope": "new labelled isolated Trip; actual Provider/model/Graph/Validator/Accept",
+  "limits": [
+    "preparation_not_Web_UI",
+    "no_verified_booking_or_visit",
+    "taxonomy_cost_estimates_not_provider_prices",
+    "one_directed_anchor_leg_not_whole_day"
+  ],
+  "checks": [],
+  "last_step": {
+    "path": "/drafts/b2c3dcd5-53ae-4ad7-a770-1e43c8ff526e/edit",
+    "method": "POST"
+  },
+  "draft_id": "b2c3dcd5-53ae-4ad7-a770-1e43c8ff526e",
+  "http_error": {
+    "status": 422,
+    "detail": [
+      {
+        "type": "missing",
+        "loc": [
+          "body",
+          "title"
+        ],
+        "msg": "Field required",
+        "input": {
+          "expected_version": 1,
+          "plan": {
+            "days": [
+              {
+                "day_index": 1,
+                "title": "测试固定活动",
+                "items": [
+                  {
+                    "name": "雷峰塔景区",
+                    "place_id": "491a9f76-6362-53a2-8585-e279be36254b",
+                    "note": "软件验收指定活动，非预约或实际到访证明"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "missing",
+        "loc": [
+          "body",
+          "requirements"
+        ],
+        "msg": "Field required",
+        "input": {
+          "expected_version": 1,
+          "plan": {
+            "days": [
+              {
+                "day_index": 1,
+                "title": "测试固定活动",
+                "items": [
+                  {
+                    "name": "雷峰塔景区",
+                    "place_id": "491a9f76-6362-53a2-8585-e279be36254b",
+                    "note": "软件验收指定活动，非预约或实际到访证明"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "status": "failed",
+  "failure_type": "HTTPError",
+  "failure": "HTTP Error 422: Unprocessable Entity"
+}
