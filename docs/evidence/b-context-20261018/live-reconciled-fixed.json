@@ -1,0 +1,218 @@
+{
+  "scope": "readback of already accepted labelled B fixture; no repeat Accept",
+  "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+  "run_id": "7530c4b3-d200-47cc-a5a5-54f9fe5f06ed",
+  "source_evidence": "live-final.json",
+  "checks": [
+    "Accepted version advanced once; day2 is 45min; day1/day3 identity/schedule/cost/lock semantics preserved; metadata touches disclosed",
+    "Legacy background record still persisted, excluded from effective projection after Accept",
+    "Unbound cross-turn pronoun requires identity clarification without treating duration as a place",
+    "Explicit UI activity binding resolves pronoun to the same activity without new place lookup"
+  ],
+  "metadata_changes": {
+    "1": {
+      "version": [
+        1,
+        2
+      ],
+      "updated_at": [
+        "2026-10-18T13:15:01.438564Z",
+        "2026-10-18T13:15:14.151940Z"
+      ]
+    },
+    "3": {
+      "updated_at": [
+        "2026-10-18T13:15:01.552137Z",
+        "2026-10-18T13:15:14.151940Z"
+      ]
+    }
+  },
+  "unbound_pronoun_resolution": {
+    "request": {
+      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+      "user_request": "把它改成45分钟，其他日期不要动",
+      "intent": {
+        "intent_type": "modify_day",
+        "source_text": "把它改成45分钟，其他日期不要动",
+        "time_scope": null,
+        "protected_activity_ids": [],
+        "requested_place_queries": [],
+        "requested_pace": null,
+        "missing_fields": [
+          "target_day"
+        ],
+        "ambiguities": []
+      },
+      "entry_point": "trip_planner",
+      "selected_day_id": null,
+      "selected_activity_id": null,
+      "target_day_id": null
+    },
+    "requires_clarification": true,
+    "clarification_questions": [
+      "你想调整旅行中的哪一天？",
+      "请从当前行程中明确选择要操作的活动：它"
+    ],
+    "parser_version": "rules-v1",
+    "semantic_draft": {
+      "primary_intent": "replan_trip",
+      "operations": [
+        {
+          "operation": "replan_trip",
+          "raw_text": "把它改成45分钟，其他日期不要动",
+          "date_expression": null,
+          "period": null,
+          "activity_mentions": [
+            "它"
+          ],
+          "place_mentions": [],
+          "constraints": {
+            "budget_must_not_increase": false,
+            "max_additional_cost_fen": null,
+            "preferred_environment": null,
+            "max_walking_minutes": null,
+            "requested_pace": null,
+            "weather_sensitive": false,
+            "preserve_completed": true
+          }
+        }
+      ],
+      "confidence": 0.98,
+      "missing_fields": [],
+      "ambiguities": [],
+      "parser": "rules",
+      "parser_version": "rules-envelope-v1"
+    },
+    "grounded_intent": {
+      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+      "primary_intent": "replan_trip",
+      "operation_types": [
+        "replan_trip"
+      ],
+      "target_day_ids": [],
+      "target_activity_ids": [],
+      "candidate_place_ids": [],
+      "unresolved_activity_mentions": [
+        "它"
+      ],
+      "unresolved_place_mentions": [],
+      "constraints": {
+        "budget_must_not_increase": false,
+        "max_additional_cost_fen": null,
+        "preferred_environment": null,
+        "max_walking_minutes": null,
+        "requested_pace": null,
+        "weather_sensitive": false,
+        "preserve_completed": true
+      },
+      "missing_fields": [
+        "target_day"
+      ],
+      "ambiguities": []
+    },
+    "policy_decision": {
+      "operation_mode": "clarify",
+      "risk_level": "medium",
+      "requires_confirmation": false,
+      "reasons": [
+        "intent_or_entity_incomplete"
+      ],
+      "route": "clarify"
+    }
+  },
+  "bound_pronoun_resolution": {
+    "request": {
+      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+      "user_request": "把它改成45分钟，其他日期不要动",
+      "intent": {
+        "intent_type": "modify_day",
+        "source_text": "把它改成45分钟，其他日期不要动",
+        "time_scope": {
+          "day_number": 2,
+          "day_date": "2026-10-20",
+          "period": null
+        },
+        "protected_activity_ids": [],
+        "requested_place_queries": [],
+        "requested_pace": null,
+        "missing_fields": [],
+        "ambiguities": []
+      },
+      "entry_point": "trip_planner",
+      "selected_day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+      "selected_activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+      "target_day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b"
+    },
+    "requires_clarification": false,
+    "clarification_questions": [],
+    "parser_version": "rules-v1",
+    "semantic_draft": {
+      "primary_intent": "replan_trip",
+      "operations": [
+        {
+          "operation": "replan_trip",
+          "raw_text": "把它改成45分钟，其他日期不要动",
+          "date_expression": null,
+          "period": null,
+          "activity_mentions": [
+            "它"
+          ],
+          "place_mentions": [],
+          "constraints": {
+            "budget_must_not_increase": false,
+            "max_additional_cost_fen": null,
+            "preferred_environment": null,
+            "max_walking_minutes": null,
+            "requested_pace": null,
+            "weather_sensitive": false,
+            "preserve_completed": true
+          }
+        }
+      ],
+      "confidence": 0.98,
+      "missing_fields": [],
+      "ambiguities": [],
+      "parser": "rules",
+      "parser_version": "rules-envelope-v1"
+    },
+    "grounded_intent": {
+      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+      "primary_intent": "replan_trip",
+      "operation_types": [
+        "replan_trip"
+      ],
+      "target_day_ids": [
+        "33cbf5b4-ba28-4efb-be23-53e467afd17b"
+      ],
+      "target_activity_ids": [
+        "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+      ],
+      "candidate_place_ids": [],
+      "unresolved_activity_mentions": [],
+      "unresolved_place_mentions": [],
+      "constraints": {
+        "budget_must_not_increase": false,
+        "max_additional_cost_fen": null,
+        "preferred_environment": null,
+        "max_walking_minutes": null,
+        "requested_pace": null,
+        "weather_sensitive": false,
+        "preserve_completed": true
+      },
+      "missing_fields": [],
+      "ambiguities": []
+    },
+    "policy_decision": {
+      "operation_mode": "preview_change",
+      "risk_level": "medium",
+      "requires_confirmation": true,
+      "reasons": [
+        "formal_plan_change"
+      ],
+      "route": "plan_preview"
+    }
+  },
+  "before_trip_version": 3,
+  "after_trip_version": 4,
+  "status": "passed"
+}

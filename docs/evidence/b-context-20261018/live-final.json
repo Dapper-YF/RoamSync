@@ -1,0 +1,4412 @@
+{
+  "scope": "new labelled isolated Trip, actual model/Graph/Validator/Accept; no real booking/visit",
+  "checks": [
+    "capture excludes provenance; historical raw record retained but excluded from effective per-day requirements",
+    "actual Graph Planner input excludes legacy provenance and revoked day2 walking limit"
+  ],
+  "last_request": {
+    "method": "GET",
+    "path": "/trips/24fc503a-41fa-4f13-92a2-5ead814bdd9d/planning-context"
+  },
+  "draft_id": "34cc5eab-e732-4fdd-8fdf-de49c6abe74c",
+  "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+  "request": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+  "resolution": {
+    "request": {
+      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+      "user_request": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+      "intent": {
+        "intent_type": "modify_day",
+        "source_text": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+        "time_scope": {
+          "day_number": 2,
+          "day_date": "2026-10-20",
+          "period": null
+        },
+        "protected_activity_ids": [
+          "b863ea67-5589-4249-a2f8-ec047014bb85"
+        ],
+        "requested_place_queries": [],
+        "requested_pace": null,
+        "missing_fields": [],
+        "ambiguities": []
+      },
+      "entry_point": "trip_planner",
+      "selected_day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+      "selected_activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+      "target_day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b"
+    },
+    "requires_clarification": false,
+    "clarification_questions": [],
+    "parser_version": "rules-v1",
+    "semantic_draft": {
+      "primary_intent": "replan_trip",
+      "operations": [
+        {
+          "operation": "replan_trip",
+          "raw_text": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+          "date_expression": "第2天",
+          "period": null,
+          "activity_mentions": [],
+          "place_mentions": [],
+          "constraints": {
+            "budget_must_not_increase": false,
+            "max_additional_cost_fen": null,
+            "preferred_environment": null,
+            "max_walking_minutes": null,
+            "requested_pace": null,
+            "weather_sensitive": false,
+            "preserve_completed": true
+          }
+        }
+      ],
+      "confidence": 0.98,
+      "missing_fields": [],
+      "ambiguities": [],
+      "parser": "rules",
+      "parser_version": "rules-envelope-v1"
+    },
+    "grounded_intent": {
+      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+      "primary_intent": "replan_trip",
+      "operation_types": [
+        "replan_trip"
+      ],
+      "target_day_ids": [
+        "33cbf5b4-ba28-4efb-be23-53e467afd17b"
+      ],
+      "target_activity_ids": [
+        "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+      ],
+      "candidate_place_ids": [],
+      "unresolved_activity_mentions": [],
+      "unresolved_place_mentions": [],
+      "constraints": {
+        "budget_must_not_increase": false,
+        "max_additional_cost_fen": null,
+        "preferred_environment": null,
+        "max_walking_minutes": null,
+        "requested_pace": null,
+        "weather_sensitive": false,
+        "preserve_completed": true
+      },
+      "missing_fields": [],
+      "ambiguities": []
+    },
+    "policy_decision": {
+      "operation_mode": "preview_change",
+      "risk_level": "medium",
+      "requires_confirmation": true,
+      "reasons": [
+        "formal_plan_change"
+      ],
+      "route": "plan_preview"
+    }
+  },
+  "run_id": "7530c4b3-d200-47cc-a5a5-54f9fe5f06ed",
+  "run": {
+    "id": "7530c4b3-d200-47cc-a5a5-54f9fe5f06ed",
+    "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+    "disruption_event_id": null,
+    "trigger_type": null,
+    "trigger_fingerprint": null,
+    "trigger_snapshot": {
+      "effective_requirements": [
+        {
+          "id": "req_535e3a242d425445b8358b6301fddf14",
+          "text": "步行上限30分钟",
+          "key": "max_walking_minutes",
+          "value": 30,
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "hard",
+          "status": "active",
+          "supersedes": []
+        },
+        {
+          "id": "req_dd5247aba933531d9f6cf3a08a6b410b",
+          "text": "偏好拍照、摄影",
+          "key": "interest",
+          "value": "photography",
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "active",
+          "supersedes": []
+        },
+        {
+          "id": "req_ee87b0d00d5559dda955ff501c7bdb3d",
+          "text": "撤销：步行上限30分钟",
+          "key": "max_walking_minutes",
+          "value": null,
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:revoke:1"
+          },
+          "scope": {
+            "kind": "day",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+            "city": "杭州",
+            "day_index": null,
+            "date": "2026-10-20",
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "revoked",
+          "supersedes": [
+            "req_535e3a242d425445b8358b6301fddf14"
+          ]
+        },
+        {
+          "id": "req_1dcde0f70a9255c5b96022e14e9cf862",
+          "text": "此次验收未实际到访",
+          "key": "user_requirement",
+          "value": null,
+          "source": {
+            "kind": "user_explicit",
+            "ref": "explicit-control:6923c34b-ac6c-49b6-bf85-6511f86d67c2"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "active",
+          "supersedes": []
+        }
+      ],
+      "decision_context_summary": {
+        "candidate_comparison": {
+          "version": "bounded-candidate-comparison-v2",
+          "weather_days": {
+            "2026-10-19": {
+              "status": "unknown",
+              "reason": "missing_stale_past_or_incomplete_prediction",
+              "provider": null,
+              "queried_at": null,
+              "nature": "provider_prediction",
+              "coverage_hours": [],
+              "hourly_rain_probability": {},
+              "max_hourly_rain_probability": null,
+              "rain_risk": "unknown",
+              "scope": "trip_representative_coordinate_not_venue_observation",
+              "freshness_policy": "planning_decision_forecast_30min_v1"
+            },
+            "2026-10-20": {
+              "status": "unknown",
+              "reason": "missing_stale_past_or_incomplete_prediction",
+              "provider": null,
+              "queried_at": null,
+              "nature": "provider_prediction",
+              "coverage_hours": [],
+              "hourly_rain_probability": {},
+              "max_hourly_rain_probability": null,
+              "rain_risk": "unknown",
+              "scope": "trip_representative_coordinate_not_venue_observation",
+              "freshness_policy": "planning_decision_forecast_30min_v1"
+            },
+            "2026-10-21": {
+              "status": "unknown",
+              "reason": "missing_stale_past_or_incomplete_prediction",
+              "provider": null,
+              "queried_at": null,
+              "nature": "provider_prediction",
+              "coverage_hours": [],
+              "hourly_rain_probability": {},
+              "max_hourly_rain_probability": null,
+              "rain_risk": "unknown",
+              "scope": "trip_representative_coordinate_not_venue_observation",
+              "freshness_policy": "planning_decision_forecast_30min_v1"
+            }
+          },
+          "candidates": [],
+          "ranking_policy": "requested_then_soft_avoid_feasible_visit_weather_fixed_free_slot_fresh_exact_walk_anchor_route_interest_then_research_rating",
+          "limits": [
+            "taxonomy_is_soft_hint",
+            "route_is_one_directed_leg_not_day_total",
+            "mixed_weather_has_no_certain_rain_penalty",
+            "unknown_does_not_exclude"
+          ],
+          "walking_tradeoffs": []
+        },
+        "candidate_route_fact_count": 0,
+        "effective_requirement_ids": [
+          "req_dd5247aba933531d9f6cf3a08a6b410b"
+        ],
+        "target_days": [
+          "2026-10-20"
+        ],
+        "formal_activity_count": 1,
+        "route_fact_statuses": [
+          {
+            "date": "2026-10-20",
+            "status": "unavailable"
+          }
+        ],
+        "protected_activity_ids": [],
+        "editable_activity_ids": [
+          "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+        ],
+        "execution_fields_present": {
+          "current_activity_id": false,
+          "navigation_target_activity_id": false,
+          "current_eta": false,
+          "delay_minutes": false,
+          "minimum_downstream_slack_minutes": false,
+          "first_impacted_activity_id": false
+        },
+        "provenance": {
+          "goals": "user_goal_and_grounded_intent",
+          "formal_itinerary": "persisted_formal_itinerary",
+          "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+          "route_context": "persisted_amap_route",
+          "execution_context": "execution_and_navigation_projection",
+          "active_disruption": "persisted_disruption_projection",
+          "user_preferences": "persisted_trip_preferences",
+          "provider_facts": "planning_provider_facts",
+          "decision_memory": "same_trip_same_target_day_rejected_revisions"
+        },
+        "decision_memory": {
+          "count": 0,
+          "source_revision_ids": [],
+          "source_run_ids": [],
+          "feedback": [],
+          "context_propagated": true,
+          "visible_to_planner": true
+        }
+      }
+    },
+    "run_type": "replan",
+    "status": "awaiting_confirmation",
+    "user_request": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+    "response_text": null,
+    "progress": {
+      "events": [
+        {
+          "stage": "intent",
+          "status": "running",
+          "at": "2026-10-18T13:15:02.620042+00:00",
+          "duration_ms": null,
+          "call_id": "30bcc11c-cdac-49f9-98a8-4354462e0ad2",
+          "provider": null,
+          "purpose": null,
+          "data": {},
+          "sequence": 1
+        },
+        {
+          "stage": "research_decision",
+          "status": "completed",
+          "at": "2026-10-18T13:15:02.747680+00:00",
+          "duration_ms": null,
+          "call_id": null,
+          "provider": null,
+          "purpose": null,
+          "data": {
+            "destination_research_required": false,
+            "destination_research_available": true
+          },
+          "sequence": 2
+        },
+        {
+          "stage": "goal",
+          "status": "completed",
+          "at": "2026-10-18T13:15:02.801155+00:00",
+          "duration_ms": null,
+          "call_id": null,
+          "provider": null,
+          "purpose": null,
+          "data": {
+            "target_days": [
+              "2026-10-20"
+            ],
+            "hard_goals": {
+              "end_before": null,
+              "max_walking_minutes": null
+            },
+            "soft_goals": {
+              "pace": null,
+              "minimize_walking": false,
+              "preserve_existing": false
+            }
+          },
+          "sequence": 3
+        },
+        {
+          "stage": "context",
+          "status": "completed",
+          "at": "2026-10-18T13:15:02.813384+00:00",
+          "duration_ms": null,
+          "call_id": null,
+          "provider": null,
+          "purpose": null,
+          "data": {
+            "trip": {
+              "id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+              "title": "B 多轮背景与保护验收 02b2666d",
+              "destination": "杭州",
+              "destination_adcode": "",
+              "destination_citycode": "",
+              "center_longitude": null,
+              "center_latitude": null,
+              "accommodation": "",
+              "accommodation_poi_id": "",
+              "accommodation_address": "",
+              "accommodation_district": "",
+              "accommodation_longitude": null,
+              "accommodation_latitude": null,
+              "start_date": "2026-10-19",
+              "end_date": "2026-10-21",
+              "total_budget_fen": null,
+              "daily_budget_fen": null,
+              "currency": "CNY",
+              "timezone": "Asia/Shanghai",
+              "created_at": "2026-10-18T13:14:58.956250Z",
+              "updated_at": "2026-10-18T13:15:01.544745Z",
+              "archived_at": null,
+              "version": 3,
+              "status": "upcoming"
+            },
+            "preferences": {
+              "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+              "pace": "balanced",
+              "interest_categories": [],
+              "transport_modes": [
+                "walk"
+              ],
+              "daily_start_time": "15:00:00",
+              "daily_end_time": "18:00:00",
+              "meal_preferences": "",
+              "avoid_categories": [],
+              "max_walking_minutes": 180,
+              "free_text_requirements": "步行上限30分钟\n偏好拍照、摄影",
+              "requirement_records": [
+                {
+                  "id": "req_535e3a242d425445b8358b6301fddf14",
+                  "text": "步行上限30分钟",
+                  "value": 30,
+                  "source": {
+                    "kind": "user_explicit",
+                    "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+                  },
+                  "scope": {
+                    "kind": "trip",
+                    "topic_id": null,
+                    "draft_id": null,
+                    "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                    "city": "杭州",
+                    "day_index": null,
+                    "date": null,
+                    "activity_id": null
+                  },
+                  "strength": "hard",
+                  "status": "active",
+                  "supersedes": []
+                },
+                {
+                  "id": "req_dd5247aba933531d9f6cf3a08a6b410b",
+                  "text": "偏好拍照、摄影",
+                  "value": "photography",
+                  "source": {
+                    "kind": "user_explicit",
+                    "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+                  },
+                  "scope": {
+                    "kind": "trip",
+                    "topic_id": null,
+                    "draft_id": null,
+                    "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                    "city": "杭州",
+                    "day_index": null,
+                    "date": null,
+                    "activity_id": null
+                  },
+                  "strength": "soft",
+                  "status": "active",
+                  "supersedes": []
+                },
+                {
+                  "id": "req_ee87b0d00d5559dda955ff501c7bdb3d",
+                  "text": "撤销：步行上限30分钟",
+                  "value": null,
+                  "source": {
+                    "kind": "user_explicit",
+                    "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:revoke:1"
+                  },
+                  "scope": {
+                    "kind": "day",
+                    "topic_id": null,
+                    "draft_id": null,
+                    "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                    "city": "杭州",
+                    "day_index": null,
+                    "date": "2026-10-20",
+                    "activity_id": null
+                  },
+                  "strength": "soft",
+                  "status": "revoked",
+                  "supersedes": [
+                    "req_535e3a242d425445b8358b6301fddf14"
+                  ]
+                },
+                {
+                  "id": "req_1dcde0f70a9255c5b96022e14e9cf862",
+                  "text": "此次验收未实际到访",
+                  "value": null,
+                  "source": {
+                    "kind": "user_explicit",
+                    "ref": "explicit-control:6923c34b-ac6c-49b6-bf85-6511f86d67c2"
+                  },
+                  "scope": {
+                    "kind": "trip",
+                    "topic_id": null,
+                    "draft_id": null,
+                    "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                    "city": "杭州",
+                    "day_index": null,
+                    "date": null,
+                    "activity_id": null
+                  },
+                  "strength": "soft",
+                  "status": "active",
+                  "supersedes": []
+                }
+              ],
+              "version": 2,
+              "created_at": "2026-10-18T13:14:58.956250Z",
+              "updated_at": "2026-10-18T13:15:01.582264Z"
+            },
+            "days": [
+              {
+                "id": "a65980fc-625c-44cd-a56c-ce9b0c41a02b",
+                "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                "date": "2026-10-19",
+                "label": "第 1 天",
+                "theme": "探索杭州",
+                "position": 0,
+                "route_mode": "walk",
+                "activities": [
+                  {
+                    "id": "6679c962-81ea-439a-9770-e5bd18389d9d",
+                    "place_id": "0d348210-7383-5ffd-99ec-07a85fe4e1e4",
+                    "name": "杭州博物馆",
+                    "custom_name": null,
+                    "display_name": "杭州博物馆",
+                    "category": "sight",
+                    "neighborhood": "上城区",
+                    "longitude": 120.166525,
+                    "latitude": 30.239091,
+                    "scheduled_time": "15:00:00",
+                    "duration_minutes": 60,
+                    "importance": "normal",
+                    "can_skip": true,
+                    "minimum_duration_minutes": null,
+                    "importance_source": "system_default",
+                    "can_skip_source": "system_default",
+                    "minimum_duration_source": "unknown",
+                    "estimated_cost_fen": 10000,
+                    "status": "planned",
+                    "position": 0,
+                    "schedule_locked": false,
+                    "version": 1,
+                    "note": "人工指定测试活动，不证明开放、预约或到访",
+                    "updated_at": "2026-10-18T13:15:01.438564Z",
+                    "source": {
+                      "id": "4f937cc6-b807-5742-b9e0-7b858d40772f",
+                      "title": "杭州博物馆 · 地点身份与参考资料（非预订报价）",
+                      "url": "https://www.amap.com/search",
+                      "provider": "amap",
+                      "queried_at": "2026-10-18T13:14:58.400660Z",
+                      "confidence": "medium"
+                    }
+                  }
+                ],
+                "route_legs": [],
+                "conflicts": []
+              },
+              {
+                "id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+                "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                "date": "2026-10-20",
+                "label": "第 2 天",
+                "theme": "探索杭州",
+                "position": 1,
+                "route_mode": "walk",
+                "activities": [
+                  {
+                    "id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                    "place_id": "d96907a9-2760-5e1c-9901-7a19d081e0a7",
+                    "name": "河坊街",
+                    "custom_name": null,
+                    "display_name": "河坊街",
+                    "category": "sight",
+                    "neighborhood": "上城区",
+                    "longitude": 120.16863,
+                    "latitude": 30.2401,
+                    "scheduled_time": "15:00:00",
+                    "duration_minutes": 60,
+                    "importance": "normal",
+                    "can_skip": true,
+                    "minimum_duration_minutes": null,
+                    "importance_source": "system_default",
+                    "can_skip_source": "system_default",
+                    "minimum_duration_source": "unknown",
+                    "estimated_cost_fen": 10000,
+                    "status": "planned",
+                    "position": 0,
+                    "schedule_locked": false,
+                    "version": 1,
+                    "note": "人工指定测试活动，不证明开放、预约或到访",
+                    "updated_at": "2026-10-18T13:15:01.438564Z",
+                    "source": {
+                      "id": "3a875bc2-367b-5be9-85c6-9c265aa2694a",
+                      "title": "河坊街 · 地点身份与参考资料（非预订报价）",
+                      "url": "https://www.amap.com/search",
+                      "provider": "amap",
+                      "queried_at": "2026-10-18T13:14:58.637282Z",
+                      "confidence": "medium"
+                    }
+                  }
+                ],
+                "route_legs": [],
+                "conflicts": []
+              },
+              {
+                "id": "4b93155f-d34d-4e0e-9eb5-3019afb43931",
+                "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                "date": "2026-10-21",
+                "label": "第 3 天",
+                "theme": "探索杭州",
+                "position": 2,
+                "route_mode": "walk",
+                "activities": [
+                  {
+                    "id": "b863ea67-5589-4249-a2f8-ec047014bb85",
+                    "place_id": "5ccbd6fc-6456-5029-92f9-c8fd7e700024",
+                    "name": "中国丝绸博物馆",
+                    "custom_name": null,
+                    "display_name": "中国丝绸博物馆",
+                    "category": "sight",
+                    "neighborhood": "西湖区",
+                    "longitude": 120.151292,
+                    "latitude": 30.22287,
+                    "scheduled_time": "15:00:00",
+                    "duration_minutes": 60,
+                    "importance": "normal",
+                    "can_skip": true,
+                    "minimum_duration_minutes": null,
+                    "importance_source": "system_default",
+                    "can_skip_source": "system_default",
+                    "minimum_duration_source": "unknown",
+                    "estimated_cost_fen": 10000,
+                    "status": "planned",
+                    "position": 0,
+                    "schedule_locked": true,
+                    "version": 2,
+                    "note": "人工指定测试活动，不证明开放、预约或到访",
+                    "updated_at": "2026-10-18T13:15:01.552137Z",
+                    "source": {
+                      "id": "ff9ddf3d-4851-5a99-b9d7-ffae10f656d2",
+                      "title": "中国丝绸博物馆 · 地点身份与参考资料（非预订报价）",
+                      "url": "https://www.amap.com/search",
+                      "provider": "amap",
+                      "queried_at": "2026-10-18T13:14:58.917815Z",
+                      "confidence": "medium"
+                    }
+                  }
+                ],
+                "route_legs": [],
+                "conflicts": []
+              }
+            ],
+            "candidates": [],
+            "actual_budget": {
+              "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+              "currency": "CNY",
+              "total_budget_fen": null,
+              "total_spent_fen": 0,
+              "total_remaining_fen": null,
+              "daily_budget_fen": null,
+              "today_spent_fen": 0,
+              "today_remaining_fen": null,
+              "local_date": "2026-10-18"
+            },
+            "planning_budget": {
+              "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+              "total_planned_fen": 30000,
+              "total_remaining_fen": null,
+              "days": [
+                {
+                  "day_plan_id": "a65980fc-625c-44cd-a56c-ce9b0c41a02b",
+                  "date": "2026-10-19",
+                  "planned_fen": 10000,
+                  "remaining_fen": null,
+                  "ratio": null,
+                  "status": "unconstrained"
+                },
+                {
+                  "day_plan_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+                  "date": "2026-10-20",
+                  "planned_fen": 10000,
+                  "remaining_fen": null,
+                  "ratio": null,
+                  "status": "unconstrained"
+                },
+                {
+                  "day_plan_id": "4b93155f-d34d-4e0e-9eb5-3019afb43931",
+                  "date": "2026-10-21",
+                  "planned_fen": 10000,
+                  "remaining_fen": null,
+                  "ratio": null,
+                  "status": "unconstrained"
+                }
+              ]
+            },
+            "generated_at": "2026-10-18T13:15:02.716353Z",
+            "execution_recovery": {
+              "frozen_activity_ids": [],
+              "protected_activity_ids": [],
+              "mutable_activity_ids": [
+                "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                "6679c962-81ea-439a-9770-e5bd18389d9d",
+                "b863ea67-5589-4249-a2f8-ec047014bb85"
+              ],
+              "recovery_options": [],
+              "execution_state": {
+                "status": "not_started"
+              }
+            },
+            "planning_goals": {
+              "target_days": [
+                "2026-10-20"
+              ],
+              "hard_goals": {
+                "end_before": null,
+                "max_walking_minutes": null
+              },
+              "soft_goals": {
+                "pace": null,
+                "minimize_walking": false,
+                "preserve_existing": false
+              }
+            },
+            "formal_route_facts": {
+              "days": [
+                {
+                  "date": "2026-10-20",
+                  "activity_sequence": [
+                    "河坊街"
+                  ],
+                  "route_legs": [],
+                  "walking_duration_minutes": 0,
+                  "walking_distance_meters": 0,
+                  "day_end": "16:00"
+                }
+              ]
+            },
+            "decision_context": {
+              "formal_itinerary": {
+                "days": [
+                  {
+                    "day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+                    "date": "2026-10-20",
+                    "activities": [
+                      {
+                        "activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                        "name": "河坊街",
+                        "scheduled_time": "15:00:00",
+                        "duration_minutes": 60,
+                        "importance": "normal",
+                        "can_skip": true,
+                        "minimum_duration_minutes": null,
+                        "category": "sight",
+                        "longitude": 120.16863,
+                        "latitude": 30.2401,
+                        "schedule_locked": false,
+                        "status": "planned"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "protected_constraints": {
+                "frozen_activity_ids": [],
+                "protected_activity_ids": [],
+                "editable_activity_ids": [
+                  "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+                ],
+                "provenance": {}
+              },
+              "execution_context": {
+                "status": "not_started",
+                "remaining_activity_ids": [
+                  "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+                ]
+              },
+              "decision_memory": [],
+              "provenance": {
+                "goals": "user_goal_and_grounded_intent",
+                "formal_itinerary": "persisted_formal_itinerary",
+                "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+                "route_context": "persisted_amap_route",
+                "execution_context": "execution_and_navigation_projection",
+                "active_disruption": "persisted_disruption_projection",
+                "user_preferences": "persisted_trip_preferences",
+                "provider_facts": "planning_provider_facts",
+                "decision_memory": "same_trip_same_target_day_rejected_revisions"
+              },
+              "route_context": {
+                "days": [
+                  {
+                    "date": "2026-10-20",
+                    "route_fact_status": "unavailable",
+                    "route_legs": []
+                  }
+                ]
+              }
+            }
+          },
+          "sequence": 4
+        },
+        {
+          "stage": "intent",
+          "status": "completed",
+          "at": "2026-10-18T13:15:02.836132+00:00",
+          "duration_ms": 190,
+          "call_id": "30bcc11c-cdac-49f9-98a8-4354462e0ad2",
+          "provider": null,
+          "purpose": null,
+          "data": {
+            "intent_resolution": {
+              "request": {
+                "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                "user_request": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+                "intent": {
+                  "intent_type": "modify_day",
+                  "source_text": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+                  "time_scope": {
+                    "day_number": 2,
+                    "day_date": "2026-10-20",
+                    "period": null
+                  },
+                  "protected_activity_ids": [
+                    "b863ea67-5589-4249-a2f8-ec047014bb85"
+                  ],
+                  "requested_place_queries": [],
+                  "requested_pace": null,
+                  "missing_fields": [],
+                  "ambiguities": []
+                },
+                "entry_point": "trip_planner",
+                "selected_day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+                "selected_activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                "target_day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b"
+              },
+              "requires_clarification": false,
+              "clarification_questions": [],
+              "parser_version": "rules-v1",
+              "semantic_draft": {
+                "primary_intent": "replan_trip",
+                "operations": [
+                  {
+                    "operation": "replan_trip",
+                    "raw_text": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+                    "date_expression": "第2天",
+                    "period": null,
+                    "activity_mentions": [],
+                    "place_mentions": [],
+                    "constraints": {
+                      "budget_must_not_increase": false,
+                      "max_additional_cost_fen": null,
+                      "preferred_environment": null,
+                      "max_walking_minutes": null,
+                      "requested_pace": null,
+                      "weather_sensitive": false,
+                      "preserve_completed": true
+                    }
+                  }
+                ],
+                "confidence": 0.98,
+                "missing_fields": [],
+                "ambiguities": [],
+                "parser": "rules",
+                "parser_version": "rules-envelope-v1"
+              },
+              "grounded_intent": {
+                "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                "primary_intent": "replan_trip",
+                "operation_types": [
+                  "replan_trip"
+                ],
+                "target_day_ids": [
+                  "33cbf5b4-ba28-4efb-be23-53e467afd17b"
+                ],
+                "target_activity_ids": [
+                  "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+                ],
+                "candidate_place_ids": [],
+                "unresolved_activity_mentions": [],
+                "unresolved_place_mentions": [],
+                "constraints": {
+                  "budget_must_not_increase": false,
+                  "max_additional_cost_fen": null,
+                  "preferred_environment": null,
+                  "max_walking_minutes": null,
+                  "requested_pace": null,
+                  "weather_sensitive": false,
+                  "preserve_completed": true
+                },
+                "missing_fields": [],
+                "ambiguities": []
+              },
+              "policy_decision": {
+                "operation_mode": "preview_change",
+                "risk_level": "medium",
+                "requires_confirmation": true,
+                "reasons": [
+                  "formal_plan_change"
+                ],
+                "route": "plan_preview"
+              }
+            },
+            "planning_goals": {
+              "target_days": [
+                "2026-10-20"
+              ],
+              "hard_goals": {
+                "end_before": null,
+                "max_walking_minutes": null
+              },
+              "soft_goals": {
+                "pace": null,
+                "minimize_walking": false,
+                "preserve_existing": false
+              }
+            },
+            "planning_context": {
+              "trip": {
+                "id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                "title": "B 多轮背景与保护验收 02b2666d",
+                "destination": "杭州",
+                "destination_adcode": "",
+                "destination_citycode": "",
+                "center_longitude": null,
+                "center_latitude": null,
+                "accommodation": "",
+                "accommodation_poi_id": "",
+                "accommodation_address": "",
+                "accommodation_district": "",
+                "accommodation_longitude": null,
+                "accommodation_latitude": null,
+                "start_date": "2026-10-19",
+                "end_date": "2026-10-21",
+                "total_budget_fen": null,
+                "daily_budget_fen": null,
+                "currency": "CNY",
+                "timezone": "Asia/Shanghai",
+                "created_at": "2026-10-18T13:14:58.956250Z",
+                "updated_at": "2026-10-18T13:15:01.544745Z",
+                "archived_at": null,
+                "version": 3,
+                "status": "upcoming"
+              },
+              "preferences": {
+                "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                "pace": "balanced",
+                "interest_categories": [],
+                "transport_modes": [
+                  "walk"
+                ],
+                "daily_start_time": "15:00:00",
+                "daily_end_time": "18:00:00",
+                "meal_preferences": "",
+                "avoid_categories": [],
+                "max_walking_minutes": 180,
+                "free_text_requirements": "步行上限30分钟\n偏好拍照、摄影",
+                "requirement_records": [
+                  {
+                    "id": "req_535e3a242d425445b8358b6301fddf14",
+                    "text": "步行上限30分钟",
+                    "value": 30,
+                    "source": {
+                      "kind": "user_explicit",
+                      "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+                    },
+                    "scope": {
+                      "kind": "trip",
+                      "topic_id": null,
+                      "draft_id": null,
+                      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                      "city": "杭州",
+                      "day_index": null,
+                      "date": null,
+                      "activity_id": null
+                    },
+                    "strength": "hard",
+                    "status": "active",
+                    "supersedes": []
+                  },
+                  {
+                    "id": "req_dd5247aba933531d9f6cf3a08a6b410b",
+                    "text": "偏好拍照、摄影",
+                    "value": "photography",
+                    "source": {
+                      "kind": "user_explicit",
+                      "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+                    },
+                    "scope": {
+                      "kind": "trip",
+                      "topic_id": null,
+                      "draft_id": null,
+                      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                      "city": "杭州",
+                      "day_index": null,
+                      "date": null,
+                      "activity_id": null
+                    },
+                    "strength": "soft",
+                    "status": "active",
+                    "supersedes": []
+                  },
+                  {
+                    "id": "req_ee87b0d00d5559dda955ff501c7bdb3d",
+                    "text": "撤销：步行上限30分钟",
+                    "value": null,
+                    "source": {
+                      "kind": "user_explicit",
+                      "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:revoke:1"
+                    },
+                    "scope": {
+                      "kind": "day",
+                      "topic_id": null,
+                      "draft_id": null,
+                      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                      "city": "杭州",
+                      "day_index": null,
+                      "date": "2026-10-20",
+                      "activity_id": null
+                    },
+                    "strength": "soft",
+                    "status": "revoked",
+                    "supersedes": [
+                      "req_535e3a242d425445b8358b6301fddf14"
+                    ]
+                  },
+                  {
+                    "id": "req_1dcde0f70a9255c5b96022e14e9cf862",
+                    "text": "此次验收未实际到访",
+                    "value": null,
+                    "source": {
+                      "kind": "user_explicit",
+                      "ref": "explicit-control:6923c34b-ac6c-49b6-bf85-6511f86d67c2"
+                    },
+                    "scope": {
+                      "kind": "trip",
+                      "topic_id": null,
+                      "draft_id": null,
+                      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                      "city": "杭州",
+                      "day_index": null,
+                      "date": null,
+                      "activity_id": null
+                    },
+                    "strength": "soft",
+                    "status": "active",
+                    "supersedes": []
+                  }
+                ],
+                "version": 2,
+                "created_at": "2026-10-18T13:14:58.956250Z",
+                "updated_at": "2026-10-18T13:15:01.582264Z"
+              },
+              "days": [
+                {
+                  "id": "a65980fc-625c-44cd-a56c-ce9b0c41a02b",
+                  "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                  "date": "2026-10-19",
+                  "label": "第 1 天",
+                  "theme": "探索杭州",
+                  "position": 0,
+                  "route_mode": "walk",
+                  "activities": [
+                    {
+                      "id": "6679c962-81ea-439a-9770-e5bd18389d9d",
+                      "place_id": "0d348210-7383-5ffd-99ec-07a85fe4e1e4",
+                      "name": "杭州博物馆",
+                      "custom_name": null,
+                      "display_name": "杭州博物馆",
+                      "category": "sight",
+                      "neighborhood": "上城区",
+                      "longitude": 120.166525,
+                      "latitude": 30.239091,
+                      "scheduled_time": "15:00:00",
+                      "duration_minutes": 60,
+                      "importance": "normal",
+                      "can_skip": true,
+                      "minimum_duration_minutes": null,
+                      "importance_source": "system_default",
+                      "can_skip_source": "system_default",
+                      "minimum_duration_source": "unknown",
+                      "estimated_cost_fen": 10000,
+                      "status": "planned",
+                      "position": 0,
+                      "schedule_locked": false,
+                      "version": 1,
+                      "note": "人工指定测试活动，不证明开放、预约或到访",
+                      "updated_at": "2026-10-18T13:15:01.438564Z",
+                      "source": {
+                        "id": "4f937cc6-b807-5742-b9e0-7b858d40772f",
+                        "title": "杭州博物馆 · 地点身份与参考资料（非预订报价）",
+                        "url": "https://www.amap.com/search",
+                        "provider": "amap",
+                        "queried_at": "2026-10-18T13:14:58.400660Z",
+                        "confidence": "medium"
+                      }
+                    }
+                  ],
+                  "route_legs": [],
+                  "conflicts": []
+                },
+                {
+                  "id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+                  "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                  "date": "2026-10-20",
+                  "label": "第 2 天",
+                  "theme": "探索杭州",
+                  "position": 1,
+                  "route_mode": "walk",
+                  "activities": [
+                    {
+                      "id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                      "place_id": "d96907a9-2760-5e1c-9901-7a19d081e0a7",
+                      "name": "河坊街",
+                      "custom_name": null,
+                      "display_name": "河坊街",
+                      "category": "sight",
+                      "neighborhood": "上城区",
+                      "longitude": 120.16863,
+                      "latitude": 30.2401,
+                      "scheduled_time": "15:00:00",
+                      "duration_minutes": 60,
+                      "importance": "normal",
+                      "can_skip": true,
+                      "minimum_duration_minutes": null,
+                      "importance_source": "system_default",
+                      "can_skip_source": "system_default",
+                      "minimum_duration_source": "unknown",
+                      "estimated_cost_fen": 10000,
+                      "status": "planned",
+                      "position": 0,
+                      "schedule_locked": false,
+                      "version": 1,
+                      "note": "人工指定测试活动，不证明开放、预约或到访",
+                      "updated_at": "2026-10-18T13:15:01.438564Z",
+                      "source": {
+                        "id": "3a875bc2-367b-5be9-85c6-9c265aa2694a",
+                        "title": "河坊街 · 地点身份与参考资料（非预订报价）",
+                        "url": "https://www.amap.com/search",
+                        "provider": "amap",
+                        "queried_at": "2026-10-18T13:14:58.637282Z",
+                        "confidence": "medium"
+                      }
+                    }
+                  ],
+                  "route_legs": [],
+                  "conflicts": []
+                },
+                {
+                  "id": "4b93155f-d34d-4e0e-9eb5-3019afb43931",
+                  "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                  "date": "2026-10-21",
+                  "label": "第 3 天",
+                  "theme": "探索杭州",
+                  "position": 2,
+                  "route_mode": "walk",
+                  "activities": [
+                    {
+                      "id": "b863ea67-5589-4249-a2f8-ec047014bb85",
+                      "place_id": "5ccbd6fc-6456-5029-92f9-c8fd7e700024",
+                      "name": "中国丝绸博物馆",
+                      "custom_name": null,
+                      "display_name": "中国丝绸博物馆",
+                      "category": "sight",
+                      "neighborhood": "西湖区",
+                      "longitude": 120.151292,
+                      "latitude": 30.22287,
+                      "scheduled_time": "15:00:00",
+                      "duration_minutes": 60,
+                      "importance": "normal",
+                      "can_skip": true,
+                      "minimum_duration_minutes": null,
+                      "importance_source": "system_default",
+                      "can_skip_source": "system_default",
+                      "minimum_duration_source": "unknown",
+                      "estimated_cost_fen": 10000,
+                      "status": "planned",
+                      "position": 0,
+                      "schedule_locked": true,
+                      "version": 2,
+                      "note": "人工指定测试活动，不证明开放、预约或到访",
+                      "updated_at": "2026-10-18T13:15:01.552137Z",
+                      "source": {
+                        "id": "ff9ddf3d-4851-5a99-b9d7-ffae10f656d2",
+                        "title": "中国丝绸博物馆 · 地点身份与参考资料（非预订报价）",
+                        "url": "https://www.amap.com/search",
+                        "provider": "amap",
+                        "queried_at": "2026-10-18T13:14:58.917815Z",
+                        "confidence": "medium"
+                      }
+                    }
+                  ],
+                  "route_legs": [],
+                  "conflicts": []
+                }
+              ],
+              "candidates": [],
+              "actual_budget": {
+                "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                "currency": "CNY",
+                "total_budget_fen": null,
+                "total_spent_fen": 0,
+                "total_remaining_fen": null,
+                "daily_budget_fen": null,
+                "today_spent_fen": 0,
+                "today_remaining_fen": null,
+                "local_date": "2026-10-18"
+              },
+              "planning_budget": {
+                "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                "total_planned_fen": 30000,
+                "total_remaining_fen": null,
+                "days": [
+                  {
+                    "day_plan_id": "a65980fc-625c-44cd-a56c-ce9b0c41a02b",
+                    "date": "2026-10-19",
+                    "planned_fen": 10000,
+                    "remaining_fen": null,
+                    "ratio": null,
+                    "status": "unconstrained"
+                  },
+                  {
+                    "day_plan_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+                    "date": "2026-10-20",
+                    "planned_fen": 10000,
+                    "remaining_fen": null,
+                    "ratio": null,
+                    "status": "unconstrained"
+                  },
+                  {
+                    "day_plan_id": "4b93155f-d34d-4e0e-9eb5-3019afb43931",
+                    "date": "2026-10-21",
+                    "planned_fen": 10000,
+                    "remaining_fen": null,
+                    "ratio": null,
+                    "status": "unconstrained"
+                  }
+                ]
+              },
+              "generated_at": "2026-10-18T13:15:02.716353Z",
+              "execution_recovery": {
+                "frozen_activity_ids": [],
+                "protected_activity_ids": [],
+                "mutable_activity_ids": [
+                  "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                  "6679c962-81ea-439a-9770-e5bd18389d9d",
+                  "b863ea67-5589-4249-a2f8-ec047014bb85"
+                ],
+                "recovery_options": [],
+                "execution_state": {
+                  "status": "not_started"
+                }
+              },
+              "planning_goals": {
+                "target_days": [
+                  "2026-10-20"
+                ],
+                "hard_goals": {
+                  "end_before": null,
+                  "max_walking_minutes": null
+                },
+                "soft_goals": {
+                  "pace": null,
+                  "minimize_walking": false,
+                  "preserve_existing": false
+                }
+              },
+              "formal_route_facts": {
+                "days": [
+                  {
+                    "date": "2026-10-20",
+                    "activity_sequence": [
+                      "河坊街"
+                    ],
+                    "route_legs": [],
+                    "walking_duration_minutes": 0,
+                    "walking_distance_meters": 0,
+                    "day_end": "16:00"
+                  }
+                ]
+              },
+              "decision_context": {
+                "formal_itinerary": {
+                  "days": [
+                    {
+                      "day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+                      "date": "2026-10-20",
+                      "activities": [
+                        {
+                          "activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                          "name": "河坊街",
+                          "scheduled_time": "15:00:00",
+                          "duration_minutes": 60,
+                          "importance": "normal",
+                          "can_skip": true,
+                          "minimum_duration_minutes": null,
+                          "category": "sight",
+                          "longitude": 120.16863,
+                          "latitude": 30.2401,
+                          "schedule_locked": false,
+                          "status": "planned"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "protected_constraints": {
+                  "frozen_activity_ids": [],
+                  "protected_activity_ids": [],
+                  "editable_activity_ids": [
+                    "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+                  ],
+                  "provenance": {}
+                },
+                "execution_context": {
+                  "status": "not_started",
+                  "remaining_activity_ids": [
+                    "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+                  ]
+                },
+                "decision_memory": [],
+                "provenance": {
+                  "goals": "user_goal_and_grounded_intent",
+                  "formal_itinerary": "persisted_formal_itinerary",
+                  "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+                  "route_context": "persisted_amap_route",
+                  "execution_context": "execution_and_navigation_projection",
+                  "active_disruption": "persisted_disruption_projection",
+                  "user_preferences": "persisted_trip_preferences",
+                  "provider_facts": "planning_provider_facts",
+                  "decision_memory": "same_trip_same_target_day_rejected_revisions"
+                },
+                "route_context": {
+                  "days": [
+                    {
+                      "date": "2026-10-20",
+                      "route_fact_status": "unavailable",
+                      "route_legs": []
+                    }
+                  ]
+                }
+              }
+            },
+            "external_facts": {
+              "status": "partial",
+              "search": {
+                "status": "not_required",
+                "sources": []
+              },
+              "weather": {
+                "status": "no_coordinate_source"
+              }
+            }
+          },
+          "sequence": 5
+        },
+        {
+          "stage": "planner",
+          "status": "running",
+          "at": "2026-10-18T13:15:02.852590+00:00",
+          "duration_ms": null,
+          "call_id": "4ed6359f-0000-4513-a64b-66f705a053f0",
+          "provider": null,
+          "purpose": "Generate Candidate",
+          "data": {},
+          "sequence": 6
+        },
+        {
+          "stage": "planner",
+          "status": "completed",
+          "at": "2026-10-18T13:15:13.413828+00:00",
+          "duration_ms": 10550,
+          "call_id": "4ed6359f-0000-4513-a64b-66f705a053f0",
+          "provider": null,
+          "purpose": "Generate Candidate",
+          "data": {
+            "proposed_snapshot": {
+              "explanation": "本次候选只修改第2天（2026-10-20）河坊街的停留时长：从60分钟缩短为45分钟，开始时间保持15:00，仍在每日15:00-18:00时间窗内。该地点因契合你偏好拍照、摄影的需求而被保留，未删除或替换。第1天的杭州博物馆和第3天的中国丝绸博物馆均在本次调整范围之外，其中第3天15点的活动是受保护活动，系统会原样保留，本方案不输出也不改动它们。按你的明确要求，没有恢复第2天已撤销的步行不超过30分钟限制。目前第2天路线数据状态为不可用，因此无法给出新的交通时长或到店估算，仅按地点坐标分区作一般安排，待确认后由系统计算路线。未声称已保存，此为待确认候选。",
+              "activities": [
+                {
+                  "candidate_id": "candidate:1:d96907a9-2760-5e1c-9901-7a19d081e0a7",
+                  "day_date": "2026-10-20",
+                  "place_candidate_id": "d96907a9-2760-5e1c-9901-7a19d081e0a7",
+                  "planned_start_time": "15:00:00",
+                  "duration_minutes": 45,
+                  "estimated_cost_fen": 10000,
+                  "transport_mode_to_here": "walk",
+                  "reason": "按你的要求将第2天河坊街的停留从60分钟调整为45分钟，开始时间仍为15:00，符合当日15:00-18:00的时间窗。河坊街是杭州历史街区，适合拍照与摄影，保留该地点身份不变，仅压缩停留。第1天与第3天的活动属于本次范围之外，不作改动；第3天15点固定活动为受保护活动，保持原样。未恢复步行不超过30分钟的限制。本候选待你确认后才会应用。",
+                  "source_ids": [
+                    "3a875bc2-367b-5be9-85c6-9c265aa2694a"
+                  ],
+                  "replaces_activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                  "locked": false
+                },
+                {
+                  "candidate_id": "preserved:6679c962-81ea-439a-9770-e5bd18389d9d",
+                  "day_date": "2026-10-19",
+                  "place_candidate_id": "0d348210-7383-5ffd-99ec-07a85fe4e1e4",
+                  "planned_start_time": "15:00:00",
+                  "duration_minutes": 60,
+                  "estimated_cost_fen": 10000,
+                  "transport_mode_to_here": "walk",
+                  "reason": "保留这项原有安排，本次只调整你指定的日期或活动。",
+                  "source_ids": [
+                    "4f937cc6-b807-5742-b9e0-7b858d40772f"
+                  ],
+                  "replaces_activity_id": "6679c962-81ea-439a-9770-e5bd18389d9d",
+                  "locked": false
+                }
+              ],
+              "route_legs": [],
+              "decision_ledger": null,
+              "provenance_parse_errors": [
+                "decision_explanation_unverified"
+              ]
+            }
+          },
+          "sequence": 7
+        },
+        {
+          "stage": "validator",
+          "status": "running",
+          "at": "2026-10-18T13:15:13.424789+00:00",
+          "duration_ms": null,
+          "call_id": "59d784d1-6f3e-4a4a-a5c6-ec4d79cacadd",
+          "provider": null,
+          "purpose": null,
+          "data": {},
+          "sequence": 8
+        },
+        {
+          "stage": "route",
+          "status": "running",
+          "at": "2026-10-18T13:15:13.452070+00:00",
+          "duration_ms": null,
+          "call_id": "41914e5f-dfaf-46e3-a930-0b8c8a11adf9",
+          "provider": null,
+          "purpose": "Route enrichment (includes persisted cache lookup)",
+          "data": {},
+          "sequence": 9
+        },
+        {
+          "stage": "route",
+          "status": "completed",
+          "at": "2026-10-18T13:15:13.474180+00:00",
+          "duration_ms": 14,
+          "call_id": "41914e5f-dfaf-46e3-a930-0b8c8a11adf9",
+          "provider": null,
+          "purpose": "Route enrichment (includes persisted cache lookup)",
+          "data": {
+            "route_legs": []
+          },
+          "sequence": 10
+        },
+        {
+          "stage": "validator",
+          "status": "completed",
+          "at": "2026-10-18T13:15:13.536947+00:00",
+          "duration_ms": 101,
+          "call_id": "59d784d1-6f3e-4a4a-a5c6-ec4d79cacadd",
+          "provider": null,
+          "purpose": null,
+          "data": {
+            "proposed_snapshot": {
+              "explanation": "本次候选只修改第2天（2026-10-20）河坊街的停留时长：从60分钟缩短为45分钟，开始时间保持15:00，仍在每日15:00-18:00时间窗内。该地点因契合你偏好拍照、摄影的需求而被保留，未删除或替换。第1天的杭州博物馆和第3天的中国丝绸博物馆均在本次调整范围之外，其中第3天15点的活动是受保护活动，系统会原样保留，本方案不输出也不改动它们。按你的明确要求，没有恢复第2天已撤销的步行不超过30分钟限制。目前第2天路线数据状态为不可用，因此无法给出新的交通时长或到店估算，仅按地点坐标分区作一般安排，待确认后由系统计算路线。未声称已保存，此为待确认候选。",
+              "activities": [
+                {
+                  "candidate_id": "candidate:1:d96907a9-2760-5e1c-9901-7a19d081e0a7",
+                  "day_date": "2026-10-20",
+                  "place_candidate_id": "d96907a9-2760-5e1c-9901-7a19d081e0a7",
+                  "planned_start_time": "15:00:00",
+                  "duration_minutes": 45,
+                  "estimated_cost_fen": 10000,
+                  "transport_mode_to_here": "walk",
+                  "reason": "按你的要求将第2天河坊街的停留从60分钟调整为45分钟，开始时间仍为15:00，符合当日15:00-18:00的时间窗。河坊街是杭州历史街区，适合拍照与摄影，保留该地点身份不变，仅压缩停留。第1天与第3天的活动属于本次范围之外，不作改动；第3天15点固定活动为受保护活动，保持原样。未恢复步行不超过30分钟的限制。本候选待你确认后才会应用。",
+                  "source_ids": [
+                    "3a875bc2-367b-5be9-85c6-9c265aa2694a"
+                  ],
+                  "replaces_activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                  "locked": false
+                },
+                {
+                  "candidate_id": "preserved:6679c962-81ea-439a-9770-e5bd18389d9d",
+                  "day_date": "2026-10-19",
+                  "place_candidate_id": "0d348210-7383-5ffd-99ec-07a85fe4e1e4",
+                  "planned_start_time": "15:00:00",
+                  "duration_minutes": 60,
+                  "estimated_cost_fen": 10000,
+                  "transport_mode_to_here": "walk",
+                  "reason": "保留这项原有安排，本次只调整你指定的日期或活动。",
+                  "source_ids": [
+                    "4f937cc6-b807-5742-b9e0-7b858d40772f"
+                  ],
+                  "replaces_activity_id": "6679c962-81ea-439a-9770-e5bd18389d9d",
+                  "locked": false
+                }
+              ],
+              "route_legs": [],
+              "decision_ledger": null,
+              "provenance_parse_errors": [
+                "decision_explanation_unverified"
+              ]
+            },
+            "validation_result": {
+              "valid": true,
+              "errors": [],
+              "warnings": []
+            },
+            "decision_summary": {
+              "status": "invalid",
+              "entries": [],
+              "error_codes": [
+                "decision_explanation_unverified"
+              ],
+              "supported_change_count": 0,
+              "unsupported_change_count": 0
+            },
+            "schedule_adjustments": []
+          },
+          "sequence": 11
+        },
+        {
+          "stage": "goal_check",
+          "status": "running",
+          "at": "2026-10-18T13:15:13.548035+00:00",
+          "duration_ms": null,
+          "call_id": "5d578ded-71f4-4ffe-be9a-120281f87219",
+          "provider": null,
+          "purpose": null,
+          "data": {},
+          "sequence": 12
+        },
+        {
+          "stage": "goal_check",
+          "status": "completed",
+          "at": "2026-10-18T13:15:13.557565+00:00",
+          "duration_ms": 0,
+          "call_id": "5d578ded-71f4-4ffe-be9a-120281f87219",
+          "provider": null,
+          "purpose": null,
+          "data": {
+            "goal_satisfaction": {
+              "results": []
+            }
+          },
+          "sequence": 13
+        },
+        {
+          "stage": "revision",
+          "status": "running",
+          "at": "2026-10-18T13:15:13.565452+00:00",
+          "duration_ms": null,
+          "call_id": "1ecbc8ec-4938-47ec-8342-20885213889d",
+          "provider": null,
+          "purpose": null,
+          "data": {},
+          "sequence": 14
+        },
+        {
+          "stage": "revision",
+          "status": "completed",
+          "at": "2026-10-18T13:15:13.601255+00:00",
+          "duration_ms": 26,
+          "call_id": "1ecbc8ec-4938-47ec-8342-20885213889d",
+          "provider": null,
+          "purpose": null,
+          "data": {
+            "revision_id": "03750865-8ebe-4f55-a690-9deace0b1166"
+          },
+          "sequence": 15
+        }
+      ],
+      "observation_sequence": 15,
+      "observations_truncated": false,
+      "stage": "validation",
+      "message": "路线查询已完成，正在核对时间、日期与预算冲突…",
+      "updated_at": "2026-10-18T13:15:13.481860+00:00"
+    },
+    "heartbeat_at": "2026-10-18T13:15:13.481860Z",
+    "entry_point": "trip_planner",
+    "selected_day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+    "selected_activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+    "intent_resolution": {
+      "request": {
+        "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+        "user_request": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+        "intent": {
+          "intent_type": "modify_day",
+          "source_text": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+          "time_scope": {
+            "day_number": 2,
+            "day_date": "2026-10-20",
+            "period": null
+          },
+          "protected_activity_ids": [
+            "b863ea67-5589-4249-a2f8-ec047014bb85"
+          ],
+          "requested_place_queries": [],
+          "requested_pace": null,
+          "missing_fields": [],
+          "ambiguities": []
+        },
+        "entry_point": "trip_planner",
+        "selected_day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+        "selected_activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+        "target_day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b"
+      },
+      "requires_clarification": false,
+      "clarification_questions": [],
+      "parser_version": "rules-v1",
+      "semantic_draft": {
+        "primary_intent": "replan_trip",
+        "operations": [
+          {
+            "operation": "replan_trip",
+            "raw_text": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+            "date_expression": "第2天",
+            "period": null,
+            "activity_mentions": [],
+            "place_mentions": [],
+            "constraints": {
+              "budget_must_not_increase": false,
+              "max_additional_cost_fen": null,
+              "preferred_environment": null,
+              "max_walking_minutes": null,
+              "requested_pace": null,
+              "weather_sensitive": false,
+              "preserve_completed": true
+            }
+          }
+        ],
+        "confidence": 0.98,
+        "missing_fields": [],
+        "ambiguities": [],
+        "parser": "rules",
+        "parser_version": "rules-envelope-v1"
+      },
+      "grounded_intent": {
+        "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+        "primary_intent": "replan_trip",
+        "operation_types": [
+          "replan_trip"
+        ],
+        "target_day_ids": [
+          "33cbf5b4-ba28-4efb-be23-53e467afd17b"
+        ],
+        "target_activity_ids": [
+          "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+        ],
+        "candidate_place_ids": [],
+        "unresolved_activity_mentions": [],
+        "unresolved_place_mentions": [],
+        "constraints": {
+          "budget_must_not_increase": false,
+          "max_additional_cost_fen": null,
+          "preferred_environment": null,
+          "max_walking_minutes": null,
+          "requested_pace": null,
+          "weather_sensitive": false,
+          "preserve_completed": true
+        },
+        "missing_fields": [],
+        "ambiguities": []
+      },
+      "policy_decision": {
+        "operation_mode": "preview_change",
+        "risk_level": "medium",
+        "requires_confirmation": true,
+        "reasons": [
+          "formal_plan_change"
+        ],
+        "route": "plan_preview"
+      }
+    },
+    "base_trip_version": 3,
+    "model_provider": "glm",
+    "model_name": "glm-5.3-flash",
+    "token_usage": 4504,
+    "error_code": null,
+    "error_message": null,
+    "error_details": null,
+    "pending_interrupt": {
+      "kind": "approval",
+      "run_id": "7530c4b3-d200-47cc-a5a5-54f9fe5f06ed",
+      "revision_id": "03750865-8ebe-4f55-a690-9deace0b1166"
+    },
+    "created_at": "2026-10-18T13:15:01.848172Z",
+    "started_at": "2026-10-18T13:15:02.172640Z",
+    "completed_at": null
+  },
+  "revision": {
+    "id": "03750865-8ebe-4f55-a690-9deace0b1166",
+    "planning_run_id": "7530c4b3-d200-47cc-a5a5-54f9fe5f06ed",
+    "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+    "revision_number": 1,
+    "reason": "本次回应你的要求：只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。\n候选与正式行程相比：\n2026-10-19：保留原有 1 个地点。\n2026-10-20：保留原有 1 个地点。\n2026-10-21：保留原有 1 个地点。\n未核实的营业、预约和天气仍需在出行前确认；本次流程不承诺后续自动核验。\n具体时间与每项选择的理由见下方；预计费用按候选内容计算，确认后才写入正式行程。",
+    "before_snapshot": {
+      "trip": {
+        "id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+        "title": "B 多轮背景与保护验收 02b2666d",
+        "destination": "杭州",
+        "destination_adcode": "",
+        "destination_citycode": "",
+        "center_longitude": null,
+        "center_latitude": null,
+        "accommodation": "",
+        "accommodation_poi_id": "",
+        "accommodation_address": "",
+        "accommodation_district": "",
+        "accommodation_longitude": null,
+        "accommodation_latitude": null,
+        "start_date": "2026-10-19",
+        "end_date": "2026-10-21",
+        "total_budget_fen": null,
+        "daily_budget_fen": null,
+        "currency": "CNY",
+        "timezone": "Asia/Shanghai",
+        "created_at": "2026-10-18T13:14:58.956250Z",
+        "updated_at": "2026-10-18T13:15:01.544745Z",
+        "archived_at": null,
+        "version": 3,
+        "status": "upcoming"
+      },
+      "preferences": {
+        "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+        "pace": "balanced",
+        "interest_categories": [],
+        "transport_modes": [
+          "walk"
+        ],
+        "daily_start_time": "15:00:00",
+        "daily_end_time": "18:00:00",
+        "meal_preferences": "",
+        "avoid_categories": [],
+        "max_walking_minutes": 180,
+        "free_text_requirements": "步行上限30分钟\n偏好拍照、摄影",
+        "requirement_records": [
+          {
+            "id": "req_535e3a242d425445b8358b6301fddf14",
+            "text": "步行上限30分钟",
+            "key": "max_walking_minutes",
+            "value": 30,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "hard",
+            "status": "active",
+            "supersedes": []
+          },
+          {
+            "id": "req_dd5247aba933531d9f6cf3a08a6b410b",
+            "text": "偏好拍照、摄影",
+            "key": "interest",
+            "value": "photography",
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "active",
+            "supersedes": []
+          },
+          {
+            "id": "req_ee87b0d00d5559dda955ff501c7bdb3d",
+            "text": "撤销：步行上限30分钟",
+            "key": "max_walking_minutes",
+            "value": null,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:revoke:1"
+            },
+            "scope": {
+              "kind": "day",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+              "city": "杭州",
+              "day_index": null,
+              "date": "2026-10-20",
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "revoked",
+            "supersedes": [
+              "req_535e3a242d425445b8358b6301fddf14"
+            ]
+          },
+          {
+            "id": "req_1dcde0f70a9255c5b96022e14e9cf862",
+            "text": "此次验收未实际到访",
+            "key": "user_requirement",
+            "value": null,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "explicit-control:6923c34b-ac6c-49b6-bf85-6511f86d67c2"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "active",
+            "supersedes": []
+          }
+        ],
+        "version": 2,
+        "created_at": "2026-10-18T13:14:58.956250Z",
+        "updated_at": "2026-10-18T13:15:01.582264Z"
+      },
+      "days": [
+        {
+          "id": "a65980fc-625c-44cd-a56c-ce9b0c41a02b",
+          "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+          "date": "2026-10-19",
+          "label": "第 1 天",
+          "theme": "探索杭州",
+          "position": 0,
+          "route_mode": "walk",
+          "activities": [
+            {
+              "id": "6679c962-81ea-439a-9770-e5bd18389d9d",
+              "place_id": "0d348210-7383-5ffd-99ec-07a85fe4e1e4",
+              "name": "杭州博物馆",
+              "custom_name": null,
+              "display_name": "杭州博物馆",
+              "category": "sight",
+              "neighborhood": "上城区",
+              "longitude": 120.166525,
+              "latitude": 30.239091,
+              "scheduled_time": "15:00:00",
+              "duration_minutes": 60,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 10000,
+              "status": "planned",
+              "position": 0,
+              "schedule_locked": false,
+              "version": 1,
+              "note": "人工指定测试活动，不证明开放、预约或到访",
+              "updated_at": "2026-10-18T13:15:01.438564Z",
+              "source": {
+                "id": "4f937cc6-b807-5742-b9e0-7b858d40772f",
+                "title": "杭州博物馆 · 地点身份与参考资料（非预订报价）",
+                "url": "https://www.amap.com/search?id=B0FFFWQGI8",
+                "provider": "amap",
+                "queried_at": "2026-10-18T13:14:58.400660Z",
+                "confidence": "medium"
+              }
+            }
+          ],
+          "route_legs": [],
+          "conflicts": []
+        },
+        {
+          "id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+          "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+          "date": "2026-10-20",
+          "label": "第 2 天",
+          "theme": "探索杭州",
+          "position": 1,
+          "route_mode": "walk",
+          "activities": [
+            {
+              "id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+              "place_id": "d96907a9-2760-5e1c-9901-7a19d081e0a7",
+              "name": "河坊街",
+              "custom_name": null,
+              "display_name": "河坊街",
+              "category": "sight",
+              "neighborhood": "上城区",
+              "longitude": 120.16863,
+              "latitude": 30.2401,
+              "scheduled_time": "15:00:00",
+              "duration_minutes": 60,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 10000,
+              "status": "planned",
+              "position": 0,
+              "schedule_locked": false,
+              "version": 1,
+              "note": "人工指定测试活动，不证明开放、预约或到访",
+              "updated_at": "2026-10-18T13:15:01.438564Z",
+              "source": {
+                "id": "3a875bc2-367b-5be9-85c6-9c265aa2694a",
+                "title": "河坊街 · 地点身份与参考资料（非预订报价）",
+                "url": "https://www.amap.com/search?id=B0FFGQ772L",
+                "provider": "amap",
+                "queried_at": "2026-10-18T13:14:58.637282Z",
+                "confidence": "medium"
+              }
+            }
+          ],
+          "route_legs": [],
+          "conflicts": []
+        },
+        {
+          "id": "4b93155f-d34d-4e0e-9eb5-3019afb43931",
+          "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+          "date": "2026-10-21",
+          "label": "第 3 天",
+          "theme": "探索杭州",
+          "position": 2,
+          "route_mode": "walk",
+          "activities": [
+            {
+              "id": "b863ea67-5589-4249-a2f8-ec047014bb85",
+              "place_id": "5ccbd6fc-6456-5029-92f9-c8fd7e700024",
+              "name": "中国丝绸博物馆",
+              "custom_name": null,
+              "display_name": "中国丝绸博物馆",
+              "category": "sight",
+              "neighborhood": "西湖区",
+              "longitude": 120.151292,
+              "latitude": 30.22287,
+              "scheduled_time": "15:00:00",
+              "duration_minutes": 60,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 10000,
+              "status": "planned",
+              "position": 0,
+              "schedule_locked": true,
+              "version": 2,
+              "note": "人工指定测试活动，不证明开放、预约或到访",
+              "updated_at": "2026-10-18T13:15:01.552137Z",
+              "source": {
+                "id": "ff9ddf3d-4851-5a99-b9d7-ffae10f656d2",
+                "title": "中国丝绸博物馆 · 地点身份与参考资料（非预订报价）",
+                "url": "https://www.amap.com/search?id=B023B09JLL",
+                "provider": "amap",
+                "queried_at": "2026-10-18T13:14:58.917815Z",
+                "confidence": "medium"
+              }
+            }
+          ],
+          "route_legs": [],
+          "conflicts": []
+        }
+      ],
+      "candidates": [],
+      "actual_budget": {
+        "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+        "currency": "CNY",
+        "total_budget_fen": null,
+        "total_spent_fen": 0,
+        "total_remaining_fen": null,
+        "daily_budget_fen": null,
+        "today_spent_fen": 0,
+        "today_remaining_fen": null,
+        "local_date": "2026-10-18"
+      },
+      "planning_budget": {
+        "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+        "total_planned_fen": 30000,
+        "total_remaining_fen": null,
+        "days": [
+          {
+            "day_plan_id": "a65980fc-625c-44cd-a56c-ce9b0c41a02b",
+            "date": "2026-10-19",
+            "planned_fen": 10000,
+            "remaining_fen": null,
+            "ratio": null,
+            "status": "unconstrained"
+          },
+          {
+            "day_plan_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+            "date": "2026-10-20",
+            "planned_fen": 10000,
+            "remaining_fen": null,
+            "ratio": null,
+            "status": "unconstrained"
+          },
+          {
+            "day_plan_id": "4b93155f-d34d-4e0e-9eb5-3019afb43931",
+            "date": "2026-10-21",
+            "planned_fen": 10000,
+            "remaining_fen": null,
+            "ratio": null,
+            "status": "unconstrained"
+          }
+        ]
+      },
+      "generated_at": "2026-10-18T13:15:02.716353Z",
+      "external_facts": {
+        "status": "partial",
+        "search": {
+          "status": "not_required"
+        },
+        "weather": {
+          "status": "no_coordinate_source"
+        }
+      },
+      "execution_recovery": {
+        "frozen_activity_ids": [],
+        "protected_activity_ids": [],
+        "mutable_activity_ids": [
+          "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+          "6679c962-81ea-439a-9770-e5bd18389d9d",
+          "b863ea67-5589-4249-a2f8-ec047014bb85"
+        ],
+        "recovery_options": [],
+        "execution_state": {
+          "status": "not_started"
+        }
+      },
+      "planning_goals": {
+        "target_days": [
+          "2026-10-20"
+        ],
+        "hard_goals": {
+          "end_before": null,
+          "max_walking_minutes": null
+        },
+        "soft_goals": {
+          "pace": null,
+          "minimize_walking": false,
+          "preserve_existing": false
+        }
+      },
+      "formal_route_facts": {
+        "days": [
+          {
+            "date": "2026-10-20",
+            "activity_sequence": [
+              "河坊街"
+            ],
+            "route_legs": [],
+            "walking_duration_minutes": 0,
+            "walking_distance_meters": 0,
+            "day_end": "16:00"
+          }
+        ]
+      },
+      "effective_requirements": [
+        {
+          "id": "req_dd5247aba933531d9f6cf3a08a6b410b",
+          "text": "偏好拍照、摄影",
+          "key": "interest",
+          "value": "photography",
+          "source": {
+            "kind": "user_explicit",
+            "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+          },
+          "scope": {
+            "kind": "trip",
+            "topic_id": null,
+            "draft_id": null,
+            "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+            "city": "杭州",
+            "day_index": null,
+            "date": null,
+            "activity_id": null
+          },
+          "strength": "soft",
+          "status": "active",
+          "supersedes": []
+        }
+      ],
+      "effective_requirements_by_date": {
+        "2026-10-20": [
+          {
+            "id": "req_dd5247aba933531d9f6cf3a08a6b410b",
+            "text": "偏好拍照、摄影",
+            "key": "interest",
+            "value": "photography",
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "active",
+            "supersedes": []
+          }
+        ]
+      },
+      "weather_sensitive": false,
+      "candidate_route_facts": [],
+      "candidate_comparison": {
+        "version": "bounded-candidate-comparison-v2",
+        "weather_days": {
+          "2026-10-19": {
+            "status": "unknown",
+            "reason": "missing_stale_past_or_incomplete_prediction",
+            "provider": null,
+            "queried_at": null,
+            "nature": "provider_prediction",
+            "coverage_hours": [],
+            "hourly_rain_probability": {},
+            "max_hourly_rain_probability": null,
+            "rain_risk": "unknown",
+            "scope": "trip_representative_coordinate_not_venue_observation",
+            "freshness_policy": "planning_decision_forecast_30min_v1"
+          },
+          "2026-10-20": {
+            "status": "unknown",
+            "reason": "missing_stale_past_or_incomplete_prediction",
+            "provider": null,
+            "queried_at": null,
+            "nature": "provider_prediction",
+            "coverage_hours": [],
+            "hourly_rain_probability": {},
+            "max_hourly_rain_probability": null,
+            "rain_risk": "unknown",
+            "scope": "trip_representative_coordinate_not_venue_observation",
+            "freshness_policy": "planning_decision_forecast_30min_v1"
+          },
+          "2026-10-21": {
+            "status": "unknown",
+            "reason": "missing_stale_past_or_incomplete_prediction",
+            "provider": null,
+            "queried_at": null,
+            "nature": "provider_prediction",
+            "coverage_hours": [],
+            "hourly_rain_probability": {},
+            "max_hourly_rain_probability": null,
+            "rain_risk": "unknown",
+            "scope": "trip_representative_coordinate_not_venue_observation",
+            "freshness_policy": "planning_decision_forecast_30min_v1"
+          }
+        },
+        "candidates": [],
+        "ranking_policy": "requested_then_soft_avoid_feasible_visit_weather_fixed_free_slot_fresh_exact_walk_anchor_route_interest_then_research_rating",
+        "limits": [
+          "taxonomy_is_soft_hint",
+          "route_is_one_directed_leg_not_day_total",
+          "mixed_weather_has_no_certain_rain_penalty",
+          "unknown_does_not_exclude"
+        ],
+        "walking_tradeoffs": []
+      },
+      "decision_context": {
+        "goal_context": {
+          "target_days": [
+            "2026-10-20"
+          ],
+          "hard_goals": {
+            "end_before": null,
+            "max_walking_minutes": null
+          },
+          "soft_goals": {
+            "pace": null,
+            "minimize_walking": false,
+            "preserve_existing": false
+          }
+        },
+        "formal_itinerary": {
+          "days": [
+            {
+              "day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+              "date": "2026-10-20",
+              "activities": [
+                {
+                  "activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                  "name": "河坊街",
+                  "scheduled_time": "15:00:00",
+                  "duration_minutes": 60,
+                  "importance": "normal",
+                  "can_skip": true,
+                  "minimum_duration_minutes": null,
+                  "category": "sight",
+                  "longitude": 120.16863,
+                  "latitude": 30.2401,
+                  "schedule_locked": false,
+                  "status": "planned"
+                }
+              ]
+            }
+          ]
+        },
+        "activity_decision_semantics": [
+          {
+            "activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+            "name": "河坊街",
+            "importance": "normal",
+            "can_skip": true,
+            "minimum_duration_minutes": null,
+            "planned_duration_minutes": 60,
+            "provenance": {
+              "importance": "system_default",
+              "can_skip": "system_default",
+              "minimum_duration_minutes": "unknown"
+            }
+          }
+        ],
+        "route_context": {
+          "days": [
+            {
+              "date": "2026-10-20",
+              "route_fact_status": "unavailable",
+              "route_legs": []
+            }
+          ]
+        },
+        "execution_context": {
+          "status": "not_started",
+          "remaining_activity_ids": [
+            "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+          ]
+        },
+        "protected_constraints": {
+          "frozen_activity_ids": [],
+          "protected_activity_ids": [],
+          "editable_activity_ids": [
+            "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+          ],
+          "provenance": {}
+        },
+        "user_preferences": {
+          "pace": "balanced",
+          "interest_categories": [],
+          "transport_modes": [
+            "walk"
+          ],
+          "daily_start_time": "15:00:00",
+          "daily_end_time": "18:00:00",
+          "meal_preferences": "",
+          "avoid_categories": [],
+          "max_walking_minutes": 180
+        },
+        "active_disruption": null,
+        "provider_facts": {
+          "status": "partial",
+          "search": {
+            "status": "not_required"
+          },
+          "weather": {
+            "status": "no_coordinate_source"
+          }
+        },
+        "decision_memory": [],
+        "provenance": {
+          "goals": "user_goal_and_grounded_intent",
+          "formal_itinerary": "persisted_formal_itinerary",
+          "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+          "route_context": "persisted_amap_route",
+          "execution_context": "execution_and_navigation_projection",
+          "active_disruption": "persisted_disruption_projection",
+          "user_preferences": "persisted_trip_preferences",
+          "provider_facts": "planning_provider_facts",
+          "decision_memory": "same_trip_same_target_day_rejected_revisions"
+        }
+      }
+    },
+    "proposed_snapshot": {
+      "explanation": "本次候选只修改第2天（2026-10-20）河坊街的停留时长：从60分钟缩短为45分钟，开始时间保持15:00，仍在每日15:00-18:00时间窗内。该地点因契合你偏好拍照、摄影的需求而被保留，未删除或替换。第1天的杭州博物馆和第3天的中国丝绸博物馆均在本次调整范围之外，其中第3天15点的活动是受保护活动，系统会原样保留，本方案不输出也不改动它们。按你的明确要求，没有恢复第2天已撤销的步行不超过30分钟限制。目前第2天路线数据状态为不可用，因此无法给出新的交通时长或到店估算，仅按地点坐标分区作一般安排，待确认后由系统计算路线。未声称已保存，此为待确认候选。",
+      "activities": [
+        {
+          "candidate_id": "candidate:1:d96907a9-2760-5e1c-9901-7a19d081e0a7",
+          "day_date": "2026-10-20",
+          "place_candidate_id": "d96907a9-2760-5e1c-9901-7a19d081e0a7",
+          "planned_start_time": "15:00:00",
+          "duration_minutes": 45,
+          "estimated_cost_fen": 10000,
+          "transport_mode_to_here": "walk",
+          "reason": "按你的要求将第2天河坊街的停留从60分钟调整为45分钟，开始时间仍为15:00，符合当日15:00-18:00的时间窗。河坊街是杭州历史街区，适合拍照与摄影，保留该地点身份不变，仅压缩停留。第1天与第3天的活动属于本次范围之外，不作改动；第3天15点固定活动为受保护活动，保持原样。未恢复步行不超过30分钟的限制。本候选待你确认后才会应用。",
+          "source_ids": [
+            "3a875bc2-367b-5be9-85c6-9c265aa2694a"
+          ],
+          "replaces_activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+          "locked": false
+        },
+        {
+          "candidate_id": "preserved:6679c962-81ea-439a-9770-e5bd18389d9d",
+          "day_date": "2026-10-19",
+          "place_candidate_id": "0d348210-7383-5ffd-99ec-07a85fe4e1e4",
+          "planned_start_time": "15:00:00",
+          "duration_minutes": 60,
+          "estimated_cost_fen": 10000,
+          "transport_mode_to_here": "walk",
+          "reason": "保留这项原有安排，本次只调整你指定的日期或活动。",
+          "source_ids": [
+            "4f937cc6-b807-5742-b9e0-7b858d40772f"
+          ],
+          "replaces_activity_id": "6679c962-81ea-439a-9770-e5bd18389d9d",
+          "locked": false
+        }
+      ],
+      "route_legs": [],
+      "decision_ledger": null,
+      "provenance_parse_errors": [
+        "decision_explanation_unverified"
+      ]
+    },
+    "difference_summary": {
+      "candidate_activity_count": 2,
+      "planned_total_fen": 30000,
+      "planned_budget_delta_fen": 0,
+      "review_count": 0,
+      "schedule_adjustments": [],
+      "required_day_dates": [],
+      "destination_research": {},
+      "recovery": {
+        "frozen_activity_ids": [],
+        "protected_activity_ids": [],
+        "mutable_activity_ids": [
+          "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+          "6679c962-81ea-439a-9770-e5bd18389d9d",
+          "b863ea67-5589-4249-a2f8-ec047014bb85"
+        ],
+        "recovery_options": [],
+        "execution_state": {
+          "status": "not_started"
+        }
+      },
+      "planning_goals": {
+        "target_days": [
+          "2026-10-20"
+        ],
+        "hard_goals": {
+          "end_before": null,
+          "max_walking_minutes": null
+        },
+        "soft_goals": {
+          "pace": null,
+          "minimize_walking": false,
+          "preserve_existing": false
+        }
+      },
+      "goal_satisfaction": {
+        "results": []
+      },
+      "candidate_comparison": {
+        "version": "bounded-candidate-comparison-v2",
+        "weather_days": {
+          "2026-10-19": {
+            "status": "unknown",
+            "reason": "missing_stale_past_or_incomplete_prediction",
+            "provider": null,
+            "queried_at": null,
+            "nature": "provider_prediction",
+            "coverage_hours": [],
+            "hourly_rain_probability": {},
+            "max_hourly_rain_probability": null,
+            "rain_risk": "unknown",
+            "scope": "trip_representative_coordinate_not_venue_observation",
+            "freshness_policy": "planning_decision_forecast_30min_v1"
+          },
+          "2026-10-20": {
+            "status": "unknown",
+            "reason": "missing_stale_past_or_incomplete_prediction",
+            "provider": null,
+            "queried_at": null,
+            "nature": "provider_prediction",
+            "coverage_hours": [],
+            "hourly_rain_probability": {},
+            "max_hourly_rain_probability": null,
+            "rain_risk": "unknown",
+            "scope": "trip_representative_coordinate_not_venue_observation",
+            "freshness_policy": "planning_decision_forecast_30min_v1"
+          },
+          "2026-10-21": {
+            "status": "unknown",
+            "reason": "missing_stale_past_or_incomplete_prediction",
+            "provider": null,
+            "queried_at": null,
+            "nature": "provider_prediction",
+            "coverage_hours": [],
+            "hourly_rain_probability": {},
+            "max_hourly_rain_probability": null,
+            "rain_risk": "unknown",
+            "scope": "trip_representative_coordinate_not_venue_observation",
+            "freshness_policy": "planning_decision_forecast_30min_v1"
+          }
+        },
+        "candidates": [],
+        "ranking_policy": "requested_then_soft_avoid_feasible_visit_weather_fixed_free_slot_fresh_exact_walk_anchor_route_interest_then_research_rating",
+        "limits": [
+          "taxonomy_is_soft_hint",
+          "route_is_one_directed_leg_not_day_total",
+          "mixed_weather_has_no_certain_rain_penalty",
+          "unknown_does_not_exclude"
+        ],
+        "walking_tradeoffs": []
+      },
+      "decision_review": {
+        "status": "checked",
+        "hard_errors": [],
+        "selection_tradeoffs": [],
+        "selected_observations": [
+          {
+            "candidate_id": "candidate:1:d96907a9-2760-5e1c-9901-7a19d081e0a7",
+            "date": "2026-10-20",
+            "weather_tradeoff": "unknown",
+            "candidate_rain_risk": "unknown",
+            "exposure_status": "unknown",
+            "soft_requirement_tradeoffs": [],
+            "before_fixed_anchor": {
+              "status": "unknown"
+            },
+            "route_status": "unknown",
+            "incoming_routes": []
+          },
+          {
+            "candidate_id": "preserved:6679c962-81ea-439a-9770-e5bd18389d9d",
+            "date": "2026-10-19",
+            "weather_tradeoff": "unknown",
+            "candidate_rain_risk": "unknown",
+            "exposure_status": "unknown",
+            "soft_requirement_tradeoffs": [],
+            "before_fixed_anchor": {
+              "status": "unknown"
+            },
+            "route_status": "unknown",
+            "incoming_routes": []
+          }
+        ],
+        "fixed_activities": [
+          {
+            "activity_id": "b863ea67-5589-4249-a2f8-ec047014bb85",
+            "date": "2026-10-21",
+            "scheduled_time": "15:00:00",
+            "status": "preserved",
+            "source": "persisted_schedule_locked_not_booking_confirmation"
+          }
+        ],
+        "effective_requirement_results": [],
+        "uncheckable_requirement_ids": [
+          "req_dd5247aba933531d9f6cf3a08a6b410b"
+        ],
+        "explanation_errors": []
+      },
+      "decision_summary": {
+        "status": "invalid",
+        "entries": [],
+        "error_codes": [
+          "decision_explanation_unverified"
+        ],
+        "supported_change_count": 0,
+        "unsupported_change_count": 0
+      },
+      "decision_ledger_status": "invalid",
+      "decision_ledger_errors": [
+        "decision_explanation_unverified"
+      ]
+    },
+    "validation_result": {
+      "valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "planning_goals": {
+      "target_days": [
+        "2026-10-20"
+      ],
+      "hard_goals": {
+        "end_before": null,
+        "max_walking_minutes": null
+      },
+      "soft_goals": {
+        "pace": null,
+        "minimize_walking": false,
+        "preserve_existing": false
+      }
+    },
+    "goal_satisfaction": {
+      "results": []
+    },
+    "source_ids": [
+      "3a875bc2-367b-5be9-85c6-9c265aa2694a",
+      "4f937cc6-b807-5742-b9e0-7b858d40772f"
+    ],
+    "status": "pending",
+    "rejection_reason_code": null,
+    "rejection_reason_text": null,
+    "created_at": "2026-10-18T13:15:13.576664Z",
+    "decided_at": null
+  },
+  "decision": {
+    "run": {
+      "id": "7530c4b3-d200-47cc-a5a5-54f9fe5f06ed",
+      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+      "disruption_event_id": null,
+      "trigger_type": null,
+      "trigger_fingerprint": null,
+      "trigger_snapshot": {
+        "effective_requirements": [
+          {
+            "id": "req_535e3a242d425445b8358b6301fddf14",
+            "text": "步行上限30分钟",
+            "key": "max_walking_minutes",
+            "value": 30,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "hard",
+            "status": "active",
+            "supersedes": []
+          },
+          {
+            "id": "req_dd5247aba933531d9f6cf3a08a6b410b",
+            "text": "偏好拍照、摄影",
+            "key": "interest",
+            "value": "photography",
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "active",
+            "supersedes": []
+          },
+          {
+            "id": "req_ee87b0d00d5559dda955ff501c7bdb3d",
+            "text": "撤销：步行上限30分钟",
+            "key": "max_walking_minutes",
+            "value": null,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:revoke:1"
+            },
+            "scope": {
+              "kind": "day",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+              "city": "杭州",
+              "day_index": null,
+              "date": "2026-10-20",
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "revoked",
+            "supersedes": [
+              "req_535e3a242d425445b8358b6301fddf14"
+            ]
+          },
+          {
+            "id": "req_1dcde0f70a9255c5b96022e14e9cf862",
+            "text": "此次验收未实际到访",
+            "key": "user_requirement",
+            "value": null,
+            "source": {
+              "kind": "user_explicit",
+              "ref": "explicit-control:6923c34b-ac6c-49b6-bf85-6511f86d67c2"
+            },
+            "scope": {
+              "kind": "trip",
+              "topic_id": null,
+              "draft_id": null,
+              "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+              "city": "杭州",
+              "day_index": null,
+              "date": null,
+              "activity_id": null
+            },
+            "strength": "soft",
+            "status": "active",
+            "supersedes": []
+          }
+        ],
+        "decision_context_summary": {
+          "candidate_comparison": {
+            "version": "bounded-candidate-comparison-v2",
+            "weather_days": {
+              "2026-10-19": {
+                "status": "unknown",
+                "reason": "missing_stale_past_or_incomplete_prediction",
+                "provider": null,
+                "queried_at": null,
+                "nature": "provider_prediction",
+                "coverage_hours": [],
+                "hourly_rain_probability": {},
+                "max_hourly_rain_probability": null,
+                "rain_risk": "unknown",
+                "scope": "trip_representative_coordinate_not_venue_observation",
+                "freshness_policy": "planning_decision_forecast_30min_v1"
+              },
+              "2026-10-20": {
+                "status": "unknown",
+                "reason": "missing_stale_past_or_incomplete_prediction",
+                "provider": null,
+                "queried_at": null,
+                "nature": "provider_prediction",
+                "coverage_hours": [],
+                "hourly_rain_probability": {},
+                "max_hourly_rain_probability": null,
+                "rain_risk": "unknown",
+                "scope": "trip_representative_coordinate_not_venue_observation",
+                "freshness_policy": "planning_decision_forecast_30min_v1"
+              },
+              "2026-10-21": {
+                "status": "unknown",
+                "reason": "missing_stale_past_or_incomplete_prediction",
+                "provider": null,
+                "queried_at": null,
+                "nature": "provider_prediction",
+                "coverage_hours": [],
+                "hourly_rain_probability": {},
+                "max_hourly_rain_probability": null,
+                "rain_risk": "unknown",
+                "scope": "trip_representative_coordinate_not_venue_observation",
+                "freshness_policy": "planning_decision_forecast_30min_v1"
+              }
+            },
+            "candidates": [],
+            "ranking_policy": "requested_then_soft_avoid_feasible_visit_weather_fixed_free_slot_fresh_exact_walk_anchor_route_interest_then_research_rating",
+            "limits": [
+              "taxonomy_is_soft_hint",
+              "route_is_one_directed_leg_not_day_total",
+              "mixed_weather_has_no_certain_rain_penalty",
+              "unknown_does_not_exclude"
+            ],
+            "walking_tradeoffs": []
+          },
+          "candidate_route_fact_count": 0,
+          "effective_requirement_ids": [
+            "req_dd5247aba933531d9f6cf3a08a6b410b"
+          ],
+          "target_days": [
+            "2026-10-20"
+          ],
+          "formal_activity_count": 1,
+          "route_fact_statuses": [
+            {
+              "date": "2026-10-20",
+              "status": "unavailable"
+            }
+          ],
+          "protected_activity_ids": [],
+          "editable_activity_ids": [
+            "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+          ],
+          "execution_fields_present": {
+            "current_activity_id": false,
+            "navigation_target_activity_id": false,
+            "current_eta": false,
+            "delay_minutes": false,
+            "minimum_downstream_slack_minutes": false,
+            "first_impacted_activity_id": false
+          },
+          "provenance": {
+            "goals": "user_goal_and_grounded_intent",
+            "formal_itinerary": "persisted_formal_itinerary",
+            "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+            "route_context": "persisted_amap_route",
+            "execution_context": "execution_and_navigation_projection",
+            "active_disruption": "persisted_disruption_projection",
+            "user_preferences": "persisted_trip_preferences",
+            "provider_facts": "planning_provider_facts",
+            "decision_memory": "same_trip_same_target_day_rejected_revisions"
+          },
+          "decision_memory": {
+            "count": 0,
+            "source_revision_ids": [],
+            "source_run_ids": [],
+            "feedback": [],
+            "context_propagated": true,
+            "visible_to_planner": true
+          }
+        }
+      },
+      "run_type": "replan",
+      "status": "accepted",
+      "user_request": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+      "response_text": null,
+      "progress": {
+        "events": [
+          {
+            "stage": "intent",
+            "status": "running",
+            "at": "2026-10-18T13:15:02.620042+00:00",
+            "duration_ms": null,
+            "call_id": "30bcc11c-cdac-49f9-98a8-4354462e0ad2",
+            "provider": null,
+            "purpose": null,
+            "data": {},
+            "sequence": 1
+          },
+          {
+            "stage": "research_decision",
+            "status": "completed",
+            "at": "2026-10-18T13:15:02.747680+00:00",
+            "duration_ms": null,
+            "call_id": null,
+            "provider": null,
+            "purpose": null,
+            "data": {
+              "destination_research_required": false,
+              "destination_research_available": true
+            },
+            "sequence": 2
+          },
+          {
+            "stage": "goal",
+            "status": "completed",
+            "at": "2026-10-18T13:15:02.801155+00:00",
+            "duration_ms": null,
+            "call_id": null,
+            "provider": null,
+            "purpose": null,
+            "data": {
+              "target_days": [
+                "2026-10-20"
+              ],
+              "hard_goals": {
+                "end_before": null,
+                "max_walking_minutes": null
+              },
+              "soft_goals": {
+                "pace": null,
+                "minimize_walking": false,
+                "preserve_existing": false
+              }
+            },
+            "sequence": 3
+          },
+          {
+            "stage": "context",
+            "status": "completed",
+            "at": "2026-10-18T13:15:02.813384+00:00",
+            "duration_ms": null,
+            "call_id": null,
+            "provider": null,
+            "purpose": null,
+            "data": {
+              "trip": {
+                "id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                "title": "B 多轮背景与保护验收 02b2666d",
+                "destination": "杭州",
+                "destination_adcode": "",
+                "destination_citycode": "",
+                "center_longitude": null,
+                "center_latitude": null,
+                "accommodation": "",
+                "accommodation_poi_id": "",
+                "accommodation_address": "",
+                "accommodation_district": "",
+                "accommodation_longitude": null,
+                "accommodation_latitude": null,
+                "start_date": "2026-10-19",
+                "end_date": "2026-10-21",
+                "total_budget_fen": null,
+                "daily_budget_fen": null,
+                "currency": "CNY",
+                "timezone": "Asia/Shanghai",
+                "created_at": "2026-10-18T13:14:58.956250Z",
+                "updated_at": "2026-10-18T13:15:01.544745Z",
+                "archived_at": null,
+                "version": 3,
+                "status": "upcoming"
+              },
+              "preferences": {
+                "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                "pace": "balanced",
+                "interest_categories": [],
+                "transport_modes": [
+                  "walk"
+                ],
+                "daily_start_time": "15:00:00",
+                "daily_end_time": "18:00:00",
+                "meal_preferences": "",
+                "avoid_categories": [],
+                "max_walking_minutes": 180,
+                "free_text_requirements": "步行上限30分钟\n偏好拍照、摄影",
+                "requirement_records": [
+                  {
+                    "id": "req_535e3a242d425445b8358b6301fddf14",
+                    "text": "步行上限30分钟",
+                    "value": 30,
+                    "source": {
+                      "kind": "user_explicit",
+                      "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+                    },
+                    "scope": {
+                      "kind": "trip",
+                      "topic_id": null,
+                      "draft_id": null,
+                      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                      "city": "杭州",
+                      "day_index": null,
+                      "date": null,
+                      "activity_id": null
+                    },
+                    "strength": "hard",
+                    "status": "active",
+                    "supersedes": []
+                  },
+                  {
+                    "id": "req_dd5247aba933531d9f6cf3a08a6b410b",
+                    "text": "偏好拍照、摄影",
+                    "value": "photography",
+                    "source": {
+                      "kind": "user_explicit",
+                      "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+                    },
+                    "scope": {
+                      "kind": "trip",
+                      "topic_id": null,
+                      "draft_id": null,
+                      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                      "city": "杭州",
+                      "day_index": null,
+                      "date": null,
+                      "activity_id": null
+                    },
+                    "strength": "soft",
+                    "status": "active",
+                    "supersedes": []
+                  },
+                  {
+                    "id": "req_ee87b0d00d5559dda955ff501c7bdb3d",
+                    "text": "撤销：步行上限30分钟",
+                    "value": null,
+                    "source": {
+                      "kind": "user_explicit",
+                      "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:revoke:1"
+                    },
+                    "scope": {
+                      "kind": "day",
+                      "topic_id": null,
+                      "draft_id": null,
+                      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                      "city": "杭州",
+                      "day_index": null,
+                      "date": "2026-10-20",
+                      "activity_id": null
+                    },
+                    "strength": "soft",
+                    "status": "revoked",
+                    "supersedes": [
+                      "req_535e3a242d425445b8358b6301fddf14"
+                    ]
+                  },
+                  {
+                    "id": "req_1dcde0f70a9255c5b96022e14e9cf862",
+                    "text": "此次验收未实际到访",
+                    "value": null,
+                    "source": {
+                      "kind": "user_explicit",
+                      "ref": "explicit-control:6923c34b-ac6c-49b6-bf85-6511f86d67c2"
+                    },
+                    "scope": {
+                      "kind": "trip",
+                      "topic_id": null,
+                      "draft_id": null,
+                      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                      "city": "杭州",
+                      "day_index": null,
+                      "date": null,
+                      "activity_id": null
+                    },
+                    "strength": "soft",
+                    "status": "active",
+                    "supersedes": []
+                  }
+                ],
+                "version": 2,
+                "created_at": "2026-10-18T13:14:58.956250Z",
+                "updated_at": "2026-10-18T13:15:01.582264Z"
+              },
+              "days": [
+                {
+                  "id": "a65980fc-625c-44cd-a56c-ce9b0c41a02b",
+                  "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                  "date": "2026-10-19",
+                  "label": "第 1 天",
+                  "theme": "探索杭州",
+                  "position": 0,
+                  "route_mode": "walk",
+                  "activities": [
+                    {
+                      "id": "6679c962-81ea-439a-9770-e5bd18389d9d",
+                      "place_id": "0d348210-7383-5ffd-99ec-07a85fe4e1e4",
+                      "name": "杭州博物馆",
+                      "custom_name": null,
+                      "display_name": "杭州博物馆",
+                      "category": "sight",
+                      "neighborhood": "上城区",
+                      "longitude": 120.166525,
+                      "latitude": 30.239091,
+                      "scheduled_time": "15:00:00",
+                      "duration_minutes": 60,
+                      "importance": "normal",
+                      "can_skip": true,
+                      "minimum_duration_minutes": null,
+                      "importance_source": "system_default",
+                      "can_skip_source": "system_default",
+                      "minimum_duration_source": "unknown",
+                      "estimated_cost_fen": 10000,
+                      "status": "planned",
+                      "position": 0,
+                      "schedule_locked": false,
+                      "version": 1,
+                      "note": "人工指定测试活动，不证明开放、预约或到访",
+                      "updated_at": "2026-10-18T13:15:01.438564Z",
+                      "source": {
+                        "id": "4f937cc6-b807-5742-b9e0-7b858d40772f",
+                        "title": "杭州博物馆 · 地点身份与参考资料（非预订报价）",
+                        "url": "https://www.amap.com/search",
+                        "provider": "amap",
+                        "queried_at": "2026-10-18T13:14:58.400660Z",
+                        "confidence": "medium"
+                      }
+                    }
+                  ],
+                  "route_legs": [],
+                  "conflicts": []
+                },
+                {
+                  "id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+                  "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                  "date": "2026-10-20",
+                  "label": "第 2 天",
+                  "theme": "探索杭州",
+                  "position": 1,
+                  "route_mode": "walk",
+                  "activities": [
+                    {
+                      "id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                      "place_id": "d96907a9-2760-5e1c-9901-7a19d081e0a7",
+                      "name": "河坊街",
+                      "custom_name": null,
+                      "display_name": "河坊街",
+                      "category": "sight",
+                      "neighborhood": "上城区",
+                      "longitude": 120.16863,
+                      "latitude": 30.2401,
+                      "scheduled_time": "15:00:00",
+                      "duration_minutes": 60,
+                      "importance": "normal",
+                      "can_skip": true,
+                      "minimum_duration_minutes": null,
+                      "importance_source": "system_default",
+                      "can_skip_source": "system_default",
+                      "minimum_duration_source": "unknown",
+                      "estimated_cost_fen": 10000,
+                      "status": "planned",
+                      "position": 0,
+                      "schedule_locked": false,
+                      "version": 1,
+                      "note": "人工指定测试活动，不证明开放、预约或到访",
+                      "updated_at": "2026-10-18T13:15:01.438564Z",
+                      "source": {
+                        "id": "3a875bc2-367b-5be9-85c6-9c265aa2694a",
+                        "title": "河坊街 · 地点身份与参考资料（非预订报价）",
+                        "url": "https://www.amap.com/search",
+                        "provider": "amap",
+                        "queried_at": "2026-10-18T13:14:58.637282Z",
+                        "confidence": "medium"
+                      }
+                    }
+                  ],
+                  "route_legs": [],
+                  "conflicts": []
+                },
+                {
+                  "id": "4b93155f-d34d-4e0e-9eb5-3019afb43931",
+                  "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                  "date": "2026-10-21",
+                  "label": "第 3 天",
+                  "theme": "探索杭州",
+                  "position": 2,
+                  "route_mode": "walk",
+                  "activities": [
+                    {
+                      "id": "b863ea67-5589-4249-a2f8-ec047014bb85",
+                      "place_id": "5ccbd6fc-6456-5029-92f9-c8fd7e700024",
+                      "name": "中国丝绸博物馆",
+                      "custom_name": null,
+                      "display_name": "中国丝绸博物馆",
+                      "category": "sight",
+                      "neighborhood": "西湖区",
+                      "longitude": 120.151292,
+                      "latitude": 30.22287,
+                      "scheduled_time": "15:00:00",
+                      "duration_minutes": 60,
+                      "importance": "normal",
+                      "can_skip": true,
+                      "minimum_duration_minutes": null,
+                      "importance_source": "system_default",
+                      "can_skip_source": "system_default",
+                      "minimum_duration_source": "unknown",
+                      "estimated_cost_fen": 10000,
+                      "status": "planned",
+                      "position": 0,
+                      "schedule_locked": true,
+                      "version": 2,
+                      "note": "人工指定测试活动，不证明开放、预约或到访",
+                      "updated_at": "2026-10-18T13:15:01.552137Z",
+                      "source": {
+                        "id": "ff9ddf3d-4851-5a99-b9d7-ffae10f656d2",
+                        "title": "中国丝绸博物馆 · 地点身份与参考资料（非预订报价）",
+                        "url": "https://www.amap.com/search",
+                        "provider": "amap",
+                        "queried_at": "2026-10-18T13:14:58.917815Z",
+                        "confidence": "medium"
+                      }
+                    }
+                  ],
+                  "route_legs": [],
+                  "conflicts": []
+                }
+              ],
+              "candidates": [],
+              "actual_budget": {
+                "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                "currency": "CNY",
+                "total_budget_fen": null,
+                "total_spent_fen": 0,
+                "total_remaining_fen": null,
+                "daily_budget_fen": null,
+                "today_spent_fen": 0,
+                "today_remaining_fen": null,
+                "local_date": "2026-10-18"
+              },
+              "planning_budget": {
+                "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                "total_planned_fen": 30000,
+                "total_remaining_fen": null,
+                "days": [
+                  {
+                    "day_plan_id": "a65980fc-625c-44cd-a56c-ce9b0c41a02b",
+                    "date": "2026-10-19",
+                    "planned_fen": 10000,
+                    "remaining_fen": null,
+                    "ratio": null,
+                    "status": "unconstrained"
+                  },
+                  {
+                    "day_plan_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+                    "date": "2026-10-20",
+                    "planned_fen": 10000,
+                    "remaining_fen": null,
+                    "ratio": null,
+                    "status": "unconstrained"
+                  },
+                  {
+                    "day_plan_id": "4b93155f-d34d-4e0e-9eb5-3019afb43931",
+                    "date": "2026-10-21",
+                    "planned_fen": 10000,
+                    "remaining_fen": null,
+                    "ratio": null,
+                    "status": "unconstrained"
+                  }
+                ]
+              },
+              "generated_at": "2026-10-18T13:15:02.716353Z",
+              "execution_recovery": {
+                "frozen_activity_ids": [],
+                "protected_activity_ids": [],
+                "mutable_activity_ids": [
+                  "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                  "6679c962-81ea-439a-9770-e5bd18389d9d",
+                  "b863ea67-5589-4249-a2f8-ec047014bb85"
+                ],
+                "recovery_options": [],
+                "execution_state": {
+                  "status": "not_started"
+                }
+              },
+              "planning_goals": {
+                "target_days": [
+                  "2026-10-20"
+                ],
+                "hard_goals": {
+                  "end_before": null,
+                  "max_walking_minutes": null
+                },
+                "soft_goals": {
+                  "pace": null,
+                  "minimize_walking": false,
+                  "preserve_existing": false
+                }
+              },
+              "formal_route_facts": {
+                "days": [
+                  {
+                    "date": "2026-10-20",
+                    "activity_sequence": [
+                      "河坊街"
+                    ],
+                    "route_legs": [],
+                    "walking_duration_minutes": 0,
+                    "walking_distance_meters": 0,
+                    "day_end": "16:00"
+                  }
+                ]
+              },
+              "decision_context": {
+                "formal_itinerary": {
+                  "days": [
+                    {
+                      "day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+                      "date": "2026-10-20",
+                      "activities": [
+                        {
+                          "activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                          "name": "河坊街",
+                          "scheduled_time": "15:00:00",
+                          "duration_minutes": 60,
+                          "importance": "normal",
+                          "can_skip": true,
+                          "minimum_duration_minutes": null,
+                          "category": "sight",
+                          "longitude": 120.16863,
+                          "latitude": 30.2401,
+                          "schedule_locked": false,
+                          "status": "planned"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "protected_constraints": {
+                  "frozen_activity_ids": [],
+                  "protected_activity_ids": [],
+                  "editable_activity_ids": [
+                    "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+                  ],
+                  "provenance": {}
+                },
+                "execution_context": {
+                  "status": "not_started",
+                  "remaining_activity_ids": [
+                    "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+                  ]
+                },
+                "decision_memory": [],
+                "provenance": {
+                  "goals": "user_goal_and_grounded_intent",
+                  "formal_itinerary": "persisted_formal_itinerary",
+                  "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+                  "route_context": "persisted_amap_route",
+                  "execution_context": "execution_and_navigation_projection",
+                  "active_disruption": "persisted_disruption_projection",
+                  "user_preferences": "persisted_trip_preferences",
+                  "provider_facts": "planning_provider_facts",
+                  "decision_memory": "same_trip_same_target_day_rejected_revisions"
+                },
+                "route_context": {
+                  "days": [
+                    {
+                      "date": "2026-10-20",
+                      "route_fact_status": "unavailable",
+                      "route_legs": []
+                    }
+                  ]
+                }
+              }
+            },
+            "sequence": 4
+          },
+          {
+            "stage": "intent",
+            "status": "completed",
+            "at": "2026-10-18T13:15:02.836132+00:00",
+            "duration_ms": 190,
+            "call_id": "30bcc11c-cdac-49f9-98a8-4354462e0ad2",
+            "provider": null,
+            "purpose": null,
+            "data": {
+              "intent_resolution": {
+                "request": {
+                  "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                  "user_request": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+                  "intent": {
+                    "intent_type": "modify_day",
+                    "source_text": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+                    "time_scope": {
+                      "day_number": 2,
+                      "day_date": "2026-10-20",
+                      "period": null
+                    },
+                    "protected_activity_ids": [
+                      "b863ea67-5589-4249-a2f8-ec047014bb85"
+                    ],
+                    "requested_place_queries": [],
+                    "requested_pace": null,
+                    "missing_fields": [],
+                    "ambiguities": []
+                  },
+                  "entry_point": "trip_planner",
+                  "selected_day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+                  "selected_activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                  "target_day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b"
+                },
+                "requires_clarification": false,
+                "clarification_questions": [],
+                "parser_version": "rules-v1",
+                "semantic_draft": {
+                  "primary_intent": "replan_trip",
+                  "operations": [
+                    {
+                      "operation": "replan_trip",
+                      "raw_text": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+                      "date_expression": "第2天",
+                      "period": null,
+                      "activity_mentions": [],
+                      "place_mentions": [],
+                      "constraints": {
+                        "budget_must_not_increase": false,
+                        "max_additional_cost_fen": null,
+                        "preferred_environment": null,
+                        "max_walking_minutes": null,
+                        "requested_pace": null,
+                        "weather_sensitive": false,
+                        "preserve_completed": true
+                      }
+                    }
+                  ],
+                  "confidence": 0.98,
+                  "missing_fields": [],
+                  "ambiguities": [],
+                  "parser": "rules",
+                  "parser_version": "rules-envelope-v1"
+                },
+                "grounded_intent": {
+                  "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                  "primary_intent": "replan_trip",
+                  "operation_types": [
+                    "replan_trip"
+                  ],
+                  "target_day_ids": [
+                    "33cbf5b4-ba28-4efb-be23-53e467afd17b"
+                  ],
+                  "target_activity_ids": [
+                    "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+                  ],
+                  "candidate_place_ids": [],
+                  "unresolved_activity_mentions": [],
+                  "unresolved_place_mentions": [],
+                  "constraints": {
+                    "budget_must_not_increase": false,
+                    "max_additional_cost_fen": null,
+                    "preferred_environment": null,
+                    "max_walking_minutes": null,
+                    "requested_pace": null,
+                    "weather_sensitive": false,
+                    "preserve_completed": true
+                  },
+                  "missing_fields": [],
+                  "ambiguities": []
+                },
+                "policy_decision": {
+                  "operation_mode": "preview_change",
+                  "risk_level": "medium",
+                  "requires_confirmation": true,
+                  "reasons": [
+                    "formal_plan_change"
+                  ],
+                  "route": "plan_preview"
+                }
+              },
+              "planning_goals": {
+                "target_days": [
+                  "2026-10-20"
+                ],
+                "hard_goals": {
+                  "end_before": null,
+                  "max_walking_minutes": null
+                },
+                "soft_goals": {
+                  "pace": null,
+                  "minimize_walking": false,
+                  "preserve_existing": false
+                }
+              },
+              "planning_context": {
+                "trip": {
+                  "id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                  "title": "B 多轮背景与保护验收 02b2666d",
+                  "destination": "杭州",
+                  "destination_adcode": "",
+                  "destination_citycode": "",
+                  "center_longitude": null,
+                  "center_latitude": null,
+                  "accommodation": "",
+                  "accommodation_poi_id": "",
+                  "accommodation_address": "",
+                  "accommodation_district": "",
+                  "accommodation_longitude": null,
+                  "accommodation_latitude": null,
+                  "start_date": "2026-10-19",
+                  "end_date": "2026-10-21",
+                  "total_budget_fen": null,
+                  "daily_budget_fen": null,
+                  "currency": "CNY",
+                  "timezone": "Asia/Shanghai",
+                  "created_at": "2026-10-18T13:14:58.956250Z",
+                  "updated_at": "2026-10-18T13:15:01.544745Z",
+                  "archived_at": null,
+                  "version": 3,
+                  "status": "upcoming"
+                },
+                "preferences": {
+                  "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                  "pace": "balanced",
+                  "interest_categories": [],
+                  "transport_modes": [
+                    "walk"
+                  ],
+                  "daily_start_time": "15:00:00",
+                  "daily_end_time": "18:00:00",
+                  "meal_preferences": "",
+                  "avoid_categories": [],
+                  "max_walking_minutes": 180,
+                  "free_text_requirements": "步行上限30分钟\n偏好拍照、摄影",
+                  "requirement_records": [
+                    {
+                      "id": "req_535e3a242d425445b8358b6301fddf14",
+                      "text": "步行上限30分钟",
+                      "value": 30,
+                      "source": {
+                        "kind": "user_explicit",
+                        "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+                      },
+                      "scope": {
+                        "kind": "trip",
+                        "topic_id": null,
+                        "draft_id": null,
+                        "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                        "city": "杭州",
+                        "day_index": null,
+                        "date": null,
+                        "activity_id": null
+                      },
+                      "strength": "hard",
+                      "status": "active",
+                      "supersedes": []
+                    },
+                    {
+                      "id": "req_dd5247aba933531d9f6cf3a08a6b410b",
+                      "text": "偏好拍照、摄影",
+                      "value": "photography",
+                      "source": {
+                        "kind": "user_explicit",
+                        "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:create"
+                      },
+                      "scope": {
+                        "kind": "trip",
+                        "topic_id": null,
+                        "draft_id": null,
+                        "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                        "city": "杭州",
+                        "day_index": null,
+                        "date": null,
+                        "activity_id": null
+                      },
+                      "strength": "soft",
+                      "status": "active",
+                      "supersedes": []
+                    },
+                    {
+                      "id": "req_ee87b0d00d5559dda955ff501c7bdb3d",
+                      "text": "撤销：步行上限30分钟",
+                      "value": null,
+                      "source": {
+                        "kind": "user_explicit",
+                        "ref": "draft:34cc5eab-e732-4fdd-8fdf-de49c6abe74c:revoke:1"
+                      },
+                      "scope": {
+                        "kind": "day",
+                        "topic_id": null,
+                        "draft_id": null,
+                        "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                        "city": "杭州",
+                        "day_index": null,
+                        "date": "2026-10-20",
+                        "activity_id": null
+                      },
+                      "strength": "soft",
+                      "status": "revoked",
+                      "supersedes": [
+                        "req_535e3a242d425445b8358b6301fddf14"
+                      ]
+                    },
+                    {
+                      "id": "req_1dcde0f70a9255c5b96022e14e9cf862",
+                      "text": "此次验收未实际到访",
+                      "value": null,
+                      "source": {
+                        "kind": "user_explicit",
+                        "ref": "explicit-control:6923c34b-ac6c-49b6-bf85-6511f86d67c2"
+                      },
+                      "scope": {
+                        "kind": "trip",
+                        "topic_id": null,
+                        "draft_id": null,
+                        "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                        "city": "杭州",
+                        "day_index": null,
+                        "date": null,
+                        "activity_id": null
+                      },
+                      "strength": "soft",
+                      "status": "active",
+                      "supersedes": []
+                    }
+                  ],
+                  "version": 2,
+                  "created_at": "2026-10-18T13:14:58.956250Z",
+                  "updated_at": "2026-10-18T13:15:01.582264Z"
+                },
+                "days": [
+                  {
+                    "id": "a65980fc-625c-44cd-a56c-ce9b0c41a02b",
+                    "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                    "date": "2026-10-19",
+                    "label": "第 1 天",
+                    "theme": "探索杭州",
+                    "position": 0,
+                    "route_mode": "walk",
+                    "activities": [
+                      {
+                        "id": "6679c962-81ea-439a-9770-e5bd18389d9d",
+                        "place_id": "0d348210-7383-5ffd-99ec-07a85fe4e1e4",
+                        "name": "杭州博物馆",
+                        "custom_name": null,
+                        "display_name": "杭州博物馆",
+                        "category": "sight",
+                        "neighborhood": "上城区",
+                        "longitude": 120.166525,
+                        "latitude": 30.239091,
+                        "scheduled_time": "15:00:00",
+                        "duration_minutes": 60,
+                        "importance": "normal",
+                        "can_skip": true,
+                        "minimum_duration_minutes": null,
+                        "importance_source": "system_default",
+                        "can_skip_source": "system_default",
+                        "minimum_duration_source": "unknown",
+                        "estimated_cost_fen": 10000,
+                        "status": "planned",
+                        "position": 0,
+                        "schedule_locked": false,
+                        "version": 1,
+                        "note": "人工指定测试活动，不证明开放、预约或到访",
+                        "updated_at": "2026-10-18T13:15:01.438564Z",
+                        "source": {
+                          "id": "4f937cc6-b807-5742-b9e0-7b858d40772f",
+                          "title": "杭州博物馆 · 地点身份与参考资料（非预订报价）",
+                          "url": "https://www.amap.com/search",
+                          "provider": "amap",
+                          "queried_at": "2026-10-18T13:14:58.400660Z",
+                          "confidence": "medium"
+                        }
+                      }
+                    ],
+                    "route_legs": [],
+                    "conflicts": []
+                  },
+                  {
+                    "id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+                    "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                    "date": "2026-10-20",
+                    "label": "第 2 天",
+                    "theme": "探索杭州",
+                    "position": 1,
+                    "route_mode": "walk",
+                    "activities": [
+                      {
+                        "id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                        "place_id": "d96907a9-2760-5e1c-9901-7a19d081e0a7",
+                        "name": "河坊街",
+                        "custom_name": null,
+                        "display_name": "河坊街",
+                        "category": "sight",
+                        "neighborhood": "上城区",
+                        "longitude": 120.16863,
+                        "latitude": 30.2401,
+                        "scheduled_time": "15:00:00",
+                        "duration_minutes": 60,
+                        "importance": "normal",
+                        "can_skip": true,
+                        "minimum_duration_minutes": null,
+                        "importance_source": "system_default",
+                        "can_skip_source": "system_default",
+                        "minimum_duration_source": "unknown",
+                        "estimated_cost_fen": 10000,
+                        "status": "planned",
+                        "position": 0,
+                        "schedule_locked": false,
+                        "version": 1,
+                        "note": "人工指定测试活动，不证明开放、预约或到访",
+                        "updated_at": "2026-10-18T13:15:01.438564Z",
+                        "source": {
+                          "id": "3a875bc2-367b-5be9-85c6-9c265aa2694a",
+                          "title": "河坊街 · 地点身份与参考资料（非预订报价）",
+                          "url": "https://www.amap.com/search",
+                          "provider": "amap",
+                          "queried_at": "2026-10-18T13:14:58.637282Z",
+                          "confidence": "medium"
+                        }
+                      }
+                    ],
+                    "route_legs": [],
+                    "conflicts": []
+                  },
+                  {
+                    "id": "4b93155f-d34d-4e0e-9eb5-3019afb43931",
+                    "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                    "date": "2026-10-21",
+                    "label": "第 3 天",
+                    "theme": "探索杭州",
+                    "position": 2,
+                    "route_mode": "walk",
+                    "activities": [
+                      {
+                        "id": "b863ea67-5589-4249-a2f8-ec047014bb85",
+                        "place_id": "5ccbd6fc-6456-5029-92f9-c8fd7e700024",
+                        "name": "中国丝绸博物馆",
+                        "custom_name": null,
+                        "display_name": "中国丝绸博物馆",
+                        "category": "sight",
+                        "neighborhood": "西湖区",
+                        "longitude": 120.151292,
+                        "latitude": 30.22287,
+                        "scheduled_time": "15:00:00",
+                        "duration_minutes": 60,
+                        "importance": "normal",
+                        "can_skip": true,
+                        "minimum_duration_minutes": null,
+                        "importance_source": "system_default",
+                        "can_skip_source": "system_default",
+                        "minimum_duration_source": "unknown",
+                        "estimated_cost_fen": 10000,
+                        "status": "planned",
+                        "position": 0,
+                        "schedule_locked": true,
+                        "version": 2,
+                        "note": "人工指定测试活动，不证明开放、预约或到访",
+                        "updated_at": "2026-10-18T13:15:01.552137Z",
+                        "source": {
+                          "id": "ff9ddf3d-4851-5a99-b9d7-ffae10f656d2",
+                          "title": "中国丝绸博物馆 · 地点身份与参考资料（非预订报价）",
+                          "url": "https://www.amap.com/search",
+                          "provider": "amap",
+                          "queried_at": "2026-10-18T13:14:58.917815Z",
+                          "confidence": "medium"
+                        }
+                      }
+                    ],
+                    "route_legs": [],
+                    "conflicts": []
+                  }
+                ],
+                "candidates": [],
+                "actual_budget": {
+                  "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                  "currency": "CNY",
+                  "total_budget_fen": null,
+                  "total_spent_fen": 0,
+                  "total_remaining_fen": null,
+                  "daily_budget_fen": null,
+                  "today_spent_fen": 0,
+                  "today_remaining_fen": null,
+                  "local_date": "2026-10-18"
+                },
+                "planning_budget": {
+                  "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+                  "total_planned_fen": 30000,
+                  "total_remaining_fen": null,
+                  "days": [
+                    {
+                      "day_plan_id": "a65980fc-625c-44cd-a56c-ce9b0c41a02b",
+                      "date": "2026-10-19",
+                      "planned_fen": 10000,
+                      "remaining_fen": null,
+                      "ratio": null,
+                      "status": "unconstrained"
+                    },
+                    {
+                      "day_plan_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+                      "date": "2026-10-20",
+                      "planned_fen": 10000,
+                      "remaining_fen": null,
+                      "ratio": null,
+                      "status": "unconstrained"
+                    },
+                    {
+                      "day_plan_id": "4b93155f-d34d-4e0e-9eb5-3019afb43931",
+                      "date": "2026-10-21",
+                      "planned_fen": 10000,
+                      "remaining_fen": null,
+                      "ratio": null,
+                      "status": "unconstrained"
+                    }
+                  ]
+                },
+                "generated_at": "2026-10-18T13:15:02.716353Z",
+                "execution_recovery": {
+                  "frozen_activity_ids": [],
+                  "protected_activity_ids": [],
+                  "mutable_activity_ids": [
+                    "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                    "6679c962-81ea-439a-9770-e5bd18389d9d",
+                    "b863ea67-5589-4249-a2f8-ec047014bb85"
+                  ],
+                  "recovery_options": [],
+                  "execution_state": {
+                    "status": "not_started"
+                  }
+                },
+                "planning_goals": {
+                  "target_days": [
+                    "2026-10-20"
+                  ],
+                  "hard_goals": {
+                    "end_before": null,
+                    "max_walking_minutes": null
+                  },
+                  "soft_goals": {
+                    "pace": null,
+                    "minimize_walking": false,
+                    "preserve_existing": false
+                  }
+                },
+                "formal_route_facts": {
+                  "days": [
+                    {
+                      "date": "2026-10-20",
+                      "activity_sequence": [
+                        "河坊街"
+                      ],
+                      "route_legs": [],
+                      "walking_duration_minutes": 0,
+                      "walking_distance_meters": 0,
+                      "day_end": "16:00"
+                    }
+                  ]
+                },
+                "decision_context": {
+                  "formal_itinerary": {
+                    "days": [
+                      {
+                        "day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+                        "date": "2026-10-20",
+                        "activities": [
+                          {
+                            "activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                            "name": "河坊街",
+                            "scheduled_time": "15:00:00",
+                            "duration_minutes": 60,
+                            "importance": "normal",
+                            "can_skip": true,
+                            "minimum_duration_minutes": null,
+                            "category": "sight",
+                            "longitude": 120.16863,
+                            "latitude": 30.2401,
+                            "schedule_locked": false,
+                            "status": "planned"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "protected_constraints": {
+                    "frozen_activity_ids": [],
+                    "protected_activity_ids": [],
+                    "editable_activity_ids": [
+                      "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+                    ],
+                    "provenance": {}
+                  },
+                  "execution_context": {
+                    "status": "not_started",
+                    "remaining_activity_ids": [
+                      "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+                    ]
+                  },
+                  "decision_memory": [],
+                  "provenance": {
+                    "goals": "user_goal_and_grounded_intent",
+                    "formal_itinerary": "persisted_formal_itinerary",
+                    "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+                    "route_context": "persisted_amap_route",
+                    "execution_context": "execution_and_navigation_projection",
+                    "active_disruption": "persisted_disruption_projection",
+                    "user_preferences": "persisted_trip_preferences",
+                    "provider_facts": "planning_provider_facts",
+                    "decision_memory": "same_trip_same_target_day_rejected_revisions"
+                  },
+                  "route_context": {
+                    "days": [
+                      {
+                        "date": "2026-10-20",
+                        "route_fact_status": "unavailable",
+                        "route_legs": []
+                      }
+                    ]
+                  }
+                }
+              },
+              "external_facts": {
+                "status": "partial",
+                "search": {
+                  "status": "not_required",
+                  "sources": []
+                },
+                "weather": {
+                  "status": "no_coordinate_source"
+                }
+              }
+            },
+            "sequence": 5
+          },
+          {
+            "stage": "planner",
+            "status": "running",
+            "at": "2026-10-18T13:15:02.852590+00:00",
+            "duration_ms": null,
+            "call_id": "4ed6359f-0000-4513-a64b-66f705a053f0",
+            "provider": null,
+            "purpose": "Generate Candidate",
+            "data": {},
+            "sequence": 6
+          },
+          {
+            "stage": "planner",
+            "status": "completed",
+            "at": "2026-10-18T13:15:13.413828+00:00",
+            "duration_ms": 10550,
+            "call_id": "4ed6359f-0000-4513-a64b-66f705a053f0",
+            "provider": null,
+            "purpose": "Generate Candidate",
+            "data": {
+              "proposed_snapshot": {
+                "explanation": "本次候选只修改第2天（2026-10-20）河坊街的停留时长：从60分钟缩短为45分钟，开始时间保持15:00，仍在每日15:00-18:00时间窗内。该地点因契合你偏好拍照、摄影的需求而被保留，未删除或替换。第1天的杭州博物馆和第3天的中国丝绸博物馆均在本次调整范围之外，其中第3天15点的活动是受保护活动，系统会原样保留，本方案不输出也不改动它们。按你的明确要求，没有恢复第2天已撤销的步行不超过30分钟限制。目前第2天路线数据状态为不可用，因此无法给出新的交通时长或到店估算，仅按地点坐标分区作一般安排，待确认后由系统计算路线。未声称已保存，此为待确认候选。",
+                "activities": [
+                  {
+                    "candidate_id": "candidate:1:d96907a9-2760-5e1c-9901-7a19d081e0a7",
+                    "day_date": "2026-10-20",
+                    "place_candidate_id": "d96907a9-2760-5e1c-9901-7a19d081e0a7",
+                    "planned_start_time": "15:00:00",
+                    "duration_minutes": 45,
+                    "estimated_cost_fen": 10000,
+                    "transport_mode_to_here": "walk",
+                    "reason": "按你的要求将第2天河坊街的停留从60分钟调整为45分钟，开始时间仍为15:00，符合当日15:00-18:00的时间窗。河坊街是杭州历史街区，适合拍照与摄影，保留该地点身份不变，仅压缩停留。第1天与第3天的活动属于本次范围之外，不作改动；第3天15点固定活动为受保护活动，保持原样。未恢复步行不超过30分钟的限制。本候选待你确认后才会应用。",
+                    "source_ids": [
+                      "3a875bc2-367b-5be9-85c6-9c265aa2694a"
+                    ],
+                    "replaces_activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                    "locked": false
+                  },
+                  {
+                    "candidate_id": "preserved:6679c962-81ea-439a-9770-e5bd18389d9d",
+                    "day_date": "2026-10-19",
+                    "place_candidate_id": "0d348210-7383-5ffd-99ec-07a85fe4e1e4",
+                    "planned_start_time": "15:00:00",
+                    "duration_minutes": 60,
+                    "estimated_cost_fen": 10000,
+                    "transport_mode_to_here": "walk",
+                    "reason": "保留这项原有安排，本次只调整你指定的日期或活动。",
+                    "source_ids": [
+                      "4f937cc6-b807-5742-b9e0-7b858d40772f"
+                    ],
+                    "replaces_activity_id": "6679c962-81ea-439a-9770-e5bd18389d9d",
+                    "locked": false
+                  }
+                ],
+                "route_legs": [],
+                "decision_ledger": null,
+                "provenance_parse_errors": [
+                  "decision_explanation_unverified"
+                ]
+              }
+            },
+            "sequence": 7
+          },
+          {
+            "stage": "validator",
+            "status": "running",
+            "at": "2026-10-18T13:15:13.424789+00:00",
+            "duration_ms": null,
+            "call_id": "59d784d1-6f3e-4a4a-a5c6-ec4d79cacadd",
+            "provider": null,
+            "purpose": null,
+            "data": {},
+            "sequence": 8
+          },
+          {
+            "stage": "route",
+            "status": "running",
+            "at": "2026-10-18T13:15:13.452070+00:00",
+            "duration_ms": null,
+            "call_id": "41914e5f-dfaf-46e3-a930-0b8c8a11adf9",
+            "provider": null,
+            "purpose": "Route enrichment (includes persisted cache lookup)",
+            "data": {},
+            "sequence": 9
+          },
+          {
+            "stage": "route",
+            "status": "completed",
+            "at": "2026-10-18T13:15:13.474180+00:00",
+            "duration_ms": 14,
+            "call_id": "41914e5f-dfaf-46e3-a930-0b8c8a11adf9",
+            "provider": null,
+            "purpose": "Route enrichment (includes persisted cache lookup)",
+            "data": {
+              "route_legs": []
+            },
+            "sequence": 10
+          },
+          {
+            "stage": "validator",
+            "status": "completed",
+            "at": "2026-10-18T13:15:13.536947+00:00",
+            "duration_ms": 101,
+            "call_id": "59d784d1-6f3e-4a4a-a5c6-ec4d79cacadd",
+            "provider": null,
+            "purpose": null,
+            "data": {
+              "proposed_snapshot": {
+                "explanation": "本次候选只修改第2天（2026-10-20）河坊街的停留时长：从60分钟缩短为45分钟，开始时间保持15:00，仍在每日15:00-18:00时间窗内。该地点因契合你偏好拍照、摄影的需求而被保留，未删除或替换。第1天的杭州博物馆和第3天的中国丝绸博物馆均在本次调整范围之外，其中第3天15点的活动是受保护活动，系统会原样保留，本方案不输出也不改动它们。按你的明确要求，没有恢复第2天已撤销的步行不超过30分钟限制。目前第2天路线数据状态为不可用，因此无法给出新的交通时长或到店估算，仅按地点坐标分区作一般安排，待确认后由系统计算路线。未声称已保存，此为待确认候选。",
+                "activities": [
+                  {
+                    "candidate_id": "candidate:1:d96907a9-2760-5e1c-9901-7a19d081e0a7",
+                    "day_date": "2026-10-20",
+                    "place_candidate_id": "d96907a9-2760-5e1c-9901-7a19d081e0a7",
+                    "planned_start_time": "15:00:00",
+                    "duration_minutes": 45,
+                    "estimated_cost_fen": 10000,
+                    "transport_mode_to_here": "walk",
+                    "reason": "按你的要求将第2天河坊街的停留从60分钟调整为45分钟，开始时间仍为15:00，符合当日15:00-18:00的时间窗。河坊街是杭州历史街区，适合拍照与摄影，保留该地点身份不变，仅压缩停留。第1天与第3天的活动属于本次范围之外，不作改动；第3天15点固定活动为受保护活动，保持原样。未恢复步行不超过30分钟的限制。本候选待你确认后才会应用。",
+                    "source_ids": [
+                      "3a875bc2-367b-5be9-85c6-9c265aa2694a"
+                    ],
+                    "replaces_activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+                    "locked": false
+                  },
+                  {
+                    "candidate_id": "preserved:6679c962-81ea-439a-9770-e5bd18389d9d",
+                    "day_date": "2026-10-19",
+                    "place_candidate_id": "0d348210-7383-5ffd-99ec-07a85fe4e1e4",
+                    "planned_start_time": "15:00:00",
+                    "duration_minutes": 60,
+                    "estimated_cost_fen": 10000,
+                    "transport_mode_to_here": "walk",
+                    "reason": "保留这项原有安排，本次只调整你指定的日期或活动。",
+                    "source_ids": [
+                      "4f937cc6-b807-5742-b9e0-7b858d40772f"
+                    ],
+                    "replaces_activity_id": "6679c962-81ea-439a-9770-e5bd18389d9d",
+                    "locked": false
+                  }
+                ],
+                "route_legs": [],
+                "decision_ledger": null,
+                "provenance_parse_errors": [
+                  "decision_explanation_unverified"
+                ]
+              },
+              "validation_result": {
+                "valid": true,
+                "errors": [],
+                "warnings": []
+              },
+              "decision_summary": {
+                "status": "invalid",
+                "entries": [],
+                "error_codes": [
+                  "decision_explanation_unverified"
+                ],
+                "supported_change_count": 0,
+                "unsupported_change_count": 0
+              },
+              "schedule_adjustments": []
+            },
+            "sequence": 11
+          },
+          {
+            "stage": "goal_check",
+            "status": "running",
+            "at": "2026-10-18T13:15:13.548035+00:00",
+            "duration_ms": null,
+            "call_id": "5d578ded-71f4-4ffe-be9a-120281f87219",
+            "provider": null,
+            "purpose": null,
+            "data": {},
+            "sequence": 12
+          },
+          {
+            "stage": "goal_check",
+            "status": "completed",
+            "at": "2026-10-18T13:15:13.557565+00:00",
+            "duration_ms": 0,
+            "call_id": "5d578ded-71f4-4ffe-be9a-120281f87219",
+            "provider": null,
+            "purpose": null,
+            "data": {
+              "goal_satisfaction": {
+                "results": []
+              }
+            },
+            "sequence": 13
+          },
+          {
+            "stage": "revision",
+            "status": "running",
+            "at": "2026-10-18T13:15:13.565452+00:00",
+            "duration_ms": null,
+            "call_id": "1ecbc8ec-4938-47ec-8342-20885213889d",
+            "provider": null,
+            "purpose": null,
+            "data": {},
+            "sequence": 14
+          },
+          {
+            "stage": "revision",
+            "status": "completed",
+            "at": "2026-10-18T13:15:13.601255+00:00",
+            "duration_ms": 26,
+            "call_id": "1ecbc8ec-4938-47ec-8342-20885213889d",
+            "provider": null,
+            "purpose": null,
+            "data": {
+              "revision_id": "03750865-8ebe-4f55-a690-9deace0b1166"
+            },
+            "sequence": 15
+          },
+          {
+            "stage": "user_decision",
+            "status": "running",
+            "at": "2026-10-18T13:15:14.138789+00:00",
+            "duration_ms": null,
+            "call_id": "021c8cc4-8413-40a9-8abc-e10a57388a46",
+            "provider": null,
+            "purpose": null,
+            "data": {},
+            "sequence": 16
+          },
+          {
+            "stage": "user_decision",
+            "status": "completed",
+            "at": "2026-10-18T13:15:14.215009+00:00",
+            "duration_ms": 64,
+            "call_id": "021c8cc4-8413-40a9-8abc-e10a57388a46",
+            "provider": null,
+            "purpose": null,
+            "data": {
+              "outcome": "accepted"
+            },
+            "sequence": 17
+          }
+        ],
+        "observation_sequence": 17,
+        "observations_truncated": false,
+        "stage": "validation",
+        "message": "路线查询已完成，正在核对时间、日期与预算冲突…",
+        "updated_at": "2026-10-18T13:15:13.481860+00:00"
+      },
+      "heartbeat_at": "2026-10-18T13:15:13.481860Z",
+      "entry_point": "trip_planner",
+      "selected_day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+      "selected_activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+      "intent_resolution": {
+        "request": {
+          "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+          "user_request": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+          "intent": {
+            "intent_type": "modify_day",
+            "source_text": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+            "time_scope": {
+              "day_number": 2,
+              "day_date": "2026-10-20",
+              "period": null
+            },
+            "protected_activity_ids": [
+              "b863ea67-5589-4249-a2f8-ec047014bb85"
+            ],
+            "requested_place_queries": [],
+            "requested_pace": null,
+            "missing_fields": [],
+            "ambiguities": []
+          },
+          "entry_point": "trip_planner",
+          "selected_day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+          "selected_activity_id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+          "target_day_id": "33cbf5b4-ba28-4efb-be23-53e467afd17b"
+        },
+        "requires_clarification": false,
+        "clarification_questions": [],
+        "parser_version": "rules-v1",
+        "semantic_draft": {
+          "primary_intent": "replan_trip",
+          "operations": [
+            {
+              "operation": "replan_trip",
+              "raw_text": "只调整第2天河坊街的停留为45分钟，其他日期安排保持原样，第3天15点固定活动不要动，不要恢复第2天已撤销的步行不超过30分钟限制。先提出候选，等待我确认。",
+              "date_expression": "第2天",
+              "period": null,
+              "activity_mentions": [],
+              "place_mentions": [],
+              "constraints": {
+                "budget_must_not_increase": false,
+                "max_additional_cost_fen": null,
+                "preferred_environment": null,
+                "max_walking_minutes": null,
+                "requested_pace": null,
+                "weather_sensitive": false,
+                "preserve_completed": true
+              }
+            }
+          ],
+          "confidence": 0.98,
+          "missing_fields": [],
+          "ambiguities": [],
+          "parser": "rules",
+          "parser_version": "rules-envelope-v1"
+        },
+        "grounded_intent": {
+          "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+          "primary_intent": "replan_trip",
+          "operation_types": [
+            "replan_trip"
+          ],
+          "target_day_ids": [
+            "33cbf5b4-ba28-4efb-be23-53e467afd17b"
+          ],
+          "target_activity_ids": [
+            "18b4abfc-ba74-444a-9ed0-cf50c980581b"
+          ],
+          "candidate_place_ids": [],
+          "unresolved_activity_mentions": [],
+          "unresolved_place_mentions": [],
+          "constraints": {
+            "budget_must_not_increase": false,
+            "max_additional_cost_fen": null,
+            "preferred_environment": null,
+            "max_walking_minutes": null,
+            "requested_pace": null,
+            "weather_sensitive": false,
+            "preserve_completed": true
+          },
+          "missing_fields": [],
+          "ambiguities": []
+        },
+        "policy_decision": {
+          "operation_mode": "preview_change",
+          "risk_level": "medium",
+          "requires_confirmation": true,
+          "reasons": [
+            "formal_plan_change"
+          ],
+          "route": "plan_preview"
+        }
+      },
+      "base_trip_version": 3,
+      "model_provider": "glm",
+      "model_name": "glm-5.3-flash",
+      "token_usage": 4504,
+      "error_code": null,
+      "error_message": null,
+      "error_details": null,
+      "pending_interrupt": null,
+      "created_at": "2026-10-18T13:15:01.848172Z",
+      "started_at": "2026-10-18T13:15:02.172640Z",
+      "completed_at": "2026-10-18T13:15:14.206260Z"
+    },
+    "pending_interrupt": null
+  },
+  "before_days": [
+    {
+      "id": "a65980fc-625c-44cd-a56c-ce9b0c41a02b",
+      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+      "date": "2026-10-19",
+      "label": "第 1 天",
+      "theme": "探索杭州",
+      "position": 0,
+      "route_mode": "walk",
+      "activities": [
+        {
+          "id": "6679c962-81ea-439a-9770-e5bd18389d9d",
+          "place_id": "0d348210-7383-5ffd-99ec-07a85fe4e1e4",
+          "name": "杭州博物馆",
+          "custom_name": null,
+          "display_name": "杭州博物馆",
+          "category": "sight",
+          "neighborhood": "上城区",
+          "longitude": 120.166525,
+          "latitude": 30.239091,
+          "scheduled_time": "15:00:00",
+          "duration_minutes": 60,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 10000,
+          "status": "planned",
+          "position": 0,
+          "schedule_locked": false,
+          "version": 1,
+          "note": "人工指定测试活动，不证明开放、预约或到访",
+          "updated_at": "2026-10-18T13:15:01.438564Z",
+          "source": {
+            "id": "4f937cc6-b807-5742-b9e0-7b858d40772f",
+            "title": "杭州博物馆 · 地点身份与参考资料（非预订报价）",
+            "url": "https://www.amap.com/search?id=B0FFFWQGI8",
+            "provider": "amap",
+            "queried_at": "2026-10-18T13:14:58.400660Z",
+            "confidence": "medium"
+          }
+        }
+      ],
+      "route_legs": [],
+      "conflicts": []
+    },
+    {
+      "id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+      "date": "2026-10-20",
+      "label": "第 2 天",
+      "theme": "探索杭州",
+      "position": 1,
+      "route_mode": "walk",
+      "activities": [
+        {
+          "id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+          "place_id": "d96907a9-2760-5e1c-9901-7a19d081e0a7",
+          "name": "河坊街",
+          "custom_name": null,
+          "display_name": "河坊街",
+          "category": "sight",
+          "neighborhood": "上城区",
+          "longitude": 120.16863,
+          "latitude": 30.2401,
+          "scheduled_time": "15:00:00",
+          "duration_minutes": 60,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 10000,
+          "status": "planned",
+          "position": 0,
+          "schedule_locked": false,
+          "version": 1,
+          "note": "人工指定测试活动，不证明开放、预约或到访",
+          "updated_at": "2026-10-18T13:15:01.438564Z",
+          "source": {
+            "id": "3a875bc2-367b-5be9-85c6-9c265aa2694a",
+            "title": "河坊街 · 地点身份与参考资料（非预订报价）",
+            "url": "https://www.amap.com/search?id=B0FFGQ772L",
+            "provider": "amap",
+            "queried_at": "2026-10-18T13:14:58.637282Z",
+            "confidence": "medium"
+          }
+        }
+      ],
+      "route_legs": [],
+      "conflicts": []
+    },
+    {
+      "id": "4b93155f-d34d-4e0e-9eb5-3019afb43931",
+      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+      "date": "2026-10-21",
+      "label": "第 3 天",
+      "theme": "探索杭州",
+      "position": 2,
+      "route_mode": "walk",
+      "activities": [
+        {
+          "id": "b863ea67-5589-4249-a2f8-ec047014bb85",
+          "place_id": "5ccbd6fc-6456-5029-92f9-c8fd7e700024",
+          "name": "中国丝绸博物馆",
+          "custom_name": null,
+          "display_name": "中国丝绸博物馆",
+          "category": "sight",
+          "neighborhood": "西湖区",
+          "longitude": 120.151292,
+          "latitude": 30.22287,
+          "scheduled_time": "15:00:00",
+          "duration_minutes": 60,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 10000,
+          "status": "planned",
+          "position": 0,
+          "schedule_locked": true,
+          "version": 2,
+          "note": "人工指定测试活动，不证明开放、预约或到访",
+          "updated_at": "2026-10-18T13:15:01.552137Z",
+          "source": {
+            "id": "ff9ddf3d-4851-5a99-b9d7-ffae10f656d2",
+            "title": "中国丝绸博物馆 · 地点身份与参考资料（非预订报价）",
+            "url": "https://www.amap.com/search?id=B023B09JLL",
+            "provider": "amap",
+            "queried_at": "2026-10-18T13:14:58.917815Z",
+            "confidence": "medium"
+          }
+        }
+      ],
+      "route_legs": [],
+      "conflicts": []
+    }
+  ],
+  "after_days": [
+    {
+      "id": "a65980fc-625c-44cd-a56c-ce9b0c41a02b",
+      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+      "date": "2026-10-19",
+      "label": "第 1 天",
+      "theme": "探索杭州",
+      "position": 0,
+      "route_mode": "walk",
+      "activities": [
+        {
+          "id": "6679c962-81ea-439a-9770-e5bd18389d9d",
+          "place_id": "0d348210-7383-5ffd-99ec-07a85fe4e1e4",
+          "name": "杭州博物馆",
+          "custom_name": null,
+          "display_name": "杭州博物馆",
+          "category": "sight",
+          "neighborhood": "上城区",
+          "longitude": 120.166525,
+          "latitude": 30.239091,
+          "scheduled_time": "15:00:00",
+          "duration_minutes": 60,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 10000,
+          "status": "planned",
+          "position": 0,
+          "schedule_locked": false,
+          "version": 2,
+          "note": "人工指定测试活动，不证明开放、预约或到访",
+          "updated_at": "2026-10-18T13:15:14.151940Z",
+          "source": {
+            "id": "4f937cc6-b807-5742-b9e0-7b858d40772f",
+            "title": "杭州博物馆 · 地点身份与参考资料（非预订报价）",
+            "url": "https://www.amap.com/search?id=B0FFFWQGI8",
+            "provider": "amap",
+            "queried_at": "2026-10-18T13:14:58.400660Z",
+            "confidence": "medium"
+          }
+        }
+      ],
+      "route_legs": [],
+      "conflicts": []
+    },
+    {
+      "id": "33cbf5b4-ba28-4efb-be23-53e467afd17b",
+      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+      "date": "2026-10-20",
+      "label": "第 2 天",
+      "theme": "探索杭州",
+      "position": 1,
+      "route_mode": "walk",
+      "activities": [
+        {
+          "id": "18b4abfc-ba74-444a-9ed0-cf50c980581b",
+          "place_id": "d96907a9-2760-5e1c-9901-7a19d081e0a7",
+          "name": "河坊街",
+          "custom_name": null,
+          "display_name": "河坊街",
+          "category": "sight",
+          "neighborhood": "上城区",
+          "longitude": 120.16863,
+          "latitude": 30.2401,
+          "scheduled_time": "15:00:00",
+          "duration_minutes": 45,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 10000,
+          "status": "planned",
+          "position": 0,
+          "schedule_locked": false,
+          "version": 2,
+          "note": "人工指定测试活动，不证明开放、预约或到访",
+          "updated_at": "2026-10-18T13:15:14.151940Z",
+          "source": {
+            "id": "3a875bc2-367b-5be9-85c6-9c265aa2694a",
+            "title": "河坊街 · 地点身份与参考资料（非预订报价）",
+            "url": "https://www.amap.com/search?id=B0FFGQ772L",
+            "provider": "amap",
+            "queried_at": "2026-10-18T13:14:58.637282Z",
+            "confidence": "medium"
+          }
+        }
+      ],
+      "route_legs": [],
+      "conflicts": []
+    },
+    {
+      "id": "4b93155f-d34d-4e0e-9eb5-3019afb43931",
+      "trip_id": "24fc503a-41fa-4f13-92a2-5ead814bdd9d",
+      "date": "2026-10-21",
+      "label": "第 3 天",
+      "theme": "探索杭州",
+      "position": 2,
+      "route_mode": "walk",
+      "activities": [
+        {
+          "id": "b863ea67-5589-4249-a2f8-ec047014bb85",
+          "place_id": "5ccbd6fc-6456-5029-92f9-c8fd7e700024",
+          "name": "中国丝绸博物馆",
+          "custom_name": null,
+          "display_name": "中国丝绸博物馆",
+          "category": "sight",
+          "neighborhood": "西湖区",
+          "longitude": 120.151292,
+          "latitude": 30.22287,
+          "scheduled_time": "15:00:00",
+          "duration_minutes": 60,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 10000,
+          "status": "planned",
+          "position": 0,
+          "schedule_locked": true,
+          "version": 2,
+          "note": "人工指定测试活动，不证明开放、预约或到访",
+          "updated_at": "2026-10-18T13:15:14.151940Z",
+          "source": {
+            "id": "ff9ddf3d-4851-5a99-b9d7-ffae10f656d2",
+            "title": "中国丝绸博物馆 · 地点身份与参考资料（非预订报价）",
+            "url": "https://www.amap.com/search?id=B023B09JLL",
+            "provider": "amap",
+            "queried_at": "2026-10-18T13:14:58.917815Z",
+            "confidence": "medium"
+          }
+        }
+      ],
+      "route_legs": [],
+      "conflicts": []
+    }
+  ],
+  "status": "failed",
+  "failure_type": "AssertionError",
+  "failure": ""
+}
