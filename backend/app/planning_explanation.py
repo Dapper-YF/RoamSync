@@ -49,6 +49,7 @@ def describe_plan_changes(context: dict, snapshot: CandidatePlanSnapshot, reques
         short_name = names.get(tradeoff["shorter_place_candidate_id"], "较短步行候选")
         if tradeoff["selected"] == "longer":
             benefits = {"explicitly_requested_place": "用户明确指定", "matches_saved_interest_category": "符合已保存的兴趣类别",
+                        "matches_reviewed_landscape_interest": "精确审核的景观组件与当前自然或摄影兴趣匹配（非摄影效果保证）",
                         "matches_explicit_photography_interest": "符合摄影兴趣", "fewer_soft_category_conflicts": "较少软性类别冲突",
                         "lower_weather_penalty_from_exposure_hint_not_shelter_proof": "按地点类型提示推测天气影响较低（非避雨保证）", "suggested_duration_fits_known_free_slot": "建议时长更适合已知空档",
                         "lower_supplied_estimated_cost_not_verified_price": "输入预计费用较低（非核实票价）"}

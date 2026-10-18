@@ -182,6 +182,42 @@ def _category_requirement(item: dict, candidate: dict) -> bool:
     return item.get("key") == "avoid_category" and item.get("value") == candidate.get("category")
 
 
+def reviewed_landscape_interest(context: dict, exposure: dict, day_date: str, *, now: datetime) -> dict | None:
+    """Reuse reviewed stable components, not a place name/category guess.
+
+    Date-scoped effective records override the legacy category preference for
+    that interest, including revocation. Stable cultural evidence does not
+    certify current light, weather, opening or the quality of a photo.
+    """
+    if (exposure.get("confidence") != "reviewed_stable_landscape_components"
+        or exposure.get("hint") != "outdoor_landscape" or not exposure.get("assertion_id")
+        or not exposure.get("source_url")):
+        return None
+    try:
+        reviewed = datetime.fromisoformat(str(exposure["reviewed_at"]).replace("Z", "+00:00"))
+        expires = datetime.fromisoformat(str(exposure["expires_at"]).replace("Z", "+00:00")) if exposure.get("expires_at") else None
+        if reviewed.tzinfo is None or reviewed > now or expires and (expires.tzinfo is None or expires <= now):
+            return None
+    except (KeyError, TypeError, ValueError):
+        return None
+    preferences = context.get("preferences") or {}
+    history = preferences.get("requirement_records") or []
+    current = _requirements(context, day_date)
+    matches, refs = [], []
+    for interest in ("nature", "photography"):
+        active = [r for r in current if r.get("key") == "interest" and r.get("value") == interest]
+        typed_history = any(r.get("key") == "interest" and r.get("value") == interest for r in history)
+        if active:
+            matches.append(interest)
+            refs.extend({"kind": "effective_requirement", "requirement_id": r["id"], "interest": interest} for r in active)
+        elif not typed_history and interest in (preferences.get("interest_categories") or []):
+            matches.append(interest)
+            refs.append({"kind": "saved_explicit_preference", "field": "interest_categories", "interest": interest})
+    return {"matched_interests": matches, "preference_refs": refs,
+            "assertion_id": exposure["assertion_id"], "source_url": exposure["source_url"], "reviewed_at": exposure["reviewed_at"],
+            "limit": "stable_landscape_components_match_interest_not_photo_quality_weather_or_opening_guarantee"} if matches else None
+
+
 def compare_candidates(context: dict, candidates: list[dict], *, allowed_dates: set[str], now: datetime | None = None) -> tuple[list[dict], dict]:
     now = now or datetime.now(UTC)
     forecasts = weather_days(context, now=now)
@@ -231,6 +267,7 @@ def compare_candidates(context: dict, candidates: list[dict], *, allowed_dates: 
                                  "suggested_duration_minutes": suggested, "anchor_activity_id": str(anchor["id"]),
                                  "limit": "directed_leg_and_soft_rest_heuristic_only_no_full_day_route_guarantee"}
             per_day.append({"date": day_date, "eligible": not excluded, "excluded_by": excluded,
+                            "reviewed_landscape_interest": reviewed_landscape_interest(context, exposure, day_date, now=now),
                             "pace_preference": pace, "walking_preference": walking_preference,
                             "photography_landscape_match": any(item.get("key") == "interest" and item.get("value") == "photography" for item in requirements) and exposure["hint"] == "outdoor_landscape",
                             "soft_avoid_requirements": soft_avoid, "candidate_rain_risk": candidate_rain_risk, "weather_penalty": rain_penalty,
@@ -308,6 +345,8 @@ def walking_tradeoffs(rows: list[dict], candidates: list[dict]) -> list[dict]:
                     advantages.append("explicitly_requested_place")
                 if longer["interest_match"] and not shorter["interest_match"]:
                     advantages.append("matches_saved_interest_category")
+                if ld.get("reviewed_landscape_interest") and not sd.get("reviewed_landscape_interest"):
+                    advantages.append("matches_reviewed_landscape_interest")
                 if ld["photography_landscape_match"] and not sd["photography_landscape_match"]:
                     advantages.append("matches_explicit_photography_interest")
                 if len(ld["soft_avoid_requirements"]) < len(sd["soft_avoid_requirements"]):
@@ -330,6 +369,7 @@ def walking_tradeoffs(rows: list[dict], candidates: list[dict]) -> list[dict]:
                     "longer_walk_minutes": lr["duration_minutes"], "shorter_walk_minutes": sr["duration_minutes"],
                     "extra_directed_walk_minutes": lr["duration_minutes"] - sr["duration_minutes"],
                     "longer_option_supported_advantages": advantages,
+                    "longer_landscape_interest_evidence": ld.get("reviewed_landscape_interest"),
                     "status": "competing_objectives" if advantages else "no_supplied_advantage_for_longer_leg",
                     "limit": "one_directed_leg_only_not_complete_day_or_verified_experience_quality"})
     return pairs

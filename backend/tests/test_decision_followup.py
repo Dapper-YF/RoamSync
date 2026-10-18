@@ -2,7 +2,7 @@
 from copy import deepcopy
 from datetime import UTC, datetime, timedelta
 
-from app.candidate_decisions import compare_candidates, review_candidate_decisions, unsupported_decision_claims
+from app.candidate_decisions import compare_candidates, review_candidate_decisions, unsupported_decision_claims, reviewed_landscape_interest
 from app.planning_explanation import describe_plan_changes
 from app.schemas import CandidateActivity, CandidatePlanSnapshot
 from tests.test_openai_planner import _state
@@ -69,6 +69,40 @@ def test_unknown_exposure_or_duration_never_becomes_evidenced_advantage():
     _, c = compare_candidates(ctx, ctx["candidates"], allowed_dates={"2026-11-01"})
     advantages = c["walking_tradeoffs"][0]["longer_option_supported_advantages"]
     assert not any("weather" in item or "duration" in item for item in advantages)
+
+
+def test_reviewed_landscape_matches_explicit_interest_even_when_provider_category_is_sight():
+    ctx = walking_case()
+    ctx["trip"]["destination"] = "杭州"
+    lake = ctx["candidates"][0]
+    lake.update(name="杭州西湖风景名胜区", category="sight", longitude=120.14, latitude=30.24,
+        source={"provider": "AMap POI", "id": "source", "url": "https://www.amap.com/search?id=B023B13L9M"})
+    ctx["preferences"]["interest_categories"] = ["nature", "photography"]
+    _, comparison = compare_candidates(ctx, ctx["candidates"], allowed_dates={"2026-11-01"})
+    pair = comparison["walking_tradeoffs"][0]
+    assert "matches_reviewed_landscape_interest" in pair["longer_option_supported_advantages"]
+    assert pair["longer_landscape_interest_evidence"]["assertion_id"] == "west_lake.landscape_components"
+    assert set(pair["longer_landscape_interest_evidence"]["matched_interests"]) == {"nature", "photography"}
+    assert pair["extra_directed_walk_minutes"] == 26
+    lake["source"]["url"] = "https://www.amap.com/search?id=WRONG"
+    _, comparison = compare_candidates(ctx, ctx["candidates"], allowed_dates={"2026-11-01"})
+    assert "matches_reviewed_landscape_interest" not in comparison["walking_tradeoffs"][0]["longer_option_supported_advantages"]
+
+
+def test_reviewed_interest_rejects_expiry_unknown_provenance_and_revoked_preference():
+    ctx = walking_case()
+    now = datetime.now(UTC)
+    exposure = {"hint": "outdoor_landscape", "confidence": "reviewed_stable_landscape_components",
+        "assertion_id": "reviewed-components", "source_url": "https://example.org/reviewed",
+        "reviewed_at": (now - timedelta(days=1)).isoformat()}
+    assert reviewed_landscape_interest(ctx, exposure, "2026-11-01", now=now)
+    assert reviewed_landscape_interest(ctx, exposure | {"expires_at": (now - timedelta(seconds=1)).isoformat()}, "2026-11-01", now=now) is None
+    assert reviewed_landscape_interest(ctx, exposure | {"reviewed_at": (now + timedelta(days=1)).isoformat()}, "2026-11-01", now=now) is None
+    assert reviewed_landscape_interest(ctx, exposure | {"confidence": "low_confidence_taxonomy_inference"}, "2026-11-01", now=now) is None
+    ctx["preferences"]["requirement_records"] = [{"key": "interest", "value": "nature", "status": "revoked"}]
+    assert reviewed_landscape_interest(ctx, exposure, "2026-11-01", now=now) is None
+    ctx["preferences"].update(interest_categories=[], requirement_records=[])
+    assert reviewed_landscape_interest(ctx, exposure, "2026-11-01", now=now) is None
     ctx = walking_case()
     ctx["candidate_route_facts"][1]["expires_at"] = (datetime.now(UTC) - timedelta(seconds=1)).isoformat()
     _, c = compare_candidates(ctx, ctx["candidates"], allowed_dates={"2026-11-01"})
