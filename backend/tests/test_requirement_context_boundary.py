@@ -11,6 +11,7 @@ SCOPE = {"kind": "draft", "draft_id": "background-boundary", "city": "杭州"}
 @pytest.mark.parametrize("text", [
     "仅用于软件验收", "本次行程只是用于系统测试", "未实际到访", "我之前没有去过",
     "仅用于软件验收/未实际到访", "仅用于软件验收（未实际到访）",
+    "此次验收未实际到访",
 ])
 def test_explicit_field_does_not_turn_provenance_into_requirements(text):
     assert capture_explicit_requirements([], text, scope=SCOPE, source_ref="u", force=True) == []
@@ -20,6 +21,7 @@ def test_explicit_field_does_not_turn_provenance_into_requirements(text):
     "不要自动确认到访", "软件验收期间不要安排购物", "必须带婴儿推车",
     "不要安排夜间活动", "未实际到访的地点不要标记已到达", "请安排软件博物馆",
     "我有哮喘，需要避免爬坡", "仅用于软件验收但不要安排夜间活动",
+    "未去过的地方优先", "没去过故想去", "此次验收未实际到访但正式旅行不要自动确认到访",
 ])
 def test_actual_travel_or_execution_constraints_are_preserved(text):
     records = capture_explicit_requirements([], text, scope=SCOPE, source_ref="u", force=True)
@@ -41,7 +43,8 @@ def test_question_and_background_do_not_discard_separate_explicit_instruction():
 
 
 def test_legacy_background_is_excluded_from_projection_without_rewriting_source():
-    records = add_requirement([], text="仅用于软件验收", scope=SCOPE, source_ref="legacy")
+    # Exact offending record from unified-preparation-2026-10-18.json.
+    records = add_requirement([], text="此次验收未实际到访", scope=SCOPE, source_ref="legacy")
     records = add_requirement(records, text="不要自动确认到访", scope=SCOPE, source_ref="real")
     before = deepcopy(records)
     projected = project_requirements(records, draft_id=SCOPE["draft_id"], city="杭州", day_index=2)
