@@ -12,7 +12,8 @@ fun yuanTextToFen(value: String): Long? = runCatching {
     amount.movePointRight(2).longValueExact()
 }.getOrNull()
 
-fun formatFen(value: Long, currencyCode: String = "CNY"): String {
+fun formatFen(value: Long?, currencyCode: String = "CNY"): String {
+    if (value == null) return "未设置"
     val formatter = NumberFormat.getCurrencyInstance(Locale.CHINA)
     formatter.currency = Currency.getInstance(currencyCode)
     return formatter.format(BigDecimal.valueOf(value, 2))

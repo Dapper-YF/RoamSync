@@ -23,10 +23,16 @@ data class TripResponse(
     val title: String,
     @SerialName("start_date") val startDate: String,
     @SerialName("end_date") val endDate: String,
-    @SerialName("total_budget_fen") val totalBudgetFen: Long,
-    @SerialName("daily_budget_fen") val dailyBudgetFen: Long,
+    @SerialName("total_budget_fen") val totalBudgetFen: Long? = null,
+    @SerialName("daily_budget_fen") val dailyBudgetFen: Long? = null,
     val currency: String,
     val timezone: String,
+    val destination: String = "",
+    val accommodation: String = "",
+    val status: String = "upcoming",
+    val version: Int = 1,
+    @SerialName("center_longitude") val longitude: Double? = null,
+    @SerialName("center_latitude") val latitude: Double? = null,
 )
 
 @Serializable
@@ -48,11 +54,11 @@ data class ExpenseResponse(
 data class BudgetResponse(
     @SerialName("trip_id") val tripId: String,
     val currency: String,
-    @SerialName("total_budget_fen") val totalBudgetFen: Long,
+    @SerialName("total_budget_fen") val totalBudgetFen: Long? = null,
     @SerialName("total_spent_fen") val totalSpentFen: Long,
-    @SerialName("total_remaining_fen") val totalRemainingFen: Long,
-    @SerialName("daily_budget_fen") val dailyBudgetFen: Long,
+    @SerialName("total_remaining_fen") val totalRemainingFen: Long? = null,
+    @SerialName("daily_budget_fen") val dailyBudgetFen: Long? = null,
     @SerialName("today_spent_fen") val todaySpentFen: Long,
-    @SerialName("today_remaining_fen") val todayRemainingFen: Long,
+    @SerialName("today_remaining_fen") val todayRemainingFen: Long? = null,
     @SerialName("local_date") val localDate: String,
 )

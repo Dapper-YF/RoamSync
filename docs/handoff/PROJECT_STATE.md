@@ -13,8 +13,10 @@ rows/credentials imported.19 historical business-table fingerprints unchanged;
 179 trips read through3000. Backend1208/Web188/typecheck/build pass. Real provider,
 model, adoption/idempotency/execution write smoke passed on restored backup only;
 production browser smoke is read-only. Local single-owner boundary, not multi-user
-isolation. Android mixed UI remains unaccepted and must be replaced against this
-official product. Source/mirror history below is historical. Full release report:
+isolation. Android native formal UI has now replaced the legacy workbench; three native
+flows and foreground location were exercised on a physical phone. Official
+Android build49 passes; current-position route/full interruption matrix remain
+open. See docs/ANDROID_NATIVE_DELIVERY_20261018.md. Source/mirror history below is historical. Full release report:
 docs/OFFICIAL_V2_RELEASE_20261018.md.
 
 ## Prior Scope

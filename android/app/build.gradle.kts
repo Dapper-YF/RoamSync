@@ -1,4 +1,11 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+
+val localEnvironment = Properties().apply {
+    val environmentFile = rootProject.file("../.env")
+    if (environmentFile.exists()) environmentFile.reader(Charsets.UTF_8).use { load(it) }
+}
+fun publicMapValue(name: String): String = "\"" + (System.getenv(name) ?: localEnvironment.getProperty(name, "")).trim().trim('"', '\'').replace("\\", "\\\\").replace("\"", "\\\"") + "\""
 
 plugins {
     alias(libs.plugins.android.application)
@@ -17,15 +24,26 @@ android {
         applicationId = "com.roamsync.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
+        buildConfigField("String", "AMAP_WEB_KEY", publicMapValue("AMAP_WEB_KEY"))
+        buildConfigField("String", "AMAP_ANDROID_KEY", publicMapValue("AMAP_ANDROID_KEY"))
+        manifestPlaceholders["AMAP_ANDROID_KEY"] = (System.getenv("AMAP_ANDROID_KEY") ?: localEnvironment.getProperty("AMAP_ANDROID_KEY", "")).trim().trim('"', '\'')
+        buildConfigField("String", "AMAP_SECURITY_CODE", publicMapValue("AMAP_SECURITY_CODE"))
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.roamsync.app.smoke.NativeSmokeInstrumentation"
     }
 
     buildTypes {
         debug {
-            buildConfigField("String", "API_BASE_URL", "\"http://127.0.0.1:8000/\"")
+            applicationIdSuffix = ".v2preview"
+            val apiBaseUrl = (System.getenv("ANDROID_API_BASE_URL")
+                ?: localEnvironment.getProperty("ANDROID_API_BASE_URL", "http://127.0.0.1:3000/"))
+                .trim().trim('"', '\'').trimEnd('/') + "/"
+            require(apiBaseUrl.startsWith("http://") || apiBaseUrl.startsWith("https://")) {
+                "ANDROID_API_BASE_URL must be an HTTP(S) URL"
+            }
+            buildConfigField("String", "API_BASE_URL", "\"${apiBaseUrl.replace("\\", "\\\\").replace("\"", "\\\"")}\"")
         }
         release {
             isMinifyEnabled = false
@@ -79,7 +97,11 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.datastore.preferences)
+    // Official AMap Navigation SDK V11.2.100 combined package.  It bundles
+    // navigation, 3D map, location and search; keep this exact release pinned.
+    implementation("com.amap.api:navi-3dmap-location-search:11.2.100_3dmap11.2.100_loc11.2.100_sea9.8.1")
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     testImplementation(libs.junit)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
 }

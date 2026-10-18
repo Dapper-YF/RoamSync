@@ -1,6 +1,8 @@
 package com.roamsync.app.di
 
 import com.roamsync.app.BuildConfig
+import com.roamsync.app.data.TourismEndpoint
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import com.roamsync.app.data.remote.RoamSyncApi
 import dagger.Module
 import dagger.Provides
@@ -26,8 +28,18 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(): OkHttpClient {
+    fun provideHttpClient(endpoint: TourismEndpoint): OkHttpClient {
         val builder = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val old = chain.request()
+                val base = endpoint.url().toHttpUrl()
+                val request = old.newBuilder().url(old.url.newBuilder().scheme(base.scheme).host(base.host).port(base.port).build())
+                endpoint.accessToken?.let { request.header("Authorization", "Bearer $it") }
+                chain.proceed(request.build())
+            }
+            .connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
+            .readTimeout(180, java.util.concurrent.TimeUnit.SECONDS)
+            .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(
                 HttpLoggingInterceptor().apply {

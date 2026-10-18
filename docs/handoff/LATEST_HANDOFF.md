@@ -24,7 +24,9 @@ VERIFIED：正式API/Worker各201运行文件与正式源码一致；Web188及�
 指纹不覆盖checkpoint内容；新requirements字段另核验空默认值。
 
 ## Prior blockers (historical)
-Android旧正式旅行UI未退出用户路径，产品重构和新UI真机闭环仍未通过。
+Android旧正式旅行组件已退出用户路径，新Compose正式页与四阶段旅程、探索/草稿/执行核心真机流程已通过。正式目录构建49通过，交付APK亦复跑真实探索。
+当前位置定位精度约30米network成功，但到下一站Provider路线失败；完整中断/断网/新UIReject矩阵未完成。
+详见docs/ANDROID_NATIVE_DELIVERY_20261018.md。
 精确GPS授权已由用户亲自选择，路线Provider范围与GPS能力仍需分开验收。
 
 ## Interview framing
