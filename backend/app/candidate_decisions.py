@@ -459,7 +459,8 @@ def unsupported_decision_claims(context: dict, snapshot) -> list[dict]:
                 if unknown_budget:
                     positive = re.search(r"预算.{0,8}(?P<predicate>合规|达标|已满足|符合|足够|无忧)|(?P<reverse>满足|符合).{0,6}预算", clause)
                     total_guarantee = re.search(r"(?:总|全部|最终).{0,6}(?:费用|消费|支出|花费).{0,6}(?P<guarantee>不会|不|未)(?:再|会|有)?(?:超过|超出|超支).{0,6}预算", clause)
-                    if ((positive and not negated_at(positive.start("predicate") if positive.group("predicate") else positive.start("reverse")))
+                    post_qualified = bool(positive and re.match(r"(?:与否|尚待|仍待|有待|尚需|待).{0,8}(?:核验|确认|评估|判断)|(?:与否|只是目标|仅为目标|是目标)", clause[positive.end():]))
+                    if ((positive and not post_qualified and not negated_at(positive.start("predicate") if positive.group("predicate") else positive.start("reverse")))
                         or (total_guarantee and not negated_at(total_guarantee.start("guarantee")))):
                         issues.append({"code": "budget_claim_not_evaluable", "subject": subject,
                                        "requirement_ids": [r["evidence"]["requirement_id"] for r in unknown_budget]})

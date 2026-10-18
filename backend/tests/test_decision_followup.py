@@ -95,7 +95,7 @@ def test_unknown_spending_cannot_claim_compliance_even_after_disclaimer():
     for text in ("实际消费未知但预算合规。", "总费用不会超过预算。"):
         snapshot.explanation = text
         assert unsupported_decision_claims(ctx, snapshot)[0]["code"] == "budget_claim_not_evaluable"
-    for text in ("无法保证总费用不会超过预算。", "实际消费未知，不能认定预算合规。", "未声称任何实际消费或总花费已满足预算。"):
+    for text in ("无法保证总费用不会超过预算。", "实际消费未知，不能认定预算合规。", "未声称任何实际消费或总花费已满足预算。", "预算合规与否尚待核验。", "预算合规尚待确认。"):
         snapshot.explanation = text
         assert unsupported_decision_claims(ctx, snapshot) == []
     snapshot.explanation = "当前预算合规。"
