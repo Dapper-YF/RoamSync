@@ -1,0 +1,162 @@
+{
+  "started_at": "2026-10-18T12:25:26.276503+00:00",
+  "model": "glm-5.3-flash",
+  "database_writes": 0,
+  "boundary": "direct_Planner_not_Graph_Validator_Accept",
+  "cost_source": "controlled_synthetic_estimates_and_spending_not_provider_prices",
+  "calls": [
+    {
+      "scenario": "active_budget",
+      "active_requirement_ids": [
+        "budget-followup-controlled"
+      ],
+      "controlled_spent_fen": 1000,
+      "input_costs_fen": {
+        "7489846f-f1da-596d-97f9-1a4c0a30164d": 8000,
+        "99ac1e1a-20b8-5a8d-a295-115696890899": 2000
+      },
+      "status": "completed",
+      "selected": [
+        {
+          "place_id": "99ac1e1a-20b8-5a8d-a295-115696890899",
+          "model_estimated_cost_fen": 2000
+        }
+      ],
+      "selected_count": 1,
+      "input_based_estimate_fen": 2000,
+      "input_based_known_exposure_fen": 3000,
+      "estimate_preserved": true,
+      "explanation": "本次按你的要求只新增一个地点，且当天不存在既有的受保护活动，因此方案仅包含这一项候选，未删除或调整任何正式活动。你偏好西湖景观，但当天同时存在一项硬性预算上限；更符合景观偏好的候选（杭州西湖风景名胜区）按受控估算的预计费用高于该上限，无法在不违反硬约束的情况下安排，所以我改选了估算费用在上限内的中国丝绸博物馆，这是在硬约束优先于软偏好下的取舍，而不是认为博物馆比西湖更符合你的兴趣。需要说明两点：一是预计费用为受控估算，不代表实际票价或预订报价，开放与预约情况尚未核实；二是该日已有部分实际消费，在缺少完整实际消费记录的情况下，我不能声称当天总消费已满足预算，费用是否达标由后端按真实数据核算。路线信息当前不可用，时间安排基于每日时间窗和偏好时段，交通方式暂按你的步行偏好设定，未验证实际通行时长；如预算上限放宽，西湖景观候选可重新纳入评估。此方案仅为候选，尚未保存。",
+      "decision_ledger": [],
+      "requirement_review": [
+        {
+          "goal": "effective_requirement:budget-followup-controlled:daily_budget_fen",
+          "type": "hard",
+          "status": "satisfied",
+          "evidence": {
+            "requirement_id": "budget-followup-controlled",
+            "date": "2026-10-19",
+            "source": {
+              "kind": "user_explicit",
+              "ref": "synthetic-budget-followup"
+            },
+            "limit_fen": 5000,
+            "limit_scope": "daily",
+            "candidate_remaining_estimated_cost_fen": 2000,
+            "actual_spent_fen": 1000,
+            "candidate_budget_exposure_fen": 3000,
+            "actual_coverage": "today_only",
+            "cost_semantics": "actual_plus_uncompleted_estimates_completed_estimates_excluded",
+            "limitation": "expenses_have_no_activity_link_prepaid_overlap_cannot_be_resolved"
+          }
+        }
+      ],
+      "hard_errors": [],
+      "token_usage": 4671,
+      "elapsed_seconds": 15.76
+    },
+    {
+      "scenario": "revoked_budget",
+      "active_requirement_ids": [],
+      "controlled_spent_fen": 1000,
+      "input_costs_fen": {
+        "7489846f-f1da-596d-97f9-1a4c0a30164d": 8000,
+        "99ac1e1a-20b8-5a8d-a295-115696890899": 2000
+      },
+      "status": "completed",
+      "selected": [
+        {
+          "place_id": "7489846f-f1da-596d-97f9-1a4c0a30164d",
+          "model_estimated_cost_fen": 8000
+        }
+      ],
+      "selected_count": 1,
+      "input_based_estimate_fen": 8000,
+      "input_based_known_exposure_fen": 9000,
+      "estimate_preserved": true,
+      "explanation": "本次按你的要求只新增一个地点，未删除或调整任何既有活动。在两个可选候选中选择了杭州西湖风景名胜区：它直接对应你偏好的西湖景观，也与你的自然类兴趣一致；另一个候选为丝绸文化博物馆，属于不同的兴趣方向，在你只加一个地点且偏好西湖景观的前提下未选。时间安排在10月19日上午9点开始，停留按建议时长60分钟，全程预留了充足的每日时间窗；由于路线数据当前不可用，未宣称具体用时或顺路性，交通按你允许的步行方式，最终以系统核算为准。费用方面：预算目前未处于受限状态，但各候选费用为受控估算，未做任何下调，实际花费与总预算是否满足需以真实消费为准，此处不做承诺。天气、开放与预约情况等未知项已交由后端与系统进一步确认，此方案仅为候选，尚未保存。",
+      "decision_ledger": [],
+      "requirement_review": [],
+      "hard_errors": [],
+      "token_usage": 4342,
+      "elapsed_seconds": 14.838
+    },
+    {
+      "scenario": "unknown_spending",
+      "active_requirement_ids": [
+        "budget-followup-controlled"
+      ],
+      "controlled_spent_fen": null,
+      "input_costs_fen": {
+        "7489846f-f1da-596d-97f9-1a4c0a30164d": 8000,
+        "99ac1e1a-20b8-5a8d-a295-115696890899": 2000
+      },
+      "status": "completed",
+      "selected": [
+        {
+          "place_id": "99ac1e1a-20b8-5a8d-a295-115696890899",
+          "model_estimated_cost_fen": 2000
+        }
+      ],
+      "selected_count": 1,
+      "input_based_estimate_fen": 2000,
+      "input_based_known_exposure_fen": 2000,
+      "estimate_preserved": true,
+      "explanation": "本次仅新增一个地点并生成候选，不涉及保存或正式行程改动。用户希望优先西湖景观，但当天存在有效的硬性预算要求：当日总费用不超过既定上限，而西湖风景名胜区的受控估算费用超过该上限，且费用不得擅自降低，也无法在缺少实际消费数据的情况下声称预算已满足。因此在两个可选候选中选择了费用在上限内的中国丝绸博物馆，兼顾预算合规与当天在西湖区范围内的体验丰富度，时间安排在上午空闲时段，遵循步行交通偏好与每日时间窗。取舍在于放弃本次的西湖景观偏好以服从硬预算约束；如果用户希望安排西湖，需要相应调整当日预算要求后重新规划。天气与路线数据均缺失，未据此做任何天气或交通时长假设，实际费用与营业情况以后端核验为准。",
+      "decision_ledger": [],
+      "requirement_review": [
+        {
+          "goal": "effective_requirement:budget-followup-controlled:daily_budget_fen",
+          "type": "hard",
+          "status": "not_evaluable",
+          "evidence": {
+            "requirement_id": "budget-followup-controlled",
+            "date": "2026-10-19",
+            "source": {
+              "kind": "user_explicit",
+              "ref": "synthetic-budget-followup"
+            },
+            "limit_fen": 5000,
+            "limit_scope": "daily",
+            "candidate_remaining_estimated_cost_fen": 2000,
+            "actual_spent_fen": null,
+            "candidate_budget_exposure_fen": 2000,
+            "actual_coverage": "unknown_for_target_date",
+            "cost_semantics": "actual_plus_uncompleted_estimates_completed_estimates_excluded",
+            "limitation": "expenses_have_no_activity_link_prepaid_overlap_cannot_be_resolved"
+          }
+        }
+      ],
+      "hard_errors": [],
+      "token_usage": 4766,
+      "elapsed_seconds": 15.311
+    }
+  ],
+  "places": [
+    {
+      "name": "杭州西湖风景名胜区",
+      "id": "7489846f-f1da-596d-97f9-1a4c0a30164d",
+      "source": {
+        "provider": "amap",
+        "source_url": "https://www.amap.com/search?id=B023B13L9M",
+        "fetched_at": "2026-10-18T12:25:31.837560Z",
+        "expires_at": "2026-10-18T13:25:31.837560Z",
+        "provider_updated_at": null,
+        "freshness": "fresh"
+      }
+    },
+    {
+      "name": "中国丝绸博物馆",
+      "id": "99ac1e1a-20b8-5a8d-a295-115696890899",
+      "source": {
+        "provider": "amap",
+        "source_url": "https://www.amap.com/search?id=B023B09JLL",
+        "fetched_at": "2026-10-18T12:25:32.283007Z",
+        "expires_at": "2026-10-18T13:25:32.283007Z",
+        "provider_updated_at": null,
+        "freshness": "fresh"
+      }
+    }
+  ],
+  "completed_at": "2026-10-18T12:26:18.192257+00:00"
+}
