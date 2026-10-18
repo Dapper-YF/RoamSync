@@ -43,9 +43,23 @@ MEASURED：最终 `67ecdf7` 运行代码已通过真实模型→Graph→Validato
 - 500元有效日预算因目标日实际消费未知仍为 `not_evaluable`。最终正式摘要明确不能据估算认定总预算合规；模型解释检查无冲突。130元只是剩余活动输入估算，不是实价或全部旅行费用。
 - 候选通过既有Validator；明确Accept使正式version 3→4，保留雷峰塔14:00/60分钟锁定，回读两活动及2028米/28分钟AMap步行路线（`is_estimated=false`）。
 
-准备是API而非Web UI，没有手机操作，不能当Web→Android→Web完成。完整链只覆盖一个偏好情景；景观优先两组目前仍是前述直接Planner证据。
+准备是API而非Web UI，没有手机操作，不能当Web→Android→Web完成。上述首次完整链是无类别兴趣的少走路情景；随后补充了下述有竞争目标的完整链。
 
 保留的失败：初两次首个地点搜索因配置缺失失败，root恢复原环境文件注入后已解决；随后测试脚本漏DraftEdit必填字段、使用PATCH而非PUT、未设置临时脚本PYTHONPATH先后失败。均未隐去；创建的专用隔离Draft/Trip保留，无历史数据清理。它们不算产品Graph失败或成功。最后修复脚本、使用新专用Trip通过上述完整链，应用代码未为通过测例更改。
+
+## 景观收益与步行代价的第二条完整链
+
+MEASURED：先在新Trip `e3023632-9638-47c7-86e3-426fcb65d110` 实际运行“仍希望少走路，但有依据的景观摄影体验更重要”。GLM选择西湖53分钟腿而非丝博28分钟腿，Validator/Accept通过；却暴露**产品复核错误**：真实AMap西湖category是`sight`，旧兴趣匹配只比较category与`nature`，因而服务器摘要误称长腿没有补偿收益。已有精确审核的湖泊、山丘、堤岸、岛屿景观组件没有进入该取舍复核。该结果不能算质量通过，原Accepted记录和理由完整保留在 `graph-landscape-priority.json`，没有重写或重复Accept。
+
+`bb19660` 修复该实际反例：复用已有精确身份审核的景观组件与当前nature/photography要求或保存偏好；保留assertion、来源、审核时间和偏好来源，不改真实Provider分类和排序，不由景点名加分。未知/低置信类型、未来审核/过期证据、已撤销且有typed历史的旧偏好不能提供收益。中文说明明确不保证摄影效果、天气或开放。最终67项Linux专项通过。
+
+MEASURED：修复重启后，以相同条件新建 Trip `4f1d0e4e-9cdf-4a6a-881c-f4cc40d94eef`，不预先强制选西湖。GLM-5.3-flash7415tokens→完整Graph→Validator→明确Accept→正式回读成功：
+
+- 实际选择西湖09:00/120分钟；到同一14点雷峰塔固定活动，53分钟腿比博物馆28分钟多25分钟。
+- 最终review为`competing_objectives`，记录`matches_reviewed_landscape_interest`、nature/photography偏好来源及 `west_lake.landscape_components`/UNESCO来源；正式摘要说明实际代价和输入支持的收益，不再误称无收益。
+- 有效500元日预算仍`not_evaluable`，目标日实际消费null；解释矛盾检查为空，未把估算升格成预算合规。天气此次是实际Open-Meteo有覆盖的城市代表坐标预报，仍非现场天气或开放证明。
+- 正式version3→4，14点/60分钟锁定活动保持；最终AMap Route2.0步行3963米/53分钟、`is_estimated=false`。
+- 原始证据 `graph-landscape-priority-fixed.json` 带本次API五个模块SHA；紧凑摘要 `graph-landscape-summary.json`。这是第二种用户优先级的完整链，不是全天最优或一般性质量保证。
 
 ## 文件和复现
 

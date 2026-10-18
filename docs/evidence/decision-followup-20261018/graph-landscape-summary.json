@@ -1,0 +1,162 @@
+{
+  "status": "passed",
+  "source_app_commit": "bb19660",
+  "case": "landscape_priority",
+  "user_priority": "landscape_photography_over_walking_saving_if_supported",
+  "request": "重新规划第1天，只选一个现有候选地点作为上午游览，仍希望尽量少走路，但喜欢自然景观摄影，景观体验比节省步行更重要，可以为有依据的景观体验接受额外步行；仍请避免无收益的绕路，说明实际步行代价与得到的体验，不要只按类别或评级选点。14点锁定活动保持原样。预算按有效要求，实际消费未知时不要宣称预算合规。",
+  "runtime_api_source_hashes": {
+    "candidate_decisions.py": "b6b38bbb65fd06e517f89fb73b862126dbc4d101abcc8d36610f89bf3f6092f9",
+    "openai_planner.py": "1c1e8bb7cab7f8e264a4610b3fc558747bc1ac119885e60720f48774ef0a2196",
+    "planning_graph.py": "24e2a5ef2e67c3c6126817b5e6d7cb57c064f37bcf43907e5ea0799f74cc3f27",
+    "planning_explanation.py": "1b27aa562a351851d8a545460cba3b29541f6bf33f4329c441fc17dc1cd9e18c",
+    "planning_intent_service.py": "dc08b7d29548ec9d4221d19ca391ffa953496b74d84cabe947e697f34d173261"
+  },
+  "trip_id": "4f1d0e4e-9cdf-4a6a-881c-f4cc40d94eef",
+  "run_id": "60844973-70ce-4518-a786-62cec62d45cb",
+  "revision_id": "bb9e66a8-0c4c-4a42-8548-20c0f5a6122b",
+  "model": "glm-5.3-flash",
+  "token_usage": 7415,
+  "before_version": 3,
+  "after_version": 4,
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": []
+  },
+  "decision_status": "accepted",
+  "tradeoffs": [
+    {
+      "date": "2026-10-19",
+      "anchor_activity_id": "e8d9f6f8-9df1-466d-8392-37c3564a2922",
+      "longer_place_candidate_id": "09149c42-c365-4884-bbc8-fd99e101d195",
+      "shorter_place_candidate_id": "f1421a65-8f2b-4a62-a1d3-cbddbfdf7414",
+      "longer_walk_minutes": 53,
+      "shorter_walk_minutes": 28,
+      "extra_directed_walk_minutes": 25,
+      "longer_option_supported_advantages": [
+        "matches_reviewed_landscape_interest"
+      ],
+      "longer_landscape_interest_evidence": {
+        "matched_interests": [
+          "nature",
+          "photography"
+        ],
+        "preference_refs": [
+          {
+            "kind": "saved_explicit_preference",
+            "field": "interest_categories",
+            "interest": "nature"
+          },
+          {
+            "kind": "saved_explicit_preference",
+            "field": "interest_categories",
+            "interest": "photography"
+          }
+        ],
+        "assertion_id": "west_lake.landscape_components",
+        "source_url": "https://whc.unesco.org/en/list/1334",
+        "reviewed_at": "2026-09-29T03:36:00.603499+00:00",
+        "limit": "stable_landscape_components_match_interest_not_photo_quality_weather_or_opening_guarantee"
+      },
+      "status": "competing_objectives",
+      "limit": "one_directed_leg_only_not_complete_day_or_verified_experience_quality",
+      "selected": "longer",
+      "evaluation": "supported_competing_objectives_not_preference_optimality_proof"
+    }
+  ],
+  "requirements": [
+    {
+      "goal": "effective_requirement:req_5191c388592c5469aa5df6871fb09309:daily_budget_fen",
+      "type": "hard",
+      "status": "not_evaluable",
+      "evidence": {
+        "requirement_id": "req_5191c388592c5469aa5df6871fb09309",
+        "date": "2026-10-19",
+        "source": {
+          "kind": "user_explicit",
+          "ref": "explicit-control:c34fee66-d51e-4611-b8f1-96a4cc822024"
+        },
+        "limit_fen": 50000,
+        "limit_scope": "daily",
+        "candidate_remaining_estimated_cost_fen": 13000,
+        "actual_spent_fen": null,
+        "candidate_budget_exposure_fen": 13000,
+        "actual_coverage": "unknown_for_target_date",
+        "cost_semantics": "actual_plus_uncompleted_estimates_completed_estimates_excluded",
+        "limitation": "expenses_have_no_activity_link_prepaid_overlap_cannot_be_resolved"
+      }
+    }
+  ],
+  "explanation_errors": [],
+  "server_reason": "本次回应你的要求：重新规划第1天，只选一个现有候选地点作为上午游览，仍希望尽量少走路，但喜欢自然景观摄影，景观体验比节省步行更重要，可以为有依据的景观体验接受额外步行；仍请避免无收益的绕路，说明实际步行代价与得到的体验，不要只按类别或评级选点。14点锁定活动保持原样。预算按有效要求，实际消费未知时不要宣称预算合规。\n候选与正式行程相比：\n2026-10-19：增加杭州西湖风景名胜区；保留原有 1 个地点。\n2026-10-19选择杭州西湖风景名胜区而非中国丝绸博物馆，到同一固定活动的已查询步行腿多25分钟；输入依据提示的竞争收益为精确审核的景观组件与当前自然或摄影兴趣匹配（非摄影效果保证），是否值得由你决定。\n预算尚无法完整核验：目标范围的实际消费未知，候选费用只是剩余活动估算，不能据此认定总预算合规。\n未核实的营业、预约和天气仍需在出行前确认；本次流程不承诺后续自动核验。\n具体时间与每项选择的理由见下方；预计费用按候选内容计算，确认后才写入正式行程。",
+  "model_explanation": "本次重新规划第1天：上午安排杭州西湖风景名胜区，14点锁定的雷峰塔景区活动保持原样不动。用户明确表示景观体验比节省步行更重要，因此没有选择步行更近的中国丝绸博物馆：丝绸博物馆是展陈参观型文化体验，与自然摄影偏好的对应证据不足；而西湖的湖山、堤岸与岛屿景观有UNESCO资料佐证，与已保存的自然与摄影兴趣直接匹配。实际代价是前往雷峰塔的步行腿更长（供应商已提供该有向步行路线），得到的收益是有依据的湖山景观与摄影机会；这是有收益的额外步行，而非绕路。上午游览结束后预留步行与休息缓冲，可在锁定活动前从容衔接。当日降雨概率低，适合户外，但营业、预约、拥挤程度与实际消费均未核实，因此不宣称预算合规，仅提示该日预算上限要求由后端按实际地点费用核验。",
+  "weather_evidence": {
+    "2026-10-19": {
+      "status": "available",
+      "reason": "fresh_complete_daytime_prediction",
+      "provider": "open_meteo",
+      "queried_at": "2026-10-18T13:27:25.209945+00:00",
+      "nature": "provider_prediction",
+      "coverage_hours": [
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "hourly_rain_probability": {
+        "9": 4,
+        "10": 4,
+        "11": 4,
+        "12": 7,
+        "13": 11,
+        "14": 12,
+        "15": 9,
+        "16": 4,
+        "17": 0
+      },
+      "max_hourly_rain_probability": 12,
+      "rain_risk": "low",
+      "scope": "trip_representative_coordinate_not_venue_observation",
+      "freshness_policy": "planning_decision_forecast_30min_v1"
+    }
+  },
+  "final_activities": [
+    {
+      "display_name": "杭州西湖风景名胜区",
+      "scheduled_time": "09:00:00",
+      "duration_minutes": 120,
+      "schedule_locked": false
+    },
+    {
+      "display_name": "雷峰塔景区",
+      "scheduled_time": "14:00:00",
+      "duration_minutes": 60,
+      "schedule_locked": true
+    }
+  ],
+  "final_routes": [
+    {
+      "mode": "walk",
+      "duration_minutes": 53,
+      "distance_meters": 3963,
+      "provider": "AMap Route 2.0",
+      "is_estimated": false
+    }
+  ],
+  "checks": [
+    "real model produced candidate; Graph/Validator pass with budget unknown and persisted walking tradeoff",
+    "explicit Accept increments itinerary once; preserves fixed activity; formal reread contains chosen place and real route"
+  ],
+  "limits": [
+    "preparation_not_Web_UI",
+    "no_verified_booking_or_visit",
+    "taxonomy_cost_estimates_not_provider_prices",
+    "one_directed_anchor_leg_not_whole_day"
+  ],
+  "targeted_linux_tests_passed": 67
+}

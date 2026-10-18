@@ -123,6 +123,11 @@ try:
     review = revision["difference_summary"]["decision_review"]
     assert review["explanation_errors"] == []
     assert review["selection_tradeoffs"], "same-anchor comparison must actually reach Planner and final review"
+    if case == "landscape_priority":
+        for tradeoff in review["selection_tradeoffs"]:
+            if tradeoff["selected"] == "longer":
+                assert "matches_reviewed_landscape_interest" in tradeoff["longer_option_supported_advantages"], "longer leg requires reviewed interest benefit, not model assertion"
+                assert tradeoff["longer_landscape_interest_evidence"]["assertion_id"]
     assert any(r["status"] == "not_evaluable" and r["evidence"].get("limit_fen") for r in review["effective_requirement_results"])
     out["checks"].append("real model produced candidate; Graph/Validator pass with budget unknown and persisted walking tradeoff")
     out["decision"] = api("/planning-runs/" + run["id"] + "/decision", "POST", {"decision": "accept"})
