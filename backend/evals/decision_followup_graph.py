@@ -5,8 +5,11 @@ through real product draft/adoption APIs and exact provider snapshots. No
 existing trip is edited, no fixture expense or venue operating fact is invented.
 """
 import asyncio
+import argparse
+import hashlib
 import json
 import os
+from pathlib import Path
 import time
 import urllib.request
 import urllib.error
@@ -17,8 +20,15 @@ from zoneinfo import ZoneInfo
 
 assert os.environ.get("ROAMSYNC_ISOLATED_INTEGRATION") == "1"
 assert os.environ["DATABASE_URL"].endswith("/roamsync_v2_integration")
+parser = argparse.ArgumentParser()
+parser.add_argument("--case", choices=["walking_only", "landscape_priority"], default="walking_only")
+case = parser.parse_args().case
 headers = {"X-RoamSync-Access": os.environ["ROAMSYNC_INTEGRATION_TOKEN"], "Content-Type": "application/json"}
 out = {"scope": "new labelled isolated Trip; actual Provider/model/Graph/Validator/Accept",
+       "case": case,
+       "user_priority": "landscape_photography_over_walking_saving_if_supported" if case == "landscape_priority" else "walking_saving_without_category_preference",
+       "runtime_api_source_hashes": {name: hashlib.sha256(Path("/app/app", name).read_bytes()).hexdigest()
+            for name in ["candidate_decisions.py", "openai_planner.py", "planning_graph.py", "planning_explanation.py", "planning_intent_service.py"]},
        "limits": ["preparation_not_Web_UI", "no_verified_booking_or_visit", "taxonomy_cost_estimates_not_provider_prices",
                   "one_directed_anchor_leg_not_whole_day"], "checks": []}
 
@@ -59,7 +69,7 @@ try:
     anchor = api("/places/search?" + urlencode({"city": "杭州", "query": "雷峰塔景区"}))["items"]
     anchor = next(p for p in anchor if p["name"].removeprefix("杭州") == "雷峰塔景区")
     assert anchor["identity_status"] == "provider_identity"
-    draft = api("/drafts", "POST", {"city": "杭州", "title": "C 决策完整链验收 " + str(uuid4())[:8],
+    draft = api("/drafts", "POST", {"city": "杭州", "title": "C 决策完整链验收 " + case + " " + str(uuid4())[:8],
         "day_count": 1, "requirements": ""})
     out["draft_id"] = draft["id"]
     path = "/drafts/" + draft["id"]
@@ -84,7 +94,7 @@ try:
     fields = ("version", "pace", "interest_categories", "transport_modes", "daily_start_time", "daily_end_time",
               "meal_preferences", "avoid_categories", "max_walking_minutes", "free_text_requirements")
     change = {k: prefs[k] for k in fields}
-    change.update(daily_start_time="09:00", interest_categories=[], transport_modes=["walk"])
+    change.update(daily_start_time="09:00", interest_categories=["nature", "photography"] if case == "landscape_priority" else [], transport_modes=["walk"])
     api(trip_path + "/preferences", "PUT", change)
     requirements = api(trip_path + "/requirements")
     api(trip_path + "/requirements", "POST", {"expected_version": requirements["version"],
@@ -93,7 +103,9 @@ try:
     out["prepared_candidates"] = asyncio.run(persist_candidates(trip_id))
     before = api(trip_path + "/planning-context")
     out["before"] = before
-    request = "重新规划第1天，只选一个现有候选地点作为上午游览，尽量少走路；14点锁定活动保持原样。预算按有效要求，实际消费未知时不要宣称预算合规。"
+    priority = ("仍希望尽量少走路，但喜欢自然景观摄影，景观体验比节省步行更重要，可以为有依据的景观体验接受额外步行；仍请避免无收益的绕路，说明实际步行代价与得到的体验，不要只按类别或评级选点。"
+                if case == "landscape_priority" else "尽量少走路；")
+    request = "重新规划第1天，只选一个现有候选地点作为上午游览，" + priority + "14点锁定活动保持原样。预算按有效要求，实际消费未知时不要宣称预算合规。"
     out["request"] = request
     run = api(trip_path + "/planning-runs", "POST", {"run_type": "replan", "user_request": request,
         "selected_day_id": before["days"][0]["id"]})
