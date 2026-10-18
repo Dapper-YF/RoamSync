@@ -92,7 +92,10 @@ def project_requirements(records, *, trip_id=None, draft_id=None, topic_id=None,
     Passing no date/day intentionally returns broad requirements only. Call once
     per target day when building day-specific Planner/Recovery input.
     """
-    matching = [r for r in valid_records(records) if _matches(r["scope"], trip_id=trip_id,
+    from app.requirement_language import is_context_only_statement
+    matching = [r for r in valid_records(records)
+        if not (r["key"] == "user_requirement" and is_context_only_statement(r["text"]))
+        and _matches(r["scope"], trip_id=trip_id,
         draft_id=draft_id, topic_id=topic_id, city=city, target_date=target_date,
         day_index=day_index, target_activity_ids=target_activity_ids)]
     blocked = {old for r in matching for old in r["supersedes"]}
@@ -132,18 +135,22 @@ def capture_explicit_requirements(records, text, *, scope, source_ref, force=Fal
     predicate. Natural-language pace/revocation is deliberately narrow.
     """
     result = valid_records(records)
-    if not text.strip() or (not force and (re.search(r"[?？]|吗|是否|怎么样|推荐|收藏|锁定", text)
-            or not re.search(r"希望|要求|不要|不想|必须|一定|偏好|喜欢|慢游|轻松|紧凑|取消|撤销|预算|拍照|摄影|步行|少走路", text))):
+    if not text.strip():
         return result
     from app.travel_language import chinese_number
     from decimal import Decimal
     # UI-selected day scope covers the whole request. A textual ordinal only
     # scopes its own clause; a later day mention cannot scope earlier interests.
     default_days = target_day_indices or []
-    from app.requirement_language import requirement_clauses, clause_polarity
+    from app.requirement_language import requirement_clauses, clause_polarity, is_context_only_statement
     clauses = requirement_clauses(text)
     for clause_index, clause in enumerate(clauses):
         if not clause.strip():
+            continue
+        if is_context_only_statement(clause):
+            continue
+        if not force and (re.search(r"[?？]|吗|是否|怎么样|推荐|收藏|锁定", clause)
+                or not re.search(r"希望|要求|不要|不想|必须|一定|偏好|喜欢|慢游|轻松|紧凑|取消|撤销|预算|拍照|摄影|步行|少走路", clause)):
             continue
         polarity = clause_polarity(clause)
         if polarity == 'historical_reference':
