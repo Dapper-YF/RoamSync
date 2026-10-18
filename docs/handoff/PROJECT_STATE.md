@@ -6,7 +6,7 @@ Last updated: 2026-10-18
 
 VERIFIED: user-authorized official source integration and localhost3000 cutover complete.
 E:/Study/RoamSync owns the approved DiscoveryApp, nearby, unified assistant, drafts,
-formal journeys/execution, scoped requirements and reviewed images. API/Worker201
+formal journeys/execution, scoped requirements and reviewed images. API/Worker207
 runtime files each match official source. Existing roamsync_postgres_data retained;
 0035/0036 add an empty requirements field and six empty product tables. No preview
 rows/credentials imported.19 historical business-table fingerprints unchanged;
@@ -28,7 +28,10 @@ provider categories, preserves unknown spending, and rejects bounded explanation
 contradictions before reviewable revisions. No DB/public schema, mutation tools or
 Accept/version authority expansion. D adds three attributed CC BY-SA photos:
 10 exact places/12 photos total. Canonical app is now the read-only source for
-isolated API/worker and canonical Web3016. New changes are not yet redeployed to3000.
+isolated API/worker and canonical Web3016. B/C/D are rebuilt from canonical2dc7a58
+and verified on3000;207 files match each official backend container. At cutover25
+business-table fingerprints match; after browser reads only Provider place cache
+changes, other24 business tables remain unchanged. Backup and image rollback retained.
 
 MEASURED: two actual GLM/Graph/AMap/Validator/Accept cases choose a28-minute leg for
 walking priority and a53-minute leg with evidenced landscape interest for explicit
@@ -39,7 +42,7 @@ one dedicated Trip; a separately paired protocol client reads identical data,
 not physical Android. Final APK is built; user explicitly skipped unavailable
 phone, leaving execution/recovery/interruption/Web reread incomplete. Reports:
 COMPREHENSIVE_FOLLOWUP_DELIVERY_20261018.md, DECISION_FOLLOWUP_20261018.md,
-B_REQUIREMENT_CONTEXT_20261018.md. No production writes or public exposure.
+B_REQUIREMENT_CONTEXT_20261018.md. No production test Trips, schema change or public exposure.
 
 ## Prior Scope
 

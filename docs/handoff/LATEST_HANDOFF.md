@@ -3,7 +3,7 @@
 ## Snapshot
 2026-10-18 从f9a5aaf继续原综合任务，B/C/D并行研发，root负责A/E和隔离集成。
 唯一正式源码E:/Study/RoamSync，3000继续此前已认可新版。新增代码进入canonical，
-3016和18004已绑定canonical；本轮未重新部署3000、未改生产数据库或网络暴露。
+3016和18004已绑定canonical；B/C/D已从正式源码2dc7a58重建发布3000，无新迁移或网络暴露。
 
 ## Current Freeze / Rehearsal Status
 VERIFIED：B背景/时长边界及C可信取舍、解释检查和D三图已统一隔离运行。
@@ -12,6 +12,8 @@ Android最终构建/单元回归通过，APK SHA256为
 3a186b7a8d82a3b9ba8698e626c34986e2fb79edb93ebdddd7956f2212c1b319。
 本轮用户明确无法连接手机并要求跳过，未安装或真机验证该APK。
 总报告：docs/COMPREHENSIVE_FOLLOWUP_DELIVERY_20261018.md。
+正式API/Worker各207文件匹配；切换前后25业务表指纹不变，浏览器后仅地点缓存变化，
+旅行等24业务表保持，179历史旅行读取通过；备份/旧镜像/回退配置留存。
 
 ## Prior milestone baseline (before shadow split)
 f631504已将旧Android工作台主用户路径替换为原生旅程；本轮不重复重构页面。
@@ -35,4 +37,4 @@ D新增三张CC BY-SA照片，目录10地点12照片，三处API/浏览器显示
 ## Interview framing
 可陈述两个有边界的实际决策情景经完整正式确认改善，以及有限B语言/背景修复。
 不得宣称任意语言、全程最优、现场到访/真实预约、全部可信解释或跨端真机全链通过。
-新增代码已合唯一源码但未发布到3000；不要把源码合入和正式运行升级混为一谈。
+新增B/C/D已发布到3000；Android最终APK仅本地构建、未真机验收，不能将二者混称完成。

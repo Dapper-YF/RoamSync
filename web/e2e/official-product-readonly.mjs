@@ -2,7 +2,7 @@ import { chromium, expect } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const base = 'http://127.0.0.1:3000';
-const out = '../docs/evidence/official-v2-20261018';
+const out = process.env.ROAMSYNC_READONLY_EVIDENCE || '../docs/evidence/official-v2-20261018';
 await mkdir(out, { recursive: true });
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
