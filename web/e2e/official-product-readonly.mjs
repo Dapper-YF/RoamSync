@@ -39,6 +39,19 @@ try {
     expect(response.status()).toBe(200);
     return response.json();
   };
+  const first = await api('/places/' + page.url().split('/').at(-1));
+  const other = await api('/places/search?' + new URLSearchParams({ city: '成都', query: '成都宽窄巷子景区' }));
+  expect(other.items.length).toBeGreaterThan(0);
+  const routeResponse = await context.request.post(base + '/api/v1/routes/query', { data: {
+    origin: first.location, destination: other.items[0].location, mode: 'walk'
+  } });
+  expect(routeResponse.status()).toBe(200);
+  expect((await routeResponse.json()).duration_seconds).toBeGreaterThan(0);
+  expect(first.images.length).toBeGreaterThan(0);
+  expect(first.images[0].usage_basis).toBe('reviewed_commons_license');
+  expect(first.images[0].place_ref.place_id).toBe(first.ref.place_id);
+  expect((await context.request.get(base + first.images[0].url)).status()).toBe(200);
+  report.checks.push('real walking route and attributed exact-place reviewed image served by 3000');
   await api('/me/favorites'); await api('/me/travel-preferences'); await api('/drafts');
   report.checks.push('favorites preferences and drafts API reachable through official gateway');
   const trips = await api('/trips');
