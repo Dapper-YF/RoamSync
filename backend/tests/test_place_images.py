@@ -1,3 +1,5 @@
+import hashlib
+
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from app.place_content.images import CATALOG, MEDIA, project_images
@@ -55,3 +57,35 @@ def test_media_allowlist_and_no_open_proxy():
     assert response.content.startswith(b'\xff\xd8')
     for name in ['unknown.jpg', 'https:evil.jpg', 'reviewed_images.json']:
         assert client.get('/api/v1/media/place-images/' + name).status_code == 404
+
+
+def test_new_hangzhou_image_bindings_and_local_asset_http_projection():
+    expected = {
+        "B023B13L9M": ("杭州西湖风景名胜区", 120.121358, 30.222692),
+        "B023B09JLL": ("中国丝绸博物馆", 120.151292, 30.22287),
+        "B0FFFWQGI8": ("杭州博物馆", 120.166525, 30.239091),
+    }
+    selected = [entry for entry in CATALOG if entry["provider_place_id"] in expected]
+    assert {entry["provider_place_id"] for entry in selected} == set(expected)
+
+    app = FastAPI()
+    app.include_router(create_router(None))
+    with TestClient(app) as client:
+        for entry in selected:
+            name, longitude, latitude = expected[entry["provider_place_id"]]
+            assert (entry["name"], entry["city"], entry["longitude"], entry["latitude"]) == (name, "杭州市", longitude, latitude)
+            assert len(entry["files"]) == 1
+            place = normalize_poi({"id": entry["provider_place_id"], "name": name, "cityname": "杭州市",
+                "location": f"{longitude},{latitude}", "typecode": "110000"})
+            assert place.ref.place_id == stable_place_id(entry["provider_place_id"])
+            assert place.image_status == "available" and len(place.images) == 1
+            photo = place.images[0]
+            assert photo.place_ref == place.ref
+            assert photo.provider == "wikimedia_commons" and photo.license_name == "CC BY-SA 4.0"
+            assert photo.source_url.startswith("https://commons.wikimedia.org/wiki/File:")
+            assert photo.attribution and photo.license_url == "https://creativecommons.org/licenses/by-sa/4.0"
+            for size, url in (("480", photo.thumbnail_url), ("960", photo.url)):
+                response = client.get(url)
+                assert response.status_code == 200 and response.headers["content-type"] == "image/jpeg"
+                assert response.content.startswith(b"\xff\xd8")
+                assert hashlib.sha256(response.content).hexdigest() == entry["files"][0]["assets"][size]["sha256"]
