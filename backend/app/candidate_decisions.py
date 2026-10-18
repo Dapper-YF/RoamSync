@@ -254,6 +254,7 @@ def compare_candidates(context: dict, candidates: list[dict], *, allowed_dates: 
         soft_category = candidate.get("category") in (preferences.get("avoid_categories") or [])
         interest = candidate.get("category") in (preferences.get("interest_categories") or [])
         row = {"place_candidate_id": candidate_id, "eligible": bool(eligible), "day_comparisons": per_day,
+               "walking_goal_active": bool(minimize_walking),
                "exposure": exposure, "requested": bool(research.get(candidate_id, {}).get("requested")),
                "preference_category_avoid": soft_category, "interest_match": interest,
                "supported_requirement_ids": [item["id"] for item in _requirements(context) if item.get("key") == "avoid_category"],
@@ -270,9 +271,68 @@ def compare_candidates(context: dict, candidates: list[dict], *, allowed_dates: 
         not by_id[str(item["id"])]["requested"], *by_id[str(item["id"])]["comparison_key"],
         list(research).index(str(item["id"])) if str(item["id"]) in research else len(research),
         -float(item.get("rating") or 0), item["name"], str(item["id"])))
-    return ranked, {"version": "bounded-candidate-comparison-v1", "weather_days": forecasts, "candidates": rows,
+    comparison = {"version": "bounded-candidate-comparison-v2", "weather_days": forecasts, "candidates": rows,
                     "ranking_policy": "requested_then_soft_avoid_feasible_visit_weather_fixed_free_slot_fresh_exact_walk_anchor_route_interest_then_research_rating",
                     "limits": ["taxonomy_is_soft_hint", "route_is_one_directed_leg_not_day_total", "mixed_weather_has_no_certain_rain_penalty", "unknown_does_not_exclude"]}
+    comparison["walking_tradeoffs"] = walking_tradeoffs(rows, candidates)
+    return ranked, comparison
+
+
+def walking_tradeoffs(rows: list[dict], candidates: list[dict]) -> list[dict]:
+    """Compare exact same-date/anchor legs, not ratings or presumed total travel.
+
+    This is a partial order, not a utility score. An interest match is a real
+    competing objective, while taxonomy/rating cannot prove an experience gain.
+    No pair makes a shorter place mandatory or authorizes a formal change.
+    """
+    by_id = {str(item["id"]): item for item in candidates}
+    pairs = []
+    for longer in rows:
+        for ld in longer["day_comparisons"]:
+            lr = ld["route_to_fixed_activity"]
+            if not ld["eligible"] or not ld["walking_preference"] and not longer.get("walking_goal_active"):
+                continue
+            if lr.get("status") != "available" or lr.get("mode") != "walk":
+                continue
+            for shorter in rows:
+                if shorter is longer:
+                    continue
+                sd = next((d for d in shorter["day_comparisons"] if d["date"] == ld["date"] and d["eligible"]), None)
+                sr = (sd or {}).get("route_to_fixed_activity", {})
+                if (sr.get("status") != "available" or sr.get("mode") != "walk"
+                    or sr.get("to_activity_id") != lr.get("to_activity_id")
+                    or sr["duration_minutes"] >= lr["duration_minutes"]):
+                    continue
+                advantages = []
+                if longer["requested"] and not shorter["requested"]:
+                    advantages.append("explicitly_requested_place")
+                if longer["interest_match"] and not shorter["interest_match"]:
+                    advantages.append("matches_saved_interest_category")
+                if ld["photography_landscape_match"] and not sd["photography_landscape_match"]:
+                    advantages.append("matches_explicit_photography_interest")
+                if len(ld["soft_avoid_requirements"]) < len(sd["soft_avoid_requirements"]):
+                    advantages.append("fewer_soft_category_conflicts")
+                known_exposure = all(r["exposure"].get("hint") != "unknown" for r in (longer, shorter))
+                known_weather = all(d.get("candidate_rain_risk") in {"low", "elevated"} for d in (ld, sd))
+                if known_exposure and known_weather and ld["weather_penalty"] - ld["weather_indoor_bonus"] < sd["weather_penalty"] - sd["weather_indoor_bonus"]:
+                    advantages.append("lower_weather_penalty_from_exposure_hint_not_shelter_proof")
+                known_duration = all(isinstance(by_id[r["place_candidate_id"]].get("suggested_duration_minutes"), int)
+                                     and not isinstance(by_id[r["place_candidate_id"]].get("suggested_duration_minutes"), bool)
+                                     and by_id[r["place_candidate_id"]]["suggested_duration_minutes"] > 0 for r in (longer, shorter))
+                if known_duration and ld["fixed_time_fit"]["penalty"] < sd["fixed_time_fit"]["penalty"]:
+                    advantages.append("suggested_duration_fits_known_free_slot")
+                lc = _number(by_id[longer["place_candidate_id"]].get("estimated_cost_fen"))
+                sc = _number(by_id[shorter["place_candidate_id"]].get("estimated_cost_fen"))
+                if lc is not None and sc is not None and lc < sc:
+                    advantages.append("lower_supplied_estimated_cost_not_verified_price")
+                pairs.append({"date": ld["date"], "anchor_activity_id": lr["to_activity_id"],
+                    "longer_place_candidate_id": longer["place_candidate_id"], "shorter_place_candidate_id": shorter["place_candidate_id"],
+                    "longer_walk_minutes": lr["duration_minutes"], "shorter_walk_minutes": sr["duration_minutes"],
+                    "extra_directed_walk_minutes": lr["duration_minutes"] - sr["duration_minutes"],
+                    "longer_option_supported_advantages": advantages,
+                    "status": "competing_objectives" if advantages else "no_supplied_advantage_for_longer_leg",
+                    "limit": "one_directed_leg_only_not_complete_day_or_verified_experience_quality"})
+    return pairs
 
 
 def review_candidate_decisions(context: dict, snapshot) -> dict:
@@ -345,11 +405,70 @@ def review_candidate_decisions(context: dict, snapshot) -> dict:
         if result["type"] == "hard" and result["status"] == "unsatisfied":
             hard_errors.append({"code": "effective_requirement_unsatisfied", "message": "候选未满足有效硬要求。",
                                 "details": result["evidence"]})
+    chosen_by_date = {(a.day_date.isoformat(), str(a.place_candidate_id)) for a in snapshot.activities}
+    selected_tradeoffs = []
+    for pair in comparison.get("walking_tradeoffs", []):
+        longer_selected = (pair["date"], pair["longer_place_candidate_id"]) in chosen_by_date
+        shorter_selected = (pair["date"], pair["shorter_place_candidate_id"]) in chosen_by_date
+        if longer_selected != shorter_selected:
+            selected_tradeoffs.append({**pair, "selected": "longer" if longer_selected else "shorter",
+                "evaluation": "supported_competing_objectives_not_preference_optimality_proof" if longer_selected and pair["longer_option_supported_advantages"]
+                              else "longer_leg_without_supplied_compensating_advantage" if longer_selected else "shorter_known_leg_selected"})
     return {"status": "hard_conflict" if hard_errors else "checked", "hard_errors": hard_errors,
+            "selection_tradeoffs": selected_tradeoffs,
             "selected_observations": observations, "fixed_activities": fixed,
             "effective_requirement_results": requirement_results,
             "uncheckable_requirement_ids": [item["id"] for item in context.get("effective_requirements") or []
                                            if item.get("status") == "active" and item.get("key") not in {"avoid_category", "weather_sensitive", "pace", "max_walking_minutes", "end_before", "budget_fen", "daily_budget_fen", "walking_preference"}]}
+
+
+def decision_fact_contract(context: dict) -> dict:
+    """Explicit capability/coverage input; absence of spending is never zero."""
+    actual = context.get("actual_budget") or {}
+    return {"actual_spending": {"trip": "known" if _number(actual.get("total_spent_fen")) is not None else "unknown",
+                                "local_date": actual.get("local_date"),
+                                "day": "known" if _number(actual.get("today_spent_fen")) is not None else "unknown"},
+            "budget_semantics": "remaining_activity_estimates_plus_recorded_expenses_not_all_inclusive_trip_price",
+            "weather": "only_fresh_covered_provider_forecast_is_evidence",
+            "opening_hours": "not_verified_no_automatic_followup_implemented",
+            "booking_availability": "not_verified_no_automatic_followup_implemented",
+            "unknown_policy": "state_unknown_and_ask_user_if_material_never_promise_future_system_verification"}
+
+
+def unsupported_decision_claims(context: dict, snapshot) -> list[dict]:
+    """Bounded textual contradiction checks in addition to structured review.
+
+    This is not a general truthfulness classifier. It catches specific known
+    regressions and never rewrites a model's sentence into a success statement.
+    """
+    import re
+    from app.planning_goals import _effective_requirement_results
+    results = _effective_requirement_results(context, snapshot)
+    unknown_budget = [r for r in results if r["status"] == "not_evaluable" and r["evidence"].get("limit_fen") is not None]
+    claims = [("explanation", snapshot.explanation)] + [(a.candidate_id, a.reason) for a in snapshot.activities]
+    issues = []
+    for subject, text in claims:
+        for sentence in re.split(r"[。；;\n]", text):
+            # A disclaimer in another clause does not negate a positive claim.
+            # Bind polarity to the particular predicate, including adversative
+            # clauses without punctuation. "不会超过" asserts compliance.
+            for clause in re.split(r"[，,]|但是|然而|不过|(?<!不)但|却|而且|并且", sentence):
+                def negated_at(index):
+                    prefix = clause[:index].replace("未知", "unknown")[-16:]
+                    return bool(re.search(r"(?:不(?:会|能|可|应)?|未|无法|不能|尚未|尚不能).{0,5}$|(?:不(?:会|能|可|应)?|未|无法|不能|尚未|尚不能)(?:声称|认定|保证|断言|证明|确认|承诺|判定|视为|表示|称).{0,24}$|(?:是否|能否|待核).{0,8}$", prefix))
+                if unknown_budget:
+                    positive = re.search(r"预算.{0,8}(?P<predicate>合规|达标|已满足|符合|足够|无忧)|(?P<reverse>满足|符合).{0,6}预算", clause)
+                    total_guarantee = re.search(r"(?:总|全部|最终).{0,6}(?:费用|消费|支出|花费).{0,6}(?P<guarantee>不会|不|未)(?:再|会|有)?(?:超过|超出|超支).{0,6}预算", clause)
+                    if ((positive and not negated_at(positive.start("predicate") if positive.group("predicate") else positive.start("reverse")))
+                        or (total_guarantee and not negated_at(total_guarantee.start("guarantee")))):
+                        issues.append({"code": "budget_claim_not_evaluable", "subject": subject,
+                                       "requirement_ids": [r["evidence"]["requirement_id"] for r in unknown_budget]})
+                future = re.search(r"(?:(?:系统|后端).{0,10}(?:会|将|进一步|后续|自动)|(?:后续|稍后).{0,8}(?:系统|后端)|以(?:系统|后端)).{0,12}(?P<verify>确认|核验|核实|查询)", clause)
+                if (re.search(r"天气|开放|营业|预约", sentence) and future
+                    and not negated_at(future.start("verify")) and not re.search(r"[?？]|吗", clause)):
+                    issues.append({"code": "unimplemented_future_verification_claim", "subject": subject,
+                                   "capability": "no_promised_automatic_opening_booking_or_future_weather_verification"})
+    return issues
 
 
 async def collect_candidate_route_facts(session, context: dict, *, target_dates: set[str], limit: int = 6) -> list[dict]:

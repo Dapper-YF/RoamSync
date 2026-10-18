@@ -15,7 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, TypeAdapter,
 
 from app.config import Settings
 from app.decision_context import assert_decision_context_invariants, build_decision_context
-from app.candidate_decisions import compare_candidates
+from app.candidate_decisions import compare_candidates, decision_fact_contract, unsupported_decision_claims
 from app.model_client import build_model_client, create_model_response
 from app.planner_entity_resolution import (PlannerEntityBindings, InvalidPlannerReference, parse_semantic_planner_output, resolve_planner_activity_references)
 from app.planning_errors import PlannerNotConfiguredError, PlannerProviderError, PlannerConstraintsUnsatisfiedError
@@ -223,6 +223,10 @@ class OpenAIResponsesPlanner:
                         "provenance_parse_errors": provenance_errors,
                     })
                 snapshot = preserve_out_of_scope_activities(snapshot, state)
+                claim_issues = unsupported_decision_claims(state["planning_context"], snapshot)
+                if claim_issues:
+                    raise ValueError(json.dumps({"decision_claim_errors": claim_issues,
+                        "required": "preserve_choice_and_explain_actual_unknowns_without_budget_success_or_unimplemented_future_verification"}, ensure_ascii=False))
                 research = state["planning_context"].get("destination_research", {}).get("places", {})
                 selected = {str(item.place_candidate_id) for item in snapshot.activities}
                 selected.update(item["place_id"] for day in state["planning_context"]["days"] for item in day["activities"]
@@ -462,6 +466,7 @@ def build_planner_input(
         "effective_requirements": context.get("effective_requirements", []),
         "effective_requirements_by_date": context.get("effective_requirements_by_date", {}),
         "candidate_comparison": comparison,
+        "decision_fact_contract": decision_fact_contract(context),
         "candidate_route_facts": context.get("candidate_route_facts", []),
         # Compatibility aliases retained while downstream consumers migrate.
         "planning_goals": context.get("planning_goals"),
@@ -479,9 +484,9 @@ def build_planner_input(
         },
         "budget_state": {
             "budget_constrained": trip["total_budget_fen"] is not None,
-            "actual_spent_fen": context.get("actual_budget", {}).get("total_spent_fen", 0),
+            "actual_spent_fen": context.get("actual_budget", {}).get("total_spent_fen"),
             "remaining_fen": context.get("actual_budget", {}).get("total_remaining_fen", trip["total_budget_fen"]),
-            "today_spent_fen": context.get("actual_budget", {}).get("today_spent_fen", 0),
+            "today_spent_fen": context.get("actual_budget", {}).get("today_spent_fen"),
             "today_remaining_fen": context.get("actual_budget", {}).get("today_remaining_fen", trip["daily_budget_fen"]),
             "planned_total_fen": context.get("planning_budget", {}).get("total_planned_fen", 0),
         },
@@ -787,4 +792,5 @@ def semantic_planner_instructions():
             .replace("editable_activity_ids", "editable_activity_refs")
             .replace("protected_activity_ids", "protected_activity_refs")
             + "\n既有活动的地点身份由系统沿用，不重新选择地点；仅输出其 activity_ref 和调整后的时间、停留及交通方式。未输出的可编辑活动表示删除。新增活动仅从 new_place_candidates 选择 candidate_ref。不要输出 candidate_id、坐标、来源、成本、路线 ID 或 before/after。Decision Ledger 为 shadow，主输出不要求 Ledger。"
-            + "\neffective_requirements_by_date 是各日有效明确要求；hard 必须满足，soft 参与取舍而不是绝对排除。candidate_comparison 是服务器可检查的有限候选比较；逐日 eligible=false 不可安排该日。taxonomy inference 是低置信类别推断，不是可靠室内/无障碍保证，unknown 表示尚未核实。天气是代表坐标的逐小时预报概率，不是必然下雨；失效或缺覆盖不作天气决策。candidate_route_facts 仅是候选到一个固定活动的有向路线，不可当全天路线或最优证明。固定活动的来源为正式schedule_locked，不等同已预约成功。解释实际选择的权衡并承认unknown，不声称已经采用或获得预约。")
+            + "\neffective_requirements_by_date 是各日有效明确要求；hard 必须满足，soft 参与取舍而不是绝对排除。candidate_comparison 是服务器可检查的有限候选比较；逐日 eligible=false 不可安排该日。taxonomy inference 是低置信类别推断，不是可靠室内/无障碍保证，unknown 表示尚未核实。天气是代表坐标的逐小时预报概率，不是必然下雨；失效或缺覆盖不作天气决策。candidate_route_facts 仅是候选到一个固定活动的有向路线，不可当全天路线或最优证明。固定活动的来源为正式schedule_locked，不等同已预约成功。解释实际选择的权衡并承认unknown，不声称已经采用或获得预约。"
+            + "\ncandidate_comparison.walking_tradeoffs 列出同日同锚点的成对事实与竞争目标：少走路是软目标，不能一律选最短；选择更长步行腿时说明具体得到的兴趣、指定体验、天气、时间或预计费用收益，并承认步行代价。没有supplied优势时优先考虑更短已知腿，不把rating当收益证明。decision_fact_contract规定事实覆盖和已有能力；actual_spent为null不是零，不能据剩余活动估算声称全部预算合规；系统没有承诺未来自动核验未知天气、营业或预约的步骤。")

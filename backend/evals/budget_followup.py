@@ -22,7 +22,7 @@ from app.place_content.provider import AMapContentProvider
 from evals.run_bounded_decision_eval import _state
 
 
-async def run(output: Path) -> dict:
+async def run(output: Path, scenarios=("active_budget", "revoked_budget", "unknown_spending")) -> dict:
     if output.exists():
         raise FileExistsError("Preserve prior evidence; choose a new output file")
     settings = get_settings().model_copy(update={"planner_max_output_tokens": 6000, "planner_max_retries": 0})
@@ -67,7 +67,7 @@ async def run(output: Path) -> dict:
         "text": "这一天预算不超过50元", "strength": "hard", "status": "active", "supersedes": [],
         "source": {"kind": "user_explicit", "ref": "synthetic-budget-followup"},
         "scope": {"kind": "day", "date": day_date}}
-    for scenario in ("active_budget", "revoked_budget", "unknown_spending"):
+    for scenario in scenarios:
         case = deepcopy(state)
         ctx = case["planning_context"]
         active = scenario != "revoked_budget"
@@ -113,4 +113,6 @@ async def run(output: Path) -> dict:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, required=True)
-    asyncio.run(run(parser.parse_args().output))
+    parser.add_argument("--scenario", choices=["active_budget", "revoked_budget", "unknown_spending"], action="append")
+    args = parser.parse_args()
+    asyncio.run(run(args.output, args.scenario or ("active_budget", "revoked_budget", "unknown_spending")))

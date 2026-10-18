@@ -19,7 +19,7 @@ from app.plan_revision_service import accept_plan_revision, validate_candidate_p
 from app.planning_context import build_planning_context
 from app.candidate_edit import candidate_base_from_context
 from app.decision_context import assert_decision_context_invariants, build_decision_context
-from app.candidate_decisions import collect_candidate_route_facts, compare_candidates, review_candidate_decisions
+from app.candidate_decisions import collect_candidate_route_facts, compare_candidates, review_candidate_decisions, unsupported_decision_claims
 from app.decision_memory import retrieve_decision_memory
 from app.decision_ledger import reconcile_route_repair_ledger, validate_decision_ledger
 from app.planning_explanation import describe_plan_changes
@@ -582,6 +582,12 @@ def build_planning_graph(
                             details={"adjustments": adjustments},
                         ))
         decision_review = review_candidate_decisions(state["planning_context"], snapshot)
+        decision_review["explanation_errors"] = unsupported_decision_claims(state["planning_context"], snapshot)
+        if decision_review["explanation_errors"]:
+            result.valid = False
+            result.errors.extend(PlanValidationIssue(code="decision_explanation_unsupported",
+                message="候选解释与已知事实或实际系统能力冲突。", details=item)
+                for item in decision_review["explanation_errors"])
         if decision_review["hard_errors"]:
             result.valid = False
             result.errors.extend(PlanValidationIssue.model_validate(item) for item in decision_review["hard_errors"])
@@ -656,7 +662,7 @@ def build_planning_graph(
                 run_id,
                 before_snapshot=state["planning_context"],
                 proposed_snapshot=snapshot,
-                reason=describe_plan_changes(state["planning_context"], snapshot, state["user_request"]),
+                reason=describe_plan_changes(state["planning_context"], snapshot, state["user_request"], decision_review=state.get("decision_review")),
                 difference_summary={
                     "candidate_activity_count": len(snapshot.activities),
                     "planned_total_fen": planned_total,
