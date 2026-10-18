@@ -1,0 +1,26 @@
+{
+  "scope": "new labelled isolated Trip; actual Provider/model/Graph/Validator/Accept",
+  "limits": [
+    "preparation_not_Web_UI",
+    "no_verified_booking_or_visit",
+    "taxonomy_cost_estimates_not_provider_prices",
+    "one_directed_anchor_leg_not_whole_day"
+  ],
+  "checks": [],
+  "last_step": {
+    "path": "/places/search?city=%E6%9D%AD%E5%B7%9E&query=%E9%9B%B7%E5%B3%B0%E5%A1%94%E6%99%AF%E5%8C%BA",
+    "method": "GET"
+  },
+  "http_error": {
+    "status": 503,
+    "detail": {
+      "code": "map_not_configured",
+      "message": "地点或路线服务暂不可用，请稍后重试",
+      "provider": "amap",
+      "provider_code": null
+    }
+  },
+  "status": "failed",
+  "failure_type": "HTTPError",
+  "failure": "HTTP Error 503: Service Unavailable"
+}

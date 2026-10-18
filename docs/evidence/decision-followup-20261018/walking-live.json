@@ -1,0 +1,409 @@
+{
+  "started_at": "2026-10-18T12:43:56.396103+00:00",
+  "model": "glm-5.3-flash",
+  "database_writes": 0,
+  "boundary": "direct_Planner_not_Graph_Validator_Accept",
+  "calls": [
+    {
+      "scenario": "walking_only",
+      "request": "只在14点固定活动之前新增一个地点，尽量少走路，保留建议停留。没有指定景点或类别偏好。",
+      "saved_interest_categories": [],
+      "status": "completed",
+      "snapshot": {
+        "explanation": "",
+        "activities": [
+          {
+            "candidate_id": "candidate:1:99ac1e1a-20b8-5a8d-a295-115696890899",
+            "day_date": "2026-10-19",
+            "place_candidate_id": "99ac1e1a-20b8-5a8d-a295-115696890899",
+            "planned_start_time": "12:00:00",
+            "duration_minutes": 60,
+            "estimated_cost_fen": 0,
+            "transport_mode_to_here": "walk",
+            "reason": "用户要求只在14点固定活动前新增一个地点且尽量少走路：中国丝绸博物馆到雷峰塔景区的步行腿为两个候选中更短的一个（28分钟，约2公里），且没有任何已知优势支持选择步行更长的西湖景区，因此在软目标取舍中优先选择更短步行腿。保留建议停留60分钟，12:00开始、13:00结束，预留步行和休息缓冲后可在14点前到达固定活动。该馆以丝绸与丝路文化交流为主题，与当日的文化体验互补。需说明：其室内属性只是低置信类别推断，当前展厅开放、预约和实际拥挤情况尚未核实；天气覆盖缺失，未据此做室内偏好决策。",
+            "source_ids": [
+              "f167bca8-6e61-4688-baa6-5248dd11aecd"
+            ],
+            "replaces_activity_id": null,
+            "locked": false
+          }
+        ],
+        "route_legs": [],
+        "decision_ledger": null,
+        "provenance_parse_errors": []
+      },
+      "review": {
+        "status": "checked",
+        "hard_errors": [],
+        "selection_tradeoffs": [
+          {
+            "date": "2026-10-19",
+            "anchor_activity_id": "cabc91a6-6d9e-4e98-a0da-7ada81129be0",
+            "longer_place_candidate_id": "7489846f-f1da-596d-97f9-1a4c0a30164d",
+            "shorter_place_candidate_id": "99ac1e1a-20b8-5a8d-a295-115696890899",
+            "longer_walk_minutes": 54,
+            "shorter_walk_minutes": 28,
+            "extra_directed_walk_minutes": 26,
+            "longer_option_supported_advantages": [],
+            "status": "no_supplied_advantage_for_longer_leg",
+            "limit": "one_directed_leg_only_not_complete_day_or_verified_experience_quality",
+            "selected": "shorter",
+            "evaluation": "shorter_known_leg_selected"
+          }
+        ],
+        "selected_observations": [
+          {
+            "candidate_id": "candidate:1:99ac1e1a-20b8-5a8d-a295-115696890899",
+            "date": "2026-10-19",
+            "weather_tradeoff": "unknown",
+            "candidate_rain_risk": "unknown",
+            "exposure_status": "indoor_exhibition",
+            "soft_requirement_tradeoffs": [],
+            "before_fixed_anchor": {
+              "status": "fits_with_known_route_and_rest_buffer",
+              "known_free_minutes": 300,
+              "route_minutes": 28,
+              "soft_rest_buffer_minutes": 10,
+              "suggested_duration_minutes": 60,
+              "anchor_activity_id": "cabc91a6-6d9e-4e98-a0da-7ada81129be0",
+              "limit": "directed_leg_and_soft_rest_heuristic_only_no_full_day_route_guarantee"
+            },
+            "route_status": "unknown",
+            "incoming_routes": []
+          }
+        ],
+        "fixed_activities": [
+          {
+            "activity_id": "cabc91a6-6d9e-4e98-a0da-7ada81129be0",
+            "date": "2026-10-19",
+            "scheduled_time": "14:00",
+            "status": "preserved",
+            "source": "persisted_schedule_locked_not_booking_confirmation"
+          }
+        ],
+        "effective_requirement_results": [],
+        "uncheckable_requirement_ids": []
+      },
+      "claim_errors": [],
+      "token_usage": 5257,
+      "reliability": {
+        "planner_reached": true,
+        "parse_success": true,
+        "reference_resolution_success": true,
+        "attempts": [
+          {
+            "attempt": 1,
+            "category": "success"
+          }
+        ],
+        "context_chars_before": 12793,
+        "context_chars_after": 10743,
+        "memory_count": 0,
+        "usage": [
+          {
+            "input_tokens": 4737,
+            "output_tokens": 520,
+            "total_tokens": 5257
+          }
+        ]
+      },
+      "elapsed_seconds": 11.357
+    },
+    {
+      "scenario": "walking_and_landscape",
+      "request": "只在14点固定活动之前新增一个地点，尽量少走路，但也喜欢景观摄影；保留建议停留，解释真实取舍。",
+      "saved_interest_categories": [
+        "nature"
+      ],
+      "status": "completed",
+      "snapshot": {
+        "explanation": "本次只在2026-10-19的14:00固定活动（雷峰塔，系统已锁定，保持原样）之前新增一个地点，其余日期与既有安排不动。候选中只有西湖与丝绸博物馆两项可行：西湖到雷峰塔的步行腿更长，丝绸博物馆更近。考虑到您明确提到喜欢景观摄影，且西湖的湖山、堤岸与岛嶝正是您偏好类型的直接拍摄对象，而博物馆是室内展陈主题、与摄影诉求关联弱，所以选择了步行更久的西湖，这是有代价的取舍而非免费收益：多走一段路换取实景拍摄机会。若您当天更想省力，博物馆是更短步行的备选。时间上从10:00开始、按建议停留120分钟，结束后的步行时间留有缓冲，不会压缩14:00的固定活动；当天完整路线数据目前不可用，以上仅基于已知的单一方向步行腿推算，未核验全程最优。天气预报缺失，开放时间、预约与拥挤程度均为未知，无法承诺，请以现场为准。该方案尚未保存，仅供确认。",
+        "activities": [
+          {
+            "candidate_id": "candidate:1:7489846f-f1da-596d-97f9-1a4c0a30164d",
+            "day_date": "2026-10-19",
+            "place_candidate_id": "7489846f-f1da-596d-97f9-1a4c0a30164d",
+            "planned_start_time": "10:00:00",
+            "duration_minutes": 120,
+            "estimated_cost_fen": 0,
+            "transport_mode_to_here": "walk",
+            "reason": "用户喜欢景观摄影，西湖的湖泊、山丘、堤岸与岛嶝组成的景观正是最直接的拍摄对象，与nature兴趣类别匹配；丝绸博物馆为室内展陈主题，与摄影诉求关联较弱。安排在10:00开始、按研究建议停留120分钟，结束后沿已知步行腿前往14:00的雷峰塔，留有充足缓冲。真实取舍：到雷峰塔的步行腿比丝绸博物馆明显更长，多出的步行时间换来的是湖山实景拍摄机会；天气未知、开放与拥挤情况均未核验，长距离步行在雨中会更吃力，如用户更想省力可改选博物馆。",
+            "source_ids": [
+              "fd1e8eae-6896-4d21-a98f-14c8c3fe06de"
+            ],
+            "replaces_activity_id": null,
+            "locked": false
+          }
+        ],
+        "route_legs": [],
+        "decision_ledger": null,
+        "provenance_parse_errors": [
+          "decision_explanation_unverified"
+        ]
+      },
+      "review": {
+        "status": "checked",
+        "hard_errors": [],
+        "selection_tradeoffs": [
+          {
+            "date": "2026-10-19",
+            "anchor_activity_id": "cabc91a6-6d9e-4e98-a0da-7ada81129be0",
+            "longer_place_candidate_id": "7489846f-f1da-596d-97f9-1a4c0a30164d",
+            "shorter_place_candidate_id": "99ac1e1a-20b8-5a8d-a295-115696890899",
+            "longer_walk_minutes": 54,
+            "shorter_walk_minutes": 28,
+            "extra_directed_walk_minutes": 26,
+            "longer_option_supported_advantages": [
+              "matches_saved_interest_category"
+            ],
+            "status": "competing_objectives",
+            "limit": "one_directed_leg_only_not_complete_day_or_verified_experience_quality",
+            "selected": "longer",
+            "evaluation": "supported_competing_objectives_not_preference_optimality_proof"
+          }
+        ],
+        "selected_observations": [
+          {
+            "candidate_id": "candidate:1:7489846f-f1da-596d-97f9-1a4c0a30164d",
+            "date": "2026-10-19",
+            "weather_tradeoff": "unknown",
+            "candidate_rain_risk": "unknown",
+            "exposure_status": "outdoor_landscape",
+            "soft_requirement_tradeoffs": [],
+            "before_fixed_anchor": {
+              "status": "fits_with_known_route_and_rest_buffer",
+              "known_free_minutes": 300,
+              "route_minutes": 54,
+              "soft_rest_buffer_minutes": 10,
+              "suggested_duration_minutes": 120,
+              "anchor_activity_id": "cabc91a6-6d9e-4e98-a0da-7ada81129be0",
+              "limit": "directed_leg_and_soft_rest_heuristic_only_no_full_day_route_guarantee"
+            },
+            "route_status": "unknown",
+            "incoming_routes": []
+          }
+        ],
+        "fixed_activities": [
+          {
+            "activity_id": "cabc91a6-6d9e-4e98-a0da-7ada81129be0",
+            "date": "2026-10-19",
+            "scheduled_time": "14:00",
+            "status": "preserved",
+            "source": "persisted_schedule_locked_not_booking_confirmation"
+          }
+        ],
+        "effective_requirement_results": [],
+        "uncheckable_requirement_ids": []
+      },
+      "claim_errors": [],
+      "token_usage": 6270,
+      "reliability": {
+        "planner_reached": true,
+        "parse_success": true,
+        "reference_resolution_success": true,
+        "attempts": [
+          {
+            "attempt": 1,
+            "category": "success"
+          }
+        ],
+        "context_chars_before": 12830,
+        "context_chars_after": 10772,
+        "memory_count": 0,
+        "usage": [
+          {
+            "input_tokens": 4739,
+            "output_tokens": 1531,
+            "total_tokens": 6270
+          }
+        ]
+      },
+      "elapsed_seconds": 27.413
+    },
+    {
+      "scenario": "landscape_priority",
+      "request": "只在14点固定活动之前新增一个地点；景观体验比少走路更重要，可以为景观接受额外步行，保留建议停留。",
+      "saved_interest_categories": [
+        "nature"
+      ],
+      "status": "completed",
+      "snapshot": {
+        "explanation": "本次只在2026-10-19的14:00固定活动（雷峰塔景区）之前新增一个地点，其余不改动，雷峰塔保持原样保留。按您的要求，景观体验优先于少走路：选择了步行更远的西湖风景名胜区而不是步行更短的丝绸博物馆，用额外步行换取自然景观体验，这同时匹配您的自然偏好；候选比较中已说明这一取舍。西湖保留建议的120分钟停留，09:00开始，结束后按已查到的到雷峰塔的步行路线预留缓冲，14:00前可抵达且有余量。需要说明的不确定项：当日天气覆盖缺失未作天气决策，营业与预约情况未核实，到候选本身的路线未单独查询，按步行安排。未声称已保存，费用与来源由后端补齐。",
+        "activities": [
+          {
+            "candidate_id": "candidate:1:7489846f-f1da-596d-97f9-1a4c0a30164d",
+            "day_date": "2026-10-19",
+            "place_candidate_id": "7489846f-f1da-596d-97f9-1a4c0a30164d",
+            "planned_start_time": "09:00:00",
+            "duration_minutes": 120,
+            "estimated_cost_fen": 0,
+            "transport_mode_to_here": "walk",
+            "reason": "用户明确表示景观体验优先于少走路，杭州西湖风景名胜区以湖泊、山丘、堤岸和岛屿构成的文化景观为核心，且匹配已保存的自然偏好，因此选它而非步行更短的室内博物馆。保留建议停留120分钟不缩短；该候选到14:00固定的雷峰塔景区有已查到的步行路线，09:00开始、11:00左右结束后仍有充分缓冲抵达，不会挤压固定活动。到该候选自身的交通与当日天气尚未核实，这里按步行的偏好交通方式安排。",
+            "source_ids": [
+              "fd1e8eae-6896-4d21-a98f-14c8c3fe06de"
+            ],
+            "replaces_activity_id": null,
+            "locked": false
+          }
+        ],
+        "route_legs": [],
+        "decision_ledger": null,
+        "provenance_parse_errors": [
+          "decision_explanation_unverified"
+        ]
+      },
+      "review": {
+        "status": "checked",
+        "hard_errors": [],
+        "selection_tradeoffs": [
+          {
+            "date": "2026-10-19",
+            "anchor_activity_id": "cabc91a6-6d9e-4e98-a0da-7ada81129be0",
+            "longer_place_candidate_id": "7489846f-f1da-596d-97f9-1a4c0a30164d",
+            "shorter_place_candidate_id": "99ac1e1a-20b8-5a8d-a295-115696890899",
+            "longer_walk_minutes": 54,
+            "shorter_walk_minutes": 28,
+            "extra_directed_walk_minutes": 26,
+            "longer_option_supported_advantages": [
+              "matches_saved_interest_category"
+            ],
+            "status": "competing_objectives",
+            "limit": "one_directed_leg_only_not_complete_day_or_verified_experience_quality",
+            "selected": "longer",
+            "evaluation": "supported_competing_objectives_not_preference_optimality_proof"
+          }
+        ],
+        "selected_observations": [
+          {
+            "candidate_id": "candidate:1:7489846f-f1da-596d-97f9-1a4c0a30164d",
+            "date": "2026-10-19",
+            "weather_tradeoff": "unknown",
+            "candidate_rain_risk": "unknown",
+            "exposure_status": "outdoor_landscape",
+            "soft_requirement_tradeoffs": [],
+            "before_fixed_anchor": {
+              "status": "fits_with_known_route_and_rest_buffer",
+              "known_free_minutes": 300,
+              "route_minutes": 54,
+              "soft_rest_buffer_minutes": 10,
+              "suggested_duration_minutes": 120,
+              "anchor_activity_id": "cabc91a6-6d9e-4e98-a0da-7ada81129be0",
+              "limit": "directed_leg_and_soft_rest_heuristic_only_no_full_day_route_guarantee"
+            },
+            "route_status": "unknown",
+            "incoming_routes": []
+          }
+        ],
+        "fixed_activities": [
+          {
+            "activity_id": "cabc91a6-6d9e-4e98-a0da-7ada81129be0",
+            "date": "2026-10-19",
+            "scheduled_time": "14:00",
+            "status": "preserved",
+            "source": "persisted_schedule_locked_not_booking_confirmation"
+          }
+        ],
+        "effective_requirement_results": [],
+        "uncheckable_requirement_ids": []
+      },
+      "claim_errors": [],
+      "token_usage": 5386,
+      "reliability": {
+        "planner_reached": true,
+        "parse_success": true,
+        "reference_resolution_success": true,
+        "attempts": [
+          {
+            "attempt": 1,
+            "category": "success"
+          }
+        ],
+        "context_chars_before": 12832,
+        "context_chars_after": 10774,
+        "memory_count": 0,
+        "usage": [
+          {
+            "input_tokens": 4739,
+            "output_tokens": 647,
+            "total_tokens": 5386
+          }
+        ]
+      },
+      "elapsed_seconds": 11.934
+    }
+  ],
+  "fact_limits": [
+    "one_directed_walk_leg_not_day_total",
+    "no_booking_or_opening_verification"
+  ],
+  "places": [
+    {
+      "id": "7489846f-f1da-596d-97f9-1a4c0a30164d",
+      "name": "杭州西湖风景名胜区",
+      "provider_id": "B023B13L9M",
+      "source": {
+        "provider": "amap",
+        "source_url": "https://www.amap.com/search?id=B023B13L9M",
+        "fetched_at": "2026-10-18T12:43:56.836914Z",
+        "expires_at": "2026-10-18T13:43:56.836914Z",
+        "provider_updated_at": null,
+        "freshness": "fresh"
+      }
+    },
+    {
+      "id": "99ac1e1a-20b8-5a8d-a295-115696890899",
+      "name": "中国丝绸博物馆",
+      "provider_id": "B023B09JLL",
+      "source": {
+        "provider": "amap",
+        "source_url": "https://www.amap.com/search?id=B023B09JLL",
+        "fetched_at": "2026-10-18T12:43:57.125724Z",
+        "expires_at": "2026-10-18T13:43:57.125724Z",
+        "provider_updated_at": null,
+        "freshness": "fresh"
+      }
+    },
+    {
+      "id": "491a9f76-6362-53a2-8585-e279be36254b",
+      "name": "雷峰塔景区",
+      "provider_id": "B023B09LKR",
+      "source": {
+        "provider": "amap",
+        "source_url": "https://www.amap.com/search?id=B023B09LKR",
+        "fetched_at": "2026-10-18T12:43:57.466497Z",
+        "expires_at": "2026-10-18T13:43:57.466497Z",
+        "provider_updated_at": null,
+        "freshness": "fresh"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "candidate_id": "7489846f-f1da-596d-97f9-1a4c0a30164d",
+      "date": "2026-10-19",
+      "to_activity_id": "cabc91a6-6d9e-4e98-a0da-7ada81129be0",
+      "direction": "candidate_to_fixed_activity",
+      "mode": "walk",
+      "status": "available",
+      "is_estimated": false,
+      "provider": "amap",
+      "duration_minutes": 54,
+      "distance_meters": 4001,
+      "expires_at": "2026-10-18T12:48:57.689214+00:00"
+    },
+    {
+      "candidate_id": "99ac1e1a-20b8-5a8d-a295-115696890899",
+      "date": "2026-10-19",
+      "to_activity_id": "cabc91a6-6d9e-4e98-a0da-7ada81129be0",
+      "direction": "candidate_to_fixed_activity",
+      "mode": "walk",
+      "status": "available",
+      "is_estimated": false,
+      "provider": "amap",
+      "duration_minutes": 28,
+      "distance_meters": 2028,
+      "expires_at": "2026-10-18T12:48:57.900535+00:00"
+    }
+  ],
+  "completed_at": "2026-10-18T12:44:48.607279+00:00"
+}

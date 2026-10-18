@@ -1,0 +1,79 @@
+{
+  "started_at": "2026-10-18T12:42:11.862391+00:00",
+  "model": "glm-5.3-flash",
+  "database_writes": 0,
+  "boundary": "direct_Planner_not_Graph_Validator_Accept",
+  "cost_source": "controlled_synthetic_estimates_and_spending_not_provider_prices",
+  "calls": [
+    {
+      "scenario": "active_budget",
+      "active_requirement_ids": [
+        "budget-followup-controlled"
+      ],
+      "controlled_spent_fen": 1000,
+      "input_costs_fen": {
+        "7489846f-f1da-596d-97f9-1a4c0a30164d": 8000,
+        "99ac1e1a-20b8-5a8d-a295-115696890899": 2000
+      },
+      "status": "failed",
+      "stage": "planner",
+      "code": "planner_unavailable",
+      "elapsed_seconds": 6.181
+    },
+    {
+      "scenario": "revoked_budget",
+      "active_requirement_ids": [],
+      "controlled_spent_fen": 1000,
+      "input_costs_fen": {
+        "7489846f-f1da-596d-97f9-1a4c0a30164d": 8000,
+        "99ac1e1a-20b8-5a8d-a295-115696890899": 2000
+      },
+      "status": "failed",
+      "stage": "planner",
+      "code": "planner_unavailable",
+      "elapsed_seconds": 5.053
+    },
+    {
+      "scenario": "unknown_spending",
+      "active_requirement_ids": [
+        "budget-followup-controlled"
+      ],
+      "controlled_spent_fen": null,
+      "input_costs_fen": {
+        "7489846f-f1da-596d-97f9-1a4c0a30164d": 8000,
+        "99ac1e1a-20b8-5a8d-a295-115696890899": 2000
+      },
+      "status": "failed",
+      "stage": "planner",
+      "code": "planner_unavailable",
+      "elapsed_seconds": 5.052
+    }
+  ],
+  "places": [
+    {
+      "name": "杭州西湖风景名胜区",
+      "id": "7489846f-f1da-596d-97f9-1a4c0a30164d",
+      "source": {
+        "provider": "amap",
+        "source_url": "https://www.amap.com/search?id=B023B13L9M",
+        "fetched_at": "2026-10-18T12:42:13.260567Z",
+        "expires_at": "2026-10-18T13:42:13.260567Z",
+        "provider_updated_at": null,
+        "freshness": "fresh"
+      }
+    },
+    {
+      "name": "中国丝绸博物馆",
+      "id": "99ac1e1a-20b8-5a8d-a295-115696890899",
+      "source": {
+        "provider": "amap",
+        "source_url": "https://www.amap.com/search?id=B023B09JLL",
+        "fetched_at": "2026-10-18T12:42:16.557605Z",
+        "expires_at": "2026-10-18T13:42:16.557605Z",
+        "provider_updated_at": null,
+        "freshness": "fresh"
+      }
+    }
+  ],
+  "completed_at": "2026-10-18T12:42:32.853026+00:00"
+}

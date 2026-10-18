@@ -1,0 +1,86 @@
+{
+  "started_at": "2026-10-18T12:46:32.665143+00:00",
+  "model": "glm-5.3-flash",
+  "database_writes": 0,
+  "boundary": "direct_Planner_not_Graph_Validator_Accept",
+  "cost_source": "controlled_synthetic_estimates_and_spending_not_provider_prices",
+  "calls": [
+    {
+      "scenario": "unknown_spending",
+      "active_requirement_ids": [
+        "budget-followup-controlled"
+      ],
+      "controlled_spent_fen": null,
+      "input_costs_fen": {
+        "7489846f-f1da-596d-97f9-1a4c0a30164d": 8000,
+        "99ac1e1a-20b8-5a8d-a295-115696890899": 2000
+      },
+      "status": "completed",
+      "selected": [
+        {
+          "place_id": "99ac1e1a-20b8-5a8d-a295-115696890899",
+          "model_estimated_cost_fen": 2000
+        }
+      ],
+      "selected_count": 1,
+      "input_based_estimate_fen": 2000,
+      "input_based_known_exposure_fen": 2000,
+      "estimate_preserved": true,
+      "explanation": "本次按你的要求只新增了一个地点。你偏好西湖景观，但该日预算不超过五十元是硬性要求，且费用为受控估算、不得擅自调低：杭州西湖风景名胜区的受控费用估算超过该日预算上限，因此无法在不违反硬约束的情况下纳入，这是一处真实的偏好与预算冲突，需要你知晓并决定是否放宽预算后再评估。作为替代，本方案新增了中国丝绸博物馆，其费用估算在该日预算内，位于西湖区，展陈主题围绕丝绸、纺织与丝路文化交流，可为当天提供文化类补充体验，与你的自然偏好属相近的户外与人文结合方向。行程安排在 2026-10-19 上午 09:00 开始，游览约一小时，交通方式按你的偏好采用步行；当天路线数据暂不可用，因此未对实际步行时长或路线顺序做确定性判断，仅按坐标做了西湖区分区假设。天气覆盖缺失，本次未做基于降雨的调整。该候选的当前开放与预约情况、实际游览时长均未核验，属于未知项。未声称任何实际消费或总花费已满足预算，费用由后端按地点信息核算后展示。",
+      "decision_ledger": [],
+      "requirement_review": [
+        {
+          "goal": "effective_requirement:budget-followup-controlled:daily_budget_fen",
+          "type": "hard",
+          "status": "not_evaluable",
+          "evidence": {
+            "requirement_id": "budget-followup-controlled",
+            "date": "2026-10-19",
+            "source": {
+              "kind": "user_explicit",
+              "ref": "synthetic-budget-followup"
+            },
+            "limit_fen": 5000,
+            "limit_scope": "daily",
+            "candidate_remaining_estimated_cost_fen": 2000,
+            "actual_spent_fen": null,
+            "candidate_budget_exposure_fen": 2000,
+            "actual_coverage": "unknown_for_target_date",
+            "cost_semantics": "actual_plus_uncompleted_estimates_completed_estimates_excluded",
+            "limitation": "expenses_have_no_activity_link_prepaid_overlap_cannot_be_resolved"
+          }
+        }
+      ],
+      "hard_errors": [],
+      "token_usage": 4881,
+      "elapsed_seconds": 13.784
+    }
+  ],
+  "places": [
+    {
+      "name": "杭州西湖风景名胜区",
+      "id": "7489846f-f1da-596d-97f9-1a4c0a30164d",
+      "source": {
+        "provider": "amap",
+        "source_url": "https://www.amap.com/search?id=B023B13L9M",
+        "fetched_at": "2026-10-18T12:46:36.149624Z",
+        "expires_at": "2026-10-18T13:46:36.149624Z",
+        "provider_updated_at": null,
+        "freshness": "fresh"
+      }
+    },
+    {
+      "name": "中国丝绸博物馆",
+      "id": "99ac1e1a-20b8-5a8d-a295-115696890899",
+      "source": {
+        "provider": "amap",
+        "source_url": "https://www.amap.com/search?id=B023B09JLL",
+        "fetched_at": "2026-10-18T12:46:36.461296Z",
+        "expires_at": "2026-10-18T13:46:36.461296Z",
+        "provider_updated_at": null,
+        "freshness": "fresh"
+      }
+    }
+  ],
+  "completed_at": "2026-10-18T12:46:50.251762+00:00"
+}
