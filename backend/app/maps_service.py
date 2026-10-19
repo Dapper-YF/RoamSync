@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
 from app.agent_observation import observed
-from app.database import Activity, DayPlan, PlaceCandidate, RouteCache, RouteLeg, Trip
+from app.database import Activity, DayPlan, PlaceCandidate, RouteCache, RouteLeg, Trip, TripPreferences
 from app.schemas import CitySuggestionResponse, LocationPoiResponse, PlaceSearchResultResponse
 
 
@@ -200,6 +200,7 @@ async def recalculate_day_route(
     session: AsyncSession,
     day_plan_id: uuid.UUID,
     mode: str = "walk",
+    *, adjust_times: bool = False, route_results: list | None = None,
 ) -> None:
     day = await session.get(DayPlan, day_plan_id)
     if day is not None:
@@ -220,14 +221,10 @@ async def recalculate_day_route(
 
     first_activity = rows[0][0]
     current = datetime.combine(datetime.today().date(), first_activity.scheduled_time)
-    if current.hour < 7 or current.hour > 20:
-        current = current.replace(hour=9, minute=0, second=0, microsecond=0)
-    if not first_activity.schedule_locked:
-        first_activity.scheduled_time = current.time()
     for position, ((from_activity, origin), (to_activity, destination)) in enumerate(
         zip(rows, rows[1:], strict=False)
     ):
-        result = await resolve_route_result(session, origin, destination, mode)
+        result = route_results[position] if route_results is not None else await resolve_route_result(session, origin, destination, mode)
         session.add(
             RouteLeg(
                 day_plan_id=day_plan_id,
@@ -246,11 +243,34 @@ async def recalculate_day_route(
         suggested_start = current + timedelta(
             minutes=from_activity.duration_minutes + result.duration_minutes
         )
+        if not adjust_times:
+            current = datetime.combine(datetime.today().date(), to_activity.scheduled_time)
+            continue
+        existing_start = datetime.combine(datetime.today().date(), to_activity.scheduled_time)
         if to_activity.schedule_locked:
+            if suggested_start > existing_start:
+                raise MapProviderError("调整会影响固定活动，请先核对取舍", code="schedule_conflict", status_code=422)
             current = datetime.combine(datetime.today().date(), to_activity.scheduled_time)
         else:
-            current = suggested_start
+            current = max(suggested_start, existing_start)
+            if current.date() != datetime.today().date():
+                raise MapProviderError("调整超出当天范围", code="schedule_conflict", status_code=422)
             to_activity.scheduled_time = current.time().replace(second=0, microsecond=0)
+    if adjust_times:
+        await validate_day_time_bounds(session, day_plan_id)
+
+
+async def validate_day_time_bounds(session, day_plan_id):
+    """Deterministic bounds for an explicitly authorized forward repair."""
+    await session.flush()
+    day = await session.get(DayPlan, day_plan_id)
+    pref = await session.get(TripPreferences, day.trip_id) if day else None
+    activities = list((await session.scalars(select(Activity).where(Activity.day_plan_id == day_plan_id).order_by(Activity.position))).all())
+    minutes = lambda value: value.hour * 60 + value.minute
+    for item in activities:
+        start, end = minutes(item.scheduled_time), minutes(item.scheduled_time) + item.duration_minutes
+        if end > 24 * 60 or pref and (start < minutes(pref.daily_start_time) or end > minutes(pref.daily_end_time)):
+            raise MapProviderError("调整超出当天可用时间，请核对后使用调整建议", code="schedule_conflict", status_code=422)
 
 
 async def resolve_route_result(

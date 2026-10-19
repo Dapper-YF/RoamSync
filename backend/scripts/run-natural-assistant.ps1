@@ -1,5 +1,5 @@
 #requires -Version 7.0
-param([string]$Evidence='focused', [switch]$Full, [switch]$Favorites)
+param([string]$Evidence='focused', [switch]$Full, [switch]$Favorites, [string[]]$TestFiles)
 $ErrorActionPreference='Stop'
 Set-Location (Split-Path $PSScriptRoot -Parent)
 $container='roamsync-natural-assistant-pg'
@@ -17,6 +17,7 @@ $python='E:/Study/RoamSync/backend/.venv/Scripts/python.exe'
 & $python -m alembic upgrade head
 if ($LASTEXITCODE -ne 0) { throw 'Migration failed' }
 $cases=@('tests/test_formal_write_protection.py','tests/test_formal_write_integration_review.py','-q','--tb=short')
+if ($TestFiles) { $cases=@($TestFiles)+@('-q','--tb=short') }
 if ($Full -or $Favorites) {
     $dbName=if ($Favorites) {'roamsync_test'} else {'promotion_test'}
     $found=docker exec $container psql -U write_test -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='$dbName'"

@@ -286,7 +286,10 @@ def test_optional_trip_version_header_and_legacy_body_compatibility(sample):
 def test_indirect_schedule_changes_advance_other_activity_version(sample):
     async def scenario():
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as c:
-            r = await c.put(f"/api/v1/activities/{sample.activities[0].id}", json={"version": 1, "duration_minutes": 45})
+            assert (await c.post(f"/api/v1/day-plans/{sample.days[0].id}/route", json={"mode": "walk"})).status_code == 200
+            # Stage B preserves slack: use an actual overlap to exercise the
+            # same indirect Activity-version fence instead of compacting a gap.
+            r = await c.put(f"/api/v1/activities/{sample.activities[0].id}", json={"version": 1, "duration_minutes": 180})
             assert r.status_code == 200
             second = next(a for a in (await current(sample))["activities"] if a["id"] == str(sample.activities[1].id))
             assert second["start"] != "11:00:00" and second["version"] == 2

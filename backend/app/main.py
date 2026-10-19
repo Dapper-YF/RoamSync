@@ -1074,9 +1074,21 @@ async def recalculate_route_endpoint(
     trip_version: int | None = Header(default=None, alias="X-Trip-Version", gt=0),
 ) -> DayPlanResponse:
     try:
-        return await recalculate_formal_route(session, day_plan_id, payload.mode, expected_trip_version=trip_version)
+        return await recalculate_formal_route(session, day_plan_id, payload.mode, expected_trip_version=trip_version, adjust_times=payload.adjust_times)
     except DayPlanNotFoundError as exc:
         raise HTTPException(status_code=404, detail="day plan not found") from exc
+    except MapProviderError as exc:
+        raise map_provider_http_error(exc) from exc
+
+
+@app.get("/api/v1/day-plans/{day_plan_id}/route", tags=["planner"])
+async def query_route_endpoint(day_plan_id: uuid.UUID, mode: str = Query(default="walk", pattern="^(walk|driving|transit)$"), session: AsyncSession = Depends(get_session)):
+    from app.planner_repository import query_formal_route
+    try:
+        version, legs = await query_formal_route(session, day_plan_id, mode)
+        return {"trip_version": version, "mode": mode, "legs": [vars(leg) for leg in legs]}
+    except DayPlanNotFoundError as exc:
+        raise HTTPException(404, "day plan not found") from exc
     except MapProviderError as exc:
         raise map_provider_http_error(exc) from exc
 

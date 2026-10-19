@@ -161,16 +161,27 @@ async def _recalculate_schedule_from_saved_route(
         (leg.from_activity_id, leg.to_activity_id): leg.duration_minutes for leg in legs
     }
     for previous, current in zip(activities, activities[1:], strict=False):
-        if current.schedule_locked:
-            continue
         start = datetime.combine(datetime.today().date(), previous.scheduled_time)
-        current.scheduled_time = (
+        earliest = (
             start
             + timedelta(
                 minutes=previous.duration_minutes
                 + leg_minutes.get((previous.id, current.id), 0)
             )
-        ).time().replace(second=0, microsecond=0)
+        )
+        existing = datetime.combine(start.date(), current.scheduled_time)
+        if earliest <= existing:
+            continue  # A duration edit does not authorize removing existing slack.
+        if current.schedule_locked or earliest.date() != start.date():
+            raise ActivityDecisionSemanticsError("调整会影响固定活动或超出当天，请核对后使用调整建议")
+        if (previous.id, current.id) not in leg_minutes:
+            raise ActivityDecisionSemanticsError("路线耗时未知，请先查询路线再调整后续时间")
+        current.scheduled_time = earliest.time().replace(second=0, microsecond=0)
+    from app.maps_service import MapProviderError, validate_day_time_bounds
+    try:
+        await validate_day_time_bounds(session, day_plan_id)
+    except MapProviderError as exc:
+        raise ActivityDecisionSemanticsError(str(exc)) from exc
 
 
 async def _day_response(session: AsyncSession, day: DayPlan) -> DayPlanResponse:
@@ -643,12 +654,37 @@ async def delete_activity(session: AsyncSession, activity_id: uuid.UUID, *, expe
 
 
 @protect_formal_write("day", "day_plan_id")
-async def recalculate_formal_route(session: AsyncSession, day_plan_id: uuid.UUID, mode="walk", *, expected_trip_version=None):
-    # Keep legacy time-recalculation behavior; only protect its actual writes.
+async def _apply_formal_route(session: AsyncSession, day_plan_id: uuid.UUID, mode, route_results, *, expected_trip_version, adjust_times=False):
     await get_day_plan(session, day_plan_id)
-    await recalculate_day_route(session, day_plan_id, mode)
+    await recalculate_day_route(session, day_plan_id, mode, route_results=route_results, adjust_times=adjust_times)
     await finish_formal_write(session)
     return await get_day_plan(session, day_plan_id)
+
+
+async def query_formal_route(session: AsyncSession, day_plan_id: uuid.UUID, mode="walk", *, expected_trip_version=None):
+    # External I/O/cache writes complete before acquiring a formal row lock.
+    from types import SimpleNamespace
+    from app import maps_service
+    from app.formal_write import FormalWriteConflictError
+    day = await session.get(DayPlan, day_plan_id)
+    if day is None:
+        raise DayPlanNotFoundError
+    trip = await get_trip(session, day.trip_id)
+    version = trip.version
+    if expected_trip_version is not None and expected_trip_version != version:
+        raise FormalWriteConflictError("安排已变化，请刷新后重新查询")
+    rows = (await session.execute(select(Activity, PlaceCandidate).join(PlaceCandidate, Activity.place_candidate_id == PlaceCandidate.id).where(Activity.day_plan_id == day_plan_id).order_by(Activity.position))).all()
+    results = []
+    for (from_activity, origin), (to_activity, destination) in zip(rows, rows[1:]):
+        result = await maps_service.resolve_route_result(session, origin, destination, mode)
+        results.append(SimpleNamespace(from_activity_id=from_activity.id, to_activity_id=to_activity.id, **{key: getattr(result, key) for key in ("distance_meters", "duration_minutes", "provider", "is_estimated", "path", "alternatives")}))
+    await session.commit()  # Cache only; no Activity/Day/Trip mutation above.
+    return version, results
+
+
+async def recalculate_formal_route(session: AsyncSession, day_plan_id: uuid.UUID, mode="walk", *, expected_trip_version=None, adjust_times=False):
+    version, results = await query_formal_route(session, day_plan_id, mode, expected_trip_version=expected_trip_version)
+    return await _apply_formal_route(session, day_plan_id, mode, results, expected_trip_version=version, adjust_times=adjust_times)
 
 
 async def get_planning_budget(

@@ -628,6 +628,7 @@ class ActivityOrderUpdate(BaseModel):
 
 class RouteRecalculateRequest(BaseModel):
     mode: RouteMode = "walk"
+    adjust_times: bool = False
 
 
 class PlanningBudgetDayResponse(BaseModel):

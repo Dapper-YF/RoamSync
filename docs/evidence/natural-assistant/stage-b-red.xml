@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="4.733" timestamp="2026-10-19T20:40:50.240620+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_route_time_separation" name="test_refresh_route_preserves_gap_and_activity_versions" time="0.580"><failure message="AssertionError: assert [{'day_id': '...': None, ...}] == [{'day_id': '...': None, ...}]&#10;  &#10;  At index 1 diff: {'id': '8d751a2f-fefa-45c8-b054-328c1a92e9f7', 'day_id': 'c7a1d016-a720-4d79-860d-f14ec527edc7', 'place_id': '141ab4d0-937b-4b2d-b3b7-ba4dd8d6e775', 'version': 2, 'position': 1, 'start': '14:40:00', 'duration': 30, 'note': None, 'name': None} != {'id': '8d751a2f-fefa-45c8-b054-328c1a92e9f7', 'day_id': 'c7a1d016-a720-4d79-860d-f14ec527edc7', 'place_id': '141ab4d0-937b-4b2d-b3b7-ba4dd8d6e775', 'version': 1, 'position': 1, 'start': '17:00:00', 'duration': 30, 'note': None, 'name': None}&#10;  Use -v to get more diff">backend\tests\test_route_time_separation.py:28: in test_refresh_route_preserves_gap_and_activity_versions
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+backend\tests\test_route_time_separation.py:27: in scenario
+    assert (await current(sample))["activities"] == before["activities"]
+E   AssertionError: assert [{'day_id': '...': None, ...}] == [{'day_id': '...': None, ...}]
+E     
+E     At index 1 diff: {'id': '8d751a2f-fefa-45c8-b054-328c1a92e9f7', 'day_id': 'c7a1d016-a720-4d79-860d-f14ec527edc7', 'place_id': '141ab4d0-937b-4b2d-b3b7-ba4dd8d6e775', 'version': 2, 'position': 1, 'start': '14:40:00', 'duration': 30, 'note': None, 'name': None} != {'id': '8d751a2f-fefa-45c8-b054-328c1a92e9f7', 'day_id': 'c7a1d016-a720-4d79-860d-f14ec527edc7', 'place_id': '141ab4d0-937b-4b2d-b3b7-ba4dd8d6e775', 'version': 1, 'position': 1, 'start': '17:00:00', 'duration': 30, 'note': None, 'name': None}
+E     Use -v to get more diff</failure></testcase><testcase classname="tests.test_route_time_separation" name="test_duration_edit_using_saved_route_preserves_existing_gap" time="0.335"><failure message="AssertionError: assert ('14:55:00' == '17:00:00'&#10;  &#10;  - 17:00:00&#10;  + 14:55:00)">backend\tests\test_route_time_separation.py:41: in test_duration_edit_using_saved_route_preserves_existing_gap
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+backend\tests\test_route_time_separation.py:40: in scenario
+    assert row["start"] == "17:00:00" and row["version"] == 1
+E   AssertionError: assert ('14:55:00' == '17:00:00'
+E     
+E     - 17:00:00
+E     + 14:55:00)</failure></testcase></testsuite></testsuites>
