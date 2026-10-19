@@ -11,6 +11,86 @@ from test_formal_write_protection import sample
 from test_flexible_arrangement import create_item
 
 
+def test_explicit_duration_change_with_gaiwei_is_not_companion_chat():
+    from app.travel_goal_router import route_travel_goal
+    result = route_travel_goal("请把第二天南京博物院的停留时长改为110分钟，总统府不要动。")
+    assert result.target_runtime == "planning" and result.mutation_requested
+
+
+def test_preserve_other_dates_does_not_reinterpret_activity_edit_as_rescheduling():
+    from app.assistant_service import requested_trip_operation
+    assert requested_trip_operation("请把南京博物院时长改为110分钟，其他日期保持不变") == "plan_trip"
+    assert requested_trip_operation("请把旅行改期到2026-11-10") == "reschedule_trip"
+
+
+def test_adopted_trip_edit_does_not_require_selecting_a_historical_suggestion(sample, monkeypatch):
+    from app.assistant_service import AssistantRouter, ToolDecision
+    calls = []
+    async def decide(self, context):
+        calls.append(context)
+        assert context["current_trip_id"] == str(sample.trip_id)
+        assert context["arrangement_items"][0]["label"] == "玄武湖"
+        return ToolDecision(tool="reply", reply="已读取当前安排，可继续协调")
+    monkeypatch.setattr(AssistantRouter, "decide", decide)
+    async def scenario():
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as c:
+            assert (await create_item(c, sample, 1, kind="selected", label="玄武湖")).status_code == 201
+            session = (await c.post("/api/v1/assistant/sessions", json={"trip_id": str(sample.trip_id)})).json()
+            mid = str(uuid4())
+            response = await c.post(f"/api/v1/assistant/sessions/{session['id']}/messages", json={
+                "message": "请调整第二天的安排，玄武湖保持已选但时间未定，这次不要把它排进具体时间。",
+                "message_id": mid, "context": {"version": "assistant-context-v1", "topic_id": "natural-travel", "surface": "trip",
+                    "prefer_flexible": True, "read_trip_id": str(sample.trip_id), "action_target": {
+                        "trip_id": str(sample.trip_id), "expected_version": 2, "operation": "plan_trip", "authorization_message_id": mid}}})
+            assert response.status_code == 200, response.text
+            assert calls, response.text
+            assert response.json()["messages"][-1]["assistant"] == "已读取当前安排，可继续协调"
+    asyncio.run(scenario())
+
+
+def test_simple_safe_duration_chat_edit_is_atomic_without_graph(sample):
+    from test_formal_write_protection import current
+    async def scenario():
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as c:
+            session = (await c.post("/api/v1/assistant/sessions", json={"trip_id": str(sample.trip_id)})).json()
+            mid = str(uuid4())
+            context = {"version": "assistant-context-v1", "topic_id": "simple-duration", "surface": "trip", "prefer_flexible": True,
+                "read_trip_id": str(sample.trip_id), "action_target": {"trip_id": str(sample.trip_id), "expected_version": 1, "operation": "plan_trip", "authorization_message_id": mid}}
+            before = await current(sample)
+            r = await c.post(f"/api/v1/assistant/sessions/{session['id']}/messages", json={"message": "请把测试地点0的停留时长改为20分钟，其他日期保持不变。", "message_id": mid, "context": context})
+            assert r.status_code == 200, r.text
+            assert r.json()["latest_run_id"] is None
+            after = await current(sample)
+            assert after["version"] == 2
+            first = next(a for a in after["activities"] if a["id"] == str(sample.activities[0].id))
+            assert first["duration"] == 20
+            assert next(a for a in after["activities"] if a["id"] == str(sample.activities[1].id)) == next(a for a in before["activities"] if a["id"] == str(sample.activities[1].id))
+            assert (await c.post(f"/api/v1/assistant/sessions/{session['id']}/messages", json={"message": "请把测试地点0的停留时长改为20分钟，其他日期保持不变。", "message_id": mid, "context": context})).status_code == 200
+            assert await current(sample) == after
+    asyncio.run(scenario())
+
+
+def test_chat_failure_after_simple_duration_edit_rolls_back_activity_and_trip(sample, monkeypatch):
+    import app.assistant_arrangement as commands
+    from test_formal_write_protection import current
+    original = commands.simple_duration_edit
+    async def fail_after(*args):
+        await original(*args)
+        raise RuntimeError("synthetic failure before assistant message persistence")
+    monkeypatch.setattr(commands, "simple_duration_edit", fail_after)
+    async def scenario():
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app, raise_app_exceptions=False), base_url="http://test") as c:
+            session = (await c.post("/api/v1/assistant/sessions", json={"trip_id": str(sample.trip_id)})).json()
+            before = await current(sample)
+            mid = str(uuid4())
+            context = {"version": "assistant-context-v1", "topic_id": "simple-duration-failure", "surface": "trip", "prefer_flexible": True,
+                "read_trip_id": str(sample.trip_id), "action_target": {"trip_id": str(sample.trip_id), "expected_version": 1, "operation": "plan_trip", "authorization_message_id": mid}}
+            r = await c.post(f"/api/v1/assistant/sessions/{session['id']}/messages", json={"message": "请把测试地点0的停留时长改为20分钟", "message_id": mid, "context": context})
+            assert r.status_code == 500
+            assert await current(sample) == before
+    asyncio.run(scenario())
+
+
 def test_flexible_preview_adoption_keeps_unknowns_and_does_not_start_graph(sample, monkeypatch):
     from app.assistant_service import AssistantRouter, ToolDecision
     from app.database import AssistantSession, Trip

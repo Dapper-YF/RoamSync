@@ -1,5 +1,30 @@
 # RoamSync Agent v1 architecture contract
 
+## Isolated natural-assistant integration (2026-10-19, unreleased)
+
+In codex/natural-assistant-integration-20261019 only: the Web assistant and saved
+arrangement share current Trip/Activity versions. Consultation creates no Trip;
+flexible creation is a bounded pending-action preview, adopted atomically.
+Trip-owned choice rows contain selected/optional/cancelled items and explicitly
+reserved intervals. Only Activity owns exact start/duration. No parallel planner
+or permanent generic task object was introduced. See delivery report for B/C/D
+constraints and migration0037; production has not been migrated.
+
+Ordinary choice edits use the controlled item writer. One uniquely named safe
+duration edit uses update_activity(commit=False), with message persistence in the
+same transaction; injected failure must roll it all back. Exact user start times
+cannot silently drift during saved-route repair. Complex changes still produce
+an existing PlanningRun/PlanRevision, with final Validator and explicit Accept.
+For already-adopted flexible trips, authorized direct edits use current planning
+context without a mandatory historical-suggestion handoff. Explicit suggestion
+references retain the original resolver. No new place identity is inferred from
+a pronoun. Version/message/Trip authorization remains mandatory before routing.
+
+GET day route is read-only with respect to formal schedule; POST route refresh
+no longer compacts gaps. Explicit repair can only resolve actual overlaps while
+preserving fixed anchors and reserved intervals. Unknown routes remain unknown.
+Evidence and measured limitations: docs/NATURAL_ASSISTANT_DELIVERY_20261019.md.
+
 Contract version: `agent-v1.0` + `travel-goal-phase0` + `travel-companion-phase1/2` (2026-09-29)
 
 Status: frozen development baseline

@@ -355,7 +355,7 @@ async def update_activity(
     session: AsyncSession,
     activity_id: uuid.UUID,
     payload: ActivityUpdate,
-    *, expected_trip_version: int | None = None,
+    *, expected_trip_version: int | None = None, commit: bool = True,
 ) -> ActivityResponse:
     activity = await session.scalar(
         select(Activity).where(Activity.id == activity_id).with_for_update().execution_options(populate_existing=True)
@@ -415,6 +415,8 @@ async def update_activity(
 
     if changed_fields & {"scheduled_time", "duration_minutes", "schedule_locked"}:
         await _recalculate_schedule_from_saved_route(session, activity.day_plan_id)
+        if "scheduled_time" in changed_fields and activity.scheduled_time != payload.scheduled_time:
+            raise ActivityDecisionSemanticsError("你指定的开始时间与前序活动或路线冲突，尚未保存；请核对后生成调整建议")
         await session.flush()
 
     place = await session.get(PlaceCandidate, activity.place_candidate_id)
@@ -423,7 +425,7 @@ async def update_activity(
     source = await session.get(SourceRecord, place.source_record_id)
     if source is None:
         raise PlaceCandidateNotFoundError
-    await finish_formal_write(session)
+    await finish_formal_write(session, commit=commit)
     await session.refresh(activity)
     return _activity_response(activity, place, source)
 

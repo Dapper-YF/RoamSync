@@ -1,6 +1,21 @@
 # RoamSync project state
 
-Last updated: 2026-10-18
+Last updated: 2026-10-19
+
+## Isolated natural-assistant development (2026-10-19, unreleased)
+
+VERIFIED in codex/natural-assistant-integration-20261019 only: reviewed formal-write
+baseline reused; read-only route query separated from authorized schedule repair;
+additive0037 Trip-owned finite choices/free intervals, Activity remains the sole
+precise schedule; current-choice context reaches existing Planner/Validator/Accept.
+Bounded preview adoption and versioned page/chat edits support the new Web primary
+assistant and saved arrangement. No generalized task model or Android changes.
+Overall PARTIAL: individual real provider/browser chains pass, but same-Trip full
+natural-language chain still hits a legacy planning-intent clarification defect.
+No official merge, deployment, production migration or commercial acceptance.
+See docs/NATURAL_ASSISTANT_DELIVERY_20261019.md and evidence/natural-assistant.
+
+
 
 ## Official RoamSync 2.0 release (2026-10-18)
 

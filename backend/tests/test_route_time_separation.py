@@ -132,3 +132,14 @@ def test_saved_route_edit_outside_day_returns_422_and_rolls_back(sample):
             assert response.status_code == 422, response.text
             assert await current(sample) == before
     asyncio.run(scenario())
+
+
+def test_explicit_start_is_not_silently_replaced_by_saved_route_math(sample):
+    async def scenario():
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as c:
+            assert (await c.post(f"/api/v1/day-plans/{sample.days[0].id}/route", json={"mode": "walk"})).status_code == 200
+            before = await current(sample)
+            response = await c.put(f"/api/v1/activities/{sample.activities[1].id}", json={"version": 1, "scheduled_time": "09:30"})
+            assert response.status_code == 422, response.text
+            assert await current(sample) == before
+    asyncio.run(scenario())

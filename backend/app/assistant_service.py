@@ -39,6 +39,11 @@ class AssistantToolError(ValueError):
     pass
 
 
+def requested_trip_operation(message):
+    # Merely preserving '其他日期' is not authorization to reschedule a Trip.
+    return "reschedule_trip" if re.search(r"改期|(?:日期|出发|返程).{0,8}(?:改到|改为|调整到)|(?:改到|改为)(?:明天|后天|下周|\d{4}[-年]|\d{1,2}月)", message) else "plan_trip"
+
+
 @dataclass(frozen=True)
 class CreationFacts:
     """Only facts the user supplied for an as-yet-unsaved trip.
@@ -471,7 +476,7 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
     if envelope and (row.trip_id is not None or not envelope.prefer_flexible):
         try:
             target_trip = await db.scalar(select(Trip).where(Trip.id == row.trip_id).with_for_update().execution_options(populate_existing=True)) if row.trip_id else None
-            requested_operation = "reschedule_trip" if re.search(r"改期|改到|日期", message) else "plan_trip"
+            requested_operation = requested_trip_operation(message)
             if not goal_routing.mutation_requested:
                 raise ValueError("请明确说明需要执行的旅行操作；历史对话不授予本次操作权限。")
             check_action_target(envelope, session_trip_id=row.trip_id, message_id=message_id,
@@ -489,7 +494,15 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
             return row
     # A creation preview may retain unresolved user names. It does not grant
     # formal writes; the existing explicit preview adoption remains mandatory.
-    brief = None if envelope and envelope.prefer_flexible and row.trip_id is None else build_planning_brief(str(row.id), str(message_id), message, goal_routing, list(effective_messages))
+    # An adopted arrangement is already the grounded result. Authorized edits
+    # use its current context, not a mandatory handoff through old suggestions.
+    # Explicit references to a suggestion still require the original resolver.
+    direct_arrangement_edit = bool(envelope and envelope.prefer_flexible and row.trip_id
+        and envelope.read_trip_id == row.trip_id and envelope.action_target
+        and envelope.action_target.operation == "plan_trip"
+        and goal_routing.mutation_requested
+        and not re.search(r"建议|suggestion_|第[一二三四五六七八九十\d]+条", message))
+    brief = None if direct_arrangement_edit or (envelope and envelope.prefer_flexible and row.trip_id is None) else build_planning_brief(str(row.id), str(message_id), message, goal_routing, list(effective_messages))
     if brief and envelope:
         brief = brief.model_copy(update={"effective_requirements": envelope.requirement_records})
     if brief and brief.status == "needs_clarification":

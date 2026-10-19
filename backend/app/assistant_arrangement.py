@@ -5,7 +5,7 @@ from sqlalchemy import select
 
 from app.arrangement_service import ItemWrite, read_items, write_item
 from app.assistant_context import check_action_target
-from app.database import PlanRevision
+from app.database import Activity, DayPlan, PlaceCandidate, PlanRevision, RouteLeg, TripPreferences
 from app.formal_write import lock_trip
 
 
@@ -22,6 +22,57 @@ def choice_command(message):
     return None
 
 
+async def simple_duration_edit(db, row, message, message_id, context):
+    """Only one exact scalar edit, no downstream decision or invented route."""
+    from app.assistant_service import AssistantToolError
+    first = re.split(r"[，,。；;]", message)[0]
+    rest = re.split(r"[，,。；;]", message)[1:]
+    if any(clause.strip() and not re.search(r"不要动|保持不变|仍为备选|不安排|其他.*不变", clause) for clause in rest):
+        return None  # Multiple changes require their own explicit coordination.
+    match = re.fullmatch(r"(?:请)?(?:把)?(?:第([一二三123])天)?(.+?)(?:的)?(?:停留时长|停留时间|游览时长|时长)(?:改为|改成|调整为)(\d+)分钟", first)
+    if not match or not row.trip_id:
+        return None
+    target = context.action_target
+    if target is None or target.operation != "plan_trip":
+        raise AssistantToolError("请从这份安排明确发起活动修改。")
+    if context.read_trip_id != row.trip_id:
+        raise AssistantToolError("当前读取的安排与修改目标不一致。")
+    day_index, name, duration = match.groups()
+    name = name.rstrip("的").strip()
+    rows = (await db.execute(select(Activity, DayPlan).join(DayPlan).join(PlaceCandidate, Activity.place_candidate_id == PlaceCandidate.id).where(
+        DayPlan.trip_id == row.trip_id, (PlaceCandidate.name == name) | (Activity.custom_name == name)))).all()
+    if day_index:
+        index = {"一": 0, "1": 0, "二": 1, "2": 1, "三": 2, "3": 2}[day_index]
+        rows = [(a, d) for a, d in rows if d.position == index]
+    if len(rows) != 1 or not 5 <= int(duration) <= 1440:
+        return None
+    activity, day = rows[0]
+    if activity.schedule_locked or activity.status != "planned":
+        return None
+    duration = int(duration)
+    minute = lambda t: t.hour*60+t.minute
+    end = minute(activity.scheduled_time) + duration
+    pref = await db.get(TripPreferences, row.trip_id)
+    if end > 1440 or pref and end > minute(pref.daily_end_time):
+        return None
+    from app.arrangement_service import read_items
+    if any(i.kind == "free_window" and i.day_date == day.date and minute(activity.scheduled_time) < minute(i.end_time) and end > minute(i.start_time)
+           for i in await read_items(db, row.trip_id)):
+        return None
+    next_activity = await db.scalar(select(Activity).where(Activity.day_plan_id == day.id, Activity.position > activity.position).order_by(Activity.position).limit(1))
+    if next_activity and duration > activity.duration_minutes:
+        route = await db.scalar(select(RouteLeg).where(RouteLeg.from_activity_id == activity.id, RouteLeg.to_activity_id == next_activity.id))
+        if route is None or end + route.duration_minutes > minute(next_activity.scheduled_time):
+            return None
+    trip = await lock_trip(db, row.trip_id, expected_version=target.expected_version)
+    check_action_target(context, session_trip_id=row.trip_id, message_id=message_id, trip_version=trip.version, operation="plan_trip")
+    from app.planner_repository import update_activity
+    from app.schemas import ActivityUpdate
+    await update_activity(db, activity.id, ActivityUpdate(version=activity.version, duration_minutes=duration),
+        expected_trip_version=trip.version, commit=False)
+    return f"已将{name}的停留时长改为{duration}分钟。已保存的路线与后续时间允许这次修改，其他活动和留白保持不变。"
+
+
 async def apply_arrangement_message(db, row, message, message_id, context):
     from app.assistant_service import AssistantToolError, confirm_action
     confirm = message.strip().rstrip("。！! ") in {"就按这份来", "就这样安排", "采用这份方案", "确认采用"}
@@ -30,6 +81,9 @@ async def apply_arrangement_message(db, row, message, message_id, context):
         return None
     if row.trip_id is None and context.prefer_flexible and re.search(r"先讨论|先聊聊|暂不创建", message) and not re.search(r"[？?]|怎么|如何|什么|是否|帮我|请形成|请安排|请规划", message):
         return "我会把这些旅行想法用于接下来的讨论。目前还没有创建旅行或保存安排；未定时间与备选会保持未定。"
+    simple = await simple_duration_edit(db, row, message, message_id, context)
+    if simple is not None:
+        return simple
     if confirm:
         if context.preview_action_id:
             key = str(context.preview_action_id)

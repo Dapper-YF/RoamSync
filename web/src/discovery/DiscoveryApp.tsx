@@ -30,7 +30,6 @@ import {
 import { PlaceContentRepository } from "../data/placeContentRepository";
 import type { ExplorePlace, ExplorePoint } from "../domain/explore";
 import {
-  AssistantPage,
   TravelAssistantProvider,
   useTravelAssistant,
 } from "../product/TravelAssistant";
@@ -41,6 +40,7 @@ import { ExploreMap } from "../product/ExploreMap";
 import { DiscoveryState, useScene, type RouteState } from "./scene";
 import "../product/ProductExperience.css";
 import "./discovery.css";
+import { NaturalAssistant, NaturalArrangements } from "../product/NaturalAssistant";
 const repository = new PlaceContentRepository();
 const categories = [
   ["all", "全部", Compass],
@@ -68,7 +68,7 @@ function Shell() {
   const [assistantEntryError, setAssistantEntryError] = useState("");
   async function askOnPage() {
     setAssistantEntryError("");
-    const tripId = location.pathname.match(/^\/trips\/([^/]+)/)?.[1];
+    const tripId = location.pathname.match(/^\/(?:trips|arrangements)\/([^/]+)/)?.[1];
     const draftId = location.pathname.match(/^\/drafts\/([^/]+)/)?.[1];
     if (tripId) {
       assistant.openAssistant({
@@ -126,19 +126,13 @@ function Shell() {
         </Link>
         <nav className="rxp-nav" aria-label="主导航">
           <NavLink to="/" end className="rxp-nav-link">
-            探索
+            AI 助手
           </NavLink>
-          <NavLink to="/nearby" className="rxp-nav-link">附近</NavLink>
-          <NavLink to="/trips" className="rxp-nav-link">旅程</NavLink>
+          <NavLink to="/arrangements" className="rxp-nav-link">我的安排</NavLink>
+          <NavLink to="/explore" className="rxp-nav-link">探索</NavLink>
+          <NavLink to="/trips" className="rxp-nav-link">已有旅程</NavLink>
           <NavLink to="/favorites" className="rxp-nav-link">
             收藏
-          </NavLink>
-          <NavLink
-            to="/assistant"
-            state={{ from: location.pathname + location.search }}
-            className="rxp-nav-link"
-          >
-            与 AI 聊聊
           </NavLink>
         </nav>
         <button
@@ -155,7 +149,9 @@ function Shell() {
         </p>
       )}
       <Routes>
-        <Route path="/" element={<Discover />} />
+        <Route path="/" element={<NaturalAssistant />} />
+        <Route path="/arrangements" element={<NaturalArrangements />} />
+        <Route path="/arrangements/:tripId" element={<NaturalAssistant />} />
         <Route path="/explore" element={<Discover />} />
         <Route path="/nearby" element={<NearbyPage />} />
         <Route path="/trips" element={<JourneysPage />} />
@@ -181,7 +177,7 @@ function Shell() {
                 }
                 label="返回浏览"
               />
-              <AssistantPage />
+              <NaturalAssistant contextTripId={assistant.context.tripId} />
             </>
           }
         />

@@ -1,42 +1,43 @@
 # Latest Handoff
 
 ## Snapshot
-2026-10-19 第一阶段正式集成评审READY（含本轮补丁，不单独批准原提交）。
-隔离目录 E:/Study/RoamSync-write-integration-20261019；分支
-codex/formal-write-integration-review-20261019；基线25a62cb。
-7b67f68无冲突应用为等价f06a847；主仓库没有更新提交，README/nginx已有改动保留。
-唯一正式源码仍为E:/Study/RoamSync。本修复未合并、未部署，3000不受影响。
+2026-10-19 自然旅行助手A—E隔离集成，总体PARTIAL，未合并或部署。
+目录E:/Study/RoamSync-natural-assistant-20261019；分支
+codex/natural-assistant-integration-20261019，基线1ce7e5d。
+唯一正式源码仍E:/Study/RoamSync，HEAD25a62cb；其README/nginx及旧文件保持。
 
 ## Current Freeze / Rehearsal Status
-VERIFIED：新增/删除/字段更新/移动/排序/路线写入先锁Trip，实际语义变化推进Trip版本。
-Accept先Trip后Revision/Run；相邻执行/恢复路径只对齐锁顺序。
-保留Activity/Requirement独立版本、最终Validator与Accept幂等；无新表或PlanningRun工作流。
-可选X-Trip-Version防旧页面；无版本旧请求保留原格式和顺序语义，但不保证识别所有延迟提交。
-评审补丁修复预算联动清空/404兼容性、非法跨Trip取锁，以及缺失Preferences自动commit
-释放Accept父锁的漏洞；保留失败回归。仅四个应用文件局部调整，无新架构。
-报告：docs/FORMAL_WRITE_INTEGRATION_REVIEW_20261019.md。
+VERIFIED：共同正式写保护复验；路线GET不改正式时间，POST默认仅刷新证据，明确授权
+才修复真实重叠，不压缩已有间隔。新增有限TripArrangementItem关系表0037，保留未排程/
+备选/撤销/明确留白，Activity独占精确时间；转换/来源/版本/Accept同事务校验。
+自然助手预览采用后才建Trip，普通咨询不创建；页面与对话共享版本化结果。
+旧Graph/Validator/Accept保留，复杂修改不直接应用。新Web默认入口AI助手＋我的安排。
+范围：日期明确单城市1—3天；未新增通用任务中心、Android或商业平台能力。
 
 ## Prior milestone baseline (before shadow split)
-此前3000发布和Android成果均属于canonical历史；不将本工作树视为正式发布。
-Spike关系表、混合精度上下文未引入；前端/Android/产品入口未调整。
+A 2f2def5；B 7468363；C 739ef56；D ed6ea2d；E见当前分支后续提交。
+基于正式写保护评审1ce7e5d，不要再次应用等价7b67f68。
+正式3000与生产数据库均未改动，迁移只在独立tmpfs测试PG执行。
 
 ## Prior verification
-MEASURED：修前新增201后旧Accept200且新增丢失；扩展矩阵6失败1通过。
-集成版隔离PostgreSQL17.11专项32通过，包括原27项及5项评审反例。
-Windows/Python3.14.3和Linux/Python3.11.16全量均1274通过1跳过；
-收藏并发另在隔离roamsync_test库补验1通过0跳过。
-证据见docs/evidence/write-integration-review/；原阶段一证据仍独立保留。
+MEASURED：最终Windows后端1316 passed/1 skipped；Web192通过，类型检查/构建通过。
+收藏并发独立库1通过。Linux最终同样1316通过/1跳过（release-linux.xml）。
+真实模型glm-5.3-flash＋AMap：咨询/采用/交叉修改通过；另一次真实局部冲突Graph/
+路线/Validator/用户Accept/刷新通过。合成预约并非真实订票。
+同一Trip全段浏览器链未通过：明确排程后，Router重写的“留白保留）”导致保护活动
+解析要求澄清“）”。未写坏安排，不能把分段通过称为完整产品GO。
+真实反例、截图、模型失败与回归XML见docs/evidence/natural-assistant。
+报告docs/NATURAL_ASSISTANT_DELIVERY_20261019.md。
 
 ## Prior blockers (historical)
-第一阶段修正版达到可合并标准；本轮未合并、未部署。不能仅采用原7b67f68。
-仍有锁内地图/可选语义模型/绑定对话调用，未完成生产负载验收。
-无X-Trip-Version客户端不能识别所有延迟旧页面提交。
-路线重算侵入留白、混合精度存储与Graph上下文仍未解决，不属于本轮。
-探索测试发现仅修改max_walking_minutes未普遍触发Accept拒绝；保留失败证据，
-未扩展Validator算法。无真实模型、前端或Android新体验验证。
-第二阶段输入：保护Trip写锁/语义版本与Accept原子性，分离地图重算和已存路线排时
-两个挤压留白入口；查询不能隐式修改活动，不提前引入混合精度表。
+当前优先阻塞是旧意图解析与新自然修改交接，下一步应以同一失败长链建立有界回归，
+修复后验证固定预约、未排程决定、留白、不同日期都能保留，不要增加功能或更换容易
+成功的演示输入。新增地点研究Provider本轮未配置，失败明确保留；原模型代理失败仅
+隔离进程改为直连，生产配置未变。模型存在重复地点/引用错误，Validator阻止采用。
+max_walking_minutes不完整仍独立P1；旧编辑部分网络调用持锁，未做负载验收。
+无版本旧客户端保护边界仍在。0037含数据降级会丢新事项，空表迁移实验不等于生产回退。
 
 ## Interview framing
-可陈述正式安排版本缺口的失败回归、PostgreSQL锁顺序和事务回滚证据。
-不可陈述自然旅行产品闭环已完成、全面约束可满足或生产已修复。
+可证明版本/幂等/锁/回滚、路线事实与排时权限分离、混合精度的单一精确时间源、
+有证据的真实Agent局部取舍与用户采用。不可声称全自然语言稳定、真实全链已完成、
+生产已发布或任意约束都能满足。

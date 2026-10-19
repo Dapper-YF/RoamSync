@@ -255,6 +255,22 @@ def test_live_trip_requires_coordination_for_new_precise_time(sample):
     asyncio.run(scenario())
 
 
+def test_user_selected_provider_place_can_be_bound_with_explicit_times(sample):
+    async def scenario():
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as c:
+            item = await create_item(c, sample, 1, kind="selected", label="博物院")
+            snapshot = {"provider": "amap", "provider_place_id": "synthetic-explicit-place", "name": "博物院", "category": "sight", "neighborhood": "synthetic", "longitude": 118.8, "latitude": 32.05,
+                "suggested_duration_minutes": 99, "estimated_cost_fen": 0, "rating": 0, "tags": [], "source_url": "https://www.amap.com/search?id=synthetic-explicit-place"}
+            response = await c.post(f"/api/v1/trips/{sample.trip_id}/arrangement-items/{item.json()['id']}/schedule", json={"expected_version": 2,
+                "day_plan_id": str(sample.days[1].id), "place_snapshot": snapshot, "scheduled_time": "14:00", "duration_minutes": 60})
+            assert response.status_code == 200, response.text
+            state = (await c.get(f"/api/v1/trips/{sample.trip_id}/arrangement-items")).json()
+            added = next(a for d in state["days"] for a in d["activities"] if a["id"] == response.json()["activity_id"])
+            assert added["duration_minutes"] == 60 and added["scheduled_time"] == "14:00:00"
+            assert response.json()["source_ref"] == item.json()["source_ref"]
+    asyncio.run(scenario())
+
+
 def test_item_change_fences_old_candidate_and_old_page(sample):
     async def scenario():
         rid = await pending_revision(sample)

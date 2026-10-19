@@ -38,7 +38,7 @@ async def _state(session, trip_id):
     return activities, encoded
 
 
-async def finish_formal_write(session):
+async def finish_formal_write(session, *, commit=True):
     trip, before, before_other = session.info["formal_write"]
     await session.flush()
     from app.arrangement_service import validate_current_arrangement
@@ -54,7 +54,10 @@ async def finish_formal_write(session):
             activity.version += 1
     if changed:
         trip.version += 1
-    await session.commit()
+    if commit:
+        await session.commit()
+    else:
+        await session.flush()
 
 
 def protect_formal_write(scope, identity_arg):

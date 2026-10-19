@@ -9,6 +9,7 @@ from sqlalchemy import delete, select
 from app.database import Activity, DayPlan, PlaceCandidate, RouteLeg, Trip, TripArrangementItem
 from app.formal_write import lock_trip
 from app.maps_service import validate_day_time_bounds
+from app.schemas import PlaceSearchResultResponse
 
 
 class ArrangementConstraintError(ValueError):
@@ -47,6 +48,7 @@ class ItemSchedule(BaseModel):
     duration_minutes: int = Field(ge=5, le=1440)
     schedule_locked: bool = False
     place_id: UUID | None = None
+    place_snapshot: PlaceSearchResultResponse | None = None
 
 
 def item_dict(row):
@@ -145,6 +147,11 @@ async def schedule_item(session, trip_id, item_id, data: ItemSchedule, *, commit
     if day is None or day.trip_id != trip_id:
         raise ValueError("日期不属于这次旅行")
     place = await session.get(PlaceCandidate, data.place_id or item.place_id) if (data.place_id or item.place_id) else None
+    if place is None and data.place_snapshot is not None and not item.place_id and not data.place_id:
+        # Same user-selected provider snapshot contract as the existing manual
+        # add endpoint, but with explicit time/duration and atomic item binding.
+        from app.planner_repository import save_candidate_snapshot
+        place = await save_candidate_snapshot(session, trip_id, data.place_snapshot)
     if place is None or place.trip_id != trip_id:
         raise ValueError("需先核实并选择这次旅行中的地点身份")
     if item.place_id and item.place_id != place.id:
