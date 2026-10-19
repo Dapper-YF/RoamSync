@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="29" time="14.216" timestamp="2026-10-19T19:57:46.032839+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_formal_write_protection" name="test_manual_add_api_invalidates_pending_revision" time="0.466" /><testcase classname="tests.test_formal_write_protection" name="test_other_manual_writes_stale_old_candidates[delete]" time="0.390" /><testcase classname="tests.test_formal_write_protection" name="test_other_manual_writes_stale_old_candidates[move]" time="0.385" /><testcase classname="tests.test_formal_write_protection" name="test_other_manual_writes_stale_old_candidates[order]" time="0.466" /><testcase classname="tests.test_formal_write_protection" name="test_other_manual_writes_stale_old_candidates[route]" time="0.484" /><testcase classname="tests.test_formal_write_protection" name="test_other_manual_writes_stale_old_candidates[update]" time="0.407" /><testcase classname="tests.test_formal_write_protection" name="test_read_and_noop_do_not_advance_formal_version" time="0.268" /><testcase classname="tests.test_formal_write_protection" name="test_concurrent_trip_metadata_updates_reject_stale_version" time="0.259" /><testcase classname="tests.test_formal_write_protection" name="test_concurrent_manual_add_and_accept_are_serialized[edit]" time="0.367" /><testcase classname="tests.test_formal_write_protection" name="test_concurrent_manual_add_and_accept_are_serialized[accept]" time="0.471" /><testcase classname="tests.test_formal_write_protection" name="test_two_concurrent_activity_edits_cannot_lose_a_successful_write" time="0.271" /><testcase classname="tests.test_formal_write_protection" name="test_failed_transaction_rolls_back_every_formal_change[add]" time="0.209" /><testcase classname="tests.test_formal_write_protection" name="test_failed_transaction_rolls_back_every_formal_change[delete]" time="0.189" /><testcase classname="tests.test_formal_write_protection" name="test_failed_transaction_rolls_back_every_formal_change[move]" time="0.217" /><testcase classname="tests.test_formal_write_protection" name="test_failed_transaction_rolls_back_every_formal_change[order]" time="0.224" /><testcase classname="tests.test_formal_write_protection" name="test_failed_transaction_rolls_back_every_formal_change[route]" time="0.200" /><testcase classname="tests.test_formal_write_protection" name="test_failed_transaction_rolls_back_every_formal_change[update]" time="0.165" /><testcase classname="tests.test_formal_write_protection" name="test_retry_does_not_duplicate_add_or_accept" time="0.610" /><testcase classname="tests.test_formal_write_protection" name="test_optional_trip_version_header_and_legacy_body_compatibility" time="0.299" /><testcase classname="tests.test_formal_write_protection" name="test_indirect_schedule_changes_advance_other_activity_version" time="0.251" /><testcase classname="tests.test_formal_write_protection" name="test_delete_selected_run_activity_cannot_deadlock_accept" time="0.437" /><testcase classname="tests.test_formal_write_protection" name="test_accept_failure_rolls_back_revision_activities_routes_and_version" time="0.374" /><testcase classname="tests.test_formal_write_protection" name="test_requirement_version_remains_independent_and_accept_rechecks_it" time="0.427" /><testcase classname="tests.test_formal_write_protection" name="test_repeated_route_recalculation_ignores_row_ids_and_timestamps" time="0.327" /><testcase classname="tests.test_formal_write_protection" name="test_two_concurrent_accepts_apply_only_once" time="0.371" /><testcase classname="tests.test_formal_write_protection" name="test_concurrent_opposing_moves_have_no_deadlock_or_lost_success" time="0.378" /><testcase classname="tests.test_formal_write_protection" name="test_concurrent_requirement_updates_keep_independent_version" time="0.305" /><testcase classname="tests.test_formal_write_integration_review" name="test_explicit_null_budget_retains_existing_linked_clear_semantics" time="0.146"><failure message="assert 5000 is None">tests\test_formal_write_integration_review.py:24: in test_explicit_null_budget_retains_existing_linked_clear_semantics
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_formal_write_integration_review.py:22: in scenario
+    assert response.json()["daily_budget_fen"] is None
+E   assert 5000 is None</failure></testcase><testcase classname="tests.test_formal_write_integration_review" name="test_invalid_cross_trip_move_rejects_without_locking_foreign_day" time="0.677"><failure message="sqlalchemy.exc.OperationalError: (psycopg.errors.LockNotAvailable) canceling statement due to lock timeout&#10;CONTEXT:  while locking tuple (0,63) in relation &quot;day_plans&quot;&#10;[SQL: SELECT day_plans.id, day_plans.trip_id, day_plans.date, day_plans.label, day_plans.theme, day_plans.position, day_plans.route_mode, day_plans.created_at, day_plans.updated_at &#10;FROM day_plans &#10;WHERE day_plans.id = %(id_1)s::UUID FOR UPDATE]&#10;[parameters: {'id_1': UUID('fa7eb0cb-1aa7-4667-a114-3a9473a2c724')}]&#10;(Background on this error at: https://sqlalche.me/e/20/e3q8)">..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\psycopg.py:642: in execute
+    result = self.await_(self._cursor.execute(query, params, **kw))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:132: in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:196: in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\psycopg\cursor_async.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.LockNotAvailable: canceling statement due to lock timeout
+E   CONTEXT:  while locking tuple (0,63) in relation "day_plans"
+
+The above exception was the direct cause of the following exception:
+tests\test_formal_write_integration_review.py:49: in test_invalid_cross_trip_move_rejects_without_locking_foreign_day
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_formal_write_integration_review.py:42: in scenario
+    await move_activity(writer, sample.activities[0].id, ActivityMoveRequest(
+app\formal_write.py:78: in guarded
+    return await fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+app\planner_repository.py:438: in move_activity
+    target_day = await session.scalar(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\ext\asyncio\session.py:504: in scalar
+    return await greenlet_spawn(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:201: in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:2421: in scalar
+    return self._execute_internal(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:2271: in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\context.py:306: in orm_execute_statement
+    result = conn.execute(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1421: in execute
+    return meth(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\sql\elements.py:526: in _execute_on_connection
+    return connection._execute_clauseelement(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1643: in _execute_clauseelement
+    ret = self._execute_context(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1848: in _execute_context
+    return self._exec_single_context(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:2365: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\psycopg.py:642: in execute
+    result = self.await_(self._cursor.execute(query, params, **kw))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:132: in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:196: in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\psycopg\cursor_async.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.OperationalError: (psycopg.errors.LockNotAvailable) canceling statement due to lock timeout
+E   CONTEXT:  while locking tuple (0,63) in relation "day_plans"
+E   [SQL: SELECT day_plans.id, day_plans.trip_id, day_plans.date, day_plans.label, day_plans.theme, day_plans.position, day_plans.route_mode, day_plans.created_at, day_plans.updated_at
+E   FROM day_plans
+E   WHERE day_plans.id = %(id_1)s::UUID FOR UPDATE]
+E   [parameters: {'id_1': UUID('fa7eb0cb-1aa7-4667-a114-3a9473a2c724')}]
+E   (Background on this error at: https://sqlalche.me/e/20/e3q8)</failure></testcase></testsuite></testsuites>

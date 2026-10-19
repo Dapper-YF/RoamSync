@@ -94,13 +94,14 @@ async def update_trip(
         exclude_unset=True,
         exclude={"version", "confirm_day_removal"},
     )
-    if not any(getattr(trip, key) != value for key, value in values.items()):
-        await session.commit()
-        return trip
     if "total_budget_fen" in values and values["total_budget_fen"] is None:
         values["daily_budget_fen"] = None
     if "daily_budget_fen" in values and values["daily_budget_fen"] is None:
         values["total_budget_fen"] = None
+    # Preserve the existing linked-clear request semantics before no-op detection.
+    if not any(getattr(trip, key) != value for key, value in values.items()):
+        await session.commit()
+        return trip
     start_date = values.get("start_date", trip.start_date)
     end_date = values.get("end_date", trip.end_date)
     total_budget = values.get("total_budget_fen", trip.total_budget_fen)

@@ -432,6 +432,16 @@ async def move_activity(
     if activity.version != payload.version:
         raise ActivityVersionConflictError
 
+    # A source-Trip lock cannot authorize locks in a different Trip. Validate
+    # immutable day ownership before acquiring either day lock; otherwise two
+    # rejected cross-Trip moves can lock each other's days in opposite order.
+    source_trip_id = await session.scalar(select(DayPlan.trip_id).where(DayPlan.id == activity.day_plan_id))
+    target_trip_id = await session.scalar(select(DayPlan.trip_id).where(DayPlan.id == payload.target_day_plan_id))
+    if source_trip_id is None or target_trip_id is None:
+        raise DayPlanNotFoundError
+    if source_trip_id != target_trip_id:
+        raise InvalidActivityMoveError
+
     source_day = await session.scalar(
         select(DayPlan).where(DayPlan.id == activity.day_plan_id).with_for_update()
     )

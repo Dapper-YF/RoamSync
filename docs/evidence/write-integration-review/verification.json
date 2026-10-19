@@ -1,0 +1,133 @@
+{
+  "verdict": "READY for scoped integration; canonical not merged or deployed",
+  "captured_at": "2026-10-19T12:08:23.693506+00:00",
+  "canonical_head": "25a62cbeec4b7c5ac5b66c383c98b86f35440c21",
+  "canonical_tracked_dirty": "M README.md\n M web/nginx.conf",
+  "canonical_preserved_sha256": {
+    "README.md": "7d2bbc6aca0b9e58af756823b2557f2436e0c5dfa95e79a88ddd0f6352afa1d9",
+    "web/nginx.conf": "6f6038592d9fb5d3be0beb8d0cbbba6755831024bedca316c8b54fcb695ea245"
+  },
+  "review_branch": "codex/formal-write-integration-review-20261019",
+  "original_commit": "7b67f68",
+  "applied_commit": "f06a847",
+  "source_sha256": {
+    "backend/app/assistant_service.py": "81cc0f4470ef6daa099ab08fc5895b27b71b7ed1e5a9949a890cc25bd8dd6f52",
+    "backend/app/draft_promotion/guard.py": "47be2676d8d28921ce3f5c2980841e5ab2583847ba40d686c76dffb5f6b9032e",
+    "backend/app/experience_replanning_service.py": "67d0d2af55a0f84a9f5ec2a8341139d18f3f58f57d24a93f79970c6ec42ba3d2",
+    "backend/app/formal_write.py": "8caf62ae90507271334e3d04a2522dc6f8196228c5cb75330e0062d81df8b2ae",
+    "backend/app/main.py": "f05f48f5a45d658ce3916f20e90e02bbef39919ad49c9067bf1db5b5c8ee67fb",
+    "backend/app/navigation/observation_ingestion.py": "0da5f8f76121ee620c0851e71972bf7baa37eb69872f1662038e5550dd281365",
+    "backend/app/plan_revision_service.py": "0b2e58fd12056af8a9273cd3bfe2bb3a9a1c92a3e5a470d67938e279d147e0ff",
+    "backend/app/planner_repository.py": "3be905c67df6fcef0e9e0876d272831a6eca3177ce3f1cecba27089d92681792",
+    "backend/app/planning_run_repository.py": "9b2e03523a196b5455b8cbfb8b6e51bdf348248f6791b2a72b5b7c7f1b176b9b",
+    "backend/app/repository.py": "f0cef31a0499e6ce85203e06875a7fe6a0e4ee3118ac5c2ce1f4f7a2f06fe604",
+    "backend/app/requirement_routes.py": "febe30a501bbab64647956902cc4a919c413d8f2f071005bc0e5b485fec7fbdd",
+    "backend/app/trip_execution_service.py": "e86f93f83bcecb5e8bb5133af425df06f810ee7f6da551f4e9c4f5f22bb976b4",
+    "backend/scripts/capture_write_integration_review.py": "72fc5ab9fceb34c2d689e796c15181c80df77a3a03544207dbb8b1366d0bb0ff",
+    "backend/scripts/run-write-integration-review.ps1": "0e47e1bab748c6541b867d4a7b79849e232238b62a8db48134d2d23f8d317261",
+    "backend/tests/test_formal_write_integration_review.py": "5810bb02ac6dfa93c5217daaa0ed9a65977aa48fd7b4ce25674b15e3a21e29fc",
+    "backend/tests/test_formal_write_protection.py": "694179e353be9b6d8c7a62238097cb29a3410131c9a9c12b0125f91d75222c03"
+  },
+  "tests": {
+    "favorites.xml": {
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 1,
+      "seconds": 0.559
+    },
+    "focused-final.xml": {
+      "tests": 32,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 32,
+      "seconds": 12.841
+    },
+    "linux-full.xml": {
+      "tests": 1275,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "passed": 1274,
+      "seconds": 75.514
+    },
+    "review-green.xml": {
+      "tests": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 29,
+      "seconds": 12.21
+    },
+    "review-red-missing-corrected.xml": {
+      "tests": 30,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 29,
+      "seconds": 12.719
+    },
+    "review-red-missing.xml": {
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 30,
+      "seconds": 12.246
+    },
+    "review-red-preferences.xml": {
+      "tests": 32,
+      "failures": 3,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 29,
+      "seconds": 14.02
+    },
+    "review-red.xml": {
+      "tests": 29,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 27,
+      "seconds": 14.216
+    },
+    "windows-full.xml": {
+      "tests": 1275,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "passed": 1274,
+      "seconds": 101.272
+    }
+  },
+  "ignore_as_proof": {
+    "review-red-missing.xml": "incorrect URL; corrected URL tested in review-red-missing-corrected.xml"
+  },
+  "database": {
+    "container": "roamsync-write-integration-pg",
+    "postgres": "17.11",
+    "mounts": "tmpfs only; no production volumes",
+    "names": [
+      "roamsync_test_write_protection",
+      "promotion_test",
+      "roamsync_test"
+    ]
+  },
+  "linux_test_image": "sha256:826a6a1062806cbb61077891830bb40f2b2aa69f4df1331bed7f2b06e0ee3ab5",
+  "runtimes": {
+    "windows-full.xml": "Python 3.14.3",
+    "linux-full.xml": "Python 3.11.16"
+  },
+  "full_suite_skip": "favorite concurrency requires exact roamsync_test; separately executed favorites.xml",
+  "real_model_validation": false,
+  "live_map_validation": false,
+  "scope_exclusions": [
+    "production merge/deploy",
+    "mixed precision",
+    "route/time separation implementation",
+    "Web/Android changes",
+    "max_walking_minutes algorithm fix"
+  ]
+}

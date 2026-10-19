@@ -182,6 +182,9 @@ async def request_dynamic_replan(
     session: AsyncSession, trip_id: uuid.UUID, payload: DynamicReplanRequest
 ):
     """Record a travel event and enqueue a confirmation-gated replan run."""
+    # Preserve the existing missing-execution 404 before taking the new fence.
+    if await session.scalar(select(TripExecution.id).where(TripExecution.trip_id == trip_id)) is None:
+        raise TripExecutionNotFoundError
     from app.formal_write import lock_trip
     await lock_trip(session, trip_id)
     execution = await session.scalar(

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="32" time="14.020" timestamp="2026-10-19T20:01:41.403237+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_formal_write_protection" name="test_manual_add_api_invalidates_pending_revision" time="0.434" /><testcase classname="tests.test_formal_write_protection" name="test_other_manual_writes_stale_old_candidates[delete]" time="0.328" /><testcase classname="tests.test_formal_write_protection" name="test_other_manual_writes_stale_old_candidates[move]" time="0.407" /><testcase classname="tests.test_formal_write_protection" name="test_other_manual_writes_stale_old_candidates[order]" time="0.400" /><testcase classname="tests.test_formal_write_protection" name="test_other_manual_writes_stale_old_candidates[route]" time="0.471" /><testcase classname="tests.test_formal_write_protection" name="test_other_manual_writes_stale_old_candidates[update]" time="0.364" /><testcase classname="tests.test_formal_write_protection" name="test_read_and_noop_do_not_advance_formal_version" time="0.254" /><testcase classname="tests.test_formal_write_protection" name="test_concurrent_trip_metadata_updates_reject_stale_version" time="0.240" /><testcase classname="tests.test_formal_write_protection" name="test_concurrent_manual_add_and_accept_are_serialized[edit]" time="0.358" /><testcase classname="tests.test_formal_write_protection" name="test_concurrent_manual_add_and_accept_are_serialized[accept]" time="0.407" /><testcase classname="tests.test_formal_write_protection" name="test_two_concurrent_activity_edits_cannot_lose_a_successful_write" time="0.268" /><testcase classname="tests.test_formal_write_protection" name="test_failed_transaction_rolls_back_every_formal_change[add]" time="0.219" /><testcase classname="tests.test_formal_write_protection" name="test_failed_transaction_rolls_back_every_formal_change[delete]" time="0.229" /><testcase classname="tests.test_formal_write_protection" name="test_failed_transaction_rolls_back_every_formal_change[move]" time="0.212" /><testcase classname="tests.test_formal_write_protection" name="test_failed_transaction_rolls_back_every_formal_change[order]" time="0.231" /><testcase classname="tests.test_formal_write_protection" name="test_failed_transaction_rolls_back_every_formal_change[route]" time="0.213" /><testcase classname="tests.test_formal_write_protection" name="test_failed_transaction_rolls_back_every_formal_change[update]" time="0.165" /><testcase classname="tests.test_formal_write_protection" name="test_retry_does_not_duplicate_add_or_accept" time="0.670" /><testcase classname="tests.test_formal_write_protection" name="test_optional_trip_version_header_and_legacy_body_compatibility" time="0.316" /><testcase classname="tests.test_formal_write_protection" name="test_indirect_schedule_changes_advance_other_activity_version" time="0.235" /><testcase classname="tests.test_formal_write_protection" name="test_delete_selected_run_activity_cannot_deadlock_accept" time="0.343" /><testcase classname="tests.test_formal_write_protection" name="test_accept_failure_rolls_back_revision_activities_routes_and_version" time="0.436" /><testcase classname="tests.test_formal_write_protection" name="test_requirement_version_remains_independent_and_accept_rechecks_it" time="0.621" /><testcase classname="tests.test_formal_write_protection" name="test_repeated_route_recalculation_ignores_row_ids_and_timestamps" time="0.472" /><testcase classname="tests.test_formal_write_protection" name="test_two_concurrent_accepts_apply_only_once" time="0.389" /><testcase classname="tests.test_formal_write_protection" name="test_concurrent_opposing_moves_have_no_deadlock_or_lost_success" time="0.346" /><testcase classname="tests.test_formal_write_protection" name="test_concurrent_requirement_updates_keep_independent_version" time="0.302" /><testcase classname="tests.test_formal_write_integration_review" name="test_missing_dynamic_replan_preserves_not_found_status" time="0.093"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;trip_version_conflict&quot;,&quot;message&quot;:&quot;旅行安排已变化，请刷新后重试&quot;}}&#10;assert 409 == 404&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">tests\test_formal_write_integration_review.py:20: in test_missing_dynamic_replan_preserves_not_found_status
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_formal_write_integration_review.py:19: in scenario
+    assert response.status_code == 404, response.text
+E   AssertionError: {"detail":{"code":"trip_version_conflict","message":"旅行安排已变化，请刷新后重试"}}
+E   assert 409 == 404
+E    +  where 409 = &lt;Response [409 Conflict]&gt;.status_code</failure></testcase><testcase classname="tests.test_formal_write_integration_review" name="test_accept_missing_preferences_does_not_release_parent_lock" time="0.588"><failure message="AssertionError: {'accept': 200, 'edit': 201, 'final': {'activities': [{'day_id': '7a917945-d0d0-4967-bcd8-a74058223798', 'duration': 3...8f-4e69-b13f-71b79fc61be8', '50fc4af7-5bc8-4303-8d99-48217cf61f7b', 10)], 'version': 2}, 'parent_lock_retained': False}&#10;assert (False)">tests\test_formal_write_integration_review.py:56: in test_accept_missing_preferences_does_not_release_parent_lock
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_formal_write_integration_review.py:53: in scenario
+    assert locked and [a.status_code, b.status_code] == [200, 409], {
+E   AssertionError: {'accept': 200, 'edit': 201, 'final': {'activities': [{'day_id': '7a917945-d0d0-4967-bcd8-a74058223798', 'duration': 3...8f-4e69-b13f-71b79fc61be8', '50fc4af7-5bc8-4303-8d99-48217cf61f7b', 10)], 'version': 2}, 'parent_lock_retained': False}
+E   assert (False)</failure></testcase><testcase classname="tests.test_formal_write_integration_review" name="test_accept_missing_preferences_creation_rolls_back_on_failure" time="0.419"><failure message="assert &lt;app.database.TripPreferences object at 0x00000295C6D04BB0&gt; is None">tests\test_formal_write_integration_review.py:73: in test_accept_missing_preferences_creation_rolls_back_on_failure
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_formal_write_integration_review.py:72: in scenario
+    assert await s.get(TripPreferences, sample.trip_id) is None
+E   assert &lt;app.database.TripPreferences object at 0x00000295C6D04BB0&gt; is None</failure></testcase><testcase classname="tests.test_formal_write_integration_review" name="test_explicit_null_budget_retains_existing_linked_clear_semantics" time="0.132" /><testcase classname="tests.test_formal_write_integration_review" name="test_invalid_cross_trip_move_rejects_without_locking_foreign_day" time="0.228" /></testsuite></testsuites>

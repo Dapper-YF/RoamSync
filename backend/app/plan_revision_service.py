@@ -536,9 +536,16 @@ async def accept_plan_revision(
         raise StalePlanningRunError
     # Serialize requirement edits with final validation/application. Changes to
     # requirements have their own version and do not bump the itinerary.
-    await session.scalar(select(TripPreferences).where(
+    preferences = await session.scalar(select(TripPreferences).where(
         TripPreferences.trip_id == trip.id,
     ).with_for_update())
+    if preferences is None:
+        # Legacy/imported Trips may lack this row. The read-side compatibility
+        # helper commits when repairing it, which would release the parent
+        # fence midway through Accept. Repair inside THIS transaction instead.
+        preferences = TripPreferences(trip_id=trip.id)
+        session.add(preferences)
+        await session.flush()
     if run.trigger_type == "experience_impact":
         from app.experience_replanning_service import _snapshot
         from app.activity_experience_impact import evaluate_activity_experience_time_impact

@@ -27,6 +27,14 @@ No new PlanningRun for simple edits, schema migration, tool authority, workflow,
 Planner context or route calculation algorithm. See
 FORMAL_WRITE_PROTECTION_20261019.md and its red/green PostgreSQL evidence.
 
+Integration review adds a bounded Accept repair: a missing legacy Preferences
+row is created/flushed within Accept's transaction, never committed by the
+read-side compatibility helper while the Trip fence is held. Invalid cross-Trip
+moves reject before foreign day locks; linked budget clears and missing-execution
+404 semantics are preserved. This remains isolated and not deployed. Review,
+new counterexamples, runtime/locking limits and stage-two input:
+FORMAL_WRITE_INTEGRATION_REVIEW_20261019.md.
+
 ### Bounded decision evidence and requirement context (2026-10-18)
 
 Canonical follow-up separates complete provenance/visit-history statements from
