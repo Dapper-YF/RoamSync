@@ -33,7 +33,9 @@ class CompanionContextReader:
                 .where(TripPreferences.trip_id == self._trip_id))).first()
             if row:
                 changes["saved_trip_preferences"] = dict(row._mapping)
-        if need.itinerary_required:
+        if need.itinerary_required or re.search(r"已选|备选|留白|未排程|我的安排|选了什么", context.current_message):
+            from app.arrangement_service import read_items, item_dict
+            changes["arrangement_items"] = [item_dict(i) for i in await read_items(self._session, self._trip_id)]
             # Exact display mentions narrow reads; ambiguous duplicate names
             # remain a list. We never pick a guessed formal identity.
             mention = re.search(r"(?:把|将)(.{1,40}?)(?:安排|放|排|改)", context.current_message)

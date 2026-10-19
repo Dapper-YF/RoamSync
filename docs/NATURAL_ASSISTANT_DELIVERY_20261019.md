@@ -66,6 +66,38 @@ Validator/Accept新增身份、留白（含已知交通能否在留白之外完�
 stage-c-cascade-red.xml的早期测试漏confirm=true，仅属测试调用错误；纠正后14项通过，
 没有据此修改原FK策略或扩大删除架构。
 
-## D—E
+## D — 有界对话及Planner接入
 
-待各阶段实际实现和验收后逐项更新；已完成前置工程不代表后续产品体验完成。
+Planner与Companion上下文读取当前事项；selected/optional/cancelled/free_window保持不同
+含义，未核实名称不授予POI身份。Planner继续使用原符号引用，服务器按已知Place或
+唯一精确名称绑定arrangement:<UUID>，最终Validator检查，Accept时才关联Activity。
+被撤销事项不得从旧对话恢复。未采用候选不会把备选变成已选。
+
+保留AssistantSession原创建预览/确认：prefer_flexible启用有限CreationChoice，不创建
+第二份长期方案。预览可展示未定事项、AI建议来源、固定预约及留白；用户采用后一个
+事务保存Trip/事项/固定Activity；不自动启动Graph。用户原话、预约时间范围与POI身份
+严格校验，模型不符时最多一次字段修复，仍不符则澄清。已定时间仅在Activity中。
+
+少量明确修改（改备选、保留、取消）使用同一write_item，无PlanningRun；绑定Trip、
+版本和当前message ID。无法唯一定位则澄清。固定/已发生活动不直接删除。'就按这份来'
+必须带当前预览ID或被明确选择的Revision及授权，不能取最近一段文本作为候选。
+
+确定性全量stage-d-release-full.xml：1309 passed、1 skipped。页面/对话交叉写、旧版本
+拒绝、重复消息、轻量采用无Graph、不得虚构预约等回归通过。新增测试清理其自建预出行
+会话，保留旧流式单轮断言；早期失败留下的67个NULL-Trip会话仅在专用测试库清理。
+
+真实Provider使用本次隔离API18019和worker、独立live库；只读加载正式.env的Provider
+配置到内存，不落密钥。原代理APIConnectionError/RemoteProtocolError；隔离进程直连
+连接成功，未改生产配置。live-13636...首次保存通过，但偏好陈述回复不贴题；有界偏好
+陈述接收修正后live-cd2974...链再次通过：真实咨询不创建旅行、多轮来源→建议→采用→
+读取，南京博物院时间未知、玄武湖备选、周六15—16留白、周日总统府14—15固定活动。
+预约是合成用户提供，地图核实的是地点身份，绝非实际订票。历史失败JSON保留。
+
+真实Graph探针的环境准备/参数错误及一次实体澄清保留；“新增地点”触发网页研究但
+未配置搜索Provider，出现planner_research_unavailable，未伪造资料；改测已有实际POI及
+已保存路线上的局部时长调整。完整Graph/Accept结果待探针结束记录，不能把HTTP200
+或awaiting_confirmation直接称为采用通过。
+
+## E
+
+待实际Web实施和浏览器验收；前面的工程通过不代表产品完整任务链已经完成。

@@ -1,0 +1,1175 @@
+{
+  "run_id": "cd2974e4-00bc-4895-b295-336250a51671",
+  "started_at": "2026-10-19T14:38:29.241036+00:00",
+  "kind": "real API/model/map; synthetic user; isolated DB",
+  "steps": [
+    {
+      "step": "message-1",
+      "status": 200,
+      "body": {
+        "id": "799a50b2-b3f3-445f-906f-bd2c894ab83e",
+        "trip_id": null,
+        "messages": [
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "live-cd2974e4-00bc-4895-b295-336250a51671",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "14ffab57-b0e8-418b-b670-a346c22b73b1",
+            "user": "第一次去南京，想了解南京博物院和玄武湖的体验有什么区别，先只聊聊，不创建旅行。",
+            "assistant": "这两处是完全不同类型的体验，简单对比一下：\n\n**南京博物院（室内博物馆）**\n- 核心是看展：历史馆、特展馆、数字馆、民国馆、艺术馆等多个场馆，馆藏丰富，从史前文物到明清宫廷器物都有。\n- 民国馆还原了老南京街景，是可以走进去的沉浸式街区，很多游客专门为此而来。\n- 节奏偏慢、偏深度，适合对历史文化感兴趣、愿意花大半天慢慢看的人。\n- 注意：通常需要提前实名预约，具体开放安排建议出发前在官方渠道确认。\n\n**玄武湖（户外湖泊公园）**\n- 核心是逛和走：环湖步道很大，可以步行、骑行或坐游船，看湖景、远眺紫金山和明城墙（玄武门段就在旁边）。\n- 节奏自由随意，傍晚日落和春秋的湖边景色很受欢迎，也适合想放松、不想赶场的时候。\n- 公园开放，基本无预约门槛，但游船、夜间开放等具体项目以现场为准。\n\n**一句话区分**：想“看东西、长知识”选南博，想“吹风、散步、看湖景”选玄武湖。两者离得不远，同一天安排一静一动也很常见。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "destination_exploration",
+              "confidence": 0.93,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_destination_exploration"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "基于对南京博物院与玄武湖的常识性了解，从体验类型、节奏、适合人群等维度对比；仅作了解交流，不涉及行程创建；门票等当前信息无法确认。",
+              "response_text": "这两处是完全不同类型的体验，简单对比一下：\n\n**南京博物院（室内博物馆）**\n- 核心是看展：历史馆、特展馆、数字馆、民国馆、艺术馆等多个场馆，馆藏丰富，从史前文物到明清宫廷器物都有。\n- 民国馆还原了老南京街景，是可以走进去的沉浸式街区，很多游客专门为此而来。\n- 节奏偏慢、偏深度，适合对历史文化感兴趣、愿意花大半天慢慢看的人。\n- 注意：通常需要提前实名预约，具体开放安排建议出发前在官方渠道确认。\n\n**玄武湖（户外湖泊公园）**\n- 核心是逛和走：环湖步道很大，可以步行、骑行或坐游船，看湖景、远眺紫金山和明城墙（玄武门段就在旁边）。\n- 节奏自由随意，傍晚日落和春秋的湖边景色很受欢迎，也适合想放松、不想赶场的时候。\n- 公园开放，基本无预约门槛，但游船、夜间开放等具体项目以现场为准。\n\n**一句话区分**：想“看东西、长知识”选南博，想“吹风、散步、看湖景”选玄武湖。两者离得不远，同一天安排一静一动也很常见。",
+              "goal_type": "destination_exploration",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_a87ce2ad4d095d1ab3fae8d683a9144e",
+                  "suggestion_type": "place",
+                  "title": "南京博物院",
+                  "summary": "深度室内博物馆体验，历史馆藏加沉浸式民国街景，适合慢节奏参观。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "南京博物院"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "馆藏与特展丰富",
+                    "民国馆沉浸感强",
+                    "与玄武湖可形成动静搭配"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-19T14:38:41.779288Z",
+                  "conversation_turn_id": "14ffab57-b0e8-418b-b670-a346c22b73b1",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_53bbe866e9e45b3eb81ee0944b4aa7bc",
+                  "suggestion_type": "place",
+                  "title": "玄武湖",
+                  "summary": "开放式城市湖泊公园，环湖散步骑行观景，适合放松和傍晚看日落。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "玄武湖"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "节奏自由、无预约门槛（现场项目另计）",
+                    "可远眺紫金山与明城墙",
+                    "与南京博物院地理位置相近"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-19T14:38:41.779288Z",
+                  "conversation_turn_id": "14ffab57-b0e8-418b-b670-a346c22b73b1",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": {
+                "options": [
+                  "南京博物院",
+                  "玄武湖"
+                ],
+                "dimensions": [
+                  "体验类型",
+                  "节奏",
+                  "适合人群",
+                  "预约门槛"
+                ],
+                "summary": "南博是室内深度文化体验，需提前预约；玄武湖是户外休闲散步，随到随逛，两者动静互补且相距不远。"
+              },
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "advisory",
+                "requested_fact_topics": []
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [
+                "output_unverified_availability"
+              ],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          }
+        ],
+        "pending_action": null,
+        "latest_run_id": null
+      }
+    },
+    {
+      "step": "message-2",
+      "status": 200,
+      "body": {
+        "id": "799a50b2-b3f3-445f-906f-bd2c894ab83e",
+        "trip_id": null,
+        "messages": [
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "live-cd2974e4-00bc-4895-b295-336250a51671",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "14ffab57-b0e8-418b-b670-a346c22b73b1",
+            "user": "第一次去南京，想了解南京博物院和玄武湖的体验有什么区别，先只聊聊，不创建旅行。",
+            "assistant": "这两处是完全不同类型的体验，简单对比一下：\n\n**南京博物院（室内博物馆）**\n- 核心是看展：历史馆、特展馆、数字馆、民国馆、艺术馆等多个场馆，馆藏丰富，从史前文物到明清宫廷器物都有。\n- 民国馆还原了老南京街景，是可以走进去的沉浸式街区，很多游客专门为此而来。\n- 节奏偏慢、偏深度，适合对历史文化感兴趣、愿意花大半天慢慢看的人。\n- 注意：通常需要提前实名预约，具体开放安排建议出发前在官方渠道确认。\n\n**玄武湖（户外湖泊公园）**\n- 核心是逛和走：环湖步道很大，可以步行、骑行或坐游船，看湖景、远眺紫金山和明城墙（玄武门段就在旁边）。\n- 节奏自由随意，傍晚日落和春秋的湖边景色很受欢迎，也适合想放松、不想赶场的时候。\n- 公园开放，基本无预约门槛，但游船、夜间开放等具体项目以现场为准。\n\n**一句话区分**：想“看东西、长知识”选南博，想“吹风、散步、看湖景”选玄武湖。两者离得不远，同一天安排一静一动也很常见。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "destination_exploration",
+              "confidence": 0.93,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_destination_exploration"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "基于对南京博物院与玄武湖的常识性了解，从体验类型、节奏、适合人群等维度对比；仅作了解交流，不涉及行程创建；门票等当前信息无法确认。",
+              "response_text": "这两处是完全不同类型的体验，简单对比一下：\n\n**南京博物院（室内博物馆）**\n- 核心是看展：历史馆、特展馆、数字馆、民国馆、艺术馆等多个场馆，馆藏丰富，从史前文物到明清宫廷器物都有。\n- 民国馆还原了老南京街景，是可以走进去的沉浸式街区，很多游客专门为此而来。\n- 节奏偏慢、偏深度，适合对历史文化感兴趣、愿意花大半天慢慢看的人。\n- 注意：通常需要提前实名预约，具体开放安排建议出发前在官方渠道确认。\n\n**玄武湖（户外湖泊公园）**\n- 核心是逛和走：环湖步道很大，可以步行、骑行或坐游船，看湖景、远眺紫金山和明城墙（玄武门段就在旁边）。\n- 节奏自由随意，傍晚日落和春秋的湖边景色很受欢迎，也适合想放松、不想赶场的时候。\n- 公园开放，基本无预约门槛，但游船、夜间开放等具体项目以现场为准。\n\n**一句话区分**：想“看东西、长知识”选南博，想“吹风、散步、看湖景”选玄武湖。两者离得不远，同一天安排一静一动也很常见。",
+              "goal_type": "destination_exploration",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_a87ce2ad4d095d1ab3fae8d683a9144e",
+                  "suggestion_type": "place",
+                  "title": "南京博物院",
+                  "summary": "深度室内博物馆体验，历史馆藏加沉浸式民国街景，适合慢节奏参观。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "南京博物院"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "馆藏与特展丰富",
+                    "民国馆沉浸感强",
+                    "与玄武湖可形成动静搭配"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-19T14:38:41.779288Z",
+                  "conversation_turn_id": "14ffab57-b0e8-418b-b670-a346c22b73b1",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_53bbe866e9e45b3eb81ee0944b4aa7bc",
+                  "suggestion_type": "place",
+                  "title": "玄武湖",
+                  "summary": "开放式城市湖泊公园，环湖散步骑行观景，适合放松和傍晚看日落。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "玄武湖"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "节奏自由、无预约门槛（现场项目另计）",
+                    "可远眺紫金山与明城墙",
+                    "与南京博物院地理位置相近"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-19T14:38:41.779288Z",
+                  "conversation_turn_id": "14ffab57-b0e8-418b-b670-a346c22b73b1",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": {
+                "options": [
+                  "南京博物院",
+                  "玄武湖"
+                ],
+                "dimensions": [
+                  "体验类型",
+                  "节奏",
+                  "适合人群",
+                  "预约门槛"
+                ],
+                "summary": "南博是室内深度文化体验，需提前预约；玄武湖是户外休闲散步，随到随逛，两者动静互补且相距不远。"
+              },
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "advisory",
+                "requested_fact_topics": []
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [
+                "output_unverified_availability"
+              ],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          },
+          {
+            "id": "66065ab3-cdc7-4c91-a4ce-440172aaa67c",
+            "user": "我想看历史展览，南京博物院确定想去但时间未定；玄武湖有时间再去就好。现在先讨论。",
+            "assistant": "我会把这些旅行想法用于接下来的讨论。目前还没有创建旅行或保存安排；未定时间与备选会保持未定。",
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "live-cd2974e4-00bc-4895-b295-336250a51671",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "tool": "arrangement_edit",
+            "run_id": null
+          }
+        ],
+        "pending_action": null,
+        "latest_run_id": null
+      }
+    },
+    {
+      "step": "message-3",
+      "status": 200,
+      "body": {
+        "id": "799a50b2-b3f3-445f-906f-bd2c894ab83e",
+        "trip_id": null,
+        "messages": [
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "live-cd2974e4-00bc-4895-b295-336250a51671",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "14ffab57-b0e8-418b-b670-a346c22b73b1",
+            "user": "第一次去南京，想了解南京博物院和玄武湖的体验有什么区别，先只聊聊，不创建旅行。",
+            "assistant": "这两处是完全不同类型的体验，简单对比一下：\n\n**南京博物院（室内博物馆）**\n- 核心是看展：历史馆、特展馆、数字馆、民国馆、艺术馆等多个场馆，馆藏丰富，从史前文物到明清宫廷器物都有。\n- 民国馆还原了老南京街景，是可以走进去的沉浸式街区，很多游客专门为此而来。\n- 节奏偏慢、偏深度，适合对历史文化感兴趣、愿意花大半天慢慢看的人。\n- 注意：通常需要提前实名预约，具体开放安排建议出发前在官方渠道确认。\n\n**玄武湖（户外湖泊公园）**\n- 核心是逛和走：环湖步道很大，可以步行、骑行或坐游船，看湖景、远眺紫金山和明城墙（玄武门段就在旁边）。\n- 节奏自由随意，傍晚日落和春秋的湖边景色很受欢迎，也适合想放松、不想赶场的时候。\n- 公园开放，基本无预约门槛，但游船、夜间开放等具体项目以现场为准。\n\n**一句话区分**：想“看东西、长知识”选南博，想“吹风、散步、看湖景”选玄武湖。两者离得不远，同一天安排一静一动也很常见。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "destination_exploration",
+              "confidence": 0.93,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_destination_exploration"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "基于对南京博物院与玄武湖的常识性了解，从体验类型、节奏、适合人群等维度对比；仅作了解交流，不涉及行程创建；门票等当前信息无法确认。",
+              "response_text": "这两处是完全不同类型的体验，简单对比一下：\n\n**南京博物院（室内博物馆）**\n- 核心是看展：历史馆、特展馆、数字馆、民国馆、艺术馆等多个场馆，馆藏丰富，从史前文物到明清宫廷器物都有。\n- 民国馆还原了老南京街景，是可以走进去的沉浸式街区，很多游客专门为此而来。\n- 节奏偏慢、偏深度，适合对历史文化感兴趣、愿意花大半天慢慢看的人。\n- 注意：通常需要提前实名预约，具体开放安排建议出发前在官方渠道确认。\n\n**玄武湖（户外湖泊公园）**\n- 核心是逛和走：环湖步道很大，可以步行、骑行或坐游船，看湖景、远眺紫金山和明城墙（玄武门段就在旁边）。\n- 节奏自由随意，傍晚日落和春秋的湖边景色很受欢迎，也适合想放松、不想赶场的时候。\n- 公园开放，基本无预约门槛，但游船、夜间开放等具体项目以现场为准。\n\n**一句话区分**：想“看东西、长知识”选南博，想“吹风、散步、看湖景”选玄武湖。两者离得不远，同一天安排一静一动也很常见。",
+              "goal_type": "destination_exploration",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_a87ce2ad4d095d1ab3fae8d683a9144e",
+                  "suggestion_type": "place",
+                  "title": "南京博物院",
+                  "summary": "深度室内博物馆体验，历史馆藏加沉浸式民国街景，适合慢节奏参观。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "南京博物院"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "馆藏与特展丰富",
+                    "民国馆沉浸感强",
+                    "与玄武湖可形成动静搭配"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-19T14:38:41.779288Z",
+                  "conversation_turn_id": "14ffab57-b0e8-418b-b670-a346c22b73b1",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_53bbe866e9e45b3eb81ee0944b4aa7bc",
+                  "suggestion_type": "place",
+                  "title": "玄武湖",
+                  "summary": "开放式城市湖泊公园，环湖散步骑行观景，适合放松和傍晚看日落。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "玄武湖"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "节奏自由、无预约门槛（现场项目另计）",
+                    "可远眺紫金山与明城墙",
+                    "与南京博物院地理位置相近"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-19T14:38:41.779288Z",
+                  "conversation_turn_id": "14ffab57-b0e8-418b-b670-a346c22b73b1",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": {
+                "options": [
+                  "南京博物院",
+                  "玄武湖"
+                ],
+                "dimensions": [
+                  "体验类型",
+                  "节奏",
+                  "适合人群",
+                  "预约门槛"
+                ],
+                "summary": "南博是室内深度文化体验，需提前预约；玄武湖是户外休闲散步，随到随逛，两者动静互补且相距不远。"
+              },
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "advisory",
+                "requested_fact_topics": []
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [
+                "output_unverified_availability"
+              ],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          },
+          {
+            "id": "66065ab3-cdc7-4c91-a4ce-440172aaa67c",
+            "user": "我想看历史展览，南京博物院确定想去但时间未定；玄武湖有时间再去就好。现在先讨论。",
+            "assistant": "我会把这些旅行想法用于接下来的讨论。目前还没有创建旅行或保存安排；未定时间与备选会保持未定。",
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "live-cd2974e4-00bc-4895-b295-336250a51671",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "tool": "arrangement_edit",
+            "run_id": null
+          },
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "live-cd2974e4-00bc-4895-b295-336250a51671",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "id": "175ad80a-b99a-446e-acec-93d2746e0987",
+            "user": "我决定2026-11-07到2026-11-08去南京两天。周日总统府14:00-15:00已经预约；周六15:00-16:00明确留白。保留南京博物院但暂不排时间，玄武湖还是备选。请形成允许留白的旅行安排建议，别把两天填满。",
+            "assistant": "请核对：南京市，2026-11-07 至 2026-11-08，共 2 天，未设置预算上限。确认后执行。\n总统府：你提供的固定预约，2026-11-08 14:00:00—15:00:00\n南京博物院：纳入，时间未定\n玄武湖：备选\n自由活动：保留空闲，2026-11-07 15:00:00—16:00:00",
+            "tool": "create_trip",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "trip_planning",
+              "confidence": 0.96,
+              "target_runtime": "planning",
+              "mutation_requested": true,
+              "trip_context_required": false,
+              "knowledge_required": false,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "explicit_user_planning_request"
+              ]
+            },
+            "planning_brief": null
+          }
+        ],
+        "pending_action": {
+          "id": "83631551-de57-4980-b1ee-a1609f33fcad",
+          "tool": "create_trip",
+          "source_trip_id": null,
+          "source_signature": null,
+          "source_title": null,
+          "city": {
+            "name": "南京市",
+            "adcode": "320100",
+            "citycode": "025",
+            "longitude": 118.796624,
+            "latitude": 32.059344
+          },
+          "title": "南京两日留白之旅",
+          "start_date": "2026-11-07",
+          "end_date": "2026-11-08",
+          "total_budget_fen": null,
+          "daily_budget_fen": null,
+          "preferences": "第一次去南京；想看历史展览；南京博物院确定想去但暂不排时间；玄武湖为备选；周日总统府14:00-15:00已预约；周六15:00-16:00明确留白；希望行程允许留白，不要把两天填满",
+          "summary": "采用后保存已选、备选、固定预约和留白；不自动填满每天。地点建议尚不等于已核实事实。",
+          "choices": [
+            {
+              "kind": "appointment",
+              "label": "总统府",
+              "origin": "user_explicit",
+              "source_quote": "周日总统府14:00-15:00已经预约",
+              "day_date": "2026-11-08",
+              "start": "14:00:00",
+              "end": "15:00:00",
+              "place_snapshot": {
+                "provider": "amap",
+                "provider_place_id": "B00190BMRC",
+                "name": "总统府",
+                "category": "sight",
+                "neighborhood": "玄武区",
+                "description": "长江路292号",
+                "longitude": 118.797398,
+                "latitude": 32.044228,
+                "suggested_duration_minutes": 90,
+                "estimated_cost_fen": 3000,
+                "rating": 4.9,
+                "tags": [
+                  "风景名胜",
+                  "国家级景点",
+                  "有图片"
+                ],
+                "source_url": "https://www.amap.com/search?id=B00190BMRC"
+              }
+            },
+            {
+              "kind": "selected",
+              "label": "南京博物院",
+              "origin": "user_explicit",
+              "source_quote": "南京博物院确定想去但时间未定",
+              "day_date": null,
+              "start": null,
+              "end": null
+            },
+            {
+              "kind": "optional",
+              "label": "玄武湖",
+              "origin": "user_explicit",
+              "source_quote": "玄武湖有时间再去就好",
+              "day_date": null,
+              "start": null,
+              "end": null
+            },
+            {
+              "kind": "free_window",
+              "label": "自由活动",
+              "origin": "user_explicit",
+              "source_quote": "周六15:00-16:00明确留白",
+              "day_date": "2026-11-07",
+              "start": "15:00:00",
+              "end": "16:00:00"
+            }
+          ],
+          "flexible": true,
+          "topic_id": "live-cd2974e4-00bc-4895-b295-336250a51671"
+        },
+        "latest_run_id": null
+      }
+    },
+    {
+      "step": "adopt",
+      "status": 200,
+      "body": {
+        "id": "799a50b2-b3f3-445f-906f-bd2c894ab83e",
+        "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+        "messages": [
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "live-cd2974e4-00bc-4895-b295-336250a51671",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "14ffab57-b0e8-418b-b670-a346c22b73b1",
+            "user": "第一次去南京，想了解南京博物院和玄武湖的体验有什么区别，先只聊聊，不创建旅行。",
+            "assistant": "这两处是完全不同类型的体验，简单对比一下：\n\n**南京博物院（室内博物馆）**\n- 核心是看展：历史馆、特展馆、数字馆、民国馆、艺术馆等多个场馆，馆藏丰富，从史前文物到明清宫廷器物都有。\n- 民国馆还原了老南京街景，是可以走进去的沉浸式街区，很多游客专门为此而来。\n- 节奏偏慢、偏深度，适合对历史文化感兴趣、愿意花大半天慢慢看的人。\n- 注意：通常需要提前实名预约，具体开放安排建议出发前在官方渠道确认。\n\n**玄武湖（户外湖泊公园）**\n- 核心是逛和走：环湖步道很大，可以步行、骑行或坐游船，看湖景、远眺紫金山和明城墙（玄武门段就在旁边）。\n- 节奏自由随意，傍晚日落和春秋的湖边景色很受欢迎，也适合想放松、不想赶场的时候。\n- 公园开放，基本无预约门槛，但游船、夜间开放等具体项目以现场为准。\n\n**一句话区分**：想“看东西、长知识”选南博，想“吹风、散步、看湖景”选玄武湖。两者离得不远，同一天安排一静一动也很常见。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "destination_exploration",
+              "confidence": 0.93,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_destination_exploration"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "基于对南京博物院与玄武湖的常识性了解，从体验类型、节奏、适合人群等维度对比；仅作了解交流，不涉及行程创建；门票等当前信息无法确认。",
+              "response_text": "这两处是完全不同类型的体验，简单对比一下：\n\n**南京博物院（室内博物馆）**\n- 核心是看展：历史馆、特展馆、数字馆、民国馆、艺术馆等多个场馆，馆藏丰富，从史前文物到明清宫廷器物都有。\n- 民国馆还原了老南京街景，是可以走进去的沉浸式街区，很多游客专门为此而来。\n- 节奏偏慢、偏深度，适合对历史文化感兴趣、愿意花大半天慢慢看的人。\n- 注意：通常需要提前实名预约，具体开放安排建议出发前在官方渠道确认。\n\n**玄武湖（户外湖泊公园）**\n- 核心是逛和走：环湖步道很大，可以步行、骑行或坐游船，看湖景、远眺紫金山和明城墙（玄武门段就在旁边）。\n- 节奏自由随意，傍晚日落和春秋的湖边景色很受欢迎，也适合想放松、不想赶场的时候。\n- 公园开放，基本无预约门槛，但游船、夜间开放等具体项目以现场为准。\n\n**一句话区分**：想“看东西、长知识”选南博，想“吹风、散步、看湖景”选玄武湖。两者离得不远，同一天安排一静一动也很常见。",
+              "goal_type": "destination_exploration",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_a87ce2ad4d095d1ab3fae8d683a9144e",
+                  "suggestion_type": "place",
+                  "title": "南京博物院",
+                  "summary": "深度室内博物馆体验，历史馆藏加沉浸式民国街景，适合慢节奏参观。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "南京博物院"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "馆藏与特展丰富",
+                    "民国馆沉浸感强",
+                    "与玄武湖可形成动静搭配"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-19T14:38:41.779288Z",
+                  "conversation_turn_id": "14ffab57-b0e8-418b-b670-a346c22b73b1",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_53bbe866e9e45b3eb81ee0944b4aa7bc",
+                  "suggestion_type": "place",
+                  "title": "玄武湖",
+                  "summary": "开放式城市湖泊公园，环湖散步骑行观景，适合放松和傍晚看日落。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "玄武湖"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "节奏自由、无预约门槛（现场项目另计）",
+                    "可远眺紫金山与明城墙",
+                    "与南京博物院地理位置相近"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-19T14:38:41.779288Z",
+                  "conversation_turn_id": "14ffab57-b0e8-418b-b670-a346c22b73b1",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": {
+                "options": [
+                  "南京博物院",
+                  "玄武湖"
+                ],
+                "dimensions": [
+                  "体验类型",
+                  "节奏",
+                  "适合人群",
+                  "预约门槛"
+                ],
+                "summary": "南博是室内深度文化体验，需提前预约；玄武湖是户外休闲散步，随到随逛，两者动静互补且相距不远。"
+              },
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "advisory",
+                "requested_fact_topics": []
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [
+                "output_unverified_availability"
+              ],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          },
+          {
+            "id": "66065ab3-cdc7-4c91-a4ce-440172aaa67c",
+            "user": "我想看历史展览，南京博物院确定想去但时间未定；玄武湖有时间再去就好。现在先讨论。",
+            "assistant": "我会把这些旅行想法用于接下来的讨论。目前还没有创建旅行或保存安排；未定时间与备选会保持未定。",
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "live-cd2974e4-00bc-4895-b295-336250a51671",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "tool": "arrangement_edit",
+            "run_id": null
+          },
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "live-cd2974e4-00bc-4895-b295-336250a51671",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "id": "175ad80a-b99a-446e-acec-93d2746e0987",
+            "user": "我决定2026-11-07到2026-11-08去南京两天。周日总统府14:00-15:00已经预约；周六15:00-16:00明确留白。保留南京博物院但暂不排时间，玄武湖还是备选。请形成允许留白的旅行安排建议，别把两天填满。",
+            "assistant": "请核对：南京市，2026-11-07 至 2026-11-08，共 2 天，未设置预算上限。确认后执行。\n总统府：你提供的固定预约，2026-11-08 14:00:00—15:00:00\n南京博物院：纳入，时间未定\n玄武湖：备选\n自由活动：保留空闲，2026-11-07 15:00:00—16:00:00",
+            "tool": "create_trip",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "trip_planning",
+              "confidence": 0.96,
+              "target_runtime": "planning",
+              "mutation_requested": true,
+              "trip_context_required": false,
+              "knowledge_required": false,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "explicit_user_planning_request"
+              ]
+            },
+            "planning_brief": null
+          },
+          {
+            "id": "10e5b032-90aa-41e6-a6a6-eaf403dcc432",
+            "user": "确认执行",
+            "assistant": "安排已保存；未排程和备选保持未定，空闲已保留。需要协调具体时间时再生成调整建议。",
+            "trip_id": "5db22d60-778f-4152-9306-97e686e7c447"
+          },
+          {
+            "id": "3ebdc5e1-4468-4adf-93d9-485b414b878b",
+            "user": "就按这份来",
+            "assistant": "已采用并保存这份安排；未定的部分保持未定。",
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "live-cd2974e4-00bc-4895-b295-336250a51671",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": "83631551-de57-4980-b1ee-a1609f33fcad",
+              "route_request": null
+            },
+            "tool": "arrangement_edit",
+            "run_id": null
+          }
+        ],
+        "pending_action": null,
+        "latest_run_id": null
+      }
+    },
+    {
+      "step": "saved-readback",
+      "status": 200,
+      "body": {
+        "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+        "version": 6,
+        "trip": {
+          "id": "5db22d60-778f-4152-9306-97e686e7c447",
+          "title": "南京两日留白之旅",
+          "destination": "南京市",
+          "destination_adcode": "320100",
+          "destination_citycode": "025",
+          "center_longitude": 118.796624,
+          "center_latitude": 32.059344,
+          "accommodation": "",
+          "accommodation_poi_id": "",
+          "accommodation_address": "",
+          "accommodation_district": "",
+          "accommodation_longitude": null,
+          "accommodation_latitude": null,
+          "start_date": "2026-11-07",
+          "end_date": "2026-11-08",
+          "total_budget_fen": null,
+          "daily_budget_fen": null,
+          "currency": "CNY",
+          "timezone": "Asia/Shanghai",
+          "created_at": "2026-10-19T14:38:49.821337Z",
+          "updated_at": "2026-10-19T14:38:49.821337Z",
+          "archived_at": null,
+          "version": 6,
+          "status": "upcoming"
+        },
+        "days": [
+          {
+            "id": "7fa8b76c-be93-4d9e-a129-d9a80e82b4a4",
+            "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+            "date": "2026-11-07",
+            "label": "第 1 天",
+            "theme": "探索南京市",
+            "position": 0,
+            "route_mode": "walk",
+            "activities": [],
+            "route_legs": [],
+            "conflicts": []
+          },
+          {
+            "id": "8d8afbd5-e5fe-4403-9425-f59b467faaa3",
+            "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+            "date": "2026-11-08",
+            "label": "第 2 天",
+            "theme": "探索南京市",
+            "position": 1,
+            "route_mode": "walk",
+            "activities": [
+              {
+                "id": "ea436291-18b2-4ac2-a796-b30e66036654",
+                "place_id": "0508eb3e-2001-4a51-bba7-992b4e201dd7",
+                "name": "总统府",
+                "custom_name": null,
+                "display_name": "总统府",
+                "category": "sight",
+                "neighborhood": "玄武区",
+                "longitude": 118.797398,
+                "latitude": 32.044228,
+                "scheduled_time": "14:00:00",
+                "duration_minutes": 60,
+                "importance": "normal",
+                "can_skip": true,
+                "minimum_duration_minutes": null,
+                "importance_source": "system_default",
+                "can_skip_source": "system_default",
+                "minimum_duration_source": "unknown",
+                "estimated_cost_fen": 3000,
+                "status": "planned",
+                "position": 0,
+                "schedule_locked": true,
+                "version": 1,
+                "note": null,
+                "updated_at": "2026-10-19T14:38:49.821337Z",
+                "source": {
+                  "id": "15ca484d-9f8e-4c26-8fb1-ad2f27a6b069",
+                  "title": "高德地点搜索：总统府",
+                  "url": "https://www.amap.com/search?id=B00190BMRC",
+                  "provider": "AMap POI",
+                  "queried_at": "2026-10-19T14:38:49.863169Z",
+                  "confidence": "high"
+                }
+              }
+            ],
+            "route_legs": [],
+            "conflicts": []
+          }
+        ],
+        "items": [
+          {
+            "id": "485a51b2-899d-500d-a9fb-1f4d29501396",
+            "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+            "kind": "free_window",
+            "label": "自由活动",
+            "source_ref": "preview:83631551-de57-4980-b1ee-a1609f33fcad:3:user_explicit",
+            "decision_ref": "adopt-preview:83631551-de57-4980-b1ee-a1609f33fcad",
+            "place_id": null,
+            "day_date": "2026-11-07",
+            "start": "15:00:00",
+            "end": "16:00:00",
+            "activity_id": null
+          },
+          {
+            "id": "76a082a5-1f1a-5704-a747-794ec30b8768",
+            "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+            "kind": "selected",
+            "label": "南京博物院",
+            "source_ref": "preview:83631551-de57-4980-b1ee-a1609f33fcad:1:user_explicit",
+            "decision_ref": "adopt-preview:83631551-de57-4980-b1ee-a1609f33fcad",
+            "place_id": null,
+            "day_date": null,
+            "start": null,
+            "end": null,
+            "activity_id": null
+          },
+          {
+            "id": "9e3da984-d0a3-547c-a8af-31a3a9d381af",
+            "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+            "kind": "optional",
+            "label": "玄武湖",
+            "source_ref": "preview:83631551-de57-4980-b1ee-a1609f33fcad:2:user_explicit",
+            "decision_ref": "adopt-preview:83631551-de57-4980-b1ee-a1609f33fcad",
+            "place_id": null,
+            "day_date": null,
+            "start": null,
+            "end": null,
+            "activity_id": null
+          },
+          {
+            "id": "c24057df-5eb1-51d8-a16c-890655ea8b7b",
+            "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+            "kind": "selected",
+            "label": "总统府",
+            "source_ref": "preview:83631551-de57-4980-b1ee-a1609f33fcad:0:user_explicit",
+            "decision_ref": "adopt-preview:83631551-de57-4980-b1ee-a1609f33fcad",
+            "place_id": "0508eb3e-2001-4a51-bba7-992b4e201dd7",
+            "day_date": null,
+            "start": null,
+            "end": null,
+            "activity_id": "ea436291-18b2-4ac2-a796-b30e66036654"
+          }
+        ]
+      }
+    }
+  ],
+  "result": "PASS bounded live creation chain; no dynamic Graph/browser claim",
+  "finished_at": "2026-10-19T14:38:50.070879+00:00"
+}

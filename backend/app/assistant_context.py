@@ -29,8 +29,9 @@ class TaskRequirements(ContextModel):
 class ActionTarget(ContextModel):
     trip_id: uuid.UUID
     expected_version: int = Field(ge=1)
-    operation: Literal["plan_trip", "reschedule_trip"]
+    operation: Literal["plan_trip", "reschedule_trip", "edit_arrangement", "accept_plan"]
     authorization_message_id: uuid.UUID
+    revision_id: uuid.UUID | None = None
 
 
 class RouteReadRequest(ContextModel):
@@ -65,6 +66,8 @@ class ContextEnvelope(ContextModel):
     requirement_records: list[dict] = Field(default_factory=list, max_length=200)
     read_trip_id: uuid.UUID | None = None
     action_target: ActionTarget | None = None
+    prefer_flexible: bool = False
+    preview_action_id: uuid.UUID | None = None
     route_request: RouteReadRequest | None = None
 
 

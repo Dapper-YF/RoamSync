@@ -268,6 +268,7 @@ class CompanionContext(Contract):
     current_destination: str | None = None
     trip_summary: dict | None = None
     formal_itinerary_summary: list[dict] = Field(default_factory=list, max_length=10)
+    arrangement_items: list[dict] = Field(default_factory=list)
     relevant_user_preferences: list[PreferenceStatement] = Field(default_factory=list, max_length=30)
     saved_trip_preferences: dict | None = None
     relevant_prior_suggestions: list[CompanionSuggestion] = Field(default_factory=list, max_length=10)

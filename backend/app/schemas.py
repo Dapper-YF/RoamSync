@@ -692,6 +692,7 @@ class PlanningContextResponse(BaseModel):
     planning_goals: PlanningGoals | None = None
     formal_route_facts: dict = Field(default_factory=dict)
     effective_requirements: list[dict] = Field(default_factory=list)
+    arrangement_items: list[dict] = Field(default_factory=list)
 
 
 PlanningRunType = Literal["initial_plan", "replan"]

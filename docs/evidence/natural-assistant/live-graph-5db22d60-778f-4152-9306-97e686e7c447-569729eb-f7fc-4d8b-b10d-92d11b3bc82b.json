@@ -1,0 +1,351 @@
+{
+  "kind": "real model Graph/AMap/Validator/Accept; synthetic user booking",
+  "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+  "source": "live-cd2974e4-00bc-4895-b295-336250a51671.json",
+  "steps": [
+    {
+      "step": "verified-poi",
+      "status": 200,
+      "place_id": "28a9640f-c463-4d61-92eb-e60c9ebb9ce5",
+      "provider": "amap"
+    },
+    {
+      "step": "create-run",
+      "status": 201,
+      "body": {
+        "id": "a4e5811f-cebd-4a6f-acff-3bb319464fea",
+        "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+        "disruption_event_id": null,
+        "trigger_type": null,
+        "trigger_fingerprint": null,
+        "trigger_snapshot": {
+          "effective_requirements": []
+        },
+        "run_type": "replan",
+        "status": "queued",
+        "user_request": "请只调整2026-11-08当天，把南京博物院加入行程，上午10:00开始，游览60分钟。总统府不要动。玄武湖仍为备选，这次不安排。其他日期保持不变，不要填满空闲。",
+        "response_text": null,
+        "progress": null,
+        "heartbeat_at": null,
+        "entry_point": "trip_planner",
+        "selected_day_id": "8d8afbd5-e5fe-4403-9425-f59b467faaa3",
+        "selected_activity_id": null,
+        "intent_resolution": {
+          "request": {
+            "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+            "user_request": "请只调整2026-11-08当天，把南京博物院加入行程，上午10:00开始，游览60分钟。总统府不要动。玄武湖仍为备选，这次不安排。其他日期保持不变，不要填满空闲。",
+            "intent": {
+              "intent_type": "modify_day",
+              "source_text": "请只调整2026-11-08当天，把南京博物院加入行程，上午10:00开始，游览60分钟。总统府不要动。玄武湖仍为备选，这次不安排。其他日期保持不变，不要填满空闲。",
+              "time_scope": {
+                "day_number": 2,
+                "day_date": "2026-11-08",
+                "period": "morning"
+              },
+              "protected_activity_ids": [
+                "ea436291-18b2-4ac2-a796-b30e66036654"
+              ],
+              "requested_place_queries": [
+                "南京博物院"
+              ],
+              "requested_pace": null,
+              "missing_fields": [],
+              "ambiguities": []
+            },
+            "entry_point": "trip_planner",
+            "selected_day_id": "8d8afbd5-e5fe-4403-9425-f59b467faaa3",
+            "selected_activity_id": null,
+            "target_day_id": "8d8afbd5-e5fe-4403-9425-f59b467faaa3"
+          },
+          "requires_clarification": false,
+          "clarification_questions": [],
+          "parser_version": "rules-v1",
+          "semantic_draft": {
+            "primary_intent": "add_activity",
+            "operations": [
+              {
+                "operation": "add_activity",
+                "raw_text": "请只调整2026-11-08当天，把南京博物院加入行程，上午10:00开始，游览60分钟。总统府不要动。玄武湖仍为备选，这次不安排。其他日期保持不变，不要填满空闲。",
+                "date_expression": "2026-11-08",
+                "period": "morning",
+                "activity_mentions": [],
+                "place_mentions": [
+                  "南京博物院"
+                ],
+                "constraints": {
+                  "budget_must_not_increase": false,
+                  "max_additional_cost_fen": null,
+                  "preferred_environment": null,
+                  "max_walking_minutes": null,
+                  "requested_pace": null,
+                  "weather_sensitive": false,
+                  "preserve_completed": true
+                }
+              }
+            ],
+            "confidence": 0.98,
+            "missing_fields": [],
+            "ambiguities": [],
+            "parser": "rules",
+            "parser_version": "rules-envelope-v1"
+          },
+          "grounded_intent": {
+            "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+            "primary_intent": "add_activity",
+            "operation_types": [
+              "add_activity"
+            ],
+            "target_day_ids": [
+              "8d8afbd5-e5fe-4403-9425-f59b467faaa3"
+            ],
+            "target_activity_ids": [],
+            "candidate_place_ids": [
+              "28a9640f-c463-4d61-92eb-e60c9ebb9ce5"
+            ],
+            "unresolved_activity_mentions": [],
+            "unresolved_place_mentions": [],
+            "constraints": {
+              "budget_must_not_increase": false,
+              "max_additional_cost_fen": null,
+              "preferred_environment": null,
+              "max_walking_minutes": null,
+              "requested_pace": null,
+              "weather_sensitive": false,
+              "preserve_completed": true
+            },
+            "missing_fields": [],
+            "ambiguities": []
+          },
+          "policy_decision": {
+            "operation_mode": "preview_change",
+            "risk_level": "medium",
+            "requires_confirmation": true,
+            "reasons": [
+              "formal_plan_change"
+            ],
+            "route": "plan_preview"
+          }
+        },
+        "base_trip_version": 6,
+        "model_provider": null,
+        "model_name": null,
+        "token_usage": 0,
+        "error_code": null,
+        "error_message": null,
+        "error_details": null,
+        "pending_interrupt": null,
+        "created_at": "2026-10-19T14:41:51.999367Z",
+        "started_at": null,
+        "completed_at": null
+      }
+    },
+    {
+      "step": "graph-result",
+      "status": 200,
+      "body": {
+        "id": "a4e5811f-cebd-4a6f-acff-3bb319464fea",
+        "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+        "disruption_event_id": null,
+        "trigger_type": null,
+        "trigger_fingerprint": null,
+        "trigger_snapshot": {
+          "effective_requirements": []
+        },
+        "run_type": "replan",
+        "status": "failed",
+        "user_request": "请只调整2026-11-08当天，把南京博物院加入行程，上午10:00开始，游览60分钟。总统府不要动。玄武湖仍为备选，这次不安排。其他日期保持不变，不要填满空闲。",
+        "response_text": null,
+        "progress": {
+          "events": [
+            {
+              "stage": "intent",
+              "status": "running",
+              "at": "2026-10-19T14:41:52.991118+00:00",
+              "duration_ms": null,
+              "call_id": "cbf9d9b9-72a9-4257-8162-cdad9fa88fec",
+              "provider": null,
+              "purpose": null,
+              "data": {},
+              "sequence": 1
+            },
+            {
+              "stage": "research_decision",
+              "status": "completed",
+              "at": "2026-10-19T14:41:53.068461+00:00",
+              "duration_ms": null,
+              "call_id": null,
+              "provider": null,
+              "purpose": null,
+              "data": {
+                "destination_research_required": true,
+                "destination_research_available": true
+              },
+              "sequence": 2
+            },
+            {
+              "stage": "research",
+              "status": "running",
+              "at": "2026-10-19T14:41:53.084839+00:00",
+              "duration_ms": null,
+              "call_id": "5c0ea520-2325-47a1-a24b-f26b13016454",
+              "provider": null,
+              "purpose": "Resolve sourced destination candidates",
+              "data": {},
+              "sequence": 3
+            },
+            {
+              "stage": "research",
+              "status": "failed",
+              "at": "2026-10-19T14:41:53.093422+00:00",
+              "duration_ms": 0,
+              "call_id": "5c0ea520-2325-47a1-a24b-f26b13016454",
+              "provider": null,
+              "purpose": "Resolve sourced destination candidates",
+              "data": {
+                "error_code": "planner_research_unavailable"
+              },
+              "sequence": 4
+            },
+            {
+              "stage": "intent",
+              "status": "failed",
+              "at": "2026-10-19T14:41:53.107474+00:00",
+              "duration_ms": 107,
+              "call_id": "cbf9d9b9-72a9-4257-8162-cdad9fa88fec",
+              "provider": null,
+              "purpose": null,
+              "data": {
+                "error_code": "planner_research_unavailable"
+              },
+              "sequence": 5
+            }
+          ],
+          "observation_sequence": 5,
+          "observations_truncated": false,
+          "stage": "intent",
+          "message": "网页检索已结束，正在核对你的需求与调整范围…",
+          "updated_at": "2026-10-19T14:41:53.077854+00:00"
+        },
+        "heartbeat_at": "2026-10-19T14:41:53.077854Z",
+        "entry_point": "trip_planner",
+        "selected_day_id": "8d8afbd5-e5fe-4403-9425-f59b467faaa3",
+        "selected_activity_id": null,
+        "intent_resolution": {
+          "request": {
+            "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+            "user_request": "请只调整2026-11-08当天，把南京博物院加入行程，上午10:00开始，游览60分钟。总统府不要动。玄武湖仍为备选，这次不安排。其他日期保持不变，不要填满空闲。",
+            "intent": {
+              "intent_type": "modify_day",
+              "source_text": "请只调整2026-11-08当天，把南京博物院加入行程，上午10:00开始，游览60分钟。总统府不要动。玄武湖仍为备选，这次不安排。其他日期保持不变，不要填满空闲。",
+              "time_scope": {
+                "day_number": 2,
+                "day_date": "2026-11-08",
+                "period": "morning"
+              },
+              "protected_activity_ids": [
+                "ea436291-18b2-4ac2-a796-b30e66036654"
+              ],
+              "requested_place_queries": [
+                "南京博物院"
+              ],
+              "requested_pace": null,
+              "missing_fields": [],
+              "ambiguities": []
+            },
+            "entry_point": "trip_planner",
+            "selected_day_id": "8d8afbd5-e5fe-4403-9425-f59b467faaa3",
+            "selected_activity_id": null,
+            "target_day_id": "8d8afbd5-e5fe-4403-9425-f59b467faaa3"
+          },
+          "requires_clarification": false,
+          "clarification_questions": [],
+          "parser_version": "rules-v1",
+          "semantic_draft": {
+            "primary_intent": "add_activity",
+            "operations": [
+              {
+                "operation": "add_activity",
+                "raw_text": "请只调整2026-11-08当天，把南京博物院加入行程，上午10:00开始，游览60分钟。总统府不要动。玄武湖仍为备选，这次不安排。其他日期保持不变，不要填满空闲。",
+                "date_expression": "2026-11-08",
+                "period": "morning",
+                "activity_mentions": [],
+                "place_mentions": [
+                  "南京博物院"
+                ],
+                "constraints": {
+                  "budget_must_not_increase": false,
+                  "max_additional_cost_fen": null,
+                  "preferred_environment": null,
+                  "max_walking_minutes": null,
+                  "requested_pace": null,
+                  "weather_sensitive": false,
+                  "preserve_completed": true
+                }
+              }
+            ],
+            "confidence": 0.98,
+            "missing_fields": [],
+            "ambiguities": [],
+            "parser": "rules",
+            "parser_version": "rules-envelope-v1"
+          },
+          "grounded_intent": {
+            "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+            "primary_intent": "add_activity",
+            "operation_types": [
+              "add_activity"
+            ],
+            "target_day_ids": [
+              "8d8afbd5-e5fe-4403-9425-f59b467faaa3"
+            ],
+            "target_activity_ids": [],
+            "candidate_place_ids": [
+              "28a9640f-c463-4d61-92eb-e60c9ebb9ce5"
+            ],
+            "unresolved_activity_mentions": [],
+            "unresolved_place_mentions": [],
+            "constraints": {
+              "budget_must_not_increase": false,
+              "max_additional_cost_fen": null,
+              "preferred_environment": null,
+              "max_walking_minutes": null,
+              "requested_pace": null,
+              "weather_sensitive": false,
+              "preserve_completed": true
+            },
+            "missing_fields": [],
+            "ambiguities": []
+          },
+          "policy_decision": {
+            "operation_mode": "preview_change",
+            "risk_level": "medium",
+            "requires_confirmation": true,
+            "reasons": [
+              "formal_plan_change"
+            ],
+            "route": "plan_preview"
+          }
+        },
+        "base_trip_version": 6,
+        "model_provider": null,
+        "model_name": null,
+        "token_usage": 0,
+        "error_code": "planner_research_unavailable",
+        "error_message": "目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。",
+        "error_details": {
+          "category": "provider_failure",
+          "reliability": {}
+        },
+        "pending_interrupt": null,
+        "created_at": "2026-10-19T14:41:51.999367Z",
+        "started_at": "2026-10-19T14:41:52.845269Z",
+        "completed_at": "2026-10-19T14:41:53.123168Z"
+      }
+    }
+  ],
+  "result": "FAIL",
+  "failure": {
+    "type": "AssertionError",
+    "message": "Graph did not produce an adoptable candidate"
+  }
+}

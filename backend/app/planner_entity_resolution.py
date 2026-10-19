@@ -63,6 +63,14 @@ class PlannerEntityBindings:
 
     def prompt(self, raw):
         prompt = dict(raw)
+        items = []
+        for item in prompt.get("arrangement_items", []):
+            clean = {k: item.get(k) for k in ("kind", "label", "day_date", "start", "end")}
+            clean["candidate_ref"] = next((ref for ref, place in self.candidates.items() if str(place.id) == str(item.get("place_id"))), None)
+            clean["activity_ref"] = next((ref for ref, place in self.existing.items() if str(place.replaces_activity_id) == str(item.get("activity_id"))), None)
+            clean["place_status"] = "resolved" if item.get("place_id") else "unresolved_user_name"
+            items.append(clean)
+        prompt["arrangement_items"] = items
         # Facts remain in provenance/debug state; the model receives each partition once.
         for key in ("planning_goals", "formal_route_facts", "current_formal_plan", "user_preferences", "allowed_ledger_references", "activity_decision_semantics"):
             prompt.pop(key, None)

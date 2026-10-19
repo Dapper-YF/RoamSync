@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="6" time="6.100" timestamp="2026-10-19T21:45:11.558719+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_arrangement_agent" name="test_flexible_preview_adoption_keeps_unknowns_and_does_not_start_graph" time="0.250"><failure message="AssertionError: {&quot;detail&quot;:{&quot;message&quot;:&quot;未配置高德 Web 服务 Key&quot;}}&#10;assert 502 == 200&#10; +  where 502 = &lt;Response [502 Bad Gateway]&gt;.status_code">tests\test_arrangement_agent.py:53: in test_flexible_preview_adoption_keeps_unknowns_and_does_not_start_graph
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_arrangement_agent.py:35: in scenario
+    assert response.status_code == 200, response.text
+E   AssertionError: {"detail":{"message":"未配置高德 Web 服务 Key"}}
+E   assert 502 == 200
+E    +  where 502 = &lt;Response [502 Bad Gateway]&gt;.status_code</failure></testcase><testcase classname="tests.test_arrangement_agent" name="test_booking_cannot_be_fabricated_or_extended_beyond_user_quote[ai_suggestion-]" time="0.003" /><testcase classname="tests.test_arrangement_agent" name="test_booking_cannot_be_fabricated_or_extended_beyond_user_quote[user_explicit-\u5468\u65e5\u603b\u7edf\u5e9c14:00-15:00\u5df2\u9884\u7ea6]" time="0.002" /><testcase classname="tests.test_arrangement_agent" name="test_planner_context_preserves_selected_optional_and_free_semantics" time="0.418" /><testcase classname="tests.test_arrangement_agent" name="test_chat_and_page_edits_preserve_each_other_without_planning_run" time="0.650" /><testcase classname="tests.test_arrangement_agent" name="test_old_chat_action_target_cannot_overwrite_a_new_page_decision" time="0.307" /></testsuite></testsuites>

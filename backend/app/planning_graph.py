@@ -519,6 +519,8 @@ def build_planning_graph(
         run_id = uuid.UUID(state["run_id"])
         trip_id = uuid.UUID(state["trip_id"])
         snapshot = CandidatePlanSnapshot.model_validate(state["proposed_snapshot"])
+        from app.arrangement_service import bind_arrangement_references
+        snapshot = bind_arrangement_references(snapshot, state["planning_context"])
         required_dates: set[date] = set()
         if state.get("run_type") == "initial_plan" and not any(day["activities"] for day in state["planning_context"]["days"]):
             intent = state["intent_resolution"]["request"]["intent"]

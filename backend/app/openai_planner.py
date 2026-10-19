@@ -62,6 +62,14 @@ destination_research 是本次网页研究：用户指定地点必须安排；�
 explanation 要说明按区域或体验顺序分天的理由、热门景点覆盖和取舍；不要以尚未采用的历史候选为基础。
 reason 用简短中文逐项说明该地点或时间为何适合本次需求，不要包含 Markdown，不要编造营业时间或尚未查询的路线依据。"""
 
+PLANNER_INSTRUCTIONS += """
+arrangement_items是当前用户决定：selected尚未排程可继续留白，不代表本轮必须全部排完；
+optional仅备选，不提升成必去；cancelled不得恢复。free_window中不得安排活动或挤入交通。
+用户保留的空闲和已有活动间隔不是待自动填满的缺口。只有本次明确授权调整的范围可动。
+unresolved_user_name只是用户提到的名称，不能编造对应POI、开放时间、预约、费用或默认停留。
+已绑定活动仅用activity_ref；未排程且已有候选身份时使用相应candidate_ref，服务端负责稳定身份。
+"""
+
 ASSISTANT_INSTRUCTIONS = """你是 RoamSync 的旅行助手，本轮只回答问题，不生成替换行程，不执行任何修改。
 先直接回应用户，结合 supplied_context 中的正式行程、预算、交通和偏好解释，给出有理由的旅行建议。
 用户问“现在的行程怎样、建议怎么走”时，先按天概括现有安排与顺序，再分析节奏、交通和体验的利弊，给出可选建议及理由。
@@ -569,6 +577,7 @@ def build_planner_input(
             ],
         }
         prompt["validation_errors"] = state["validation_result"]["errors"]
+    prompt["arrangement_items"] = context.get("arrangement_items", [])
     return prompt, allowed, allowed_dates
 
 

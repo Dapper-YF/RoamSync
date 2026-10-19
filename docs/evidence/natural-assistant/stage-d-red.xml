@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="3" time="6.084" timestamp="2026-10-19T21:28:47.664805+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_arrangement_agent" name="test_planner_context_preserves_selected_optional_and_free_semantics" time="0.439"><failure message="KeyError: 'arrangement_items'">tests\test_arrangement_agent.py:22: in test_planner_context_preserves_selected_optional_and_free_semantics
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_arrangement_agent.py:20: in scenario
+    assert {i["kind"] for i in context["arrangement_items"]} == {"selected", "optional", "free_window"}
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'arrangement_items'</failure></testcase><testcase classname="tests.test_arrangement_agent" name="test_chat_and_page_edits_preserve_each_other_without_planning_run" time="0.335"><failure message="AssertionError: {&quot;detail&quot;:[{&quot;type&quot;:&quot;literal_error&quot;,&quot;loc&quot;:[&quot;body&quot;,&quot;context&quot;,&quot;action_target&quot;,&quot;operation&quot;],&quot;msg&quot;:&quot;Input should be 'plan_trip' or 'reschedule_trip'&quot;,&quot;input&quot;:&quot;edit_arrangement&quot;,&quot;ctx&quot;:{&quot;expected&quot;:&quot;'plan_trip' or 'reschedule_trip'&quot;}}]}&#10;assert 422 == 200&#10; +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code">tests\test_arrangement_agent.py:48: in test_chat_and_page_edits_preserve_each_other_without_planning_run
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_arrangement_agent.py:39: in scenario
+    assert response.status_code == 200, response.text
+E   AssertionError: {"detail":[{"type":"literal_error","loc":["body","context","action_target","operation"],"msg":"Input should be 'plan_trip' or 'reschedule_trip'","input":"edit_arrangement","ctx":{"expected":"'plan_trip' or 'reschedule_trip'"}}]}
+E   assert 422 == 200
+E    +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code</failure></testcase><testcase classname="tests.test_arrangement_agent" name="test_old_chat_action_target_cannot_overwrite_a_new_page_decision" time="0.277" /></testsuite></testsuites>

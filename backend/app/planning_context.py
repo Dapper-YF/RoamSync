@@ -28,6 +28,7 @@ async def build_planning_context(
     frozen = set(execution_recovery["frozen_activity_ids"])
     protected = set(execution_recovery["protected_activity_ids"])
     execution_recovery["mutable_activity_ids"] = sorted(activity_ids - frozen - protected)
+    from app.arrangement_service import read_items, item_dict
     return PlanningContextResponse(
         trip=TripResponse.model_validate(trip),
         preferences=TripPreferencesResponse.model_validate(preferences),
@@ -39,4 +40,5 @@ async def build_planning_context(
         external_facts={},
         execution_recovery=execution_recovery,
         effective_requirements=valid_records(getattr(preferences, "requirement_records", [])),
+        arrangement_items=[item_dict(item) for item in await read_items(session, trip_id)],
     )

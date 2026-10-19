@@ -35,6 +35,24 @@ No new Graph node, PlanningRun for simple edits, or persisted second timetable.
 The model/context/Web integrations are separate later gates, not claimed here.
 Evidence and scope: NATURAL_ASSISTANT_DELIVERY_20261019.md.
 
+### Bounded flexible assistant integration (stage D, isolated)
+
+The existing AssistantSession creation preview may carry finite CreationChoice
+fields when prefer_flexible is explicitly enabled. It does not create a Trip
+until the existing confirmation boundary is adopted; uncertain choices retain
+null times. User-source quotes, booking intervals and verified appointment POI
+identity are checked before adoption. At most one local creation-field repair
+is allowed; failure does not write a plan. Current revoked choices cannot be
+restored by a candidate merely because old dialogue mentioned them.
+
+ActionTarget optionally supports edit_arrangement and accept_plan with the same
+message/Trip/version binding. Exact bounded edits use write_item, not a Graph.
+Bare 'adopt this' never adopts arbitrary prose: an explicit displayed preview ID
+or revision ID and current authorization is required. Old clients retain defaults.
+Planner/Companion read the actual finite items; symbolic model references are
+server-bound to existing item identities before validation, with no model-owned
+UUID authority. These are additions to existing services, not a new Agent system.
+
 ### Isolated formal-write protection candidate (2026-10-19)
 
 Implemented/tested in `codex/formal-write-protection-20261019`, not deployed.

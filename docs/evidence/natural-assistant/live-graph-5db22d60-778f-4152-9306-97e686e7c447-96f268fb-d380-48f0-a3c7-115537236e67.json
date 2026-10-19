@@ -1,0 +1,278 @@
+{
+  "kind": "real model Graph/AMap/Validator/Accept; synthetic user booking",
+  "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+  "source": "live-cd2974e4-00bc-4895-b295-336250a51671.json",
+  "steps": [
+    {
+      "step": "verified-poi",
+      "status": 200,
+      "place_id": "28a9640f-c463-4d61-92eb-e60c9ebb9ce5",
+      "provider": "amap"
+    },
+    {
+      "step": "create-run",
+      "status": 201,
+      "body": {
+        "id": "ed267dbf-baaf-453a-a3c7-dd8c9293cbbd",
+        "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+        "disruption_event_id": null,
+        "trigger_type": null,
+        "trigger_fingerprint": null,
+        "trigger_snapshot": {
+          "effective_requirements": []
+        },
+        "run_type": "replan",
+        "status": "queued",
+        "user_request": "请只调整2026-11-08当天，把南京博物院安排在上午10:00开始，停留60分钟。保留总统府14:00开始、停留60分钟的固定预约不动；玄武湖仍为备选，不安排。周六活动和15:00-16:00留白保持不变。不要填满空闲。",
+        "response_text": null,
+        "progress": null,
+        "heartbeat_at": null,
+        "entry_point": "trip_planner",
+        "selected_day_id": "8d8afbd5-e5fe-4403-9425-f59b467faaa3",
+        "selected_activity_id": null,
+        "intent_resolution": {
+          "request": {
+            "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+            "user_request": "请只调整2026-11-08当天，把南京博物院安排在上午10:00开始，停留60分钟。保留总统府14:00开始、停留60分钟的固定预约不动；玄武湖仍为备选，不安排。周六活动和15:00-16:00留白保持不变。不要填满空闲。",
+            "intent": {
+              "intent_type": "modify_day",
+              "source_text": "请只调整2026-11-08当天，把南京博物院安排在上午10:00开始，停留60分钟。保留总统府14:00开始、停留60分钟的固定预约不动；玄武湖仍为备选，不安排。周六活动和15:00-16:00留白保持不变。不要填满空闲。",
+              "time_scope": {
+                "day_number": 2,
+                "day_date": "2026-11-08",
+                "period": "morning"
+              },
+              "protected_activity_ids": [
+                "ea436291-18b2-4ac2-a796-b30e66036654"
+              ],
+              "requested_place_queries": [],
+              "requested_pace": null,
+              "missing_fields": [],
+              "ambiguities": [
+                "activity_not_found:停留60分钟的固定预约不动"
+              ]
+            },
+            "entry_point": "trip_planner",
+            "selected_day_id": "8d8afbd5-e5fe-4403-9425-f59b467faaa3",
+            "selected_activity_id": null,
+            "target_day_id": "8d8afbd5-e5fe-4403-9425-f59b467faaa3"
+          },
+          "requires_clarification": true,
+          "clarification_questions": [
+            "当前行程中没有找到“停留60分钟的固定预约不动”，请重新指定活动。"
+          ],
+          "parser_version": "rules-v1",
+          "semantic_draft": {
+            "primary_intent": "replan_trip",
+            "operations": [
+              {
+                "operation": "replan_trip",
+                "raw_text": "请只调整2026-11-08当天，把南京博物院安排在上午10:00开始，停留60分钟。保留总统府14:00开始、停留60分钟的固定预约不动；玄武湖仍为备选，不安排。周六活动和15:00-16:00留白保持不变。不要填满空闲。",
+                "date_expression": "2026-11-08",
+                "period": "morning",
+                "activity_mentions": [],
+                "place_mentions": [],
+                "constraints": {
+                  "budget_must_not_increase": false,
+                  "max_additional_cost_fen": null,
+                  "preferred_environment": null,
+                  "max_walking_minutes": null,
+                  "requested_pace": null,
+                  "weather_sensitive": false,
+                  "preserve_completed": true
+                }
+              }
+            ],
+            "confidence": 0.98,
+            "missing_fields": [],
+            "ambiguities": [],
+            "parser": "rules",
+            "parser_version": "rules-envelope-v1"
+          },
+          "grounded_intent": {
+            "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+            "primary_intent": "replan_trip",
+            "operation_types": [
+              "replan_trip"
+            ],
+            "target_day_ids": [
+              "8d8afbd5-e5fe-4403-9425-f59b467faaa3"
+            ],
+            "target_activity_ids": [],
+            "candidate_place_ids": [],
+            "unresolved_activity_mentions": [],
+            "unresolved_place_mentions": [],
+            "constraints": {
+              "budget_must_not_increase": false,
+              "max_additional_cost_fen": null,
+              "preferred_environment": null,
+              "max_walking_minutes": null,
+              "requested_pace": null,
+              "weather_sensitive": false,
+              "preserve_completed": true
+            },
+            "missing_fields": [],
+            "ambiguities": [
+              "activity_not_found:停留60分钟的固定预约不动"
+            ]
+          },
+          "policy_decision": {
+            "operation_mode": "clarify",
+            "risk_level": "medium",
+            "requires_confirmation": false,
+            "reasons": [
+              "intent_or_entity_incomplete"
+            ],
+            "route": "clarify"
+          }
+        },
+        "base_trip_version": 6,
+        "model_provider": null,
+        "model_name": null,
+        "token_usage": 0,
+        "error_code": null,
+        "error_message": null,
+        "error_details": null,
+        "pending_interrupt": null,
+        "created_at": "2026-10-19T14:40:31.572873Z",
+        "started_at": null,
+        "completed_at": null
+      }
+    },
+    {
+      "step": "graph-result",
+      "status": 200,
+      "body": {
+        "id": "ed267dbf-baaf-453a-a3c7-dd8c9293cbbd",
+        "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+        "disruption_event_id": null,
+        "trigger_type": null,
+        "trigger_fingerprint": null,
+        "trigger_snapshot": {
+          "effective_requirements": []
+        },
+        "run_type": "replan",
+        "status": "failed",
+        "user_request": "请只调整2026-11-08当天，把南京博物院安排在上午10:00开始，停留60分钟。保留总统府14:00开始、停留60分钟的固定预约不动；玄武湖仍为备选，不安排。周六活动和15:00-16:00留白保持不变。不要填满空闲。",
+        "response_text": null,
+        "progress": null,
+        "heartbeat_at": "2026-10-19T14:40:33.318896Z",
+        "entry_point": "trip_planner",
+        "selected_day_id": "8d8afbd5-e5fe-4403-9425-f59b467faaa3",
+        "selected_activity_id": null,
+        "intent_resolution": {
+          "request": {
+            "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+            "user_request": "请只调整2026-11-08当天，把南京博物院安排在上午10:00开始，停留60分钟。保留总统府14:00开始、停留60分钟的固定预约不动；玄武湖仍为备选，不安排。周六活动和15:00-16:00留白保持不变。不要填满空闲。",
+            "intent": {
+              "intent_type": "modify_day",
+              "source_text": "请只调整2026-11-08当天，把南京博物院安排在上午10:00开始，停留60分钟。保留总统府14:00开始、停留60分钟的固定预约不动；玄武湖仍为备选，不安排。周六活动和15:00-16:00留白保持不变。不要填满空闲。",
+              "time_scope": {
+                "day_number": 2,
+                "day_date": "2026-11-08",
+                "period": "morning"
+              },
+              "protected_activity_ids": [
+                "ea436291-18b2-4ac2-a796-b30e66036654"
+              ],
+              "requested_place_queries": [],
+              "requested_pace": null,
+              "missing_fields": [],
+              "ambiguities": [
+                "activity_not_found:停留60分钟的固定预约不动"
+              ]
+            },
+            "entry_point": "trip_planner",
+            "selected_day_id": "8d8afbd5-e5fe-4403-9425-f59b467faaa3",
+            "selected_activity_id": null,
+            "target_day_id": "8d8afbd5-e5fe-4403-9425-f59b467faaa3"
+          },
+          "requires_clarification": true,
+          "clarification_questions": [
+            "当前行程中没有找到“停留60分钟的固定预约不动”，请重新指定活动。"
+          ],
+          "parser_version": "rules-v1",
+          "semantic_draft": {
+            "primary_intent": "replan_trip",
+            "operations": [
+              {
+                "operation": "replan_trip",
+                "raw_text": "请只调整2026-11-08当天，把南京博物院安排在上午10:00开始，停留60分钟。保留总统府14:00开始、停留60分钟的固定预约不动；玄武湖仍为备选，不安排。周六活动和15:00-16:00留白保持不变。不要填满空闲。",
+                "date_expression": "2026-11-08",
+                "period": "morning",
+                "activity_mentions": [],
+                "place_mentions": [],
+                "constraints": {
+                  "budget_must_not_increase": false,
+                  "max_additional_cost_fen": null,
+                  "preferred_environment": null,
+                  "max_walking_minutes": null,
+                  "requested_pace": null,
+                  "weather_sensitive": false,
+                  "preserve_completed": true
+                }
+              }
+            ],
+            "confidence": 0.98,
+            "missing_fields": [],
+            "ambiguities": [],
+            "parser": "rules",
+            "parser_version": "rules-envelope-v1"
+          },
+          "grounded_intent": {
+            "trip_id": "5db22d60-778f-4152-9306-97e686e7c447",
+            "primary_intent": "replan_trip",
+            "operation_types": [
+              "replan_trip"
+            ],
+            "target_day_ids": [
+              "8d8afbd5-e5fe-4403-9425-f59b467faaa3"
+            ],
+            "target_activity_ids": [],
+            "candidate_place_ids": [],
+            "unresolved_activity_mentions": [],
+            "unresolved_place_mentions": [],
+            "constraints": {
+              "budget_must_not_increase": false,
+              "max_additional_cost_fen": null,
+              "preferred_environment": null,
+              "max_walking_minutes": null,
+              "requested_pace": null,
+              "weather_sensitive": false,
+              "preserve_completed": true
+            },
+            "missing_fields": [],
+            "ambiguities": [
+              "activity_not_found:停留60分钟的固定预约不动"
+            ]
+          },
+          "policy_decision": {
+            "operation_mode": "clarify",
+            "risk_level": "medium",
+            "requires_confirmation": false,
+            "reasons": [
+              "intent_or_entity_incomplete"
+            ],
+            "route": "clarify"
+          }
+        },
+        "base_trip_version": 6,
+        "model_provider": null,
+        "model_name": null,
+        "token_usage": 0,
+        "error_code": "planning_graph_failed",
+        "error_message": "relation \"checkpoints\" does not exist\nLINE 26: from checkpoints WHERE thread_id = $1 AND checkpoint_ns = $2...\n              ^",
+        "error_details": null,
+        "pending_interrupt": null,
+        "created_at": "2026-10-19T14:40:31.572873Z",
+        "started_at": "2026-10-19T14:40:33.305017Z",
+        "completed_at": "2026-10-19T14:40:33.557171Z"
+      }
+    }
+  ],
+  "result": "FAIL",
+  "failure": {
+    "type": "AssertionError",
+    "message": "Graph did not produce an adoptable candidate"
+  }
+}

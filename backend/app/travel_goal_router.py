@@ -35,6 +35,8 @@ def route_travel_goal(message: str, history: list[dict] | None = None, *, pendin
     clauses = [clause.strip() for clause in re.split(r"[，,。；;？?]|然后|并且|并(?=帮我|把|将)|就(?=帮我|请|把|将)", text) if clause.strip()]
     action = any(_ACTION.search(clause) and not _NEGATED.search(clause) and not _QUESTION.search(clause)
                  for clause in clauses)
+    action = action or any(re.search(r"(?:请|帮我|替我|给我).{0,6}(?:形成|整理|保存).{0,12}(?:旅行安排|出游安排|安排建议|灵活安排)", clause)
+        and not _NEGATED.search(clause) and not _QUESTION.search(clause) for clause in clauses)
     # "能不能帮我安排" asks the assistant to act; "怎么安排" asks for advice.
     action = action or any(re.search(r"(?:能不能|能否|可以)(?:请)?帮我.{0,20}(?:安排|规划|调整|修改)", clause)
                            and not _NEGATED.search(clause) for clause in clauses)

@@ -266,6 +266,14 @@ async def candidate_item_errors(session, trip_id, snapshot, protected, day_by_id
     def issue(code, message):
         errors.append(PlanValidationIssue(code=code, message=message))
     active = {str(i.id): i for i in items if i.kind != "cancelled"}
+    normalize = lambda text: "".join(text.split()).casefold()
+    places = {str(p.id): p for p in (await session.scalars(select(PlaceCandidate).where(PlaceCandidate.trip_id == trip_id))).all()}
+    for item in items:
+        if item.kind == "cancelled" and any(
+            str(a.place_candidate_id) == str(item.place_id) or item.place_id is None and
+            str(a.place_candidate_id) in places and normalize(places[str(a.place_candidate_id)].name) == normalize(item.label)
+            for a in snapshot.activities):
+            issue("arrangement_cancelled_choice_restored", "候选不能恢复已经撤销的事项，请先明确重新选择")
     replacements = {a.replaces_activity_id for a in snapshot.activities}
     for item in active.values():
         if item.activity_id:
@@ -279,7 +287,8 @@ async def candidate_item_errors(session, trip_id, snapshot, protected, day_by_id
     for a in snapshot.activities:
         if a.candidate_id.startswith("arrangement:"):
             item = active.get(a.candidate_id.removeprefix("arrangement:"))
-            if item is None or item.kind == "free_window" or item.activity_id or item.place_id != a.place_candidate_id:
+            unresolved_match = item is not None and item.place_id is None and str(a.place_candidate_id) in places and normalize(places[str(a.place_candidate_id)].name) == normalize(item.label)
+            if item is None or item.kind == "free_window" or item.activity_id or item.place_id != a.place_candidate_id and not unresolved_match:
                 issue("arrangement_identity_invalid", "候选事项身份、地点或当前关联已变化")
     minute = lambda t: t.hour * 60 + t.minute
     stops = [(a.day_date, minute(a.planned_start_time), a.duration_minutes) for a in snapshot.activities]
@@ -314,5 +323,36 @@ async def bind_accepted_items(session, trip_id, snapshot, activities_by_ref, rev
         if candidate.candidate_id.startswith("arrangement:"):
             item = rows[candidate.candidate_id.removeprefix("arrangement:")]
             item.activity_id = activities_by_ref[candidate.candidate_id].id
+            item.place_id, item.identity_key = candidate.place_candidate_id, f"place:{candidate.place_candidate_id}"
             item.kind, item.day_date = "selected", None
             item.decision_ref = f"accept:{revision_id}"
+
+
+def bind_arrangement_references(snapshot, context):
+    """Server binds identities; the model continues using symbolic place refs."""
+    normalize = lambda text: "".join(text.split()).casefold()
+    places = context.get("candidates", [])
+    by_place = {}
+    for item in context.get("arrangement_items", []):
+        if item.get("kind") not in {"selected", "optional"} or item.get("activity_id"):
+            continue
+        pid = item.get("place_id")
+        if not pid:
+            matches = [p for p in places if normalize(p["name"]) == normalize(item["label"])]
+            if len(matches) == 1:
+                pid = matches[0]["id"]
+        if pid:
+            by_place.setdefault(str(pid), []).append(item)
+    mapping = {}
+    for a in snapshot.activities:
+        candidates = by_place.get(str(a.place_candidate_id), [])
+        if a.replaces_activity_id is None and len(candidates) == 1:
+            mapping[a.candidate_id] = f"arrangement:{candidates[0]['id']}"
+    def replace(value):
+        if isinstance(value, dict):
+            return {k: replace(v) for k, v in value.items()}
+        if isinstance(value, list):
+            return [replace(v) for v in value]
+        return mapping.get(value, value) if isinstance(value, str) else value
+    from app.schemas import CandidatePlanSnapshot
+    return CandidatePlanSnapshot.model_validate(replace(snapshot.model_dump(mode="json")))
