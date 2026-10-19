@@ -330,7 +330,8 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
                 message_id, row.messages, active_place_port)
         elif envelope.read_trip_id:
             from app.requirements import bind_topic_to_trip, valid_records
-            trip = await get_trip(db, envelope.read_trip_id)
+            from app.formal_write import lock_trip
+            trip = await lock_trip(db, envelope.read_trip_id)
             pref = await db.scalar(select(TripPreferences).where(TripPreferences.trip_id == trip.id).with_for_update())
             if pref and (not envelope.browsing_city or envelope.browsing_city.removesuffix("市") == trip.destination.removesuffix("市")):
                 # Canonical Trip state precedes capture, so an API edit/revoke

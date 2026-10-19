@@ -510,8 +510,16 @@ async def accept_plan_revision(
 ) -> PlanRevision:
     from app.draft_promotion.guard import authorize_accept
     await authorize_accept(session, revision_id, commit=commit)
+    # Trip before Revision/Run/Activity. Activity deletion can implicitly update
+    # Run.selected_activity_id through its FK; the reverse order can deadlock.
+    trip_id = await session.scalar(select(PlanRevision.trip_id).where(PlanRevision.id == revision_id))
+    if trip_id is None:
+        raise PlanRevisionNotFoundError
+    trip = await session.scalar(select(Trip).where(Trip.id == trip_id).with_for_update().execution_options(populate_existing=True))
+    if trip is None:
+        raise PlanRevisionNotFoundError
     revision = await session.scalar(
-        select(PlanRevision).where(PlanRevision.id == revision_id).with_for_update()
+        select(PlanRevision).where(PlanRevision.id == revision_id).with_for_update().execution_options(populate_existing=True)
     )
     if revision is None:
         raise PlanRevisionNotFoundError
@@ -520,9 +528,8 @@ async def accept_plan_revision(
     if revision.status != "pending":
         raise InvalidPlanningRunStateError
     run = await session.scalar(
-        select(PlanningRun).where(PlanningRun.id == revision.planning_run_id).with_for_update()
+        select(PlanningRun).where(PlanningRun.id == revision.planning_run_id).with_for_update().execution_options(populate_existing=True)
     )
-    trip = await session.scalar(select(Trip).where(Trip.id == revision.trip_id).with_for_update())
     if run is None or trip is None:
         raise PlanRevisionNotFoundError
     if trip.version != run.base_trip_version:

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="6" skipped="0" tests="7" time="7.482" timestamp="2026-10-19T19:22:55.394043+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_formal_write_protection" name="test_manual_add_api_invalidates_pending_revision" time="0.826"><failure message="AssertionError: {'accept_status': 200, 'added_id': '5305cb45-9f5a-4c34-ae7f-8df64d9dd355', 'added_survives': False, 'body': '{&quot;id&quot;:&quot;ce...jection_reason_text&quot;:null,&quot;created_at&quot;:&quot;2026-10-19T11:22:58.869402Z&quot;,&quot;decided_at&quot;:&quot;2026-10-19T11:22:59.413337Z&quot;}', ...}&#10;assert 200 == 409&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests\test_formal_write_protection.py:102: in test_manual_add_api_invalidates_pending_revision
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_formal_write_protection.py:96: in scenario
+    assert response.status_code == 409, {
+E   AssertionError: {'accept_status': 200, 'added_id': '5305cb45-9f5a-4c34-ae7f-8df64d9dd355', 'added_survives': False, 'body': '{"id":"ce...jection_reason_text":null,"created_at":"2026-10-19T11:22:58.869402Z","decided_at":"2026-10-19T11:22:59.413337Z"}', ...}
+E   assert 200 == 409
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure></testcase><testcase classname="tests.test_formal_write_protection" name="test_other_manual_writes_stale_old_candidates[delete]" time="0.262"><failure message="assert 1 == (1 + 1)">tests\test_formal_write_protection.py:128: in test_other_manual_writes_stale_old_candidates
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_formal_write_protection.py:124: in scenario
+    assert edited["version"] == before["version"] + 1
+E   assert 1 == (1 + 1)</failure></testcase><testcase classname="tests.test_formal_write_protection" name="test_other_manual_writes_stale_old_candidates[move]" time="0.326"><failure message="assert 1 == (1 + 1)">tests\test_formal_write_protection.py:128: in test_other_manual_writes_stale_old_candidates
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_formal_write_protection.py:124: in scenario
+    assert edited["version"] == before["version"] + 1
+E   assert 1 == (1 + 1)</failure></testcase><testcase classname="tests.test_formal_write_protection" name="test_other_manual_writes_stale_old_candidates[order]" time="0.342"><failure message="assert 1 == (1 + 1)">tests\test_formal_write_protection.py:128: in test_other_manual_writes_stale_old_candidates
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_formal_write_protection.py:124: in scenario
+    assert edited["version"] == before["version"] + 1
+E   assert 1 == (1 + 1)</failure></testcase><testcase classname="tests.test_formal_write_protection" name="test_other_manual_writes_stale_old_candidates[route]" time="0.362"><failure message="assert 1 == (1 + 1)">tests\test_formal_write_protection.py:128: in test_other_manual_writes_stale_old_candidates
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_formal_write_protection.py:124: in scenario
+    assert edited["version"] == before["version"] + 1
+E   assert 1 == (1 + 1)</failure></testcase><testcase classname="tests.test_formal_write_protection" name="test_other_manual_writes_stale_old_candidates[update]" time="0.384" /><testcase classname="tests.test_formal_write_protection" name="test_read_and_noop_do_not_advance_formal_version" time="0.285"><failure message="assert 2 == 1">tests\test_formal_write_protection.py:139: in test_read_and_noop_do_not_advance_formal_version
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_formal_write_protection.py:138: in scenario
+    assert (await current(sample))["version"] == before["version"]
+E   assert 2 == 1</failure></testcase></testsuite></testsuites>

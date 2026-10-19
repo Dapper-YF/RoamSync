@@ -76,6 +76,13 @@ async def ingest_navigation_observation(
     compare-and-set predicates still fence every material version at the write,
     so correctness does not depend on a Python check remaining true.
     """
+    # Recovery may update Run while Accept supersedes this NavigationSession.
+    # Take their common Trip owner first, before either child can be locked.
+    from app.formal_write import lock_trip
+    trip_id = await session.scalar(select(NavigationSession.trip_id).where(NavigationSession.id == observation.session_id))
+    if trip_id is None:
+        raise NavigationObservationNotFoundError("navigation session not found")
+    await lock_trip(session, trip_id)
     navigation = await session.scalar(
         select(NavigationSession)
         .where(NavigationSession.id == observation.session_id)

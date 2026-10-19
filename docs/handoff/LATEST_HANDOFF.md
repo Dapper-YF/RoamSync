@@ -1,40 +1,35 @@
 # Latest Handoff
 
 ## Snapshot
-2026-10-18 从f9a5aaf继续原综合任务，B/C/D并行研发，root负责A/E和隔离集成。
-唯一正式源码E:/Study/RoamSync，3000继续此前已认可新版。新增代码进入canonical，
-3016和18004已绑定canonical；B/C/D已从正式源码2dc7a58重建发布3000，无新迁移或网络暴露。
+2026-10-19 本工作树仅完成正式安排共同写入保护第一阶段。
+隔离目录 E:/Study/RoamSync-write-protection-20261019；分支
+codex/formal-write-protection-20261019；基线25a62cb。
+唯一正式源码仍为E:/Study/RoamSync。本修复未合并、未部署，3000不受影响。
 
 ## Current Freeze / Rehearsal Status
-VERIFIED：B背景/时长边界及C可信取舍、解释检查和D三图已统一隔离运行。
-最终后端全回归1218通过、25跳过、2既有弃用警告；Web类型检查/旅程回归通过。
-Android最终构建/单元回归通过，APK SHA256为
-3a186b7a8d82a3b9ba8698e626c34986e2fb79edb93ebdddd7956f2212c1b319。
-本轮用户明确无法连接手机并要求跳过，未安装或真机验证该APK。
-总报告：docs/COMPREHENSIVE_FOLLOWUP_DELIVERY_20261018.md。
-正式API/Worker各207文件匹配；切换前后25业务表指纹不变，浏览器后仅地点缓存变化，
-旅行等24业务表保持，179历史旅行读取通过；备份/旧镜像/回退配置留存。
+VERIFIED：新增/删除/字段更新/移动/排序/路线写入先锁Trip，实际语义变化推进Trip版本。
+Accept先Trip后Revision/Run；相邻执行/恢复路径只对齐锁顺序。
+保留Activity/Requirement独立版本、最终Validator与Accept幂等；无新表或PlanningRun工作流。
+可选X-Trip-Version防旧页面；无版本旧请求保留原格式和顺序语义，但不保证识别所有延迟提交。
+报告：docs/FORMAL_WRITE_PROTECTION_20261019.md。
 
 ## Prior milestone baseline (before shadow split)
-f631504已将旧Android工作台主用户路径替换为原生旅程；本轮不重复重构页面。
-a412a81/6f45bb0正式3000升级、原179旅行与19表指纹保留属于此前交付。
+此前3000发布和Android成果均属于canonical历史；不将本工作树视为正式发布。
+Spike关系表、混合精度上下文未引入；前端/Android/产品入口未调整。
 
 ## Prior verification
-MEASURED：B真实GLM→Graph→Validator→Accept只改day2时长，背景/撤销要求不进
-有效Planner投影，day1/3业务字段保持；元数据触碰已披露。原“45分钟”地点澄清
-复现后修复，原已Accept测试Trip仅补读未重放。
-MEASURED：C两条真实完整链，少走路选28分钟腿；景观优先选53分钟腿，额外25分钟
-与UNESCO审核景观/当前偏好来源可核验；预算unknown保持not_evaluable，锁定活动保持。
-景观首测虽Accept但server摘要错误的反例保留，修后新Trip通过，未改历史reason。
-D新增三张CC BY-SA照片，目录10地点12照片，三处API/浏览器显示通过；无新增实价/开放事实。
+MEASURED：修前新增201后旧Accept200且新增丢失；扩展矩阵6失败1通过。
+修后隔离PostgreSQL17.11专项27通过，包括真实锁等待、双向编辑/Accept竞争、
+并发编辑、FK删除竞争、故障回滚、重试与独立Requirement版本。
+Windows/Python3.14.3和Linux/Python3.11.16全量均1269通过1跳过；
+跳过为依赖精确旧测试库名的收藏并发测试。证据见docs/evidence/write-protection/。
 
 ## Prior blockers (historical)
-同Trip Web真实页面规划/明确采用及短期设备协议读取一致通过，Trip6d056cb8…；
-这不是手机。缺最终APK执行→Recovery→下一站→中断→Web回读，完整闭环incomplete。
-当前位置路线原现场原因未确诊；公开地标Provider对照验证范围/距离错误分类，不能替代手机坐标。
-锁屏/进程死亡/断网/令牌失效/Reject/过期/并发手机矩阵待设备，用户本轮已要求跳过。
+第一阶段代码达到可评审/集成标准。正式环境仍需后续集成本修复才有保护。
+路线重算侵入留白、混合精度存储与Graph上下文仍未解决，不属于本轮。
+探索测试发现仅修改max_walking_minutes未普遍触发Accept拒绝；保留失败证据，
+未扩展Validator算法。无真实模型、前端或Android新体验验证。
 
 ## Interview framing
-可陈述两个有边界的实际决策情景经完整正式确认改善，以及有限B语言/背景修复。
-不得宣称任意语言、全程最优、现场到访/真实预约、全部可信解释或跨端真机全链通过。
-新增B/C/D已发布到3000；Android最终APK仅本地构建、未真机验收，不能将二者混称完成。
+可陈述正式安排版本缺口的失败回归、PostgreSQL锁顺序和事务回滚证据。
+不可陈述自然旅行产品闭环已完成、全面约束可满足或生产已修复。

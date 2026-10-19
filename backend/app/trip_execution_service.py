@@ -56,6 +56,11 @@ def projected_activity_end(item: ActivityExecution, planned_duration_minutes: in
 
 
 async def _locked_experience_context(session: AsyncSession, activity_execution_id: uuid.UUID):
+    from app.formal_write import lock_trip
+    trip_id = await session.scalar(select(TripExecution.trip_id).join(ActivityExecution, ActivityExecution.trip_execution_id == TripExecution.id).where(ActivityExecution.id == activity_execution_id))
+    if trip_id is None:
+        raise TripExecutionNotFoundError
+    await lock_trip(session, trip_id)
     row = await session.execute(select(ActivityExecution, Activity, TripExecution, Trip)
         .join(Activity, ActivityExecution.activity_id == Activity.id)
         .join(TripExecution, ActivityExecution.trip_execution_id == TripExecution.id)
@@ -177,6 +182,8 @@ async def request_dynamic_replan(
     session: AsyncSession, trip_id: uuid.UUID, payload: DynamicReplanRequest
 ):
     """Record a travel event and enqueue a confirmation-gated replan run."""
+    from app.formal_write import lock_trip
+    await lock_trip(session, trip_id)
     execution = await session.scalar(
         select(TripExecution)
         .where(TripExecution.trip_id == trip_id)
@@ -270,7 +277,9 @@ async def start_trip_execution(
     *,
     commit: bool = True,
 ) -> TripExecutionResponse:
-    trip = await get_trip(session, trip_id)
+    await get_trip(session, trip_id)
+    from app.formal_write import lock_trip
+    trip = await lock_trip(session, trip_id)
     existing = await session.scalar(
         select(TripExecution).where(TripExecution.trip_id == trip_id).with_for_update()
     )
@@ -340,6 +349,11 @@ async def apply_trip_execution_action(
     execution_id: uuid.UUID,
     payload: TripExecutionActionRequest,
 ) -> TripExecutionResponse:
+    from app.formal_write import lock_trip
+    trip_id = await session.scalar(select(TripExecution.trip_id).where(TripExecution.id == execution_id))
+    if trip_id is None:
+        raise TripExecutionNotFoundError
+    await lock_trip(session, trip_id)
     execution = await session.scalar(
         select(TripExecution).where(TripExecution.id == execution_id).with_for_update()
     )

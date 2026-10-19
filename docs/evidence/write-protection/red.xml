@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="5.789" timestamp="2026-10-19T19:20:41.009032+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_formal_write_protection" name="test_manual_add_api_invalidates_pending_revision" time="0.675"><failure message="AssertionError: {'accept_status': 200, 'added_id': '61763fdb-db19-4ad2-8289-04fe834628fe', 'added_survives': False, 'body': '{&quot;id&quot;:&quot;59...jection_reason_text&quot;:null,&quot;created_at&quot;:&quot;2026-10-19T11:20:45.338884Z&quot;,&quot;decided_at&quot;:&quot;2026-10-19T11:20:45.786445Z&quot;}', ...}&#10;assert 200 == 409&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests\test_formal_write_protection.py:102: in test_manual_add_api_invalidates_pending_revision
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_formal_write_protection.py:96: in scenario
+    assert response.status_code == 409, {
+E   AssertionError: {'accept_status': 200, 'added_id': '61763fdb-db19-4ad2-8289-04fe834628fe', 'added_survives': False, 'body': '{"id":"59...jection_reason_text":null,"created_at":"2026-10-19T11:20:45.338884Z","decided_at":"2026-10-19T11:20:45.786445Z"}', ...}
+E   assert 200 == 409
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure></testcase></testsuite></testsuites>

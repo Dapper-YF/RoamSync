@@ -29,7 +29,7 @@ async def authorize_accept(session, revision_id, *, commit=True):
     """No public request field can set this internal request-local capability.
 
     First unlocked lookups only discover provenance. Mutation locks are always
-    operation -> revision -> run -> trip -> draft. Cancel also locks operation.
+    operation -> trip -> revision -> run -> draft. Cancel also locks operation.
     """
     revision = await session.get(PlanRevision, revision_id)
     if revision is None:
@@ -48,10 +48,10 @@ async def authorize_accept(session, revision_id, *, commit=True):
         raise InvalidPlanningRunStateError("Draft Promotion候选必须通过对应转换操作确认采用")
     owner = capability[1]
     operation, row = await get_operation(session, owner, UUID(promotion_id), lock=True)
+    trip = await session.scalar(select(Trip).where(Trip.id == revision.trip_id).with_for_update().execution_options(populate_existing=True))
     # populate_existing is essential after the unlocked provenance lookups.
     revision = await session.scalar(select(PlanRevision).where(PlanRevision.id == revision_id).with_for_update().execution_options(populate_existing=True))
     run = await session.scalar(select(PlanningRun).where(PlanningRun.id == revision.planning_run_id).with_for_update().execution_options(populate_existing=True))
-    trip = await session.scalar(select(Trip).where(Trip.id == revision.trip_id).with_for_update().execution_options(populate_existing=True))
     now = datetime.now(UTC)
     if (operation.status != "awaiting_apply" or operation.allowed_action != "create_and_adopt"
         or operation.revoked_at or operation.consumed_at or operation.expires_at <= now):

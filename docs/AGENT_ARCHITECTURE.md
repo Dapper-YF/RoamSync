@@ -13,6 +13,20 @@ deferred and must not be presented as implemented Agent behavior.
 
 ## Scope and product boundary
 
+### Isolated formal-write protection candidate (2026-10-19)
+
+Implemented/tested in `codex/formal-write-protection-20261019`, not deployed.
+Manual formal commands lock Trip before Day/Activity; semantic changes advance
+Trip.version once, including route/time side effects. Activity optimistic
+versions and independent Requirement/Preferences versions remain. Optional
+X-Trip-Version adds stale-page protection without changing existing bodies.
+Accept locks Trip before Revision/Run; Draft authorization locks Operation then
+Trip before its children. Candidate create/save/reject and adjacent runtime
+writers follow the same common-parent order to avoid FK/child lock inversions.
+No new PlanningRun for simple edits, schema migration, tool authority, workflow,
+Planner context or route calculation algorithm. See
+FORMAL_WRITE_PROTECTION_20261019.md and its red/green PostgreSQL evidence.
+
 ### Bounded decision evidence and requirement context (2026-10-18)
 
 Canonical follow-up separates complete provenance/visit-history statements from

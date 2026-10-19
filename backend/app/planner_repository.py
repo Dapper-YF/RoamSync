@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import Activity, DayPlan, PlaceCandidate, RouteLeg, SourceRecord
 from app.maps_service import recalculate_day_route
 from app.repository import get_trip
+from app.formal_write import finish_formal_write, protect_formal_write
 from app.schemas import (
     ActivityResponse,
     ActivityMoveResponse,
@@ -267,6 +268,7 @@ async def get_candidates(
     return [_place_response(place, source) for place, source in result.tuples()]
 
 
+@protect_formal_write("day", "day_plan_id")
 async def add_activity(
     session: AsyncSession,
     day_plan_id: uuid.UUID,
@@ -277,6 +279,7 @@ async def add_activity(
     minimum_duration_minutes: int | None = None,
     importance_explicit: bool = False,
     can_skip_explicit: bool = False,
+    expected_trip_version: int | None = None,
 ) -> ActivityResponse:
     day = await session.get(DayPlan, day_plan_id)
     if day is None:
@@ -328,7 +331,7 @@ async def add_activity(
     session.add(activity)
     await session.flush()
     await recalculate_day_route(session, day_plan_id, route_mode)
-    await session.commit()
+    await finish_formal_write(session)
     await session.refresh(activity)
     source = await session.get(SourceRecord, place.source_record_id)
     if source is None:
@@ -336,13 +339,15 @@ async def add_activity(
     return _activity_response(activity, place, source)
 
 
+@protect_formal_write("activity", "activity_id")
 async def update_activity(
     session: AsyncSession,
     activity_id: uuid.UUID,
     payload: ActivityUpdate,
+    *, expected_trip_version: int | None = None,
 ) -> ActivityResponse:
     activity = await session.scalar(
-        select(Activity).where(Activity.id == activity_id).with_for_update()
+        select(Activity).where(Activity.id == activity_id).with_for_update().execution_options(populate_existing=True)
     )
     if activity is None:
         raise ActivityNotFoundError
@@ -392,9 +397,7 @@ async def update_activity(
     # edit changes the formal itinerary too, so it must advance that same
     # fence; Activity.version alone cannot prevent an old candidate from
     # silently overwriting this edit.
-    if changed_fields:
-        trip = await get_trip(session, day.trip_id)
-        trip.version += 1
+    # The outer Trip lock/fingerprint advances the shared version exactly once.
     activity.version += 1
     activity.updated_at = datetime.now(UTC)
     await session.flush()
@@ -409,18 +412,20 @@ async def update_activity(
     source = await session.get(SourceRecord, place.source_record_id)
     if source is None:
         raise PlaceCandidateNotFoundError
-    await session.commit()
+    await finish_formal_write(session)
     await session.refresh(activity)
     return _activity_response(activity, place, source)
 
 
+@protect_formal_write("activity", "activity_id")
 async def move_activity(
     session: AsyncSession,
     activity_id: uuid.UUID,
     payload: ActivityMoveRequest,
+    *, expected_trip_version: int | None = None,
 ) -> ActivityMoveResponse:
     activity = await session.scalar(
-        select(Activity).where(Activity.id == activity_id).with_for_update()
+        select(Activity).where(Activity.id == activity_id).with_for_update().execution_options(populate_existing=True)
     )
     if activity is None:
         raise ActivityNotFoundError
@@ -487,7 +492,7 @@ async def move_activity(
     await recalculate_day_route(session, source_day.id, source_day.route_mode)
     if target_day.id != source_day.id:
         await recalculate_day_route(session, target_day.id, target_day.route_mode)
-    await session.commit()
+    await finish_formal_write(session)
     return ActivityMoveResponse(
         activity_id=activity.id,
         source_day=await _day_response(session, source_day),
@@ -566,8 +571,10 @@ def _next_activity_time(existing: list[Activity]) -> time:
     return candidate.time().replace(second=0, microsecond=0)
 
 
+@protect_formal_write("day", "day_plan_id")
 async def reorder_activities(
-    session: AsyncSession, day_plan_id: uuid.UUID, activity_ids: list[uuid.UUID]
+    session: AsyncSession, day_plan_id: uuid.UUID, activity_ids: list[uuid.UUID],
+    *, expected_trip_version: int | None = None,
 ) -> DayPlanResponse:
     day = await session.get(DayPlan, day_plan_id)
     if day is None:
@@ -593,11 +600,12 @@ async def reorder_activities(
         by_id[activity_id].position = position
     await session.flush()
     await recalculate_day_route(session, day_plan_id, route_mode)
-    await session.commit()
+    await finish_formal_write(session)
     return await _day_response(session, day)
 
 
-async def delete_activity(session: AsyncSession, activity_id: uuid.UUID) -> None:
+@protect_formal_write("activity", "activity_id")
+async def delete_activity(session: AsyncSession, activity_id: uuid.UUID, *, expected_trip_version: int | None = None) -> None:
     activity = await session.get(Activity, activity_id)
     if activity is None:
         raise ActivityNotFoundError
@@ -621,7 +629,16 @@ async def delete_activity(session: AsyncSession, activity_id: uuid.UUID) -> None
         item.position = position
     await session.flush()
     await recalculate_day_route(session, day_plan_id, route_mode)
-    await session.commit()
+    await finish_formal_write(session)
+
+
+@protect_formal_write("day", "day_plan_id")
+async def recalculate_formal_route(session: AsyncSession, day_plan_id: uuid.UUID, mode="walk", *, expected_trip_version=None):
+    # Keep legacy time-recalculation behavior; only protect its actual writes.
+    await get_day_plan(session, day_plan_id)
+    await recalculate_day_route(session, day_plan_id, mode)
+    await finish_formal_write(session)
+    return await get_day_plan(session, day_plan_id)
 
 
 async def get_planning_budget(

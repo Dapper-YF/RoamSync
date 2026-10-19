@@ -1,0 +1,120 @@
+{
+  "captured_at": "2026-10-19T11:46:42.925547+00:00",
+  "scope": "isolated stage 1 formal itinerary write protection; not integrated/deployed",
+  "base": "25a62cbeec4b7c5ac5b66c383c98b86f35440c21",
+  "branch": "codex/formal-write-protection-20261019",
+  "worktree": "E:\\Study\\RoamSync-write-protection-20261019",
+  "database": {
+    "container": "roamsync-write-protection-pg",
+    "image": "postgres:17-alpine",
+    "version": "17.11",
+    "storage": "tmpfs; no production volume",
+    "database": "roamsync_test_write_protection",
+    "additional_database": "promotion_test"
+  },
+  "runtimes": {
+    "full-first.xml": "Windows Python 3.14.3",
+    "linux-full.xml": "Linux Python 3.11.16"
+  },
+  "results": {
+    "focused-final.xml": {
+      "tests": 27,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 27,
+      "seconds": 13.226
+    },
+    "focused-second.xml": {
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 19,
+      "seconds": 9.839
+    },
+    "focused-third.xml": {
+      "tests": 24,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 23,
+      "seconds": 12.662
+    },
+    "full-first.xml": {
+      "tests": 1270,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "passed": 1269,
+      "seconds": 114.01
+    },
+    "green-first.xml": {
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 7,
+      "seconds": 5.833
+    },
+    "linux-full.xml": {
+      "tests": 1270,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "passed": 1269,
+      "seconds": 80.973
+    },
+    "red-matrix.xml": {
+      "tests": 7,
+      "failures": 6,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 1,
+      "seconds": 7.482
+    },
+    "red-metadata.xml": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 0,
+      "seconds": 4.31
+    },
+    "red.xml": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 0,
+      "seconds": 5.789
+    }
+  },
+  "historical_failures": [
+    "red.xml",
+    "red-matrix.xml",
+    "red-metadata.xml",
+    "focused-third.xml"
+  ],
+  "known_skip": "place_content_postgres concurrent favorite requires exact database roamsync_test",
+  "known_probe_failure": "focused-third: bare max_walking_minutes not universally enforced by existing Accept; unchanged",
+  "external_services": "no real model or map calls; route fixture only",
+  "source_sha256": {
+    "backend/app/assistant_service.py": "81cc0f4470ef6daa099ab08fc5895b27b71b7ed1e5a9949a890cc25bd8dd6f52",
+    "backend/app/draft_promotion/guard.py": "ec737fb9ca0d33675be1c380277a5215141029090ad21698139d9c23d7b1d2d7",
+    "backend/app/experience_replanning_service.py": "1dabf3ac388e5e6ebcadf77016661fc48c42c3762eab669ab8db6194a4f4e3fd",
+    "backend/app/formal_write.py": "8cb445ef7141c587ab0c985ed9a7659344f1a2c9d81baf570ae8f46097db8195",
+    "backend/app/main.py": "f05f48f5a45d658ce3916f20e90e02bbef39919ad49c9067bf1db5b5c8ee67fb",
+    "backend/app/navigation/observation_ingestion.py": "69ed3e5a3f43d85640a3c411de7d6327199b54327581cbd0c1412d59fc97717b",
+    "backend/app/plan_revision_service.py": "9e245fbc3b15eb9a87ae32cf120eff5a26a581908d611bfd64e717c5cd17ac4d",
+    "backend/app/planner_repository.py": "85fa9f46adf4cab09b05fd22d6e408561e9f42d015631ef96b90f0eb6e2397b9",
+    "backend/app/planning_run_repository.py": "9b2e03523a196b5455b8cbfb8b6e51bdf348248f6791b2a72b5b7c7f1b176b9b",
+    "backend/app/repository.py": "6929aca393b92d99f64441fd0f4486debf1e7a9c0ab3f35ce148463894cfc266",
+    "backend/app/requirement_routes.py": "7fc55b4cde5785c75fc7f13d9c77f6943aa57f1f81febe9d05f8fbbbced67a99",
+    "backend/app/trip_execution_service.py": "814aaf8b2c27e1d5b5c4b8edc9a5302cb1970e97dfaf650269080b1fb0044264",
+    "backend/scripts/capture_write_protection_evidence.py": "52f3cd1fed4a9bc55eb05fb1fc16c392567591e08f87a495cb958f346b4b8872",
+    "backend/scripts/run-write-protection.ps1": "0082849e52a052b76068970f755332a9b085e0660712124a28942290bc45b75c",
+    "backend/scripts/run_write_protection_tests.py": "dc8e6eb0eff9987421969f4781c35c9b9d2e56b15d7a64a3f6cc6e1da3ca6071",
+    "backend/tests/test_formal_write_protection.py": "9b6d3fba517ad2d4ec4ef06cb3236007ed44eefa251c8b5572b45aa224dcb05d"
+  }
+}

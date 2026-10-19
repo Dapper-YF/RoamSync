@@ -35,6 +35,9 @@ def create_router(owner_dependency):
 
     async def state(session, trip_id, version=None):
         trip = await get_trip(session, trip_id)
+        if version is not None:
+            from app.formal_write import lock_trip
+            trip = await lock_trip(session, trip_id)
         pref = await session.scalar(select(TripPreferences).where(TripPreferences.trip_id == trip_id).with_for_update())
         if pref is None:
             raise HTTPException(404, detail={"code": "trip_preferences_not_found"})

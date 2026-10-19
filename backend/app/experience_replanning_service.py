@@ -25,6 +25,8 @@ async def ensure_experience_recovery(session: AsyncSession, activity_execution_i
     execution = await session.scalar(select(TripExecution).where(TripExecution.id == item.trip_execution_id))
     if execution is None:
         return None
+    from app.formal_write import lock_trip
+    await lock_trip(session, execution.trip_id)
     current_activity = await session.get(Activity, item.activity_id)
     if current_activity is None:
         return None

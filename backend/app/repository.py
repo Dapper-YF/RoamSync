@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import Activity, DayPlan, Expense, PlaceCandidate, RouteLeg, SourceRecord, Trip, TripPreferences
+from app.formal_write import lock_trip
 from app.schemas import (
     BudgetResponse,
     ExpenseCreate,
@@ -85,13 +86,17 @@ async def list_trips(session: AsyncSession) -> list[Trip]:
 async def update_trip(
     session: AsyncSession, trip_id: uuid.UUID, payload: TripUpdate
 ) -> Trip:
-    trip = await get_trip(session, trip_id)
+    await get_trip(session, trip_id)
+    trip = await lock_trip(session, trip_id)
     if trip.version != payload.version:
         raise TripVersionConflictError
     values = payload.model_dump(
         exclude_unset=True,
         exclude={"version", "confirm_day_removal"},
     )
+    if not any(getattr(trip, key) != value for key, value in values.items()):
+        await session.commit()
+        return trip
     if "total_budget_fen" in values and values["total_budget_fen"] is None:
         values["daily_budget_fen"] = None
     if "daily_budget_fen" in values and values["daily_budget_fen"] is None:
@@ -305,7 +310,11 @@ async def duplicate_trip(session: AsyncSession, trip_id: uuid.UUID, *, commit: b
 
 
 async def archive_trip(session: AsyncSession, trip_id: uuid.UUID) -> Trip:
-    trip = await get_trip(session, trip_id)
+    await get_trip(session, trip_id)
+    trip = await lock_trip(session, trip_id)
+    if trip.archived_at is not None:
+        await session.commit()
+        return trip
     trip.archived_at = datetime.now(UTC)
     trip.version += 1
     await session.commit()
@@ -329,6 +338,11 @@ async def get_trip_deletion_preview(
 
 async def delete_trip(session: AsyncSession, trip_id: uuid.UUID) -> None:
     await get_trip(session, trip_id)
+    # Assistant actions hold Session before Trip. Lock dependent sessions in
+    # that order before cascading them, rather than invert the order on delete.
+    from app.database import AssistantSession
+    await session.scalars(select(AssistantSession).where(AssistantSession.trip_id == trip_id).order_by(AssistantSession.id).with_for_update())
+    await lock_trip(session, trip_id)
     await session.execute(delete(Trip).where(Trip.id == trip_id))
     await session.commit()
 
@@ -352,7 +366,13 @@ async def update_trip_preferences(
     trip_id: uuid.UUID,
     payload: TripPreferencesUpdate,
 ) -> TripPreferences:
-    preferences = await get_trip_preferences(session, trip_id)
+    await get_trip(session, trip_id)
+    await lock_trip(session, trip_id)
+    preferences = await session.scalar(select(TripPreferences).where(TripPreferences.trip_id == trip_id).with_for_update().execution_options(populate_existing=True))
+    if preferences is None:
+        preferences = TripPreferences(trip_id=trip_id)
+        session.add(preferences)
+        await session.flush()
     if preferences.version != payload.version:
         raise TripPreferencesVersionConflictError
     for key, value in payload.model_dump(exclude={"version"}).items():

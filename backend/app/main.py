@@ -2,7 +2,9 @@ import uuid
 import os
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI, HTTPException, Query, Response, status
+from fastapi import Depends, FastAPI, HTTPException, Header, Query, Response, status
+from fastapi.responses import JSONResponse
+from app.formal_write import FormalWriteConflictError
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -171,6 +173,14 @@ async def lifespan(_: FastAPI):
 
 settings = get_settings()
 app = FastAPI(title=settings.app_name, version="0.1.0", lifespan=lifespan)
+
+
+@app.exception_handler(FormalWriteConflictError)
+async def formal_write_conflict_handler(request, exc):
+    return JSONResponse(status_code=409, content={"detail": {"code": "trip_version_conflict", "message": str(exc)}})
+
+
+from app.planner_repository import recalculate_formal_route
 from app.assistant_routes import router as assistant_router
 app.include_router(assistant_router)
 from app.agent_monitor import router as agent_monitor_router
@@ -941,6 +951,7 @@ async def add_activity_endpoint(
     day_plan_id: uuid.UUID,
     payload: ActivityCreate,
     session: AsyncSession = Depends(get_session),
+    trip_version: int | None = Header(default=None, alias="X-Trip-Version", gt=0),
 ) -> ActivityResponse:
     try:
         return await add_activity(
@@ -953,6 +964,7 @@ async def add_activity_endpoint(
             payload.minimum_duration_minutes,
             "importance" in payload.model_fields_set,
             "can_skip" in payload.model_fields_set,
+            expected_trip_version=trip_version,
         )
     except DayPlanNotFoundError as exc:
         raise HTTPException(status_code=404, detail="day plan not found") from exc
@@ -975,9 +987,10 @@ async def reorder_activities_endpoint(
     day_plan_id: uuid.UUID,
     payload: ActivityOrderUpdate,
     session: AsyncSession = Depends(get_session),
+    trip_version: int | None = Header(default=None, alias="X-Trip-Version", gt=0),
 ) -> DayPlanResponse:
     try:
-        return await reorder_activities(session, day_plan_id, payload.activity_ids)
+        return await reorder_activities(session, day_plan_id, payload.activity_ids, expected_trip_version=trip_version)
     except DayPlanNotFoundError as exc:
         raise HTTPException(status_code=404, detail="day plan not found") from exc
     except InvalidActivityOrderError as exc:
@@ -998,9 +1011,10 @@ async def update_activity_endpoint(
     activity_id: uuid.UUID,
     payload: ActivityUpdate,
     session: AsyncSession = Depends(get_session),
+    trip_version: int | None = Header(default=None, alias="X-Trip-Version", gt=0),
 ) -> ActivityResponse:
     try:
-        return await update_activity(session, activity_id, payload)
+        return await update_activity(session, activity_id, payload, expected_trip_version=trip_version)
     except ActivityNotFoundError as exc:
         raise HTTPException(status_code=404, detail="activity not found") from exc
     except ActivityVersionConflictError as exc:
@@ -1024,9 +1038,10 @@ async def move_activity_endpoint(
     activity_id: uuid.UUID,
     payload: ActivityMoveRequest,
     session: AsyncSession = Depends(get_session),
+    trip_version: int | None = Header(default=None, alias="X-Trip-Version", gt=0),
 ) -> ActivityMoveResponse:
     try:
-        return await move_activity(session, activity_id, payload)
+        return await move_activity(session, activity_id, payload, expected_trip_version=trip_version)
     except ActivityNotFoundError as exc:
         raise HTTPException(status_code=404, detail="activity not found") from exc
     except DayPlanNotFoundError as exc:
@@ -1056,12 +1071,10 @@ async def recalculate_route_endpoint(
     day_plan_id: uuid.UUID,
     payload: RouteRecalculateRequest,
     session: AsyncSession = Depends(get_session),
+    trip_version: int | None = Header(default=None, alias="X-Trip-Version", gt=0),
 ) -> DayPlanResponse:
     try:
-        await get_day_plan(session, day_plan_id)
-        await recalculate_day_route(session, day_plan_id, payload.mode)
-        await session.commit()
-        return await get_day_plan(session, day_plan_id)
+        return await recalculate_formal_route(session, day_plan_id, payload.mode, expected_trip_version=trip_version)
     except DayPlanNotFoundError as exc:
         raise HTTPException(status_code=404, detail="day plan not found") from exc
     except MapProviderError as exc:
@@ -1076,9 +1089,10 @@ async def recalculate_route_endpoint(
 async def delete_activity_endpoint(
     activity_id: uuid.UUID,
     session: AsyncSession = Depends(get_session),
+    trip_version: int | None = Header(default=None, alias="X-Trip-Version", gt=0),
 ) -> Response:
     try:
-        await delete_activity(session, activity_id)
+        await delete_activity(session, activity_id, expected_trip_version=trip_version)
     except ActivityNotFoundError as exc:
         raise HTTPException(status_code=404, detail="activity not found") from exc
     except MapProviderError as exc:

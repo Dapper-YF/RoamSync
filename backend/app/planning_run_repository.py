@@ -56,7 +56,9 @@ async def create_planning_run(
     trigger_snapshot: dict | None = None,
     trigger_fingerprint: str | None = None,
 ) -> PlanningRun:
-    trip = await get_trip(session, trip_id)
+    await get_trip(session, trip_id)
+    from app.formal_write import lock_trip
+    trip = await lock_trip(session, trip_id)
     disruption = None
     if payload.disruption_event_id is not None:
         if payload.run_type != "replan":
@@ -189,9 +191,11 @@ async def save_plan_revision(
     commit: bool = True,
 ) -> PlanRevision:
     run = await get_planning_run(session, run_id)
+    from app.formal_write import lock_trip
+    trip = await lock_trip(session, run.trip_id)
+    run = await session.scalar(select(PlanningRun).where(PlanningRun.id == run_id).with_for_update().execution_options(populate_existing=True))
     if run.status not in {"queued", "researching", "planning", "validating"}:
         raise InvalidPlanningRunStateError
-    trip = await get_trip(session, run.trip_id)
     if trip.version != run.base_trip_version:
         raise StalePlanningRunError
     if enrich_routes:
@@ -264,7 +268,12 @@ async def reject_revision(
     session: AsyncSession, revision_id: uuid.UUID, *,
     reason_code: str | None = None, reason_text: str | None = None,
 ) -> PlanRevision:
-    revision = await session.get(PlanRevision, revision_id)
+    from app.formal_write import lock_trip
+    trip_id = await session.scalar(select(PlanRevision.trip_id).where(PlanRevision.id == revision_id))
+    if trip_id is None:
+        raise PlanRevisionNotFoundError
+    await lock_trip(session, trip_id)
+    revision = await session.scalar(select(PlanRevision).where(PlanRevision.id == revision_id).with_for_update().execution_options(populate_existing=True))
     if revision is None:
         raise PlanRevisionNotFoundError
     if revision.status != "pending":
