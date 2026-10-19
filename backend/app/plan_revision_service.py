@@ -137,7 +137,9 @@ async def validate_candidate_plan(
         ).all()
     )
     errors: list[PlanValidationIssue] = []
-    missing_dates = (required_dates or set()) - {item.day_date for item in snapshot.activities}
+    from app.arrangement_service import candidate_item_errors, free_days
+    missing_dates = (required_dates or set()) - {item.day_date for item in snapshot.activities} - await free_days(session, trip_id)
+    errors.extend(await candidate_item_errors(session, trip_id, snapshot, protected, day_by_id))
     if missing_dates:
         errors.append(PlanValidationIssue(
             code="missing_plan_days",
@@ -663,6 +665,10 @@ async def accept_plan_revision(
             )
         )
 
+    from app.arrangement_service import bind_accepted_items, validate_current_arrangement
+    await bind_accepted_items(session, trip.id, snapshot, activities_by_ref, revision.id)
+    await session.flush()
+    await validate_current_arrangement(session, trip.id)
     decided_at = datetime.now(UTC)
     # RouteLeg rows are recreated below/above as part of applying a candidate.
     # A live runtime projection must never keep accepting writes for the old

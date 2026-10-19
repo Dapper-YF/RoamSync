@@ -155,13 +155,16 @@ async def update_trip(
             day.position = position
             day.label = f"第 {position + 1} 天"
     trip.version += 1
+    from app.arrangement_service import validate_current_arrangement
+    await validate_current_arrangement(session, trip_id)
     await session.commit()
     await session.refresh(trip)
     return trip
 
 
 async def duplicate_trip(session: AsyncSession, trip_id: uuid.UUID, *, commit: bool = True) -> Trip:
-    source_trip = await get_trip(session, trip_id)
+    await get_trip(session, trip_id)
+    source_trip = await lock_trip(session, trip_id)
     duplicate = Trip(
         title=f"{source_trip.title}（副本）",
         destination=source_trip.destination,
@@ -302,6 +305,16 @@ async def duplicate_trip(session: AsyncSession, trip_id: uuid.UUID, *, commit: b
                 calculated_at=leg.calculated_at,
             )
         )
+    from app.arrangement_service import read_items
+    from app.database import TripArrangementItem
+    for item in await read_items(session, trip_id):
+        place = place_map.get(item.place_id)
+        linked = activity_map.get(item.activity_id)
+        session.add(TripArrangementItem(trip_id=duplicate.id, kind=item.kind, label=item.label,
+            identity_key=f"place:{place.id}" if place else item.identity_key,
+            source_ref=item.source_ref, decision_ref=f"duplicate:{trip_id}", place_id=place.id if place else None,
+            day_date=item.day_date, start_time=item.start_time, end_time=item.end_time,
+            activity_id=linked.id if linked else None))
     if commit:
         await session.commit()
     else:

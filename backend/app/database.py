@@ -476,6 +476,30 @@ class Activity(Base):
     )
 
 
+class TripArrangementItem(Base):
+    __tablename__ = "trip_arrangement_items"
+    __table_args__ = (
+        UniqueConstraint("trip_id", "identity_key", name="uq_arrangement_trip_identity"),
+        UniqueConstraint("activity_id", name="uq_arrangement_activity"),
+        CheckConstraint("kind IN ('selected','optional','free_window','cancelled')", name="ck_arrangement_kind"),
+        CheckConstraint("length(trim(source_ref)) > 0 AND length(trim(label)) > 0", name="ck_arrangement_source"),
+        CheckConstraint("activity_id IS NULL OR kind='selected'", name="ck_arrangement_link"),
+        CheckConstraint("(kind='free_window' AND day_date IS NOT NULL AND start_time IS NOT NULL AND end_time IS NOT NULL AND start_time < end_time AND place_id IS NULL AND activity_id IS NULL) OR (kind!='free_window' AND start_time IS NULL AND end_time IS NULL)", name="ck_arrangement_precision"),
+    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    trip_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("trips.id", ondelete="CASCADE"), index=True)
+    kind: Mapped[str] = mapped_column(String(16))
+    label: Mapped[str] = mapped_column(String(160))
+    identity_key: Mapped[str] = mapped_column(String(250))
+    source_ref: Mapped[str] = mapped_column(String(200))
+    decision_ref: Mapped[str] = mapped_column(String(200))
+    place_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("place_candidates.id", ondelete="RESTRICT"), nullable=True)
+    day_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    start_time: Mapped[time | None] = mapped_column(Time, nullable=True)
+    end_time: Mapped[time | None] = mapped_column(Time, nullable=True)
+    activity_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("activities.id", ondelete="SET NULL"), nullable=True)
+
+
 class TripExecution(Base):
     __tablename__ = "trip_executions"
     __table_args__ = (

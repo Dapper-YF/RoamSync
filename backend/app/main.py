@@ -173,6 +173,14 @@ async def lifespan(_: FastAPI):
 
 settings = get_settings()
 app = FastAPI(title=settings.app_name, version="0.1.0", lifespan=lifespan)
+from app.arrangement_routes import router as arrangement_router
+from app.arrangement_service import ArrangementConstraintError
+app.include_router(arrangement_router)
+
+
+@app.exception_handler(ArrangementConstraintError)
+async def arrangement_conflict_handler(request, exc):
+    return JSONResponse(status_code=422, content={"detail": {"code": "arrangement_conflict", "message": str(exc)}})
 
 
 @app.exception_handler(FormalWriteConflictError)

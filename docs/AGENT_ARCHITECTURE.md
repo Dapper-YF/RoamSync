@@ -13,6 +13,28 @@ deferred and must not be presented as implemented Agent behavior.
 
 ## Scope and product boundary
 
+### Isolated finite arrangement integration (2026-10-19, stage C)
+
+Unreleased development branch codex/natural-assistant-integration-20261019 adds
+0037 trip_arrangement_items: Trip owns selected/optional choices and explicit
+free windows; Activity alone owns precise schedules. Names may remain unbound
+to a verified Place; they do not carry fabricated times, durations or costs.
+Manual endpoints require expected Trip version, keep source identity, and use
+the common Trip lock. Conversion creates and links an Activity atomically;
+deletion cancels the linked decision without erasing provenance. A completed
+or active experience cannot be silently demoted by the new simple item API.
+
+Final Validator/Accept preserve linked choices and explicit free windows;
+candidate_id arrangement:<uuid> binds a known unscheduled Place only when the
+user adopts that precise candidate. Optional choices remain optional until
+then. Full-day free windows may waive coverage for that day; ordinary omissions
+of required days still fail. Additive validation issues: arrangement_decision_omitted,
+arrangement_identity_required, arrangement_identity_invalid,
+arrangement_free_window_conflict, arrangement_free_window_travel_conflict.
+No new Graph node, PlanningRun for simple edits, or persisted second timetable.
+The model/context/Web integrations are separate later gates, not claimed here.
+Evidence and scope: NATURAL_ASSISTANT_DELIVERY_20261019.md.
+
 ### Isolated formal-write protection candidate (2026-10-19)
 
 Implemented/tested in `codex/formal-write-protection-20261019`, not deployed.

@@ -632,6 +632,8 @@ async def delete_activity(session: AsyncSession, activity_id: uuid.UUID, *, expe
         raise ActivityNotFoundError
     day_plan_id = activity.day_plan_id
     route_mode = await _route_mode(session, day_plan_id)
+    from app.arrangement_service import cancel_activity_choices
+    await cancel_activity_choices(session, [activity.id])
     await session.delete(activity)
     await session.flush()
     remaining = list(

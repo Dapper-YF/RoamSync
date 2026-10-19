@@ -587,6 +587,11 @@ class _LazyDefaultKnowledgeTool:
 async def shift_trip_dates(db: AsyncSession, trip: Trip, start: date, end: date) -> None:
     days = list((await db.scalars(select(DayPlan).where(DayPlan.trip_id == trip.id).order_by(DayPlan.position))).all())
     count = (end - start).days + 1
+    from app.arrangement_service import cancel_activity_choices, shift_choice_dates
+    removed_ids = [d.id for d in days[count:]]
+    if removed_ids:
+        await cancel_activity_choices(db, list((await db.scalars(select(Activity.id).where(Activity.day_plan_id.in_(removed_ids)))).all()))
+    await shift_choice_dates(db, trip, start, end)
     for d in days:
         d.date = date(1, 1, 1) + timedelta(days=d.position)
     await db.flush()

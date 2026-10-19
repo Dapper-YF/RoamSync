@@ -41,6 +41,8 @@ async def _state(session, trip_id):
 async def finish_formal_write(session):
     trip, before, before_other = session.info["formal_write"]
     await session.flush()
+    from app.arrangement_service import validate_current_arrangement
+    await validate_current_arrangement(session, trip.id)
     after, after_other = await _state(session, trip.id)
     changed_ids = {key for key in before.keys() & after.keys() if before[key][0] != after[key][0]}
     changed = before.keys() != after.keys() or bool(changed_ids) or before_other != after_other

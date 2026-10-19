@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="14" time="11.060" timestamp="2026-10-19T21:06:20.983594+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_flexible_arrangement" name="test_nanjing_mixed_arrangement_roundtrip_without_fake_times" time="0.600" /><testcase classname="tests.test_flexible_arrangement" name="test_accept_revalidates_reserved_window" time="0.653" /><testcase classname="tests.test_flexible_arrangement" name="test_concurrent_choice_writes_do_not_lose_a_success" time="0.361" /><testcase classname="tests.test_flexible_arrangement" name="test_failed_choice_write_rolls_back_item_and_version" time="0.306" /><testcase classname="tests.test_flexible_arrangement" name="test_manual_time_edit_cannot_enter_reserved_window" time="0.355" /><testcase classname="tests.test_flexible_arrangement" name="test_blank_day_is_valid_only_with_explicit_day_coverage_permission" time="0.387" /><testcase classname="tests.test_flexible_arrangement" name="test_linked_item_cannot_be_omitted_by_current_version_candidate" time="0.575" /><testcase classname="tests.test_flexible_arrangement" name="test_accept_can_bind_selected_item_atomically_and_replay" time="0.695" /><testcase classname="tests.test_flexible_arrangement" name="test_database_rejects_invalid_precision_or_place_identity[precision]" time="0.167" /><testcase classname="tests.test_flexible_arrangement" name="test_database_rejects_invalid_precision_or_place_identity[foreign_key]" time="0.183" /><testcase classname="tests.test_flexible_arrangement" name="test_deleting_trip_with_place_choice_preserves_existing_cascade_contract" time="0.194"><failure message="AssertionError: {&quot;detail&quot;:&quot;confirm=true is required&quot;}&#10;assert 400 == 204&#10; +  where 400 = &lt;Response [400 Bad Request]&gt;.status_code">tests\test_flexible_arrangement.py:186: in test_deleting_trip_with_place_choice_preserves_existing_cascade_contract
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_flexible_arrangement.py:185: in scenario
+    assert removed.status_code == 204, removed.text
+E   AssertionError: {"detail":"confirm=true is required"}
+E   assert 400 == 204
+E    +  where 400 = &lt;Response [400 Bad Request]&gt;.status_code</failure></testcase><testcase classname="tests.test_flexible_arrangement" name="test_item_change_fences_old_candidate_and_old_page" time="0.406" /><testcase classname="tests.test_flexible_arrangement" name="test_schedule_transfer_and_delete_retains_decision_identity" time="0.496" /><testcase classname="tests.test_flexible_arrangement" name="test_free_window_rejects_overlapping_activity_and_rolls_back" time="0.382" /></testsuite></testsuites>
