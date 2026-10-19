@@ -15,7 +15,7 @@ VERIFIED：共同正式写保护复验；路线GET不改正式时间，POST默�
 范围：日期明确单城市1—3天；未新增通用任务中心、Android或商业平台能力。
 
 ## Prior milestone baseline (before shadow split)
-A 2f2def5；B 7468363；C 739ef56；D ed6ea2d；E见当前分支后续提交。
+A 2f2def5；B 7468363；C 739ef56；D ed6ea2d；E 38e2524；后续仅交付记录。
 基于正式写保护评审1ce7e5d，不要再次应用等价7b67f68。
 正式3000与生产数据库均未改动，迁移只在独立tmpfs测试PG执行。
 
