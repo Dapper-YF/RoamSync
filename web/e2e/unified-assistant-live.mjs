@@ -4,9 +4,11 @@ import { resolve } from 'node:path';
 import { assertNaturalAdjustment } from './assert-natural-adjustment.mjs';
 
 const out = resolve(process.env.ROAMSYNC_EVIDENCE_DIR || '../docs/evidence/unified-assistant');
+const base = process.env.ROAMSYNC_WEB_BASE_URL || 'http://127.0.0.1:3020';
+if (!['http://127.0.0.1:3020', 'http://127.0.0.1:3021'].includes(base)) throw Error('Isolated acceptance ports only');
 await mkdir(out, { recursive: true });
 const id = new Date().toISOString().replace(/[:.]/g, '-');
-const report = { kind: 'real Chromium / real isolated API / real model / real map; synthetic user', started_at: new Date().toISOString(), steps: [], requests: [], consoleErrors: [] };
+const report = { kind: 'real Chromium / real isolated API / real model / real map; synthetic user', base_url: base, started_at: new Date().toISOString(), steps: [], requests: [], consoleErrors: [] };
 const browser = await chromium.launch({ headless: true, channel: 'msedge' });
 const page = await browser.newPage({ viewport: { width: 1440, height: 1050 } });
 await page.addInitScript(() => {
@@ -50,12 +52,12 @@ const send = async (message) => {
   return body;
 };
 try {
-  await page.goto('http://127.0.0.1:3020/');
+  await page.goto(`${base}/`);
   await page.getByRole('heading', { name: '下一站，想去哪里？' }).waitFor();
-  const before = await (await page.request.get('http://127.0.0.1:3020/api/v1/trips')).json();
+  const before = await (await page.request.get(`${base}/api/v1/trips`)).json();
   const first = await send('第一次去南京，南京博物院和玄武湖的体验有什么区别？先只聊聊，不创建旅行。');
   if (first.trip_id || first.pending_action) throw Error('consultation incorrectly became saved work');
-  const afterQuestion = await (await page.request.get('http://127.0.0.1:3020/api/v1/trips')).json();
+  const afterQuestion = await (await page.request.get(`${base}/api/v1/trips`)).json();
   if (JSON.stringify(before) !== JSON.stringify(afterQuestion)) throw Error('Trip created during consultation');
   await send('南京博物院确定想去但时间未定；玄武湖有时间再去。现在先讨论。');
   const proposal = await send('我决定2026-11-07到2026-11-08去南京两天。周日总统府14:00-15:00已经预约；周六15:00-16:00明确留白。保留南京博物院但暂不排时间，玄武湖还是备选。请形成允许留白的旅行安排建议，别把两天填满。');
@@ -82,7 +84,7 @@ try {
   await page.getByText('已保存这项决定，其他时间没有重新安排。').waitFor();
   const chat = await send('保留玄武湖，其他暂时不定');
   if (chat.latest_run_id) throw Error('simple change unnecessarily started Graph');
-  const state = await (await page.request.get(`http://127.0.0.1:3020/api/v1/trips/${tid}/arrangement-items`)).json();
+  const state = await (await page.request.get(`${base}/api/v1/trips/${tid}/arrangement-items`)).json();
   if (!state.items.some(i => i.label.includes('博物院') && i.kind === 'optional') || !state.items.some(i => i.label.includes('玄武湖') && i.kind === 'selected')) throw Error('chat lost page change');
   await record('page-plus-chat-readback', { trip_id: tid, body: state });
   await page.reload();
@@ -106,22 +108,22 @@ try {
   await record('schedule-chosen-place-and-time', { status: scheduled.status(), body: await scheduled.json() });
   if (!scheduled.ok()) throw Error('explicit UI scheduling failed');
   await page.getByText('已按你选择的地点和时间保存，没有补填其他时间；相邻路线仍需核实。').waitFor();
-  const beforeAdjustment = await (await page.request.get(`http://127.0.0.1:3020/api/v1/trips/${tid}/arrangement-items`)).json();
+  const beforeAdjustment = await (await page.request.get(`${base}/api/v1/trips/${tid}/arrangement-items`)).json();
   const queried = page.waitForResponse(r => /\/day-plans\/[^/]+\/route$/.test(r.url()) && r.request().method() === 'GET', { timeout: 60000 });
   await page.getByRole('button', { name: '查看活动间路线，不改时间' }).last().click();
   const routeResponse = await queried;
   await record('read-only-route', { status: routeResponse.status(), body: await routeResponse.json() });
   if (!routeResponse.ok()) throw Error('actual route query failed');
-  const afterRoute = await (await page.request.get(`http://127.0.0.1:3020/api/v1/trips/${tid}/arrangement-items`)).json();
+  const afterRoute = await (await page.request.get(`${base}/api/v1/trips/${tid}/arrangement-items`)).json();
   if (JSON.stringify(afterRoute) !== JSON.stringify(beforeAdjustment)) throw Error('read-only route modified arrangement');
   await send('请调整第二天的安排：南京博物院需要12:30以后才能开始。总统府不要动。希望还可以游览110分钟，但如果赶不上预约请缩短博物院，说明取舍。其他日期和留白保持不变，玄武湖保持已选但时间未定，这次不要把它排进具体时间。');
   const adjustment = page.getByRole('region', { name: '局部调整建议' });
   await adjustment.waitFor({ timeout: 240000 });
-  const beforeAccept = await (await page.request.get(`http://127.0.0.1:3020/api/v1/trips/${tid}/arrangement-items`)).json();
+  const beforeAccept = await (await page.request.get(`${base}/api/v1/trips/${tid}/arrangement-items`)).json();
   if (JSON.stringify(beforeAccept) !== JSON.stringify(beforeAdjustment)) throw Error('candidate changed formal result before acceptance');
   const runs = report.steps.filter(s => s.step === 'chat' && s.body.latest_run_id);
   const lastRun = runs.at(-1)?.body.latest_run_id;
-  if (lastRun) await record('real-run-observations', { body: await (await page.request.get(`http://127.0.0.1:3020/api/v1/planning-runs/${lastRun}`)).json() });
+  if (lastRun) await record('real-run-observations', { body: await (await page.request.get(`${base}/api/v1/planning-runs/${lastRun}`)).json() });
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: resolve(out, `web-${id}-adjustment.png`), fullPage: true });
   const accepting = page.waitForResponse(r => /\/plan-revisions\/[^/]+\/accept$/.test(r.url()), { timeout: 60000 });
@@ -132,7 +134,7 @@ try {
   await adjustment.waitFor({ state: 'hidden' });
   await page.reload();
   await page.locator('.journeys-schedule').filter({ hasText: '南京博物院' }).waitFor();
-  const final = await (await page.request.get(`http://127.0.0.1:3020/api/v1/trips/${tid}/arrangement-items`)).json();
+  const final = await (await page.request.get(`${base}/api/v1/trips/${tid}/arrangement-items`)).json();
   assertNaturalAdjustment(final);
   if (!final.days.flatMap(d => d.activities).some(a => a.schedule_locked && a.scheduled_time === '14:00:00')) throw Error('appointment moved');
   if (JSON.stringify(final.days[0]) !== JSON.stringify(beforeAdjustment.days[0])) throw Error('unrelated free day changed');

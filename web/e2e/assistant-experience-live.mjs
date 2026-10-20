@@ -1,10 +1,12 @@
 import { chromium } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-const out = resolve('../docs/evidence/unified-assistant');
+const out = resolve(process.env.ROAMSYNC_EVIDENCE_DIR || '../docs/evidence/unified-assistant');
+const base = process.env.ROAMSYNC_WEB_BASE_URL || 'http://127.0.0.1:3020';
+if (!['http://127.0.0.1:3020', 'http://127.0.0.1:3021'].includes(base)) throw Error('Isolated acceptance ports only');
 await mkdir(out, { recursive: true });
 const id = new Date().toISOString().replace(/[:.]/g, '-');
-const report = { kind: 'actual browser, configured model and Tavily; no mocks', cases: [], errors: [] };
+const report = { kind: 'actual browser, configured model and Tavily; no mocks', base_url: base, cases: [], errors: [] };
 const browser = await chromium.launch({ channel: 'msedge', headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
 await page.addInitScript(() => {
@@ -25,7 +27,7 @@ await page.addInitScript(() => {
 });
 page.on('pageerror', e => report.errors.push(e.message));
 try {
-  await page.goto('http://127.0.0.1:3020/');
+  await page.goto(`${base}/`);
   for (const [name, message] of [
     ['general', '如果喜欢慢慢逛，成都和苏州分别有什么体验特点？先只讨论，不创建旅行。'],
     ['web-images', '请联网搜索成都有什么特色美食，配一张火锅或小吃相关的真实图片，介绍体验特点。'],
