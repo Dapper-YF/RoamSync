@@ -637,7 +637,12 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
             reply = "请先告诉我要讨论哪一趟旅行，或者提供目的地创建旅行。"
         else:
             reply = "我会结合正式行程，说明安排和建议的理由。" if decision.tool == "query_trip" else "我会按这次要求准备候选调整，并说明修改理由。"
-            request = decision.planning_request.strip() or message
+            # For an adopted flexible arrangement the current user turn and
+            # persisted Trip already provide the authority and context. Router
+            # prose is diagnostic only: it must not invent names or scope.
+            rewritten_request = decision.planning_request.strip()
+            request = message if direct_arrangement_edit else rewritten_request or message
+            turn_metadata["router_planning_request"] = rewritten_request
             has_plan = bool(await db.scalar(select(Activity.id).join(DayPlan).where(DayPlan.trip_id == target).limit(1)))
             run = await create_planning_run(db, target, PlanningRunCreate(run_type="replan" if has_plan else "initial_plan", user_request=request,
                 selected_day_id=selected_day_id if target == row.trip_id else None, selected_activity_id=selected_activity_id if target == row.trip_id else None), commit=False)

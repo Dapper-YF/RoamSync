@@ -499,7 +499,7 @@ def _change_scope_text(message: str) -> str:
         part = re.sub(r"(?:保留)?第[一二三四五六七八九十两\d]+天(?:的)?\d{1,2}(?:点|时)(?:\d{1,2}分?)?(?:的)?(?:固定|锁定|预约)(?:的)?活动(?:不要动|别动|不变|照旧)?", "", part)
         if not part.strip():
             continue
-        boundary = re.search(r"不变|照旧|不调整|不要改动", part)
+        boundary = re.search(r"不变|照旧|不调整|不要改动|不要动|别动", part)
         remaining = re.sub(r"不调整|不要改动", "", part)
         if boundary and not re.search(r"调整|修改|加入|添加|增加|移到|替换|删除", remaining):
             continue
@@ -637,7 +637,12 @@ def _resolve_protected_activities(
     for mention in mentions:
         if _trip_setting_kind(mention):
             continue
-        normalized_mention = _normalize_entity(mention)
+        # Regex captures are not identities. Discard format-only fragments
+        # before substring matching (empty strings would match every alias).
+        # Remove boundary decoration, not punctuation inside a real name.
+        normalized_mention = _normalize_entity(mention).strip('()（）[]【】{}「」『』“”‘’"\'：:*-•')
+        if not any(char.isalpha() for char in normalized_mention):
+            continue
         fixed = _resolve_fixed_activity_reference(normalized_mention, entities, trip_start_date)
         if fixed is not None:
             if len(fixed) == 1:
@@ -696,6 +701,13 @@ def _resolve_protected_activities(
 
 def _resolve_fixed_activity_reference(value: str, entities: list[_ActivityEntity], trip_start_date: date | None) -> list[uuid.UUID] | None:
     """Ground a dated locked appointment by persisted day and clock time."""
+    weekday = re.fullmatch(r"(?:周|星期)([一二三四五六日天])(?:的)?(上午|下午|晚上)?(?:的)?(?:固定|锁定|预约)(?:的)?(?:活动)?", value)
+    if weekday:
+        index = '一二三四五六日'.index(weekday[1].replace('天', '日'))
+        period = weekday[2]
+        bounds = {'上午': (0, 12), '下午': (12, 18), '晚上': (18, 24)}
+        return [e.id for e in entities if e.schedule_locked and e.day_date.weekday() == index
+            and (not period or e.scheduled_time and bounds[period][0] <= e.scheduled_time.hour < bounds[period][1])]
     match = re.fullmatch(r"第([一二三四五六七八九十两\d]+)天(?:的)?(\d{1,2})(?:点|时)(?:(\d{1,2})分?)?(?:的)?(?:固定|锁定|预约)(?:的)?活动", value)
     if match is None:
         return None
@@ -719,7 +731,9 @@ def _is_plan_meta_activity_reference(value: str) -> bool:
         return True
     if re.fullmatch(r"(?:其他|其余|剩余|非目标)(?:的)?(?:日期|天|日)(?:的)?(?:行程|安排|活动)?(?:不变|照旧)?", value):
         return True
-    if value in {"顺序", "时长", "时间", "交通", "交通衔接", "安排", "内容", "要求", "上述要求"}:
+    if re.fullmatch(r"第[一二三四五六七八九十两\d]+天(?:的)?(?:安排|行程)?", value):
+        return True
+    if value in {"顺序", "时长", "时间", "交通", "交通衔接", "安排", "内容", "要求", "上述要求", "留白", "空闲", "自由时间"}:
         return True
     if re.fullmatch(r"(?:用户)?(?:整体)?偏好[:：][\d一二三四五六七八九十两]+(?:个)?人(?:出行|旅行)", value):
         return True

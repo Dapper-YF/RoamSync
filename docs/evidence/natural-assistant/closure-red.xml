@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="10" skipped="0" tests="11" time="4.733" timestamp="2026-10-20T08:17:28.597886+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_natural_handoff_closure" name="test_original_browser_request_survives_router_rewrite" time="0.381"><failure message="AssertionError: assert '请调整 2026-11-...玄武湖保持已选但时间未定。' == '请调整第二天的安排：南京...这次不要把它排进具体时间。'&#10;  &#10;  - 请调整第二天的安排：南京博物院需要12:30以后才能开始。总统府不要动。希望还可以游览110分钟，但如果赶不上预约请缩短博物院，说明取舍。其他日期和留白保持不变，玄武湖保持已选但时间未定，这次不要把它排进具体时间。&#10;  + 请调整 2026-11-08（第二天）的安排：1) 南京博物院需要12:30以后才能开始；2) 总统府不要动；3) 其他日期和留白保持不变（11-07 15:00-16:00自由活动留白保留）；4) 玄武湖保持已选但时间未定。">tests\test_natural_handoff_closure.py:42: in test_original_browser_request_survives_router_rewrite
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_natural_handoff_closure.py:38: in scenario
+    assert run.user_request == ORIGINAL
+E   AssertionError: assert '请调整 2026-11-...玄武湖保持已选但时间未定。' == '请调整第二天的安排：南京...这次不要把它排进具体时间。'
+E
+E     - 请调整第二天的安排：南京博物院需要12:30以后才能开始。总统府不要动。希望还可以游览110分钟，但如果赶不上预约请缩短博物院，说明取舍。其他日期和留白保持不变，玄武湖保持已选但时间未定，这次不要把它排进具体时间。
+E     + 请调整 2026-11-08（第二天）的安排：1) 南京博物院需要12:30以后才能开始；2) 总统府不要动；3) 其他日期和留白保持不变（11-07 15:00-16:00自由活动留白保留）；4) 玄武湖保持已选但时间未定。</failure></testcase><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[\uff09]" time="0.001"><failure message="AssertionError: assert ['activity_not_found:）'] == []&#10;  &#10;  Left contains one more item: 'activity_not_found:）'&#10;  Use -v to get more diff">tests\test_natural_handoff_closure.py:49: in test_format_fragment_is_not_an_activity_identity
+    assert errors == []
+E   AssertionError: assert ['activity_not_found:）'] == []
+E
+E     Left contains one more item: 'activity_not_found:）'
+E     Use -v to get more diff</failure></testcase><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[)]" time="0.001"><failure message="AssertionError: assert ['activity_not_found:)'] == []&#10;  &#10;  Left contains one more item: 'activity_not_found:)'&#10;  Use -v to get more diff">tests\test_natural_handoff_closure.py:49: in test_format_fragment_is_not_an_activity_identity
+    assert errors == []
+E   AssertionError: assert ['activity_not_found:)'] == []
+E
+E     Left contains one more item: 'activity_not_found:)'
+E     Use -v to get more diff</failure></testcase><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[\u201d]" time="0.001"><failure message="AssertionError: assert ['activity_not_found:”'] == []&#10;  &#10;  Left contains one more item: 'activity_not_found:”'&#10;  Use -v to get more diff">tests\test_natural_handoff_closure.py:49: in test_format_fragment_is_not_an_activity_identity
+    assert errors == []
+E   AssertionError: assert ['activity_not_found:”'] == []
+E
+E     Left contains one more item: 'activity_not_found:”'
+E     Use -v to get more diff</failure></testcase><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[\u3011]" time="0.001"><failure message="AssertionError: assert ['activity_not_found:】'] == []&#10;  &#10;  Left contains one more item: 'activity_not_found:】'&#10;  Use -v to get more diff">tests\test_natural_handoff_closure.py:49: in test_format_fragment_is_not_an_activity_identity
+    assert errors == []
+E   AssertionError: assert ['activity_not_found:】'] == []
+E
+E     Left contains one more item: 'activity_not_found:】'
+E     Use -v to get more diff</failure></testcase><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[1)]" time="0.001"><failure message="AssertionError: assert ['activity_not_found:1)'] == []&#10;  &#10;  Left contains one more item: 'activity_not_found:1)'&#10;  Use -v to get more diff">tests\test_natural_handoff_closure.py:49: in test_format_fragment_is_not_an_activity_identity
+    assert errors == []
+E   AssertionError: assert ['activity_not_found:1)'] == []
+E
+E     Left contains one more item: 'activity_not_found:1)'
+E     Use -v to get more diff</failure></testcase><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[\uff08]" time="0.001"><failure message="AssertionError: assert ['activity_not_found:（'] == []&#10;  &#10;  Left contains one more item: 'activity_not_found:（'&#10;  Use -v to get more diff">tests\test_natural_handoff_closure.py:49: in test_format_fragment_is_not_an_activity_identity
+    assert errors == []
+E   AssertionError: assert ['activity_not_found:（'] == []
+E
+E     Left contains one more item: 'activity_not_found:（'
+E     Use -v to get more diff</failure></testcase><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[&quot;&quot;]" time="0.001"><failure message="assert ['activity_not_found:&quot;&quot;'] == []&#10;  &#10;  Left contains one more item: 'activity_not_found:&quot;&quot;'&#10;  Use -v to get more diff">tests\test_natural_handoff_closure.py:49: in test_format_fragment_is_not_an_activity_identity
+    assert errors == []
+E   assert ['activity_not_found:""'] == []
+E
+E     Left contains one more item: 'activity_not_found:""'
+E     Use -v to get more diff</failure></testcase><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[\u2026]" time="0.001"><failure message="AssertionError: assert ['activity_not_found:…'] == []&#10;  &#10;  Left contains one more item: 'activity_not_found:…'&#10;  Use -v to get more diff">tests\test_natural_handoff_closure.py:49: in test_format_fragment_is_not_an_activity_identity
+    assert errors == []
+E   AssertionError: assert ['activity_not_found:…'] == []
+E
+E     Left contains one more item: 'activity_not_found:…'
+E     Use -v to get more diff</failure></testcase><testcase classname="tests.test_natural_handoff_closure" name="test_decorated_real_name_and_unknown_name_keep_grounding" time="0.000" /><testcase classname="tests.test_natural_handoff_closure" name="test_free_interval_is_not_an_unknown_venue" time="0.001"><failure message="AssertionError: assert ['activity_not_found:留白'] == []&#10;  &#10;  Left contains one more item: 'activity_not_found:留白'&#10;  Use -v to get more diff">tests\test_natural_handoff_closure.py:65: in test_free_interval_is_not_an_unknown_venue
+    assert errors == []
+E   AssertionError: assert ['activity_not_found:留白'] == []
+E
+E     Left contains one more item: 'activity_not_found:留白'
+E     Use -v to get more diff</failure></testcase></testsuite></testsuites>
