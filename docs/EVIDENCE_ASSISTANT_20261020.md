@@ -46,3 +46,11 @@ live-lookup.json（最终完整记录，含模型公开草稿）：
 - 标题/分店词校验是保守字符串规则，可能错失有用页面，不能证明网页所有段落只属于目标分店。
 - 图片热链会失效，搜索描述也可能有误；参考图不是门店实拍证明。
 - max_walking_minutes、其他旧路径长事务、旧客户端版本保护及公网多用户边界继续独立跟踪。
+
+## 正式整合与部署验收（2026-10-20，VERIFIED / MEASURED）
+正式源码以快进保留完整历史：af6b408 → 0994051（后端）→ a23141b（Web）→ 1dca42d（证据）→ a53cc74（上线验收发现的图片状态矛盾防护）。
+通过 E:/Study/RoamSync/scripts/start-roamsync.ps1 正式构建启动；Web/API/Worker 健康，API 和 Worker 各 215 运行文件与正式源码逐字节一致。Web 包 index-OefwTOCs.js / index-yP_FK_g3.css。
+最终 a53cc74 后端完整回归再次执行：1358 passed / 1 skipped / 2 历史弃用警告；新增防护专项 9 passed。Web 211/typecheck/build 通过，正式 Docker 构建亦重跑 Web 回归。Linux 后端没有本轮新记录。
+3000 真实查询：南京玄武湖，Tavily 页面正文、来源锚点、Commons 实景、作者许可均可用；图片 naturalWidth>0，完成后过程 aria-expanded=false，刷新后引用和过程仍在。最初生产实测发现模型说“没有图片”却已显示照片，已补服务端拒绝此类媒体可用性断言并真实复验；旧历史回复不自动重写。
+备份及部署日志：E:/Study/RoamSync-deployment-backups/20261020-evidence-assistant（数据库约16MB自定义备份、回滚镜像、前后业务指纹、3000-result.png）。不增加数据库迁移，原生产卷保留。部署后、浏览器查询前 26 张业务表指纹全相同，179 Trip / 851 Activity；查询后正式 Trip/Day/Activity/Preferences/Run/Revision 仍未变化。README/nginx 哈希未变，1856 个原未跟踪文件逐字节保留。原手头交接文档不纳入功能提交，另以增补保留此前内容。
+结论：限定“可取得证据闭环”的版本 GO / MERGED / READY FOR LOCAL USE；门店完整评论、稳定评价归纳、所有文字事实的自动证明及商业服务能力仍未得到证明。仍需持续关注模型格式波动、保守过滤和检索覆盖率，不能把三个示例通过当普遍准确率。
