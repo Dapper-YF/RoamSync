@@ -77,6 +77,8 @@ def project_search(fact, message):
             description = re.sub(r"\.(?:jpe?g|png|webp|gif)$", "", filename, flags=re.I)[:160]
         if isinstance(item.get("score"), (int, float)) and item["score"] < 0.6:
             continue
+        if not exact_subject and any(image["topic"] == dish for image in images):
+            continue  # One illustrative photograph per dish is sufficient.
         if url not in {i["url"] for i in images}:
             # Original image URL is the only guaranteed attribution available in
             # Tavily image results. Do not invent a publisher or license.

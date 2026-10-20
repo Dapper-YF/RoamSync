@@ -41,7 +41,9 @@ def test_returned_encoded_filename_can_ground_image_without_invented_caption():
 
 def test_dish_reference_does_not_claim_city_photograph_or_replace_a_venue():
     image = {"url": "https://images.example.org/photo.jpg", "description": "A spicy hotpot with chili"}
-    result = project_search(fact([image]), "联网搜索成都有什么特色美食，想看看火锅图片")
+    collage = {"url": "https://images.example.org/collage.jpg", "description": "A variety of food including hotpot and dessert"}
+    result = project_search(fact([image, collage]), "联网搜索成都有什么特色美食，想看看火锅图片")
+    assert len(result["images"]) == 1
     assert result["images"][0]["topic"] == "火锅"
     assert result["images"][0]["description"].startswith("火锅参考图")
     assert not project_search(fact([image]), "联网搜索南京博物院的图片")["images"]
