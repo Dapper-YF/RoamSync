@@ -306,7 +306,53 @@ async def prepare_action(db: AsyncSession, decision: ToolDecision, current: Trip
 
 
 @observe_message
-async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, message_id: uuid.UUID, *, router=None, companion_responder=None, companion_provider=None, companion_runtime=None, knowledge_tool=None, city_search=search_amap_cities, selected_day_id=None, selected_activity_id=None, context=None, place_port=None) -> AssistantSession:
+async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, message_id: uuid.UUID, *, router=None, companion_responder=None, companion_provider=None, companion_runtime=None, knowledge_tool=None, city_search=search_amap_cities, selected_day_id=None, selected_activity_id=None, context=None, place_port=None, researcher=None) -> AssistantSession:
+    from app.assistant_places import ContentServicePlaces
+    settings = get_settings()
+    # The bounded discovery adapter finishes ALL network work before taking the
+    # session row lock. Legacy injected runtimes and formal write paths are intact.
+    if context is not None and (researcher is not None or (
+        isinstance(place_port, ContentServicePlaces) and settings.planner_api_key.get_secret_value()
+        and router is None and companion_responder is None and companion_provider is None and companion_runtime is None)):
+        from app.assistant_context import ContextEnvelope, restore_context, capture_requirements, capture_effective_requirements
+        from app.assistant_research import research, snapshot_signature
+        incoming = ContextEnvelope.model_validate(context)
+        snapshot = await db.get(AssistantSession, session_id)
+        if snapshot is None:
+            raise AssistantToolError("对话不存在，请重新打开助手。")
+        if any(m["id"] == str(message_id) for m in snapshot.messages):
+            return snapshot
+        envelope, history = restore_context(incoming, list(snapshot.messages))
+        goal = route_travel_goal(message, history[-12:], pending_action=snapshot.pending_action)
+        eligible = (goal.target_runtime == "companion" and not incoming.action_target
+            and not incoming.preview_action_id and not incoming.route_request
+            and not incoming.read_draft_id)
+        if eligible:
+            if envelope.read_trip_id:
+                await get_trip(db, envelope.read_trip_id)
+            signature = snapshot_signature(snapshot)
+            envelope = capture_effective_requirements(capture_requirements(envelope, message), message, message_id=message_id)
+            await db.commit()
+            try:
+                bundle = await (researcher or research)(settings, message, history, envelope, place_port)
+            except Exception as exc:
+                import logging
+                logging.getLogger(__name__).warning("Read-only research unavailable: %s", type(exc).__name__)
+                raise AssistantToolError("这次地点查询暂不可用，问题已保留，可以稍后重试。") from exc
+            if bundle is not None:
+                fresh = await db.scalar(select(AssistantSession).where(AssistantSession.id == session_id)
+                    .with_for_update().execution_options(populate_existing=True))
+                if fresh is None:
+                    raise AssistantToolError("对话已清除，请重新打开助手。")
+                if any(m["id"] == str(message_id) for m in fresh.messages):
+                    return fresh
+                if snapshot_signature(fresh) != signature:
+                    await db.rollback()
+                    raise AssistantToolError("对话已有新的决定，请重新读取当前状态后再查询。")
+                fresh.messages = [*fresh.messages, {**bundle, "id": str(message_id), "user": message,
+                    "tool": "reply", "run_id": None, "goal_routing": goal.model_dump(mode="json")}]
+                await db.commit()
+                return fresh
     row = await locked_session(db, session_id)
     if any(m["id"] == str(message_id) for m in row.messages):
         return row

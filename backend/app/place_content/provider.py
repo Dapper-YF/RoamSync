@@ -63,7 +63,7 @@ def normalize_poi(poi: dict, fetched_at: datetime | None = None) -> Place | None
     category = {"05": "food", "10": "lodging", "11": "attraction"}.get(type_code[:2], "other")
     if category == "other" and provider_type:
         category = next((c for c, word in [("food", "餐饮"), ("lodging", "住宿"), ("attraction", "风景名胜")] if word in provider_type), "other")
-    biz = poi.get("biz_ext") if isinstance(poi.get("biz_ext"), dict) else {}
+    biz = poi.get("business") if isinstance(poi.get("business"), dict) else (poi.get("biz_ext") if isinstance(poi.get("biz_ext"), dict) else {})
     rating = number(biz.get("rating"))
     # AMap's empty/zero sentinel is not a verified zero-star review.
     rating = rating if rating is not None and 0 < rating <= 5 else None
@@ -76,6 +76,8 @@ def normalize_poi(poi: dict, fetched_at: datetime | None = None) -> Place | None
         name=name, category=category, provider_type=provider_type, aliases=alias_values(poi.get("alias"), name),
         address=text_value(poi.get("address")), city=text_value(poi.get("cityname")), district=text_value(poi.get("adname")),
         location=point, rating=rating, rating_status="provided" if rating is not None else "unknown",
+        opening_hours_reference=text_value(biz.get("opentime_week")) or text_value(biz.get("opentime_today")),
+        provider_tags=[p.strip() for p in str(biz.get("tag") or "").split(",") if p.strip()][:12],
         price=price, price_status="provider_reference" if price else "unknown",
         image_status="withheld_pending_license" if isinstance(poi.get("photos"), list) and poi["photos"] else "missing",
         source=Source(source_url=f"https://www.amap.com/search?id={provider_id}", fetched_at=now, expires_at=now + timedelta(hours=1)),

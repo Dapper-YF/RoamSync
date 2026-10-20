@@ -20,6 +20,23 @@ class ExternalFactError(RuntimeError):
     pass
 
 
+async def extract_tavily(settings: Settings, *, urls: list[str]) -> dict:
+    """Read known public search URLs, never crawl or claim inaccessible pages."""
+    if not settings.search_api_key:
+        raise ExternalFactError("tavily provider is not configured")
+    def request():
+        req = Request(f"{settings.tavily_base_url.rstrip('/')}/extract",
+            data=json.dumps({"urls": urls[:6], "extract_depth": "basic", "format": "text"}).encode(),
+            headers={"Content-Type": "application/json", "Authorization": f"Bearer {settings.search_api_key}"}, method="POST")
+        try:
+            transport = build_opener(ProxyHandler({"https": settings.tavily_proxy_url, "http": settings.tavily_proxy_url})).open if settings.tavily_proxy_url.strip() else urlopen
+            with transport(req, timeout=settings.search_timeout_seconds) as response:
+                return json.loads(response.read().decode("utf-8"))
+        except Exception as exc:
+            raise ExternalFactError("extract_provider_unavailable") from exc
+    return await asyncio.to_thread(request)
+
+
 @dataclass(frozen=True)
 class WeatherFact:
     provider: str

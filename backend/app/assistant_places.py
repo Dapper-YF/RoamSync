@@ -24,6 +24,8 @@ class PlaceView(ContextModel):
     expires_at: str | None = None
     external_ref: dict | None = None
     images: list[Image] = Field(default_factory=list)
+    opening_hours_reference: str | None = None
+    provider_tags: list[str] = Field(default_factory=list)
     # No unverified price/hours/reviews/availability enter this initial port.
     missing_facts: list[str] = Field(default_factory=lambda: ["实时价格", "当前营业状态", "评论", "酒店可用性"])
 
@@ -206,7 +208,29 @@ class ContentServicePlaces:
             reference_cost_yuan=place.price.amount if place.price and place.category == "food" else None,
             longitude=place.location.longitude, latitude=place.location.latitude,
             coordinate_system="gcj02", source=place.source.source_url, retrieved_at=place.source.fetched_at.isoformat(),
-            expires_at=place.source.expires_at.isoformat(), external_ref=place.ref.external_ref.model_dump(mode="json"), images=place.images)
+            expires_at=place.source.expires_at.isoformat(), external_ref=place.ref.external_ref.model_dump(mode="json"), images=place.images,
+            opening_hours_reference=place.opening_hours_reference, provider_tags=place.provider_tags)
+
+    async def research_search(self, *, query, city, near, limit, category):
+        """V5 reference fields, same canonical identity/cache and no formal writes."""
+        from app.place_content.provider import normalize_poi, TYPE_CODES
+        import asyncio
+        params = {"keywords": query, "region": city, "city_limit": "true", "page_size": limit,
+            "show_fields": "business,photos"}
+        if category == "food":
+            params["types"] = TYPE_CODES[category]
+        path = "v5/place/text"
+        if near:
+            path = "v5/place/around"
+            params.update(location=f"{near.longitude},{near.latitude}", radius=3000, sortrule="distance")
+        payload = await self.service.provider._request(path, params)
+        found = []
+        for raw in payload.get("pois", [])[:limit]:
+            place = normalize_poi(raw)
+            if place:
+                await asyncio.to_thread(self.service.repository.save, place)
+                found.append(self.view(place))
+        return found
 
     async def get_place(self, place_id):
         return self.view(await self.service.get_place(place_id, allow_stale=False))

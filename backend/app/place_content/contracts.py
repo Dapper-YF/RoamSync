@@ -72,6 +72,8 @@ class ReviewedExperience(DTO):
 
 
 class Place(DTO):
+    opening_hours_reference: str | None = None
+    provider_tags: list[str] = Field(default_factory=list)
     ref: PlaceRef
     name: str
     category: Literal["attraction", "food", "lodging", "other"]
