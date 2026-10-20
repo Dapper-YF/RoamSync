@@ -1,4 +1,4 @@
-import { render, screen, waitFor, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent, cleanup, act } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NaturalAssistant } from "./NaturalAssistant";
@@ -8,9 +8,22 @@ const base = { version: 7, trip: { id: "trip", title: "南京两日", destinatio
 const session = { id: "session", trip_id: "trip", messages: [], pending_action: null, latest_run_id: null };
 const mount = (path = "/arrangements/trip") => render(<MemoryRouter initialEntries={[path]}><Routes><Route path="/arrangements/:tripId" element={<NaturalAssistant />} /><Route path="/" element={<NaturalAssistant />} /></Routes></MemoryRouter>);
 beforeEach(() => { localStorage.clear(); });
-afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
+afterEach(() => { cleanup(); vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 describe("natural assistant result boundary", () => {
+  it("stops polling a terminal run instead of querying forever", async () => {
+    vi.useFakeTimers();
+    let reads = 0;
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+      if (url.endsWith("/assistant/sessions")) return new Response(JSON.stringify({ ...session, latest_run_id: "finished" }));
+      if (url.endsWith("/planning-runs/finished")) { reads++; return new Response(JSON.stringify({ id: "finished", status: "failed", error_message: "provider unavailable" })); }
+      return new Response(JSON.stringify(base));
+    }));
+    await act(async () => { mount(); await vi.advanceTimersByTimeAsync(0); });
+    expect(reads).toBe(1);
+    await act(async () => { await vi.advanceTimersByTimeAsync(10000); });
+    expect(reads).toBe(1);
+  });
   it("shows the candidate's actual tradeoff before adoption", async () => {
     vi.stubGlobal("fetch", vi.fn(async (url: string) => {
       if (url.endsWith("/assistant/sessions")) return new Response(JSON.stringify({ ...session, latest_run_id: "run" }));

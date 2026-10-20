@@ -83,6 +83,7 @@ export function NaturalAssistant({ contextTripId }: { contextTripId?: string } =
   useEffect(() => {
     if (!runId) return;
     let active = true;
+    let interval: ReturnType<typeof setInterval> | undefined;
     const poll = async () => {
       try {
         const value = await naturalRequest<Run>(`/planning-runs/${runId}`);
@@ -91,10 +92,13 @@ export function NaturalAssistant({ contextTripId }: { contextTripId?: string } =
         if (value.status === "awaiting_confirmation") {
           const proposal = await naturalRequest<Revision>(`/planning-runs/${runId}/revision`);
           if (active) setRevision(proposal);
-        } else if (["accepted", "rejected", "cancelled", "failed"].includes(value.status)) setRevision(undefined);
+        } else if (["accepted", "rejected", "cancelled", "failed", "answered"].includes(value.status)) {
+          setRevision(undefined);
+          if (interval !== undefined) clearInterval(interval);
+        }
       } catch (e) { if (active) setError((e as Error).message); }
     };
-    void poll(); const interval = setInterval(() => void poll(), 2500);
+    void poll(); interval = setInterval(() => void poll(), 2500);
     return () => { active = false; clearInterval(interval); };
   }, [runId]);
   async function task(operation: () => Promise<void>) {
