@@ -11,6 +11,18 @@ beforeEach(() => { localStorage.clear(); });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
 describe("natural assistant result boundary", () => {
+  it("shows the candidate's actual tradeoff before adoption", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+      if (url.endsWith("/assistant/sessions")) return new Response(JSON.stringify({ ...session, latest_run_id: "run" }));
+      if (url.endsWith("/planning-runs/run")) return new Response(JSON.stringify({ id: "run", status: "awaiting_confirmation" }));
+      if (url.endsWith("/revision")) return new Response(JSON.stringify({ id: "revision", status: "pending", reason: "调整建议", proposed_snapshot: {
+        activities: [{ candidate_id: "a", day_date: "2026-11-08", planned_start_time: "15:39:00", duration_minutes: 110,
+          reason: "先保留14点预约，再去博物院，可以保留110分钟" }] }, validation_result: {} }));
+      return new Response(JSON.stringify(base));
+    }));
+    mount();
+    expect(await screen.findByText("先保留14点预约，再去博物院，可以保留110分钟")).toBeInTheDocument();
+  });
   it("persists a page decision with the displayed version and reloads the common result", async () => {
     let current = base;
     const requests: { url: string; init?: RequestInit }[] = [];

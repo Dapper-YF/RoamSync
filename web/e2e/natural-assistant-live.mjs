@@ -1,27 +1,32 @@
 import { chromium } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { assertNaturalAdjustment } from './assert-natural-adjustment.mjs';
 
-const out = resolve('../docs/evidence/natural-assistant');
+const out = resolve(process.env.ROAMSYNC_EVIDENCE_DIR || '../docs/evidence/natural-assistant');
 await mkdir(out, { recursive: true });
 const id = new Date().toISOString().replace(/[:.]/g, '-');
-const report = { kind: 'real Chromium / real isolated API / real model / real map; synthetic user', steps: [], consoleErrors: [] };
+const report = { kind: 'real Chromium / real isolated API / real model / real map; synthetic user', started_at: new Date().toISOString(), steps: [], requests: [], consoleErrors: [] };
 const browser = await chromium.launch({ headless: true, channel: 'msedge' });
 const page = await browser.newPage({ viewport: { width: 1440, height: 1050 } });
 page.setDefaultTimeout(20000);
 page.on('pageerror', error => report.consoleErrors.push(error.message));
+page.on('requestfinished', request => {
+  if (request.url().includes('/api/v1/')) report.requests.push({ path: new URL(request.url()).pathname, method: request.method(), timing: request.timing() });
+});
 const record = async (step, detail = {}) => {
-  report.steps.push({ step, ...detail });
+  report.steps.push({ step, at: new Date().toISOString(), ...detail });
   await writeFile(resolve(out, `web-live-${id}.json`), JSON.stringify(report, null, 2));
   console.log(step);
 };
 const send = async (message) => {
+  const start = Date.now();
   await page.getByLabel('告诉助手你的问题或变化').fill(message);
   const finished = page.waitForResponse(r => /\/assistant\/sessions\/[^/]+\/messages$/.test(r.url()) && r.request().method() === 'POST', { timeout: 180000 });
   await page.getByRole('button', { name: '发送', exact: true }).click();
   const response = await finished;
   const body = await response.json();
-  await record('chat', { message, status: response.status(), body });
+  await record('chat', { message, elapsed_ms: Date.now() - start, status: response.status(), body });
   if (!response.ok()) throw Error(`chat failed ${response.status()}`);
   await page.getByRole('button', { name: '发送', exact: true }).waitFor({ state: 'visible' });
   return body;
@@ -86,6 +91,11 @@ try {
   await send('请调整第二天的安排：南京博物院需要12:30以后才能开始。总统府不要动。希望还可以游览110分钟，但如果赶不上预约请缩短博物院，说明取舍。其他日期和留白保持不变，玄武湖保持已选但时间未定，这次不要把它排进具体时间。');
   const adjustment = page.getByRole('region', { name: '局部调整建议' });
   await adjustment.waitFor({ timeout: 240000 });
+  const beforeAccept = await (await page.request.get(`http://127.0.0.1:3019/api/v1/trips/${tid}/arrangement-items`)).json();
+  if (JSON.stringify(beforeAccept) !== JSON.stringify(beforeAdjustment)) throw Error('candidate changed formal result before acceptance');
+  const runs = report.steps.filter(s => s.step === 'chat' && s.body.latest_run_id);
+  const lastRun = runs.at(-1)?.body.latest_run_id;
+  if (lastRun) await record('real-run-observations', { body: await (await page.request.get(`http://127.0.0.1:3019/api/v1/planning-runs/${lastRun}`)).json() });
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: resolve(out, `web-${id}-adjustment.png`), fullPage: true });
   const accepting = page.waitForResponse(r => /\/plan-revisions\/[^/]+\/accept$/.test(r.url()), { timeout: 60000 });
@@ -97,14 +107,18 @@ try {
   await page.reload();
   await page.locator('.natural-activity').filter({ hasText: '南京博物院' }).waitFor();
   const final = await (await page.request.get(`http://127.0.0.1:3019/api/v1/trips/${tid}/arrangement-items`)).json();
-  const changed = final.days.flatMap(d => d.activities).find(a => a.name.includes('博物院'));
-  if (changed.scheduled_time < '12:30:00' || changed.duration_minutes >= 110) throw Error('late-start tradeoff missing');
+  assertNaturalAdjustment(final);
   if (!final.days.flatMap(d => d.activities).some(a => a.schedule_locked && a.scheduled_time === '14:00:00')) throw Error('appointment moved');
   if (JSON.stringify(final.days[0]) !== JSON.stringify(beforeAdjustment.days[0])) throw Error('unrelated free day changed');
   const lake = final.items.find(i => i.label.includes('玄武湖'));
   if (lake.kind !== 'selected' || lake.activity_id) throw Error('unscheduled choice was silently scheduled');
+  for (const item of beforeAdjustment.items) {
+    if (final.items.find(i => i.id === item.id)?.source_ref !== item.source_ref) throw Error('original item provenance changed');
+  }
   await record('final-same-trip-readback', { body: final });
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('button', { name: '刷新已保存内容' }).click();
+  await page.getByRole('complementary', { name: '我的安排' }).getByText('有意保留，不自动填满').waitFor();
   await page.screenshot({ path: resolve(out, `web-${id}-mobile.png`), fullPage: true });
   const overflow = await page.locator('body').evaluate(el => el.scrollWidth > innerWidth);
   if (overflow) throw Error('mobile horizontal overflow');
@@ -113,6 +127,7 @@ try {
   report.result = 'FAIL'; report.failure = error.message;
   await page.screenshot({ path: resolve(out, `web-${id}-failure.png`), fullPage: true }).catch(() => {});
 } finally {
+  report.finished_at = new Date().toISOString();
   await writeFile(resolve(out, `web-live-${id}.json`), JSON.stringify(report, null, 2));
   console.log(report.result);
   await browser.close();
