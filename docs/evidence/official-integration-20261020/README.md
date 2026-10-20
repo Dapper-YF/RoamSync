@@ -5,7 +5,7 @@ Start with integration-summary.json and ../../OFFICIAL_INTEGRATION_20261020.md.
 - Canonical source fast-forward: 25a62cb → 8344b54 → 8c23a93. A following report-only commit is included in final Git HEAD.
 - windows-full.xml / linux-full.xml: final full-source reruns, each 1349 passed and 1 skipped. The favorite case was separately verified in favorites-postgresql.xml.
 - postgresql-core.xml / postgresql-core-matrix.json: 93 real PostgreSQL core cases.
-- web-final.json: 206 passed. web-production-flags-build.log: typecheck/build with official product/context flags and public browser-map configuration.
+- web-final.json: 206 passed. web-production-flags-build.txt: typecheck/build with official product/context flags and public browser-map configuration.
 - migration-compatibility.json: six legacy tables' full-row hashes unchanged around 0037. Only an empty new-table downgrade was tested; no production migration or full production-backup rehearsal.
 - preservation-after-code-merge.json: two local edits plus1856 untracked files byte-identical; source/config changes were not discarded. Full before manifest is archived.
 - lint-comparison.json: 41 pre-existing errors, 27 warnings, zero new error identities.
