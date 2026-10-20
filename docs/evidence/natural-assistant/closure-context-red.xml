@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="18" time="5.601" timestamp="2026-10-20T08:24:57.609073+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_natural_handoff_closure" name="test_original_browser_request_survives_router_rewrite" time="0.478" /><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[\uff09]" time="0.001" /><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[)]" time="0.001" /><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[\u201d]" time="0.000" /><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[\u3011]" time="0.000" /><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[1)]" time="0.000" /><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[\uff08]" time="0.000" /><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[&quot;&quot;]" time="0.001" /><testcase classname="tests.test_natural_handoff_closure" name="test_format_fragment_is_not_an_activity_identity[\u2026]" time="0.001" /><testcase classname="tests.test_natural_handoff_closure" name="test_decorated_real_name_and_unknown_name_keep_grounding" time="0.001" /><testcase classname="tests.test_natural_handoff_closure" name="test_free_interval_is_not_an_unknown_venue" time="0.000" /><testcase classname="tests.test_natural_handoff_closure" name="test_original_request_grounds_scope_and_fixed_appointment" time="0.192" /><testcase classname="tests.test_natural_handoff_closure" name="test_weekday_appointment_is_grounded_and_ambiguity_is_preserved" time="0.001" /><testcase classname="tests.test_natural_handoff_closure" name="test_unchanged_day_is_a_scope_boundary_not_an_activity[\u628a\u7b2c\u4e8c\u5929\u4e0b\u5348\u7559\u7a7a\uff0c\u7b2c\u4e00\u5929\u522b\u52a8\u3002]" time="0.001" /><testcase classname="tests.test_natural_handoff_closure" name="test_unchanged_day_is_a_scope_boundary_not_an_activity[\u7b2c\u4e00\u5929\u522b\u52a8\uff0c\u53ea\u8c03\u6574\u7b2c\u4e8c\u5929\u4e0b\u5348\u3002]" time="0.001" /><testcase classname="tests.test_natural_handoff_closure" name="test_true_pronoun_ambiguity_is_not_suppressed" time="0.001" /><testcase classname="tests.test_natural_handoff_closure" name="test_unbound_flexible_conversation_does_not_offer_unselected_old_trips" time="0.171"><failure message="AssertionError: assert [{'destinatio...7', ...}, ...] == []&#10;  &#10;  Left contains 137 more items, first extra item: {'destination': '苏州', 'end_date': '2027-03-02', 'id': '743ca3c3-e713-4fe6-aca4-95bd3c45d279', 'start_date': '2027-03-01', ...}&#10;  Use -v to get more diff">tests\test_natural_handoff_closure.py:134: in test_unbound_flexible_conversation_does_not_offer_unselected_old_trips
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_natural_handoff_closure.py:124: in scenario
+    r = await c.post(f"/api/v1/assistant/sessions/{session['id']}/messages", json={
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx\_client.py:1859: in post
+    return await self.request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx\_client.py:1540: in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx\_client.py:1629: in send
+    response = await self._send_handling_auth(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx\_client.py:1657: in _send_handling_auth
+    response = await self._send_handling_redirects(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx\_client.py:1694: in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx\_client.py:1730: in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx\_transports\asgi.py:170: in handle_async_request
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:2734: in app
+    await route.handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:1780: in handle
+    await self.original_router.handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:2789: in handle
+    await included_router._handle_selected(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:1800: in _handle_selected
+    await original_route.handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:1279: in handle
+    await app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:706: in app
+    raw_response = await run_endpoint_function(
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:352: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\assistant_routes.py:66: in message_endpoint
+    return await respond(send_message(db, session_id, payload.message.strip(), payload.message_id,
+app\assistant_routes.py:43: in respond
+    return session_response(await operation)
+                            ^^^^^^^^^^^^^^^
+app\dialogue_observation.py:82: in wrapped
+    result = await operation(db, session_id, message, message_id, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\assistant_service.py:565: in send_message
+    decision = await router.decide(context)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_natural_handoff_closure.py:117: in decide
+    assert context['trips'] == []
+E   AssertionError: assert [{'destinatio...7', ...}, ...] == []
+E
+E     Left contains 137 more items, first extra item: {'destination': '苏州', 'end_date': '2027-03-02', 'id': '743ca3c3-e713-4fe6-aca4-95bd3c45d279', 'start_date': '2027-03-01', ...}
+E     Use -v to get more diff</failure></testcase><testcase classname="tests.test_natural_handoff_closure" name="test_wrong_choice_authorization_returns_422_without_mutation" time="0.248"><failure message="AssertionError: Internal Server Error&#10;assert 500 == 422&#10; +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code">tests\test_natural_handoff_closure.py:150: in test_wrong_choice_authorization_returns_422_without_mutation
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_natural_handoff_closure.py:148: in scenario
+    assert r.status_code == 422, r.text
+E   AssertionError: Internal Server Error
+E   assert 500 == 422
+E    +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code</failure></testcase></testsuite></testsuites>

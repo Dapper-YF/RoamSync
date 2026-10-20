@@ -109,3 +109,60 @@ def test_true_pronoun_ambiguity_is_not_suppressed():
     errors = []
     assert _resolve_protected_activities('它不要动', [], None, errors) == []
     assert errors == ['ambiguous_activity_reference:它']
+
+
+def test_unbound_flexible_conversation_does_not_offer_unselected_old_trips(sample, monkeypatch):
+    from app.assistant_service import AssistantRouter, ToolDecision
+    async def decide(self, context):
+        assert context['trips'] == []
+        return ToolDecision(tool='reply', reply='可以讨论新的旅行')
+    monkeypatch.setattr(AssistantRouter, 'decide', decide)
+    async def scenario():
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url='http://test') as c:
+            session = (await c.post('/api/v1/assistant/sessions', json={})).json()
+            try:
+                r = await c.post(f"/api/v1/assistant/sessions/{session['id']}/messages", json={
+                    'message':'我决定去南京两天，请形成允许留白的旅行安排建议。','message_id':str(uuid4()),
+                    'context':{'version':'assistant-context-v1','topic_id':'new-trip','prefer_flexible':True}})
+                assert r.status_code == 200, r.text
+                assert r.json()['trip_id'] is None
+            finally:
+                from app.database import AssistantSession
+                async with sample.sessions() as db:
+                    await db.delete(await db.get(AssistantSession, session['id']))
+                    await db.commit()
+    asyncio.run(scenario())
+
+
+def test_wrong_choice_authorization_returns_422_without_mutation(sample):
+    from test_flexible_arrangement import create_item
+    async def scenario():
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app, raise_app_exceptions=False), base_url='http://test') as c:
+            assert (await create_item(c, sample, 1, kind='selected', label='玄武湖')).status_code == 201
+            before = (await c.get(f'/api/v1/trips/{sample.trip_id}/arrangement-items')).json()
+            session = (await c.post('/api/v1/assistant/sessions', json={'trip_id':str(sample.trip_id)})).json()
+            mid = str(uuid4())
+            r = await c.post(f"/api/v1/assistant/sessions/{session['id']}/messages", json={'message':'取消玄武湖','message_id':mid,
+                'context':{'version':'assistant-context-v1','topic_id':'wrong-auth','prefer_flexible':True,'read_trip_id':str(sample.trip_id),
+                    'action_target':{'trip_id':str(sample.trip_id),'expected_version':2,'operation':'plan_trip','authorization_message_id':mid}}})
+            assert r.status_code == 422, r.text
+            assert (await c.get(f'/api/v1/trips/{sample.trip_id}/arrangement-items')).json() == before
+    asyncio.run(scenario())
+
+
+def test_reaffirmed_optional_choice_is_a_bounded_edit_not_planning(sample):
+    from test_flexible_arrangement import create_item
+    async def scenario():
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url='http://test') as c:
+            assert (await create_item(c, sample, 1, kind='selected', label='玄武湖')).status_code == 201
+            session = (await c.post('/api/v1/assistant/sessions', json={'trip_id':str(sample.trip_id)})).json()
+            mid = str(uuid4())
+            response = await c.post(f"/api/v1/assistant/sessions/{session['id']}/messages", json={'message':'玄武湖还是备选，不要排进去','message_id':mid,
+                'context':{'version':'assistant-context-v1','topic_id':'optional','prefer_flexible':True,'read_trip_id':str(sample.trip_id),
+                    'action_target':{'trip_id':str(sample.trip_id),'expected_version':2,'operation':'edit_arrangement','authorization_message_id':mid}}})
+            assert response.status_code == 200, response.text
+            assert response.json()['messages'][-1]['tool']=='arrangement_edit'
+            assert response.json()['messages'][-1]['run_id'] is None
+            state=(await c.get(f'/api/v1/trips/{sample.trip_id}/arrangement-items')).json()
+            assert state['items'][0]['kind']=='optional' and state['items'][0]['activity_id'] is None
+    asyncio.run(scenario())

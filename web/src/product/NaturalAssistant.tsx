@@ -113,7 +113,8 @@ export function NaturalAssistant({ contextTripId }: { contextTripId?: string } =
     const message = draft.trim();
     await task(async () => {
       const mid = crypto.randomUUID();
-      const simple = /改成备选|改为备选|设为备选|作为备选|^(?:请)?保留|^(?:今天)?(?:不想去|不去|取消)/.test(message);
+      const simple = /改成备选|改为备选|设为备选|作为备选|^(?:请)?保留|^(?:今天)?(?:不想去|不去|取消)/.test(message)
+        || /^[^，。；]+(?:还是|仍是|仍为)备选(?:[，,](?:不要|别)(?:把它)?排进去)?[。！! ]*$/.test(message);
       const adopt = /^(?:就按这份来|就这样安排|采用这份方案|确认采用)[。！! ]*$/.test(message);
       const context = { version: "assistant-context-v1", topic_id: topic, surface: tripId ? "trip" : "assistant", prefer_flexible: true,
         ...(tripId ? { read_trip_id: tripId, browsing_city: arrangement?.trip.destination,

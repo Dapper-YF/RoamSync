@@ -43,7 +43,7 @@ describe("natural assistant result boundary", () => {
     expect(screen.queryByText("trip_version_conflict")).not.toBeInTheDocument();
   });
 
-  it("sends chat changes against the same displayed Trip and message identity", async () => {
+  it.each(["把玄武湖改成备选", "玄武湖还是备选，不要排进去"])("sends %s against the same displayed Trip and message identity", async (message) => {
     const messages: Record<string, unknown>[] = [];
     vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
       if (url.endsWith("/assistant/sessions")) return new Response(JSON.stringify(session));
@@ -52,7 +52,7 @@ describe("natural assistant result boundary", () => {
     }));
     mount();
     await screen.findByText("玄武湖");
-    fireEvent.change(screen.getByLabelText("告诉助手你的问题或变化"), { target: { value: "把玄武湖改成备选" } });
+    fireEvent.change(screen.getByLabelText("告诉助手你的问题或变化"), { target: { value: message } });
     await waitFor(() => expect(screen.getByRole("button", { name: "发送" })).toBeEnabled());
     fireEvent.click(screen.getByRole("button", { name: "发送" }));
     await waitFor(() => expect(messages).toHaveLength(1));

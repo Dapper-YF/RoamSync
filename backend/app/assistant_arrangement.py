@@ -13,6 +13,7 @@ def choice_command(message):
     text = message.strip().rstrip("。！! ")
     for pattern, kind in [
         (r"(?:请)?(?:把)?(.+?)(?:改成|改为|设为|作为)备选", "optional"),
+        (r"(.+?)(?:还是|仍是|仍为)备选(?:[，,](?:不要|别)(?:把它)?排进去)?", "optional"),
         (r"(?:请)?(?:保留|确定要去)(.+?)(?:[，,](?:其他|其余)(?:暂时)?不定)?", "selected"),
         (r"(?:今天)?(?:不想去|不去|取消)(.+?)(?:了)?", "cancelled"),
     ]:

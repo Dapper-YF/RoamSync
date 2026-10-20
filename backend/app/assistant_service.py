@@ -314,7 +314,12 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
     if context is not None:
         from app.assistant_arrangement import apply_arrangement_message
         incoming = ContextEnvelope.model_validate(context)
-        reply = await apply_arrangement_message(db, row, message, message_id, incoming)
+        try:
+            reply = await apply_arrangement_message(db, row, message, message_id, incoming)
+        except ValueError as exc:
+            # Bounded command validation uses ValueError, as does the existing
+            # action-target gate below. Invalid authority is a client error.
+            raise AssistantToolError(str(exc)) from exc
         if reply is not None:
             row.messages = [*row.messages, {"id": str(message_id), "user": message, "assistant": reply,
                 "context": incoming.model_dump(mode="json"), "tool": "arrangement_edit", "run_id": None}]
@@ -541,11 +546,12 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
     # input and cannot become a second entity-resolution channel.
     history = [{key: value for key, value in m.items() if key not in {"companion_result", "planning_brief"}}
                for m in history]
+    visible_trips = [] if envelope and envelope.prefer_flexible and current is None else trips
     context = {"message": message, "current_local_date": datetime.now(ZoneInfo(current.timezone if current else "Asia/Shanghai")).date().isoformat(),
         "prefer_flexible": bool(envelope and envelope.prefer_flexible),
         "current_trip_id": str(current.id) if current else None, "pending_action": row.pending_action, "history": history,
         "latest_planning_state": {"status": previous[0].status, "pending_interrupt": previous[0].pending_interrupt} if previous else None,
-        "trips": [{"id": str(t.id), "title": t.title, "destination": t.destination, "start_date": str(t.start_date), "end_date": str(t.end_date), "total_budget_fen": t.total_budget_fen} for t in trips if not t.archived_at or (current and current.id == t.id)]}
+        "trips": [{"id": str(t.id), "title": t.title, "destination": t.destination, "start_date": str(t.start_date), "end_date": str(t.end_date), "total_budget_fen": t.total_budget_fen} for t in visible_trips if not t.archived_at or (current and current.id == t.id)]}
     if current:
         plan = await build_planning_context(db, current.id)
         context["current_plan"] = [{"date": str(day.date), "day_id": str(day.id), "activities": [{"name": a.display_name, "time": str(a.scheduled_time)} for a in day.activities]} for day in plan.days]
