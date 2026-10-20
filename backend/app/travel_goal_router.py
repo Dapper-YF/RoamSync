@@ -43,7 +43,9 @@ def route_travel_goal(message: str, history: list[dict] | None = None, *, pendin
     previous = bool(re.search(r"刚才|之前|前面|第.{1,4}个建议|上面|那个安排|你推荐|^那", text) and history)
     references = list(dict.fromkeys(re.findall(r'[《「“"]([^》」”"]{1,40})[》」”"]', text)))[:20]
     common = dict(referenced_entities=references, referenced_previous_decision=previous,
-        live_fact_likely_required=bool(re.search(r"天气|营业|开放|闭馆|票价|门票|路况|实时|当前GPS|现在|今天", text)))
+        live_fact_likely_required=bool(re.search(r"天气|营业|开放|闭馆|票价|门票|路况|实时|当前GPS|现在|今天", text)) and not (
+            bool(re.search(r"(?:我|自己).{0,25}(?:累了|太累|困了|没精神|想休息|不想走)", text))
+            and not re.search(r"天气|营业|开放|闭馆|门票|路况|排队|人多|预约|能进|能去", text)))
     if _EXECUTION.search(text) and not _QUESTION.search(text) and not _NEGATED.search(text):
         return TravelGoalRouting(goal_type="trip_execution", target_runtime="execution", confidence=0.98,
             mutation_requested=False, trip_context_required=True, knowledge_required=False,

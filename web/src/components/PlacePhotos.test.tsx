@@ -21,6 +21,7 @@ it('keeps attribution and gracefully handles an image failing without hiding con
   expect(photo.getAttribute('loading')).toBe('lazy');
   fireEvent.error(photo);
   expect(screen.getByRole('status').textContent).toContain('地点信息仍可使用');
+  fireEvent.click(screen.getByLabelText('图片来源与许可'));
   expect(screen.getByRole('link', {name:'CC BY-SA 4.0'}).getAttribute('href')).toBe(image.license_url);
 });
 it('browses multiple photos and shows their individual credits', () => {
@@ -28,5 +29,7 @@ it('browses multiple photos and shows their individual credits', () => {
   render(<PlaceGallery photos={photos} name="公园"/>);
   fireEvent.click(screen.getByRole('button',{name:'查看第2张照片'}));
   expect(screen.getByRole('img').getAttribute('alt')).toBe('第二视角');
-  expect(screen.getByRole('link',{name:/Another author/})).toBeTruthy();
+  expect(screen.getByText(/Another author/)).not.toBeVisible();
+  fireEvent.click(screen.getByLabelText('图片来源与许可'));
+  expect(screen.getByRole('link',{name:/Another author/})).toBeVisible();
 });

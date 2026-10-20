@@ -13,6 +13,8 @@ it("shows a reviewed place photo with attribution without requiring its name in 
     images: [{ place_id: "p1", topic: "玄武湖", url: "/api/v1/media/place-images/park-1-960.jpg", source_url: "https://commons.wikimedia.org/wiki/File:park.jpg", description: "玄武湖实景", usage_basis: "reviewed_commons_license", attribution: "Photo Author", license_name: "CC BY-SA 4.0", license_url: "https://creativecommons.org/licenses/by-sa/4.0/" }] }} />);
   expect(screen.getByRole("img", { name: "玄武湖实景" })).toBeVisible();
   expect(screen.getByRole("link", { name: "CC BY-SA 4.0" })).toHaveAttribute("href", "https://creativecommons.org/licenses/by-sa/4.0/");
+  expect(screen.getByText(/Photo Author/)).not.toBeVisible();
+  fireEvent.click(screen.getByLabelText("图片来源与许可"));
   expect(screen.getByText(/Photo Author/)).toBeVisible();
 });
 const search: AnswerSearch = { status: "available", sources: [{ url: "https://example.org/food", title: "成都美食" }], images: [{ url: "https://images.example.org/hotpot.jpg", source_url: "https://images.example.org/hotpot.jpg", description: "成都火锅" }] };

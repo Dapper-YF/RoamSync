@@ -1,3 +1,4 @@
+import { AssistantPlaceMap } from "./AssistantPlaceMap";
 import { PlaceCover } from '../components/PlacePhotos';
 import { approvedPhotos } from '../data/placeContentRepository';
 import {
@@ -655,11 +656,12 @@ function AssistantConversation({ drawer = false }: { drawer?: boolean }) {
                       message.assistant,
                   )} search={(message.read_tools as { web_search?: AnswerSearch } | undefined)?.web_search} />
                 </div>
-                {!!message.place_cards?.length && (
+                {!!message.place_cards?.some(c => c.reason_kind === "retrieved_reference") && <AssistantPlaceMap cards={message.place_cards} />}
+                {!!message.place_cards?.some(c => c.reason_kind !== "retrieved_reference") && (
                   <div className="travel-assistant-suggestions">
                     {message.place_cards
                       .filter((card) =>
-                        /^[0-9a-f-]{36}$/i.test(card.place.place_id),
+                        card.reason_kind !== "retrieved_reference" && /^[0-9a-f-]{36}$/i.test(card.place.place_id),
                       )
                       .map((card) => (
                         <span key={card.place.place_id} className={card.reason_kind === "retrieved_reference" ? "assistant-retrieved-place" : undefined}>
@@ -672,14 +674,6 @@ function AssistantConversation({ drawer = false }: { drawer?: boolean }) {
                             {card.place.name} · {card.place.city}
                             <ArrowUpRight size={13} />
                           </Link>
-                          {card.reason_kind === "retrieved_reference" && <div className="assistant-place-facts">
-                            <p>{card.place.address || "地址暂无"}</p>
-                            <p>{card.place.rating != null ? `高德评分 ${card.place.rating}/5` : "暂无评分"} · {card.place.reference_cost_yuan != null ? `参考人均 ¥${card.place.reference_cost_yuan}` : "暂无参考消费"}</p>
-                            {card.place.opening_hours_reference && <p>高德标注时间：{card.place.opening_hours_reference}</p>}
-                            {!!card.place.provider_tags?.length && <p>地点标签：{card.place.provider_tags.slice(0, 4).join("、")}</p>}
-                            <Link to={`/places/${encodeURIComponent(card.place.place_id)}/map`}>地图位置</Link>
-                            <small>供应商参考信息，以门店实际情况为准。</small>
-                          </div>}
                           {context.place &&
                             card.place.place_id !== context.place.id &&
                             import.meta.env.VITE_ASSISTANT_CONTEXT_CONTRACT ===

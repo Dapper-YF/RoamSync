@@ -22,8 +22,8 @@ function SearchImage({ image }: { image: AnswerSearch["images"][number] }) {
   const [failed, setFailed] = useState(false);
   const reviewedLocal = image.usage_basis === "reviewed_commons_license" && /^\/api\/v1\/media\/place-images\/[a-z0-9-]+\.jpg$/.test(image.url) && !!image.license_url && safeUrl(image.license_url);
   if (failed || (!safeUrl(image.url) && !reviewedLocal) || !safeUrl(image.source_url)) return null;
-  const caption = image.topic ? `${image.topic}${image.description.startsWith(image.topic + "参考图") ? "参考图" : ""}` : image.description.slice(0, 80);
-  return <figure><a href={image.source_url} target="_blank" rel="noopener noreferrer"><img src={image.url} alt={image.description} loading="lazy" referrerPolicy="no-referrer" onError={() => setFailed(true)} /></a><figcaption>{caption} · <a href={image.source_url} target="_blank" rel="noopener noreferrer">查看原图</a>{reviewedLocal && <small> · {image.attribution} · <a href={image.license_url} target="_blank" rel="noopener noreferrer">{image.license_name || "授权说明"}</a>{image.changes ? ` · ${image.changes}` : ""}</small>}</figcaption></figure>;
+  const reference = !!image.topic && image.description.startsWith(image.topic + "参考图");
+  return <figure><a href={image.source_url} target="_blank" rel="noopener noreferrer"><img src={image.url} alt={image.description} loading="lazy" referrerPolicy="no-referrer" onError={() => setFailed(true)} /></a>{reference && <span className="assistant-photo-kind">参考图</span>}<details className="assistant-photo-credit"><summary aria-label="图片来源与许可">ⓘ</summary><small>{reviewedLocal ? image.attribution : image.description} · <a href={image.source_url} target="_blank" rel="noopener noreferrer">图片来源</a>{reviewedLocal && <> · <a href={image.license_url} target="_blank" rel="noopener noreferrer">{image.license_name || "授权说明"}</a>{image.changes ? ` · ${image.changes}` : ""}</>}</small></details></figure>;
 }
 export function AssistantAnswer({ text, search }: { text: string; search?: AnswerSearch }) {
   const paragraphs = text.split(/\n\s*\n/);

@@ -455,7 +455,7 @@ export interface AssistantSession {
       route_request?: { origin_place_id: string; destination_place_id: string; mode: "walk" | "driving" } | null };
     read_tools?: { comparison?: { status: "available" | "unavailable"; items: Array<{place_id:string;name:string;city:string;address:string|null;rating:number|null;reference_cost_yuan:number|null;source:string;retrieved_at:string}>;missing_count:number;semantics:"provider_reference_not_live_quote" }; route?: { status: "available" | "unavailable"; result?: { mode: "walk" | "driving"; distance_meters: number; duration_seconds: number } } };
     place_cards?: Array<{
-      place: { place_id: string; name: string; city: string; source: string; retrieved_at: string; address?: string | null; rating?: number | null; reference_cost_yuan?: number | null; opening_hours_reference?: string | null; provider_tags?: string[]; images?: import('../data/placeContentRepository').ContentImage[] };
+      place: { place_id: string; name: string; city: string; source: string; retrieved_at: string; address?: string | null; rating?: number | null; reference_cost_yuan?: number | null; opening_hours_reference?: string | null; provider_tags?: string[]; longitude?: number | null; latitude?: number | null; coordinate_system?: string; images?: import('../data/placeContentRepository').ContentImage[] };
       role: "discussed" | "recommendation"; suggestion_ids: string[];
       detail_path: string; reason_kind: "assistant_advice_unverified" | "retrieved_reference";
     }>;

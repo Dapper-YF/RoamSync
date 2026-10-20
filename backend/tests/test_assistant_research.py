@@ -80,7 +80,88 @@ def test_real_reference_cannot_authorize_invented_prices_or_reviews():
     async def answer(*args):
         return ResearchAnswer(paragraphs=[{'text':'人均只要99元。用户都说不排队。高德参考评分4.6。本次资料没有可展示的图片。', 'place_index':1,
             'supports':[{'source_id':'poi_1','snippet_id':'s1'}]}])
-    bundle=asyncio.run(research(None,'火锅',[],ContextEnvelope(browsing_city='成都'),Port(),judge=judge,search=search,answer=answer))
+    bundle=asyncio.run(research(None,'火锅评分',[],ContextEnvelope(browsing_city='成都'),Port(),judge=judge,search=search,answer=answer))
     assert '99' not in bundle['assistant'] and '不排队' not in bundle['assistant'] and '没有可展示' not in bundle['assistant']
     assert '4.6' in bundle['assistant']
     assert set(bundle['read_tools']['web_search']['answer_validation']) == {'unsupported_numeric_claim','review_claim_without_review_source','model_media_availability_claim'}
+
+
+def test_prose_projection_omits_unasked_provider_parameters_but_keeps_requested_fields():
+    from app.assistant_research import prose_place_reference
+    experience=prose_place_reference(PLACE, '适合慢慢逛吗', 'attraction')
+    assert PLACE.address not in experience and '4.6' not in experience
+    practical=prose_place_reference(PLACE, '地址在哪，评分和人均多少', 'food')
+    assert PLACE.address in practical and '4.6' in practical and '68' in practical
+
+
+def test_explicit_named_nearby_anchor_is_resolved_without_assuming_gps():
+    park=PLACE.model_copy(update={'name':'人民公园','place_id':uuid.uuid4(),'longitude':104.05,'latitude':30.65})
+    class NamedPort:
+        async def search(self, **kw):
+            if kw['query']=='人民公园': return [park]
+            assert kw['near']==park
+            return [PLACE]
+    async def judge(*a): return LookupIntent(needed=True,city='成都',query='早餐',nearby=True,near_name='人民公园',read_pages=False)
+    async def answer(*a): return ResearchAnswer()
+    result=asyncio.run(research(None,'成都人民公园附近吃早餐',[],ContextEnvelope(),NamedPort(),judge=judge,answer=answer))
+    assert result['place_cards'] and '请指定' not in result['assistant']
+
+
+def test_personal_fatigue_is_not_a_live_venue_status_question():
+    from app.travel_goal_router import route_travel_goal
+    from app.companion_contracts import CompanionContext
+    from app.companion_information import determine_information_need
+    text='我本来今天想去玄武湖，现在累了不想走'
+    goal=route_travel_goal(text,[])
+    need=determine_information_need(CompanionContext(current_message=text,travel_goal=goal),[])
+    assert not need.live_fact_required
+    assert route_travel_goal('现在人多吗',[]).live_fact_likely_required
+
+
+def test_named_attraction_selects_one_main_poi_not_duplicate_alias_cards():
+    main=PLACE.model_copy(update={'name':'玄武湖景区','category':'attraction','city':'南京市'})
+    alias=main.model_copy(update={'name':'玄武湖','place_id':uuid.uuid4()})
+    class AliasPort:
+        async def search(self, **kw): return [alias,main]
+    async def judge(*a): return LookupIntent(needed=True,city='南京',query='玄武湖',names=['玄武湖'],category='attraction',read_pages=False)
+    async def answer(*a): return ResearchAnswer()
+    result=asyncio.run(research(None,'南京玄武湖适合散步吗',[],ContextEnvelope(),AliasPort(),judge=judge,answer=answer))
+    assert [p['place']['name'] for p in result['place_cards']]==['玄武湖景区']
+
+
+def test_precise_name_keeps_city_prefix_that_is_part_of_the_place_name():
+    museum=PLACE.model_copy(update={'name':'南京博物院','city':'南京市','category':'attraction'})
+    class MuseumPort:
+        async def search(self, **kw):
+            assert kw['query']=='南京博物院'
+            return [museum]
+    async def judge(*a): return LookupIntent(needed=True,city='南京',query='南京博物院',names=['南京博物院'],category='attraction',read_pages=False)
+    async def answer(*a): return ResearchAnswer()
+    result=asyncio.run(research(None,'南京博物院值得去吗',[],ContextEnvelope(),MuseumPort(),judge=judge,answer=answer))
+    assert len(result['place_cards'])==1
+
+
+def test_explicit_comparison_can_cite_both_full_place_identities():
+    other=PLACE.model_copy(update={'name':'皇城老妈火锅(皇城店)','place_id':uuid.uuid4(),'reference_cost_yuan':115})
+    class Both:
+        async def search(self,**kw): return [other] if '皇城老妈' in kw['query'] else [PLACE]
+    async def judge(*a): return LookupIntent(needed=True,city='成都',names=[PLACE.name,other.name],read_pages=False)
+    async def answer(*a): return ResearchAnswer(paragraphs=[{'text':PLACE.name+'参考人均68元，'+other.name+'参考人均115元。','place_index':1,'supports':[{'source_id':'poi_1','snippet_id':'s1'},{'source_id':'poi_2','snippet_id':'s1'}]}])
+    result=asyncio.run(research(None,'成都'+PLACE.name+'和'+other.name+'怎么选',[],ContextEnvelope(),Both(),judge=judge,answer=answer))
+    assert '[1] [2]' in result['assistant'] and not result['read_tools']['web_search']['answer_validation']
+
+
+def test_missing_comparison_subject_cannot_be_ranked_as_worse():
+    async def judge(*a): return LookupIntent(needed=True,city='成都',names=[PLACE.name,'皇城老妈火锅(皇城店)'],read_pages=False)
+    async def answer(*a): raise AssertionError('do not rank incomplete comparison')
+    result=asyncio.run(research(None,'成都'+PLACE.name+'和皇城老妈火锅(皇城店)怎么选',[],ContextEnvelope(),Port(),judge=judge,answer=answer))
+    assert '暂时不能做完整比较' in result['assistant']
+    assert 'comparison_incomplete' in result['read_tools']['web_search']['answer_validation']
+
+
+def test_public_page_does_not_authorize_current_booking_or_walking_guarantees():
+    async def judge(*a): return LookupIntent(needed=True,city='成都',query='火锅',read_pages=False)
+    async def answer(*a): return ResearchAnswer(paragraphs=[{'text':'每晚六点放票，必须提前实名预约。全逛步数约两万步，强度很低。可以先看地点详情。','place_index':1,'supports':[{'source_id':'poi_1','snippet_id':'s1'}]}])
+    result=asyncio.run(research(None,'成都火锅预约要求',[],ContextEnvelope(),Port(),judge=judge,answer=answer))
+    assert '每晚六点' not in result['assistant'] and '强度很低' not in result['assistant']
+    assert '没有通过官方渠道确认' in result['assistant']

@@ -1,5 +1,21 @@
 # RoamSync Agent v1 architecture contract
 
+
+## Question-focused discovery and quality audit (2026-10-20)
+
+The bounded read adapter now minimizes POI fields sent to prose generation,
+resolves explicitly named nearby anchors without assuming GPS, preserves city
+prefixes in canonical names, and permits a comparison paragraph to cite multiple
+fully named current candidates with evidence for each. Missing comparison
+subjects cannot be ranked as worse. Current booking rules and unverified walking
+guarantees are not authorized by ordinary travel pages. Trip/Validator/Accept
+permissions and message persistence remain unchanged. Personal fatigue alone
+is not a request for live venue status; existing real-time fact gates remain.
+Chat maps reuse ExploreMap and canonical GCJ02 coordinates; photo attribution
+remains available through an on-image disclosure. Evidence and known failures:
+docs/CONVERSATION_QUALITY_20261020.md. Reply quality remains PARTIAL, not a new
+claim of comprehensive fact validation.
+
 ## Bounded read-only discovery and page evidence (2026-10-20)
 
 The assistant may select an actual POI lookup from natural requests, using the
