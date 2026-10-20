@@ -321,6 +321,11 @@ async def research(settings, message, history, envelope, port, *, judge=determin
                 clean_text = re.sub(r"\b(?:web_\d+_\d+|poi_\d+)\b", "", clean_text)
                 sentences = []
                 for sentence in re.split(r"(?<=[。！？])", clean_text):
+                    # Media is a server/UI decision. The prose model receives
+                    # text evidence, so it cannot attest image availability.
+                    if re.search(r"(?:资料|这次|本次|提供|展示|没有|未取得|未获取|未包含|无法|不含).{0,40}(?:图片|照片|配图)|(?:图片|照片|配图).{0,40}(?:展示|提供|没有|无法|查看)", sentence):
+                        issues.append("model_media_availability_claim")
+                        continue
                     if not numbers(sentence).issubset(numbers(supporting_text)):
                         issues.append("unsupported_numeric_claim")
                         continue

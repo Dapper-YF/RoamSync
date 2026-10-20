@@ -78,9 +78,9 @@ def test_real_reference_cannot_authorize_invented_prices_or_reviews():
     async def judge(*args): return LookupIntent(needed=True, query='火锅')
     async def search(*args, **kwargs): return SearchFact('tavily', 'today', 'q', {'results': []})
     async def answer(*args):
-        return ResearchAnswer(paragraphs=[{'text':'人均只要99元。用户都说不排队。高德参考评分4.6。', 'place_index':1,
+        return ResearchAnswer(paragraphs=[{'text':'人均只要99元。用户都说不排队。高德参考评分4.6。本次资料没有可展示的图片。', 'place_index':1,
             'supports':[{'source_id':'poi_1','snippet_id':'s1'}]}])
     bundle=asyncio.run(research(None,'火锅',[],ContextEnvelope(browsing_city='成都'),Port(),judge=judge,search=search,answer=answer))
-    assert '99' not in bundle['assistant'] and '不排队' not in bundle['assistant']
+    assert '99' not in bundle['assistant'] and '不排队' not in bundle['assistant'] and '没有可展示' not in bundle['assistant']
     assert '4.6' in bundle['assistant']
-    assert set(bundle['read_tools']['web_search']['answer_validation']) == {'unsupported_numeric_claim','review_claim_without_review_source'}
+    assert set(bundle['read_tools']['web_search']['answer_validation']) == {'unsupported_numeric_claim','review_claim_without_review_source','model_media_availability_claim'}
