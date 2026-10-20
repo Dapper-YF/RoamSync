@@ -51,7 +51,8 @@ assert count() == before
 migrate("upgrade", "head")
 assert count() == before
 engine.dispose()
-out = ROOT.parent / "docs/evidence/natural-assistant/migration.json"
+out = ROOT.parent / os.environ.get("ROAMSYNC_MIGRATION_EVIDENCE", "docs/evidence/natural-assistant/migration.json")
+out.parent.mkdir(parents=True, exist_ok=True)
 out.write_text(json.dumps({"database": "roamsync_arrangement_migration_test", "sequence": ["0036", "0037", "0036", "0037"],
     "before": before, "after_each_step": after, "result": "PASS", "scope": "synthetic isolated database only; no populated arrangement downgrade"}, indent=2), encoding="utf-8")
 print("PASS: legacy Trip/day data survived upgrade, empty-table downgrade and re-upgrade")

@@ -1,0 +1,3490 @@
+{
+  "kind": "real Chromium / real isolated API / real model / real map; synthetic user",
+  "started_at": "2026-10-20T00:41:01.109Z",
+  "steps": [
+    {
+      "step": "chat",
+      "at": "2026-10-20T00:41:12.583Z",
+      "message": "第一次去南京，南京博物院和玄武湖的体验有什么区别？先只聊聊，不创建旅行。",
+      "elapsed_ms": 10153,
+      "status": 200,
+      "body": {
+        "id": "3a1c25d7-3093-4cd8-91fa-dc8114fef0bb",
+        "trip_id": null,
+        "messages": [
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+            "user": "第一次去南京，南京博物院和玄武湖的体验有什么区别？先只聊聊，不创建旅行。",
+            "assistant": "两处风格差异很大，可以这样理解：\n\n南京博物院是室内大型博物馆体验，核心是文物和历史——馆藏从史前玉器、青铜器到明清书画、民国街景展区都很丰富，节奏偏“看与学”，适合喜欢深度历史文化、愿意花上半天慢慢逛的人。人多时部分热门展厅可能要排队，开放情况建议出行前确认。\n\n玄武湖则是户外湖泊公园体验，核心是放松和风景——环湖散步、看城墙与湖面相映，适合慢节奏休闲、拍照、散步骑行。强度低，随时可进可出，体验感更多取决于天气。\n\n简单说：想“读南京的历史”就去博物院，想“感受南京的日常呼吸感”就去玄武湖。两者不冲突，不少游客会把博物院安排在白天、傍晚去玄武湖收尾。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "destination_exploration",
+              "confidence": 0.93,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_destination_exploration"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "基于常识比较南京博物院与玄武湖两类体验差异：室内人文展馆 vs 户外城市湖泊公园，不涉及实时开放信息，不创建行程。",
+              "response_text": "两处风格差异很大，可以这样理解：\n\n南京博物院是室内大型博物馆体验，核心是文物和历史——馆藏从史前玉器、青铜器到明清书画、民国街景展区都很丰富，节奏偏“看与学”，适合喜欢深度历史文化、愿意花上半天慢慢逛的人。人多时部分热门展厅可能要排队，开放情况建议出行前确认。\n\n玄武湖则是户外湖泊公园体验，核心是放松和风景——环湖散步、看城墙与湖面相映，适合慢节奏休闲、拍照、散步骑行。强度低，随时可进可出，体验感更多取决于天气。\n\n简单说：想“读南京的历史”就去博物院，想“感受南京的日常呼吸感”就去玄武湖。两者不冲突，不少游客会把博物院安排在白天、傍晚去玄武湖收尾。",
+              "goal_type": "destination_exploration",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_ad96f6a1059a5884b2b785fdca14c917",
+                  "suggestion_type": "experience",
+                  "title": "南京博物院深度参观",
+                  "summary": "以馆藏文物和民国街景为主的室内博物馆体验，适合历史文化爱好者，建议预留半天。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "南京博物院深度参观"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "首次到南京了解六朝古都文化的代表性入口",
+                    "室内不受天气影响，可慢速细看"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:41:12.496122Z",
+                  "conversation_turn_id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_088d2a3fcffc53b8a0fbf27e9c418bf1",
+                  "suggestion_type": "experience",
+                  "title": "玄武湖环湖漫步",
+                  "summary": "户外城市湖泊公园，看湖光与明城墙相映，适合休闲散步和拍照。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "玄武湖环湖漫步"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "节奏轻松，随时可进可出",
+                    "傍晚湖景与城墙组合出片"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:41:12.496122Z",
+                  "conversation_turn_id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_bce89e987408560eb463e5bb623227f1",
+                  "suggestion_type": "strategy",
+                  "title": "先馆后湖的组合思路",
+                  "summary": "白天参观博物院，傍晚转场玄武湖散步收尾，两种体验互补。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "先馆后湖的组合思路"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "动与静结合，避免一天节奏单一",
+                    "两地在市区，转场相对顺路"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:41:12.496122Z",
+                  "conversation_turn_id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": null,
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "advisory",
+                "requested_fact_topics": []
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          }
+        ],
+        "pending_action": null,
+        "latest_run_id": null
+      }
+    },
+    {
+      "step": "chat",
+      "at": "2026-10-20T00:41:12.754Z",
+      "message": "南京博物院确定想去但时间未定；玄武湖有时间再去。现在先讨论。",
+      "elapsed_ms": 116,
+      "status": 200,
+      "body": {
+        "id": "3a1c25d7-3093-4cd8-91fa-dc8114fef0bb",
+        "trip_id": null,
+        "messages": [
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+            "user": "第一次去南京，南京博物院和玄武湖的体验有什么区别？先只聊聊，不创建旅行。",
+            "assistant": "两处风格差异很大，可以这样理解：\n\n南京博物院是室内大型博物馆体验，核心是文物和历史——馆藏从史前玉器、青铜器到明清书画、民国街景展区都很丰富，节奏偏“看与学”，适合喜欢深度历史文化、愿意花上半天慢慢逛的人。人多时部分热门展厅可能要排队，开放情况建议出行前确认。\n\n玄武湖则是户外湖泊公园体验，核心是放松和风景——环湖散步、看城墙与湖面相映，适合慢节奏休闲、拍照、散步骑行。强度低，随时可进可出，体验感更多取决于天气。\n\n简单说：想“读南京的历史”就去博物院，想“感受南京的日常呼吸感”就去玄武湖。两者不冲突，不少游客会把博物院安排在白天、傍晚去玄武湖收尾。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "destination_exploration",
+              "confidence": 0.93,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_destination_exploration"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "基于常识比较南京博物院与玄武湖两类体验差异：室内人文展馆 vs 户外城市湖泊公园，不涉及实时开放信息，不创建行程。",
+              "response_text": "两处风格差异很大，可以这样理解：\n\n南京博物院是室内大型博物馆体验，核心是文物和历史——馆藏从史前玉器、青铜器到明清书画、民国街景展区都很丰富，节奏偏“看与学”，适合喜欢深度历史文化、愿意花上半天慢慢逛的人。人多时部分热门展厅可能要排队，开放情况建议出行前确认。\n\n玄武湖则是户外湖泊公园体验，核心是放松和风景——环湖散步、看城墙与湖面相映，适合慢节奏休闲、拍照、散步骑行。强度低，随时可进可出，体验感更多取决于天气。\n\n简单说：想“读南京的历史”就去博物院，想“感受南京的日常呼吸感”就去玄武湖。两者不冲突，不少游客会把博物院安排在白天、傍晚去玄武湖收尾。",
+              "goal_type": "destination_exploration",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_ad96f6a1059a5884b2b785fdca14c917",
+                  "suggestion_type": "experience",
+                  "title": "南京博物院深度参观",
+                  "summary": "以馆藏文物和民国街景为主的室内博物馆体验，适合历史文化爱好者，建议预留半天。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "南京博物院深度参观"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "首次到南京了解六朝古都文化的代表性入口",
+                    "室内不受天气影响，可慢速细看"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:41:12.496122Z",
+                  "conversation_turn_id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_088d2a3fcffc53b8a0fbf27e9c418bf1",
+                  "suggestion_type": "experience",
+                  "title": "玄武湖环湖漫步",
+                  "summary": "户外城市湖泊公园，看湖光与明城墙相映，适合休闲散步和拍照。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "玄武湖环湖漫步"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "节奏轻松，随时可进可出",
+                    "傍晚湖景与城墙组合出片"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:41:12.496122Z",
+                  "conversation_turn_id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_bce89e987408560eb463e5bb623227f1",
+                  "suggestion_type": "strategy",
+                  "title": "先馆后湖的组合思路",
+                  "summary": "白天参观博物院，傍晚转场玄武湖散步收尾，两种体验互补。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "先馆后湖的组合思路"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "动与静结合，避免一天节奏单一",
+                    "两地在市区，转场相对顺路"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:41:12.496122Z",
+                  "conversation_turn_id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": null,
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "advisory",
+                "requested_fact_topics": []
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          },
+          {
+            "id": "12b33f11-86ad-4408-b42a-0239c5b57235",
+            "user": "南京博物院确定想去但时间未定；玄武湖有时间再去。现在先讨论。",
+            "assistant": "我会把这些旅行想法用于接下来的讨论。目前还没有创建旅行或保存安排；未定时间与备选会保持未定。",
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "tool": "arrangement_edit",
+            "run_id": null
+          }
+        ],
+        "pending_action": null,
+        "latest_run_id": null
+      }
+    },
+    {
+      "step": "chat",
+      "at": "2026-10-20T00:41:21.868Z",
+      "message": "我决定2026-11-07到2026-11-08去南京两天。周日总统府14:00-15:00已经预约；周六15:00-16:00明确留白。保留南京博物院但暂不排时间，玄武湖还是备选。请形成允许留白的旅行安排建议，别把两天填满。",
+      "elapsed_ms": 9106,
+      "status": 200,
+      "body": {
+        "id": "3a1c25d7-3093-4cd8-91fa-dc8114fef0bb",
+        "trip_id": null,
+        "messages": [
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+            "user": "第一次去南京，南京博物院和玄武湖的体验有什么区别？先只聊聊，不创建旅行。",
+            "assistant": "两处风格差异很大，可以这样理解：\n\n南京博物院是室内大型博物馆体验，核心是文物和历史——馆藏从史前玉器、青铜器到明清书画、民国街景展区都很丰富，节奏偏“看与学”，适合喜欢深度历史文化、愿意花上半天慢慢逛的人。人多时部分热门展厅可能要排队，开放情况建议出行前确认。\n\n玄武湖则是户外湖泊公园体验，核心是放松和风景——环湖散步、看城墙与湖面相映，适合慢节奏休闲、拍照、散步骑行。强度低，随时可进可出，体验感更多取决于天气。\n\n简单说：想“读南京的历史”就去博物院，想“感受南京的日常呼吸感”就去玄武湖。两者不冲突，不少游客会把博物院安排在白天、傍晚去玄武湖收尾。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "destination_exploration",
+              "confidence": 0.93,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_destination_exploration"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "基于常识比较南京博物院与玄武湖两类体验差异：室内人文展馆 vs 户外城市湖泊公园，不涉及实时开放信息，不创建行程。",
+              "response_text": "两处风格差异很大，可以这样理解：\n\n南京博物院是室内大型博物馆体验，核心是文物和历史——馆藏从史前玉器、青铜器到明清书画、民国街景展区都很丰富，节奏偏“看与学”，适合喜欢深度历史文化、愿意花上半天慢慢逛的人。人多时部分热门展厅可能要排队，开放情况建议出行前确认。\n\n玄武湖则是户外湖泊公园体验，核心是放松和风景——环湖散步、看城墙与湖面相映，适合慢节奏休闲、拍照、散步骑行。强度低，随时可进可出，体验感更多取决于天气。\n\n简单说：想“读南京的历史”就去博物院，想“感受南京的日常呼吸感”就去玄武湖。两者不冲突，不少游客会把博物院安排在白天、傍晚去玄武湖收尾。",
+              "goal_type": "destination_exploration",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_ad96f6a1059a5884b2b785fdca14c917",
+                  "suggestion_type": "experience",
+                  "title": "南京博物院深度参观",
+                  "summary": "以馆藏文物和民国街景为主的室内博物馆体验，适合历史文化爱好者，建议预留半天。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "南京博物院深度参观"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "首次到南京了解六朝古都文化的代表性入口",
+                    "室内不受天气影响，可慢速细看"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:41:12.496122Z",
+                  "conversation_turn_id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_088d2a3fcffc53b8a0fbf27e9c418bf1",
+                  "suggestion_type": "experience",
+                  "title": "玄武湖环湖漫步",
+                  "summary": "户外城市湖泊公园，看湖光与明城墙相映，适合休闲散步和拍照。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "玄武湖环湖漫步"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "节奏轻松，随时可进可出",
+                    "傍晚湖景与城墙组合出片"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:41:12.496122Z",
+                  "conversation_turn_id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_bce89e987408560eb463e5bb623227f1",
+                  "suggestion_type": "strategy",
+                  "title": "先馆后湖的组合思路",
+                  "summary": "白天参观博物院，傍晚转场玄武湖散步收尾，两种体验互补。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "先馆后湖的组合思路"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "动与静结合，避免一天节奏单一",
+                    "两地在市区，转场相对顺路"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:41:12.496122Z",
+                  "conversation_turn_id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": null,
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "advisory",
+                "requested_fact_topics": []
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          },
+          {
+            "id": "12b33f11-86ad-4408-b42a-0239c5b57235",
+            "user": "南京博物院确定想去但时间未定；玄武湖有时间再去。现在先讨论。",
+            "assistant": "我会把这些旅行想法用于接下来的讨论。目前还没有创建旅行或保存安排；未定时间与备选会保持未定。",
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "tool": "arrangement_edit",
+            "run_id": null
+          },
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "id": "bb3928c2-42f0-4c51-8e70-c40c4fc4d205",
+            "user": "我决定2026-11-07到2026-11-08去南京两天。周日总统府14:00-15:00已经预约；周六15:00-16:00明确留白。保留南京博物院但暂不排时间，玄武湖还是备选。请形成允许留白的旅行安排建议，别把两天填满。",
+            "assistant": "请核对：南京市，2026-11-07 至 2026-11-08，共 2 天，未设置预算上限。确认后执行。\n总统府：你提供的固定预约，2026-11-08 14:00:00—15:00:00\n自由活动：保留空闲，2026-11-07 15:00:00—16:00:00\n南京博物院：纳入，时间未定\n玄武湖：备选",
+            "tool": "create_trip",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "trip_planning",
+              "confidence": 0.96,
+              "target_runtime": "planning",
+              "mutation_requested": true,
+              "trip_context_required": false,
+              "knowledge_required": false,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "explicit_user_planning_request"
+              ]
+            },
+            "planning_brief": null
+          }
+        ],
+        "pending_action": {
+          "id": "19f00dda-b52d-4ae2-995e-acca9f3ff031",
+          "tool": "create_trip",
+          "source_trip_id": null,
+          "source_signature": null,
+          "source_title": null,
+          "city": {
+            "name": "南京市",
+            "adcode": "320100",
+            "citycode": "025",
+            "longitude": 118.796624,
+            "latitude": 32.059344
+          },
+          "title": "南京两日游",
+          "start_date": "2026-11-07",
+          "end_date": "2026-11-08",
+          "total_budget_fen": null,
+          "daily_budget_fen": null,
+          "preferences": "两天行程允许留白，不填满；总统府周日14:00-15:00已预约；周六15:00-16:00明确留白；南京博物院确定想去但暂不排时间；玄武湖为备选。",
+          "summary": "采用后保存已选、备选、固定预约和留白；不自动填满每天。地点建议尚不等于已核实事实。",
+          "choices": [
+            {
+              "kind": "appointment",
+              "label": "总统府",
+              "origin": "user_explicit",
+              "source_quote": "周日总统府14:00-15:00已经预约",
+              "day_date": "2026-11-08",
+              "start": "14:00:00",
+              "end": "15:00:00",
+              "place_snapshot": {
+                "provider": "amap",
+                "provider_place_id": "B00190BMRC",
+                "name": "总统府",
+                "category": "sight",
+                "neighborhood": "玄武区",
+                "description": "长江路292号",
+                "longitude": 118.797398,
+                "latitude": 32.044228,
+                "suggested_duration_minutes": 90,
+                "estimated_cost_fen": 3000,
+                "rating": 4.9,
+                "tags": [
+                  "风景名胜",
+                  "国家级景点",
+                  "有图片"
+                ],
+                "source_url": "https://www.amap.com/search?id=B00190BMRC"
+              }
+            },
+            {
+              "kind": "free_window",
+              "label": "自由活动",
+              "origin": "user_explicit",
+              "source_quote": "周六15:00-16:00明确留白",
+              "day_date": "2026-11-07",
+              "start": "15:00:00",
+              "end": "16:00:00"
+            },
+            {
+              "kind": "selected",
+              "label": "南京博物院",
+              "origin": "user_explicit",
+              "source_quote": "保留南京博物院但暂不排时间",
+              "day_date": null,
+              "start": null,
+              "end": null
+            },
+            {
+              "kind": "optional",
+              "label": "玄武湖",
+              "origin": "user_explicit",
+              "source_quote": "玄武湖还是备选",
+              "day_date": null,
+              "start": null,
+              "end": null
+            }
+          ],
+          "flexible": true,
+          "topic_id": "natural-travel"
+        },
+        "latest_run_id": null
+      }
+    },
+    {
+      "step": "chat",
+      "at": "2026-10-20T00:41:25.273Z",
+      "message": "保留玄武湖，其他暂时不定",
+      "elapsed_ms": 527,
+      "status": 200,
+      "body": {
+        "id": "3a1c25d7-3093-4cd8-91fa-dc8114fef0bb",
+        "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+        "messages": [
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+            "user": "第一次去南京，南京博物院和玄武湖的体验有什么区别？先只聊聊，不创建旅行。",
+            "assistant": "两处风格差异很大，可以这样理解：\n\n南京博物院是室内大型博物馆体验，核心是文物和历史——馆藏从史前玉器、青铜器到明清书画、民国街景展区都很丰富，节奏偏“看与学”，适合喜欢深度历史文化、愿意花上半天慢慢逛的人。人多时部分热门展厅可能要排队，开放情况建议出行前确认。\n\n玄武湖则是户外湖泊公园体验，核心是放松和风景——环湖散步、看城墙与湖面相映，适合慢节奏休闲、拍照、散步骑行。强度低，随时可进可出，体验感更多取决于天气。\n\n简单说：想“读南京的历史”就去博物院，想“感受南京的日常呼吸感”就去玄武湖。两者不冲突，不少游客会把博物院安排在白天、傍晚去玄武湖收尾。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "destination_exploration",
+              "confidence": 0.93,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_destination_exploration"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "基于常识比较南京博物院与玄武湖两类体验差异：室内人文展馆 vs 户外城市湖泊公园，不涉及实时开放信息，不创建行程。",
+              "response_text": "两处风格差异很大，可以这样理解：\n\n南京博物院是室内大型博物馆体验，核心是文物和历史——馆藏从史前玉器、青铜器到明清书画、民国街景展区都很丰富，节奏偏“看与学”，适合喜欢深度历史文化、愿意花上半天慢慢逛的人。人多时部分热门展厅可能要排队，开放情况建议出行前确认。\n\n玄武湖则是户外湖泊公园体验，核心是放松和风景——环湖散步、看城墙与湖面相映，适合慢节奏休闲、拍照、散步骑行。强度低，随时可进可出，体验感更多取决于天气。\n\n简单说：想“读南京的历史”就去博物院，想“感受南京的日常呼吸感”就去玄武湖。两者不冲突，不少游客会把博物院安排在白天、傍晚去玄武湖收尾。",
+              "goal_type": "destination_exploration",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_ad96f6a1059a5884b2b785fdca14c917",
+                  "suggestion_type": "experience",
+                  "title": "南京博物院深度参观",
+                  "summary": "以馆藏文物和民国街景为主的室内博物馆体验，适合历史文化爱好者，建议预留半天。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "南京博物院深度参观"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "首次到南京了解六朝古都文化的代表性入口",
+                    "室内不受天气影响，可慢速细看"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:41:12.496122Z",
+                  "conversation_turn_id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_088d2a3fcffc53b8a0fbf27e9c418bf1",
+                  "suggestion_type": "experience",
+                  "title": "玄武湖环湖漫步",
+                  "summary": "户外城市湖泊公园，看湖光与明城墙相映，适合休闲散步和拍照。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "玄武湖环湖漫步"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "节奏轻松，随时可进可出",
+                    "傍晚湖景与城墙组合出片"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:41:12.496122Z",
+                  "conversation_turn_id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_bce89e987408560eb463e5bb623227f1",
+                  "suggestion_type": "strategy",
+                  "title": "先馆后湖的组合思路",
+                  "summary": "白天参观博物院，傍晚转场玄武湖散步收尾，两种体验互补。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "先馆后湖的组合思路"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "动与静结合，避免一天节奏单一",
+                    "两地在市区，转场相对顺路"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:41:12.496122Z",
+                  "conversation_turn_id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": null,
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "advisory",
+                "requested_fact_topics": []
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          },
+          {
+            "id": "12b33f11-86ad-4408-b42a-0239c5b57235",
+            "user": "南京博物院确定想去但时间未定；玄武湖有时间再去。现在先讨论。",
+            "assistant": "我会把这些旅行想法用于接下来的讨论。目前还没有创建旅行或保存安排；未定时间与备选会保持未定。",
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "tool": "arrangement_edit",
+            "run_id": null
+          },
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "id": "bb3928c2-42f0-4c51-8e70-c40c4fc4d205",
+            "user": "我决定2026-11-07到2026-11-08去南京两天。周日总统府14:00-15:00已经预约；周六15:00-16:00明确留白。保留南京博物院但暂不排时间，玄武湖还是备选。请形成允许留白的旅行安排建议，别把两天填满。",
+            "assistant": "请核对：南京市，2026-11-07 至 2026-11-08，共 2 天，未设置预算上限。确认后执行。\n总统府：你提供的固定预约，2026-11-08 14:00:00—15:00:00\n自由活动：保留空闲，2026-11-07 15:00:00—16:00:00\n南京博物院：纳入，时间未定\n玄武湖：备选",
+            "tool": "create_trip",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "trip_planning",
+              "confidence": 0.96,
+              "target_runtime": "planning",
+              "mutation_requested": true,
+              "trip_context_required": false,
+              "knowledge_required": false,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "explicit_user_planning_request"
+              ]
+            },
+            "planning_brief": null
+          },
+          {
+            "id": "6441a946-2622-4d77-8eb1-83f6af40c1ef",
+            "user": "确认执行",
+            "assistant": "安排已保存；未排程和备选保持未定，空闲已保留。需要协调具体时间时再生成调整建议。",
+            "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d"
+          },
+          {
+            "id": "5603ee20-5714-40ec-a61d-d71eef892fe5",
+            "user": "保留玄武湖，其他暂时不定",
+            "assistant": "已保留玄武湖，时间可以继续未定。其他安排没有重规划。",
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "trip",
+              "physical_location": null,
+              "browsing_city": "南京市",
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+              "action_target": {
+                "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+                "expected_version": 7,
+                "operation": "edit_arrangement",
+                "authorization_message_id": "5603ee20-5714-40ec-a61d-d71eef892fe5",
+                "revision_id": null
+              },
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "tool": "arrangement_edit",
+            "run_id": null
+          }
+        ],
+        "pending_action": null,
+        "latest_run_id": null
+      }
+    },
+    {
+      "step": "page-plus-chat-readback",
+      "at": "2026-10-20T00:41:25.604Z",
+      "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+      "body": {
+        "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+        "version": 8,
+        "trip": {
+          "id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+          "title": "南京两日游",
+          "destination": "南京市",
+          "destination_adcode": "320100",
+          "destination_citycode": "025",
+          "center_longitude": 118.796624,
+          "center_latitude": 32.059344,
+          "accommodation": "",
+          "accommodation_poi_id": "",
+          "accommodation_address": "",
+          "accommodation_district": "",
+          "accommodation_longitude": null,
+          "accommodation_latitude": null,
+          "start_date": "2026-11-07",
+          "end_date": "2026-11-08",
+          "total_budget_fen": null,
+          "daily_budget_fen": null,
+          "currency": "CNY",
+          "timezone": "Asia/Shanghai",
+          "created_at": "2026-10-20T00:41:22.102175Z",
+          "updated_at": "2026-10-20T00:41:24.828136Z",
+          "archived_at": null,
+          "version": 8,
+          "status": "upcoming"
+        },
+        "days": [
+          {
+            "id": "bd92686c-f554-4323-bd84-39ae2bd4afa7",
+            "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+            "date": "2026-11-07",
+            "label": "第 1 天",
+            "theme": "探索南京市",
+            "position": 0,
+            "route_mode": "walk",
+            "activities": [],
+            "route_legs": [],
+            "conflicts": []
+          },
+          {
+            "id": "cb2c4a52-8a64-43f7-8f57-0cec4f1fdc33",
+            "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+            "date": "2026-11-08",
+            "label": "第 2 天",
+            "theme": "探索南京市",
+            "position": 1,
+            "route_mode": "walk",
+            "activities": [
+              {
+                "id": "f2485bf6-0d04-43f9-8c8a-e1da22d1e285",
+                "place_id": "f80ca2e7-f9c9-4a60-b2cd-24f3d08e6e69",
+                "name": "总统府",
+                "custom_name": null,
+                "display_name": "总统府",
+                "category": "sight",
+                "neighborhood": "玄武区",
+                "longitude": 118.797398,
+                "latitude": 32.044228,
+                "scheduled_time": "14:00:00",
+                "duration_minutes": 60,
+                "importance": "normal",
+                "can_skip": true,
+                "minimum_duration_minutes": null,
+                "importance_source": "system_default",
+                "can_skip_source": "system_default",
+                "minimum_duration_source": "unknown",
+                "estimated_cost_fen": 3000,
+                "status": "planned",
+                "position": 0,
+                "schedule_locked": true,
+                "version": 1,
+                "note": null,
+                "updated_at": "2026-10-20T00:41:22.102175Z",
+                "source": {
+                  "id": "51dc6bd2-9d97-40a8-9dfd-ff9399dcb054",
+                  "title": "高德地点搜索：总统府",
+                  "url": "https://www.amap.com/search?id=B00190BMRC",
+                  "provider": "AMap POI",
+                  "queried_at": "2026-10-20T00:41:22.419259Z",
+                  "confidence": "high"
+                }
+              }
+            ],
+            "route_legs": [],
+            "conflicts": []
+          }
+        ],
+        "items": [
+          {
+            "id": "0b267d6e-51e1-5725-9590-9e8c93fdb114",
+            "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+            "kind": "optional",
+            "label": "南京博物院",
+            "source_ref": "preview:19f00dda-b52d-4ae2-995e-acca9f3ff031:2:user_explicit",
+            "decision_ref": "web:e2b5651c-1f84-4a19-8d50-4c689bb62278",
+            "place_id": null,
+            "day_date": null,
+            "start": null,
+            "end": null,
+            "activity_id": null
+          },
+          {
+            "id": "306faa95-b503-5a98-a87f-8a8c401849f8",
+            "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+            "kind": "selected",
+            "label": "玄武湖",
+            "source_ref": "preview:19f00dda-b52d-4ae2-995e-acca9f3ff031:3:user_explicit",
+            "decision_ref": "message:5603ee20-5714-40ec-a61d-d71eef892fe5",
+            "place_id": null,
+            "day_date": null,
+            "start": null,
+            "end": null,
+            "activity_id": null
+          },
+          {
+            "id": "49d88284-ae80-5f5f-8680-9124b7fba395",
+            "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+            "kind": "selected",
+            "label": "总统府",
+            "source_ref": "preview:19f00dda-b52d-4ae2-995e-acca9f3ff031:0:user_explicit",
+            "decision_ref": "adopt-preview:19f00dda-b52d-4ae2-995e-acca9f3ff031",
+            "place_id": "f80ca2e7-f9c9-4a60-b2cd-24f3d08e6e69",
+            "day_date": null,
+            "start": null,
+            "end": null,
+            "activity_id": "f2485bf6-0d04-43f9-8c8a-e1da22d1e285"
+          },
+          {
+            "id": "bdb40eaf-5734-5c9f-98bb-7fb87c687161",
+            "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+            "kind": "free_window",
+            "label": "自由活动",
+            "source_ref": "preview:19f00dda-b52d-4ae2-995e-acca9f3ff031:1:user_explicit",
+            "decision_ref": "adopt-preview:19f00dda-b52d-4ae2-995e-acca9f3ff031",
+            "place_id": null,
+            "day_date": "2026-11-07",
+            "start": "15:00:00",
+            "end": "16:00:00",
+            "activity_id": null
+          }
+        ]
+      }
+    },
+    {
+      "step": "schedule-chosen-place-and-time",
+      "at": "2026-10-20T00:41:27.575Z",
+      "status": 200,
+      "body": {
+        "id": "0b267d6e-51e1-5725-9590-9e8c93fdb114",
+        "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+        "kind": "selected",
+        "label": "南京博物院",
+        "source_ref": "preview:19f00dda-b52d-4ae2-995e-acca9f3ff031:2:user_explicit",
+        "decision_ref": "web:e2b5651c-1f84-4a19-8d50-4c689bb62278",
+        "place_id": "2cf288ab-a70b-42c3-8034-08bb936547ed",
+        "day_date": null,
+        "start": null,
+        "end": null,
+        "activity_id": "ad891f28-15ac-4008-a433-572f351f8b7b"
+      }
+    },
+    {
+      "step": "chat",
+      "at": "2026-10-20T00:41:40.286Z",
+      "message": "请调整第二天的安排：南京博物院需要12:30以后才能开始。总统府不要动。希望还可以游览110分钟，但如果赶不上预约请缩短博物院，说明取舍。其他日期和留白保持不变，玄武湖保持已选但时间未定，这次不要把它排进具体时间。",
+      "elapsed_ms": 12556,
+      "status": 200,
+      "body": {
+        "id": "3a1c25d7-3093-4cd8-91fa-dc8114fef0bb",
+        "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+        "messages": [
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+            "user": "第一次去南京，南京博物院和玄武湖的体验有什么区别？先只聊聊，不创建旅行。",
+            "assistant": "两处风格差异很大，可以这样理解：\n\n南京博物院是室内大型博物馆体验，核心是文物和历史——馆藏从史前玉器、青铜器到明清书画、民国街景展区都很丰富，节奏偏“看与学”，适合喜欢深度历史文化、愿意花上半天慢慢逛的人。人多时部分热门展厅可能要排队，开放情况建议出行前确认。\n\n玄武湖则是户外湖泊公园体验，核心是放松和风景——环湖散步、看城墙与湖面相映，适合慢节奏休闲、拍照、散步骑行。强度低，随时可进可出，体验感更多取决于天气。\n\n简单说：想“读南京的历史”就去博物院，想“感受南京的日常呼吸感”就去玄武湖。两者不冲突，不少游客会把博物院安排在白天、傍晚去玄武湖收尾。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "destination_exploration",
+              "confidence": 0.93,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_destination_exploration"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "基于常识比较南京博物院与玄武湖两类体验差异：室内人文展馆 vs 户外城市湖泊公园，不涉及实时开放信息，不创建行程。",
+              "response_text": "两处风格差异很大，可以这样理解：\n\n南京博物院是室内大型博物馆体验，核心是文物和历史——馆藏从史前玉器、青铜器到明清书画、民国街景展区都很丰富，节奏偏“看与学”，适合喜欢深度历史文化、愿意花上半天慢慢逛的人。人多时部分热门展厅可能要排队，开放情况建议出行前确认。\n\n玄武湖则是户外湖泊公园体验，核心是放松和风景——环湖散步、看城墙与湖面相映，适合慢节奏休闲、拍照、散步骑行。强度低，随时可进可出，体验感更多取决于天气。\n\n简单说：想“读南京的历史”就去博物院，想“感受南京的日常呼吸感”就去玄武湖。两者不冲突，不少游客会把博物院安排在白天、傍晚去玄武湖收尾。",
+              "goal_type": "destination_exploration",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_ad96f6a1059a5884b2b785fdca14c917",
+                  "suggestion_type": "experience",
+                  "title": "南京博物院深度参观",
+                  "summary": "以馆藏文物和民国街景为主的室内博物馆体验，适合历史文化爱好者，建议预留半天。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "南京博物院深度参观"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "首次到南京了解六朝古都文化的代表性入口",
+                    "室内不受天气影响，可慢速细看"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:41:12.496122Z",
+                  "conversation_turn_id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_088d2a3fcffc53b8a0fbf27e9c418bf1",
+                  "suggestion_type": "experience",
+                  "title": "玄武湖环湖漫步",
+                  "summary": "户外城市湖泊公园，看湖光与明城墙相映，适合休闲散步和拍照。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "玄武湖环湖漫步"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "节奏轻松，随时可进可出",
+                    "傍晚湖景与城墙组合出片"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:41:12.496122Z",
+                  "conversation_turn_id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_bce89e987408560eb463e5bb623227f1",
+                  "suggestion_type": "strategy",
+                  "title": "先馆后湖的组合思路",
+                  "summary": "白天参观博物院，傍晚转场玄武湖散步收尾，两种体验互补。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "先馆后湖的组合思路"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "动与静结合，避免一天节奏单一",
+                    "两地在市区，转场相对顺路"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:41:12.496122Z",
+                  "conversation_turn_id": "257d3404-7e9a-4390-b31e-26f838ff7049",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": null,
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "advisory",
+                "requested_fact_topics": []
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          },
+          {
+            "id": "12b33f11-86ad-4408-b42a-0239c5b57235",
+            "user": "南京博物院确定想去但时间未定；玄武湖有时间再去。现在先讨论。",
+            "assistant": "我会把这些旅行想法用于接下来的讨论。目前还没有创建旅行或保存安排；未定时间与备选会保持未定。",
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "tool": "arrangement_edit",
+            "run_id": null
+          },
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "id": "bb3928c2-42f0-4c51-8e70-c40c4fc4d205",
+            "user": "我决定2026-11-07到2026-11-08去南京两天。周日总统府14:00-15:00已经预约；周六15:00-16:00明确留白。保留南京博物院但暂不排时间，玄武湖还是备选。请形成允许留白的旅行安排建议，别把两天填满。",
+            "assistant": "请核对：南京市，2026-11-07 至 2026-11-08，共 2 天，未设置预算上限。确认后执行。\n总统府：你提供的固定预约，2026-11-08 14:00:00—15:00:00\n自由活动：保留空闲，2026-11-07 15:00:00—16:00:00\n南京博物院：纳入，时间未定\n玄武湖：备选",
+            "tool": "create_trip",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "trip_planning",
+              "confidence": 0.96,
+              "target_runtime": "planning",
+              "mutation_requested": true,
+              "trip_context_required": false,
+              "knowledge_required": false,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "explicit_user_planning_request"
+              ]
+            },
+            "planning_brief": null
+          },
+          {
+            "id": "6441a946-2622-4d77-8eb1-83f6af40c1ef",
+            "user": "确认执行",
+            "assistant": "安排已保存；未排程和备选保持未定，空闲已保留。需要协调具体时间时再生成调整建议。",
+            "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d"
+          },
+          {
+            "id": "5603ee20-5714-40ec-a61d-d71eef892fe5",
+            "user": "保留玄武湖，其他暂时不定",
+            "assistant": "已保留玄武湖，时间可以继续未定。其他安排没有重规划。",
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "trip",
+              "physical_location": null,
+              "browsing_city": "南京市",
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+              "action_target": {
+                "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+                "expected_version": 7,
+                "operation": "edit_arrangement",
+                "authorization_message_id": "5603ee20-5714-40ec-a61d-d71eef892fe5",
+                "revision_id": null
+              },
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "tool": "arrangement_edit",
+            "run_id": null
+          },
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "trip",
+              "physical_location": null,
+              "browsing_city": "南京市",
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [
+                {
+                  "id": "req_c809987ab5ec520b9cfeffa9ddfc9ded",
+                  "text": "总统府不要动",
+                  "key": "user_requirement",
+                  "value": null,
+                  "source": {
+                    "kind": "user_explicit",
+                    "ref": "61854ee3-5f26-4dd3-8b5f-d7147ff32760"
+                  },
+                  "scope": {
+                    "kind": "trip",
+                    "topic_id": null,
+                    "draft_id": null,
+                    "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+                    "city": "南京市",
+                    "day_index": null,
+                    "date": null,
+                    "activity_id": null
+                  },
+                  "strength": "soft",
+                  "status": "active",
+                  "supersedes": []
+                },
+                {
+                  "id": "req_1b5432e2dcc254379dc5a9af813cc45f",
+                  "text": "希望还可以游览110分钟",
+                  "key": "user_requirement",
+                  "value": null,
+                  "source": {
+                    "kind": "user_explicit",
+                    "ref": "61854ee3-5f26-4dd3-8b5f-d7147ff32760"
+                  },
+                  "scope": {
+                    "kind": "trip",
+                    "topic_id": null,
+                    "draft_id": null,
+                    "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+                    "city": "南京市",
+                    "day_index": null,
+                    "date": null,
+                    "activity_id": null
+                  },
+                  "strength": "soft",
+                  "status": "active",
+                  "supersedes": []
+                },
+                {
+                  "id": "req_4ea5e3217ce6538899f387b7baca1d18",
+                  "text": "这次不要把它排进具体时间",
+                  "key": "user_requirement",
+                  "value": null,
+                  "source": {
+                    "kind": "user_explicit",
+                    "ref": "61854ee3-5f26-4dd3-8b5f-d7147ff32760"
+                  },
+                  "scope": {
+                    "kind": "trip",
+                    "topic_id": null,
+                    "draft_id": null,
+                    "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+                    "city": "南京市",
+                    "day_index": null,
+                    "date": null,
+                    "activity_id": null
+                  },
+                  "strength": "soft",
+                  "status": "active",
+                  "supersedes": []
+                }
+              ],
+              "read_trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+              "action_target": {
+                "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+                "expected_version": 9,
+                "operation": "plan_trip",
+                "authorization_message_id": "61854ee3-5f26-4dd3-8b5f-d7147ff32760",
+                "revision_id": null
+              },
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {
+              "execution": {
+                "status": "available",
+                "result": {
+                  "id": null,
+                  "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+                  "status": "not_started",
+                  "current_date": "2026-11-08",
+                  "current_day_plan_id": "cb2c4a52-8a64-43f7-8f57-0cec4f1fdc33",
+                  "current_activity_id": "ad891f28-15ac-4008-a433-572f351f8b7b",
+                  "actual_started_at": null,
+                  "actual_ended_at": null,
+                  "paused_at": null,
+                  "schedule_delay_minutes": 0,
+                  "remaining_activity_count": 2,
+                  "remaining_estimated_cost_fen": 6000,
+                  "activities": [
+                    {
+                      "id": null,
+                      "activity_id": "ad891f28-15ac-4008-a433-572f351f8b7b",
+                      "day_plan_id": "cb2c4a52-8a64-43f7-8f57-0cec4f1fdc33",
+                      "day_date": "2026-11-08",
+                      "name": "南京博物院",
+                      "scheduled_time": "10:00:00",
+                      "estimated_cost_fen": 3000,
+                      "status": "pending",
+                      "actual_arrived_at": null,
+                      "actual_started_at": null,
+                      "actual_ended_at": null,
+                      "delay_minutes": 0
+                    },
+                    {
+                      "id": null,
+                      "activity_id": "f2485bf6-0d04-43f9-8c8a-e1da22d1e285",
+                      "day_plan_id": "cb2c4a52-8a64-43f7-8f57-0cec4f1fdc33",
+                      "day_date": "2026-11-08",
+                      "name": "总统府",
+                      "scheduled_time": "14:00:00",
+                      "estimated_cost_fen": 3000,
+                      "status": "pending",
+                      "actual_arrived_at": null,
+                      "actual_started_at": null,
+                      "actual_ended_at": null,
+                      "delay_minutes": 0
+                    }
+                  ],
+                  "events": [],
+                  "experience_impact": null,
+                  "current_activity_name": "南京博物院",
+                  "recovery_planning": null,
+                  "delay_semantics": "schedule_delay_minutes is recorded arrival delay only; experience_impact owns current stay projection and downstream feasibility"
+                }
+              }
+            },
+            "requirement_sync": null,
+            "router_planning_request": "请调整第二天的安排：南京博物院需要12:30以后才能开始，安排在2026-11-08、12:30之后，希望可游览110分钟；总统府预约2026-11-08 14:00-15:00不要动，若时间冲突请缩短博物院并说明取舍。其他日期和留白保持不变：2026-11-07 15:00-16:00自由活动留白不变；玄武湖保持已选但时间未定，不排进具体时间。",
+            "id": "61854ee3-5f26-4dd3-8b5f-d7147ff32760",
+            "user": "请调整第二天的安排：南京博物院需要12:30以后才能开始。总统府不要动。希望还可以游览110分钟，但如果赶不上预约请缩短博物院，说明取舍。其他日期和留白保持不变，玄武湖保持已选但时间未定，这次不要把它排进具体时间。",
+            "assistant": "我会按这次要求准备候选调整，并说明修改理由。",
+            "tool": "plan_trip",
+            "run_id": "30f67e79-3202-4b17-884b-91a40e8aef5c",
+            "goal_routing": {
+              "goal_type": "trip_modification",
+              "confidence": 0.96,
+              "target_runtime": "planning",
+              "mutation_requested": true,
+              "trip_context_required": true,
+              "knowledge_required": false,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "explicit_user_planning_request"
+              ]
+            },
+            "planning_brief": null
+          }
+        ],
+        "pending_action": null,
+        "latest_run_id": "30f67e79-3202-4b17-884b-91a40e8aef5c"
+      }
+    }
+  ],
+  "requests": [
+    {
+      "path": "/api/v1/assistant/sessions",
+      "method": "POST",
+      "timing": {
+        "startTime": 1792456862389.1091,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.287,
+        "responseStart": 12.709,
+        "responseEnd": 14.256
+      }
+    },
+    {
+      "path": "/api/v1/assistant/sessions",
+      "method": "POST",
+      "timing": {
+        "startTime": 1792456862391.0198,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.249,
+        "responseStart": 13.009,
+        "responseEnd": 14.22
+      }
+    },
+    {
+      "path": "/api/v1/assistant/sessions/3a1c25d7-3093-4cd8-91fa-dc8114fef0bb/messages",
+      "method": "POST",
+      "timing": {
+        "startTime": 1792456862566.0498,
+        "domainLookupStart": 0.097,
+        "domainLookupEnd": 0.111,
+        "connectStart": 0.111,
+        "secureConnectionStart": -1,
+        "connectEnd": 0.684,
+        "requestStart": 0.737,
+        "responseStart": 9977.121,
+        "responseEnd": 9978.502
+      }
+    },
+    {
+      "path": "/api/v1/assistant/sessions/3a1c25d7-3093-4cd8-91fa-dc8114fef0bb/messages",
+      "method": "POST",
+      "timing": {
+        "startTime": 1792456872694.82,
+        "domainLookupStart": 0.174,
+        "domainLookupEnd": 0.964,
+        "connectStart": 0.964,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.911,
+        "requestStart": 2.061,
+        "responseStart": 47.645,
+        "responseEnd": 49.164
+      }
+    },
+    {
+      "path": "/api/v1/assistant/sessions/3a1c25d7-3093-4cd8-91fa-dc8114fef0bb/messages",
+      "method": "POST",
+      "timing": {
+        "startTime": 1792456872811.295,
+        "domainLookupStart": 0.175,
+        "domainLookupEnd": 0.195,
+        "connectStart": 0.195,
+        "secureConnectionStart": -1,
+        "connectEnd": 2.037,
+        "requestStart": 2.183,
+        "responseStart": 9019.421,
+        "responseEnd": 9021.648
+      }
+    },
+    {
+      "path": "/api/v1/assistant/sessions/3a1c25d7-3093-4cd8-91fa-dc8114fef0bb/decision",
+      "method": "POST",
+      "timing": {
+        "startTime": 1792456882075.4858,
+        "domainLookupStart": 0.156,
+        "domainLookupEnd": 1.076,
+        "connectStart": 1.076,
+        "secureConnectionStart": -1,
+        "connectEnd": 2.052,
+        "requestStart": 2.177,
+        "responseStart": 1702.641,
+        "responseEnd": 1704.249
+      }
+    },
+    {
+      "path": "/api/v1/assistant/sessions",
+      "method": "POST",
+      "timing": {
+        "startTime": 1792456883807.848,
+        "domainLookupStart": 0.213,
+        "domainLookupEnd": 0.24,
+        "connectStart": 0.24,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.393,
+        "requestStart": 1.516,
+        "responseStart": 49.697,
+        "responseEnd": 51.272
+      }
+    },
+    {
+      "path": "/api/v1/trips/06abb47c-d33e-4795-88b8-9e97ef8ea48d/arrangement-items",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456883811.46,
+        "domainLookupStart": 0.192,
+        "domainLookupEnd": 0.215,
+        "connectStart": 0.215,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.046,
+        "requestStart": 1.146,
+        "responseStart": 180.351,
+        "responseEnd": 186.979
+      }
+    },
+    {
+      "path": "/api/v1/trips/06abb47c-d33e-4795-88b8-9e97ef8ea48d/arrangement-items/0b267d6e-51e1-5725-9590-9e8c93fdb114",
+      "method": "PUT",
+      "timing": {
+        "startTime": 1792456884267.013,
+        "domainLookupStart": 0.215,
+        "domainLookupEnd": 0.237,
+        "connectStart": 0.237,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.273,
+        "requestStart": 1.384,
+        "responseStart": 260.733,
+        "responseEnd": 261.923
+      }
+    },
+    {
+      "path": "/api/v1/trips/06abb47c-d33e-4795-88b8-9e97ef8ea48d/arrangement-items",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456884531.9932,
+        "domainLookupStart": 0.225,
+        "domainLookupEnd": 0.243,
+        "connectStart": 0.243,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.32,
+        "requestStart": 1.425,
+        "responseStart": 195.473,
+        "responseEnd": 198.249
+      }
+    },
+    {
+      "path": "/api/v1/assistant/sessions/3a1c25d7-3093-4cd8-91fa-dc8114fef0bb/messages",
+      "method": "POST",
+      "timing": {
+        "startTime": 1792456884802.578,
+        "domainLookupStart": 0.165,
+        "domainLookupEnd": 1.044,
+        "connectStart": 1.044,
+        "secureConnectionStart": -1,
+        "connectEnd": 2.225,
+        "requestStart": 2.357,
+        "responseStart": 457.051,
+        "responseEnd": 458.803
+      }
+    },
+    {
+      "path": "/api/v1/trips/06abb47c-d33e-4795-88b8-9e97ef8ea48d/arrangement-items",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456885263.077,
+        "domainLookupStart": 0.256,
+        "domainLookupEnd": 0.281,
+        "connectStart": 0.281,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.426,
+        "requestStart": 1.564,
+        "responseStart": 159.149,
+        "responseEnd": 160.605
+      }
+    },
+    {
+      "path": "/api/v1/assistant/sessions",
+      "method": "POST",
+      "timing": {
+        "startTime": 1792456885832.782,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.339,
+        "responseStart": 53.766,
+        "responseEnd": 55.006
+      }
+    },
+    {
+      "path": "/api/v1/assistant/sessions",
+      "method": "POST",
+      "timing": {
+        "startTime": 1792456885831.356,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.298,
+        "responseStart": 73.912,
+        "responseEnd": 75.608
+      }
+    },
+    {
+      "path": "/api/v1/trips/06abb47c-d33e-4795-88b8-9e97ef8ea48d/arrangement-items",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456885828.591,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.375,
+        "responseStart": 147.597,
+        "responseEnd": 151.417
+      }
+    },
+    {
+      "path": "/api/v1/trips/06abb47c-d33e-4795-88b8-9e97ef8ea48d/arrangement-items",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456885834.954,
+        "domainLookupStart": 141.999,
+        "domainLookupEnd": 142.886,
+        "connectStart": 142.886,
+        "secureConnectionStart": -1,
+        "connectEnd": 144.506,
+        "requestStart": 144.621,
+        "responseStart": 258.493,
+        "responseEnd": 263.32
+      }
+    },
+    {
+      "path": "/api/v1/trips/06abb47c-d33e-4795-88b8-9e97ef8ea48d/places/search",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456886285.0508,
+        "domainLookupStart": 0.176,
+        "domainLookupEnd": 0.193,
+        "connectStart": 0.193,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.123,
+        "requestStart": 1.233,
+        "responseStart": 693.811,
+        "responseEnd": 695.541
+      }
+    },
+    {
+      "path": "/api/v1/trips/06abb47c-d33e-4795-88b8-9e97ef8ea48d/arrangement-items/0b267d6e-51e1-5725-9590-9e8c93fdb114/schedule",
+      "method": "POST",
+      "timing": {
+        "startTime": 1792456887295.926,
+        "domainLookupStart": 0.157,
+        "domainLookupEnd": 1.056,
+        "connectStart": 1.056,
+        "secureConnectionStart": -1,
+        "connectEnd": 2.011,
+        "requestStart": 2.132,
+        "responseStart": 267.237,
+        "responseEnd": 268.694
+      }
+    },
+    {
+      "path": "/api/v1/trips/06abb47c-d33e-4795-88b8-9e97ef8ea48d/arrangement-items",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456887566.218,
+        "domainLookupStart": 0.248,
+        "domainLookupEnd": 0.268,
+        "connectStart": 0.268,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.242,
+        "requestStart": 1.366,
+        "responseStart": 65.038,
+        "responseEnd": 66.385
+      }
+    },
+    {
+      "path": "/api/v1/assistant/sessions/3a1c25d7-3093-4cd8-91fa-dc8114fef0bb/messages",
+      "method": "POST",
+      "timing": {
+        "startTime": 1792456887783.222,
+        "domainLookupStart": 0.174,
+        "domainLookupEnd": 0.196,
+        "connectStart": 0.196,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.291,
+        "requestStart": 1.429,
+        "responseStart": 12490.859,
+        "responseEnd": 12492.475
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456900286.864,
+        "domainLookupStart": 0.182,
+        "domainLookupEnd": 0.198,
+        "connectStart": 0.198,
+        "secureConnectionStart": -1,
+        "connectEnd": 0.918,
+        "requestStart": 1.005,
+        "responseStart": 12.7,
+        "responseEnd": 13.871
+      }
+    },
+    {
+      "path": "/api/v1/trips/06abb47c-d33e-4795-88b8-9e97ef8ea48d/arrangement-items",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456900276.3828,
+        "domainLookupStart": 0.158,
+        "domainLookupEnd": 0.694,
+        "connectStart": 0.694,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.284,
+        "requestStart": 1.352,
+        "responseStart": 30.239,
+        "responseEnd": 31.234
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456902788.877,
+        "domainLookupStart": 0.221,
+        "domainLookupEnd": 0.857,
+        "connectStart": 0.857,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.479,
+        "requestStart": 1.573,
+        "responseStart": 15.125,
+        "responseEnd": 16.372
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456905292.334,
+        "domainLookupStart": 0.18,
+        "domainLookupEnd": 0.772,
+        "connectStart": 0.772,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.284,
+        "requestStart": 1.35,
+        "responseStart": 10.956,
+        "responseEnd": 12.06
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456907790.7178,
+        "domainLookupStart": 0.179,
+        "domainLookupEnd": 0.692,
+        "connectStart": 0.692,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.19,
+        "requestStart": 1.264,
+        "responseStart": 10.16,
+        "responseEnd": 11.303
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456910300.451,
+        "domainLookupStart": 0.2,
+        "domainLookupEnd": 0.818,
+        "connectStart": 0.818,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.497,
+        "requestStart": 1.592,
+        "responseStart": 11.268,
+        "responseEnd": 12.451
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456912798.363,
+        "domainLookupStart": 0.179,
+        "domainLookupEnd": 0.732,
+        "connectStart": 0.732,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.244,
+        "requestStart": 1.319,
+        "responseStart": 10.721,
+        "responseEnd": 12.025
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456915289.655,
+        "domainLookupStart": 0.197,
+        "domainLookupEnd": 0.828,
+        "connectStart": 0.828,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.66,
+        "requestStart": 1.749,
+        "responseStart": 12.026,
+        "responseEnd": 13.289
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456917790.0159,
+        "domainLookupStart": 0.184,
+        "domainLookupEnd": 0.628,
+        "connectStart": 0.628,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.215,
+        "requestStart": 1.291,
+        "responseStart": 2917.231,
+        "responseEnd": 2963.97
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456920372.39,
+        "domainLookupStart": 379.847,
+        "domainLookupEnd": 380.313,
+        "connectStart": 380.313,
+        "secureConnectionStart": -1,
+        "connectEnd": 394.361,
+        "requestStart": 394.484,
+        "responseStart": 584.834,
+        "responseEnd": 658.034
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456922791.4421,
+        "domainLookupStart": 0.177,
+        "domainLookupEnd": 0.698,
+        "connectStart": 0.698,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.377,
+        "requestStart": 1.465,
+        "responseStart": 233.001,
+        "responseEnd": 234.792
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456925297.668,
+        "domainLookupStart": 0.19,
+        "domainLookupEnd": 0.206,
+        "connectStart": 0.206,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.004,
+        "requestStart": 1.076,
+        "responseStart": 300.547,
+        "responseEnd": 303.016
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456927797.7651,
+        "domainLookupStart": 0.199,
+        "domainLookupEnd": 0.7,
+        "connectStart": 0.7,
+        "secureConnectionStart": -1,
+        "connectEnd": 5.281,
+        "requestStart": 5.387,
+        "responseStart": 170.435,
+        "responseEnd": 171.703
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456930299.57,
+        "domainLookupStart": 0.156,
+        "domainLookupEnd": 0.659,
+        "connectStart": 0.659,
+        "secureConnectionStart": -1,
+        "connectEnd": 14.232,
+        "requestStart": 14.361,
+        "responseStart": 254.083,
+        "responseEnd": 256.186
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456932791.95,
+        "domainLookupStart": 0.2,
+        "domainLookupEnd": 0.216,
+        "connectStart": 0.216,
+        "secureConnectionStart": -1,
+        "connectEnd": 7.974,
+        "requestStart": 8.112,
+        "responseStart": 290.239,
+        "responseEnd": 291.936
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456935302.613,
+        "domainLookupStart": 0.182,
+        "domainLookupEnd": 0.682,
+        "connectStart": 0.682,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.793,
+        "requestStart": 1.887,
+        "responseStart": 125.837,
+        "responseEnd": 127.22
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456937796.087,
+        "domainLookupStart": 0.22,
+        "domainLookupEnd": 0.848,
+        "connectStart": 0.848,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.543,
+        "requestStart": 1.631,
+        "responseStart": 39.459,
+        "responseEnd": 41.24
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456940289.2517,
+        "domainLookupStart": 0.155,
+        "domainLookupEnd": 0.663,
+        "connectStart": 0.663,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.174,
+        "requestStart": 1.249,
+        "responseStart": 10.102,
+        "responseEnd": 11.046
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456942796.5798,
+        "domainLookupStart": 0.196,
+        "domainLookupEnd": 0.668,
+        "connectStart": 0.668,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.163,
+        "requestStart": 1.23,
+        "responseStart": 9.568,
+        "responseEnd": 10.885
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456945291.8809,
+        "domainLookupStart": 0.198,
+        "domainLookupEnd": 0.768,
+        "connectStart": 0.768,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.283,
+        "requestStart": 1.37,
+        "responseStart": 9.937,
+        "responseEnd": 11.122
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456947796.756,
+        "domainLookupStart": 0.195,
+        "domainLookupEnd": 0.714,
+        "connectStart": 0.714,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.35,
+        "requestStart": 1.423,
+        "responseStart": 9.523,
+        "responseEnd": 10.706
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456950300.678,
+        "domainLookupStart": 0.223,
+        "domainLookupEnd": 0.762,
+        "connectStart": 0.762,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.438,
+        "requestStart": 1.518,
+        "responseStart": 10.731,
+        "responseEnd": 11.909
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456952794.807,
+        "domainLookupStart": 0.216,
+        "domainLookupEnd": 0.731,
+        "connectStart": 0.731,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.167,
+        "requestStart": 1.235,
+        "responseStart": 9.922,
+        "responseEnd": 11.054
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456955295.352,
+        "domainLookupStart": 0.227,
+        "domainLookupEnd": 0.867,
+        "connectStart": 0.867,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.453,
+        "requestStart": 1.542,
+        "responseStart": 9.926,
+        "responseEnd": 11.116
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456957795.7148,
+        "domainLookupStart": 0.211,
+        "domainLookupEnd": 0.709,
+        "connectStart": 0.709,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.225,
+        "requestStart": 1.311,
+        "responseStart": 10.894,
+        "responseEnd": 12.048
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456960294.419,
+        "domainLookupStart": 0.181,
+        "domainLookupEnd": 0.645,
+        "connectStart": 0.645,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.129,
+        "requestStart": 1.192,
+        "responseStart": 10.924,
+        "responseEnd": 12.255
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456962790.502,
+        "domainLookupStart": 0.194,
+        "domainLookupEnd": 0.674,
+        "connectStart": 0.674,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.095,
+        "requestStart": 1.147,
+        "responseStart": 9.547,
+        "responseEnd": 10.643
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456965291.466,
+        "domainLookupStart": 0.199,
+        "domainLookupEnd": 0.671,
+        "connectStart": 0.671,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.121,
+        "requestStart": 1.192,
+        "responseStart": 9.827,
+        "responseEnd": 10.968
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456967802.877,
+        "domainLookupStart": 0.224,
+        "domainLookupEnd": 0.716,
+        "connectStart": 0.716,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.287,
+        "requestStart": 1.354,
+        "responseStart": 9.546,
+        "responseEnd": 10.961
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456970288.6982,
+        "domainLookupStart": 0.246,
+        "domainLookupEnd": 0.923,
+        "connectStart": 0.923,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.414,
+        "requestStart": 1.474,
+        "responseStart": 9.468,
+        "responseEnd": 10.737
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456972789.604,
+        "domainLookupStart": 0.206,
+        "domainLookupEnd": 0.816,
+        "connectStart": 0.816,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.47,
+        "requestStart": 1.562,
+        "responseStart": 10.358,
+        "responseEnd": 11.596
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456975289.6929,
+        "domainLookupStart": 0.197,
+        "domainLookupEnd": 0.822,
+        "connectStart": 0.822,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.3,
+        "requestStart": 1.369,
+        "responseStart": 9.217,
+        "responseEnd": 10.518
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456977789.454,
+        "domainLookupStart": 0.199,
+        "domainLookupEnd": 0.766,
+        "connectStart": 0.766,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.302,
+        "requestStart": 1.374,
+        "responseStart": 9.552,
+        "responseEnd": 10.647
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456980294.653,
+        "domainLookupStart": 0.188,
+        "domainLookupEnd": 0.695,
+        "connectStart": 0.695,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.121,
+        "requestStart": 1.202,
+        "responseStart": 9.109,
+        "responseEnd": 10.294
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456982789.8281,
+        "domainLookupStart": 0.163,
+        "domainLookupEnd": 0.661,
+        "connectStart": 0.661,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.178,
+        "requestStart": 1.244,
+        "responseStart": 9.923,
+        "responseEnd": 10.884
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456985291.451,
+        "domainLookupStart": 0.177,
+        "domainLookupEnd": 0.819,
+        "connectStart": 0.819,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.283,
+        "requestStart": 1.357,
+        "responseStart": 10.299,
+        "responseEnd": 11.559
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456987787.742,
+        "domainLookupStart": 0.161,
+        "domainLookupEnd": 0.629,
+        "connectStart": 0.629,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.135,
+        "requestStart": 1.194,
+        "responseStart": 8.468,
+        "responseEnd": 9.544
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456990288.491,
+        "domainLookupStart": 0.156,
+        "domainLookupEnd": 0.584,
+        "connectStart": 0.584,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.23,
+        "requestStart": 1.325,
+        "responseStart": 8.912,
+        "responseEnd": 9.869
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456992789.915,
+        "domainLookupStart": 0.179,
+        "domainLookupEnd": 0.858,
+        "connectStart": 0.858,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.451,
+        "requestStart": 1.525,
+        "responseStart": 10.29,
+        "responseEnd": 11.371
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456995299.72,
+        "domainLookupStart": 0.226,
+        "domainLookupEnd": 0.926,
+        "connectStart": 0.926,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.858,
+        "requestStart": 1.936,
+        "responseStart": 9.07,
+        "responseEnd": 10.176
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792456997796.583,
+        "domainLookupStart": 0.218,
+        "domainLookupEnd": 0.812,
+        "connectStart": 0.812,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.391,
+        "requestStart": 1.451,
+        "responseStart": 9.164,
+        "responseEnd": 10.272
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457000303.7688,
+        "domainLookupStart": 0.222,
+        "domainLookupEnd": 0.798,
+        "connectStart": 0.798,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.53,
+        "requestStart": 1.629,
+        "responseStart": 30.167,
+        "responseEnd": 32.169
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457002799.5623,
+        "domainLookupStart": 0.188,
+        "domainLookupEnd": 0.588,
+        "connectStart": 0.588,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.073,
+        "requestStart": 1.129,
+        "responseStart": 9.161,
+        "responseEnd": 10.295
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457005299.4958,
+        "domainLookupStart": 0.157,
+        "domainLookupEnd": 0.698,
+        "connectStart": 0.698,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.187,
+        "requestStart": 1.251,
+        "responseStart": 8.799,
+        "responseEnd": 9.654
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457007796.327,
+        "domainLookupStart": 0.166,
+        "domainLookupEnd": 0.659,
+        "connectStart": 0.659,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.119,
+        "requestStart": 1.173,
+        "responseStart": 8.554,
+        "responseEnd": 9.591
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457010293.248,
+        "domainLookupStart": 0.246,
+        "domainLookupEnd": 0.906,
+        "connectStart": 0.906,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.485,
+        "requestStart": 1.614,
+        "responseStart": 9.799,
+        "responseEnd": 10.937
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457012790.5369,
+        "domainLookupStart": 0.217,
+        "domainLookupEnd": 1.057,
+        "connectStart": 1.057,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.817,
+        "requestStart": 1.926,
+        "responseStart": 12.61,
+        "responseEnd": 13.999
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457015289.594,
+        "domainLookupStart": 0.171,
+        "domainLookupEnd": 0.619,
+        "connectStart": 0.619,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.021,
+        "requestStart": 1.11,
+        "responseStart": 8.855,
+        "responseEnd": 9.884
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457017798.6191,
+        "domainLookupStart": 0.159,
+        "domainLookupEnd": 0.643,
+        "connectStart": 0.643,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.199,
+        "requestStart": 1.259,
+        "responseStart": 8.915,
+        "responseEnd": 9.867
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457020293.3801,
+        "domainLookupStart": 0.201,
+        "domainLookupEnd": 0.695,
+        "connectStart": 0.695,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.282,
+        "requestStart": 1.336,
+        "responseStart": 8.964,
+        "responseEnd": 10.155
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457022801.829,
+        "domainLookupStart": 0.224,
+        "domainLookupEnd": 0.985,
+        "connectStart": 0.985,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.799,
+        "requestStart": 1.905,
+        "responseStart": 12.83,
+        "responseEnd": 14.302
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457025287.347,
+        "domainLookupStart": 0.188,
+        "domainLookupEnd": 0.758,
+        "connectStart": 0.758,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.325,
+        "requestStart": 1.389,
+        "responseStart": 9.868,
+        "responseEnd": 11.011
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457027790.125,
+        "domainLookupStart": 0.146,
+        "domainLookupEnd": 0.578,
+        "connectStart": 0.578,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.04,
+        "requestStart": 1.105,
+        "responseStart": 8.983,
+        "responseEnd": 9.951
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457030297.465,
+        "domainLookupStart": 0.208,
+        "domainLookupEnd": 0.696,
+        "connectStart": 0.696,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.112,
+        "requestStart": 1.174,
+        "responseStart": 8.98,
+        "responseEnd": 10.009
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457032803.2751,
+        "domainLookupStart": 0.166,
+        "domainLookupEnd": 0.622,
+        "connectStart": 0.622,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.097,
+        "requestStart": 1.145,
+        "responseStart": 8.682,
+        "responseEnd": 9.763
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457035289.032,
+        "domainLookupStart": 0.261,
+        "domainLookupEnd": 0.708,
+        "connectStart": 0.708,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.247,
+        "requestStart": 1.311,
+        "responseStart": 9.446,
+        "responseEnd": 10.796
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457037792.249,
+        "domainLookupStart": 0.159,
+        "domainLookupEnd": 0.651,
+        "connectStart": 0.651,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.157,
+        "requestStart": 1.209,
+        "responseStart": 8.587,
+        "responseEnd": 9.493
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457040288.6108,
+        "domainLookupStart": 0.2,
+        "domainLookupEnd": 0.834,
+        "connectStart": 0.834,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.464,
+        "requestStart": 1.552,
+        "responseStart": 9.712,
+        "responseEnd": 10.721
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457042795.4988,
+        "domainLookupStart": 0.169,
+        "domainLookupEnd": 0.617,
+        "connectStart": 0.617,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.175,
+        "requestStart": 1.236,
+        "responseStart": 9.021,
+        "responseEnd": 9.977
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457045297.3762,
+        "domainLookupStart": 0.169,
+        "domainLookupEnd": 0.875,
+        "connectStart": 0.875,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.47,
+        "requestStart": 1.548,
+        "responseStart": 9.978,
+        "responseEnd": 11.132
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457047789.368,
+        "domainLookupStart": 0.21,
+        "domainLookupEnd": 0.914,
+        "connectStart": 0.914,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.591,
+        "requestStart": 1.677,
+        "responseStart": 11.873,
+        "responseEnd": 12.987
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457050300.548,
+        "domainLookupStart": 0.165,
+        "domainLookupEnd": 0.65,
+        "connectStart": 0.65,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.22,
+        "requestStart": 1.294,
+        "responseStart": 9.447,
+        "responseEnd": 10.686
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457052800.287,
+        "domainLookupStart": 0.199,
+        "domainLookupEnd": 0.715,
+        "connectStart": 0.715,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.159,
+        "requestStart": 1.219,
+        "responseStart": 9.515,
+        "responseEnd": 10.672
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457055289.0122,
+        "domainLookupStart": 0.26,
+        "domainLookupEnd": 1.04,
+        "connectStart": 1.04,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.758,
+        "requestStart": 1.844,
+        "responseStart": 10.381,
+        "responseEnd": 11.921
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457057797.658,
+        "domainLookupStart": 0.226,
+        "domainLookupEnd": 0.789,
+        "connectStart": 0.789,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.383,
+        "requestStart": 1.467,
+        "responseStart": 10.032,
+        "responseEnd": 11.068
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457060295.931,
+        "domainLookupStart": 0.188,
+        "domainLookupEnd": 0.775,
+        "connectStart": 0.775,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.305,
+        "requestStart": 1.37,
+        "responseStart": 9.604,
+        "responseEnd": 10.682
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457062800.768,
+        "domainLookupStart": 0.179,
+        "domainLookupEnd": 0.704,
+        "connectStart": 0.704,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.3,
+        "requestStart": 1.37,
+        "responseStart": 9.565,
+        "responseEnd": 10.579
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457065293.199,
+        "domainLookupStart": 0.161,
+        "domainLookupEnd": 0.615,
+        "connectStart": 0.615,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.093,
+        "requestStart": 1.161,
+        "responseStart": 9.028,
+        "responseEnd": 10.181
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457067791.313,
+        "domainLookupStart": 0.135,
+        "domainLookupEnd": 0.551,
+        "connectStart": 0.551,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.011,
+        "requestStart": 1.095,
+        "responseStart": 9.202,
+        "responseEnd": 10.22
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457070295.4043,
+        "domainLookupStart": 0.188,
+        "domainLookupEnd": 0.65,
+        "connectStart": 0.65,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.179,
+        "requestStart": 1.258,
+        "responseStart": 9.715,
+        "responseEnd": 10.78
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457072797.2642,
+        "domainLookupStart": 0.16,
+        "domainLookupEnd": 0.646,
+        "connectStart": 0.646,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.135,
+        "requestStart": 1.194,
+        "responseStart": 9.179,
+        "responseEnd": 10.271
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457075295.707,
+        "domainLookupStart": 0.215,
+        "domainLookupEnd": 0.836,
+        "connectStart": 0.836,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.516,
+        "requestStart": 1.617,
+        "responseStart": 13.163,
+        "responseEnd": 14.85
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457077799.7131,
+        "domainLookupStart": 0.287,
+        "domainLookupEnd": 0.769,
+        "connectStart": 0.769,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.219,
+        "requestStart": 1.29,
+        "responseStart": 9.031,
+        "responseEnd": 10.115
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457080296.829,
+        "domainLookupStart": 0.213,
+        "domainLookupEnd": 0.757,
+        "connectStart": 0.757,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.343,
+        "requestStart": 1.431,
+        "responseStart": 8.765,
+        "responseEnd": 9.786
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457082790.5999,
+        "domainLookupStart": 0.212,
+        "domainLookupEnd": 0.782,
+        "connectStart": 0.782,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.273,
+        "requestStart": 1.332,
+        "responseStart": 9.263,
+        "responseEnd": 10.439
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457085290.26,
+        "domainLookupStart": 0.208,
+        "domainLookupEnd": 0.707,
+        "connectStart": 0.707,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.136,
+        "requestStart": 1.194,
+        "responseStart": 9.448,
+        "responseEnd": 10.607
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457087794.8071,
+        "domainLookupStart": 0.182,
+        "domainLookupEnd": 0.792,
+        "connectStart": 0.792,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.505,
+        "requestStart": 1.607,
+        "responseStart": 11.838,
+        "responseEnd": 13.139
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457090295.182,
+        "domainLookupStart": 0.197,
+        "domainLookupEnd": 0.898,
+        "connectStart": 0.898,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.568,
+        "requestStart": 1.659,
+        "responseStart": 12.441,
+        "responseEnd": 13.598
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457092791.741,
+        "domainLookupStart": 0.227,
+        "domainLookupEnd": 1.268,
+        "connectStart": 1.268,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.975,
+        "requestStart": 2.075,
+        "responseStart": 11.659,
+        "responseEnd": 13.421
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457095290.569,
+        "domainLookupStart": 0.207,
+        "domainLookupEnd": 0.876,
+        "connectStart": 0.876,
+        "secureConnectionStart": -1,
+        "connectEnd": 4.733,
+        "requestStart": 4.84,
+        "responseStart": 46.539,
+        "responseEnd": 47.976
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457097790.132,
+        "domainLookupStart": 0.196,
+        "domainLookupEnd": 0.739,
+        "connectStart": 0.739,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.443,
+        "requestStart": 1.53,
+        "responseStart": 11.06,
+        "responseEnd": 12.21
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457100288.5398,
+        "domainLookupStart": 0.204,
+        "domainLookupEnd": 0.791,
+        "connectStart": 0.791,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.318,
+        "requestStart": 1.39,
+        "responseStart": 11.57,
+        "responseEnd": 12.882
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457102798.695,
+        "domainLookupStart": 0.187,
+        "domainLookupEnd": 0.997,
+        "connectStart": 0.997,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.988,
+        "requestStart": 2.089,
+        "responseStart": 12.105,
+        "responseEnd": 13.753
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457105298.195,
+        "domainLookupStart": 0.202,
+        "domainLookupEnd": 0.747,
+        "connectStart": 0.747,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.289,
+        "requestStart": 1.368,
+        "responseStart": 10.896,
+        "responseEnd": 12.216
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457107799.285,
+        "domainLookupStart": 0.202,
+        "domainLookupEnd": 0.808,
+        "connectStart": 0.808,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.399,
+        "requestStart": 1.472,
+        "responseStart": 10.366,
+        "responseEnd": 11.574
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457110298.0818,
+        "domainLookupStart": 0.22,
+        "domainLookupEnd": 0.758,
+        "connectStart": 0.758,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.323,
+        "requestStart": 1.397,
+        "responseStart": 11.084,
+        "responseEnd": 12.592
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457112800.2039,
+        "domainLookupStart": 0.278,
+        "domainLookupEnd": 1.116,
+        "connectStart": 1.116,
+        "secureConnectionStart": -1,
+        "connectEnd": 2.079,
+        "requestStart": 2.2,
+        "responseStart": 14.729,
+        "responseEnd": 16.262
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457115291.042,
+        "domainLookupStart": 0.241,
+        "domainLookupEnd": 1.078,
+        "connectStart": 1.078,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.898,
+        "requestStart": 1.99,
+        "responseStart": 31.96,
+        "responseEnd": 34.955
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457117801.958,
+        "domainLookupStart": 0.164,
+        "domainLookupEnd": 0.701,
+        "connectStart": 0.701,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.302,
+        "requestStart": 1.361,
+        "responseStart": 10.731,
+        "responseEnd": 11.872
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457120288.605,
+        "domainLookupStart": 0.226,
+        "domainLookupEnd": 0.941,
+        "connectStart": 0.941,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.627,
+        "requestStart": 1.723,
+        "responseStart": 10.675,
+        "responseEnd": 12.002
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457122788.097,
+        "domainLookupStart": 0.198,
+        "domainLookupEnd": 0.662,
+        "connectStart": 0.662,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.096,
+        "requestStart": 1.168,
+        "responseStart": 9.746,
+        "responseEnd": 11.279
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457125299.469,
+        "domainLookupStart": 0.253,
+        "domainLookupEnd": 0.979,
+        "connectStart": 0.979,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.661,
+        "requestStart": 1.74,
+        "responseStart": 9.81,
+        "responseEnd": 10.994
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457127791.949,
+        "domainLookupStart": 0.198,
+        "domainLookupEnd": 0.647,
+        "connectStart": 0.647,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.273,
+        "requestStart": 1.349,
+        "responseStart": 9.713,
+        "responseEnd": 10.775
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457130300.277,
+        "domainLookupStart": 0.18,
+        "domainLookupEnd": 0.663,
+        "connectStart": 0.663,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.2,
+        "requestStart": 1.273,
+        "responseStart": 9.627,
+        "responseEnd": 10.953
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457132796.75,
+        "domainLookupStart": 0.145,
+        "domainLookupEnd": 0.621,
+        "connectStart": 0.621,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.373,
+        "requestStart": 1.457,
+        "responseStart": 10.197,
+        "responseEnd": 11.392
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457135287.802,
+        "domainLookupStart": 0.203,
+        "domainLookupEnd": 0.713,
+        "connectStart": 0.713,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.333,
+        "requestStart": 1.553,
+        "responseStart": 11.537,
+        "responseEnd": 13.021
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457137790.9392,
+        "domainLookupStart": 0.252,
+        "domainLookupEnd": 0.977,
+        "connectStart": 0.977,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.719,
+        "requestStart": 1.823,
+        "responseStart": 11.379,
+        "responseEnd": 12.632
+      }
+    },
+    {
+      "path": "/api/v1/planning-runs/30f67e79-3202-4b17-884b-91a40e8aef5c",
+      "method": "GET",
+      "timing": {
+        "startTime": 1792457140301.6008,
+        "domainLookupStart": 0.236,
+        "domainLookupEnd": 1.138,
+        "connectStart": 1.138,
+        "secureConnectionStart": -1,
+        "connectEnd": 2.11,
+        "requestStart": 2.198,
+        "responseStart": 10.694,
+        "responseEnd": 12.157
+      }
+    }
+  ],
+  "consoleErrors": [],
+  "result": "FAIL",
+  "failure": "locator.waitFor: Timeout 240000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: '局部调整建议' }) to be visible\u001b[22m\n",
+  "finished_at": "2026-10-20T00:45:40.471Z"
+}

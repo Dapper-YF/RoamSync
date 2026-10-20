@@ -1,43 +1,43 @@
 # Latest Handoff
 
 ## Snapshot
-2026-10-19 自然旅行助手A—E隔离集成，总体PARTIAL，未合并或部署。
-目录E:/Study/RoamSync-natural-assistant-20261019；分支
-codex/natural-assistant-integration-20261019，基线1ce7e5d。
-唯一正式源码仍E:/Study/RoamSync，HEAD25a62cb；其README/nginx及旧文件保持。
+2026-10-20 自然旅行助手闭环修复，总体PARTIAL，尚不标READY FOR INTEGRATION。
+开发E:/Study/RoamSync-natural-assistant-20261019，分支
+codex/natural-assistant-closure-20261020，基于干净8c52664。
+独立复核E:/Study/RoamSync-natural-closure-review-20261020；正式源仍
+E:/Study/RoamSync，HEAD25a62cb。未合并正式分支、未部署、未迁移生产库。
 
 ## Current Freeze / Rehearsal Status
-VERIFIED：共同正式写保护复验；路线GET不改正式时间，POST默认仅刷新证据，明确授权
-才修复真实重叠，不压缩已有间隔。新增有限TripArrangementItem关系表0037，保留未排程/
-备选/撤销/明确留白，Activity独占精确时间；转换/来源/版本/Accept同事务校验。
-自然助手预览采用后才建Trip，普通咨询不创建；页面与对话共享版本化结果。
-旧Graph/Validator/Accept保留，复杂修改不直接应用。新Web默认入口AI助手＋我的安排。
-范围：日期明确单城市1—3天；未新增通用任务中心、Android或商业平台能力。
+VERIFIED：原用户全文进入已采用安排的PlanningRun，Router改写仅作诊断；格式碎片
+不进活动身份匹配，星期预约/不动日期按实际数据定位。新未绑定对话不列出未选旧Trip。
+错误授权422而非500；备选重申复用受控编辑；候选显示活动reason；终态停止轮询。
+原Graph、Validator、版本/并发/幂等、留白和固定预约保护保留，无新模型/迁移/工作流。
 
 ## Prior milestone baseline (before shadow split)
-A 2f2def5；B 7468363；C 739ef56；D ed6ea2d；E 38e2524；后续仅交付记录。
-基于正式写保护评审1ce7e5d，不要再次应用等价7b67f68。
-正式3000与生产数据库均未改动，迁移只在独立tmpfs测试PG执行。
+原A2f2def5、B7468363、C739ef56、Ded6ea2d、E38e2524及交付8c52664保留。
+本轮代码998a383原话/引用/范围；bca55f6上下文/授权/备选；cb1f88b取舍展示与验收；
+0cad41d终态轮询。后续仅证据、报告、探针更新。无需重复应用7b67f68。
 
 ## Prior verification
-MEASURED：最终Windows后端1316 passed/1 skipped；Web192通过，类型检查/构建通过。
-收藏并发独立库1通过。Linux最终同样1316通过/1跳过（release-linux.xml）。
-真实模型glm-5.3-flash＋AMap：咨询/采用/交叉修改通过；另一次真实局部冲突Graph/
-路线/Validator/用户Accept/刷新通过。合成预约并非真实订票。
-同一Trip全段浏览器链未通过：明确排程后，Router重写的“留白保留）”导致保护活动
-解析要求澄清“）”。未写坏安排，不能把分段通过称为完整产品GO。
-真实反例、截图、模型失败与回归XML见docs/evidence/natural-assistant。
-报告docs/NATURAL_ASSISTANT_DELIVERY_20261019.md。
+MEASURED：Windows及隔离复核Linux全量均1335通过/1跳过；收藏独立库1通过；
+Web195通过、类型检查/build通过；浏览器路线判定器另3项通过。
+0036→0037→0036→0037仅独立库空新表回退，旧Trip/两天保留。
+原措辞/原轮次同Trip真实浏览器00-18完整通过。00-35改序采用/恢复完成；旧断言错误
+强制缩短，已修正：12:30以后可以改到预约后，仍严格检查真实路线/时间衔接。
+同Trip桌面/390手机续验通过，六秒只查一次已接受Run；不冒称最终全链一次成功。
+有限真实服务6通过，区分模型/确定性路径；含糊指代澄清而非猜身份。
+报告docs/NATURAL_ASSISTANT_CLOSURE_20261020.md；证据natural-closure-20261020
+及natural-assistant/closure-*.xml。所有软件、Provider及探针失败保留。
 
 ## Prior blockers (historical)
-当前优先阻塞是旧意图解析与新自然修改交接，下一步应以同一失败长链建立有界回归，
-修复后验证固定预约、未排程决定、留白、不同日期都能保留，不要增加功能或更换容易
-成功的演示输入。新增地点研究Provider本轮未配置，失败明确保留；原模型代理失败仅
-隔离进程改为直连，生产配置未变。模型存在重复地点/引用错误，Validator阻止采用。
-max_walking_minutes不完整仍独立P1；旧编辑部分网络调用持锁，未做负载验收。
-无版本旧客户端保护边界仍在。0037含数据降级会丢新事项，空表迁移实验不等于生产回退。
+原意图阻塞已修复；最终版长链Provider复验未完成：00-27及00-41 Planner连接失败，
+00-32高德超时。不能以首次成功/续验冒充最终新版绿色全链。连接可用后只重跑原脚本，
+不加功能、不降Validator、不无限调Prompt。
+max_walking_minutes最终验证仍独立P1，本轮不承诺硬步行限制。部分旧网络调用持锁，
+30次采样最多1等待/活跃事务10.49秒，未做负载验收。旧无版本客户端边界仍在。
+0037有数据降级会丢新事项；生产备份、发布、迁移另行决定。单所有者本地边界，
+未验收公网多用户；新地点研究Provider未配，不承诺最新票价/开放/预约。
 
 ## Interview framing
-可证明版本/幂等/锁/回滚、路线事实与排时权限分离、混合精度的单一精确时间源、
-有证据的真实Agent局部取舍与用户采用。不可声称全自然语言稳定、真实全链已完成、
-生产已发布或任意约束都能满足。
+可证明模型改写与授权分离、真实PG一致性/回滚、混合精度单一时间源、路线约束下的
+合法不同解及用户采用。不能声称任意对话稳定、计费级调用数准确、已发布或最终验收GO。

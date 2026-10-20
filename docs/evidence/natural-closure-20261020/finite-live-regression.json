@@ -1,0 +1,2516 @@
+{
+  "kind": "real model/API; deterministic commands explicitly distinguished; synthetic data",
+  "cases": [
+    {
+      "name": "culture-consultation",
+      "input": "南京有哪些历史文化特点？先了解，不规划旅行。",
+      "context": {
+        "version": "assistant-context-v1",
+        "topic_id": "finite-consult",
+        "surface": "assistant",
+        "prefer_flexible": true
+      },
+      "status": 200,
+      "elapsed_ms": 12028,
+      "expected_path": "real Companion model, no formal writes",
+      "body": {
+        "id": "07be31ba-a23c-455d-a468-14da186be7f3",
+        "trip_id": null,
+        "messages": [
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "finite-consult",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "4b653ad4-43ad-4cbe-a4a5-1c936c595d93",
+            "user": "南京有哪些历史文化特点？先了解，不规划旅行。",
+            "assistant": "南京是中国著名古都，历史文化特点可以概括为以下几个方面：\n\n1. **六朝古都、十朝都会**：东吴、东晋和南朝宋、齐、梁、陈先后在此建都，之后南唐、明初、太平天国和中华民国也定都于此，城市承载了约1700多年的都城史。\n\n2. **六朝风骨与江南文脉**：六朝时期南京是南方文化中心，玄学清谈、书法绘画（如王羲之、顾恺之的时代）兴盛；后世又有《文心雕龙》《千字文》《儒林外史》《红楼梦》相关背景等文学积淀，被誉为\"天下文枢\"，江南贡院所在的夫子庙一带是古代科举文化重镇。\n\n3. **明代遗产厚重**：明初定都南京，留下明城墙（世界现存规模较大的古代城垣之一）、明孝陵、朝天宫等；永乐迁都后南京仍是留都，设有完整的中央机构。\n\n4. **民国风貌**：1927年后作为民国首都，形成中山陵、总统府、颐和路民国建筑群等中西合璧的城市风貌。\n\n5. **苦难与纪念记忆**：近代南京经历了鸦片战争《南京条约》签订地和南京大屠杀等重大历史事件，侵华日军南京大屠杀遇难同胞纪念馆承载着重要的民族记忆。\n\n6. **山川形胜与人文交融**：\"钟山龙蟠，石城虎踞\"，秦淮河、玄武湖、栖霞山与古城格局相互映衬，兼具帝王气象与市井烟水气，饮食上淮扬风味与金陵菜、秦淮小吃自成一体。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "explanation",
+              "confidence": 0.94,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_explanation"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "用户仅想了解南京的历史文化特点，属知识型解答，不涉及行程规划。基于稳定通史知识作答，不涉及票价、开放时间等实时信息。",
+              "response_text": "南京是中国著名古都，历史文化特点可以概括为以下几个方面：\n\n1. **六朝古都、十朝都会**：东吴、东晋和南朝宋、齐、梁、陈先后在此建都，之后南唐、明初、太平天国和中华民国也定都于此，城市承载了约1700多年的都城史。\n\n2. **六朝风骨与江南文脉**：六朝时期南京是南方文化中心，玄学清谈、书法绘画（如王羲之、顾恺之的时代）兴盛；后世又有《文心雕龙》《千字文》《儒林外史》《红楼梦》相关背景等文学积淀，被誉为\"天下文枢\"，江南贡院所在的夫子庙一带是古代科举文化重镇。\n\n3. **明代遗产厚重**：明初定都南京，留下明城墙（世界现存规模较大的古代城垣之一）、明孝陵、朝天宫等；永乐迁都后南京仍是留都，设有完整的中央机构。\n\n4. **民国风貌**：1927年后作为民国首都，形成中山陵、总统府、颐和路民国建筑群等中西合璧的城市风貌。\n\n5. **苦难与纪念记忆**：近代南京经历了鸦片战争《南京条约》签订地和南京大屠杀等重大历史事件，侵华日军南京大屠杀遇难同胞纪念馆承载着重要的民族记忆。\n\n6. **山川形胜与人文交融**：\"钟山龙蟠，石城虎踞\"，秦淮河、玄武湖、栖霞山与古城格局相互映衬，兼具帝王气象与市井烟水气，饮食上淮扬风味与金陵菜、秦淮小吃自成一体。",
+              "goal_type": "explanation",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_ff927eefdd5a5352998ba119f5dc2458",
+                  "suggestion_type": "experience",
+                  "title": "沿\"六朝—明代—民国\"三条历史线索游览南京",
+                  "summary": "可按朝代脉络分别了解南京：六朝遗迹与南朝石刻、明城墙与明孝陵、中山陵与颐和路民国建筑群。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "沿\"六朝—明代—民国\"三条历史线索游览南京"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "南京历史文化层次分明，按朝代线索理解更有条理",
+                    "适合后续如有规划时作为主题参考"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:22:43.432614Z",
+                  "conversation_turn_id": "4b653ad4-43ad-4cbe-a4a5-1c936c595d93",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": null,
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "factual",
+                "requested_fact_topics": [
+                  "history_general"
+                ]
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          }
+        ],
+        "pending_action": null,
+        "latest_run_id": null
+      },
+      "telemetry": {
+        "status": "completed",
+        "events": [
+          {
+            "sequence": 1,
+            "stage": "message",
+            "status": "completed",
+            "at": "2026-10-20T00:22:31.429534+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 2,
+            "stage": "travel_goal_routing",
+            "status": "running",
+            "at": "2026-10-20T00:22:31.443171+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 3,
+            "stage": "travel_goal_routing",
+            "status": "completed",
+            "at": "2026-10-20T00:22:31.448006+00:00",
+            "duration_ms": 5
+          },
+          {
+            "sequence": 4,
+            "stage": "interpret_goal",
+            "status": "running",
+            "at": "2026-10-20T00:22:31.502055+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 5,
+            "stage": "interpret_goal",
+            "status": "completed",
+            "at": "2026-10-20T00:22:31.502078+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 6,
+            "stage": "resolve_conversation",
+            "status": "running",
+            "at": "2026-10-20T00:22:31.533390+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 7,
+            "stage": "resolve_conversation",
+            "status": "completed",
+            "at": "2026-10-20T00:22:31.549358+00:00",
+            "duration_ms": 16
+          },
+          {
+            "sequence": 8,
+            "stage": "determine_information_need",
+            "status": "running",
+            "at": "2026-10-20T00:22:31.551152+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 9,
+            "stage": "determine_information_need",
+            "status": "completed",
+            "at": "2026-10-20T00:22:31.551349+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 10,
+            "stage": "gather_context",
+            "status": "running",
+            "at": "2026-10-20T00:22:31.552278+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 11,
+            "stage": "gather_context",
+            "status": "completed",
+            "at": "2026-10-20T00:22:31.552298+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 12,
+            "stage": "generate",
+            "status": "running",
+            "at": "2026-10-20T00:22:31.552774+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 13,
+            "stage": "companion_model",
+            "status": "running",
+            "at": "2026-10-20T00:22:31.552790+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 14,
+            "stage": "companion_model",
+            "status": "completed",
+            "at": "2026-10-20T00:22:43.429948+00:00",
+            "duration_ms": 11877
+          },
+          {
+            "sequence": 15,
+            "stage": "generate",
+            "status": "completed",
+            "at": "2026-10-20T00:22:43.431680+00:00",
+            "duration_ms": 11879
+          },
+          {
+            "sequence": 16,
+            "stage": "extract_outcome",
+            "status": "running",
+            "at": "2026-10-20T00:22:43.432581+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 17,
+            "stage": "extract_outcome",
+            "status": "completed",
+            "at": "2026-10-20T00:22:43.438992+00:00",
+            "duration_ms": 6
+          },
+          {
+            "sequence": 18,
+            "stage": "handoff_boundary",
+            "status": "running",
+            "at": "2026-10-20T00:22:43.439847+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 19,
+            "stage": "handoff_boundary",
+            "status": "completed",
+            "at": "2026-10-20T00:22:43.439856+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 20,
+            "stage": "prepare_persistence",
+            "status": "running",
+            "at": "2026-10-20T00:22:43.440350+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 21,
+            "stage": "prepare_persistence",
+            "status": "completed",
+            "at": "2026-10-20T00:22:43.440367+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 22,
+            "stage": "response_returned",
+            "status": "completed",
+            "at": "2026-10-20T00:22:43.447195+00:00",
+            "duration_ms": null
+          }
+        ],
+        "source": "process_local"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "name": "place-comparison",
+      "input": "南京博物院与玄武湖适合怎样不同的体验？先不安排。",
+      "context": {
+        "version": "assistant-context-v1",
+        "topic_id": "finite-consult",
+        "surface": "assistant",
+        "prefer_flexible": true
+      },
+      "status": 200,
+      "elapsed_ms": 21218,
+      "expected_path": "real Companion model, no Planner",
+      "body": {
+        "id": "07be31ba-a23c-455d-a468-14da186be7f3",
+        "trip_id": null,
+        "messages": [
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "finite-consult",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "4b653ad4-43ad-4cbe-a4a5-1c936c595d93",
+            "user": "南京有哪些历史文化特点？先了解，不规划旅行。",
+            "assistant": "南京是中国著名古都，历史文化特点可以概括为以下几个方面：\n\n1. **六朝古都、十朝都会**：东吴、东晋和南朝宋、齐、梁、陈先后在此建都，之后南唐、明初、太平天国和中华民国也定都于此，城市承载了约1700多年的都城史。\n\n2. **六朝风骨与江南文脉**：六朝时期南京是南方文化中心，玄学清谈、书法绘画（如王羲之、顾恺之的时代）兴盛；后世又有《文心雕龙》《千字文》《儒林外史》《红楼梦》相关背景等文学积淀，被誉为\"天下文枢\"，江南贡院所在的夫子庙一带是古代科举文化重镇。\n\n3. **明代遗产厚重**：明初定都南京，留下明城墙（世界现存规模较大的古代城垣之一）、明孝陵、朝天宫等；永乐迁都后南京仍是留都，设有完整的中央机构。\n\n4. **民国风貌**：1927年后作为民国首都，形成中山陵、总统府、颐和路民国建筑群等中西合璧的城市风貌。\n\n5. **苦难与纪念记忆**：近代南京经历了鸦片战争《南京条约》签订地和南京大屠杀等重大历史事件，侵华日军南京大屠杀遇难同胞纪念馆承载着重要的民族记忆。\n\n6. **山川形胜与人文交融**：\"钟山龙蟠，石城虎踞\"，秦淮河、玄武湖、栖霞山与古城格局相互映衬，兼具帝王气象与市井烟水气，饮食上淮扬风味与金陵菜、秦淮小吃自成一体。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "explanation",
+              "confidence": 0.94,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_explanation"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "用户仅想了解南京的历史文化特点，属知识型解答，不涉及行程规划。基于稳定通史知识作答，不涉及票价、开放时间等实时信息。",
+              "response_text": "南京是中国著名古都，历史文化特点可以概括为以下几个方面：\n\n1. **六朝古都、十朝都会**：东吴、东晋和南朝宋、齐、梁、陈先后在此建都，之后南唐、明初、太平天国和中华民国也定都于此，城市承载了约1700多年的都城史。\n\n2. **六朝风骨与江南文脉**：六朝时期南京是南方文化中心，玄学清谈、书法绘画（如王羲之、顾恺之的时代）兴盛；后世又有《文心雕龙》《千字文》《儒林外史》《红楼梦》相关背景等文学积淀，被誉为\"天下文枢\"，江南贡院所在的夫子庙一带是古代科举文化重镇。\n\n3. **明代遗产厚重**：明初定都南京，留下明城墙（世界现存规模较大的古代城垣之一）、明孝陵、朝天宫等；永乐迁都后南京仍是留都，设有完整的中央机构。\n\n4. **民国风貌**：1927年后作为民国首都，形成中山陵、总统府、颐和路民国建筑群等中西合璧的城市风貌。\n\n5. **苦难与纪念记忆**：近代南京经历了鸦片战争《南京条约》签订地和南京大屠杀等重大历史事件，侵华日军南京大屠杀遇难同胞纪念馆承载着重要的民族记忆。\n\n6. **山川形胜与人文交融**：\"钟山龙蟠，石城虎踞\"，秦淮河、玄武湖、栖霞山与古城格局相互映衬，兼具帝王气象与市井烟水气，饮食上淮扬风味与金陵菜、秦淮小吃自成一体。",
+              "goal_type": "explanation",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_ff927eefdd5a5352998ba119f5dc2458",
+                  "suggestion_type": "experience",
+                  "title": "沿\"六朝—明代—民国\"三条历史线索游览南京",
+                  "summary": "可按朝代脉络分别了解南京：六朝遗迹与南朝石刻、明城墙与明孝陵、中山陵与颐和路民国建筑群。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "沿\"六朝—明代—民国\"三条历史线索游览南京"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "南京历史文化层次分明，按朝代线索理解更有条理",
+                    "适合后续如有规划时作为主题参考"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:22:43.432614Z",
+                  "conversation_turn_id": "4b653ad4-43ad-4cbe-a4a5-1c936c595d93",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": null,
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "factual",
+                "requested_fact_topics": [
+                  "history_general"
+                ]
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          },
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "349b0718-2fd4-414a-b99a-e057171f7610",
+            "user": "第一次去南京，南京博物院和玄武湖的体验有什么区别？先只聊聊，不创建旅行。",
+            "assistant": "这两个地方的体验差别挺大的：\n\n**南京博物院**：室内文化体验为主，是中国三大博物馆之一，馆藏非常丰富，历史馆、特展馆、数字馆、民国馆等各具特色，其中民国馆还原了老南京街景，很出片。适合喜欢历史文物、想深度了解六朝古都背景的人，通常需要预留半天，且一般要提前预约（具体预约规则建议出行前查官方渠道确认）。\n\n**玄武湖**：户外自然风光，是江南地区规模很大的城内湖，环湖步行或骑车很舒服，可以看到湖景、古城墙和紫金山远景。适合放松、拍照、傍晚看日落，节奏自由，不费脑，走累了随处可停。\n\n简单说：一个动脑看展，一个放松看景。第一次去如果时间允许，两者完全可以搭配——白天看博物院，傍晚去玄武湖沿明城墙散步，一天的节奏会很舒服。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "destination_exploration",
+              "confidence": 0.93,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_destination_exploration"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "首次到访南京，比较南京博物院与玄武湖的体验差异，属一般知识问答，不涉及实时开放状态或行程创建。",
+              "response_text": "这两个地方的体验差别挺大的：\n\n**南京博物院**：室内文化体验为主，是中国三大博物馆之一，馆藏非常丰富，历史馆、特展馆、数字馆、民国馆等各具特色，其中民国馆还原了老南京街景，很出片。适合喜欢历史文物、想深度了解六朝古都背景的人，通常需要预留半天，且一般要提前预约（具体预约规则建议出行前查官方渠道确认）。\n\n**玄武湖**：户外自然风光，是江南地区规模很大的城内湖，环湖步行或骑车很舒服，可以看到湖景、古城墙和紫金山远景。适合放松、拍照、傍晚看日落，节奏自由，不费脑，走累了随处可停。\n\n简单说：一个动脑看展，一个放松看景。第一次去如果时间允许，两者完全可以搭配——白天看博物院，傍晚去玄武湖沿明城墙散步，一天的节奏会很舒服。",
+              "goal_type": "destination_exploration",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_6b849af0a386598eaaf3b66320a7f836",
+                  "suggestion_type": "experience",
+                  "title": "南京博物院深度看展",
+                  "summary": "室内文化体验，馆藏丰富，民国馆街景尤其有特色，建议预留半天并提前确认预约要求。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "南京博物院深度看展"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "首次到南京了解历史背景的代表性体验",
+                    "民国馆沉浸式场景独特"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:22:52.766000Z",
+                  "conversation_turn_id": "349b0718-2fd4-414a-b99a-e057171f7610",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_deee66f000e25cf3bb398b1dd1e213b4",
+                  "suggestion_type": "experience",
+                  "title": "玄武湖环湖漫步与日落",
+                  "summary": "户外湖景休闲，可远眺紫金山与明城墙，节奏自由，适合傍晚放松。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "玄武湖环湖漫步与日落"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "与博物院一动一静互补",
+                    "靠近明城墙，景观层次丰富"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:22:52.766000Z",
+                  "conversation_turn_id": "349b0718-2fd4-414a-b99a-e057171f7610",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": {
+                "options": [
+                  "南京博物院",
+                  "玄武湖"
+                ],
+                "dimensions": [
+                  "体验类型",
+                  "节奏",
+                  "适合时长",
+                  "适合人群"
+                ],
+                "summary": "南京博物院偏室内文化深度体验，玄武湖偏户外自然休闲；可白天看展、傍晚湖边散步组合安排。"
+              },
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "advisory",
+                "requested_fact_topics": []
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          },
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "finite-consult",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "fe5d4dc1-bd61-4fa9-bfb6-a725862b0e3a",
+            "user": "南京博物院与玄武湖适合怎样不同的体验？先不安排。",
+            "assistant": "两者气质差别很大，适合的体验类型也不同：\n\n**南京博物院——沉浸式人文深度游**\n- 中国规模较大的博物馆之一，历史馆、特展馆、艺术馆、数字馆、民国馆、非遗馆六个部分各有侧重。\n- 适合慢节奏逛展：看文物精品（如镇院之宝）、看特展，喜欢历史的可以待上大半天。\n- 民国馆还原了老南京街景，拍照和怀旧氛围很突出；非遗馆常有手工艺展示。\n- 更适合对历史、艺术、文物感兴趣的人，室内为主，不受天气影响。\n\n**玄武湖——户外自然与市井休闲**\n- 江南地区规模较大的城内湖，五洲（环洲、樱洲、梁洲、翠洲、菱洲）各有风景，环湖步行或骑行都很舒服。\n- 适合放松式体验：湖边散步、划船、看落日，远处可见紫金山与明城墙，\"山水城林\"的城市格局在这里最直观。\n- 春季樱洲樱花、夏季荷花是特色看点；也是本地人日常休闲地，市井气息浓。\n- 更适合想喘口气、拍照、轻活动量的人，体验随季节和天气变化大。\n\n简单说：想\"看懂南京的历史厚度\"选博物院，想\"感受南京的山水与日常\"选玄武湖；两者一个室内一个户外，也可以同一天搭配（博物院在中山门附近，与玄武湖相距不算远），具体开放信息建议出行前自行确认。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "recommendation",
+              "confidence": 0.93,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_recommendation"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "用户想了解南京博物院与玄武湖各自适合的体验差异，仅咨询不规划；基于两处性质对比，从体验类型、节奏、适合人群等维度说明。",
+              "response_text": "两者气质差别很大，适合的体验类型也不同：\n\n**南京博物院——沉浸式人文深度游**\n- 中国规模较大的博物馆之一，历史馆、特展馆、艺术馆、数字馆、民国馆、非遗馆六个部分各有侧重。\n- 适合慢节奏逛展：看文物精品（如镇院之宝）、看特展，喜欢历史的可以待上大半天。\n- 民国馆还原了老南京街景，拍照和怀旧氛围很突出；非遗馆常有手工艺展示。\n- 更适合对历史、艺术、文物感兴趣的人，室内为主，不受天气影响。\n\n**玄武湖——户外自然与市井休闲**\n- 江南地区规模较大的城内湖，五洲（环洲、樱洲、梁洲、翠洲、菱洲）各有风景，环湖步行或骑行都很舒服。\n- 适合放松式体验：湖边散步、划船、看落日，远处可见紫金山与明城墙，\"山水城林\"的城市格局在这里最直观。\n- 春季樱洲樱花、夏季荷花是特色看点；也是本地人日常休闲地，市井气息浓。\n- 更适合想喘口气、拍照、轻活动量的人，体验随季节和天气变化大。\n\n简单说：想\"看懂南京的历史厚度\"选博物院，想\"感受南京的山水与日常\"选玄武湖；两者一个室内一个户外，也可以同一天搭配（博物院在中山门附近，与玄武湖相距不算远），具体开放信息建议出行前自行确认。",
+              "goal_type": "recommendation",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_619cdbda727c59a1a4a42810cb435017",
+                  "suggestion_type": "experience",
+                  "title": "南京博物院沉浸式逛展",
+                  "summary": "以历史馆、特展与民国馆街景为主的室内人文深度体验。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "南京博物院沉浸式逛展"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "适合对文物与历史感兴趣的慢节奏游览",
+                    "室内为主，不受天气影响"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:23:04.743132Z",
+                  "conversation_turn_id": "fe5d4dc1-bd61-4fa9-bfb6-a725862b0e3a",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_e3f256b8ce585c9f90543424b645567c",
+                  "suggestion_type": "experience",
+                  "title": "玄武湖环湖漫步与湖上休闲",
+                  "summary": "五洲景观、环湖步行骑行、划船看落日的户外休闲体验。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "玄武湖环湖漫步与湖上休闲"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "直观感受南京山水城林格局",
+                    "季节性景观（樱花、荷花）与市井气息突出"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:23:04.743132Z",
+                  "conversation_turn_id": "fe5d4dc1-bd61-4fa9-bfb6-a725862b0e3a",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": {
+                "options": [
+                  "南京博物院",
+                  "玄武湖"
+                ],
+                "dimensions": [
+                  "体验类型",
+                  "节奏与时长",
+                  "适合人群",
+                  "季节天气影响"
+                ],
+                "summary": "博物院偏室内深度人文体验，玄武湖偏户外自然休闲；前者看历史厚度，后者感受山水与市井日常。"
+              },
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "context_required",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "saved_context_read_only"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": true,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "advisory",
+                "requested_fact_topics": []
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          }
+        ],
+        "pending_action": null,
+        "latest_run_id": null
+      },
+      "telemetry": {
+        "status": "completed",
+        "events": [
+          {
+            "sequence": 1,
+            "stage": "message",
+            "status": "completed",
+            "at": "2026-10-20T00:22:43.536566+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 2,
+            "stage": "travel_goal_routing",
+            "status": "running",
+            "at": "2026-10-20T00:22:52.775026+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 3,
+            "stage": "travel_goal_routing",
+            "status": "completed",
+            "at": "2026-10-20T00:22:52.775106+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 4,
+            "stage": "interpret_goal",
+            "status": "running",
+            "at": "2026-10-20T00:22:52.821699+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 5,
+            "stage": "interpret_goal",
+            "status": "completed",
+            "at": "2026-10-20T00:22:52.821710+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 6,
+            "stage": "resolve_conversation",
+            "status": "running",
+            "at": "2026-10-20T00:22:52.823467+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 7,
+            "stage": "resolve_conversation",
+            "status": "completed",
+            "at": "2026-10-20T00:22:52.824258+00:00",
+            "duration_ms": 1
+          },
+          {
+            "sequence": 8,
+            "stage": "determine_information_need",
+            "status": "running",
+            "at": "2026-10-20T00:22:52.824982+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 9,
+            "stage": "determine_information_need",
+            "status": "completed",
+            "at": "2026-10-20T00:22:52.825117+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 10,
+            "stage": "gather_context",
+            "status": "running",
+            "at": "2026-10-20T00:22:52.826141+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 11,
+            "stage": "gather_context",
+            "status": "completed",
+            "at": "2026-10-20T00:22:52.826157+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 12,
+            "stage": "generate",
+            "status": "running",
+            "at": "2026-10-20T00:22:52.826598+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 13,
+            "stage": "companion_model",
+            "status": "running",
+            "at": "2026-10-20T00:22:52.826610+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 14,
+            "stage": "companion_model",
+            "status": "completed",
+            "at": "2026-10-20T00:23:04.741584+00:00",
+            "duration_ms": 11915
+          },
+          {
+            "sequence": 15,
+            "stage": "generate",
+            "status": "completed",
+            "at": "2026-10-20T00:23:04.742041+00:00",
+            "duration_ms": 11915
+          },
+          {
+            "sequence": 16,
+            "stage": "extract_outcome",
+            "status": "running",
+            "at": "2026-10-20T00:23:04.743085+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 17,
+            "stage": "extract_outcome",
+            "status": "completed",
+            "at": "2026-10-20T00:23:04.743285+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 18,
+            "stage": "handoff_boundary",
+            "status": "running",
+            "at": "2026-10-20T00:23:04.744038+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 19,
+            "stage": "handoff_boundary",
+            "status": "completed",
+            "at": "2026-10-20T00:23:04.744047+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 20,
+            "stage": "prepare_persistence",
+            "status": "running",
+            "at": "2026-10-20T00:23:04.744559+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 21,
+            "stage": "prepare_persistence",
+            "status": "completed",
+            "at": "2026-10-20T00:23:04.744581+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 22,
+            "stage": "response_returned",
+            "status": "completed",
+            "at": "2026-10-20T00:23:04.751041+00:00",
+            "duration_ms": null
+          }
+        ],
+        "source": "process_local"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "name": "interest-is-not-adoption",
+      "input": "南京博物院听起来不错，我感兴趣，但还没决定出行。",
+      "context": {
+        "version": "assistant-context-v1",
+        "topic_id": "finite-consult",
+        "surface": "assistant",
+        "prefer_flexible": true
+      },
+      "status": 200,
+      "elapsed_ms": 5878,
+      "expected_path": "real model or bounded reply; no adoption",
+      "body": {
+        "id": "07be31ba-a23c-455d-a468-14da186be7f3",
+        "trip_id": null,
+        "messages": [
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "finite-consult",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "4b653ad4-43ad-4cbe-a4a5-1c936c595d93",
+            "user": "南京有哪些历史文化特点？先了解，不规划旅行。",
+            "assistant": "南京是中国著名古都，历史文化特点可以概括为以下几个方面：\n\n1. **六朝古都、十朝都会**：东吴、东晋和南朝宋、齐、梁、陈先后在此建都，之后南唐、明初、太平天国和中华民国也定都于此，城市承载了约1700多年的都城史。\n\n2. **六朝风骨与江南文脉**：六朝时期南京是南方文化中心，玄学清谈、书法绘画（如王羲之、顾恺之的时代）兴盛；后世又有《文心雕龙》《千字文》《儒林外史》《红楼梦》相关背景等文学积淀，被誉为\"天下文枢\"，江南贡院所在的夫子庙一带是古代科举文化重镇。\n\n3. **明代遗产厚重**：明初定都南京，留下明城墙（世界现存规模较大的古代城垣之一）、明孝陵、朝天宫等；永乐迁都后南京仍是留都，设有完整的中央机构。\n\n4. **民国风貌**：1927年后作为民国首都，形成中山陵、总统府、颐和路民国建筑群等中西合璧的城市风貌。\n\n5. **苦难与纪念记忆**：近代南京经历了鸦片战争《南京条约》签订地和南京大屠杀等重大历史事件，侵华日军南京大屠杀遇难同胞纪念馆承载着重要的民族记忆。\n\n6. **山川形胜与人文交融**：\"钟山龙蟠，石城虎踞\"，秦淮河、玄武湖、栖霞山与古城格局相互映衬，兼具帝王气象与市井烟水气，饮食上淮扬风味与金陵菜、秦淮小吃自成一体。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "explanation",
+              "confidence": 0.94,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_explanation"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "用户仅想了解南京的历史文化特点，属知识型解答，不涉及行程规划。基于稳定通史知识作答，不涉及票价、开放时间等实时信息。",
+              "response_text": "南京是中国著名古都，历史文化特点可以概括为以下几个方面：\n\n1. **六朝古都、十朝都会**：东吴、东晋和南朝宋、齐、梁、陈先后在此建都，之后南唐、明初、太平天国和中华民国也定都于此，城市承载了约1700多年的都城史。\n\n2. **六朝风骨与江南文脉**：六朝时期南京是南方文化中心，玄学清谈、书法绘画（如王羲之、顾恺之的时代）兴盛；后世又有《文心雕龙》《千字文》《儒林外史》《红楼梦》相关背景等文学积淀，被誉为\"天下文枢\"，江南贡院所在的夫子庙一带是古代科举文化重镇。\n\n3. **明代遗产厚重**：明初定都南京，留下明城墙（世界现存规模较大的古代城垣之一）、明孝陵、朝天宫等；永乐迁都后南京仍是留都，设有完整的中央机构。\n\n4. **民国风貌**：1927年后作为民国首都，形成中山陵、总统府、颐和路民国建筑群等中西合璧的城市风貌。\n\n5. **苦难与纪念记忆**：近代南京经历了鸦片战争《南京条约》签订地和南京大屠杀等重大历史事件，侵华日军南京大屠杀遇难同胞纪念馆承载着重要的民族记忆。\n\n6. **山川形胜与人文交融**：\"钟山龙蟠，石城虎踞\"，秦淮河、玄武湖、栖霞山与古城格局相互映衬，兼具帝王气象与市井烟水气，饮食上淮扬风味与金陵菜、秦淮小吃自成一体。",
+              "goal_type": "explanation",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_ff927eefdd5a5352998ba119f5dc2458",
+                  "suggestion_type": "experience",
+                  "title": "沿\"六朝—明代—民国\"三条历史线索游览南京",
+                  "summary": "可按朝代脉络分别了解南京：六朝遗迹与南朝石刻、明城墙与明孝陵、中山陵与颐和路民国建筑群。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "沿\"六朝—明代—民国\"三条历史线索游览南京"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "南京历史文化层次分明，按朝代线索理解更有条理",
+                    "适合后续如有规划时作为主题参考"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:22:43.432614Z",
+                  "conversation_turn_id": "4b653ad4-43ad-4cbe-a4a5-1c936c595d93",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": null,
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "factual",
+                "requested_fact_topics": [
+                  "history_general"
+                ]
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          },
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "349b0718-2fd4-414a-b99a-e057171f7610",
+            "user": "第一次去南京，南京博物院和玄武湖的体验有什么区别？先只聊聊，不创建旅行。",
+            "assistant": "这两个地方的体验差别挺大的：\n\n**南京博物院**：室内文化体验为主，是中国三大博物馆之一，馆藏非常丰富，历史馆、特展馆、数字馆、民国馆等各具特色，其中民国馆还原了老南京街景，很出片。适合喜欢历史文物、想深度了解六朝古都背景的人，通常需要预留半天，且一般要提前预约（具体预约规则建议出行前查官方渠道确认）。\n\n**玄武湖**：户外自然风光，是江南地区规模很大的城内湖，环湖步行或骑车很舒服，可以看到湖景、古城墙和紫金山远景。适合放松、拍照、傍晚看日落，节奏自由，不费脑，走累了随处可停。\n\n简单说：一个动脑看展，一个放松看景。第一次去如果时间允许，两者完全可以搭配——白天看博物院，傍晚去玄武湖沿明城墙散步，一天的节奏会很舒服。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "destination_exploration",
+              "confidence": 0.93,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_destination_exploration"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "首次到访南京，比较南京博物院与玄武湖的体验差异，属一般知识问答，不涉及实时开放状态或行程创建。",
+              "response_text": "这两个地方的体验差别挺大的：\n\n**南京博物院**：室内文化体验为主，是中国三大博物馆之一，馆藏非常丰富，历史馆、特展馆、数字馆、民国馆等各具特色，其中民国馆还原了老南京街景，很出片。适合喜欢历史文物、想深度了解六朝古都背景的人，通常需要预留半天，且一般要提前预约（具体预约规则建议出行前查官方渠道确认）。\n\n**玄武湖**：户外自然风光，是江南地区规模很大的城内湖，环湖步行或骑车很舒服，可以看到湖景、古城墙和紫金山远景。适合放松、拍照、傍晚看日落，节奏自由，不费脑，走累了随处可停。\n\n简单说：一个动脑看展，一个放松看景。第一次去如果时间允许，两者完全可以搭配——白天看博物院，傍晚去玄武湖沿明城墙散步，一天的节奏会很舒服。",
+              "goal_type": "destination_exploration",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_6b849af0a386598eaaf3b66320a7f836",
+                  "suggestion_type": "experience",
+                  "title": "南京博物院深度看展",
+                  "summary": "室内文化体验，馆藏丰富，民国馆街景尤其有特色，建议预留半天并提前确认预约要求。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "南京博物院深度看展"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "首次到南京了解历史背景的代表性体验",
+                    "民国馆沉浸式场景独特"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:22:52.766000Z",
+                  "conversation_turn_id": "349b0718-2fd4-414a-b99a-e057171f7610",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_deee66f000e25cf3bb398b1dd1e213b4",
+                  "suggestion_type": "experience",
+                  "title": "玄武湖环湖漫步与日落",
+                  "summary": "户外湖景休闲，可远眺紫金山与明城墙，节奏自由，适合傍晚放松。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "玄武湖环湖漫步与日落"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "与博物院一动一静互补",
+                    "靠近明城墙，景观层次丰富"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:22:52.766000Z",
+                  "conversation_turn_id": "349b0718-2fd4-414a-b99a-e057171f7610",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": {
+                "options": [
+                  "南京博物院",
+                  "玄武湖"
+                ],
+                "dimensions": [
+                  "体验类型",
+                  "节奏",
+                  "适合时长",
+                  "适合人群"
+                ],
+                "summary": "南京博物院偏室内文化深度体验，玄武湖偏户外自然休闲；可白天看展、傍晚湖边散步组合安排。"
+              },
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "advisory",
+                "requested_fact_topics": []
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          },
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "finite-consult",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "fe5d4dc1-bd61-4fa9-bfb6-a725862b0e3a",
+            "user": "南京博物院与玄武湖适合怎样不同的体验？先不安排。",
+            "assistant": "两者气质差别很大，适合的体验类型也不同：\n\n**南京博物院——沉浸式人文深度游**\n- 中国规模较大的博物馆之一，历史馆、特展馆、艺术馆、数字馆、民国馆、非遗馆六个部分各有侧重。\n- 适合慢节奏逛展：看文物精品（如镇院之宝）、看特展，喜欢历史的可以待上大半天。\n- 民国馆还原了老南京街景，拍照和怀旧氛围很突出；非遗馆常有手工艺展示。\n- 更适合对历史、艺术、文物感兴趣的人，室内为主，不受天气影响。\n\n**玄武湖——户外自然与市井休闲**\n- 江南地区规模较大的城内湖，五洲（环洲、樱洲、梁洲、翠洲、菱洲）各有风景，环湖步行或骑行都很舒服。\n- 适合放松式体验：湖边散步、划船、看落日，远处可见紫金山与明城墙，\"山水城林\"的城市格局在这里最直观。\n- 春季樱洲樱花、夏季荷花是特色看点；也是本地人日常休闲地，市井气息浓。\n- 更适合想喘口气、拍照、轻活动量的人，体验随季节和天气变化大。\n\n简单说：想\"看懂南京的历史厚度\"选博物院，想\"感受南京的山水与日常\"选玄武湖；两者一个室内一个户外，也可以同一天搭配（博物院在中山门附近，与玄武湖相距不算远），具体开放信息建议出行前自行确认。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "recommendation",
+              "confidence": 0.93,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_recommendation"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "用户想了解南京博物院与玄武湖各自适合的体验差异，仅咨询不规划；基于两处性质对比，从体验类型、节奏、适合人群等维度说明。",
+              "response_text": "两者气质差别很大，适合的体验类型也不同：\n\n**南京博物院——沉浸式人文深度游**\n- 中国规模较大的博物馆之一，历史馆、特展馆、艺术馆、数字馆、民国馆、非遗馆六个部分各有侧重。\n- 适合慢节奏逛展：看文物精品（如镇院之宝）、看特展，喜欢历史的可以待上大半天。\n- 民国馆还原了老南京街景，拍照和怀旧氛围很突出；非遗馆常有手工艺展示。\n- 更适合对历史、艺术、文物感兴趣的人，室内为主，不受天气影响。\n\n**玄武湖——户外自然与市井休闲**\n- 江南地区规模较大的城内湖，五洲（环洲、樱洲、梁洲、翠洲、菱洲）各有风景，环湖步行或骑行都很舒服。\n- 适合放松式体验：湖边散步、划船、看落日，远处可见紫金山与明城墙，\"山水城林\"的城市格局在这里最直观。\n- 春季樱洲樱花、夏季荷花是特色看点；也是本地人日常休闲地，市井气息浓。\n- 更适合想喘口气、拍照、轻活动量的人，体验随季节和天气变化大。\n\n简单说：想\"看懂南京的历史厚度\"选博物院，想\"感受南京的山水与日常\"选玄武湖；两者一个室内一个户外，也可以同一天搭配（博物院在中山门附近，与玄武湖相距不算远），具体开放信息建议出行前自行确认。",
+              "goal_type": "recommendation",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_619cdbda727c59a1a4a42810cb435017",
+                  "suggestion_type": "experience",
+                  "title": "南京博物院沉浸式逛展",
+                  "summary": "以历史馆、特展与民国馆街景为主的室内人文深度体验。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "南京博物院沉浸式逛展"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "适合对文物与历史感兴趣的慢节奏游览",
+                    "室内为主，不受天气影响"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:23:04.743132Z",
+                  "conversation_turn_id": "fe5d4dc1-bd61-4fa9-bfb6-a725862b0e3a",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_e3f256b8ce585c9f90543424b645567c",
+                  "suggestion_type": "experience",
+                  "title": "玄武湖环湖漫步与湖上休闲",
+                  "summary": "五洲景观、环湖步行骑行、划船看落日的户外休闲体验。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "玄武湖环湖漫步与湖上休闲"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "直观感受南京山水城林格局",
+                    "季节性景观（樱花、荷花）与市井气息突出"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:23:04.743132Z",
+                  "conversation_turn_id": "fe5d4dc1-bd61-4fa9-bfb6-a725862b0e3a",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": {
+                "options": [
+                  "南京博物院",
+                  "玄武湖"
+                ],
+                "dimensions": [
+                  "体验类型",
+                  "节奏与时长",
+                  "适合人群",
+                  "季节天气影响"
+                ],
+                "summary": "博物院偏室内深度人文体验，玄武湖偏户外自然休闲；前者看历史厚度，后者感受山水与市井日常。"
+              },
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "context_required",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "saved_context_read_only"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": true,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "advisory",
+                "requested_fact_topics": []
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          },
+          {
+            "id": "3a72d6aa-fc13-45f3-b4a5-94f772799242",
+            "user": "南京博物院确定想去但时间未定；玄武湖有时间再去。现在先讨论。",
+            "assistant": "我会把这些旅行想法用于接下来的讨论。目前还没有创建旅行或保存安排；未定时间与备选会保持未定。",
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "tool": "arrangement_edit",
+            "run_id": null
+          },
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "finite-consult",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "e803a9af-500c-40b7-a392-835611e49bd1",
+            "user": "南京博物院听起来不错，我感兴趣，但还没决定出行。",
+            "assistant": "南京博物院确实是个值得深入了解的选择。延续之前的介绍，它的亮点在于六个馆各有侧重：历史馆的文物精品、特展馆的临展、民国馆的老南京街景，以及非遗馆的手工艺展示，喜欢历史的话可以慢节奏逛上大半天，而且全程室内，不太受天气影响。\n\n需要提醒的是，博物院通常需要提前预约，且周一多为闭馆日，具体的开放时间、预约方式和临展信息建议你真正决定出行时再查证最新情况。\n\n你现在不用急着安排，可以先把它和玄武湖（或总统府、夫子庙一带）放在一起慢慢比较，看看哪种体验更合你的兴趣。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "travel_chat",
+              "confidence": 0.55,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": false,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "uncertain_no_mutation_authorization"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "用户对南京博物院表达兴趣但尚未决定出行，延续此前文史对比话题，给出了解信息与后续可选方向，不做行程安排。",
+              "response_text": "南京博物院确实是个值得深入了解的选择。延续之前的介绍，它的亮点在于六个馆各有侧重：历史馆的文物精品、特展馆的临展、民国馆的老南京街景，以及非遗馆的手工艺展示，喜欢历史的话可以慢节奏逛上大半天，而且全程室内，不太受天气影响。\n\n需要提醒的是，博物院通常需要提前预约，且周一多为闭馆日，具体的开放时间、预约方式和临展信息建议你真正决定出行时再查证最新情况。\n\n你现在不用急着安排，可以先把它和玄武湖（或总统府、夫子庙一带）放在一起慢慢比较，看看哪种体验更合你的兴趣。",
+              "goal_type": "travel_chat",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_6f48a80a47a45da8afc2e30a61111879",
+                  "suggestion_type": "place",
+                  "title": "南京博物院",
+                  "summary": "以历史馆、特展馆、民国馆街景为主的室内人文深度游览选择。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "南京博物院"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "用户明确表达兴趣但尚未决定出行",
+                    "室内为主，不受天气影响",
+                    "通常需提前预约，出行前需核实最新开放信息"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:23:10.626018Z",
+                  "conversation_turn_id": "e803a9af-500c-40b7-a392-835611e49bd1",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": null,
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "advisory",
+                "requested_fact_topics": []
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          }
+        ],
+        "pending_action": null,
+        "latest_run_id": null
+      },
+      "telemetry": {
+        "status": "completed",
+        "events": [
+          {
+            "sequence": 1,
+            "stage": "message",
+            "status": "completed",
+            "at": "2026-10-20T00:23:04.766273+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 2,
+            "stage": "travel_goal_routing",
+            "status": "running",
+            "at": "2026-10-20T00:23:04.772135+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 3,
+            "stage": "travel_goal_routing",
+            "status": "completed",
+            "at": "2026-10-20T00:23:04.772405+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 4,
+            "stage": "interpret_goal",
+            "status": "running",
+            "at": "2026-10-20T00:23:04.825346+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 5,
+            "stage": "interpret_goal",
+            "status": "completed",
+            "at": "2026-10-20T00:23:04.825356+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 6,
+            "stage": "resolve_conversation",
+            "status": "running",
+            "at": "2026-10-20T00:23:04.826464+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 7,
+            "stage": "resolve_conversation",
+            "status": "completed",
+            "at": "2026-10-20T00:23:04.827228+00:00",
+            "duration_ms": 1
+          },
+          {
+            "sequence": 8,
+            "stage": "determine_information_need",
+            "status": "running",
+            "at": "2026-10-20T00:23:04.827889+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 9,
+            "stage": "determine_information_need",
+            "status": "completed",
+            "at": "2026-10-20T00:23:04.828009+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 10,
+            "stage": "gather_context",
+            "status": "running",
+            "at": "2026-10-20T00:23:04.829444+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 11,
+            "stage": "gather_context",
+            "status": "completed",
+            "at": "2026-10-20T00:23:04.829469+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 12,
+            "stage": "generate",
+            "status": "running",
+            "at": "2026-10-20T00:23:04.832265+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 13,
+            "stage": "companion_model",
+            "status": "running",
+            "at": "2026-10-20T00:23:04.832302+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 14,
+            "stage": "companion_model",
+            "status": "completed",
+            "at": "2026-10-20T00:23:10.623512+00:00",
+            "duration_ms": 5791
+          },
+          {
+            "sequence": 15,
+            "stage": "generate",
+            "status": "completed",
+            "at": "2026-10-20T00:23:10.624052+00:00",
+            "duration_ms": 5792
+          },
+          {
+            "sequence": 16,
+            "stage": "extract_outcome",
+            "status": "running",
+            "at": "2026-10-20T00:23:10.625939+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 17,
+            "stage": "extract_outcome",
+            "status": "completed",
+            "at": "2026-10-20T00:23:10.626227+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 18,
+            "stage": "handoff_boundary",
+            "status": "running",
+            "at": "2026-10-20T00:23:10.627801+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 19,
+            "stage": "handoff_boundary",
+            "status": "completed",
+            "at": "2026-10-20T00:23:10.627821+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 20,
+            "stage": "prepare_persistence",
+            "status": "running",
+            "at": "2026-10-20T00:23:10.629200+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 21,
+            "stage": "prepare_persistence",
+            "status": "completed",
+            "at": "2026-10-20T00:23:10.629247+00:00",
+            "duration_ms": 0
+          },
+          {
+            "sequence": 22,
+            "stage": "response_returned",
+            "status": "completed",
+            "at": "2026-10-20T00:23:10.637968+00:00",
+            "duration_ms": null
+          }
+        ],
+        "source": "process_local"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "name": "simple-duration-no-graph",
+      "input": "请把南京博物院的停留时长改为20分钟，其他日期保持不变。",
+      "context": {
+        "version": "assistant-context-v1",
+        "topic_id": "finite-bound",
+        "surface": "trip",
+        "prefer_flexible": true,
+        "read_trip_id": "c2f5fc20-0003-4da1-98e3-83c5113c7fb9",
+        "action_target": {
+          "trip_id": "c2f5fc20-0003-4da1-98e3-83c5113c7fb9",
+          "expected_version": 10,
+          "operation": "plan_trip",
+          "authorization_message_id": "1f3564bd-34b2-4643-ad20-0a7ce693966d"
+        }
+      },
+      "status": 200,
+      "elapsed_ms": 158,
+      "expected_path": "deterministic existing update_activity, no model",
+      "body": {
+        "id": "e9fffef6-1e83-450b-b1ee-1648e17ccc59",
+        "trip_id": "c2f5fc20-0003-4da1-98e3-83c5113c7fb9",
+        "messages": [
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "place_cards": [],
+            "context_limitations": [],
+            "continuity": "legacy_session_topic_json_v1",
+            "id": "e9e789b3-a0ba-4367-9677-99087491a745",
+            "user": "第一次去南京，南京博物院和玄武湖的体验有什么区别？先只聊聊，不创建旅行。",
+            "assistant": "这两个地方的体验差别挺大的，可以说是南京的『一内一外』。\n\n南京博物院是大型综合性博物馆，体验核心是『看』——历史文物、艺术展览非常多，比如民国馆复原了老街景，很有沉浸感。适合对历史、文化感兴趣的人，节奏偏慢、偏深度，通常要预留大半天。室内不受天气影响，节假日热门时段人多，建议提前在官方渠道预约。\n\n玄武湖则是户外城市湖泊公园，体验核心是『逛』——环湖散步、租船游湖、看湖景和远处的紫金山天际线。节奏自由，进出方便，适合放松、拍照，日落和夜晚的湖边尤其舒服。受天气影响较大，雨天体验会打折扣。\n\n简单说：想『吸收』文化就选博物院，想『放松』身心就选玄武湖；两者一北一南隔着市区，时间充裕完全可以各玩半天，白天看展、傍晚环湖是常见的搭配。",
+            "tool": "reply",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "destination_exploration",
+              "confidence": 0.93,
+              "target_runtime": "companion",
+              "mutation_requested": false,
+              "trip_context_required": false,
+              "knowledge_required": true,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "companion_destination_exploration"
+              ]
+            },
+            "companion_result": {
+              "analysis_summary": "首次南京探索咨询，比较南京博物院与玄武湖的体验差异：室内文化深度 vs 户外城市湖泊，不涉及行程创建或实时信息。",
+              "response_text": "这两个地方的体验差别挺大的，可以说是南京的『一内一外』。\n\n南京博物院是大型综合性博物馆，体验核心是『看』——历史文物、艺术展览非常多，比如民国馆复原了老街景，很有沉浸感。适合对历史、文化感兴趣的人，节奏偏慢、偏深度，通常要预留大半天。室内不受天气影响，节假日热门时段人多，建议提前在官方渠道预约。\n\n玄武湖则是户外城市湖泊公园，体验核心是『逛』——环湖散步、租船游湖、看湖景和远处的紫金山天际线。节奏自由，进出方便，适合放松、拍照，日落和夜晚的湖边尤其舒服。受天气影响较大，雨天体验会打折扣。\n\n简单说：想『吸收』文化就选博物院，想『放松』身心就选玄武湖；两者一北一南隔着市区，时间充裕完全可以各玩半天，白天看展、傍晚环湖是常见的搭配。",
+              "goal_type": "destination_exploration",
+              "status": "completed",
+              "suggestions": [
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_548a6f45801252a2aacd7c8855073b27",
+                  "suggestion_type": "place",
+                  "title": "南京博物院",
+                  "summary": "大型综合性博物馆，含民国馆沉浸式街区，适合文化深度游览，建议预留大半天，热门时段需提前预约。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "南京博物院"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "文物与展览丰富",
+                    "民国馆体验独特",
+                    "室内活动不受天气影响"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:18:50.514265Z",
+                  "conversation_turn_id": "e9e789b3-a0ba-4367-9677-99087491a745",
+                  "status": "suggested"
+                },
+                {
+                  "place_ref": null,
+                  "suggestion_id": "suggestion_d662bb26f6be5510971f8e3f5912d2bf",
+                  "suggestion_type": "place",
+                  "title": "玄武湖",
+                  "summary": "户外城市湖泊公园，可环湖散步、划船，看紫金山天际线，日落夜景尤佳，节奏自由。",
+                  "entity_refs": [
+                    {
+                      "kind": "raw_mention",
+                      "value": "玄武湖"
+                    }
+                  ],
+                  "destination": "南京",
+                  "reasons": [
+                    "免费进出、节奏灵活",
+                    "适合放松与拍照",
+                    "傍晚湖景体验好"
+                  ],
+                  "evidence_refs": [],
+                  "grounding": "unverified_proposal",
+                  "created_at": "2026-10-20T00:18:50.514265Z",
+                  "conversation_turn_id": "e9e789b3-a0ba-4367-9677-99087491a745",
+                  "status": "suggested"
+                }
+              ],
+              "resolved_suggestion_refs": [],
+              "interactions": [],
+              "comparison": null,
+              "explanation": null,
+              "information_need": {
+                "knowledge_decision": "general_knowledge",
+                "knowledge_strategy": "selective",
+                "knowledge_reasons": [
+                  "stable_model_knowledge_no_retrieval"
+                ],
+                "source_required": false,
+                "optional_rag": false,
+                "knowledge_required": false,
+                "general_knowledge_allowed": true,
+                "knowledge_types": [],
+                "live_fact_required": false,
+                "forecast_required": false,
+                "opening_hours_required": false,
+                "fact_requirements": [],
+                "fact_types": [],
+                "search_required": false,
+                "decision_history_required": false,
+                "trip_context_required": false,
+                "preferences_required": false,
+                "itinerary_required": false,
+                "audience_tags": [],
+                "season_tags": [],
+                "experience_tags": [],
+                "filter_signals": [],
+                "answer_mode": "advisory",
+                "requested_fact_topics": []
+              },
+              "information_gaps": [],
+              "planning_handoff": null,
+              "conversation_destination": "南京",
+              "runtime_trace": [
+                "interpret_goal",
+                "resolve_conversation",
+                "determine_information_need",
+                "gather_read_only_context",
+                "generate_interaction",
+                "extract_interaction_outcome",
+                "planning_handoff_not_authorized",
+                "prepare_conversation_persistence"
+              ],
+              "knowledge_evidence": [],
+              "answer_evidence_refs": [],
+              "knowledge_retrieval": null,
+              "grounding_status": "unverified_proposal",
+              "grounding_limitations": [
+                "model_general_knowledge_unverified"
+              ],
+              "claims": [],
+              "claim_validation_issues": [],
+              "forecast_plan": null,
+              "opening_hours_plan": null,
+              "resolved_facts": []
+            }
+          },
+          {
+            "id": "045496ef-7bc2-4f78-97fa-fc3660e2e6e3",
+            "user": "南京博物院确定想去但时间未定；玄武湖有时间再去。现在先讨论。",
+            "assistant": "我会把这些旅行想法用于接下来的讨论。目前还没有创建旅行或保存安排；未定时间与备选会保持未定。",
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "tool": "arrangement_edit",
+            "run_id": null
+          },
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "assistant",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": null,
+              "action_target": null,
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {},
+            "requirement_sync": null,
+            "id": "29b34bc5-8595-4e61-b326-5e3644aa4871",
+            "user": "我决定2026-11-07到2026-11-08去南京两天。周日总统府14:00-15:00已经预约；周六15:00-16:00明确留白。保留南京博物院但暂不排时间，玄武湖还是备选。请形成允许留白的旅行安排建议，别把两天填满。",
+            "assistant": "请核对：南京市，2026-11-07 至 2026-11-08，共 2 天，未设置预算上限。确认后执行。\n总统府：你提供的固定预约，2026-11-08 14:00:00—15:00:00\n自由活动：保留空闲，2026-11-07 15:00:00—16:00:00\n南京博物院：纳入，时间未定\n玄武湖：备选",
+            "tool": "create_trip",
+            "run_id": null,
+            "goal_routing": {
+              "goal_type": "trip_planning",
+              "confidence": 0.96,
+              "target_runtime": "planning",
+              "mutation_requested": true,
+              "trip_context_required": false,
+              "knowledge_required": false,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "explicit_user_planning_request"
+              ]
+            },
+            "planning_brief": null
+          },
+          {
+            "id": "b2788d59-f0d3-4b56-ae2e-638b6477a79c",
+            "user": "确认执行",
+            "assistant": "安排已保存；未排程和备选保持未定，空闲已保留。需要协调具体时间时再生成调整建议。",
+            "trip_id": "c2f5fc20-0003-4da1-98e3-83c5113c7fb9"
+          },
+          {
+            "id": "8659019c-8194-41ab-a05e-3a560d23d0c2",
+            "user": "保留玄武湖，其他暂时不定",
+            "assistant": "已保留玄武湖，时间可以继续未定。其他安排没有重规划。",
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "trip",
+              "physical_location": null,
+              "browsing_city": "南京市",
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": "c2f5fc20-0003-4da1-98e3-83c5113c7fb9",
+              "action_target": {
+                "trip_id": "c2f5fc20-0003-4da1-98e3-83c5113c7fb9",
+                "expected_version": 7,
+                "operation": "edit_arrangement",
+                "authorization_message_id": "8659019c-8194-41ab-a05e-3a560d23d0c2",
+                "revision_id": null
+              },
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "tool": "arrangement_edit",
+            "run_id": null
+          },
+          {
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "natural-travel",
+              "surface": "trip",
+              "physical_location": null,
+              "browsing_city": "南京市",
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [
+                {
+                  "id": "req_c170c536009658f58ef069d5e20582a7",
+                  "text": "总统府不要动",
+                  "key": "user_requirement",
+                  "value": null,
+                  "source": {
+                    "kind": "user_explicit",
+                    "ref": "3440ae56-269f-4430-9a64-738820dd2d1b"
+                  },
+                  "scope": {
+                    "kind": "trip",
+                    "topic_id": null,
+                    "draft_id": null,
+                    "trip_id": "c2f5fc20-0003-4da1-98e3-83c5113c7fb9",
+                    "city": "南京市",
+                    "day_index": null,
+                    "date": null,
+                    "activity_id": null
+                  },
+                  "strength": "soft",
+                  "status": "active",
+                  "supersedes": []
+                },
+                {
+                  "id": "req_471cdc0e80605c349d812dad45ebaf7e",
+                  "text": "希望还可以游览110分钟",
+                  "key": "user_requirement",
+                  "value": null,
+                  "source": {
+                    "kind": "user_explicit",
+                    "ref": "3440ae56-269f-4430-9a64-738820dd2d1b"
+                  },
+                  "scope": {
+                    "kind": "trip",
+                    "topic_id": null,
+                    "draft_id": null,
+                    "trip_id": "c2f5fc20-0003-4da1-98e3-83c5113c7fb9",
+                    "city": "南京市",
+                    "day_index": null,
+                    "date": null,
+                    "activity_id": null
+                  },
+                  "strength": "soft",
+                  "status": "active",
+                  "supersedes": []
+                },
+                {
+                  "id": "req_63d5857aeeb25434b9cba65e5d02ac12",
+                  "text": "这次不要把它排进具体时间",
+                  "key": "user_requirement",
+                  "value": null,
+                  "source": {
+                    "kind": "user_explicit",
+                    "ref": "3440ae56-269f-4430-9a64-738820dd2d1b"
+                  },
+                  "scope": {
+                    "kind": "trip",
+                    "topic_id": null,
+                    "draft_id": null,
+                    "trip_id": "c2f5fc20-0003-4da1-98e3-83c5113c7fb9",
+                    "city": "南京市",
+                    "day_index": null,
+                    "date": null,
+                    "activity_id": null
+                  },
+                  "strength": "soft",
+                  "status": "active",
+                  "supersedes": []
+                }
+              ],
+              "read_trip_id": "c2f5fc20-0003-4da1-98e3-83c5113c7fb9",
+              "action_target": {
+                "trip_id": "c2f5fc20-0003-4da1-98e3-83c5113c7fb9",
+                "expected_version": 9,
+                "operation": "plan_trip",
+                "authorization_message_id": "3440ae56-269f-4430-9a64-738820dd2d1b",
+                "revision_id": null
+              },
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "read_tools": {
+              "execution": {
+                "status": "available",
+                "result": {
+                  "id": null,
+                  "trip_id": "c2f5fc20-0003-4da1-98e3-83c5113c7fb9",
+                  "status": "not_started",
+                  "current_date": "2026-11-08",
+                  "current_day_plan_id": "44347485-5f08-4e82-a191-1d197b5e438a",
+                  "current_activity_id": "dad9159a-77a5-4b14-b042-9027a9b05724",
+                  "actual_started_at": null,
+                  "actual_ended_at": null,
+                  "paused_at": null,
+                  "schedule_delay_minutes": 0,
+                  "remaining_activity_count": 2,
+                  "remaining_estimated_cost_fen": 6000,
+                  "activities": [
+                    {
+                      "id": null,
+                      "activity_id": "dad9159a-77a5-4b14-b042-9027a9b05724",
+                      "day_plan_id": "44347485-5f08-4e82-a191-1d197b5e438a",
+                      "day_date": "2026-11-08",
+                      "name": "南京博物院",
+                      "scheduled_time": "10:00:00",
+                      "estimated_cost_fen": 3000,
+                      "status": "pending",
+                      "actual_arrived_at": null,
+                      "actual_started_at": null,
+                      "actual_ended_at": null,
+                      "delay_minutes": 0
+                    },
+                    {
+                      "id": null,
+                      "activity_id": "baa041e1-170e-4ab2-a16b-8f0651b1aeeb",
+                      "day_plan_id": "44347485-5f08-4e82-a191-1d197b5e438a",
+                      "day_date": "2026-11-08",
+                      "name": "总统府",
+                      "scheduled_time": "14:00:00",
+                      "estimated_cost_fen": 3000,
+                      "status": "pending",
+                      "actual_arrived_at": null,
+                      "actual_started_at": null,
+                      "actual_ended_at": null,
+                      "delay_minutes": 0
+                    }
+                  ],
+                  "events": [],
+                  "experience_impact": null,
+                  "current_activity_name": "南京博物院",
+                  "recovery_planning": null,
+                  "delay_semantics": "schedule_delay_minutes is recorded arrival delay only; experience_impact owns current stay projection and downstream feasibility"
+                }
+              }
+            },
+            "requirement_sync": null,
+            "router_planning_request": "请调整11月8日（第二天）安排：南京博物院需12:30以后才能开始，仍希望可游览110分钟；若会赶不上总统府14:00预约则缩短博物院游览时间并说明取舍；总统府14:00预约保持不变；其他日期和11月7日15:00-16:00留白保持不变；玄武湖保持已选状态但时间未定，这次不要排进具体时间。",
+            "id": "3440ae56-269f-4430-9a64-738820dd2d1b",
+            "user": "请调整第二天的安排：南京博物院需要12:30以后才能开始。总统府不要动。希望还可以游览110分钟，但如果赶不上预约请缩短博物院，说明取舍。其他日期和留白保持不变，玄武湖保持已选但时间未定，这次不要把它排进具体时间。",
+            "assistant": "我会按这次要求准备候选调整，并说明修改理由。",
+            "tool": "plan_trip",
+            "run_id": "40d581f2-1d95-4231-a3be-50b2d0248bc0",
+            "goal_routing": {
+              "goal_type": "trip_modification",
+              "confidence": 0.96,
+              "target_runtime": "planning",
+              "mutation_requested": true,
+              "trip_context_required": true,
+              "knowledge_required": false,
+              "live_fact_likely_required": false,
+              "referenced_entities": [],
+              "referenced_previous_decision": false,
+              "clarification_needed": false,
+              "signals": [
+                "explicit_user_planning_request"
+              ]
+            },
+            "planning_brief": null
+          },
+          {
+            "id": "1f3564bd-34b2-4643-ad20-0a7ce693966d",
+            "user": "请把南京博物院的停留时长改为20分钟，其他日期保持不变。",
+            "assistant": "已将南京博物院的停留时长改为20分钟。已保存的路线与后续时间允许这次修改，其他活动和留白保持不变。",
+            "context": {
+              "version": "assistant-context-v1",
+              "topic_id": "finite-bound",
+              "surface": "trip",
+              "physical_location": null,
+              "browsing_city": null,
+              "discussing_place_id": null,
+              "discussing_place_ids": [],
+              "discovery_context": null,
+              "read_draft_id": null,
+              "read_draft_version": null,
+              "requirements": null,
+              "requirement_records": [],
+              "read_trip_id": "c2f5fc20-0003-4da1-98e3-83c5113c7fb9",
+              "action_target": {
+                "trip_id": "c2f5fc20-0003-4da1-98e3-83c5113c7fb9",
+                "expected_version": 10,
+                "operation": "plan_trip",
+                "authorization_message_id": "1f3564bd-34b2-4643-ad20-0a7ce693966d",
+                "revision_id": null
+              },
+              "prefer_flexible": true,
+              "preview_action_id": null,
+              "route_request": null
+            },
+            "tool": "arrangement_edit",
+            "run_id": null
+          }
+        ],
+        "pending_action": null,
+        "latest_run_id": "40d581f2-1d95-4231-a3be-50b2d0248bc0"
+      },
+      "telemetry": {
+        "status": "completed",
+        "events": [
+          {
+            "sequence": 1,
+            "stage": "message",
+            "status": "completed",
+            "at": "2026-10-20T00:23:10.922333+00:00",
+            "duration_ms": null
+          },
+          {
+            "sequence": 2,
+            "stage": "response_returned",
+            "status": "completed",
+            "at": "2026-10-20T00:23:11.075396+00:00",
+            "duration_ms": null
+          }
+        ],
+        "source": "process_local"
+      },
+      "verdict": "FAIL",
+      "failure": ""
+    }
+  ],
+  "locks": [
+    {
+      "at": "2026-10-20T00:22:31.833382+00:00",
+      "waiting_for_lock": 0,
+      "max_active_transaction_age_seconds": 0.0
+    },
+    {
+      "at": "2026-10-20T00:22:32.929812+00:00",
+      "waiting_for_lock": 0,
+      "max_active_transaction_age_seconds": 0.03751
+    },
+    {
+      "at": "2026-10-20T00:22:33.938759+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 0.777402
+    },
+    {
+      "at": "2026-10-20T00:22:34.952550+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 1.791194
+    },
+    {
+      "at": "2026-10-20T00:22:35.961259+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 2.800341
+    },
+    {
+      "at": "2026-10-20T00:22:36.977340+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 3.816985
+    },
+    {
+      "at": "2026-10-20T00:22:37.986924+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 4.82682
+    },
+    {
+      "at": "2026-10-20T00:22:38.997028+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 5.836871
+    },
+    {
+      "at": "2026-10-20T00:22:40.005936+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 6.846001
+    },
+    {
+      "at": "2026-10-20T00:22:41.010438+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 7.850751
+    },
+    {
+      "at": "2026-10-20T00:22:42.016822+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 8.857105
+    },
+    {
+      "at": "2026-10-20T00:22:43.027630+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 9.868147
+    },
+    {
+      "at": "2026-10-20T00:22:44.040185+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 0.500043
+    },
+    {
+      "at": "2026-10-20T00:22:45.054762+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 1.514802
+    },
+    {
+      "at": "2026-10-20T00:22:46.063389+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 2.521711
+    },
+    {
+      "at": "2026-10-20T00:22:47.067012+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 3.527179
+    },
+    {
+      "at": "2026-10-20T00:22:48.070836+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 4.531219
+    },
+    {
+      "at": "2026-10-20T00:22:49.078910+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 5.539322
+    },
+    {
+      "at": "2026-10-20T00:22:50.085686+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 6.546114
+    },
+    {
+      "at": "2026-10-20T00:22:51.090576+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 7.549251
+    },
+    {
+      "at": "2026-10-20T00:22:52.099784+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 8.558485
+    },
+    {
+      "at": "2026-10-20T00:22:53.108012+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 0.180226
+    },
+    {
+      "at": "2026-10-20T00:22:54.119057+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 1.191535
+    },
+    {
+      "at": "2026-10-20T00:22:55.136159+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 2.205503
+    },
+    {
+      "at": "2026-10-20T00:22:56.151347+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 3.224335
+    },
+    {
+      "at": "2026-10-20T00:22:57.163048+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 4.235204
+    },
+    {
+      "at": "2026-10-20T00:22:58.180403+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 5.253302
+    },
+    {
+      "at": "2026-10-20T00:22:59.189772+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 6.263023
+    },
+    {
+      "at": "2026-10-20T00:23:00.206275+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 7.279486
+    },
+    {
+      "at": "2026-10-20T00:23:01.212571+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 8.286003
+    },
+    {
+      "at": "2026-10-20T00:23:02.216024+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 9.289126
+    },
+    {
+      "at": "2026-10-20T00:23:03.228983+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 10.30262
+    },
+    {
+      "at": "2026-10-20T00:23:04.242052+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 11.315578
+    },
+    {
+      "at": "2026-10-20T00:23:05.254044+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 0.422223
+    },
+    {
+      "at": "2026-10-20T00:23:06.270160+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 1.438244
+    },
+    {
+      "at": "2026-10-20T00:23:07.282964+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 2.451133
+    },
+    {
+      "at": "2026-10-20T00:23:08.297450+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 3.465386
+    },
+    {
+      "at": "2026-10-20T00:23:09.310169+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 4.478688
+    },
+    {
+      "at": "2026-10-20T00:23:10.323364+00:00",
+      "waiting_for_lock": 1,
+      "max_active_transaction_age_seconds": 5.491309
+    }
+  ]
+}

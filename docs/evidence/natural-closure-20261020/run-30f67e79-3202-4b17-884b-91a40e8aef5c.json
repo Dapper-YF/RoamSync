@@ -1,0 +1,1234 @@
+{
+  "id": "30f67e79-3202-4b17-884b-91a40e8aef5c",
+  "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+  "disruption_event_id": null,
+  "trigger_type": null,
+  "trigger_fingerprint": null,
+  "trigger_snapshot": {
+    "effective_requirements": [
+      {
+        "id": "req_c809987ab5ec520b9cfeffa9ddfc9ded",
+        "text": "总统府不要动",
+        "key": "user_requirement",
+        "value": null,
+        "source": {
+          "kind": "user_explicit",
+          "ref": "61854ee3-5f26-4dd3-8b5f-d7147ff32760"
+        },
+        "scope": {
+          "kind": "trip",
+          "topic_id": null,
+          "draft_id": null,
+          "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+          "city": "南京市",
+          "day_index": null,
+          "date": null,
+          "activity_id": null
+        },
+        "strength": "soft",
+        "status": "active",
+        "supersedes": []
+      },
+      {
+        "id": "req_1b5432e2dcc254379dc5a9af813cc45f",
+        "text": "希望还可以游览110分钟",
+        "key": "user_requirement",
+        "value": null,
+        "source": {
+          "kind": "user_explicit",
+          "ref": "61854ee3-5f26-4dd3-8b5f-d7147ff32760"
+        },
+        "scope": {
+          "kind": "trip",
+          "topic_id": null,
+          "draft_id": null,
+          "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+          "city": "南京市",
+          "day_index": null,
+          "date": null,
+          "activity_id": null
+        },
+        "strength": "soft",
+        "status": "active",
+        "supersedes": []
+      },
+      {
+        "id": "req_4ea5e3217ce6538899f387b7baca1d18",
+        "text": "这次不要把它排进具体时间",
+        "key": "user_requirement",
+        "value": null,
+        "source": {
+          "kind": "user_explicit",
+          "ref": "61854ee3-5f26-4dd3-8b5f-d7147ff32760"
+        },
+        "scope": {
+          "kind": "trip",
+          "topic_id": null,
+          "draft_id": null,
+          "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+          "city": "南京市",
+          "day_index": null,
+          "date": null,
+          "activity_id": null
+        },
+        "strength": "soft",
+        "status": "active",
+        "supersedes": []
+      }
+    ],
+    "decision_context_summary": {
+      "candidate_comparison": {
+        "version": "bounded-candidate-comparison-v2",
+        "weather_days": {
+          "2026-11-07": {
+            "status": "unknown",
+            "reason": "missing_stale_past_or_incomplete_prediction",
+            "provider": null,
+            "queried_at": null,
+            "nature": "provider_prediction",
+            "coverage_hours": [],
+            "hourly_rain_probability": {},
+            "max_hourly_rain_probability": null,
+            "rain_risk": "unknown",
+            "scope": "trip_representative_coordinate_not_venue_observation",
+            "freshness_policy": "planning_decision_forecast_30min_v1"
+          },
+          "2026-11-08": {
+            "status": "unknown",
+            "reason": "missing_stale_past_or_incomplete_prediction",
+            "provider": null,
+            "queried_at": null,
+            "nature": "provider_prediction",
+            "coverage_hours": [],
+            "hourly_rain_probability": {},
+            "max_hourly_rain_probability": null,
+            "rain_risk": "unknown",
+            "scope": "trip_representative_coordinate_not_venue_observation",
+            "freshness_policy": "planning_decision_forecast_30min_v1"
+          }
+        },
+        "candidates": [],
+        "ranking_policy": "requested_then_soft_avoid_feasible_visit_weather_fixed_free_slot_fresh_exact_walk_anchor_route_interest_then_research_rating",
+        "limits": [
+          "taxonomy_is_soft_hint",
+          "route_is_one_directed_leg_not_day_total",
+          "mixed_weather_has_no_certain_rain_penalty",
+          "unknown_does_not_exclude"
+        ],
+        "walking_tradeoffs": []
+      },
+      "candidate_route_fact_count": 0,
+      "effective_requirement_ids": [
+        "req_c809987ab5ec520b9cfeffa9ddfc9ded",
+        "req_1b5432e2dcc254379dc5a9af813cc45f",
+        "req_4ea5e3217ce6538899f387b7baca1d18"
+      ],
+      "target_days": [
+        "2026-11-08"
+      ],
+      "formal_activity_count": 2,
+      "route_fact_statuses": [
+        {
+          "date": "2026-11-08",
+          "status": "unavailable"
+        }
+      ],
+      "protected_activity_ids": [
+        "f2485bf6-0d04-43f9-8c8a-e1da22d1e285"
+      ],
+      "editable_activity_ids": [
+        "ad891f28-15ac-4008-a433-572f351f8b7b"
+      ],
+      "execution_fields_present": {
+        "current_activity_id": false,
+        "navigation_target_activity_id": false,
+        "current_eta": false,
+        "delay_minutes": false,
+        "minimum_downstream_slack_minutes": false,
+        "first_impacted_activity_id": false
+      },
+      "provenance": {
+        "goals": "user_goal_and_grounded_intent",
+        "formal_itinerary": "persisted_formal_itinerary",
+        "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+        "route_context": "persisted_amap_route",
+        "execution_context": "execution_and_navigation_projection",
+        "active_disruption": "persisted_disruption_projection",
+        "user_preferences": "persisted_trip_preferences",
+        "provider_facts": "planning_provider_facts",
+        "decision_memory": "same_trip_same_target_day_rejected_revisions"
+      },
+      "decision_memory": {
+        "count": 0,
+        "source_revision_ids": [],
+        "source_run_ids": [],
+        "feedback": [],
+        "context_propagated": true,
+        "visible_to_planner": true
+      }
+    }
+  },
+  "run_type": "replan",
+  "status": "failed",
+  "user_request": "请调整第二天的安排：南京博物院需要12:30以后才能开始。总统府不要动。希望还可以游览110分钟，但如果赶不上预约请缩短博物院，说明取舍。其他日期和留白保持不变，玄武湖保持已选但时间未定，这次不要把它排进具体时间。",
+  "response_text": null,
+  "progress": {
+    "events": [
+      {
+        "stage": "intent",
+        "status": "running",
+        "at": "2026-10-20T00:41:40.851771+00:00",
+        "duration_ms": null,
+        "call_id": "5c252301-de95-44e2-8bd5-edd4c55281fe",
+        "provider": null,
+        "purpose": null,
+        "data": {},
+        "sequence": 1
+      },
+      {
+        "stage": "research_decision",
+        "status": "completed",
+        "at": "2026-10-20T00:41:40.944279+00:00",
+        "duration_ms": null,
+        "call_id": null,
+        "provider": null,
+        "purpose": null,
+        "data": {
+          "destination_research_required": false,
+          "destination_research_available": true
+        },
+        "sequence": 2
+      },
+      {
+        "stage": "goal",
+        "status": "completed",
+        "at": "2026-10-20T00:41:40.982958+00:00",
+        "duration_ms": null,
+        "call_id": null,
+        "provider": null,
+        "purpose": null,
+        "data": {
+          "target_days": [
+            "2026-11-08"
+          ],
+          "hard_goals": {
+            "end_before": null,
+            "max_walking_minutes": null
+          },
+          "soft_goals": {
+            "pace": null,
+            "minimize_walking": false,
+            "preserve_existing": false
+          }
+        },
+        "sequence": 3
+      },
+      {
+        "stage": "context",
+        "status": "completed",
+        "at": "2026-10-20T00:41:41.003384+00:00",
+        "duration_ms": null,
+        "call_id": null,
+        "provider": null,
+        "purpose": null,
+        "data": {
+          "trip": {
+            "id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+            "title": "南京两日游",
+            "destination": "南京市",
+            "destination_adcode": "320100",
+            "destination_citycode": "025",
+            "center_longitude": 118.796624,
+            "center_latitude": 32.059344,
+            "accommodation": "",
+            "accommodation_poi_id": "",
+            "accommodation_address": "",
+            "accommodation_district": "",
+            "accommodation_longitude": null,
+            "accommodation_latitude": null,
+            "start_date": "2026-11-07",
+            "end_date": "2026-11-08",
+            "total_budget_fen": null,
+            "daily_budget_fen": null,
+            "currency": "CNY",
+            "timezone": "Asia/Shanghai",
+            "created_at": "2026-10-20T00:41:22.102175Z",
+            "updated_at": "2026-10-20T00:41:27.310150Z",
+            "archived_at": null,
+            "version": 9,
+            "status": "upcoming"
+          },
+          "preferences": {
+            "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+            "pace": "balanced",
+            "interest_categories": [],
+            "transport_modes": [
+              "walk",
+              "transit"
+            ],
+            "daily_start_time": "09:00:00",
+            "daily_end_time": "21:00:00",
+            "meal_preferences": "",
+            "avoid_categories": [],
+            "max_walking_minutes": 60,
+            "free_text_requirements": "两天行程允许留白，不填满；总统府周日14:00-15:00已预约；周六15:00-16:00明确留白；南京博物院确定想去但暂不排时间；玄武湖为备选。",
+            "requirement_records": [
+              {
+                "id": "req_c809987ab5ec520b9cfeffa9ddfc9ded",
+                "text": "总统府不要动",
+                "value": null,
+                "source": {
+                  "kind": "user_explicit",
+                  "ref": "61854ee3-5f26-4dd3-8b5f-d7147ff32760"
+                },
+                "scope": {
+                  "kind": "trip",
+                  "topic_id": null,
+                  "draft_id": null,
+                  "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+                  "city": "南京市",
+                  "day_index": null,
+                  "date": null,
+                  "activity_id": null
+                },
+                "strength": "soft",
+                "status": "active",
+                "supersedes": []
+              },
+              {
+                "id": "req_1b5432e2dcc254379dc5a9af813cc45f",
+                "text": "希望还可以游览110分钟",
+                "value": null,
+                "source": {
+                  "kind": "user_explicit",
+                  "ref": "61854ee3-5f26-4dd3-8b5f-d7147ff32760"
+                },
+                "scope": {
+                  "kind": "trip",
+                  "topic_id": null,
+                  "draft_id": null,
+                  "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+                  "city": "南京市",
+                  "day_index": null,
+                  "date": null,
+                  "activity_id": null
+                },
+                "strength": "soft",
+                "status": "active",
+                "supersedes": []
+              },
+              {
+                "id": "req_4ea5e3217ce6538899f387b7baca1d18",
+                "text": "这次不要把它排进具体时间",
+                "value": null,
+                "source": {
+                  "kind": "user_explicit",
+                  "ref": "61854ee3-5f26-4dd3-8b5f-d7147ff32760"
+                },
+                "scope": {
+                  "kind": "trip",
+                  "topic_id": null,
+                  "draft_id": null,
+                  "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+                  "city": "南京市",
+                  "day_index": null,
+                  "date": null,
+                  "activity_id": null
+                },
+                "strength": "soft",
+                "status": "active",
+                "supersedes": []
+              }
+            ],
+            "version": 3,
+            "created_at": "2026-10-20T00:41:22.102175Z",
+            "updated_at": "2026-10-20T00:41:27.792073Z"
+          },
+          "days": [
+            {
+              "id": "bd92686c-f554-4323-bd84-39ae2bd4afa7",
+              "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+              "date": "2026-11-07",
+              "label": "第 1 天",
+              "theme": "探索南京市",
+              "position": 0,
+              "route_mode": "walk",
+              "activities": [],
+              "route_legs": [],
+              "conflicts": []
+            },
+            {
+              "id": "cb2c4a52-8a64-43f7-8f57-0cec4f1fdc33",
+              "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+              "date": "2026-11-08",
+              "label": "第 2 天",
+              "theme": "探索南京市",
+              "position": 1,
+              "route_mode": "walk",
+              "activities": [
+                {
+                  "id": "ad891f28-15ac-4008-a433-572f351f8b7b",
+                  "place_id": "2cf288ab-a70b-42c3-8034-08bb936547ed",
+                  "name": "南京博物院",
+                  "custom_name": null,
+                  "display_name": "南京博物院",
+                  "category": "culture",
+                  "neighborhood": "玄武区",
+                  "longitude": 118.825064,
+                  "latitude": 32.040802,
+                  "scheduled_time": "10:00:00",
+                  "duration_minutes": 60,
+                  "importance": "normal",
+                  "can_skip": true,
+                  "minimum_duration_minutes": null,
+                  "importance_source": "system_default",
+                  "can_skip_source": "system_default",
+                  "minimum_duration_source": "unknown",
+                  "estimated_cost_fen": 3000,
+                  "status": "planned",
+                  "position": 0,
+                  "schedule_locked": false,
+                  "version": 1,
+                  "note": null,
+                  "updated_at": "2026-10-20T00:41:27.310150Z",
+                  "source": {
+                    "id": "6af6b82a-be39-4f32-9922-5d6343140938",
+                    "title": "高德地点搜索：南京博物院",
+                    "url": "https://www.amap.com/search",
+                    "provider": "AMap POI",
+                    "queried_at": "2026-10-20T00:41:27.370212Z",
+                    "confidence": "high"
+                  }
+                },
+                {
+                  "id": "f2485bf6-0d04-43f9-8c8a-e1da22d1e285",
+                  "place_id": "f80ca2e7-f9c9-4a60-b2cd-24f3d08e6e69",
+                  "name": "总统府",
+                  "custom_name": null,
+                  "display_name": "总统府",
+                  "category": "sight",
+                  "neighborhood": "玄武区",
+                  "longitude": 118.797398,
+                  "latitude": 32.044228,
+                  "scheduled_time": "14:00:00",
+                  "duration_minutes": 60,
+                  "importance": "normal",
+                  "can_skip": true,
+                  "minimum_duration_minutes": null,
+                  "importance_source": "system_default",
+                  "can_skip_source": "system_default",
+                  "minimum_duration_source": "unknown",
+                  "estimated_cost_fen": 3000,
+                  "status": "planned",
+                  "position": 1,
+                  "schedule_locked": true,
+                  "version": 2,
+                  "note": null,
+                  "updated_at": "2026-10-20T00:41:27.310150Z",
+                  "source": {
+                    "id": "51dc6bd2-9d97-40a8-9dfd-ff9399dcb054",
+                    "title": "高德地点搜索：总统府",
+                    "url": "https://www.amap.com/search",
+                    "provider": "AMap POI",
+                    "queried_at": "2026-10-20T00:41:22.419259Z",
+                    "confidence": "high"
+                  }
+                }
+              ],
+              "route_legs": [],
+              "conflicts": []
+            }
+          ],
+          "candidates": [],
+          "actual_budget": {
+            "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+            "currency": "CNY",
+            "total_budget_fen": null,
+            "total_spent_fen": 0,
+            "total_remaining_fen": null,
+            "daily_budget_fen": null,
+            "today_spent_fen": 0,
+            "today_remaining_fen": null,
+            "local_date": "2026-10-20"
+          },
+          "planning_budget": {
+            "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+            "total_planned_fen": 6000,
+            "total_remaining_fen": null,
+            "days": [
+              {
+                "day_plan_id": "bd92686c-f554-4323-bd84-39ae2bd4afa7",
+                "date": "2026-11-07",
+                "planned_fen": 0,
+                "remaining_fen": null,
+                "ratio": null,
+                "status": "unconstrained"
+              },
+              {
+                "day_plan_id": "cb2c4a52-8a64-43f7-8f57-0cec4f1fdc33",
+                "date": "2026-11-08",
+                "planned_fen": 6000,
+                "remaining_fen": null,
+                "ratio": null,
+                "status": "unconstrained"
+              }
+            ]
+          },
+          "generated_at": "2026-10-20T00:41:40.915511Z",
+          "execution_recovery": {
+            "frozen_activity_ids": [],
+            "protected_activity_ids": [],
+            "mutable_activity_ids": [
+              "ad891f28-15ac-4008-a433-572f351f8b7b",
+              "f2485bf6-0d04-43f9-8c8a-e1da22d1e285"
+            ],
+            "recovery_options": [],
+            "execution_state": {
+              "status": "not_started"
+            }
+          },
+          "planning_goals": {
+            "target_days": [
+              "2026-11-08"
+            ],
+            "hard_goals": {
+              "end_before": null,
+              "max_walking_minutes": null
+            },
+            "soft_goals": {
+              "pace": null,
+              "minimize_walking": false,
+              "preserve_existing": false
+            }
+          },
+          "formal_route_facts": {
+            "days": [
+              {
+                "date": "2026-11-08",
+                "activity_sequence": [
+                  "南京博物院",
+                  "总统府"
+                ],
+                "route_legs": [],
+                "walking_duration_minutes": 0,
+                "walking_distance_meters": 0,
+                "day_end": "15:00"
+              }
+            ]
+          },
+          "decision_context": {
+            "formal_itinerary": {
+              "days": [
+                {
+                  "day_id": "cb2c4a52-8a64-43f7-8f57-0cec4f1fdc33",
+                  "date": "2026-11-08",
+                  "activities": [
+                    {
+                      "activity_id": "ad891f28-15ac-4008-a433-572f351f8b7b",
+                      "name": "南京博物院",
+                      "scheduled_time": "10:00:00",
+                      "duration_minutes": 60,
+                      "importance": "normal",
+                      "can_skip": true,
+                      "minimum_duration_minutes": null,
+                      "category": "culture",
+                      "longitude": 118.825064,
+                      "latitude": 32.040802,
+                      "schedule_locked": false,
+                      "status": "planned"
+                    },
+                    {
+                      "activity_id": "f2485bf6-0d04-43f9-8c8a-e1da22d1e285",
+                      "name": "总统府",
+                      "scheduled_time": "14:00:00",
+                      "duration_minutes": 60,
+                      "importance": "normal",
+                      "can_skip": true,
+                      "minimum_duration_minutes": null,
+                      "category": "sight",
+                      "longitude": 118.797398,
+                      "latitude": 32.044228,
+                      "schedule_locked": true,
+                      "status": "planned"
+                    }
+                  ]
+                }
+              ]
+            },
+            "protected_constraints": {
+              "frozen_activity_ids": [],
+              "protected_activity_ids": [
+                "f2485bf6-0d04-43f9-8c8a-e1da22d1e285"
+              ],
+              "editable_activity_ids": [
+                "ad891f28-15ac-4008-a433-572f351f8b7b"
+              ],
+              "provenance": {
+                "f2485bf6-0d04-43f9-8c8a-e1da22d1e285": [
+                  "schedule_locked",
+                  "user_request_protection"
+                ]
+              }
+            },
+            "execution_context": {
+              "status": "not_started",
+              "remaining_activity_ids": [
+                "ad891f28-15ac-4008-a433-572f351f8b7b"
+              ]
+            },
+            "decision_memory": [],
+            "provenance": {
+              "goals": "user_goal_and_grounded_intent",
+              "formal_itinerary": "persisted_formal_itinerary",
+              "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+              "route_context": "persisted_amap_route",
+              "execution_context": "execution_and_navigation_projection",
+              "active_disruption": "persisted_disruption_projection",
+              "user_preferences": "persisted_trip_preferences",
+              "provider_facts": "planning_provider_facts",
+              "decision_memory": "same_trip_same_target_day_rejected_revisions"
+            },
+            "route_context": {
+              "days": [
+                {
+                  "date": "2026-11-08",
+                  "route_fact_status": "unavailable",
+                  "route_legs": []
+                }
+              ]
+            }
+          }
+        },
+        "sequence": 4
+      },
+      {
+        "stage": "intent",
+        "status": "completed",
+        "at": "2026-10-20T00:41:41.035873+00:00",
+        "duration_ms": 160,
+        "call_id": "5c252301-de95-44e2-8bd5-edd4c55281fe",
+        "provider": null,
+        "purpose": null,
+        "data": {
+          "intent_resolution": {
+            "request": {
+              "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+              "user_request": "请调整第二天的安排：南京博物院需要12:30以后才能开始。总统府不要动。希望还可以游览110分钟，但如果赶不上预约请缩短博物院，说明取舍。其他日期和留白保持不变，玄武湖保持已选但时间未定，这次不要把它排进具体时间。",
+              "intent": {
+                "intent_type": "modify_day",
+                "source_text": "请调整第二天的安排：南京博物院需要12:30以后才能开始。总统府不要动。希望还可以游览110分钟，但如果赶不上预约请缩短博物院，说明取舍。其他日期和留白保持不变，玄武湖保持已选但时间未定，这次不要把它排进具体时间。",
+                "time_scope": {
+                  "day_number": 2,
+                  "day_date": "2026-11-08",
+                  "period": null
+                },
+                "protected_activity_ids": [
+                  "f2485bf6-0d04-43f9-8c8a-e1da22d1e285"
+                ],
+                "requested_place_queries": [],
+                "requested_pace": null,
+                "missing_fields": [],
+                "ambiguities": []
+              },
+              "entry_point": "trip_planner",
+              "selected_day_id": null,
+              "selected_activity_id": null,
+              "target_day_id": "cb2c4a52-8a64-43f7-8f57-0cec4f1fdc33"
+            },
+            "requires_clarification": false,
+            "clarification_questions": [],
+            "parser_version": "rules-v1",
+            "semantic_draft": {
+              "primary_intent": "replan_trip",
+              "operations": [
+                {
+                  "operation": "replan_trip",
+                  "raw_text": "请调整第二天的安排：南京博物院需要12:30以后才能开始。总统府不要动。希望还可以游览110分钟，但如果赶不上预约请缩短博物院，说明取舍。其他日期和留白保持不变，玄武湖保持已选但时间未定，这次不要把它排进具体时间。",
+                  "date_expression": "第二天",
+                  "period": null,
+                  "activity_mentions": [],
+                  "place_mentions": [],
+                  "constraints": {
+                    "budget_must_not_increase": false,
+                    "max_additional_cost_fen": null,
+                    "preferred_environment": null,
+                    "max_walking_minutes": null,
+                    "requested_pace": null,
+                    "weather_sensitive": false,
+                    "preserve_completed": true
+                  }
+                }
+              ],
+              "confidence": 0.98,
+              "missing_fields": [],
+              "ambiguities": [],
+              "parser": "rules",
+              "parser_version": "rules-envelope-v1"
+            },
+            "grounded_intent": {
+              "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+              "primary_intent": "replan_trip",
+              "operation_types": [
+                "replan_trip"
+              ],
+              "target_day_ids": [
+                "cb2c4a52-8a64-43f7-8f57-0cec4f1fdc33"
+              ],
+              "target_activity_ids": [],
+              "candidate_place_ids": [],
+              "unresolved_activity_mentions": [],
+              "unresolved_place_mentions": [],
+              "constraints": {
+                "budget_must_not_increase": false,
+                "max_additional_cost_fen": null,
+                "preferred_environment": null,
+                "max_walking_minutes": null,
+                "requested_pace": null,
+                "weather_sensitive": false,
+                "preserve_completed": true
+              },
+              "missing_fields": [],
+              "ambiguities": []
+            },
+            "policy_decision": {
+              "operation_mode": "preview_change",
+              "risk_level": "medium",
+              "requires_confirmation": true,
+              "reasons": [
+                "formal_plan_change"
+              ],
+              "route": "plan_preview"
+            }
+          },
+          "planning_goals": {
+            "target_days": [
+              "2026-11-08"
+            ],
+            "hard_goals": {
+              "end_before": null,
+              "max_walking_minutes": null
+            },
+            "soft_goals": {
+              "pace": null,
+              "minimize_walking": false,
+              "preserve_existing": false
+            }
+          },
+          "planning_context": {
+            "trip": {
+              "id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+              "title": "南京两日游",
+              "destination": "南京市",
+              "destination_adcode": "320100",
+              "destination_citycode": "025",
+              "center_longitude": 118.796624,
+              "center_latitude": 32.059344,
+              "accommodation": "",
+              "accommodation_poi_id": "",
+              "accommodation_address": "",
+              "accommodation_district": "",
+              "accommodation_longitude": null,
+              "accommodation_latitude": null,
+              "start_date": "2026-11-07",
+              "end_date": "2026-11-08",
+              "total_budget_fen": null,
+              "daily_budget_fen": null,
+              "currency": "CNY",
+              "timezone": "Asia/Shanghai",
+              "created_at": "2026-10-20T00:41:22.102175Z",
+              "updated_at": "2026-10-20T00:41:27.310150Z",
+              "archived_at": null,
+              "version": 9,
+              "status": "upcoming"
+            },
+            "preferences": {
+              "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+              "pace": "balanced",
+              "interest_categories": [],
+              "transport_modes": [
+                "walk",
+                "transit"
+              ],
+              "daily_start_time": "09:00:00",
+              "daily_end_time": "21:00:00",
+              "meal_preferences": "",
+              "avoid_categories": [],
+              "max_walking_minutes": 60,
+              "free_text_requirements": "两天行程允许留白，不填满；总统府周日14:00-15:00已预约；周六15:00-16:00明确留白；南京博物院确定想去但暂不排时间；玄武湖为备选。",
+              "requirement_records": [
+                {
+                  "id": "req_c809987ab5ec520b9cfeffa9ddfc9ded",
+                  "text": "总统府不要动",
+                  "value": null,
+                  "source": {
+                    "kind": "user_explicit",
+                    "ref": "61854ee3-5f26-4dd3-8b5f-d7147ff32760"
+                  },
+                  "scope": {
+                    "kind": "trip",
+                    "topic_id": null,
+                    "draft_id": null,
+                    "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+                    "city": "南京市",
+                    "day_index": null,
+                    "date": null,
+                    "activity_id": null
+                  },
+                  "strength": "soft",
+                  "status": "active",
+                  "supersedes": []
+                },
+                {
+                  "id": "req_1b5432e2dcc254379dc5a9af813cc45f",
+                  "text": "希望还可以游览110分钟",
+                  "value": null,
+                  "source": {
+                    "kind": "user_explicit",
+                    "ref": "61854ee3-5f26-4dd3-8b5f-d7147ff32760"
+                  },
+                  "scope": {
+                    "kind": "trip",
+                    "topic_id": null,
+                    "draft_id": null,
+                    "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+                    "city": "南京市",
+                    "day_index": null,
+                    "date": null,
+                    "activity_id": null
+                  },
+                  "strength": "soft",
+                  "status": "active",
+                  "supersedes": []
+                },
+                {
+                  "id": "req_4ea5e3217ce6538899f387b7baca1d18",
+                  "text": "这次不要把它排进具体时间",
+                  "value": null,
+                  "source": {
+                    "kind": "user_explicit",
+                    "ref": "61854ee3-5f26-4dd3-8b5f-d7147ff32760"
+                  },
+                  "scope": {
+                    "kind": "trip",
+                    "topic_id": null,
+                    "draft_id": null,
+                    "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+                    "city": "南京市",
+                    "day_index": null,
+                    "date": null,
+                    "activity_id": null
+                  },
+                  "strength": "soft",
+                  "status": "active",
+                  "supersedes": []
+                }
+              ],
+              "version": 3,
+              "created_at": "2026-10-20T00:41:22.102175Z",
+              "updated_at": "2026-10-20T00:41:27.792073Z"
+            },
+            "days": [
+              {
+                "id": "bd92686c-f554-4323-bd84-39ae2bd4afa7",
+                "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+                "date": "2026-11-07",
+                "label": "第 1 天",
+                "theme": "探索南京市",
+                "position": 0,
+                "route_mode": "walk",
+                "activities": [],
+                "route_legs": [],
+                "conflicts": []
+              },
+              {
+                "id": "cb2c4a52-8a64-43f7-8f57-0cec4f1fdc33",
+                "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+                "date": "2026-11-08",
+                "label": "第 2 天",
+                "theme": "探索南京市",
+                "position": 1,
+                "route_mode": "walk",
+                "activities": [
+                  {
+                    "id": "ad891f28-15ac-4008-a433-572f351f8b7b",
+                    "place_id": "2cf288ab-a70b-42c3-8034-08bb936547ed",
+                    "name": "南京博物院",
+                    "custom_name": null,
+                    "display_name": "南京博物院",
+                    "category": "culture",
+                    "neighborhood": "玄武区",
+                    "longitude": 118.825064,
+                    "latitude": 32.040802,
+                    "scheduled_time": "10:00:00",
+                    "duration_minutes": 60,
+                    "importance": "normal",
+                    "can_skip": true,
+                    "minimum_duration_minutes": null,
+                    "importance_source": "system_default",
+                    "can_skip_source": "system_default",
+                    "minimum_duration_source": "unknown",
+                    "estimated_cost_fen": 3000,
+                    "status": "planned",
+                    "position": 0,
+                    "schedule_locked": false,
+                    "version": 1,
+                    "note": null,
+                    "updated_at": "2026-10-20T00:41:27.310150Z",
+                    "source": {
+                      "id": "6af6b82a-be39-4f32-9922-5d6343140938",
+                      "title": "高德地点搜索：南京博物院",
+                      "url": "https://www.amap.com/search",
+                      "provider": "AMap POI",
+                      "queried_at": "2026-10-20T00:41:27.370212Z",
+                      "confidence": "high"
+                    }
+                  },
+                  {
+                    "id": "f2485bf6-0d04-43f9-8c8a-e1da22d1e285",
+                    "place_id": "f80ca2e7-f9c9-4a60-b2cd-24f3d08e6e69",
+                    "name": "总统府",
+                    "custom_name": null,
+                    "display_name": "总统府",
+                    "category": "sight",
+                    "neighborhood": "玄武区",
+                    "longitude": 118.797398,
+                    "latitude": 32.044228,
+                    "scheduled_time": "14:00:00",
+                    "duration_minutes": 60,
+                    "importance": "normal",
+                    "can_skip": true,
+                    "minimum_duration_minutes": null,
+                    "importance_source": "system_default",
+                    "can_skip_source": "system_default",
+                    "minimum_duration_source": "unknown",
+                    "estimated_cost_fen": 3000,
+                    "status": "planned",
+                    "position": 1,
+                    "schedule_locked": true,
+                    "version": 2,
+                    "note": null,
+                    "updated_at": "2026-10-20T00:41:27.310150Z",
+                    "source": {
+                      "id": "51dc6bd2-9d97-40a8-9dfd-ff9399dcb054",
+                      "title": "高德地点搜索：总统府",
+                      "url": "https://www.amap.com/search",
+                      "provider": "AMap POI",
+                      "queried_at": "2026-10-20T00:41:22.419259Z",
+                      "confidence": "high"
+                    }
+                  }
+                ],
+                "route_legs": [],
+                "conflicts": []
+              }
+            ],
+            "candidates": [],
+            "actual_budget": {
+              "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+              "currency": "CNY",
+              "total_budget_fen": null,
+              "total_spent_fen": 0,
+              "total_remaining_fen": null,
+              "daily_budget_fen": null,
+              "today_spent_fen": 0,
+              "today_remaining_fen": null,
+              "local_date": "2026-10-20"
+            },
+            "planning_budget": {
+              "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+              "total_planned_fen": 6000,
+              "total_remaining_fen": null,
+              "days": [
+                {
+                  "day_plan_id": "bd92686c-f554-4323-bd84-39ae2bd4afa7",
+                  "date": "2026-11-07",
+                  "planned_fen": 0,
+                  "remaining_fen": null,
+                  "ratio": null,
+                  "status": "unconstrained"
+                },
+                {
+                  "day_plan_id": "cb2c4a52-8a64-43f7-8f57-0cec4f1fdc33",
+                  "date": "2026-11-08",
+                  "planned_fen": 6000,
+                  "remaining_fen": null,
+                  "ratio": null,
+                  "status": "unconstrained"
+                }
+              ]
+            },
+            "generated_at": "2026-10-20T00:41:40.915511Z",
+            "execution_recovery": {
+              "frozen_activity_ids": [],
+              "protected_activity_ids": [],
+              "mutable_activity_ids": [
+                "ad891f28-15ac-4008-a433-572f351f8b7b",
+                "f2485bf6-0d04-43f9-8c8a-e1da22d1e285"
+              ],
+              "recovery_options": [],
+              "execution_state": {
+                "status": "not_started"
+              }
+            },
+            "planning_goals": {
+              "target_days": [
+                "2026-11-08"
+              ],
+              "hard_goals": {
+                "end_before": null,
+                "max_walking_minutes": null
+              },
+              "soft_goals": {
+                "pace": null,
+                "minimize_walking": false,
+                "preserve_existing": false
+              }
+            },
+            "formal_route_facts": {
+              "days": [
+                {
+                  "date": "2026-11-08",
+                  "activity_sequence": [
+                    "南京博物院",
+                    "总统府"
+                  ],
+                  "route_legs": [],
+                  "walking_duration_minutes": 0,
+                  "walking_distance_meters": 0,
+                  "day_end": "15:00"
+                }
+              ]
+            },
+            "decision_context": {
+              "formal_itinerary": {
+                "days": [
+                  {
+                    "day_id": "cb2c4a52-8a64-43f7-8f57-0cec4f1fdc33",
+                    "date": "2026-11-08",
+                    "activities": [
+                      {
+                        "activity_id": "ad891f28-15ac-4008-a433-572f351f8b7b",
+                        "name": "南京博物院",
+                        "scheduled_time": "10:00:00",
+                        "duration_minutes": 60,
+                        "importance": "normal",
+                        "can_skip": true,
+                        "minimum_duration_minutes": null,
+                        "category": "culture",
+                        "longitude": 118.825064,
+                        "latitude": 32.040802,
+                        "schedule_locked": false,
+                        "status": "planned"
+                      },
+                      {
+                        "activity_id": "f2485bf6-0d04-43f9-8c8a-e1da22d1e285",
+                        "name": "总统府",
+                        "scheduled_time": "14:00:00",
+                        "duration_minutes": 60,
+                        "importance": "normal",
+                        "can_skip": true,
+                        "minimum_duration_minutes": null,
+                        "category": "sight",
+                        "longitude": 118.797398,
+                        "latitude": 32.044228,
+                        "schedule_locked": true,
+                        "status": "planned"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "protected_constraints": {
+                "frozen_activity_ids": [],
+                "protected_activity_ids": [
+                  "f2485bf6-0d04-43f9-8c8a-e1da22d1e285"
+                ],
+                "editable_activity_ids": [
+                  "ad891f28-15ac-4008-a433-572f351f8b7b"
+                ],
+                "provenance": {
+                  "f2485bf6-0d04-43f9-8c8a-e1da22d1e285": [
+                    "schedule_locked",
+                    "user_request_protection"
+                  ]
+                }
+              },
+              "execution_context": {
+                "status": "not_started",
+                "remaining_activity_ids": [
+                  "ad891f28-15ac-4008-a433-572f351f8b7b"
+                ]
+              },
+              "decision_memory": [],
+              "provenance": {
+                "goals": "user_goal_and_grounded_intent",
+                "formal_itinerary": "persisted_formal_itinerary",
+                "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+                "route_context": "persisted_amap_route",
+                "execution_context": "execution_and_navigation_projection",
+                "active_disruption": "persisted_disruption_projection",
+                "user_preferences": "persisted_trip_preferences",
+                "provider_facts": "planning_provider_facts",
+                "decision_memory": "same_trip_same_target_day_rejected_revisions"
+              },
+              "route_context": {
+                "days": [
+                  {
+                    "date": "2026-11-08",
+                    "route_fact_status": "unavailable",
+                    "route_legs": []
+                  }
+                ]
+              }
+            }
+          },
+          "external_facts": {
+            "status": "disabled_in_test",
+            "search": {
+              "sources": []
+            },
+            "weather": {}
+          }
+        },
+        "sequence": 5
+      },
+      {
+        "stage": "planner",
+        "status": "running",
+        "at": "2026-10-20T00:41:41.059373+00:00",
+        "duration_ms": null,
+        "call_id": "ee78dba3-9149-4375-b3f3-2a5f2d8becc9",
+        "provider": null,
+        "purpose": "Generate Candidate",
+        "data": {},
+        "sequence": 6
+      },
+      {
+        "stage": "planner",
+        "status": "failed",
+        "at": "2026-10-20T00:41:58.668325+00:00",
+        "duration_ms": 17594,
+        "call_id": "ee78dba3-9149-4375-b3f3-2a5f2d8becc9",
+        "provider": null,
+        "purpose": "Generate Candidate",
+        "data": {
+          "error_code": "planner_unavailable"
+        },
+        "sequence": 7
+      }
+    ],
+    "observation_sequence": 7,
+    "observations_truncated": false,
+    "stage": "planning",
+    "message": "正在根据景点资料编排每天的游览顺序、时长与预算，等待模型返回…",
+    "updated_at": "2026-10-20T00:41:41.094940+00:00"
+  },
+  "heartbeat_at": "2026-10-20T00:41:55.748960Z",
+  "entry_point": "trip_planner",
+  "selected_day_id": null,
+  "selected_activity_id": null,
+  "intent_resolution": {
+    "request": {
+      "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+      "user_request": "请调整第二天的安排：南京博物院需要12:30以后才能开始。总统府不要动。希望还可以游览110分钟，但如果赶不上预约请缩短博物院，说明取舍。其他日期和留白保持不变，玄武湖保持已选但时间未定，这次不要把它排进具体时间。",
+      "intent": {
+        "intent_type": "modify_day",
+        "source_text": "请调整第二天的安排：南京博物院需要12:30以后才能开始。总统府不要动。希望还可以游览110分钟，但如果赶不上预约请缩短博物院，说明取舍。其他日期和留白保持不变，玄武湖保持已选但时间未定，这次不要把它排进具体时间。",
+        "time_scope": {
+          "day_number": 2,
+          "day_date": "2026-11-08",
+          "period": null
+        },
+        "protected_activity_ids": [
+          "f2485bf6-0d04-43f9-8c8a-e1da22d1e285"
+        ],
+        "requested_place_queries": [],
+        "requested_pace": null,
+        "missing_fields": [],
+        "ambiguities": []
+      },
+      "entry_point": "trip_planner",
+      "selected_day_id": null,
+      "selected_activity_id": null,
+      "target_day_id": "cb2c4a52-8a64-43f7-8f57-0cec4f1fdc33"
+    },
+    "requires_clarification": false,
+    "clarification_questions": [],
+    "parser_version": "rules-v1",
+    "semantic_draft": {
+      "primary_intent": "replan_trip",
+      "operations": [
+        {
+          "operation": "replan_trip",
+          "raw_text": "请调整第二天的安排：南京博物院需要12:30以后才能开始。总统府不要动。希望还可以游览110分钟，但如果赶不上预约请缩短博物院，说明取舍。其他日期和留白保持不变，玄武湖保持已选但时间未定，这次不要把它排进具体时间。",
+          "date_expression": "第二天",
+          "period": null,
+          "activity_mentions": [],
+          "place_mentions": [],
+          "constraints": {
+            "budget_must_not_increase": false,
+            "max_additional_cost_fen": null,
+            "preferred_environment": null,
+            "max_walking_minutes": null,
+            "requested_pace": null,
+            "weather_sensitive": false,
+            "preserve_completed": true
+          }
+        }
+      ],
+      "confidence": 0.98,
+      "missing_fields": [],
+      "ambiguities": [],
+      "parser": "rules",
+      "parser_version": "rules-envelope-v1"
+    },
+    "grounded_intent": {
+      "trip_id": "06abb47c-d33e-4795-88b8-9e97ef8ea48d",
+      "primary_intent": "replan_trip",
+      "operation_types": [
+        "replan_trip"
+      ],
+      "target_day_ids": [
+        "cb2c4a52-8a64-43f7-8f57-0cec4f1fdc33"
+      ],
+      "target_activity_ids": [],
+      "candidate_place_ids": [],
+      "unresolved_activity_mentions": [],
+      "unresolved_place_mentions": [],
+      "constraints": {
+        "budget_must_not_increase": false,
+        "max_additional_cost_fen": null,
+        "preferred_environment": null,
+        "max_walking_minutes": null,
+        "requested_pace": null,
+        "weather_sensitive": false,
+        "preserve_completed": true
+      },
+      "missing_fields": [],
+      "ambiguities": []
+    },
+    "policy_decision": {
+      "operation_mode": "preview_change",
+      "risk_level": "medium",
+      "requires_confirmation": true,
+      "reasons": [
+        "formal_plan_change"
+      ],
+      "route": "plan_preview"
+    }
+  },
+  "base_trip_version": 9,
+  "model_provider": null,
+  "model_name": null,
+  "token_usage": 0,
+  "error_code": "planner_unavailable",
+  "error_message": "planner provider could not be reached",
+  "error_details": {
+    "category": "provider_failure",
+    "reliability": {}
+  },
+  "pending_interrupt": null,
+  "created_at": "2026-10-20T00:41:27.792073Z",
+  "started_at": "2026-10-20T00:41:40.664645Z",
+  "completed_at": "2026-10-20T00:41:59.906372Z"
+}

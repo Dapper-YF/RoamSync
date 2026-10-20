@@ -1,6 +1,16 @@
 # RoamSync project state
 
-Last updated: 2026-10-19
+Last updated: 2026-10-20
+
+## Isolated closure corrections (2026-10-20, unreleased)
+
+VERIFIED on codex/natural-assistant-closure-20261020: original user messages own
+authorized flexible-trip intent; Router rewrites are diagnostic on that path.
+Format fragments, preservation scopes, unselected old Trips and bounded choice
+authorization corrected; proposal explanations shown; terminal polling stops.
+Windows/Linux1335+1 skipped, Web195/typecheck/build, actual same-Trip recovery pass.
+Overall remains PARTIAL: final full-chain provider reruns failed; no official merge,
+production migration or deployment. See NATURAL_ASSISTANT_CLOSURE_20261020.md.
 
 ## Isolated natural-assistant development (2026-10-19, unreleased)
 

@@ -1,0 +1,136 @@
+{
+  "code_commits": [
+    "998a383",
+    "bca55f6",
+    "cb1f88b",
+    "0cad41d"
+  ],
+  "base": "8c52664",
+  "integration_base": "25a62cb",
+  "overall": "PARTIAL",
+  "ready_for_integration": false,
+  "browser_attempts": [
+    {
+      "evidence": "../natural-assistant/web-live-2026-10-20T00-18-32-118Z.json",
+      "result": "PASS",
+      "scope": "original unchanged inputs, same Trip, before later bounded context/UI fixes"
+    },
+    {
+      "evidence": "web-live-2026-10-20T00-22-29-936Z.json",
+      "result": "FAIL",
+      "failure": "chat failed 422",
+      "chat_ms": [
+        19872,
+        11895,
+        15956
+      ],
+      "http_requests": 5,
+      "polls": 0
+    },
+    {
+      "evidence": "web-live-2026-10-20T00-27-16-895Z.json",
+      "result": "FAIL",
+      "failure": "locator.waitFor: Timeout 240000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: '局部调整建议' }) to be visible\u001b[22m\n",
+      "chat_ms": [
+        21358,
+        105,
+        7129,
+        79,
+        4892
+      ],
+      "http_requests": 120,
+      "polls": 97
+    },
+    {
+      "evidence": "web-live-2026-10-20T00-32-40-502Z.json",
+      "result": "FAIL",
+      "failure": "chat failed 502",
+      "chat_ms": [
+        14081,
+        119,
+        29836
+      ],
+      "http_requests": 5,
+      "polls": 0
+    },
+    {
+      "evidence": "web-live-2026-10-20T00-35-39-904Z.json",
+      "result": "FAIL",
+      "failure": "late-start tradeoff missing",
+      "chat_ms": [
+        11145,
+        51,
+        7099,
+        74,
+        6158
+      ],
+      "http_requests": 39,
+      "polls": 12
+    },
+    {
+      "evidence": "web-live-2026-10-20T00-41-01-109Z.json",
+      "result": "FAIL",
+      "failure": "locator.waitFor: Timeout 240000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: '局部调整建议' }) to be visible\u001b[22m\n",
+      "chat_ms": [
+        10153,
+        116,
+        9106,
+        527,
+        12556
+      ],
+      "http_requests": 118,
+      "polls": 97
+    }
+  ],
+  "latest_full_chain": "web-live-2026-10-20T00-41-01-109Z.json",
+  "known_accepted_alternative": "late-start-accepted-counterexample.json",
+  "same_trip_continuation": "same-trip-restored.json",
+  "live_finite_cases": "finite-live-d84a5309-b0cd-401e-b24f-02b5137632b9.json",
+  "production_merged": false,
+  "deployed": false,
+  "production_migrated": false,
+  "backend": {
+    "windows": {
+      "tests": 1336,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    "linux": {
+      "tests": 1336,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    "favorites": {
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "web": {
+    "numPassedTests": 195,
+    "numFailedTests": 0,
+    "success": true,
+    "typecheck": "passed",
+    "production_build": "passed"
+  },
+  "oracle_node_tests_passed": 3,
+  "integration": {
+    "worktree": "E:/Study/RoamSync-natural-closure-review-20261020",
+    "branch": "codex/natural-closure-review-20261020",
+    "code_head": "0cad41d",
+    "linux_test_source_head": "cb1f88b",
+    "linux_difference": "subsequent commit changes only Web/tests and evidence, no backend app/schema/migration changes",
+    "modified_overlap": [],
+    "untracked_overlap": []
+  },
+  "canonical": {
+    "head": "25a62cbeec4b7c5ac5b66c383c98b86f35440c21",
+    "hashes": {
+      "README.md": "7d2bbc6aca0b9e58af756823b2557f2436e0c5dfa95e79a88ddd0f6352afa1d9",
+      "web/nginx.conf": "6f6038592d9fb5d3be0beb8d0cbbba6755831024bedca316c8b54fcb695ea245"
+    }
+  }
+}

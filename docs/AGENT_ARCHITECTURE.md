@@ -1,5 +1,26 @@
 # RoamSync Agent v1 architecture contract
 
+## Natural handoff correction (2026-10-20, isolated and unreleased)
+
+For an already adopted flexible Trip, a currently authorized direct edit uses
+the original user message as PlanningRun.user_request and intent source_text.
+Router planning_request is recorded for diagnostics only on that path. This
+avoids granting model paraphrases authority to invent names, dates or scope.
+Explicit suggestion handoff and legacy clients retain their original route.
+Unbound flexible conversations do not enumerate unselected historical Trips.
+
+Only lexical activity references enter name matching; format-only captures are
+not identities. Weekday locked-appointment references resolve from persisted
+date/time and remain ambiguous when multiple activities match. Unchanged-day
+clauses cannot set the mutation date. Choice updates continue using the existing
+versioned writer, including explicit reaffirmation of optional status.
+
+Bounded-command validation failures return422. No new authority, workflow,
+migration, graph node, automatic adoption or relaxed Validator was introduced.
+The Web now displays the candidate's existing per-activity explanation before
+adoption. A latest PlanningRun ID can remain historical; a simple edit's own
+message run_id is null. Evidence: NATURAL_ASSISTANT_CLOSURE_20261020.md.
+
 ## Isolated natural-assistant integration (2026-10-19, unreleased)
 
 In codex/natural-assistant-integration-20261019 only: the Web assistant and saved
