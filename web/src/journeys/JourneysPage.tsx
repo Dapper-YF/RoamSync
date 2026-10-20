@@ -17,7 +17,7 @@ export function JourneysPage() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [tab, setTab] = useJourneyScene<string>("tab", "drafts");
+  const [tab, setTab] = useJourneyScene<string>("tab", "upcoming");
   const [create, setCreate] = useJourneyScene("create", { city: "", title: "", requirements: "", days: 3 });
   const [busy, setBusy] = useState(false);
   const [browse, setBrowse] = useJourneyScene("browse", { query: "", limit: 12 });
@@ -42,7 +42,7 @@ export function JourneysPage() {
   const match = (text: string) => text.toLocaleLowerCase().includes(browse.query.trim().toLocaleLowerCase());
   const shownTrips = trips.filter(t => tripPhase(t, today) === tab && match(`${t.title} ${t.destination} ${t.startDate} ${t.endDate}`));
   const shownDrafts = drafts.filter(d => match(`${d.title} ${d.city} ${d.requirements}`));
-  return <main className="journeys-page"><div className="journeys-heading"><div><span className="journeys-eyebrow">YOUR NEXT CHAPTER</span><h1>{isNew ? "从一个旅行想法开始" : "旅程，按你的节奏继续"}</h1><p>{isNew ? "不必先确定日期，留下目的地和想怎么玩。" : "想法、已经确认的安排，以及正在发生的旅行。"}</p></div>{!isNew && <Link className="journeys-primary" to="/drafts/new"><FilePenLine size={17} />筹划新旅行</Link>}</div>
+  return <main className="journeys-page"><div className="journeys-heading"><div><span className="journeys-eyebrow">YOUR NEXT CHAPTER</span><h1>{isNew ? "从一个旅行想法开始" : "我的安排，按你的节奏继续"}</h1><p>{isNew ? "不必先确定日期，留下目的地和想怎么玩。" : "想法、已经确认的安排，以及正在发生的旅行。"}</p></div>{!isNew && <Link className="journeys-primary" to="/"><FilePenLine size={17} />和助手聊聊</Link>}</div>
     {error && <div role="alert" className="journeys-notice">{error}<button onClick={() => void load()}>重新读取</button></div>}
     {isNew ? <><Link className="journeys-back" to="/trips">← 返回旅程</Link><form className="journeys-card journeys-create" onSubmit={submit}><label>想去哪里<input required maxLength={100} placeholder="输入城市或目的地" value={create.city} onChange={e => setCreate({ ...create, city: e.target.value })} /></label><label>为这次旅行起个名字<input maxLength={200} placeholder="可留空" value={create.title} onChange={e => setCreate({ ...create, title: e.target.value })} /></label><label>玩几天<input required type="number" min={1} max={14} value={create.days} onChange={e => setCreate({ ...create, days: Number(e.target.value) })} /></label><label>你想怎样度过这几天<textarea maxLength={3000} placeholder="同行人、节奏、特别想去的地方，或需要避免的安排" value={create.requirements} onChange={e => setCreate({ ...create, requirements: e.target.value })} /></label><button className="journeys-primary" disabled={busy}>{busy ? "正在创建…" : "开始筹划"}<ArrowRight size={17} /></button></form></> : <>
     <div className="journeys-tabs" role="tablist" aria-label="旅程阶段">{groups.map(([key, label]) => <button role="tab" aria-selected={tab === key} className={tab === key ? "selected" : ""} key={key} onClick={() => setTab(key)}>{label}<span>{key === "drafts" ? drafts.length : trips.filter(t => tripPhase(t, today) === key).length}</span></button>)}</div>

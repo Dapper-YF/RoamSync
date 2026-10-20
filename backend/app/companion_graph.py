@@ -163,6 +163,11 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
             need = need.model_copy(update={"trip_context_required": True,
                 "itinerary_required": need.itinerary_required or bool(re.search(r"行程|旅行", context.current_message))})
         updates = {"pending_planning_handoff": None}
+        if (context.read_tool_context.get("web_search", {}).get("status") == "available"
+            and not need.live_fact_required and not need.decision_history_required):
+            # Search snippets are untrusted reference material, never reviewed
+            # KnowledgeEvidence or authority for current prices/opening/booking.
+            need = need.model_copy(update={"knowledge_required": False, "general_knowledge_allowed": True})
         if need.forecast_required and fact_tool is not None:
             try:
                 plan = await fact_tool.plan_forecast(context.current_message,

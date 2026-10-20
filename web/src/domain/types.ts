@@ -485,6 +485,8 @@ export interface AssistantSession {
     };
   }>;
   pending_action: null | {
+    flexible?: boolean;
+    choices?: Array<{ kind: string; label: string; origin: string; day_date: string | null; start: string | null; end: string | null }>;
     id: string; tool: "create_trip" | "reschedule_trip" | "reuse_trip";
     title: string; source_title?: string; city: { name: string };
     start_date: string; end_date: string; total_budget_fen: number; daily_budget_fen: number;

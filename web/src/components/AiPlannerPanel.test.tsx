@@ -37,7 +37,7 @@ it("shows analysis then growing answer before the streaming request completes", 
   await waitFor(() => expect(repository.streamAssistantMessage).toHaveBeenCalled());
   act(() => onEvent({ type: "analysis_delta", delta: "结合区域与节奏。" }));
   expect(screen.getByText("结合区域与节奏。")).toBeVisible();
-  expect(screen.getByText("Thinking · 正在分析")).toBeInTheDocument();
+  expect(screen.getByText("思考中…")).toBeInTheDocument();
   act(() => onEvent({ type: "answer_delta", delta: "第一天集中钟山。" }));
   await waitFor(() => expect(screen.getByText("第一天集中钟山。")).toBeVisible());
   expect(screen.getByRole("textbox", { name: "告诉旅程总管" })).toBeDisabled();
@@ -49,7 +49,7 @@ it("shows analysis then growing answer before the streaming request completes", 
     companion_result: { response_text: "完成后的解释。", analysis_summary: "结合区域与节奏。", goal_type: "explanation", status: "completed",
       suggestions: [], resolved_suggestion_refs: [], runtime_trace: [] } }] }));
   expect(screen.getByText("完成后的解释。")).toBeVisible();
-  expect(screen.getByText("Thinking · 分析摘要")).toBeInTheDocument();
+  expect(screen.getByText("思考摘要")).toBeInTheDocument();
   expect(repository.sendAssistantMessage).not.toHaveBeenCalled();
 });
 
@@ -532,6 +532,6 @@ it("keeps the candidate visible while answering a Companion explanation", async 
   expect(await screen.findByText(answer.response_text)).toBeInTheDocument();
   await waitFor(() => expect(screen.getByRole("button", { name: "确认并应用" })).toBeEnabled());
   expect(screen.getByText("候选方案")).toBeInTheDocument();
-  await userEvent.click(screen.getByText("回答依据"));
-  expect(screen.getByText("对应方案：fixture")).toBeInTheDocument();
+  expect(screen.queryByText("回答依据")).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "确认并应用" })).toBeEnabled();
 });

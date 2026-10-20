@@ -67,13 +67,14 @@ async def fetch_open_meteo(
 
 @observed("search", provider="Tavily", purpose="Destination Research", input_summary=lambda args, kwargs: {"query": kwargs.get("query")},
           output_summary=lambda fact: {"query": fact.query, "sources": [{"title": item.get("title"), "url": item.get("url"), "content": item.get("content", "")[:800]} for item in fact.payload.get("results", [])], "source_count": len(fact.payload.get("results", []))})
-async def search_tavily(settings: Settings, *, query: str, max_results: int = 5) -> SearchFact:
+async def search_tavily(settings: Settings, *, query: str, max_results: int = 5, include_images: bool = False) -> SearchFact:
     key = settings.search_api_key
     if not key:
         raise ExternalFactError("tavily provider is not configured")
 
     def request() -> dict:
-        body = json.dumps({"query": query, "max_results": max_results}).encode()
+        body = json.dumps({"query": query, "max_results": max_results,
+            **({"include_images": True, "include_image_descriptions": True} if include_images else {})}).encode()
         req = Request(
             f"{settings.tavily_base_url.rstrip('/')}/search",
             data=body,

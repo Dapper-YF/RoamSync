@@ -423,6 +423,12 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
         return row
     brief = None
     if goal_routing.target_runtime == "companion":
+        if envelope:
+            from app.assistant_search import search_requested, search_for_answer
+            if search_requested(message):
+                from app.assistant_stream import emit
+                emit("status", message="正在搜索相关资料…")
+                read_tools["web_search"] = await search_for_answer(get_settings(), message)
         if companion_responder:
             class ResponderProvider:
                 async def generate(self, context, need):

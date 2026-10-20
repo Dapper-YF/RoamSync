@@ -117,7 +117,8 @@ async def session_events(operation, db):
                 logging.getLogger(__name__).warning(
                     "Assistant streaming rollback failed: %s", type(rollback_error).__name__)
             # No raw exception or provider payload in the browser.
-            await queue.put({"type": "error", "message": "这次回答未能完成，请重试。"})
+            conflict = getattr(exc, "status_code", None) == 409
+            await queue.put({"type": "error", "message": "这份安排刚刚有了新修改。本次没有覆盖它，请刷新并核对后再试。" if conflict else "这次回答未能完成，请重试。"})
         finally:
             stream_sink.reset(token)
 

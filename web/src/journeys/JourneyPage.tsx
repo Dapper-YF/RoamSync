@@ -7,12 +7,15 @@ import { errorMessage, localDate, tripPhase, type JourneyPageProps } from "./jou
 import { useJourneyScene } from "./continuity";
 import { EffectiveRequirements } from "./EffectiveRequirements";
 import "./journeys.css";
+import { ArrangementExtras } from "../product/ArrangementExtras";
+import { useOptionalTravelAssistant } from "../product/TravelAssistant";
 
 const api = new ApiTripPlanningRepository();
 const inFlight = (r: PlanningRun) => ["queued", "researching", "planning", "validating"].includes(r.status);
 const executionLabels = { pending: "待前往", arrived: "已到达", in_progress: "正在体验", completed: "已完成", skipped: "已跳过" };
 export function JourneyPage(props: JourneyPageProps) { const { tripId = "" } = useParams(); return <Journey key={tripId} id={tripId} {...props} />; }
 function Journey({ id, onAskAssistant, onRoute }: JourneyPageProps & { id: string }) {
+  const assistant = useOptionalTravelAssistant();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [days, setDays] = useState<DayPlan[]>([]);
   const [progress, setProgress] = useState<ExecutionProgress | null>(null);
@@ -43,7 +46,7 @@ function Journey({ id, onAskAssistant, onRoute }: JourneyPageProps & { id: strin
     if (results[4].status === "fulfilled") setNames(Object.fromEntries(results[4].value.map(p => [p.id, p.name])));
     setLoading(false);
   }
-  useEffect(() => { void load(); }, [id]);
+  useEffect(() => { void load(); }, [id, assistant?.arrangement?.version]);
   useEffect(() => { if (!runs.some(inFlight) && !["in_progress", "paused"].includes(progress?.execution.status || "")) return; const timer = setInterval(() => void load(), 4000); return () => clearInterval(timer); }, [id, runs.some(inFlight), progress?.execution.status]);
   const shownDay = days.find(d => d.id === selection.day) || days.find(d => d.date === progress?.execution.currentDate) || days[0];
   const allActivities = days.flatMap(d => d.activities);
@@ -56,7 +59,7 @@ function Journey({ id, onAskAssistant, onRoute }: JourneyPageProps & { id: strin
   const next = allActivities.find(a => a.id === nextExecution?.activityId);
   async function perform(operation: () => Promise<unknown>, success: string) {
     setBusy(true); setError(""); setNotice("");
-    try { await operation(); setNotice(success); await load(); } catch (e) { setError(errorMessage(e)); await load(); } finally { setBusy(false); }
+    try { await operation(); setNotice(success); await assistant?.refreshArrangement(); await load(); } catch (e) { setError(errorMessage(e)); await load(); } finally { setBusy(false); }
   }
   async function propose() {
     if (!selection.request.trim()) return;
@@ -76,7 +79,8 @@ function Journey({ id, onAskAssistant, onRoute }: JourneyPageProps & { id: strin
   if (!trip) return <main className="journeys-page"><Link to="/trips">← 旅程</Link>{error ? <p role="alert">{error}<button onClick={() => void load()}>重新读取</button></p> : <p role="status">{loading ? "正在读取旅行…" : "旅行暂不可用"}</p>}</main>;
   return <main className="journeys-page journeys-formal"><Link className="journeys-back" to="/trips">← 旅程</Link><div className="journeys-heading"><div><span className="journeys-eyebrow">{historical ? "MEMORIES TO KEEP" : phase === "active" ? "MAKE TODAY YOURS" : "LOOKING FORWARD"}</span><h1>{trip.title}</h1><p>{trip.destination} · {trip.startDate} — {trip.endDate} · {historical ? "历史安排" : phase === "active" ? "旅行中的安排" : "即将出发"}</p></div><button className="journeys-secondary" disabled={!onAskAssistant} onClick={() => onAskAssistant?.({ tripId: id, city: trip.destination, prompt: historical ? "帮我回顾这次旅行的安排。" : "结合当前日程和实际进度，下一步有什么建议？" })}><Sparkles size={17} />和 AI 聊聊</button></div>
     {error && <div className="journeys-notice" role="alert">{error}<button onClick={() => { setError(""); void load(); }}>读取最新状态</button></div>}{notice && <p className="journeys-success" role="status">{notice}</p>}
-    <EffectiveRequirements kind="trip" id={trip.id} version={trip.version} disabled={busy || historical} onChanged={() => void load()} />
+    <EffectiveRequirements kind="trip" id={trip.id} version={trip.version} disabled={busy || historical} onChanged={() => { void load(); void assistant?.refreshArrangement(); }} />
+    {assistant?.arrangement?.trip.id === id && <ArrangementExtras />}
     {!historical && <section className="journeys-card journeys-today" aria-label="当前旅行进度"><h2>{progress?.execution.status === "completed" ? "本次旅行已结束" : progress?.execution.status === "not_started" ? "准备好了，就开始今天的旅行" : progress?.execution.status === "paused" ? "旅行暂时停下来了" : "此刻和下一站"}</h2>{progressError ? <p role="alert">{progressError}<button onClick={() => void load()}>重试</button></p> : progress ? <>
     {progress.execution.status === "not_started" ? <><p>这里记录你主动确认的到达和完成进度。路线查询与外部地图不代表实时 GPS 导航。</p>{shownDay && <button className="journeys-primary" disabled={busy || !shownDay.activities.length} onClick={() => void perform(() => api.startTripExecution(id, shownDay.id), "已开始记录这一天的旅行进度。")}>开始{shownDay.date}的旅行</button>}</> : <><div className="journeys-current-next"><article><span className="journeys-eyebrow">现在</span><h3>{progress.currentActivityName || current?.name || "当前没有进行中的活动"}</h3>{progress.currentActivityExperience?.elapsedExperienceMinutes != null && <p>已体验{progress.currentActivityExperience.elapsedExperienceMinutes}分钟</p>}{progress.currentActivityExperience?.projectedEndAt && <p>预计结束 {new Date(progress.currentActivityExperience.projectedEndAt).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" })}</p>}</article><ArrowRight size={22} /><article><span className="journeys-eyebrow">下一站</span><h3>{progress.navigationTargetName || next?.name || "今天没有下一站"}</h3>{next && <p>{next.scheduledTime.slice(0, 5)} · {next.durationMinutes}分钟</p>}{next && onRoute && <button className="journeys-secondary" onClick={() => route(next, current)}><Navigation size={16} />查询下一站路线</button>}</article></div><p>尚有{progress.execution.remainingActivityCount}项活动 · {progress.execution.scheduleDelayMinutes > 0 ? `比安排晚${progress.execution.scheduleDelayMinutes}分钟` : "暂无已记录延迟"}</p><div className="journeys-actions">{progress.execution.status === "paused" ? <button disabled={busy} onClick={() => action("resume")}>继续旅行</button> : progress.execution.status === "in_progress" && <button disabled={busy} onClick={() => action("pause")}>暂停旅行</button>}{progress.execution.status !== "completed" && progress.execution.remainingActivityCount === 0 && <button className="journeys-primary" disabled={busy} onClick={() => action("finish")}>结束本次旅行</button>}</div></>}
     </> : <p>正在读取实际进度…</p>}</section>}

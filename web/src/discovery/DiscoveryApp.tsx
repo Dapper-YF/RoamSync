@@ -5,6 +5,7 @@ import {
   NavLink,
   Route,
   Routes,
+  Navigate,
   useLocation,
   useNavigate,
   useParams,
@@ -30,6 +31,7 @@ import {
 import { PlaceContentRepository } from "../data/placeContentRepository";
 import type { ExplorePlace, ExplorePoint } from "../domain/explore";
 import {
+  AssistantPage,
   TravelAssistantProvider,
   useTravelAssistant,
 } from "../product/TravelAssistant";
@@ -40,7 +42,6 @@ import { ExploreMap } from "../product/ExploreMap";
 import { DiscoveryState, useScene, type RouteState } from "./scene";
 import "../product/ProductExperience.css";
 import "./discovery.css";
-import { NaturalAssistant, NaturalArrangements } from "../product/NaturalAssistant";
 const repository = new PlaceContentRepository();
 const categories = [
   ["all", "全部", Compass],
@@ -128,20 +129,19 @@ function Shell() {
           <NavLink to="/" end className="rxp-nav-link">
             AI 助手
           </NavLink>
-          <NavLink to="/arrangements" className="rxp-nav-link">我的安排</NavLink>
+          <NavLink to="/trips" className="rxp-nav-link">我的安排</NavLink>
           <NavLink to="/explore" className="rxp-nav-link">探索</NavLink>
-          <NavLink to="/trips" className="rxp-nav-link">已有旅程</NavLink>
           <NavLink to="/favorites" className="rxp-nav-link">
             收藏
           </NavLink>
         </nav>
-        <button
+        {location.pathname !== "/" && location.pathname !== "/assistant" && <button
           className="rxp-assistant-button"
           onClick={() => void askOnPage()}
         >
           <Sparkles size={16} />
           旅行助手
-        </button>
+        </button>}
       </header>
       {assistantEntryError && (
         <p role="alert" className="discovery-entry-error">
@@ -149,9 +149,9 @@ function Shell() {
         </p>
       )}
       <Routes>
-        <Route path="/" element={<NaturalAssistant />} />
-        <Route path="/arrangements" element={<NaturalArrangements />} />
-        <Route path="/arrangements/:tripId" element={<NaturalAssistant />} />
+        <Route path="/" element={<AssistantPage />} />
+        <Route path="/arrangements" element={<Navigate to="/trips" replace />} />
+        <Route path="/arrangements/:tripId" element={<ArrangementRedirect />} />
         <Route path="/explore" element={<Discover />} />
         <Route path="/nearby" element={<NearbyPage />} />
         <Route path="/trips" element={<JourneysPage />} />
@@ -177,7 +177,7 @@ function Shell() {
                 }
                 label="返回浏览"
               />
-              <NaturalAssistant contextTripId={assistant.context.tripId} />
+              <AssistantPage />
             </>
           }
         />
@@ -196,12 +196,16 @@ function Shell() {
         RoamSync <span>随心探索，从容出发。</span>
         <small>
           {location.pathname === "/assistant"
-            ? "与 AI 讨论不会创建或修改正式旅行。"
+            ? "查询与讨论不会自动修改安排，重要调整由你确认。"
             : "地点与路线由高德提供 · 信息缺失时如实保留"}
         </small>
       </footer>
     </div>
   );
+}
+function ArrangementRedirect() {
+  const { tripId } = useParams();
+  return <Navigate to={`/trips/${tripId}`} replace />;
 }
 function Back({ to, label = "返回探索" }: { to: string; label?: string }) {
   return (

@@ -21,6 +21,7 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import {
   CompanionThinking,
+  ThinkingSummary,
   companionAnswer,
 } from "../components/CompanionThinking";
 import { ApiTripPlanningRepository } from "../data/apiTripPlanningRepository";
@@ -34,6 +35,10 @@ import {
 import type { ExplorePlace, ExploreRepository } from "../domain/explore";
 import type { AssistantSession, TripPlanningRepository } from "../domain/types";
 import "./TravelAssistant.css";
+import { createStreamBuffer } from "../data/streamBuffer";
+import { assistantRequest, arrangementAction, type Arrangement, type Revision, type Run } from "./arrangementApi";
+import { AssistantDecisions } from "./AssistantDecisions";
+import { AssistantAnswer, type AnswerSearch } from "../components/AssistantAnswer";
 
 interface RouteReadRequest {
   origin_place_id: string;
@@ -61,6 +66,13 @@ interface AssistantState {
   error: string;
   submission: string;
   stream: string;
+  analysis: string;
+  arrangement?: Arrangement;
+  revision?: Revision;
+  run?: Run;
+  refreshArrangement: () => Promise<void>;
+  decidePreview: (accept: boolean) => Promise<void>;
+  decideRevision: (accept: boolean) => Promise<void>;
   status: string;
   send: (
     routeRequest?: RouteReadRequest,
@@ -88,6 +100,7 @@ export function useTravelAssistant() {
   if (!value) throw new Error("TravelAssistantProvider is required");
   return value;
 }
+export function useOptionalTravelAssistant() { return useContext(AssistantContext); }
 
 export function TravelAssistantProvider({
   children,
@@ -142,6 +155,11 @@ export function TravelAssistantProvider({
   const [submission, setSubmission] = useState("");
   const [stream, setStream] = useState("");
   const [status, setStatus] = useState("");
+  const [analysis, setAnalysis] = useState("");
+  const [arrangement, setArrangement] = useState<Arrangement>();
+  const [revision, setRevision] = useState<Revision>();
+  const [run, setRun] = useState<Run>();
+  const [runRefresh, setRunRefresh] = useState(0);
   const [retry, setRetry] = useState(0);
   const retryMessage = useRef<{
     scope: string;
@@ -151,10 +169,77 @@ export function TravelAssistantProvider({
   const sending = useRef(false);
   const sendingScope = useRef<string | null>(null);
   const unified = import.meta.env.VITE_DISCOVERY_PRODUCT === "true";
-  const sessionTripId = unified ? undefined : context.tripId;
+  const sessionTripId = context.tripId;
   const scope = sessionTripId ?? "global";
+  const currentScope = useRef(scope);
+  currentScope.current = scope;
+  const arrangementRead = useRef(0);
+  const routeTripSeen = useRef<string | undefined>(undefined);
   const session = sessions[scope];
-  const active = opened || location.pathname === "/assistant";
+  const active = opened || location.pathname === "/assistant" || (unified && (location.pathname === "/" || /^\/trips\/[^/]+$/.test(location.pathname)));
+  useEffect(() => {
+    const trip = location.pathname.match(/^\/trips\/([^/]+)(?:\/planner)?$/)?.[1];
+    if (unified && trip && routeTripSeen.current !== trip) { routeTripSeen.current = trip; setContext({ tripId: trip }); }
+    if (!trip) routeTripSeen.current = undefined;
+  }, [unified, location.pathname, context.tripId]);
+  const refreshArrangement = useCallback(async () => {
+    if (currentScope.current !== (sessionTripId ?? "global")) return;
+    const request = ++arrangementRead.current;
+    if (!unified || !sessionTripId) { setArrangement(undefined); return; }
+    const next = await assistantRequest<Arrangement>(`/trips/${sessionTripId}/arrangement-items`);
+    if (currentScope.current === sessionTripId && arrangementRead.current === request) { setArrangement(next); setRunRefresh(value => value + 1); }
+  }, [unified, sessionTripId]);
+  useEffect(() => { setArrangement(undefined); void refreshArrangement().catch(e => setError(messageOf(e))); }, [refreshArrangement]);
+  const receive = (next: AssistantSession) => {
+    const nextScope = next.trip_id ?? "global";
+    setSessions(values => { const copy = { ...values, [nextScope]: next }; if (next.trip_id && scope === "global") delete copy.global; return copy; });
+    if (unified) {
+      localStorage.setItem(`roamsync.assistant.session.${nextScope}`, next.id);
+      if (next.trip_id && next.trip_id !== sessionTripId && currentScope.current === scope) { localStorage.removeItem("roamsync.assistant.session.global"); setContext({ tripId: next.trip_id }); }
+    }
+  };
+  const runId = session?.latest_run_id;
+  useEffect(() => {
+    if (!unified || !runId || !active) return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      try {
+        const next = await assistantRequest<Run>(`/planning-runs/${runId}`);
+        if (cancelled) return;
+        setRun(next);
+        if (next.status === "awaiting_confirmation") {
+          const candidate = await assistantRequest<Revision>(`/planning-runs/${runId}/revision`);
+          if (!cancelled) setRevision(candidate);
+        } else setRevision(undefined);
+        if (["queued", "researching", "planning", "validating"].includes(next.status)) timer = setTimeout(() => void poll(), 2500);
+      } catch (e) { if (!cancelled) setError(messageOf(e)); }
+    };
+    void poll();
+    return () => { cancelled = true; clearTimeout(timer); setRun(undefined); setRevision(undefined); };
+  }, [unified, runId, active, runRefresh]);
+  const decidePreview = async (accept: boolean) => {
+    if (!session?.pending_action || busy || sending.current) return;
+    setBusy(true); setError("");
+    try {
+      const next = await assistantRequest<AssistantSession>(`/assistant/sessions/${session.id}/decision`, { method: "POST", body: JSON.stringify({ action_id: session.pending_action.id, accept }) });
+      receive(next);
+      // Creation changes scope and reloads through the existing effect; a date
+      // change retains the Trip and must explicitly refresh its protected version.
+      if (accept && next.trip_id === sessionTripId && currentScope.current === scope) await refreshArrangement();
+    }
+    catch (e) { setError(messageOf(e)); }
+    finally { setBusy(false); }
+  };
+  const decideRevision = async (accept: boolean) => {
+    if (!revision || busy || sending.current) return;
+    setBusy(true); setError("");
+    try {
+      await assistantRequest(`/plan-revisions/${revision.id}/${accept ? "accept" : "reject"}`, { method: "POST" });
+      if (currentScope.current === scope) { setRevision(undefined); setRun(undefined); await refreshArrangement(); }
+    } catch (e) { setError(messageOf(e)); }
+    finally { setBusy(false); }
+  };
   useEffect(() => {
     setOpened(false);
   }, [location.pathname]);
@@ -163,7 +248,9 @@ export function TravelAssistantProvider({
     (next?: TravelAssistantContext) => {
       if (next) {
         // Place entry always starts from global scope unless a Trip was explicitly supplied.
-        const { prompt: _prompt, returnTo: _returnTo, ...readContext } = next;
+        const readContext = { ...next };
+        delete readContext.prompt;
+        delete readContext.returnTo;
         setContext(readContext);
         if (
           next.prompt !== undefined ||
@@ -207,7 +294,9 @@ export function TravelAssistantProvider({
     (async () => {
       if (!tripRepository.getAssistantSession)
         throw new Error("当前服务暂不支持 AI 对话，请继续浏览探索和收藏。");
-      const next = await tripRepository.getAssistantSession(sessionTripId);
+      const saved = unified ? localStorage.getItem(`roamsync.assistant.session.${scope}`) : null;
+      const next = unified ? await assistantRequest<AssistantSession>("/assistant/sessions", { method: "POST", body: JSON.stringify({ ...(saved ? { session_id: saved } : {}), trip_id: sessionTripId ?? null }) }) : await tripRepository.getAssistantSession(sessionTripId);
+      if (unified) localStorage.setItem(`roamsync.assistant.session.${scope}`, next.id);
       if (next.trip_id !== (sessionTripId ?? null))
         throw new Error("会话关联的行程与当前选择不一致，请重试。");
       if (!cancelled) setSessions((values) => ({ ...values, [scope]: next }));
@@ -221,7 +310,7 @@ export function TravelAssistantProvider({
     return () => {
       cancelled = true;
     };
-  }, [active, sessionTripId, retry, scope, session, tripRepository]);
+  }, [active, sessionTripId, retry, scope, session, tripRepository, unified]);
 
   const send = async (
     routeRequest?: RouteReadRequest,
@@ -243,13 +332,25 @@ export function TravelAssistantProvider({
     setError("");
     setSubmission(message);
     setStream("");
-    setStatus("正在整理旅行建议…");
+    setStatus("正在理解你的问题…");
+    setAnalysis("");
+    const answerBuffer = createStreamBuffer(delta => setStream(value => value + delta));
+    const analysisBuffer = createStreamBuffer(delta => setAnalysis(value => value + delta));
     setDraft("");
     try {
       const requestContext = productAssistantContext(
         selectedContext,
         import.meta.env.VITE_ASSISTANT_CONTEXT_CONTRACT,
       );
+      if (unified && requestContext.context) {
+        Object.assign(requestContext.context, { prefer_flexible: true });
+        if (sessionTripId) {
+          if (!arrangement || arrangement.trip.id !== sessionTripId) throw new Error("请先重新读取当前安排，再提交修改。");
+          Object.assign(requestContext.context, { action_target: arrangementAction(message, arrangement, id, revision) });
+        }
+        if (/^(?:就按这份来|就这样安排|采用这份方案|确认采用)[。！! ]*$/.test(message) && session.pending_action)
+          Object.assign(requestContext.context, { preview_action_id: session.pending_action.id });
+      }
       const response = await fetch(
         `/api/v1/assistant/sessions/${encodeURIComponent(session.id)}/messages/stream`,
         {
@@ -274,22 +375,27 @@ export function TravelAssistantProvider({
         },
       );
       const next = await readAssistantStream(response, (event) => {
+        if (currentScope.current !== selectedScope) return;
         if (event.type === "answer_delta")
-          setStream((value) => value + event.delta);
+          answerBuffer.push(event.delta);
+        if (event.type === "analysis_delta") analysisBuffer.push(event.delta);
         if (event.type === "status") setStatus(event.message);
         if (event.type === "reset") {
+          answerBuffer.reset(); analysisBuffer.reset(); setAnalysis("");
           setStream("");
           setStatus("正在重新整理回答…");
         }
       });
-      if (next.trip_id !== (sessionTripId ?? null))
+      answerBuffer.flush(); analysisBuffer.flush();
+      if (!unified && next.trip_id !== (sessionTripId ?? null))
         throw new Error("返回的会话关联发生变化，请前往行程页面确认。");
-      setSessions((values) => ({ ...values, [selectedScope]: next }));
+      if (unified) { receive(next); await refreshArrangement(); }
+      else setSessions((values) => ({ ...values, [selectedScope]: next }));
       retryMessage.current = null;
     } catch (cause) {
-      setError(messageOf(cause));
-      setDraft((value) => value || message);
+      if (currentScope.current === selectedScope) { setError(messageOf(cause)); setDraft((value) => value || message); }
     } finally {
+      answerBuffer.reset(); analysisBuffer.reset();
       sending.current = false;
       sendingScope.current = null;
       setBusy(false);
@@ -312,15 +418,16 @@ export function TravelAssistantProvider({
     error,
     submission: sendingScope.current === scope ? submission : "",
     stream,
+    analysis, arrangement, revision, run, refreshArrangement, decidePreview, decideRevision,
     status,
     send,
-    retrySession: () => setRetry((value) => value + 1),
+    retrySession: () => { setRetry(value => value + 1); void refreshArrangement().catch(e => setError(messageOf(e))); },
     exploreRepository,
   };
   return (
     <AssistantContext.Provider value={value}>
       {children}
-      {opened && location.pathname !== "/assistant" && (
+      {opened && location.pathname !== "/assistant" && !(unified && location.pathname === "/") && (
         <div className="travel-assistant-overlay">
           <button
             className="travel-assistant-scrim"
@@ -542,10 +649,11 @@ function AssistantConversation({ drawer = false }: { drawer?: boolean }) {
               <Sparkles size={17} />
               <div>
                 <div className="travel-assistant-text">
-                  {companionAnswer(
+                  {message.companion_result?.analysis_summary && <ThinkingSummary text={message.companion_result.analysis_summary} />}
+                  <AssistantAnswer text={companionAnswer(
                     message.companion_result?.response_text ||
                       message.assistant,
-                  )}
+                  )} search={(message.read_tools as { web_search?: AnswerSearch } | undefined)?.web_search} />
                 </div>
                 {!!message.place_cards?.length && (
                   <div className="travel-assistant-suggestions">
@@ -683,18 +791,21 @@ function AssistantConversation({ drawer = false }: { drawer?: boolean }) {
             <div className="travel-assistant-user">{assistant.submission}</div>
             <div className="travel-assistant-reply">
               <Sparkles size={17} />
-              <div className="travel-assistant-text">
-                {assistant.stream || assistant.status}
+              <div><ThinkingSummary text={assistant.analysis} active={!!assistant.analysis && !assistant.stream} />
+                {!assistant.stream && <p role="status">{assistant.status}</p>}
+                <div className="travel-assistant-text">{assistant.stream}</div>
               </div>
             </div>
           </div>
         )}
+        <AssistantDecisions />
         {error && (
           <div className="travel-assistant-error" role="alert">
             <p>{error}</p>
             {!session && (
               <button onClick={assistant.retrySession}>重新连接</button>
             )}
+            {session && <button onClick={assistant.retrySession}>重新读取当前状态</button>}
             <p>
               你仍可以<Link to="/explore">继续探索</Link>，或查看
               <Link to="/favorites">我的收藏</Link>。
@@ -754,7 +865,7 @@ function AssistantConversation({ drawer = false }: { drawer?: boolean }) {
         </button>
       </form>
       <footer className="travel-assistant-footer">
-        AI 建议仅供参考 · 此处的浏览与讨论不会修改正式旅行
+        查询与讨论不会自动修改安排 · 重要调整由你确认
       </footer>
     </div>
   );
