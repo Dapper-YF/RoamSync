@@ -8,7 +8,7 @@ describe("Companion answer presentation", () => {
     expect(screen.getByRole("button", { name: "思考中…" })).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByText("先比较步行距离与游玩节奏。")).toBeVisible();
     rerender(<><ThinkingSummary text="先比较步行距离与游玩节奏。" /><p>推荐先去人民公园。</p></>);
-    const toggle = screen.getByRole("button", { name: "思考摘要" });
+    const toggle = screen.getByRole("button", { name: "思考过程" });
     expect(toggle).toHaveAttribute("aria-expanded", "false");
     expect(screen.getByText("先比较步行距离与游玩节奏。")).not.toBeVisible();
     expect(screen.getByText("推荐先去人民公园。")).toBeVisible();
@@ -19,10 +19,10 @@ describe("Companion answer presentation", () => {
   });
   it("keeps saved summaries collapsed and omits an absent summary", () => {
     const { rerender } = render(<ThinkingSummary text="保存的摘要" />);
-    expect(screen.getByRole("button", { name: "思考摘要" })).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByRole("button", { name: "思考过程" })).toHaveAttribute("aria-expanded", "false");
     expect(screen.getByText("保存的摘要")).not.toBeVisible();
     rerender(<ThinkingSummary text="" />);
-    expect(screen.queryByRole("region", { name: "思考摘要" })).toBeNull();
+    expect(screen.queryByRole("region", { name: "思考过程" })).toBeNull();
   });
   it("cleans diagnostic headings and internal citations in persisted replies", () => {
     expect(companionAnswer("资料支持：\n西湖文化景观。 [knowledge_internal]\n\n助手的推断与建议（不是来源事实）：\n可以摄影。\n\n资料限制：\n- 未覆盖摄影"))

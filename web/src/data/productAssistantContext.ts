@@ -70,6 +70,9 @@ export function productAssistantContext(
     ) {
       throw new Error("当前地点身份尚未接入统一地点服务，请先使用自由对话。");
     }
+    const browsingCity = place?.city ?? context.city ?? context.draftContext?.city ?? null;
+    const freeAssistant = !place && !context.tripId && !context.draftContext && !context.discovery
+      && (!context.surface || context.surface === "assistant");
     return {
       context: {
         version: "assistant-context-v1",
@@ -85,8 +88,9 @@ export function productAssistantContext(
                 : context.discovery
                   ? "map"
                   : "assistant"),
-        browsing_city:
-          place?.city ?? context.city ?? context.draftContext?.city ?? null,
+        // Omission continues the server-read conversational city; explicit null
+        // on other surfaces retains its existing scope-clearing meaning.
+        ...(!freeAssistant || browsingCity ? { browsing_city: browsingCity } : {}),
         discussing_place_id: place?.id ?? null,
         read_trip_id: context.tripId ?? null,
         ...(import.meta.env.VITE_DISCOVERY_PRODUCT === "true"

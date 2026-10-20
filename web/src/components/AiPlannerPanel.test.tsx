@@ -49,7 +49,7 @@ it("shows analysis then growing answer before the streaming request completes", 
     companion_result: { response_text: "完成后的解释。", analysis_summary: "结合区域与节奏。", goal_type: "explanation", status: "completed",
       suggestions: [], resolved_suggestion_refs: [], runtime_trace: [] } }] }));
   expect(screen.getByText("完成后的解释。")).toBeVisible();
-  expect(screen.getByText("思考摘要")).toBeInTheDocument();
+  expect(screen.getByText("思考过程")).toBeInTheDocument();
   expect(repository.sendAssistantMessage).not.toHaveBeenCalled();
 });
 

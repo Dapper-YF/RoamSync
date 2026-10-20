@@ -3,6 +3,10 @@ import { productAssistantContext } from "./productAssistantContext";
 import type { ExplorePlace } from "../domain/explore";
 
 describe("C line assistant context boundary", () => {
+  it("leaves the free assistant city omitted so follow-up requests retain server context", () => {
+    expect(productAssistantContext({ surface: "assistant" }, "assistant-context-v1").context).not.toHaveProperty("browsing_city");
+    expect(productAssistantContext({ city: "南京" }, "assistant-context-v1").context).toHaveProperty("browsing_city", "南京");
+  });
   it("carries canonical identity without action permission or inferred GPS", () => {
     const place = { id: "53283e50-7288-4727-a05c-9515e8268ea2", city: "杭州市" } as ExplorePlace;
     expect(productAssistantContext({ place }, "assistant-context-v1")).toEqual({ context: {

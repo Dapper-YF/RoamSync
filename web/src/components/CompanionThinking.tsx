@@ -36,11 +36,11 @@ export function ThinkingSummary({ text, active = false }: { text: string; active
   // Once complete, the user can reopen it independently of later text updates.
   useEffect(() => { setExpanded(active); }, [active]);
   if (!text && !active) return null;
-  return <section className="thinking-summary" aria-label="思考摘要" data-active={active}>
+  return <section className="thinking-summary" aria-label="思考过程" data-active={active}>
     <button type="button" className="thinking-summary-toggle" aria-expanded={expanded}
       aria-controls={contentId} onClick={() => setExpanded(value => !value)}>
       {active && <LoaderCircle size={14} className="thinking-summary-spinner" aria-hidden="true" />}
-      <span>{active ? "思考中…" : "思考摘要"}</span>
+      <span>{active ? "思考中…" : "思考过程"}</span>
       <ChevronDown size={14} className="thinking-summary-chevron" aria-hidden="true" />
     </button>
     <div id={contentId} className="thinking-summary-content" hidden={!expanded}>
