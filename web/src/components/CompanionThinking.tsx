@@ -1,6 +1,8 @@
 import type { AssistantSession } from "../domain/types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
+import { ChevronDown, LoaderCircle } from "lucide-react";
 import { createStreamBuffer } from "../data/streamBuffer";
+import "./CompanionThinking.css";
 
 type Result = NonNullable<AssistantSession["messages"][number]["companion_result"]>;
 
@@ -28,11 +30,23 @@ export function CompanionThinking({ result }: { result: Result }) {
 }
 
 export function ThinkingSummary({ text, active = false }: { text: string; active?: boolean }) {
+  const [expanded, setExpanded] = useState(active);
+  const contentId = useId();
+  // Collapse when the answer starts, even if the summary was opened while live.
+  // Once complete, the user can reopen it independently of later text updates.
+  useEffect(() => { setExpanded(active); }, [active]);
   if (!text && !active) return null;
-  return <details className="ai-thinking ai-analysis" open={active || undefined}>
-    <summary>{active ? "思考中…" : "思考摘要"}</summary>
-    <p>{text || "正在整理相关信息…"}</p>
-  </details>;
+  return <section className="thinking-summary" aria-label="思考摘要" data-active={active}>
+    <button type="button" className="thinking-summary-toggle" aria-expanded={expanded}
+      aria-controls={contentId} onClick={() => setExpanded(value => !value)}>
+      {active && <LoaderCircle size={14} className="thinking-summary-spinner" aria-hidden="true" />}
+      <span>{active ? "思考中…" : "思考摘要"}</span>
+      <ChevronDown size={14} className="thinking-summary-chevron" aria-hidden="true" />
+    </button>
+    <div id={contentId} className="thinking-summary-content" hidden={!expanded}>
+      <p>{text || "正在整理相关信息…"}</p>
+    </div>
+  </section>;
 }
 
 export function StreamingText({ text }: { text: string }) {

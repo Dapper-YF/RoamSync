@@ -1,8 +1,29 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { companionAnswer, CompanionThinking } from "./CompanionThinking";
+import { companionAnswer, CompanionThinking, ThinkingSummary } from "./CompanionThinking";
 
 describe("Companion answer presentation", () => {
+  it("collapses the separate summary when the answer starts and lets the user reopen it", () => {
+    const { rerender } = render(<><ThinkingSummary text="先比较步行距离与游玩节奏。" active /><p>正文位置</p></>);
+    expect(screen.getByRole("button", { name: "思考中…" })).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByText("先比较步行距离与游玩节奏。")).toBeVisible();
+    rerender(<><ThinkingSummary text="先比较步行距离与游玩节奏。" /><p>推荐先去人民公园。</p></>);
+    const toggle = screen.getByRole("button", { name: "思考摘要" });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByText("先比较步行距离与游玩节奏。")).not.toBeVisible();
+    expect(screen.getByText("推荐先去人民公园。")).toBeVisible();
+    fireEvent.click(toggle);
+    expect(screen.getByText("先比较步行距离与游玩节奏。")).toBeVisible();
+    rerender(<><ThinkingSummary text="先比较步行距离与游玩节奏，再考虑兴趣。" /><p>推荐先去人民公园。</p></>);
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+  });
+  it("keeps saved summaries collapsed and omits an absent summary", () => {
+    const { rerender } = render(<ThinkingSummary text="保存的摘要" />);
+    expect(screen.getByRole("button", { name: "思考摘要" })).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByText("保存的摘要")).not.toBeVisible();
+    rerender(<ThinkingSummary text="" />);
+    expect(screen.queryByRole("region", { name: "思考摘要" })).toBeNull();
+  });
   it("cleans diagnostic headings and internal citations in persisted replies", () => {
     expect(companionAnswer("资料支持：\n西湖文化景观。 [knowledge_internal]\n\n助手的推断与建议（不是来源事实）：\n可以摄影。\n\n资料限制：\n- 未覆盖摄影"))
       .toBe("西湖文化景观。\n\n可以摄影。");
