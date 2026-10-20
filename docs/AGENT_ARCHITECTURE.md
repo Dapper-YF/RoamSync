@@ -1,5 +1,27 @@
 # RoamSync Agent v1 architecture contract
 
+## Bounded read-only discovery and page evidence (2026-10-20)
+
+The assistant may select an actual POI lookup from natural requests, using the
+existing goal/InformationNeed boundary plus bounded model query arguments. It
+never grants mutation authority. AMap V5 reference fields share the existing
+canonical Place identity/cache; no migration, second Trip model or review store.
+The new discovery path reads a scoped session snapshot, commits the read
+transaction, performs external work without SQL locks, then locks/reloads and
+compares the snapshot before appending the reply. Replays use message_id.
+Conflicting late results fail visibly rather than overwrite newer decisions.
+
+Tavily Search/Extract results are untrusted reference material, not certified
+live facts or reviewed KnowledgeEvidence. Current-turn source/snippet IDs are
+server-owned and place-bound; response citations select existing snippets.
+Reference prices/hours are labelled provider references. A source being readable
+does not prove it contains platform reviews or represents public consensus.
+Images distinguish exact-place photos from topic illustrations. No login bypass,
+external arbitrary-URL proxy or model-generated URL is introduced. Private
+reasoning stays private; public progress reports actual read operations only.
+Legacy Planning/Validator/Accept and existing fact-resolution contracts remain.
+Change-control evidence: docs/EVIDENCE_ASSISTANT_20261020.md and associated tests.
+
 ## Shared frontend and search reference boundary (2026-10-20, isolated)
 
 DiscoveryApp uses the existing TravelAssistantProvider for homepage and drawer.
