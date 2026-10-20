@@ -1,5 +1,21 @@
 # RoamSync Agent v1 architecture contract
 
+## Shared frontend and search reference boundary (2026-10-20, isolated)
+
+DiscoveryApp uses the existing TravelAssistantProvider for homepage and drawer.
+Trip versioned APIs remain the sole mutation authority. Adopted creation changes
+session scope; adopting a same-Trip date preview explicitly refreshes the current
+arrangement/version. Stale reads from another scope cannot replace current state.
+There is no additional user-task entity, time source, workflow or migration.
+
+Explicit Companion web-search requests reuse search_tavily and persist an additive
+read_tools.web_search projection. Current-response sources and image descriptions
+are untrusted reference input, never KnowledgeEvidence or live-fact resolution.
+They cannot authorize edits or prove prices, opening hours or bookings. Public
+analysis summaries may be shown; private reasoning is not exposed. Search failure
+and image hotlink failure do not manufacture sources or substitute images.
+Change control/evidence: UNIFIED_ASSISTANT_DELIVERY_20261020.md, commits27db70f/9540436.
+
 ## Natural handoff correction (2026-10-20, isolated and unreleased)
 
 For an already adopted flexible Trip, a currently authorized direct edit uses

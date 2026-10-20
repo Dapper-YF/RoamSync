@@ -2,6 +2,23 @@
 
 Last updated: 2026-10-20
 
+## Unified official frontend candidate (2026-10-20, unreleased)
+
+VERIFIED on codex/unified-assistant-experience-20261020, based on 1df46af:
+27db70f reuses DiscoveryApp/TravelAssistant as homepage and shared drawer session;
+JourneyPage and the assistant read/write the same versioned arrangement. No
+new DB model or Agent workflow. Buffered text and actual public analysis summaries
+replace typewriter/classification copy. Explicit Tavily search can supply bounded,
+subject-matched image references; these are never verified live facts. 9540436
+limits duplicate dish illustrations.
+MEASURED: Windows/Linux full1349 passed+1 skipped; isolated favorites1 passed;
+Web206/typecheck/build passed. Final same-browser/Trip real model+AMap chain and
+actual search/image browser checks passed. Scope is GO / READY FOR INTEGRATION;
+canonical source remains25a62cb with local README/nginx preserved, no merge,
+production migration or deployment. Global lint retains41 errors in untouched
+files; max_walking_minutes remains separate P1. Evidence and exact commit scopes:
+docs/UNIFIED_ASSISTANT_DELIVERY_20261020.md.
+
 ## Isolated closure corrections (2026-10-20, unreleased)
 
 VERIFIED on codex/natural-assistant-closure-20261020: original user messages own

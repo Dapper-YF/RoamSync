@@ -1,0 +1,148 @@
+{
+  "date": "2026-10-20",
+  "branch": "codex/unified-assistant-experience-20261020",
+  "baseline": "1df46af",
+  "implementation": "27db70f",
+  "image_followup": "9540436",
+  "raw_evidence_archive": "raw-records.zip (original JSON/XML/PNG names are ZIP entries; final summaries and selected screenshots remain directly accessible)",
+  "verdict": "GO / READY FOR INTEGRATION within stated scope; unreleased",
+  "canonical_head": "25a62cb",
+  "merged": false,
+  "production_migration": false,
+  "deployed": false,
+  "tests": {
+    "windows_full": {
+      "tests": 1350,
+      "passed": 1349,
+      "skipped": 1,
+      "failures": 0,
+      "artifact": "windows-final.xml"
+    },
+    "linux_full": {
+      "tests": 1350,
+      "passed": 1349,
+      "skipped": 1,
+      "failures": 0,
+      "artifact": "linux-final.xml"
+    },
+    "favorites_postgresql": {
+      "tests": 1,
+      "passed": 1,
+      "skipped": 0,
+      "failures": 0,
+      "artifact": "favorites-postgresql.xml"
+    },
+    "search_stream": {
+      "tests": 21,
+      "passed": 21,
+      "skipped": 0,
+      "failures": 0,
+      "artifact": "search-stream-final.xml"
+    },
+    "image_followup_windows": {
+      "tests": 14,
+      "passed": 14,
+      "skipped": 0,
+      "failures": 0,
+      "artifact": "image-reference-green.xml"
+    },
+    "image_followup_linux": {
+      "tests": 14,
+      "passed": 14,
+      "skipped": 0,
+      "failures": 0,
+      "artifact": "image-reference-linux-final.xml"
+    }
+  },
+  "web": {
+    "passed": 206,
+    "failed": 0,
+    "artifact": "web-final.json",
+    "typecheck_build": "PASS on 27db70f; later change is backend image projection only"
+  },
+  "lint": {
+    "errors": 41,
+    "warnings": 27,
+    "error_files": [
+      "web/e2e/demo-acceptance.spec.ts",
+      "web/e2e/demo-current-review.spec.ts",
+      "web/e2e/demo-execution.spec.ts",
+      "web/e2e/demo-explanation.spec.ts",
+      "web/e2e/demo-knowledge-scope.spec.ts",
+      "web/e2e/demo-lifecycle.spec.ts",
+      "web/src/drafts/DraftPromotionPanel.test.tsx",
+      "web/src/journeyRouting/routeModel.ts",
+      "web/src/journeys/Journeys.test.tsx",
+      "web/src/nearby/state.ts",
+      "web/src/product/NaturalAssistant.tsx"
+    ],
+    "errors_in_changed_files": []
+  },
+  "real_chain": {
+    "artifact": "web-live-2026-10-20T02-24-52-232Z.json",
+    "result": "PASS one real browser/user/Trip chain: consultation→preview→adoption→page edit→chat edit→explicit time→late-start conflict→real Graph/route→Accept→reload",
+    "steps": [
+      "chat",
+      "chat",
+      "chat",
+      "chat",
+      "page-plus-chat-readback",
+      "schedule-chosen-place-and-time",
+      "read-only-route",
+      "chat",
+      "real-run-observations",
+      "accept-real-local-adjustment",
+      "final-same-trip-readback"
+    ],
+    "console_errors": []
+  },
+  "real_experience": {
+    "artifact": "experience-2026-10-20T02-32-29-443Z.json",
+    "result": "PASS",
+    "cases": [
+      {
+        "name": "general",
+        "visible_updates": 9,
+        "internal_copy_visible": 0,
+        "loaded_images": []
+      },
+      {
+        "name": "web-images",
+        "visible_updates": 18,
+        "internal_copy_visible": 0,
+        "loaded_images": [
+          {
+            "src": "https://vj-prod-website-cms.s3.ap-southeast-1.amazonaws.com/depositphotos150247536xl-1714095888901.jpg",
+            "alt": "火锅参考图 · The hotpot features a divided pot with one side containing a clear, mild broth with jujubes and goji berries, and the other side filled with a spicy, red chili and pepper broth, garnished with green onion and various spices.",
+            "loaded": true,
+            "width": 783
+          }
+        ]
+      }
+    ]
+  },
+  "review": {
+    "model": "Astra Medium",
+    "read_only": true,
+    "findings_addressed": [
+      "scope read races",
+      "explicit free chat rebinding",
+      "reschedule authority",
+      "page/dialogue cache invalidation",
+      "same-Trip date adoption cache refresh",
+      "same-city image substitution"
+    ],
+    "does_not_replace_tests": true
+  },
+  "canonical_local_hashes": {
+    "README.md": "7d2bbc6aca0b9e58af756823b2557f2436e0c5dfa95e79a88ddd0f6352afa1d9",
+    "web/nginx.conf": "6f6038592d9fb5d3be0beb8d0cbbba6755831024bedca316c8b54fcb695ea245"
+  },
+  "known_limits": [
+    "max_walking_minutes remains independent P1",
+    "provider errors and image hotlink failures possible",
+    "no complete Markdown renderer",
+    "no production or public multi-user/load acceptance",
+    "search snippets and illustrative images are not verified live facts"
+  ]
+}
