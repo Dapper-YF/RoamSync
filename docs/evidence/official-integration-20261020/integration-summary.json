@@ -1,0 +1,223 @@
+{
+  "date": "2026-10-20",
+  "verdict": "MERGED / READY FOR LOCAL USE; ready for deployment review, not deployed",
+  "canonical_source": "E:/Study/RoamSync",
+  "canonical_branch": "codex/official-v2-20261018",
+  "before_head": "25a62cb",
+  "accepted_candidate": "8344b54",
+  "merged_code_head": "8c23a93",
+  "new_prompt_commit": "230db6a",
+  "evidence_commit_note": "Final Git HEAD may include a following documentation-only commit, reported in delivery receipt",
+  "merge_strategy": "fast-forward; complete history",
+  "formal_write_patch_equivalence": {
+    "original": "7b67f68",
+    "included": "f06a847",
+    "stable_patch_id": "4a4100c65cef3cf55424d99f88ebfe4c6e8a78cf"
+  },
+  "required_commit_order": [
+    "f06a8476d0495fb3b511dc5d6cb93514bcae040c fix: fence formal itinerary writes against stale revisions",
+    "1ce7e5d6505322e8c93577d4ede92cc73348dcfa fix: close formal-write integration review gaps and record PostgreSQL acceptance",
+    "2f2def52998b40c2a85870522ac83a4544fae360 chore: establish reviewed natural-assistant integration baseline",
+    "7468363fe237a57989c442726000bf42f0bf4872 fix: separate route evidence from authorized schedule repair",
+    "739ef566874d63c88fff486d13941556e7a99af5 feat: persist finite Trip-owned flexible choices and protected free windows",
+    "ed6ea2dd13ce5822b23d6eac7baa209cae65a74a feat: connect bounded flexible decisions to assistant and existing Planner",
+    "38e2524591859ca05c9219cadfb699cfcbc91be0 feat: add versioned natural-assistant Web flow and record partial live acceptance",
+    "8c526640068b35e08239980ccf77a38c6f3066e5 docs: finalize stage commits and measured partial acceptance",
+    "998a383c8c13c315fbf8418e36c9b5141a32c334 fix: ground flexible-trip edits in original user requests and reject format fragments",
+    "bca55f687b5d47f39581b8e345bd957da4722c55 fix: isolate unbound travel context and validate bounded choice edits",
+    "cb1f88b4611290eda450bd0ce756156742624a4d fix: expose proposal tradeoffs and verify user constraints without fixing visit order",
+    "0cad41d1fdb6aca7eafcde644743b39898e917e1 fix: stop terminal planning polling and verify restored browser state",
+    "1df46afa608d3d7894331e5e160d25c17ca43754 test: record closure regressions, real provider failures and isolated integration review",
+    "27db70f8709c32142a191cb924be820e133f778e feat: unify discovery assistant and protected arrangements with readable streamed answers",
+    "954043694ba175d09dd3fc8678cc2c7b99d7336d fix: keep food reference illustrations concise and avoid duplicate dish images",
+    "8344b545068b331d377668ba74ee7777f971f14a docs: record unified assistant real-service acceptance and integration baseline"
+  ],
+  "preservation": {
+    "result": "PASS",
+    "code_head": "8c23a93aabdf0edcbdc00f40d79fee8241a85a61",
+    "protected_files": 1858,
+    "untracked_count": 1856,
+    "changed_or_missing": [],
+    "runtime_config_changes": [],
+    "local_modified": [
+      "README.md",
+      "web/nginx.conf"
+    ],
+    "local_backup": "C:\\Users\\Dapper\\AppData\\Local\\Temp\\RoamSync-integration-preservation-a79_3e8h"
+  },
+  "tests": {
+    "windows": {
+      "tests": 1350,
+      "passed": 1349,
+      "skipped": 1,
+      "errors": 0,
+      "failures": 0,
+      "artifact": "windows-full.xml"
+    },
+    "linux": {
+      "tests": 1350,
+      "passed": 1349,
+      "skipped": 1,
+      "errors": 0,
+      "failures": 0,
+      "artifact": "linux-full.xml"
+    },
+    "postgresql_core": {
+      "tests": 93,
+      "passed": 93,
+      "skipped": 0,
+      "errors": 0,
+      "failures": 0,
+      "artifact": "postgresql-core.xml"
+    },
+    "favorites": {
+      "tests": 1,
+      "passed": 1,
+      "skipped": 0,
+      "errors": 0,
+      "failures": 0,
+      "artifact": "favorites-postgresql.xml"
+    }
+  },
+  "web": {
+    "passed": 206,
+    "failed": 0,
+    "typecheck": "PASS",
+    "default_build": "PASS",
+    "production_flags_build": "PASS",
+    "production_flags_asset": "index-Do3I724E.js"
+  },
+  "lint": {
+    "errors": 41,
+    "warnings": 27,
+    "new_error_identities": [],
+    "scope": "relative file, rule and message compared with prior accepted source"
+  },
+  "migration": {
+    "result": "PASS",
+    "legacy_tables": {
+      "trips": {
+        "rows": 1,
+        "sha256": "799e7d84c79a445c54000cb928ca70e236fa3cb92879333762134b7a170328b1"
+      },
+      "day_plans": {
+        "rows": 2,
+        "sha256": "c2439940e9ff215942cf506b403221157607ac7c6d8d9fad0d9f4e464ee2674b"
+      },
+      "trip_preferences": {
+        "rows": 1,
+        "sha256": "47c0ca0a3585cb879773ef51b9cc25e5951ce9d517d6ea9b38cc21ef380e22c8"
+      },
+      "source_records": {
+        "rows": 1,
+        "sha256": "928f9ba44e39b57974051f6d91f76431bd78e97ba7b62a691665c34cc3b95759"
+      },
+      "place_candidates": {
+        "rows": 1,
+        "sha256": "abe2b032dce4a1cb361397471e43ce4d33cf95e69f7a6ed8f2ae0e4d481f8642"
+      },
+      "activities": {
+        "rows": 1,
+        "sha256": "e74a9b150ec3c18320544656ef9776bce6efbc09522c866e509e48d49a579715"
+      }
+    },
+    "steps": [
+      {
+        "target": "head",
+        "direction": "upgrade",
+        "legacy_rows_unchanged": true
+      },
+      {
+        "target": "20261018_0036",
+        "direction": "downgrade",
+        "legacy_rows_unchanged": true
+      },
+      {
+        "target": "head",
+        "direction": "upgrade",
+        "legacy_rows_unchanged": true
+      }
+    ],
+    "final_version": "20261019_0037",
+    "scope": "synthetic legacy Trip, two days, locked Activity/version4 and Requirements/version3; empty new-table downgrade only; no production DB"
+  },
+  "real_browser": {
+    "base_url": "http://127.0.0.1:3021",
+    "artifact": "web-live-2026-10-20T03-11-06-622Z.json",
+    "result": "PASS one real browser/user/Trip chain: consultation→preview→adoption→page edit→chat edit→explicit time→late-start conflict→real Graph/route→Accept→reload",
+    "steps": [
+      "chat",
+      "chat",
+      "chat",
+      "chat",
+      "page-plus-chat-readback",
+      "schedule-chosen-place-and-time",
+      "read-only-route",
+      "chat",
+      "real-run-observations",
+      "accept-real-local-adjustment",
+      "final-same-trip-readback"
+    ],
+    "pageerrors": [],
+    "elapsed_seconds": 217.859,
+    "synthetic_user_and_booking": true,
+    "mocks": false
+  },
+  "real_display": {
+    "artifact": "experience-2026-10-20T03-16-08-402Z.json",
+    "result": "PASS",
+    "cases": [
+      {
+        "name": "general",
+        "internal_copy_visible": 0,
+        "visible_updates": 10,
+        "loaded_images": 0
+      },
+      {
+        "name": "web-images",
+        "internal_copy_visible": 0,
+        "visible_updates": 11,
+        "loaded_images": 1
+      }
+    ]
+  },
+  "style": {
+    "status": "PARTIAL",
+    "evidence": [
+      "style-baseline.json",
+      "style-conversational.json",
+      "style-revised.json"
+    ],
+    "scope": "three questions per version, not a statistical benchmark",
+    "finding": "Rigid numbering reduced; verbosity, guidebook phrases and repeated caveats remain. Do not claim natural-content acceptance."
+  },
+  "production": {
+    "3000_asset": [
+      "/assets/index-BvKbhelx.js"
+    ],
+    "containers": [
+      "/roamsync-web sha256:a57c83ab1e69aaba0fa47213500ac554bd624ae04e0eff1c6a9ac42ebbd41b85 2026-10-18T13:42:54.30024906Z",
+      "/roamsync-api sha256:2118e8cb43d79efea2778e3993eb61db9bf397fdab6cb94566ee2ef48e33909f 2026-10-18T13:42:52.463206425Z",
+      "/roamsync-agent-worker-1 sha256:9cebedf4618280a1a7b173a2c32a512ea2cc0f5d4ab6404488d5e4e900bd7c62 2026-10-18T13:42:54.306806745Z"
+    ],
+    "runtime_bounded_search_module": false,
+    "deployed_by_this_task": false
+  },
+  "test_setup_failure": {
+    "artifact": "windows-uninitialized.xml",
+    "failed": 215,
+    "errors": 80,
+    "cause": "fresh regression database not migrated; first error UndefinedTable trips",
+    "remediation": "retain and rename diagnostic DB; create clean DB, migrate to0037, rerun both final suites"
+  },
+  "known_risks": [
+    "max_walking_minutes hard constraint coverage",
+    "network I/O while locks held / long transactions",
+    "legacy clients without full version fencing",
+    "provider delay and availability",
+    "historical ESLint debt",
+    "public multi-user security not accepted",
+    "conversational content quality remains partial"
+  ],
+  "raw_evidence_archive": "raw-acceptance.zip; original filenames retained as ZIP entries"
+}

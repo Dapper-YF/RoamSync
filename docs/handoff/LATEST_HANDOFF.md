@@ -1,46 +1,46 @@
 # Latest Handoff
 
 ## Snapshot
-2026-10-20 正式视觉前端整合及三项助手体验修正，有限范围 GO / READY FOR INTEGRATION。
-独立开发 E:/Study/RoamSync-unified-assistant-20261020，分支
-codex/unified-assistant-experience-20261020，基于1df46af。
-代码27db70f，图片收敛9540436；后续提交仅证据与报告。
-正式源E:/Study/RoamSync仍HEAD25a62cb，README/nginx本地成果哈希不变；未合并、未部署、
-未迁移生产库。预览3020 → API18020及独立测试库，不能当作正式3000已更新。
+2026-10-20 新版正式源码整合完成：MERGED / READY FOR LOCAL USE，具备部署评审条件。
+唯一正式源码E:/Study/RoamSync，原分支codex/official-v2-20261018保持。
+实际快进25a62cb→8344b54→8c23a93；随后仅文档/证据提交，未重建或部署正式3000、
+未迁移生产数据库。3000仍是10月18日旧镜像，不代表新版效果。
+独立验收检出E:/Study/RoamSync-official-integration-20261020，预览3021/API18021/PG51420。
 
 ## Current Freeze / Rehearsal Status
-VERIFIED：DiscoveryApp首页使用原TravelAssistant；首页/抽屉共享Provider和会话。
-我的安排统一到原旅程页面，安排编辑、聊天编辑及候选采用重读同一受保护结果。
-明确自由对话不被路径重新绑定；旧作用域读/消息不能污染新Trip。
-同Trip改期采用后刷新日期和版本，失败先行回归已通过。
-内部通用知识说明默认隐藏；仅实际公开摘要显示thinking；SSE按缓冲块发布。
-明确联网搜索复用Tavily，安全主题匹配的真实图片按需显示，菜品参考图同类只留一张。
-检索片段不是已核实事实，不能授予修改权。没有新业务对象、迁移或Agent工作流。
+VERIFIED：原16提交完整进入正式分支，保留写保护、路线时间分离、0037、A—E、
+自然交接修复和统一TravelAssistant首页/抽屉/安排入口；不是只选最后几个前端提交。
+正式README.md与web/nginx.conf继续保持原本未提交修改；1856未跟踪文件保持。
+1858文件全量SHA256、运行配置校验前后相同，无大小写路径碰撞、无强制reset/clean。
+用户追加普通回复模板化反馈：230db6a仅改善日常回答结构与相关免责声明；实际三例仍
+存在冗长/攻略腔，内容自然度PARTIAL，不能等同于流式/显示修复已完成。
 
 ## Prior milestone baseline (before shadow split)
-保留原正式写保护、路线/时间分离、混合精度0037、A—E和闭环修复的完整依赖历史。
-当前正式源不含1df46af；集成不能只cherry-pick本轮两个提交，也不应重复应用7b67f68。
-本轮不继续3019独立界面；其文件/测试保留但无用户路由。3000/原3016源码关系见交付报告。
+原7b67f68补丁在正式依赖链对应f06a847，stable patch-id完全相同；其后1ce7e5d评审
+修正和所有阶段保留。8344b54包含27db70f/9540436及完整前序历史。
+8c23a93是独立运行/迁移验收和浏览器端口参数化，不新增产品实体/工作流。
+旧候选分支和工作树可作历史参考；正式项目以后以canonical当前HEAD为基础。
 
 ## Prior verification
-MEASURED：27db70f Windows/Linux PostgreSQL全量均1349通过、1跳过；收藏独立库1通过。
-Web206通过、类型检查/build通过。9540436仅图片筛选，Windows/Linux专项各14通过，
-真实图片探针再通过。全仓lint仍41错误/27警告，错误都在本轮未改文件；没有声称全仓lint通过。
-Astra Medium只读复核发现的作用域、失效通知、改期缓存问题均修复，review不替代测试。
-目标前端同浏览器/Trip完整真实链02:24通过：咨询→建议→采用→页面/对话修改→排时间→
-路线只读→冲突→真实模型/Graph/AMap/Validator→Accept→刷新/390px恢复，pageerror为零。
-02:32真实搜索配图复验通过：1张真实火锅参考图正常加载，内部说明出现0次，截图已视觉检查。
-证据docs/evidence/unified-assistant/machine-summary.json；报告
-docs/UNIFIED_ASSISTANT_DELIVERY_20261020.md。合成测试旅行，不冒充真实游客验收。
+MEASURED：最终产品源码Windows/Linux全量各1349通过/1跳过；PG核心专项93通过，
+收藏独立库1通过。Web206、类型检查、默认与正式开关构建通过。
+ESLint41错误/27警告，与历史错误身份比较新增0；未清理无关问题。
+0036→0037→0036→0037：合成旧Trip、两天、Place/Source、锁定Activity(version4)、
+Requirements/Preferences(version3)、Trip(version5)六表完整行哈希每步相同。
+降级只验证空的新事项表；不声称有混合数据可无损降级或已做生产全量快照演练。
+目标3021同浏览器/Trip真实模型+AMap+Graph+Validator+Accept完整链通过，约218秒；
+咨询不建Trip、页面/对话修改、路线只读、留白/预约/来源保留、刷新/390px恢复均检查。
+真实搜索配图1张正常加载，通用知识内部提示出现0次；截图已视觉检查，无Mock冒充。
+报告docs/OFFICIAL_INTEGRATION_20261020.md；证据official-integration-20261020。
 
 ## Prior blockers (historical)
-此前3019的最终长链Provider阻塞已由本轮目标界面的真实绿色链补验，保留原失败记录。
-max_walking_minutes最终硬约束仍独立P1；Provider间歇失败、图片防盗链和检索描述错误仍可能发生。
-部分旧网络请求持锁，未做公网多用户/负载验收。旧不传版本客户端边界沿用。
-0037有数据降级会丢新事项，生产迁移/备份/发布另行决定。日期未定、完整Markdown、
-媒体托管及视觉真实性保证不在本轮；不承诺最新票价/营业/预约已核实。
+新建回归库首跑漏迁移，UndefinedTable导致215失败/80错误；保留原记录和诊断库，
+重新建库升级0037后最终双平台通过，不是产品修复或删测。
+仍有max_walking_minutes硬约束P1、网络持锁/长事务、旧客户端版本边界、Provider延迟、
+历史lint、公网多用户安全未验收；日常内容自然度也未完全达标，不扩展新Agent处理。
+生产迁移、备份、回退及3000构建切换需下一次部署评审；本轮没有执行它们。
 
 ## Interview framing
-可展示原成熟UI与新受控Agent动作的整合、跨入口单一结果、作用域竞态回归、真实PG并发与
-回滚、混合精度保护、真实路线约束及用户Accept。不能把本轮GO解释为已发布、任意对话
-稳定或全部硬约束已兑现。先进行正式集成评审，保留主工作区已有本地成果。
+可证明完整历史无损整合、真实PG并发/回滚/版本保护、混合精度旧数据兼容、跨入口
+单一结果、实际工具与用户Accept。不能声称任意对话自然、事实都核实、规划最优、
+低延迟、全部硬约束或公网多用户生产安全。源码合并与正式服务部署必须明确区分。

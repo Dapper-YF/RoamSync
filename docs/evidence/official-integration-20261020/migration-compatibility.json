@@ -1,0 +1,48 @@
+{
+  "result": "PASS",
+  "legacy_tables": {
+    "trips": {
+      "rows": 1,
+      "sha256": "799e7d84c79a445c54000cb928ca70e236fa3cb92879333762134b7a170328b1"
+    },
+    "day_plans": {
+      "rows": 2,
+      "sha256": "c2439940e9ff215942cf506b403221157607ac7c6d8d9fad0d9f4e464ee2674b"
+    },
+    "trip_preferences": {
+      "rows": 1,
+      "sha256": "47c0ca0a3585cb879773ef51b9cc25e5951ce9d517d6ea9b38cc21ef380e22c8"
+    },
+    "source_records": {
+      "rows": 1,
+      "sha256": "928f9ba44e39b57974051f6d91f76431bd78e97ba7b62a691665c34cc3b95759"
+    },
+    "place_candidates": {
+      "rows": 1,
+      "sha256": "abe2b032dce4a1cb361397471e43ce4d33cf95e69f7a6ed8f2ae0e4d481f8642"
+    },
+    "activities": {
+      "rows": 1,
+      "sha256": "e74a9b150ec3c18320544656ef9776bce6efbc09522c866e509e48d49a579715"
+    }
+  },
+  "steps": [
+    {
+      "target": "head",
+      "direction": "upgrade",
+      "legacy_rows_unchanged": true
+    },
+    {
+      "target": "20261018_0036",
+      "direction": "downgrade",
+      "legacy_rows_unchanged": true
+    },
+    {
+      "target": "head",
+      "direction": "upgrade",
+      "legacy_rows_unchanged": true
+    }
+  ],
+  "final_version": "20261019_0037",
+  "scope": "synthetic legacy Trip, two days, locked Activity/version4 and Requirements/version3; empty new-table downgrade only; no production DB"
+}

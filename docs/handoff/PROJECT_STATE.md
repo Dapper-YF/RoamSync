@@ -2,6 +2,22 @@
 
 Last updated: 2026-10-20
 
+## Official source integrated (2026-10-20, not deployed)
+
+VERIFIED: canonical E:/Study/RoamSync, branch codex/official-v2-20261018,
+fast-forwarded25a62cb→8344b54→8c23a93 with complete history. Product code is now
+official, not confined to the candidate worktree. README/nginx local edits plus
+1856 untracked files remained byte-identical; runtime configs unchanged.
+230db6a adds request-dependent casual prose and relevant caveats after user style
+feedback; three-case live comparisons remain PARTIAL for natural-content quality.
+MEASURED on final source: Windows/Linux1349 passed+1 skipped each; PostgreSQL
+core93, isolated favorites1, Web206/typecheck/default+production-flag builds pass.
+0036↔0037 six legacy-table full-row hashes unchanged in synthetic migration DB.
+Actual3021 same-Trip model/AMap/Validator/Accept/mobile chain and search image pass.
+MERGED / READY FOR LOCAL USE; ready for deployment review, not production rollout.
+3000 still serves Oct18 image. Global lint41 unchanged errors, hard-walking and
+other known risks remain. Report: docs/OFFICIAL_INTEGRATION_20261020.md.
+
 ## Unified official frontend candidate (2026-10-20, unreleased)
 
 VERIFIED on codex/unified-assistant-experience-20261020, based on 1df46af:
