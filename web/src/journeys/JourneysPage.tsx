@@ -13,7 +13,7 @@ import {HandbookPhoto} from './HandbookPhotos';
 import {SavedIntentionsPanel} from './SavedIntentionsPanel';
 
 const tripsRepository = new ApiTripPlanningRepository();
-const groups = [["drafts", "正在筹划", "日期可以以后再定。先把想去的地方和旅行要求安排好。"], ["upcoming", "即将出发", "查看已经确认的安排，核对出发前需要的信息。"], ["active", "正在旅行", "继续当前活动，查看下一站和实际进度。"], ["history", "历史旅行", "回看过去保留的日程。"]] as const;
+const groups = [["drafts", "正在筹划", "日期可以以后再定。先把想去的地方和旅行要求安排好。"], ["upcoming", "即将出发", "查看已经确认的安排，核对出发前需要的信息。"], ["active", "正在旅行", "继续当前活动，查看下一站和实际进度。"], ["history", "过去与归档", "回看过去的日程，以及你已归档的安排。"]] as const;
 export function JourneysPage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -53,5 +53,5 @@ export function JourneysPage() {
     <label className="journeys-list-search">查找我的旅程<input placeholder="旅行名称、目的地或日期" value={browse.query} onChange={e => setBrowse({ query: e.target.value, limit: 12 })} /></label><section aria-label={chosen[1]}><h2>{chosen[1]}</h2><p className="journeys-muted">{chosen[2]}</p>{loading ? <p role="status">正在读取你的旅程…</p> : tab === "drafts" ? <div className="journeys-grid">{shownDrafts.slice(0, browse.limit).map(d => <Link className="journeys-card journeys-trip-card" key={d.id} to={`/drafts/${d.id}`}><FilePenLine /><span className="journeys-chip">{d.status === "cancelled" ? "已暂停，可恢复" : d.saved ? "已保存草稿" : "继续筹划"}</span><h3>{d.title}</h3><p><MapPin size={14} />{d.city} · {d.day_count}天 · 日期未定</p><p>{d.requirements || "打开草稿，继续安排想去的地方。"}</p><strong>{d.status === "cancelled" ? "查看和恢复" : "继续编辑"}<ArrowRight size={16} /></strong></Link>)}{shownDrafts.length === 0 && !error && <Empty label="还没有旅行草稿" detail="如果只是想找个地方逛逛，可以直接探索；想筹划几天的旅行，再从这里开始。" />}</div> : <div className="journeys-grid">{shownTrips.slice(0, browse.limit).map(t => <Link className="journeys-card journeys-trip-card" key={t.id} to={`/trips/${t.id}`}>{handbookEnabled()&&<HandbookPhoto city={t.destination}/>}<CalendarDays /><span className="journeys-chip">{chosen[1]}</span><h3>{t.title}</h3><p><MapPin size={14} />{t.destination}</p><p>{t.startDate} — {t.endDate}</p><strong>{tab === "active" ? "继续今天的旅行" : tab === "history" ? "回看日程" : "查看出发安排"}<ArrowRight size={16} /></strong></Link>)}{shownTrips.length === 0 && !error && <Empty label={`暂无${chosen[1]}`} detail="你保留的正式安排会显示在对应阶段。" />}</div>}{(tab === "drafts" ? shownDrafts.length : shownTrips.length) > browse.limit && <button className="journeys-secondary" onClick={() => setBrowse({ ...browse, limit: browse.limit + 12 })}>查看更多旅程（已显示{browse.limit}条）</button>}</section>{handbookEnabled()&&<SavedIntentionsPanel trips={trips} onChanged={()=>void load()}/>}</>}
   </main>;
 }
-function Empty({ label, detail }: { label: string; detail: string }) { return <div className="journeys-empty"><Compass size={30} /><h3>{label}</h3><p>{detail}</p><Link to="/">去探索目的地</Link></div>; }
+function Empty({ label, detail }: { label: string; detail: string }) { return <div className="journeys-empty"><Compass size={30} /><h3>{label}</h3><p>{detail}</p><Link to="/explore">去探索目的地</Link></div>; }
 
