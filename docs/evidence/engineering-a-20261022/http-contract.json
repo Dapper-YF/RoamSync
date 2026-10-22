@@ -1,0 +1,194 @@
+[
+  {
+    "case": "ready",
+    "method": "GET",
+    "path": "/health/ready",
+    "port": "18036",
+    "status": 200,
+    "body": {
+      "status": "ready"
+    }
+  },
+  {
+    "case": "list",
+    "method": "GET",
+    "path": "/api/v1/trips",
+    "port": "18036",
+    "status": 200,
+    "body": [
+      {
+        "id": "d932ccce-7a6a-496e-9e40-00d24d1e576f",
+        "title": "Synthetic lock audit",
+        "destination": "南京",
+        "destination_adcode": "",
+        "destination_citycode": "",
+        "center_longitude": null,
+        "center_latitude": null,
+        "accommodation": "",
+        "accommodation_poi_id": "",
+        "accommodation_address": "",
+        "accommodation_district": "",
+        "accommodation_longitude": null,
+        "accommodation_latitude": null,
+        "start_date": "2026-11-07",
+        "end_date": "2026-11-07",
+        "total_budget_fen": null,
+        "daily_budget_fen": null,
+        "currency": "CNY",
+        "timezone": "Asia/Shanghai",
+        "created_at": "2026-10-22T13:05:23.662105Z",
+        "updated_at": "2026-10-22T13:05:23.662105Z",
+        "archived_at": null,
+        "version": 1,
+        "status": "upcoming"
+      }
+    ]
+  },
+  {
+    "case": "missing",
+    "method": "GET",
+    "path": "/api/v1/trips/94976882-c97d-4e58-905a-31fb50404dc9",
+    "port": "18036",
+    "status": 404,
+    "body": {
+      "detail": "trip not found"
+    }
+  },
+  {
+    "case": "validation",
+    "method": "POST",
+    "path": "/api/v1/trips",
+    "port": "18036",
+    "status": 422,
+    "body": {
+      "detail": [
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "title"
+          ],
+          "msg": "Field required",
+          "input": {}
+        },
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "start_date"
+          ],
+          "msg": "Field required",
+          "input": {}
+        },
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "end_date"
+          ],
+          "msg": "Field required",
+          "input": {}
+        }
+      ]
+    }
+  },
+  {
+    "case": "create_synthetic_no_auth_in_default_mode",
+    "method": "POST",
+    "path": "/api/v1/trips",
+    "port": "18036",
+    "status": 201,
+    "body": {
+      "id": "6388f260-d9bc-4228-b5d0-f47ae687961c",
+      "title": "Synthetic API envelope audit",
+      "destination": "南京",
+      "destination_adcode": "",
+      "destination_citycode": "",
+      "center_longitude": null,
+      "center_latitude": null,
+      "accommodation": "",
+      "accommodation_poi_id": "",
+      "accommodation_address": "",
+      "accommodation_district": "",
+      "accommodation_longitude": null,
+      "accommodation_latitude": null,
+      "start_date": "2026-11-07",
+      "end_date": "2026-11-07",
+      "total_budget_fen": null,
+      "daily_budget_fen": null,
+      "currency": "CNY",
+      "timezone": "Asia/Shanghai",
+      "created_at": "2026-10-22T13:07:37.404132Z",
+      "updated_at": "2026-10-22T13:07:37.404132Z",
+      "archived_at": null,
+      "version": 1,
+      "status": "upcoming"
+    }
+  },
+  {
+    "case": "detail",
+    "method": "GET",
+    "path": "/api/v1/trips/6388f260-d9bc-4228-b5d0-f47ae687961c",
+    "port": "18036",
+    "status": 200,
+    "body": {
+      "id": "6388f260-d9bc-4228-b5d0-f47ae687961c",
+      "title": "Synthetic API envelope audit",
+      "destination": "南京",
+      "destination_adcode": "",
+      "destination_citycode": "",
+      "center_longitude": null,
+      "center_latitude": null,
+      "accommodation": "",
+      "accommodation_poi_id": "",
+      "accommodation_address": "",
+      "accommodation_district": "",
+      "accommodation_longitude": null,
+      "accommodation_latitude": null,
+      "start_date": "2026-11-07",
+      "end_date": "2026-11-07",
+      "total_budget_fen": null,
+      "daily_budget_fen": null,
+      "currency": "CNY",
+      "timezone": "Asia/Shanghai",
+      "created_at": "2026-10-22T13:07:37.404132Z",
+      "updated_at": "2026-10-22T13:07:37.404132Z",
+      "archived_at": null,
+      "version": 1,
+      "status": "upcoming"
+    }
+  },
+  {
+    "case": "empty_list",
+    "method": "GET",
+    "path": "/api/v1/trips/6388f260-d9bc-4228-b5d0-f47ae687961c/planning-runs",
+    "port": "18036",
+    "status": 200,
+    "body": []
+  },
+  {
+    "case": "official_direct_unauthorized",
+    "method": "GET",
+    "path": "/api/v1/trips",
+    "port": "8000",
+    "status": 401,
+    "body": {
+      "detail": {
+        "code": "unauthorized",
+        "message": "请通过本地 RoamSync 页面访问"
+      }
+    }
+  },
+  {
+    "case": "official_cross_origin_denied",
+    "method": "GET",
+    "path": "/api/v1/trips",
+    "port": "3000",
+    "status": 403,
+    "body": {
+      "detail": {
+        "code": "origin_denied"
+      }
+    }
+  }
+]
