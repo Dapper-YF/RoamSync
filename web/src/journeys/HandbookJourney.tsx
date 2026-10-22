@@ -62,9 +62,9 @@ export function HandbookJourney({trip,days,places,runs,revisions,selection,selec
   const scheduled=data.filter(r=>r.state!=='undated'&&r.state!=='optional');
   return <><ol className="handbook-timeline">{scheduled.map((r,index)=>{
    const sourceDay=days.find(d=>d.date===r.date);
-   const next=scheduled[index+1];
+   const next=scheduled.slice(index+1).find(row=>row.date===r.date&&row.activity);
    const leg=!pending&&r.activity&&next?.activity?sourceDay?.routeLegs?.find(l=>l.fromActivityId===r.activity!.id&&l.toActivityId===next.activity!.id):undefined;
-   const previous=index>0?scheduled[index-1].activity:undefined;
+   const previous=scheduled.slice(0,index).reverse().find(row=>row.date===r.date&&row.activity)?.activity;
    return <li className={`handbook-stop ${r.state}`} key={r.id}>
     <time>{r.time||'时间未定'}{r.state==='free'&&r.choice?.end?`—${r.choice.end.slice(0,5)}`:''}</time>
     <div>{(pending||r.state==='free')&&<span className="handbook-status">{r.state==='saved'?'保持原样':stateNames[r.state]}</span>}
