@@ -19,11 +19,13 @@ ARG VITE_ASSISTANT_CONTEXT_CONTRACT="assistant-context-v1"
 ENV VITE_TRAVEL_CONTENT_CONTRACT=${VITE_TRAVEL_CONTENT_CONTRACT} \
     VITE_ASSISTANT_CONTEXT_CONTRACT=${VITE_ASSISTANT_CONTEXT_CONTRACT}
 RUN pnpm typecheck && VITE_DISCOVERY_PRODUCT= VITE_TRAVEL_CONTENT_CONTRACT= VITE_ASSISTANT_CONTEXT_CONTRACT= pnpm test --maxWorkers=2 && pnpm build
+RUN node scripts/write-build-manifest.mjs
 
 FROM nginx:1.27-alpine AS production
 
 COPY nginx.local-product.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/release-manifest.json /usr/share/nginx/roamsync-source-manifest.json
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

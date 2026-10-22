@@ -61,3 +61,7 @@ foreach ($url in @('http://127.0.0.1:8000/health/ready', 'http://127.0.0.1:3000/
     if ($response.StatusCode -ne 200) { throw "Health check failed: $url" }
     Write-Output "PASS health: $url"
 }
+$evidenceRoot = Join-Path $sourceRoot 'artifacts/release-verification'
+New-Item -ItemType Directory -Path $evidenceRoot -Force | Out-Null
+& python (Join-Path $PSScriptRoot 'verify-release.py') --output (Join-Path $evidenceRoot 'latest.json')
+if ($LASTEXITCODE -ne 0) { throw 'Build manifest/source/artifact verification failed. Health alone cannot certify this release.' }
