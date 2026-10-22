@@ -1,6 +1,32 @@
 # RoamSync project state
 
-Last updated: 2026-10-21
+Last updated: 2026-10-22
+
+## Journey handbook and source-bound intentions (2026-10-22)
+
+VERIFIED: canonical `/trips` and detail now use the handbook presentation with
+shared day/overview/map rows, date/activity-scoped assistant, recoverable previews,
+version-fenced adoption and preserved direct editing/execution. The user's final
+visual direction adds a real destination cover and large place-photo cards.
+Reviewed local Commons imagery is exposed through a bounded read-only city catalog;
+activity matches require original name and coordinates. Missing photos remain text.
+An additive0038 saved_intentions table supports explicit source-bound decisions,
+capture-time relative dates, idempotent writes, versioned revoke and transactional
+transfer into existing arrangements. Existing volumes and links are preserved.
+
+MEASURED: latest web228 tests/41 files and type/build passed; backend Linux main1432
+passed/25 dedicated skips, dedicated25 passed, later focused intentions10/photos42/
+place-handoff57 passed (overlapping checks, not additive). Isolated real model/AMap
+existing-day revision, failed adoption recovery, reload/adoption/map and independent
+intention flows verified.390px/320px no horizontal overflow; one scoped input.
+Official startup deployment and source224-file API/Worker verification passed.
+Original deployment adds only the new table; photo redeploy preserves all32 tables.
+Read smoke may update sessions/content caches, never the synthetic formal trip data.
+
+OPEN: a fresh empty-trip real test progressed after preserving planning venue names
+but now fails safely with planner_research_unavailable; not counted as a successful
+initial-plan end-to-end. Image coverage is limited to reviewed venues. See
+docs/JOURNEY_HANDBOOK_20261022.md and evidence/handbook-20261022/verification.json.
 
 ## Practical answers and selective P1 integration (2026-10-21)
 

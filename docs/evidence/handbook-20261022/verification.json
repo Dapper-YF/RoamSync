@@ -1,0 +1,103 @@
+{
+  "linux_main": {
+    "tests": 1457,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 25
+  },
+  "dedicated_databases": {
+    "tests": 25,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "intentions_final": {
+    "tests": 10,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "photos_final": {
+    "tests": 42,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "web_final": {
+    "tests": 228,
+    "files": 41,
+    "failures": 0,
+    "evidence": "web-photos-tests.log"
+  },
+  "build": {
+    "passed": true,
+    "evidence": "web-photos-build-final.log",
+    "invalid_attempt": "web-photos-build.log used a removed config; not counted as passing"
+  },
+  "real_model": {
+    "provider": "glm",
+    "model": "glm-5.3-flash",
+    "intentions": [
+      {
+        "case": "explicit-relative",
+        "passed": true,
+        "saved_count": 1
+      },
+      {
+        "case": "undated",
+        "passed": true,
+        "saved_count": 1
+      },
+      {
+        "case": "hypothetical",
+        "passed": true,
+        "saved_count": 0
+      },
+      {
+        "case": "third-party",
+        "passed": true,
+        "saved_count": 0
+      },
+      {
+        "case": "no-save",
+        "passed": true,
+        "saved_count": 0
+      },
+      {
+        "case": "knowledge",
+        "passed": true,
+        "saved_count": 0
+      }
+    ],
+    "empty_initial_plan": {
+      "status": "OPEN_external_research_failure",
+      "before": "empty_initial_plan",
+      "after": "planner_research_unavailable",
+      "evidence": "empty-initial-real-retry.json",
+      "planning_run": "62cc5036-2fdf-4533-a13e-16ef8ede8fd2"
+    }
+  },
+  "ui": {
+    "390px": {
+      "client": 390,
+      "scroll": 390,
+      "loaded_real_images": 2
+    },
+    "320px": {
+      "client": 305,
+      "scroll": 305,
+      "visible_inputs": 1,
+      "scope": "2026-11-03"
+    },
+    "screenshots": [
+      "photo-layout-mobile.png",
+      "photo-layout-320-drawer.png"
+    ]
+  },
+  "place_handoff_final": {
+    "tests": 57,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}
