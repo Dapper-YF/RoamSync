@@ -46,7 +46,7 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
     envelope = bootstrap_memory(envelope, history)
     if reset_requested(message):
         envelope, history, _ = apply_memory(envelope, history, message, message_id)
-    envelope, history, literal_changed = apply_memory(envelope, history, message, message_id, literal_conditions(message))
+    envelope, history, literal_changed = apply_memory(envelope, history, message, message_id, literal_conditions(message), today=captured_at.date())
     signature = snapshot_signature(row)
     trip_id = envelope.read_trip_id or (None if envelope.conversation_memory.get("detached_trip") else row.trip_id)
     summary = None
@@ -101,10 +101,11 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                     # memory patch. Comparisons, quoted and hypothetical cities
                     # still pass the same user-evidence guards below.
                     if (literal_city and literal_city in message and not any(u.field == "city" for u in updates)
+                        and not ("city" in literal_changed and "city" in envelope.conversation_memory.get("withdrawn", {}))
                         and not re.search(re.escape(literal_city) + r"(?:市)?(?:和|与|还是|或|、)|(?:和|与|还是|或|、)" + re.escape(literal_city), message)):
                         from app.assistant_memory import MemoryUpdate
                         updates.append(MemoryUpdate(field="city", value=literal_city, source_quote=literal_city))
-                    envelope, history, selected_changed = apply_memory(envelope, history, message, message_id, updates)
+                    envelope, history, selected_changed = apply_memory(envelope, history, message, message_id, updates, today=captured_at.date())
                     changed = list(dict.fromkeys([*changed, *selected_changed]))
                     if changed:
                         diagnostics.record("context", "completed", fields=list(dict.fromkeys(changed)))
@@ -155,7 +156,8 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                 # such as "哪里"; it is not a geographical identity authority.
                 from app.companion_information import explicit_destination
                 destination = explicit_destination(message)
-                if (not envelope.conversation_memory.get("slots", {}).get("city") and isinstance(destination, str)
+                if ("city" not in envelope.conversation_memory.get("withdrawn", {})
+                    and not envelope.conversation_memory.get("slots", {}).get("city") and isinstance(destination, str)
                     and 2 <= len(destination) <= 6 and destination in message):
                     from app.assistant_memory import MemoryUpdate
                     envelope, _, _ = apply_memory(envelope, history, message, message_id,

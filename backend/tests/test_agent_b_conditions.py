@@ -63,6 +63,14 @@ def test_hypothetical_pending_date_never_revokes_current_date():
     assert memory_prompt(env)["slots"]["start_date"]["value"] == "2026-11-23"
 
 
+def test_literal_withdrawal_is_not_misread_as_an_affirmative_old_city():
+    from app.assistant_memory import literal_conditions
+    env = remember(ContextEnvelope(), "我去洛阳", MemoryUpdate(field="city", value="洛阳", source_quote="我去洛阳"))
+    text = "取消目的地，日期也先不定，原来的洛阳先放下。"
+    env = remember(env, text, *literal_conditions(text))
+    assert not env.browsing_city and "city" not in memory_prompt(env)["slots"]
+
+
 def food_env(budget="晚餐人均最多60元"):
     return remember(ContextEnvelope(browsing_city="柳州"), "我完全不吃辣，" + budget,
         MemoryUpdate(field="preferences", value="完全不吃辣", operation="add", source_quote="我完全不吃辣"),
@@ -76,20 +84,37 @@ def places():
 
 
 def test_research_receives_effective_conditions_after_history_window_and_cost_tradeoff():
+    from app.external_facts import SearchFact
     observed = []
     async def answer(settings, schema, instructions, value):
         observed.append(value)
         return ResearchAnswer()
     class Port:
         async def research_search(self, **kwargs): return places()
-    async def judge(*args): return LookupIntent(needed=True, query="餐厅", category="food", read_pages=False)
-    result = asyncio.run(research(None, "按我的条件选晚饭", [{"user": "聊历史"} for _ in range(10)], food_env(), Port(), judge=judge, answer=answer))
+    async def judge(*args): return LookupIntent(needed=True, query="餐厅", category="food", read_pages=True)
+    async def search(*args, **kwargs):
+        return SearchFact("fixture", "2026-10-22", "synthetic", {"results": [{"url": "https://example.org/synthetic", "title": "甲餐厅 乙餐厅 丙餐厅", "content": "甲餐厅 乙餐厅 丙餐厅，仅为合成测试证据。"}]})
+    async def extract(*args, **kwargs): return {"results": []}
+    result = asyncio.run(research(None, "按我的条件选晚饭", [{"user": "聊历史"} for _ in range(10)], food_env(), Port(), judge=judge, answer=answer, search=search, extract=extract))
     assert observed[0]["effective_conditions"]["preferences"][0]["value"] == "完全不吃辣"
     support = result["read_tools"]["decision_support"]
     assert [i["budget_relation"] for i in support["candidates"]] == ["above_reference_limit", "within_reference_limit", "unknown"]
     assert support["budget"]["amount_yuan"] == 60
     assert "35" in result["assistant"] and "18" in result["assistant"]
-    assert "无法判断" in result["assistant"] and "不辣" in result["assistant"]
+    assert "无法判断" in result["assistant"] and "不吃辣" in result["assistant"]
+
+
+def test_reference_only_food_decision_avoids_a_model_call_and_keeps_unknown_equal():
+    class Port:
+        async def research_search(self, **kwargs): return places()
+    async def judge(*args): return LookupIntent(needed=True, query="餐厅", category="food", read_pages=False)
+    async def forbidden(*args): raise AssertionError("reference arithmetic and unknown diet need no model call")
+    env = remember(food_env(), "取消晚餐预算", MemoryUpdate(field="budget", operation="clear", source_quote="取消晚餐预算"))
+    result = asyncio.run(research(None, "按我的条件比较", [], env, Port(), judge=judge, answer=forbidden))
+    assert len(result["place_cards"]) == 3 and "先降低优先级" not in result["assistant"]
+    assert "丙餐厅" in result["assistant"] and "不吃辣" in result["assistant"]
+    assert result["read_tools"]["decision_support"]["reference_only_answer"]
+    assert result["read_tools"]["web_search"]["answer_validation"] == []
 
 
 def test_trip_total_and_per_day_budget_are_not_compared_to_restaurant_per_person_cost():

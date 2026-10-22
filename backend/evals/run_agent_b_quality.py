@@ -153,7 +153,7 @@ async def matched_run(args, settings, output):
         MemoryUpdate(field="budget", value="晚饭人均最多60元", source_quote="晚饭人均最多60元")])
     # Condition source falls outside Research's eight-message prompt window.
     history = [{"user": "完全不吃辣，晚饭人均最多60元"}, *[{"user": "先聊城市文化"} for _ in range(9)]]
-    report = {"label": args.label, "synthetic_material_real_model": True, "records": []}
+    report = {"label": args.label, "synthetic_material_configured_real_model_pipeline": True, "records": []}
     for name, current in (("bounded-budget", env), ("budget-withdrawn", apply_memory(env, history,
         "取消晚饭预算，忌口保留", uuid4(), [MemoryUpdate(field="budget", operation="clear", source_quote="取消晚饭预算")])[0])):
         turn = TurnDiagnostics(str(uuid4()))

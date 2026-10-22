@@ -1,6 +1,82 @@
 """Decision help from observed inputs, separate from claims about unknown venues."""
 import math
 import re
+from decimal import Decimal, InvalidOperation
+
+
+def active_condition_text(memory):
+    """Only effective values, never old source quotes or withdrawal records."""
+    memory = memory or {}
+    return " ".join(str(item.get("value", "")) for item in [
+        *memory.get("slots", {}).values(), *memory.get("preferences", []), *memory.get("requirements", [])])
+
+
+def research_decision_support(envelope, candidates, category):
+    """Deterministic arithmetic over compatible reference costs, never a bill.
+
+    A total/daily/hotel budget cannot be compared with restaurant per-person
+    reference spending. Unspecified units stay unknown instead of being guessed.
+    No menu, accessibility or internal-walking facts are inferred from a POI.
+    """
+    from app.assistant_memory import memory_prompt
+    conditions = memory_prompt(envelope)
+    entry = conditions["slots"].get("budget", {})
+    text = str(entry.get("source_quote", ""))
+    budget = None
+    match = re.search(r"(?:人均|每人)\s*(?:预算|餐费|消费)?\s*(?:不超过|最多|上限(?:为)?|控制在|约|大约|为|是|在)?\s*(\d+(?:\.\d{1,2})?)\s*元", text)
+    if (category == "food" and match and not re.search(r"每天|每日|一天|全程|总预算|总共|合计|住宿|酒店|门票|交通", text)):
+        amount = Decimal(match[1])
+        if amount > 0:
+            budget = {"amount_yuan": float(amount), "unit": "per_person_meal",
+                      "source_quote": text, "message_id": entry.get("message_id")}
+    items = []
+    for index, place in enumerate(candidates, 1):
+        cost = place.reference_cost_yuan
+        relation, difference = "not_comparable", None
+        if budget:
+            relation = "unknown"
+            if cost is not None:
+                try:
+                    difference = Decimal(str(cost)) - Decimal(str(budget["amount_yuan"]))
+                    if difference.is_finite():
+                        relation = "above_reference_limit" if difference > 0 else "within_reference_limit"
+                        difference = float(difference)
+                    else:
+                        difference = None
+                except InvalidOperation:
+                    difference = None
+        items.append({"place_id": str(place.place_id), "name": place.name,
+                      "reference_source_id": f"poi_{index}", "citation_index": index,
+                      "reference_cost_yuan": cost, "budget_relation": relation, "difference_yuan": difference,
+                      "diet_suitability": "unknown", "on_site_walking": "unknown"})
+    return {"conditions": conditions, "budget": budget, "candidates": items,
+            "semantics": "reference_cost_comparison_not_actual_bill_or_venue_suitability"}
+
+
+def render_research_decision_support(support, category):
+    """A useful decision remains possible when generative prose is unavailable."""
+    parts = []
+    budget = support["budget"]
+    if budget:
+        limit = f"{budget['amount_yuan']:g}"
+        comparisons = []
+        for item in support["candidates"]:
+            relation = item["budget_relation"]
+            name = f"{item['name']} [{item['citation_index']}]"
+            if relation == "above_reference_limit":
+                comparisons.append(f"{name}的高德参考人均高出{limit}元上限{item['difference_yuan']:g}元，按花费先降低优先级")
+            elif relation == "within_reference_limit":
+                comparisons.append(f"{name}的参考人均比上限低{abs(item['difference_yuan']):g}元，可先核对菜单")
+            else:
+                comparisons.append(f"{name}缺少参考消费，无法判断预算是否合适")
+        parts.append("；".join(comparisons) + "。参考人均不等于这顿实际账单。")
+    conditions = active_condition_text(support["conditions"])
+    if category == "food" and re.search(r"不吃|不能吃|吃不了|吃素|素食|过敏|忌口", conditions):
+        dietary = [item["value"] for key in ("preferences", "requirements") for item in support["conditions"][key]
+                   if re.search(r"不吃|不能吃|吃不了|吃素|素食|过敏|忌口", item["value"])]
+        label = "、".join(dietary[:3])
+        parts.append(f"饮食要求{('（' + label + '）') if label else ''}仍需逐家核对：目前的地点信息不能证明能提供符合你忌口的餐食，先确认食材、汤底和调料，再决定；参考消费低也不能证明适合。")
+    return "\n\n".join(parts)
 
 
 def research_options(candidates, sources, message=""):
@@ -20,7 +96,7 @@ def research_options(candidates, sources, message=""):
 def practical_next_step(message, category, *, city="", memory=None):
     # These are choices/verification actions, never assertions that an amenity,
     # menu, low-effort path or commercial promise exists.
-    conditions=str(memory or "") + " " + message
+    conditions=active_condition_text(memory) + " " + message
     if re.search(r"累了|想休息|不想去|不出门",message) and not re.search(r"推荐|还有|替代|怎么",message):
         return "那就先休息，不必再加一处。"
     if category == "food":

@@ -13,7 +13,7 @@ class MemoryUpdate(BaseModel):
     value: str = Field(default="", max_length=240)
     replaces: str = Field(default="", max_length=240)
     source_quote: str = Field(min_length=1, max_length=300)
-    scope: Literal["personal", "destination"] = "personal"
+    scope: Literal["personal", "trip", "topic", "destination"] = "personal"
 
 
 def local_today():
@@ -21,7 +21,7 @@ def local_today():
 
 
 def reset_requested(message):
-    return bool(re.search(r"^(?:请|我们|那就|现在|先)?(?:换个话题|换一个话题|重新开始|开始新对话|另一次旅行|新的旅行|新的一次旅行)", message.strip()))
+    return bool(re.search(r"^(?:请|我们|那就|现在|先)?(?:换个话题|换一个话题|重新开始|开始新对话|另一次旅行|另一趟旅行|新的旅行|新的一次旅行|新的一趟旅行)", message.strip()))
 
 
 def server_memory(envelope):
@@ -60,18 +60,25 @@ def literal_conditions(message):
     if re.search(r"如果|假如|假设|要是|[“”「」\"?？]|是否|吗|几天|合适|介绍|解释|朋友|听说|他|她|取消出发|不出发", message):
         return []
     updates = []
-    if re.search(r"我(?:们)?.{0,8}(?:去|到)|改去|目的地", message):
+    if re.search(r"我(?:们)?.{0,8}(?:去|到)|改去|目的地(?:改为|改成|为|是)", message):
         from app.companion_information import explicit_destination
         city = explicit_destination(message)
         if city and city in message:
-            updates.append(MemoryUpdate(field="city", value=city, source_quote=city))
+            updates.append(MemoryUpdate(field="city", value=city, source_quote=city, scope="trip"))
     date_token = r"今天|明天|后天|20\d{2}-\d{2}-\d{2}|(?:20\d{2}年)?\d{1,2}月\d{1,2}[日号]|(?:下下|下|本|这)?(?:周|星期)[一二三四五六日天]"
     match = re.search(rf"({date_token})(?:\s*(?:开始|出发|去))|(?:出发(?:日期)?(?:改为|改成|为|是)?|改为|改成)\s*({date_token})", message)
     if match:
-        updates.append(MemoryUpdate(field="start_date", value=match[1] or match[2], source_quote=match[0]))
+        updates.append(MemoryUpdate(field="start_date", value=match[1] or match[2], source_quote=match[0], scope="trip"))
     duration = re.search(r"(?:游玩|玩|待|改为|改成|那就)([一二三四五六七八九十两\d]+天)", message)
     if duration:
-        updates.append(MemoryUpdate(field="duration_days", value=duration[1], source_quote=duration[0]))
+        updates.append(MemoryUpdate(field="duration_days", value=duration[1], source_quote=duration[0], scope="trip"))
+    # Exact scalar withdrawal must survive a selector omitting a patch, just as
+    # literal departure/duration answers do. The noun alone ("目的地") is not
+    # an affirmative city declaration. These statements confer no write rights.
+    fields = {"目的地": "city", "出发日期": "start_date", "日期": "start_date", "预算": "budget", "同行人数": "party_size"}
+    labels = "|".join(fields)
+    for match in re.finditer(rf"(?:取消|清除|忘掉)(?:这次的?|原来的?)?({labels})|({labels})(?:也|都)?(?:先|暂时|还)?(?:不定|未定|待定|没定|不确定)", message):
+        updates.append(MemoryUpdate(field=fields[match[1] or match[2]], operation="clear", source_quote=match[0], scope="trip"))
     # High-precision personal declarations must not disappear when the single
     # semantic selector omits a memory patch beside dates/duration. These are
     # literal user data only; apply_memory still checks provenance and scope.
@@ -81,7 +88,8 @@ def literal_conditions(message):
             continue
         match = re.fullmatch(r"(?:我(?:们)?(?:都)?|这次|全程|完全|严格)?\s*(不吃辣|不能吃辣|吃不了辣|吃素|少走路|慢慢逛|别太赶)", clause)
         if match:
-            updates.append(MemoryUpdate(field="preferences", operation="add", value=match[1], source_quote=clause))
+            updates.append(MemoryUpdate(field="preferences", operation="add", value=match[1], source_quote=clause,
+                                        scope="trip" if re.match(r"这次|全程", clause) else "personal"))
     return updates
 
 
@@ -95,11 +103,16 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
     memory = deepcopy(server_memory(envelope))
     reset = reset_requested(message) and memory.get("epoch") != str(message_id)
     if reset:
-        memory = {"version": 1, "epoch": str(message_id), "slots": {}, "preferences": [], "requirements": [], "detached_trip": True}
+        # A different journey within this chat can reuse explicitly personal
+        # preferences. A new conversation/topic or "重新开始" clears everything.
+        new_journey = bool(re.match(r"^(?:请|我们|那就|现在|先)?(?:另一次旅行|另一趟旅行|新的旅行|新的一次旅行|新的一趟旅行)", message.strip()))
+        personal = {key: [item for item in memory[key] if item.get("scope") == "personal"] if new_journey else []
+                    for key in ("preferences", "requirements")}
+        memory = {"version": 1, "epoch": str(message_id), "slots": {}, **personal, "detached_trip": True}
         history = []
         envelope = envelope.model_copy(update={"browsing_city": None, "discussing_place_id": None,
             "discussing_place_ids": [], "discovery_context": None, "requirements": None, "requirement_records": [], "read_trip_id": None,
-            "read_draft_id": None, "read_draft_version": None, "action_target": None})
+            "read_draft_id": None, "read_draft_version": None, "action_target": None, "route_request": None})
     original_city = memory["slots"].get("city", {}).get("value") or envelope.browsing_city
     accepted = []
     for update in updates:
@@ -123,9 +136,9 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
             continue
         if operation not in {"clear", "remove"} and (not value or value not in quote):
             continue
-        if key == "city" and re.search(r"不去|别去|不要去|不想去|取消去", re.split(r"[，。；!?！？]", prefix)[-1] + quote):
+        if key == "city" and operation not in {"clear", "remove"} and re.search(r"不去|别去|不要去|不想去|取消去", re.split(r"[，。；!?！？]", prefix)[-1] + quote):
             continue
-        if operation == "clear" and not re.search(r"取消|不限|不设|清除|忘掉|不再|不要|无需|不用", quote):
+        if operation == "clear" and not re.search(r"取消|不限|不设|清除|忘掉|不再|不要|无需|不用|待定|(?:先|还|也)?不定|未定|没(?:有)?定|不确定", quote):
             continue
         normalized = value
         if key == "start_date" and operation not in {"clear", "remove"}:
@@ -140,6 +153,15 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
                 continue
             normalized = number
         evidence = {"value": normalized, "source_quote": quote, "message_id": str(message_id), "scope": update.scope}
+        withdrawn = memory.setdefault("withdrawn", {})
+        withdrawal_key = key + (":" + (update.replaces or value) if key in {"preferences", "requirements"} and operation != "clear" else "")
+        if operation in {"clear", "remove"}:
+            withdrawn[withdrawal_key] = {"source_quote": quote, "message_id": str(message_id), "state": "unknown" if key not in {"preferences", "requirements"} else "withdrawn"}
+        else:
+            withdrawn.pop(key, None)
+            withdrawn.pop(key + ":" + value, None)
+            if update.replaces:
+                withdrawn[key + ":" + update.replaces] = {"source_quote": quote, "message_id": str(message_id), "state": "superseded"}
         if key in {"preferences", "requirements"}:
             items = memory[key]
             if operation == "clear":
@@ -156,23 +178,38 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
             memory["slots"][key] = evidence
         accepted.append(key)
     city = memory["slots"].get("city", {}).get("value")
+    memory["withdrawn"] = dict(list(memory.get("withdrawn", {}).items())[-40:])
     changes = {"conversation_memory": memory}
+    # Scalar withdrawal must reach the older typed projection as well. It never
+    # edits a saved Trip; these are only the current conversation's conditions.
+    if envelope.requirements and any(k in accepted and k not in memory["slots"] for k in ("budget", "party_size")):
+        changes["requirements"] = envelope.requirements.model_copy(update={
+            **({"budget_fen": None} if "budget" in accepted and "budget" not in memory["slots"] else {}),
+            **({"party_size": None} if "party_size" in accepted and "party_size" not in memory["slots"] else {})})
     if city:
         changes["browsing_city"] = city
-    if city and original_city and city.removesuffix("市") != original_city.removesuffix("市"):
+    cleared_city = "city" in accepted and not city
+    if cleared_city or (city and original_city and city.removesuffix("市") != original_city.removesuffix("市")):
         # Old recommendation IDs, POI focus and local constraints cannot cross cities.
         history = []
         memory["epoch"] = str(message_id)
         memory["detached_trip"] = True
-        memory["requirements"] = [r for r in memory["requirements"] if r.get("scope", "personal") != "destination"]
+        for key in ("preferences", "requirements"):
+            memory[key] = [r for r in memory[key] if r.get("scope", "personal") not in {"destination", "topic"}]
+        memory["slots"] = {key: item for key, item in memory["slots"].items()
+                           if key == "city" or item.get("scope", "personal") not in {"destination", "topic"}}
         changes.update(discussing_place_id=None, discussing_place_ids=[], discovery_context=None,
-            requirement_records=[], requirements=None, read_trip_id=None, read_draft_id=None, read_draft_version=None, action_target=None)
+            requirement_records=[], requirements=None, read_trip_id=None, read_draft_id=None, read_draft_version=None,
+            action_target=None, route_request=None)
+        if cleared_city:
+            changes["browsing_city"] = None
     return envelope.model_copy(update=changes), history, accepted
 
 
 def memory_prompt(envelope):
     memory = server_memory(envelope)
-    return {"slots": memory["slots"], "preferences": memory["preferences"], "requirements": memory["requirements"]}
+    return {"slots": memory["slots"], "preferences": memory["preferences"], "requirements": memory["requirements"],
+            "withdrawn": memory.get("withdrawn", {})}
 
 
 def bootstrap_memory(envelope, history):
