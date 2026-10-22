@@ -106,7 +106,9 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
         # A different journey within this chat can reuse explicitly personal
         # preferences. A new conversation/topic or "重新开始" clears everything.
         new_journey = bool(re.match(r"^(?:请|我们|那就|现在|先)?(?:另一次旅行|另一趟旅行|新的旅行|新的一次旅行|新的一趟旅行)", message.strip()))
-        personal = {key: [item for item in memory[key] if item.get("scope") == "personal"] if new_journey else []
+        # Pre-B selectors labelled temporary trip constraints "personal" too.
+        # Those legacy labels cannot acquire new cross-journey persistence.
+        personal = {key: [item for item in memory[key] if item.get("scope") == "personal" and item.get("scope_version") == 2] if new_journey else []
                     for key in ("preferences", "requirements")}
         memory = {"version": 1, "epoch": str(message_id), "slots": {}, **personal, "detached_trip": True}
         history = []
@@ -152,7 +154,7 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
             if not 1 <= number <= (31 if key == "duration_days" else 100):
                 continue
             normalized = number
-        evidence = {"value": normalized, "source_quote": quote, "message_id": str(message_id), "scope": update.scope}
+        evidence = {"value": normalized, "source_quote": quote, "message_id": str(message_id), "scope": update.scope, "scope_version": 2}
         withdrawn = memory.setdefault("withdrawn", {})
         withdrawal_key = key + (":" + (update.replaces or value) if key in {"preferences", "requirements"} and operation != "clear" else "")
         if operation in {"clear", "remove"}:

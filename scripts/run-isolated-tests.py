@@ -77,7 +77,7 @@ def main():
         base = compose + ["run", "--rm", "-T", "--volume", out.as_posix() + ":/evidence"]
         target = "postgres-test:5432/roamsync_test_write_protection"
         preflight = "uv run --no-sync python tests/_database_safety.py && uv run --no-sync alembic upgrade head && "
-        main_exit = run("backend-main", base + ["-e", "DATABASE_URL=postgresql+psycopg://roamsync_test:roamsync_test_password@" + target, "-e", "LANGGRAPH_DATABASE_URL=postgresql://roamsync_test:roamsync_test_password@" + target, "api-test", "sh", "-c", preflight + "uv run --no-sync pytest --ignore=tests/test_draft_promotion.py --ignore=tests/test_place_content_postgres.py --junitxml=/evidence/backend-main.xml --durations=10"], required=False)
+        main_exit = run("backend-main", base + ["-e", "ROAMSYNC_AGENT_B_POSTGRES=1", "-e", "DATABASE_URL=postgresql+psycopg://roamsync_test:roamsync_test_password@" + target, "-e", "LANGGRAPH_DATABASE_URL=postgresql://roamsync_test:roamsync_test_password@" + target, "api-test", "sh", "-c", preflight + "uv run --no-sync pytest --ignore=tests/test_draft_promotion.py --ignore=tests/test_place_content_postgres.py --junitxml=/evidence/backend-main.xml --durations=10"], required=False)
         dedicated_exit = run("backend-dedicated", base + ["-e", "PROMOTION_TEST_DATABASE_URL=postgresql+psycopg://roamsync_test:roamsync_test_password@postgres-test:5432/promotion_test", "api-test", "sh", "-c", preflight + "uv run --no-sync pytest tests/test_draft_promotion.py tests/test_place_content_postgres.py --junitxml=/evidence/backend-dedicated.xml --durations=10"], required=False)
         failed = bool(main_exit or dedicated_exit)
     finally:

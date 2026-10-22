@@ -9,6 +9,7 @@ import pytest
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.pool import NullPool
+from sqlalchemy.engine import make_url
 
 from app.assistant_capabilities import CapabilityDecision
 from app.assistant_memory import MemoryUpdate
@@ -22,7 +23,7 @@ def sessions():
     if os.environ.get("ROAMSYNC_AGENT_B_POSTGRES") != "1":
         pytest.skip("requires B's exclusive disposable PostgreSQL")
     url = os.environ["DATABASE_URL"]
-    assert url == "postgresql+psycopg://agent_b_test:agent_b_test_only@127.0.0.1:15435/roamsync_agent_b_test"
+    assert make_url(url).database in {"roamsync_agent_b_test", "roamsync_test_write_protection"}
     engine = create_async_engine(url, poolclass=NullPool)
     yield async_sessionmaker(engine, expire_on_commit=False)
     asyncio.run(engine.dispose())
