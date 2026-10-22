@@ -32,7 +32,7 @@ def read_json(container, path):
 
 
 def fingerprint(data, path):
-    if Path(path).suffix in TEXT:
+    if Path(path).suffix in TEXT or Path(path).name in {"Dockerfile", ".dockerignore"}:
         data = data.replace(b"\r\n", b"\n")
     return hashlib.sha256(data).hexdigest()
 
