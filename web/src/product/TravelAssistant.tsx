@@ -40,6 +40,7 @@ import "./TravelAssistant.css";
 import { createStreamBuffer } from "../data/streamBuffer";
 import { assistantRequest, arrangementAction, type Arrangement, type Revision, type Run } from "./arrangementApi";
 import { AssistantDecisions } from "./AssistantDecisions";
+import { rememberIntentionSession } from '../journeys/savedIntentions';
 import { AssistantAnswer, type AnswerSearch, type AnswerVisuals } from "../components/AssistantAnswer";
 
 interface RouteReadRequest {
@@ -58,6 +59,8 @@ interface AssistantState {
   returnTo: string;
   openAssistant: (context?: TravelAssistantContext) => void;
   closeAssistant: () => void;
+  continueDiscussion: () => void;
+  isOpen: boolean;
   context: TravelAssistantContext;
   resetContext: () => void;
   startNewConversation: () => Promise<void>;
@@ -183,8 +186,8 @@ export function TravelAssistantProvider({
   const active = opened || location.pathname === "/assistant" || (unified && (location.pathname === "/" || /^\/trips\/[^/]+$/.test(location.pathname)));
   useEffect(() => {
     const trip = location.pathname.match(/^\/trips\/([^/]+)(?:\/planner)?$/)?.[1];
-    if (unified && trip && routeTripSeen.current !== trip) { routeTripSeen.current = trip; setContext({ tripId: trip }); }
-    if (!trip) routeTripSeen.current = undefined;
+    if (unified && trip && routeTripSeen.current !== trip) { routeTripSeen.current = trip; setContext(old => old.tripId === trip ? old : { tripId: trip }); }
+    if (!trip) { if (routeTripSeen.current && unified) setContext({}); routeTripSeen.current = undefined; }
   }, [unified, location.pathname, context.tripId]);
   const refreshArrangement = useCallback(async () => {
     if (currentScope.current !== (sessionTripId ?? "global")) return;
@@ -195,6 +198,7 @@ export function TravelAssistantProvider({
   }, [unified, sessionTripId]);
   useEffect(() => { setArrangement(undefined); void refreshArrangement().catch(e => setError(messageOf(e))); }, [refreshArrangement]);
   const receive = (next: AssistantSession) => {
+    rememberIntentionSession(next.id);
     const nextScope = next.trip_id ?? "global";
     setSessions(values => { const copy = { ...values, [nextScope]: next }; if (next.trip_id && scope === "global") delete copy.global; return copy; });
     if (unified) {
@@ -260,6 +264,8 @@ export function TravelAssistantProvider({
           next.prompt !== undefined ||
           next.place?.id !== context.place?.id ||
           next.tripId !== context.tripId ||
+          next.selectedDayId !== context.selectedDayId ||
+          next.selectedActivityId !== context.selectedActivityId ||
           next.city !== context.city ||
           next.draftContext?.draftId !== context.draftContext?.draftId ||
           JSON.stringify(next.places?.map((p) => p.id)) !==
@@ -290,6 +296,8 @@ export function TravelAssistantProvider({
     setLoading(true); setError("");
     try {
       const next = await assistantRequest<AssistantSession>("/assistant/sessions", {method:"POST",body:JSON.stringify({new_session:true})});
+      if(session) rememberIntentionSession(session.id);
+      rememberIntentionSession(next.id);
       newAssistantTopic();
       localStorage.setItem("roamsync.assistant.session.global", next.id);
       setSessions(values => ({...values,global:next}));
@@ -299,6 +307,7 @@ export function TravelAssistantProvider({
     finally { setLoading(false); }
   };
   const closeAssistant = useCallback(() => setOpened(false), []);
+  const continueDiscussion = () => { setOpened(true); requestAnimationFrame(() => document.querySelector<HTMLTextAreaElement>('.travel-assistant-conversation textarea')?.focus()); };
 
   useEffect(() => {
     if (!active || session) {
@@ -316,7 +325,7 @@ export function TravelAssistantProvider({
       if (unified) localStorage.setItem(`roamsync.assistant.session.${scope}`, next.id);
       if (next.trip_id !== (sessionTripId ?? null))
         throw new Error("会话关联的行程与当前选择不一致，请重试。");
-      if (!cancelled) setSessions((values) => ({ ...values, [scope]: next }));
+      if (!cancelled) {rememberIntentionSession(next.id);setSessions((values) => ({ ...values, [scope]: next }));}
     })()
       .catch((cause) => {
         if (!cancelled) setError(messageOf(cause));
@@ -381,6 +390,8 @@ export function TravelAssistantProvider({
             message,
             message_id: id,
             ...requestContext,
+            ...(context.tripId && context.selectedDayId ? {selected_day_id:context.selectedDayId} : {}),
+            ...(context.tripId && context.selectedActivityId ? {selected_activity_id:context.selectedActivityId} : {}),
             ...(routeRequest && "context" in requestContext
               ? {
                   context: {
@@ -407,7 +418,7 @@ export function TravelAssistantProvider({
       answerBuffer.flush(); analysisBuffer.flush();
       if (!unified && next.trip_id !== (sessionTripId ?? null))
         throw new Error("返回的会话关联发生变化，请前往行程页面确认。");
-      if (unified) { receive(next); await refreshArrangement(); }
+      if (unified) { receive(next); await refreshArrangement(); window.dispatchEvent(new Event("roamsync:intentions-changed")); }
       else setSessions((values) => ({ ...values, [selectedScope]: next }));
       retryMessage.current = null;
     } catch (cause) {
@@ -423,6 +434,8 @@ export function TravelAssistantProvider({
     }
   };
   const value: AssistantState = {
+    continueDiscussion,
+    isOpen: opened,
     returnTo,
     openAssistant,
     closeAssistant,
@@ -569,7 +582,7 @@ function AssistantConversation({ drawer = false }: { drawer?: boolean }) {
         ) : (
           <>
             <Compass size={15} />
-            <span>一起探索下一段旅程</span>
+            <span>{context.tripId ? `${context.tripTitle || assistant.arrangement?.trip.title || "这趟旅行"}${context.selectedDayDate ? " · " + context.selectedDayDate : ""}${context.selectedActivityName ? " · " + context.selectedActivityName : ""}` : "自由聊 · 一起探索下一段旅程"}</span>
           </>
         )}
         {(context.place ||
@@ -633,13 +646,13 @@ function AssistantConversation({ drawer = false }: { drawer?: boolean }) {
             <h1>
               {context.place
                 ? `关于${context.place.name}，想聊些什么？`
-                : "下一站，想去哪里？"}
+                : context.tripId ? `想怎样调整${context.selectedDayDate || "这趟旅行"}？` : "下一站，想去哪里？"}
             </h1>
-            <p>找一座合心意的城市，比较两个目的地，或聊聊当地的吃喝与体验。</p>
+            <p>{context.tripId ? "告诉我想保留什么、哪里想轻松一点。我会先准备候选，采用后才保存。" : "找一座合心意的城市，比较两个目的地，或聊聊当地的吃喝与体验。"}</p>
             <div className="travel-assistant-prompts">
               {(context.place
                 ? ["这个地方适合怎样的旅行者？", "游览前需要了解什么？"]
-                : [
+                : context.tripId ? ["请把这一天安排得轻松一点，保留预约和留白，先给候选。", "说明这一天已保存的安排，不修改。"] : [
                     "想找个适合慢慢逛的城市",
                     "周末想短途旅行，怎么选目的地？",
                     "帮我比较两座城市",

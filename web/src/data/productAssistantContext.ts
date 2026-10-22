@@ -40,6 +40,11 @@ export interface AssistantProductReadContext {
   place?: ExplorePlace;
   places?: ExplorePlace[];
   tripId?: string;
+  tripTitle?: string;
+  selectedDayId?: string;
+  selectedDayDate?: string;
+  selectedActivityId?: string;
+  selectedActivityName?: string;
   city?: string;
   discovery?: AssistantDiscoveryContext;
   draftContext?: {

@@ -13,7 +13,8 @@ export function AssistantDecisions() {
       <p>{preview.start_date} — {preview.end_date}</p><p>{preview.summary}</p>
       <ul>{preview.choices?.map((i, n) => <li key={n}><strong>{i.label}</strong> · {choiceLabels[i.kind]}{i.start && ` · ${i.day_date} ${clock(i.start)}—${clock(i.end)}`}</li>)}</ul>
       <button disabled={a.busy} onClick={() => void a.decidePreview(true)}>采用并保存这份安排</button>
-      <button disabled={a.busy} onClick={() => void a.decidePreview(false)}>继续讨论</button>
+      <button disabled={a.busy} onClick={() => a.continueDiscussion()}>继续讨论</button>
+      <button disabled={a.busy} onClick={() => void a.decidePreview(false)}>放弃这份建议</button>
     </section>}
     {a.run && ["queued", "researching", "planning", "validating"].includes(a.run.status) && <p role="status">正在核对需要协调的安排，当前安排保持不变…</p>}
     {a.run?.status === "failed" && <p role="alert">这次没能形成可采用的调整。{a.run.error_message} 原安排保持不变。</p>}

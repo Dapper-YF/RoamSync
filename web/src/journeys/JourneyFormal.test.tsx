@@ -14,10 +14,18 @@ beforeEach(() => {
   vi.spyOn(prototype, "getCandidates").mockResolvedValue([]);
   vi.spyOn(prototype, "getExecutionProgress").mockResolvedValue({ tripId: "test-trip", currentActivityName: "人民公园", currentActivityExperience: { activityId: activity.id, activityExecutionId: "activity-execution", plannedDurationMinutes: 60, totalExtensionMinutes: 15 }, experienceImpact: { impactState: "absorbed", timeShiftMinutes: 15, minimumDownstreamSlackMinutes: 120 }, execution: { id: "execution-1", status: "in_progress", currentDate: "2099-01-01", currentDayPlanId: "day-1", currentActivityId: activity.id, remainingActivityCount: 1, scheduleDelayMinutes: 0, activities: [{ activityId: activity.id, dayPlanId: "day-1", status: "in_progress" }] } } as unknown as ExecutionProgress);
 });
-afterEach(() => { cleanup(); sessionStorage.clear(); vi.restoreAllMocks(); });
-function mount() { render(<MemoryRouter initialEntries={["/trips/test-trip"]}><Routes><Route path="/trips/:tripId" element={<JourneyPage />} /></Routes></MemoryRouter>); }
+afterEach(() => { cleanup(); sessionStorage.clear(); localStorage.clear(); vi.restoreAllMocks(); });
+function mount(onAskAssistant?: import('./journeyApi').JourneyPageProps['onAskAssistant']) { render(<MemoryRouter initialEntries={["/trips/test-trip"]}><Routes><Route path="/trips/:tripId" element={<JourneyPage onAskAssistant={onAskAssistant}/>} /></Routes></MemoryRouter>); }
+it("the handbook binds a selected activity without opening a scheduling form",async()=>{
+  const ask=vi.fn();mount(ask);
+  await screen.findByRole('button',{name:'和 AI 调整这一天'});
+  fireEvent.click(screen.getByRole('button',{name:'和 AI 商量'}));
+  expect(ask).toHaveBeenCalledWith(expect.objectContaining({tripId:'test-trip',selectedDayId:'day-1',selectedDayDate:'2099-01-01',selectedActivityId:activity.id}));
+  expect(screen.queryByLabelText('希望怎样调整')).not.toBeInTheDocument();
+});
 it("binds an explicit activity adjustment to the existing day and activity identity", async () => {
   const create = vi.spyOn(ApiTripPlanningRepository.prototype, "createPlanningRun").mockResolvedValue({ id: "run-1" } as never);
+  localStorage.setItem("roamsync.handbook.enabled","false");
   mount();
   fireEvent.change(await screen.findByLabelText("具体活动"), { target: { value: activity.id } });
   fireEvent.change(screen.getByLabelText("希望怎样调整"), { target: { value: "只把这处活动延后半小时" } });

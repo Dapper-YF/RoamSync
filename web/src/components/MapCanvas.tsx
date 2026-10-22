@@ -147,7 +147,7 @@ export function MapCanvas({ activities, center, accommodation, routeLegs, select
       <div className="map-legend glass-panel">
         <span><i className="legend-dot planned" />计划节点</span>
         {accommodation && <span><i className="legend-dot accommodation" />住宿</span>}
-        <span><i className="legend-line" />高德最短路线</span>
+        {routeLegs.some(leg => (leg.path?.length ?? 0) > 1) && <span><i className="legend-line" />已查询路线</span>}
         {routeLegs.some((leg) => (leg.alternatives?.length ?? 0) > 0) && <span><i className="legend-line alternative" />备选路线</span>}
       </div>
       <button className="map-locate glass-button" type="button" aria-label="定位到行程">

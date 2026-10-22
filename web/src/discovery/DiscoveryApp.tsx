@@ -39,6 +39,7 @@ import { JourneyRoutePage } from "../journeyRouting";
 import { NearbyPage } from "../nearby/NearbyPage";
 import { JourneysPage, JourneyDraftPage, JourneyPage, type JourneyPageProps } from "../journeys";
 import { ExploreMap } from "../product/ExploreMap";
+import { readScene } from "../journeys/continuity";
 import { DiscoveryState, useScene, type RouteState } from "./scene";
 import "../product/ProductExperience.css";
 import "./discovery.css";
@@ -72,8 +73,13 @@ function Shell() {
     const tripId = location.pathname.match(/^\/(?:trips|arrangements)\/([^/]+)/)?.[1];
     const draftId = location.pathname.match(/^\/drafts\/([^/]+)/)?.[1];
     if (tripId) {
+      const saved=readScene<{day?:string}>(`trip.${tripId}.scene`,{});
+      const days=assistant.arrangement?.trip.id===tripId?assistant.arrangement.days:[];
+      const chosen=days.find(d=>d.id===saved.day)||days.find(d=>d.date===new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()))||days[0];
       assistant.openAssistant({
         tripId,
+        tripTitle:assistant.arrangement?.trip.id===tripId?assistant.arrangement.trip.title:undefined,
+        selectedDayId:chosen?.id,selectedDayDate:chosen?.date,
         returnTo: location.pathname + location.search,
       });
       return;

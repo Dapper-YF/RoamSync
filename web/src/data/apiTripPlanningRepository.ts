@@ -213,6 +213,7 @@ interface ApiActualBudget {
 }
 
 interface ApiPlanningRun {
+  base_trip_version?: number;
   trigger_snapshot?: { decision_context_summary?: { decision_memory?: { count?: number; feedback?: Array<{ source_revision_id: string; reason_code?: string | null; reason_text?: string | null }> } } } | null;
   progress?: PlanningRun["progress"] | null;
   heartbeat_at?: string | null;
@@ -668,6 +669,7 @@ export class ApiTripPlanningRepository implements TripPlanningRepository {
 function mapPlanningRun(dto: ApiPlanningRun): PlanningRun {
   const memory = dto.trigger_snapshot?.decision_context_summary?.decision_memory;
   return {
+    baseTripVersion: dto.base_trip_version,
     decisionMemory: memory ? {
       count: memory.count ?? 0,
       feedback: (memory.feedback ?? []).map((item) => ({

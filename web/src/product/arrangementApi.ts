@@ -1,6 +1,6 @@
 import type { AssistantSession } from "../domain/types";
 
-export type Choice = { id: string; kind: "selected" | "optional" | "free_window" | "cancelled"; label: string; source_ref: string; decision_ref: string; place_id: string | null; day_date: string | null; start: string | null; end: string | null; activity_id: string | null };
+export type Choice = { time_period?: string|null; id: string; kind: "selected" | "optional" | "free_window" | "cancelled"; label: string; source_ref: string; decision_ref: string; place_id: string | null; day_date: string | null; start: string | null; end: string | null; activity_id: string | null };
 export type Activity = { id: string; place_id: string; name: string; display_name: string; scheduled_time: string; duration_minutes: number; schedule_locked: boolean; version: number; note: string | null };
 export type Arrangement = { version: number; trip: { id: string; title: string; destination: string; start_date: string; end_date: string; version: number }; days: { id: string; date: string; activities: Activity[]; route_legs: { duration_minutes: number; is_estimated: boolean }[] }[]; items: Choice[] };
 export type Run = { id: string; status: string; base_trip_version?: number; error_message: string | null; response_text: string | null; pending_interrupt?: { kind: string; revision_id?: string; questions?: string[] } | null };

@@ -1,0 +1,13 @@
+import {describe,it,expect} from 'vitest';
+import {defaultHandbookDay,handbookRows,validMapRows} from './handbookModel';
+import type {Activity,DayPlan,PlanRevision} from '../domain/types';
+const a={id:'a',placeId:'park',name:'人民公园',originalName:'人民公园',category:'sight',neighborhood:'',scheduledTime:'13:00',durationMinutes:60,coordinates:[104,30],scheduleLocked:false,importance:'normal',estimatedCostFen:0,status:'planned',version:1,updatedAt:'',source:{id:'source',title:'测试',url:'',provider:'test',queriedAt:'',confidence:'medium'}} as Activity;
+const day={id:'d2',date:'2026-11-03',activities:[a]} as DayPlan;
+const revision={id:'r',planningGoals:{targetDays:[day.date]},activities:[{candidateId:'c',replacesActivityId:'a',placeCandidateId:'park',dayDate:day.date,plannedStartTime:'14:00',durationMinutes:45}]} as PlanRevision;
+describe('shared handbook read model',()=>{
+ it('restores explicit selection, then today, then first day',()=>{const first={...day,id:'d1',date:'2026-11-02'};expect(defaultHandbookDay([first,day],'d1',day.date)).toBe(first);expect(defaultHandbookDay([first,day],'missing',day.date)).toBe(day);expect(defaultHandbookDay([first,day],'','2026-10-22')).toBe(first)});
+ it('preview is derived without mutating saved state and map uses same rows',()=>{const saved=handbookRows(day,[]);const preview=handbookRows(day,[],revision);expect(saved[0].time).toBe('13:00');expect(preview[0].state).toBe('changed');expect(preview[0].time).toBe('14:00');expect(validMapRows(preview)[0].activity?.scheduledTime).toBe('14:00');expect(a.scheduledTime).toBe('13:00')});
+ it('unaffected dates preserve activities and deliberate free time',()=>{const other={...day,id:'d3',date:'2026-11-04'};expect(handbookRows(other,[],revision)[0].state).toBe('saved');const rows=handbookRows(day,[{id:'free',label:'自由活动',kind:'free_window',day_date:day.date,start:'15:00',end:'16:00',activity_id:null} as never],revision);expect(rows.find(r=>r.id==='free')?.state).toBe('free')});
+ it('removed activities do not become map markers and unknown coordinates are excluded',()=>{const empty={...revision,activities:[]};const rows=handbookRows(day,[],empty);expect(rows[0].state).toBe('removed');expect(validMapRows(rows)).toEqual([]);expect(validMapRows([{...handbookRows(day,[])[0],activity:{...a,coordinates:[NaN,0]}}])).toEqual([])});
+ it('omitted fixed or execution-protected activities remain visible in preview',()=>{const empty={...revision,activities:[]};const fixed={...day,activities:[{...a,scheduleLocked:true}]};expect(handbookRows(fixed,[],empty)[0].state).toBe('saved');expect(validMapRows(handbookRows(fixed,[],empty))).toHaveLength(1);expect(handbookRows(day,[],empty,[],['a'])[0].state).toBe('saved')});
+});

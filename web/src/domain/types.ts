@@ -277,6 +277,7 @@ export type PlanningRunStatus =
   | "awaiting_confirmation" | "accepted" | "rejected" | "failed" | "cancelled" | "answered";
 
 export interface PlanningRun {
+  baseTripVersion?: number;
   decisionMemory?: { count: number; feedback: Array<{ sourceRevisionId: string; reasonCode?: string; reasonText?: string }> };
   progress?: { stage: string; message: string; updated_at: string };
   heartbeatAt?: string;

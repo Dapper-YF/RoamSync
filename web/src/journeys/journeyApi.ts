@@ -3,6 +3,11 @@ import type { ExplorePoint } from "../domain/explore";
 
 export interface JourneyAssistantContext {
   tripId?: string;
+  tripTitle?: string;
+  selectedDayId?: string;
+  selectedDayDate?: string;
+  selectedActivityId?: string;
+  selectedActivityName?: string;
   draftContext?: { draftId: string; version: number; city: string; requirements: string; plan: unknown };
   prompt?: string;
   city?: string;
