@@ -6,11 +6,11 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.candidate_route_service import enrich_candidate_routes
-from app.database import CandidateRouteLeg, PlanningRun, PlanRevision, TripDisruptionEvent
+from app.database import CandidateRouteLeg, PlanningRun, PlanRevision, TripDisruptionEvent, TripPreferences
 from app.repository import get_trip
 from app.travel_goal_router import route_travel_goal
 from app.requirements import valid_records
-from app.repository import get_trip_preferences
+from app.planning_preparation import PreparedPlanningIntent, prepare_planning_intent
 from app.planning_intent_service import (
     SemanticIntentProvider,
     UnsupportedPlanningIntentError,
@@ -50,15 +50,30 @@ async def create_planning_run(
     payload: PlanningRunCreate,
     *,
     semantic_provider: SemanticIntentProvider | None = None,
+    prepared_intent: PreparedPlanningIntent | None = None,
     commit: bool = True,
     trigger_type: str | None = None,
     trigger_key: str | None = None,
     trigger_snapshot: dict | None = None,
     trigger_fingerprint: str | None = None,
 ) -> PlanningRun:
+    # Network preparation must finish before even starting the write session.
+    # Automatic fact-triggered runs have no external semantic provider.
+    if prepared_intent is not None and not prepared_intent.matches(trip_id, payload):
+        raise StalePlanningRunError("prepared planning input does not match the request")
+    if prepared_intent is None and semantic_provider is not None:
+        prepared_intent = await prepare_planning_intent(
+            session, trip_id, payload, semantic_provider=semantic_provider)
     await get_trip(session, trip_id)
     from app.formal_write import lock_trip
     trip = await lock_trip(session, trip_id)
+    preferences = await session.scalar(select(TripPreferences).where(
+        TripPreferences.trip_id == trip_id).with_for_update().execution_options(populate_existing=True))
+    if prepared_intent is not None and (
+        trip.version != prepared_intent.base_trip_version
+        or (preferences.version if preferences else None) != prepared_intent.preferences_version
+    ):
+        raise StalePlanningRunError("旅行安排或偏好已变化，请重新确认规划请求")
     disruption = None
     if payload.disruption_event_id is not None:
         if payload.run_type != "replan":
@@ -88,7 +103,7 @@ async def create_planning_run(
             selected_day_id=payload.selected_day_id,
             selected_activity_id=payload.selected_activity_id,
         ),
-        semantic_provider=semantic_provider,
+        prepared_draft=prepared_intent.draft if prepared_intent else None,
         default_planning_intent=(
             "create_plan" if payload.run_type == "initial_plan" else "replan_trip"
         ),
@@ -105,7 +120,12 @@ async def create_planning_run(
             "我还不确定你希望我完成什么。可以问现有行程、路线或预算，也可以明确说明要修改哪部分；订票和删除整趟旅行请使用相应服务或页面。",
         )
     automatic_trigger_type = trigger_type or ("navigation_disruption" if disruption else None)
-    preferences = await get_trip_preferences(session, trip_id)
+    if preferences is None:
+        # Imported legacy trips may lack preferences. Repair in this same unit
+        # of work; get_trip_preferences would commit all caller-owned writes.
+        preferences = TripPreferences(trip_id=trip_id)
+        session.add(preferences)
+        await session.flush()
     trigger_snapshot = {**(trigger_snapshot or {}), "effective_requirements":
         valid_records(getattr(preferences, "requirement_records", []))}
     run = PlanningRun(

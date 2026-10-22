@@ -360,12 +360,14 @@ async def resolve_planning_intent_endpoint(
     session: AsyncSession = Depends(get_session),
 ) -> PlanningIntentResolution:
     try:
-        return await resolve_planning_intent(
+        from app.planning_preparation import resolve_planning_without_transaction
+        resolution, _, _ = await resolve_planning_without_transaction(
             session,
             trip_id,
             payload,
             semantic_provider=build_semantic_intent_provider(get_settings()),
         )
+        return resolution
     except TripNotFoundError as exc:
         raise HTTPException(status_code=404, detail="trip not found") from exc
     except IntentContextError as exc:
