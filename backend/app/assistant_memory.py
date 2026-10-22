@@ -243,6 +243,10 @@ def bootstrap_memory(envelope, history):
                 literal = clause.strip()[:240]
                 if literal:
                     updates.append(MemoryUpdate(field="preferences", operation="add", value=literal, source_quote=literal))
+        # Historical messages have no verified scope evidence. Keep recovered
+        # conditions useful within this journey without upgrading them into
+        # durable personal preferences under the new selector contract.
+        updates = [update.model_copy(update={"scope": "trip"}) for update in updates]
         envelope, _, _ = apply_memory(envelope, [], text, turn.get("id", "legacy"), updates)
     return envelope
 

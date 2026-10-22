@@ -4,7 +4,7 @@ from uuid import uuid4
 import pytest
 
 from app.assistant_context import ContextEnvelope
-from app.assistant_memory import MemoryUpdate, apply_memory
+from app.assistant_memory import MemoryUpdate, apply_memory, bootstrap_memory
 
 
 @pytest.mark.parametrize("collection", ["preferences", "requirements"])
@@ -23,3 +23,14 @@ def test_new_explicit_personal_scope_remains_distinct_from_legacy_labels():
         "source_quote": "这趟带父母", "message_id": str(uuid4())})
     envelope, _, _ = apply_memory(envelope, [], "另一趟旅行，我自己去", uuid4())
     assert [item["value"] for item in envelope.conversation_memory["preferences"]] == ["吃素"]
+
+
+@pytest.mark.parametrize("historical_text", ["这趟带父母，少走路", "我一直吃素"])
+def test_legacy_history_bootstrap_does_not_invent_durable_scope(historical_text):
+    envelope = bootstrap_memory(ContextEnvelope(), [{"id": str(uuid4()), "user": historical_text}])
+    # History can restore useful conditions for the current journey, but its old
+    # records lack the verified scope contract introduced by the new selector.
+    assert envelope.conversation_memory["preferences"]
+    assert all(item["scope"] == "trip" for item in envelope.conversation_memory["preferences"])
+    envelope, _, _ = apply_memory(envelope, [], "另一趟旅行，我自己去", uuid4())
+    assert not envelope.conversation_memory["preferences"]
