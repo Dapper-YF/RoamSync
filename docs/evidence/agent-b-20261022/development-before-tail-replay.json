@@ -1,0 +1,1054 @@
+{
+  "split": "development",
+  "label": "baseline-replay",
+  "source_sha": "50e3a7f06f721f8febc05b37e02bc096679ea1a3",
+  "fixture_sha256": "314cc152c135c4fafd0cb242dc03688120c11a15d94d979cd94f9d853491d0c2",
+  "model": "glm-5.3-flash",
+  "provider": "glm",
+  "synthetic": true,
+  "records": [
+    {
+      "case": "long-food",
+      "turn": 11,
+      "user": "查柳州肥螺庄(荣军店)和新月螺蛳粉(雅儒店)，按我最早的饮食和晚饭预算怎么选？没有菜单也请给有用的比较。",
+      "session_id": "f9c48071-8232-4e55-ab98-08ff9ac2f0d1",
+      "raw": {
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": "柳州",
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [
+            {
+              "id": "req_bf88ad9314ed5685a35f2bf8ab489ea3",
+              "text": "我喜欢拍菜市场和普通街道",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "da01292c-b195-4ea7-a247-d7a0c4067c17"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": "柳州",
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_dc33482c12dc5816af6afe51180146e8",
+              "text": "不一定要网红机位",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "da01292c-b195-4ea7-a247-d7a0c4067c17"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": "柳州",
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_2ad93210841659408db518c35a0727e5",
+              "text": "偏好拍照、摄影",
+              "key": "interest",
+              "value": "photography",
+              "source": {
+                "kind": "user_explicit",
+                "ref": "e0748ec2-67fe-4a6b-b0a9-6ec1fe7927b0"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": "柳州",
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            }
+          ],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "start_date": {
+                "value": "2026-11-14",
+                "source_quote": "改成11月14日出发",
+                "message_id": "7e34acf5-114f-4f0d-9830-9dd6e99da9cb",
+                "scope": "personal"
+              },
+              "duration_days": {
+                "value": 3,
+                "source_quote": "玩三天",
+                "message_id": "090638c3-9427-4192-ae2b-aea41b07cfdd",
+                "scope": "personal"
+              },
+              "city": {
+                "value": "柳州",
+                "source_quote": "柳州",
+                "message_id": "e955d493-52fe-4e22-a837-bc269ac34564",
+                "scope": "personal"
+              },
+              "party_size": {
+                "value": 2,
+                "source_quote": "两个人",
+                "message_id": "090638c3-9427-4192-ae2b-aea41b07cfdd",
+                "scope": "personal"
+              },
+              "budget": {
+                "value": "晚餐人均最多60元",
+                "source_quote": "晚餐人均最多60元",
+                "message_id": "090638c3-9427-4192-ae2b-aea41b07cfdd",
+                "scope": "personal"
+              }
+            },
+            "preferences": [
+              {
+                "value": "不吃辣",
+                "source_quote": "我完全不吃辣",
+                "message_id": "090638c3-9427-4192-ae2b-aea41b07cfdd",
+                "scope": "personal"
+              },
+              {
+                "value": "喜欢拍菜市场和普通街道",
+                "source_quote": "我喜欢拍菜市场和普通街道",
+                "message_id": "da01292c-b195-4ea7-a247-d7a0c4067c17",
+                "scope": "personal"
+              },
+              {
+                "value": "不一定要网红机位",
+                "source_quote": "不一定要网红机位",
+                "message_id": "da01292c-b195-4ea7-a247-d7a0c4067c17",
+                "scope": "personal"
+              },
+              {
+                "value": "不赶景点",
+                "source_quote": "我更想慢慢坐着观察，不赶景点。",
+                "message_id": "3b363fa4-21a4-476e-8b9f-93ef39370b0f",
+                "scope": "personal"
+              }
+            ],
+            "requirements": [
+              {
+                "value": "暂时不加活动",
+                "source_quote": "我先喝杯水，暂时不加活动。",
+                "message_id": "7cf9401f-b9a4-415f-9209-68dc00baadbd",
+                "scope": "personal"
+              }
+            ]
+          }
+        },
+        "read_tools": {
+          "web_search": {
+            "status": "empty",
+            "provider": "amap+tavily",
+            "sources": [],
+            "images": [],
+            "semantics": "retrieved_reference_not_live_verification",
+            "progress": [
+              "正在查询柳州的真实地点…"
+            ]
+          }
+        },
+        "place_cards": [],
+        "companion_result": {
+          "visual_subjects": [],
+          "analysis_summary": "正在查询柳州的真实地点…",
+          "response_text": "这次没有查到可确认的对应地点，暂不推荐猜测的店名。可以补充分店名或所在区域再查。",
+          "goal_type": "recommendation",
+          "status": "completed",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_decision": "general_knowledge",
+            "knowledge_strategy": "selective",
+            "knowledge_reasons": [],
+            "source_required": false,
+            "optional_rag": false,
+            "knowledge_required": false,
+            "general_knowledge_allowed": false,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": true,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": null,
+          "runtime_trace": [],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "not_applicable",
+          "grounding_limitations": [],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        },
+        "assistant": "这次没有查到可确认的对应地点，暂不推荐猜测的店名。可以补充分店名或所在区域再查。",
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "e955d493-52fe-4e22-a837-bc269ac34564",
+          "answer_status": "partial",
+          "answer_attempts": 0,
+          "duration_ms": 10041,
+          "selection": {
+            "intent": "lookup",
+            "capabilities": [
+              "poi",
+              "web"
+            ],
+            "reason_code": "place_identity",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 420
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 8654,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 8212
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 8654
+            },
+            {
+              "stage": "context",
+              "status": "completed",
+              "elapsed_ms": 8673,
+              "fields": [
+                "city"
+              ]
+            },
+            {
+              "stage": "poi_research",
+              "status": "running",
+              "elapsed_ms": 8674
+            },
+            {
+              "stage": "poi",
+              "status": "running",
+              "elapsed_ms": 8676
+            },
+            {
+              "stage": "poi",
+              "status": "completed",
+              "elapsed_ms": 9307
+            },
+            {
+              "stage": "poi",
+              "status": "running",
+              "elapsed_ms": 9309
+            },
+            {
+              "stage": "poi",
+              "status": "completed",
+              "elapsed_ms": 9696
+            },
+            {
+              "stage": "poi",
+              "status": "running",
+              "elapsed_ms": 9696
+            },
+            {
+              "stage": "poi",
+              "status": "completed",
+              "elapsed_ms": 10011
+            },
+            {
+              "stage": "poi_research",
+              "status": "completed",
+              "elapsed_ms": 10041
+            }
+          ]
+        },
+        "id": "e955d493-52fe-4e22-a837-bc269ac34564",
+        "user": "查柳州肥螺庄(荣军店)和新月螺蛳粉(雅儒店)，按我最早的饮食和晚饭预算怎么选？没有菜单也请给有用的比较。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.92,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_place_identity"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 10.384,
+      "choices": [
+        {
+          "intent": "lookup",
+          "capabilities": [
+            "poi",
+            "web"
+          ],
+          "city": "柳州",
+          "query": "肥螺庄 新月螺蛳粉 比较",
+          "category": "food",
+          "names": [
+            "肥螺庄(荣军店)",
+            "新月螺蛳粉(雅儒店)"
+          ],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "place_identity",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": []
+        }
+      ],
+      "calls": [
+        {
+          "tool": "research_search",
+          "args": [],
+          "kwargs": {
+            "query": "肥螺庄 荣军店",
+            "city": "柳州",
+            "near": null,
+            "limit": 3,
+            "category": "food"
+          },
+          "result": [
+            {
+              "place_id": "17bc598a-395c-5a71-9c54-29fae3c77935",
+              "name": "广雅现包云吞(白云店)",
+              "aliases": [],
+              "city": "柳州市",
+              "category": "food",
+              "provider_type": "餐饮服务;中餐厅;中餐厅",
+              "address": "荣军街道燎原路36号白云小区三村3栋1楼1-2号之2号",
+              "rating": 3.9,
+              "reference_cost_yuan": 12.0,
+              "longitude": 109.434818,
+              "latitude": 24.291296,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0FFFAKDSO",
+              "retrieved_at": "2026-10-22T12:57:34.616675+00:00",
+              "expires_at": "2026-10-22T13:57:34.616675+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0FFFAKDSO"
+              },
+              "images": [],
+              "opening_hours_reference": "周一至周日 07:00-22:00",
+              "provider_tags": [
+                "黄瓜炒肉",
+                "鲜肉云吞面",
+                "花菜炒肉",
+                "芹菜炒牛肉",
+                "四季豆炒肉",
+                "辣椒皮蛋",
+                "葱爆牛肉",
+                "榨菜鸡杂",
+                "香干回锅肉",
+                "茄子豆角",
+                "芹菜炒猪心",
+                "小葱云吞面"
+              ],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            {
+              "place_id": "90400f06-6d70-506e-88ad-8bcb41d4b354",
+              "name": "重庆味道(荣军路店)",
+              "aliases": [],
+              "city": "柳州市",
+              "category": "food",
+              "provider_type": "餐饮服务;中餐厅;中餐厅",
+              "address": "荣军路88号荣华商厦1-20号",
+              "rating": 4.2,
+              "reference_cost_yuan": 38.0,
+              "longitude": 109.419769,
+              "latitude": 24.302721,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0J3H7SQSA",
+              "retrieved_at": "2026-10-22T12:57:34.670347+00:00",
+              "expires_at": "2026-10-22T13:57:34.670347+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0J3H7SQSA"
+              },
+              "images": [],
+              "opening_hours_reference": "周一至周日 11:00-21:00",
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            {
+              "place_id": "174ac1ca-663c-5759-a4b3-b03e26b7011c",
+              "name": "博龙石磨卷粉(荣军店)",
+              "aliases": [],
+              "city": "柳州市",
+              "category": "food",
+              "provider_type": "餐饮服务;餐饮相关场所;餐饮相关",
+              "address": "荣军路158号-9号",
+              "rating": 3.6,
+              "reference_cost_yuan": 12.0,
+              "longitude": 109.423846,
+              "latitude": 24.2962,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0FFHJPMAQ",
+              "retrieved_at": "2026-10-22T12:57:34.745147+00:00",
+              "expires_at": "2026-10-22T13:57:34.745147+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0FFHJPMAQ"
+              },
+              "images": [],
+              "opening_hours_reference": "周一至周日 06:30-15:00",
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            }
+          ],
+          "seconds": 0.63
+        },
+        {
+          "tool": "research_search",
+          "args": [],
+          "kwargs": {
+            "query": "肥螺庄",
+            "city": "柳州",
+            "near": null,
+            "limit": 3,
+            "category": "food"
+          },
+          "result": [
+            {
+              "place_id": "b5847bad-51e3-5624-b763-fb64e1358a4a",
+              "name": "覃望成肥螺庄",
+              "aliases": [],
+              "city": "柳州市",
+              "category": "food",
+              "provider_type": "餐饮服务;中餐厅;中餐厅",
+              "address": "驾鹤街道驾鹤路141-12号",
+              "rating": 4.4,
+              "reference_cost_yuan": 55.0,
+              "longitude": 109.413638,
+              "latitude": 24.30459,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0LRJZH67H",
+              "retrieved_at": "2026-10-22T12:57:35.065415+00:00",
+              "expires_at": "2026-10-22T13:57:35.065415+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0LRJZH67H"
+              },
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            {
+              "place_id": "13fd0b7f-5087-507f-838a-ea11f501c880",
+              "name": "肥螺庄一号店",
+              "aliases": [],
+              "city": "柳州市",
+              "category": "food",
+              "provider_type": "餐饮服务;中餐厅;中餐厅",
+              "address": "驾鹤路141号江南新天地C座57、58、59、59、60、61号",
+              "rating": 4.5,
+              "reference_cost_yuan": 61.0,
+              "longitude": 109.413562,
+              "latitude": 24.304437,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0LDZBOFO3",
+              "retrieved_at": "2026-10-22T12:57:35.104759+00:00",
+              "expires_at": "2026-10-22T13:57:35.104759+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0LDZBOFO3"
+              },
+              "images": [],
+              "opening_hours_reference": "周一至周日 11:00-02:00",
+              "provider_tags": [
+                "鸭爪"
+              ],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            {
+              "place_id": "c5b18d51-739a-5c2c-9c0a-422124233f0d",
+              "name": "肥螺庄(柳东店)",
+              "aliases": [],
+              "city": "柳州市",
+              "category": "food",
+              "provider_type": "餐饮服务;餐饮相关场所;餐饮相关",
+              "address": "柳东新区新福路8号蔚莱别苑1栋1-3",
+              "rating": 4.3,
+              "reference_cost_yuan": 25.0,
+              "longitude": 109.534919,
+              "latitude": 24.36795,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0FFM7PG7W",
+              "retrieved_at": "2026-10-22T12:57:35.144217+00:00",
+              "expires_at": "2026-10-22T13:57:35.144217+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0FFM7PG7W"
+              },
+              "images": [],
+              "opening_hours_reference": "周一至周日 11:00-24:00",
+              "provider_tags": [
+                "螺蛳粉"
+              ],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            }
+          ],
+          "seconds": 0.387
+        },
+        {
+          "tool": "research_search",
+          "args": [],
+          "kwargs": {
+            "query": "新月螺蛳粉 雅儒店",
+            "city": "柳州",
+            "near": null,
+            "limit": 3,
+            "category": "food"
+          },
+          "result": [
+            {
+              "place_id": "cfec995e-0a62-57d2-8eb3-e26f08e33f3b",
+              "name": "新月螺蛳粉",
+              "aliases": [],
+              "city": "柳州市",
+              "category": "food",
+              "provider_type": "餐饮服务;餐饮相关场所;餐饮相关",
+              "address": "曙光东路228号怡鑫园1栋2层",
+              "rating": 4.6,
+              "reference_cost_yuan": 20.0,
+              "longitude": 109.41387,
+              "latitude": 24.310722,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0FFL34CZD",
+              "retrieved_at": "2026-10-22T12:57:35.458634+00:00",
+              "expires_at": "2026-10-22T13:57:35.458634+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0FFL34CZD"
+              },
+              "images": [],
+              "opening_hours_reference": "周一至周日 11:00-23:00",
+              "provider_tags": [
+                "螺蛳粉"
+              ],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            }
+          ],
+          "seconds": 0.315
+        }
+      ]
+    },
+    {
+      "case": "long-food",
+      "turn": 12,
+      "user": "先取消晚饭的人均预算，忌口保留。现在还有哪些有效条件？",
+      "session_id": "f9c48071-8232-4e55-ab98-08ff9ac2f0d1",
+      "raw": {
+        "assistant": "好，晚饭的人均预算已取消，忌口保留。现在还生效的条件是：\n\n- 11月14日出发，柳州玩三天，两个人\n- 完全不吃辣（点餐前仍建议先确认有无单独熬的不辣汤底）\n- 喜欢拍菜市场和普通街道，不一定要网红机位\n- 不赶景点，更想慢慢坐着观察\n- 暂时不加活动\n\n之后如果预算想再定，随时说一声就行。",
+        "companion_result": {
+          "visual_subjects": [],
+          "analysis_summary": "已取消晚饭人均预算，忌口等其他条件不变，列出当前仍生效的全部条件。",
+          "response_text": "好，晚饭的人均预算已取消，忌口保留。现在还生效的条件是：\n\n- 11月14日出发，柳州玩三天，两个人\n- 完全不吃辣（点餐前仍建议先确认有无单独熬的不辣汤底）\n- 喜欢拍菜市场和普通街道，不一定要网红机位\n- 不赶景点，更想慢慢坐着观察\n- 暂时不加活动\n\n之后如果预算想再定，随时说一声就行。",
+          "goal_type": "travel_chat",
+          "status": "completed",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_decision": "general_knowledge",
+            "knowledge_strategy": "selective",
+            "knowledge_reasons": [
+              "stable_model_knowledge_no_retrieval"
+            ],
+            "source_required": false,
+            "optional_rag": false,
+            "knowledge_required": false,
+            "general_knowledge_allowed": true,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": "柳州",
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "not_applicable",
+          "grounding_limitations": [
+            "model_general_knowledge_unverified"
+          ],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        },
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": "柳州",
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [
+            {
+              "id": "req_bf88ad9314ed5685a35f2bf8ab489ea3",
+              "text": "我喜欢拍菜市场和普通街道",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "da01292c-b195-4ea7-a247-d7a0c4067c17"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": "柳州",
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_dc33482c12dc5816af6afe51180146e8",
+              "text": "不一定要网红机位",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "da01292c-b195-4ea7-a247-d7a0c4067c17"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": "柳州",
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_2ad93210841659408db518c35a0727e5",
+              "text": "偏好拍照、摄影",
+              "key": "interest",
+              "value": "photography",
+              "source": {
+                "kind": "user_explicit",
+                "ref": "e0748ec2-67fe-4a6b-b0a9-6ec1fe7927b0"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": "柳州",
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_3c6f6a2f30315234bd9c80ea13b61dc2",
+              "text": "撤销：先取消晚饭的人均预算",
+              "key": "budget_fen",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "ddcc8d22-60b1-4162-9c9d-8dd7b265f966"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": "柳州",
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "revoked",
+              "supersedes": []
+            }
+          ],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "start_date": {
+                "value": "2026-11-14",
+                "source_quote": "改成11月14日出发",
+                "message_id": "7e34acf5-114f-4f0d-9830-9dd6e99da9cb",
+                "scope": "personal"
+              },
+              "duration_days": {
+                "value": 3,
+                "source_quote": "玩三天",
+                "message_id": "090638c3-9427-4192-ae2b-aea41b07cfdd",
+                "scope": "personal"
+              },
+              "city": {
+                "value": "柳州",
+                "source_quote": "柳州",
+                "message_id": "e955d493-52fe-4e22-a837-bc269ac34564",
+                "scope": "personal"
+              },
+              "party_size": {
+                "value": 2,
+                "source_quote": "两个人",
+                "message_id": "090638c3-9427-4192-ae2b-aea41b07cfdd",
+                "scope": "personal"
+              }
+            },
+            "preferences": [
+              {
+                "value": "不吃辣",
+                "source_quote": "我完全不吃辣",
+                "message_id": "090638c3-9427-4192-ae2b-aea41b07cfdd",
+                "scope": "personal"
+              },
+              {
+                "value": "喜欢拍菜市场和普通街道",
+                "source_quote": "我喜欢拍菜市场和普通街道",
+                "message_id": "da01292c-b195-4ea7-a247-d7a0c4067c17",
+                "scope": "personal"
+              },
+              {
+                "value": "不一定要网红机位",
+                "source_quote": "不一定要网红机位",
+                "message_id": "da01292c-b195-4ea7-a247-d7a0c4067c17",
+                "scope": "personal"
+              },
+              {
+                "value": "不赶景点",
+                "source_quote": "我更想慢慢坐着观察，不赶景点。",
+                "message_id": "3b363fa4-21a4-476e-8b9f-93ef39370b0f",
+                "scope": "personal"
+              }
+            ],
+            "requirements": [
+              {
+                "value": "暂时不加活动",
+                "source_quote": "我先喝杯水，暂时不加活动。",
+                "message_id": "7cf9401f-b9a4-415f-9209-68dc00baadbd",
+                "scope": "personal"
+              }
+            ]
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "ddcc8d22-60b1-4162-9c9d-8dd7b265f966",
+          "answer_status": "complete",
+          "answer_attempts": 1,
+          "duration_ms": 11879,
+          "selection": {
+            "intent": "direct",
+            "capabilities": [],
+            "reason_code": "stable_knowledge",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 101
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 6661,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 6543
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 6661
+            },
+            {
+              "stage": "context",
+              "status": "completed",
+              "elapsed_ms": 6662,
+              "fields": [
+                "budget"
+              ]
+            },
+            {
+              "stage": "companion",
+              "status": "running",
+              "elapsed_ms": 6826
+            },
+            {
+              "stage": "answer",
+              "status": "running",
+              "elapsed_ms": 7192
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 11861,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 4668
+            },
+            {
+              "stage": "answer",
+              "status": "completed",
+              "elapsed_ms": 11861
+            },
+            {
+              "stage": "companion",
+              "status": "completed",
+              "elapsed_ms": 11879
+            }
+          ]
+        },
+        "id": "ddcc8d22-60b1-4162-9c9d-8dd7b265f966",
+        "user": "先取消晚饭的人均预算，忌口保留。现在还有哪些有效条件？",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.93,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_stable_knowledge"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 12.013,
+      "choices": [
+        {
+          "intent": "direct",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "stable_knowledge",
+          "memory_updates": [
+            {
+              "field": "budget",
+              "operation": "clear",
+              "value": "",
+              "replaces": "",
+              "source_quote": "先取消晚饭的人均预算",
+              "scope": "personal"
+            }
+          ],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": []
+        }
+      ],
+      "calls": []
+    }
+  ],
+  "before": {
+    "Trip": 0,
+    "Activity": 0,
+    "PlanningRun": 0,
+    "PlanRevision": 0,
+    "SavedIntention": 0
+  },
+  "after": {
+    "Trip": 0,
+    "Activity": 0,
+    "PlanningRun": 0,
+    "PlanRevision": 0,
+    "SavedIntention": 0
+  }
+}

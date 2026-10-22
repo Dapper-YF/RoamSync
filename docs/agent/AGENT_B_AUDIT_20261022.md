@@ -73,6 +73,17 @@ Having a validated top-level intent does not eliminate downstream interpretation
 
 ## Chosen development scope
 
+Outcome addendum: the once-run post-freeze holdout confirms compound/direct
+reinterpretation, normalization/negation projection losses and unsupported venue
+effort claims. Full detail and original replies are in
+../AGENT_QUALITY_B_DELIVERY_20261022.md and ../evidence/agent-b-20261022/.
+These are observed examples, not population reliability estimates. Two narrow
+improvements shipped only to the isolated B branch; the assistant remains NO-GO.
+Legacy personal-label migration is additionally OPEN: A's f39960c fences existing
+stored labels, but B reproduced bootstrap_memory promoting old trip prose to v2
+personal scope. A was notified and owns integration-only correction; B held its
+product freeze and did not retune against holdout failures.
+
 Two connected improvements: (1) effective conditions plus server-calculated,
 unit-compatible reference-price comparisons reach Research and its fallback;
 (2) scoped withdrawal and new-trip lifecycle, with provenance for unknown values

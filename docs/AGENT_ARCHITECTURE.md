@@ -1,5 +1,28 @@
 # RoamSync Agent v1 architecture contract
 
+## Agent quality B isolated extension (2026-10-22; not released)
+
+Candidate c83a93c from f116ada extends only server-owned session conditions:
+personal/trip/topic/destination scopes and bounded withdrawn provenance distinguish
+unknown/revoked/superseded values. A city withdrawal detaches old place, route and
+Trip read context; it grants no write authority. Relative date retries use the
+stored receipt date. This does not create a persistent profile or cross-session
+memory. Legacy personal labels are ambiguous; A owns the integration migration
+fence, including the bootstrap counterexample reported by B.
+
+Research receives effective conditions plus per-POI source-bound decision support.
+Only compatible per-person meal budgets may be compared with reference meal costs;
+total/daily/lodging budgets and unknown costs remain incomparable. Arithmetic is
+server computed. Reference-only practical comparisons can render without an extra
+answer generation; external reviews, menus, actual bills and internal walking are
+not inferred. No public request/response model, schema, permission, Graph state,
+failure code or candidate acceptance rule changed.
+
+Overall NO-GO: untouched holdout 5/20, including unsupported effort assurance and
+lost compound/hypothetical tasks. No release recommendation or new complete live
+creation/modification/adoption acceptance. See AGENT_QUALITY_B_DELIVERY_20261022.md
+and evidence/agent-b-20261022/ for exact raw answers, failures and scope limits.
+
 ## Journey handbook and independent intentions (2026-10-22)
 
 The handbook is a read projection of existing Day/Activity/ArrangementItem and

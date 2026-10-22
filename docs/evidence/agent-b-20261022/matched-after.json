@@ -1,0 +1,702 @@
+{
+  "label": "after-development",
+  "synthetic_material_real_model": true,
+  "records": [
+    {
+      "case": "bounded-budget",
+      "raw": {
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "main",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": "柳州",
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": false,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "budget": {
+                "value": "晚饭人均最多60元",
+                "source_quote": "晚饭人均最多60元",
+                "message_id": "c4babda5-0d41-4bdc-b2a9-e8399505e9c3",
+                "scope": "personal"
+              }
+            },
+            "preferences": [
+              {
+                "value": "完全不吃辣",
+                "source_quote": "完全不吃辣",
+                "message_id": "c4babda5-0d41-4bdc-b2a9-e8399505e9c3",
+                "scope": "personal"
+              }
+            ],
+            "requirements": [],
+            "withdrawn": {}
+          }
+        },
+        "read_tools": {
+          "web_search": {
+            "status": "available",
+            "provider": "amap+tavily",
+            "sources": [
+              {
+                "source_id": "poi_1",
+                "place_id": "35f401b6-70b6-4abb-9080-a5329ce9b9b4",
+                "url": "https://example.org/synthetic",
+                "title": "高德 · 测试甲店",
+                "read_level": "provider_reference",
+                "retrieved_at": "2026-10-22T08:00:00Z",
+                "excerpt": "测试甲店；合成测试地址；参考人均95.0元"
+              },
+              {
+                "source_id": "poi_2",
+                "place_id": "1a15429e-52aa-4589-aae0-2c2264c4783a",
+                "url": "https://example.org/synthetic",
+                "title": "高德 · 测试乙店",
+                "read_level": "provider_reference",
+                "retrieved_at": "2026-10-22T08:00:00Z",
+                "excerpt": "测试乙店；合成测试地址；参考人均42.0元"
+              },
+              {
+                "source_id": "poi_3",
+                "place_id": "5ad8e107-4f95-44f0-8286-ca0f78485288",
+                "url": "https://example.org/synthetic",
+                "title": "高德 · 测试丙店",
+                "read_level": "provider_reference",
+                "retrieved_at": "2026-10-22T08:00:00Z",
+                "excerpt": "测试丙店；合成测试地址"
+              }
+            ],
+            "images": [],
+            "semantics": "retrieved_reference_not_live_verification",
+            "progress": [
+              "正在查询柳州的真实地点…",
+              "正在结合已取得的地点信息和资料整理建议…"
+            ],
+            "answer_validation": [
+              "unsupported_numeric_claim",
+              "unsupported_numeric_claim",
+              "unsupported_numeric_claim"
+            ],
+            "read_failures": []
+          },
+          "decision_support": {
+            "conditions": {
+              "slots": {
+                "budget": {
+                  "value": "晚饭人均最多60元",
+                  "source_quote": "晚饭人均最多60元",
+                  "message_id": "c4babda5-0d41-4bdc-b2a9-e8399505e9c3",
+                  "scope": "personal"
+                }
+              },
+              "preferences": [
+                {
+                  "value": "完全不吃辣",
+                  "source_quote": "完全不吃辣",
+                  "message_id": "c4babda5-0d41-4bdc-b2a9-e8399505e9c3",
+                  "scope": "personal"
+                }
+              ],
+              "requirements": [],
+              "withdrawn": {}
+            },
+            "budget": {
+              "amount_yuan": 60.0,
+              "unit": "per_person_meal",
+              "source_quote": "晚饭人均最多60元",
+              "message_id": "c4babda5-0d41-4bdc-b2a9-e8399505e9c3"
+            },
+            "candidates": [
+              {
+                "place_id": "35f401b6-70b6-4abb-9080-a5329ce9b9b4",
+                "name": "测试甲店",
+                "reference_source_id": "poi_1",
+                "citation_index": 1,
+                "reference_cost_yuan": 95.0,
+                "budget_relation": "above_reference_limit",
+                "difference_yuan": 35.0,
+                "diet_suitability": "unknown",
+                "on_site_walking": "unknown"
+              },
+              {
+                "place_id": "1a15429e-52aa-4589-aae0-2c2264c4783a",
+                "name": "测试乙店",
+                "reference_source_id": "poi_2",
+                "citation_index": 2,
+                "reference_cost_yuan": 42.0,
+                "budget_relation": "within_reference_limit",
+                "difference_yuan": -18.0,
+                "diet_suitability": "unknown",
+                "on_site_walking": "unknown"
+              },
+              {
+                "place_id": "5ad8e107-4f95-44f0-8286-ca0f78485288",
+                "name": "测试丙店",
+                "reference_source_id": "poi_3",
+                "citation_index": 3,
+                "reference_cost_yuan": null,
+                "budget_relation": "unknown",
+                "difference_yuan": null,
+                "diet_suitability": "unknown",
+                "on_site_walking": "unknown"
+              }
+            ],
+            "semantics": "reference_cost_comparison_not_actual_bill_or_venue_suitability"
+          }
+        },
+        "place_cards": [
+          {
+            "place": {
+              "place_id": "35f401b6-70b6-4abb-9080-a5329ce9b9b4",
+              "name": "测试甲店",
+              "aliases": [],
+              "city": "柳州",
+              "category": "food",
+              "provider_type": null,
+              "address": "合成测试地址",
+              "rating": null,
+              "reference_cost_yuan": 95.0,
+              "longitude": null,
+              "latitude": null,
+              "coordinate_system": "gcj02",
+              "source": "https://example.org/synthetic",
+              "retrieved_at": "2026-10-22T08:00:00Z",
+              "expires_at": null,
+              "external_ref": null,
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            "role": "recommendation",
+            "suggestion_ids": [],
+            "reason_kind": "retrieved_reference",
+            "detail_path": "/places/35f401b6-70b6-4abb-9080-a5329ce9b9b4"
+          },
+          {
+            "place": {
+              "place_id": "1a15429e-52aa-4589-aae0-2c2264c4783a",
+              "name": "测试乙店",
+              "aliases": [],
+              "city": "柳州",
+              "category": "food",
+              "provider_type": null,
+              "address": "合成测试地址",
+              "rating": null,
+              "reference_cost_yuan": 42.0,
+              "longitude": null,
+              "latitude": null,
+              "coordinate_system": "gcj02",
+              "source": "https://example.org/synthetic",
+              "retrieved_at": "2026-10-22T08:00:00Z",
+              "expires_at": null,
+              "external_ref": null,
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            "role": "recommendation",
+            "suggestion_ids": [],
+            "reason_kind": "retrieved_reference",
+            "detail_path": "/places/1a15429e-52aa-4589-aae0-2c2264c4783a"
+          },
+          {
+            "place": {
+              "place_id": "5ad8e107-4f95-44f0-8286-ca0f78485288",
+              "name": "测试丙店",
+              "aliases": [],
+              "city": "柳州",
+              "category": "food",
+              "provider_type": null,
+              "address": "合成测试地址",
+              "rating": null,
+              "reference_cost_yuan": null,
+              "longitude": null,
+              "latitude": null,
+              "coordinate_system": "gcj02",
+              "source": "https://example.org/synthetic",
+              "retrieved_at": "2026-10-22T08:00:00Z",
+              "expires_at": null,
+              "external_ref": null,
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            "role": "recommendation",
+            "suggestion_ids": [],
+            "reason_kind": "retrieved_reference",
+            "detail_path": "/places/5ad8e107-4f95-44f0-8286-ca0f78485288"
+          }
+        ],
+        "companion_result": {
+          "visual_subjects": [],
+          "analysis_summary": "正在查询柳州的真实地点…\n正在结合已取得的地点信息和资料整理建议…",
+          "response_text": "先保留这几个实际查到的选择：测试甲店（合成测试地址；高德参考消费约95元） [1]；测试乙店（合成测试地址；高德参考消费约42元） [2]；测试丙店（合成测试地址） [3]。\n\n测试甲店 [1]的高德参考人均高出60元上限35元，按花费先降低优先级；测试乙店 [2]的参考人均比上限低18元，可先核对菜单；测试丙店 [3]缺少参考消费，无法判断预算是否合适。参考人均不等于这顿实际账单。\n\n饮食要求（完全不吃辣）仍需逐家核对：目前的地点信息不能证明能提供符合你忌口的餐食，先确认食材、汤底和调料，再决定；参考消费低也不能证明适合。",
+          "goal_type": "recommendation",
+          "status": "completed",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_decision": "general_knowledge",
+            "knowledge_strategy": "selective",
+            "knowledge_reasons": [],
+            "source_required": false,
+            "optional_rag": false,
+            "knowledge_required": false,
+            "general_knowledge_allowed": false,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": true,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": null,
+          "runtime_trace": [],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "not_applicable",
+          "grounding_limitations": [],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        },
+        "assistant": "先保留这几个实际查到的选择：测试甲店（合成测试地址；高德参考消费约95元） [1]；测试乙店（合成测试地址；高德参考消费约42元） [2]；测试丙店（合成测试地址） [3]。\n\n测试甲店 [1]的高德参考人均高出60元上限35元，按花费先降低优先级；测试乙店 [2]的参考人均比上限低18元，可先核对菜单；测试丙店 [3]缺少参考消费，无法判断预算是否合适。参考人均不等于这顿实际账单。\n\n饮食要求（完全不吃辣）仍需逐家核对：目前的地点信息不能证明能提供符合你忌口的餐食，先确认食材、汤底和调料，再决定；参考消费低也不能证明适合。"
+      },
+      "seconds": 11.154180300000007,
+      "trace": {
+        "version": 1,
+        "correlation_id": "80f02216-f322-4909-bdc5-b099d13e12ea",
+        "answer_status": "captured",
+        "answer_attempts": 1,
+        "duration_ms": 11154,
+        "selection": {},
+        "events": [
+          {
+            "stage": "poi",
+            "status": "running",
+            "elapsed_ms": 4
+          },
+          {
+            "stage": "poi",
+            "status": "completed",
+            "elapsed_ms": 4
+          },
+          {
+            "stage": "answer",
+            "status": "running",
+            "elapsed_ms": 734
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 10210,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 9472
+          },
+          {
+            "stage": "answer",
+            "status": "completed",
+            "elapsed_ms": 10210
+          }
+        ]
+      }
+    },
+    {
+      "case": "budget-withdrawn",
+      "raw": {
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "main",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": "柳州",
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": false,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {},
+            "preferences": [
+              {
+                "value": "完全不吃辣",
+                "source_quote": "完全不吃辣",
+                "message_id": "c4babda5-0d41-4bdc-b2a9-e8399505e9c3",
+                "scope": "personal"
+              }
+            ],
+            "requirements": [],
+            "withdrawn": {
+              "budget": {
+                "source_quote": "取消晚饭预算",
+                "message_id": "11088fa8-d5fa-467a-bc76-733eacae95c4",
+                "state": "unknown"
+              }
+            }
+          }
+        },
+        "read_tools": {
+          "web_search": {
+            "status": "available",
+            "provider": "amap+tavily",
+            "sources": [
+              {
+                "source_id": "poi_1",
+                "place_id": "35f401b6-70b6-4abb-9080-a5329ce9b9b4",
+                "url": "https://example.org/synthetic",
+                "title": "高德 · 测试甲店",
+                "read_level": "provider_reference",
+                "retrieved_at": "2026-10-22T08:00:00Z",
+                "excerpt": "测试甲店；合成测试地址；参考人均95.0元"
+              },
+              {
+                "source_id": "poi_2",
+                "place_id": "1a15429e-52aa-4589-aae0-2c2264c4783a",
+                "url": "https://example.org/synthetic",
+                "title": "高德 · 测试乙店",
+                "read_level": "provider_reference",
+                "retrieved_at": "2026-10-22T08:00:00Z",
+                "excerpt": "测试乙店；合成测试地址；参考人均42.0元"
+              },
+              {
+                "source_id": "poi_3",
+                "place_id": "5ad8e107-4f95-44f0-8286-ca0f78485288",
+                "url": "https://example.org/synthetic",
+                "title": "高德 · 测试丙店",
+                "read_level": "provider_reference",
+                "retrieved_at": "2026-10-22T08:00:00Z",
+                "excerpt": "测试丙店；合成测试地址",
+                "support_quotes": [
+                  "测试丙店；柳州"
+                ]
+              }
+            ],
+            "images": [],
+            "semantics": "retrieved_reference_not_live_verification",
+            "progress": [
+              "正在查询柳州的真实地点…",
+              "正在结合已取得的地点信息和资料整理建议…"
+            ],
+            "answer_validation": [
+              "citation_quote_or_identity_mismatch"
+            ],
+            "read_failures": []
+          },
+          "decision_support": {
+            "conditions": {
+              "slots": {},
+              "preferences": [
+                {
+                  "value": "完全不吃辣",
+                  "source_quote": "完全不吃辣",
+                  "message_id": "c4babda5-0d41-4bdc-b2a9-e8399505e9c3",
+                  "scope": "personal"
+                }
+              ],
+              "requirements": [],
+              "withdrawn": {
+                "budget": {
+                  "source_quote": "取消晚饭预算",
+                  "message_id": "11088fa8-d5fa-467a-bc76-733eacae95c4",
+                  "state": "unknown"
+                }
+              }
+            },
+            "budget": null,
+            "candidates": [
+              {
+                "place_id": "35f401b6-70b6-4abb-9080-a5329ce9b9b4",
+                "name": "测试甲店",
+                "reference_source_id": "poi_1",
+                "citation_index": 1,
+                "reference_cost_yuan": 95.0,
+                "budget_relation": "not_comparable",
+                "difference_yuan": null,
+                "diet_suitability": "unknown",
+                "on_site_walking": "unknown"
+              },
+              {
+                "place_id": "1a15429e-52aa-4589-aae0-2c2264c4783a",
+                "name": "测试乙店",
+                "reference_source_id": "poi_2",
+                "citation_index": 2,
+                "reference_cost_yuan": 42.0,
+                "budget_relation": "not_comparable",
+                "difference_yuan": null,
+                "diet_suitability": "unknown",
+                "on_site_walking": "unknown"
+              },
+              {
+                "place_id": "5ad8e107-4f95-44f0-8286-ca0f78485288",
+                "name": "测试丙店",
+                "reference_source_id": "poi_3",
+                "citation_index": 3,
+                "reference_cost_yuan": null,
+                "budget_relation": "not_comparable",
+                "difference_yuan": null,
+                "diet_suitability": "unknown",
+                "on_site_walking": "unknown"
+              }
+            ],
+            "semantics": "reference_cost_comparison_not_actual_bill_or_venue_suitability"
+          }
+        },
+        "place_cards": [
+          {
+            "place": {
+              "place_id": "35f401b6-70b6-4abb-9080-a5329ce9b9b4",
+              "name": "测试甲店",
+              "aliases": [],
+              "city": "柳州",
+              "category": "food",
+              "provider_type": null,
+              "address": "合成测试地址",
+              "rating": null,
+              "reference_cost_yuan": 95.0,
+              "longitude": null,
+              "latitude": null,
+              "coordinate_system": "gcj02",
+              "source": "https://example.org/synthetic",
+              "retrieved_at": "2026-10-22T08:00:00Z",
+              "expires_at": null,
+              "external_ref": null,
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            "role": "recommendation",
+            "suggestion_ids": [],
+            "reason_kind": "retrieved_reference",
+            "detail_path": "/places/35f401b6-70b6-4abb-9080-a5329ce9b9b4"
+          },
+          {
+            "place": {
+              "place_id": "1a15429e-52aa-4589-aae0-2c2264c4783a",
+              "name": "测试乙店",
+              "aliases": [],
+              "city": "柳州",
+              "category": "food",
+              "provider_type": null,
+              "address": "合成测试地址",
+              "rating": null,
+              "reference_cost_yuan": 42.0,
+              "longitude": null,
+              "latitude": null,
+              "coordinate_system": "gcj02",
+              "source": "https://example.org/synthetic",
+              "retrieved_at": "2026-10-22T08:00:00Z",
+              "expires_at": null,
+              "external_ref": null,
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            "role": "recommendation",
+            "suggestion_ids": [],
+            "reason_kind": "retrieved_reference",
+            "detail_path": "/places/1a15429e-52aa-4589-aae0-2c2264c4783a"
+          },
+          {
+            "place": {
+              "place_id": "5ad8e107-4f95-44f0-8286-ca0f78485288",
+              "name": "测试丙店",
+              "aliases": [],
+              "city": "柳州",
+              "category": "food",
+              "provider_type": null,
+              "address": "合成测试地址",
+              "rating": null,
+              "reference_cost_yuan": null,
+              "longitude": null,
+              "latitude": null,
+              "coordinate_system": "gcj02",
+              "source": "https://example.org/synthetic",
+              "retrieved_at": "2026-10-22T08:00:00Z",
+              "expires_at": null,
+              "external_ref": null,
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            "role": "recommendation",
+            "suggestion_ids": [],
+            "reason_kind": "retrieved_reference",
+            "detail_path": "/places/5ad8e107-4f95-44f0-8286-ca0f78485288"
+          }
+        ],
+        "companion_result": {
+          "visual_subjects": [],
+          "analysis_summary": "正在查询柳州的真实地点…\n正在结合已取得的地点信息和资料整理建议…",
+          "response_text": "丙店（高德标注在柳州）连参考人均都没有，能确认的信息最少，晚餐候选里建议先排后面，等甲、乙或你自己补充菜系口味后再考虑。 [3]\n\n饮食要求（完全不吃辣）仍需逐家核对：目前的地点信息不能证明能提供符合你忌口的餐食，先确认食材、汤底和调料，再决定；参考消费低也不能证明适合。",
+          "goal_type": "recommendation",
+          "status": "completed",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_decision": "general_knowledge",
+            "knowledge_strategy": "selective",
+            "knowledge_reasons": [],
+            "source_required": false,
+            "optional_rag": false,
+            "knowledge_required": false,
+            "general_knowledge_allowed": false,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": true,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": null,
+          "runtime_trace": [],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "not_applicable",
+          "grounding_limitations": [],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        },
+        "assistant": "丙店（高德标注在柳州）连参考人均都没有，能确认的信息最少，晚餐候选里建议先排后面，等甲、乙或你自己补充菜系口味后再考虑。 [3]\n\n饮食要求（完全不吃辣）仍需逐家核对：目前的地点信息不能证明能提供符合你忌口的餐食，先确认食材、汤底和调料，再决定；参考消费低也不能证明适合。"
+      },
+      "seconds": 6.682653900003061,
+      "trace": {
+        "version": 1,
+        "correlation_id": "089b9a21-ef52-402c-abbc-4602b8c41f8b",
+        "answer_status": "captured",
+        "answer_attempts": 1,
+        "duration_ms": 6683,
+        "selection": {},
+        "events": [
+          {
+            "stage": "poi",
+            "status": "running",
+            "elapsed_ms": 0
+          },
+          {
+            "stage": "poi",
+            "status": "completed",
+            "elapsed_ms": 1
+          },
+          {
+            "stage": "answer",
+            "status": "running",
+            "elapsed_ms": 322
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 6681,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 6353
+          },
+          {
+            "stage": "answer",
+            "status": "completed",
+            "elapsed_ms": 6681
+          }
+        ]
+      }
+    }
+  ]
+}

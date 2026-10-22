@@ -2,6 +2,31 @@
 
 Last updated: 2026-10-22
 
+## Agent quality B — isolated candidate, not released (2026-10-22)
+
+VERIFIED: B branches from A's common f116ada baseline in
+E:/Study/RoamSync-agent-quality-b-20261022. Product commit c83a93c carries
+effective conditions into Research; compatible per-person meal-reference costs
+are compared by the server with source IDs and unknown menu/actual bills preserved.
+Explicit scalar withdrawal detaches old city/POI/route/Trip context. New internal
+trip/topic scopes and bounded withdrawn provenance remain session local. Public
+models, schema, Graph, Validator and Accept are unchanged. No merge or deployment.
+
+MEASURED: same-question withdrawal state 0/5 before, 5/5 after. Untouched holdout
+ran once after product freeze: 5/20 turns pass, one critical unsupported effort
+guarantee; overall NO-GO. Creation/modification/adoption has not completed a new
+live end-to-end. Windows 1472 unique tests pass across required separate databases;
+Linux main 1345 pass/27 skip, not a Linux full-suite pass. Exact raw runs, failed
+attempts, scoped metrics and hashes accompany docs/AGENT_QUALITY_B_DELIVERY_20261022.md.
+The implementing agent reviewed the holdout; no independent external review.
+
+OPEN: independent components can reinterpret hypotheticals and lose compound
+subtasks/date/effort conditions. Normalized memory values can fail literal guards;
+requirement projections disagree on negation. Legacy personal labels must not
+gain cross-journey scope. A's integration-only f39960c fences stored labels; B's
+bootstrap counterexample shows an additional legacy-message migration path,
+reported to A without parallel editing. B raw results do not measure A's fix.
+
 ## Journey handbook and source-bound intentions (2026-10-22)
 
 VERIFIED: canonical `/trips` and detail now use the handbook presentation with
