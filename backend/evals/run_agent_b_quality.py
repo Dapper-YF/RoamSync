@@ -49,15 +49,18 @@ async def dialogue_run(args, settings, output):
     from app.assistant_capabilities import select_capabilities
     from app.place_content.service import PlaceContentService
     from app.place_content.provider import AMapContentProvider
-    from app.place_content.repository import ContentRepository
+    from app.place_content.repository import ContentRepository, metadata as content_metadata
 
     assert settings.database_url == DB
     sync = create_engine(DB, poolclass=NullPool)
     Base.metadata.create_all(sync)
+    content_metadata.create_all(sync)
     engine = create_async_engine(DB, poolclass=NullPool)
     factory = async_sessionmaker(engine, expire_on_commit=False)
     fixture = ROOT / "evals/fixtures/agent_b_20261022.json"
     data = json.loads(fixture.read_text(encoding="utf-8"))
+    cases = [c for c in data[args.split] if not args.case or c["id"] == args.case]
+    replay = json.loads(args.replay.read_text(encoding="utf-8")) if args.replay else None
     report = {"split": args.split, "label": args.label, "source_sha": subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(), "fixture_sha256": hashlib.sha256(fixture.read_bytes()).hexdigest(),
         "model": settings.planner_model, "provider": settings.planner_provider, "synthetic": True, "records": []}
@@ -71,11 +74,14 @@ async def dialogue_run(args, settings, output):
     async def scenario(case):
         async with semaphore:
             async with factory() as db:
-                row = AssistantSession(messages=[], applied_actions={})
+                previous = [r["raw"] for r in replay["records"] if r["case"] == case["id"] and r["turn"] < args.from_turn] if replay else []
+                row = AssistantSession(messages=previous, applied_actions={})
                 db.add(row)
                 await db.commit()
                 sid = row.id
             for index, message in enumerate(case["turns"], 1):
+                if index < args.from_turn:
+                    continue
                 calls, choices = [], []
                 port = ContentServicePlaces(PlaceContentService(AMapContentProvider(settings.amap_rest_key), ContentRepository(sync)), owner="agent-b-synthetic")
                 for name in ("get_place", "search", "research_search", "query_route"):
@@ -116,7 +122,7 @@ async def dialogue_run(args, settings, output):
                 dump(output, report)
                 print(json.dumps({"case": case["id"], "turn": index, "seconds": record["seconds"], "error": record.get("error_type")}), flush=True)
     try:
-        await asyncio.gather(*(scenario(case) for case in data[args.split]))
+        await asyncio.gather(*(scenario(case) for case in cases))
         report["after"] = await counts()
         dump(output, report)
     finally:
@@ -167,7 +173,14 @@ def main():
     parser.add_argument("--label", required=True)
     parser.add_argument("--settings-source", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--case")
+    parser.add_argument("--from-turn", type=int, default=1)
+    parser.add_argument("--replay", type=Path)
     args = parser.parse_args()
+    if args.from_turn != 1 and (not args.replay or not args.case):
+        raise SystemExit("Tail replay requires a source trace and one named development case")
+    if args.split == "holdout" and (args.replay or args.case or args.from_turn != 1):
+        raise SystemExit("Holdout must run intact")
     if args.output.exists():
         raise SystemExit("Refusing to overwrite an earlier raw run")
     if sys.platform == "win32":
