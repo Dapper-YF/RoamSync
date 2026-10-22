@@ -20,19 +20,35 @@ function Text({ text, sources = [] }: { text: string; sources?: AnswerSearch["so
 }
 function SearchImage({ image }: { image: AnswerSearch["images"][number] }) {
   const [failed, setFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const reviewedLocal = image.usage_basis === "reviewed_commons_license" && /^\/api\/v1\/media\/place-images\/[a-z0-9-]+\.jpg$/.test(image.url) && !!image.license_url && safeUrl(image.license_url);
   if (failed || (!safeUrl(image.url) && !reviewedLocal) || !safeUrl(image.source_url)) return null;
-  const reference = !!image.topic && image.description.startsWith(image.topic + "参考图");
-  return <figure><a href={image.source_url} target="_blank" rel="noopener noreferrer"><img src={image.url} alt={image.description} loading="lazy" referrerPolicy="no-referrer" onError={() => setFailed(true)} /></a>{reference && <span className="assistant-photo-kind">参考图</span>}<details className="assistant-photo-credit"><summary aria-label="图片来源与许可">ⓘ</summary><small>{reviewedLocal ? image.attribution : image.description} · <a href={image.source_url} target="_blank" rel="noopener noreferrer">图片来源</a>{reviewedLocal && <> · <a href={image.license_url} target="_blank" rel="noopener noreferrer">{image.license_name || "授权说明"}</a>{image.changes ? ` · ${image.changes}` : ""}</>}</small></details></figure>;
+  const description = image.description.replace(/参考图\s*[·：:]?\s*/g, "");
+  return <figure className="assistant-inline-photo" style={loaded ? undefined : {display:"none"}}><a href={image.source_url} target="_blank" rel="noopener noreferrer"><img src={image.url} alt={description} loading="eager" referrerPolicy="no-referrer" onLoad={() => setLoaded(true)} onError={() => setFailed(true)} /></a><details className="assistant-photo-credit"><summary aria-label="图片来源与许可">ⓘ</summary><small>{reviewedLocal ? image.attribution : description} · <a href={image.source_url} target="_blank" rel="noopener noreferrer">图片来源</a>{reviewedLocal && <> · <a href={image.license_url} target="_blank" rel="noopener noreferrer">{image.license_name || "授权说明"}</a>{image.changes ? ` · ${image.changes}` : ""}</>}</small></details></figure>;
 }
-export function AssistantAnswer({ text, search }: { text: string; search?: AnswerSearch }) {
+export type AnswerVisuals = { status: string; images: AnswerSearch["images"]; requested?: boolean };
+export function AssistantAnswer({ text, search, visuals }: { text: string; search?: AnswerSearch; visuals?: AnswerVisuals }) {
   const paragraphs = text.split(/\n\s*\n/);
   const usable = search?.status === "available" && search.sources.length > 0;
+  const images = [...new Map([...(usable ? search.images : []), ...(visuals?.status === "available" ? visuals.images : [])]
+    .filter(i => !i.topic || text.includes(i.topic) || (i.place_id && search?.sources.some(s => s.place_id === i.place_id)))
+    .map(i => [i.url, i])).values()].slice(0, 3);
+  const placements = new Map<number, AnswerSearch["images"][number]>();
+  for (const image of images) {
+    const candidates = paragraphs.map((paragraph,index) => {
+      const position = image.topic ? paragraph.indexOf(image.topic) : -1;
+      return {index,score:position >= 0 ? (position < 12 ? 120 : 0) + Math.min(paragraph.length,180) : image.topic ? -1 : 0};
+    }).filter(candidate=>candidate.score >= 0 && !placements.has(candidate.index)).sort((a,b)=>b.score-a.score||a.index-b.index);
+    const target = candidates[0]?.index ?? (image.place_id && !placements.has(0) ? 0 : undefined);
+    if (target !== undefined) placements.set(target,image);
+  }
   return <div className="assistant-answer-content">
-    {paragraphs.map((paragraph, n) => <div key={n}><p><Text text={paragraph} sources={usable ? search.sources : []} /></p>
-      {n === 0 && usable && search.images.length > 0 && <div className="assistant-answer-images">{search.images.filter(i => !i.topic || text.includes(i.topic) || (i.place_id && search.sources.some(s => s.place_id === i.place_id))).slice(0, 3).map(i => <SearchImage key={i.url} image={i} />)}</div>}
+    {paragraphs.map((paragraph, n) => <div key={n} className="assistant-answer-block">
+      {placements.has(n) && <SearchImage key={placements.get(n)!.url} image={placements.get(n)!} />}
+      <p><Text text={paragraph} sources={usable ? search.sources : []} /></p>
     </div>)}
     {usable && <details className="ai-thinking"><summary>参考链接</summary><ul>{search.sources.filter(s => safeUrl(s.url)).map((s, index) => <li key={s.source_id || s.url}><a href={s.url} target="_blank" rel="noopener noreferrer">[{index + 1}] {s.title || "查看来源"}</a>{s.read_level && <small> · {s.read_level === "page_text" ? "已读取正文" : s.read_level === "provider_reference" ? "高德参考信息" : "仅搜索摘要"}</small>}</li>)}</ul></details>}
     {search?.status === "unavailable" && <p className="travel-assistant-status">这次联网搜索暂不可用，可以稍后重试。</p>}
+    {visuals?.requested && visuals.status === "unavailable" && <p className="travel-assistant-status">相关图片暂未找到，文字内容已保留。</p>}
   </div>;
 }

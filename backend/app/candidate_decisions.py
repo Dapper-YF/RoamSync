@@ -445,6 +445,8 @@ def review_candidate_decisions(context: dict, snapshot) -> dict:
         if result["type"] == "hard" and result["status"] == "unsatisfied":
             hard_errors.append({"code": "effective_requirement_unsatisfied", "message": "候选未满足有效硬要求。",
                                 "details": result["evidence"]})
+        elif result["type"] == "hard" and result["status"] == "not_evaluable" and result["evidence"].get("limit_minutes") is not None:
+            hard_errors.append({"code":"walking_limit_unverifiable", "message":"现有路线不足以核实活动间步行上限。", "details":result["evidence"]})
     chosen_by_date = {(a.day_date.isoformat(), str(a.place_candidate_id)) for a in snapshot.activities}
     selected_tradeoffs = []
     for pair in comparison.get("walking_tradeoffs", []):

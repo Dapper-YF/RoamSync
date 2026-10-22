@@ -282,7 +282,7 @@ def test_companion_provider_uses_bounded_draft_schema_without_tools(monkeypatch)
     assert answer.agent_claims[0].text == "可以按兴趣与节奏逐项比较。"
     assert "tools" not in calls[0]
     schema = calls[0]["text_format"]["schema"]
-    assert set(schema["properties"]) == {"analysis_summary", "agent_claims", "suggestions", "comparison"}
+    assert set(schema["properties"]) == {"analysis_summary", "agent_claims", "suggestions", "comparison", "visual_subjects"}
     assert schema["additionalProperties"] is False
     assert client.closed
 
@@ -311,6 +311,6 @@ def test_companion_provider_general_food_reply_uses_plain_answer_schema(monkeypa
         CompanionContext(current_message=text, travel_goal=route_travel_goal(text)),
         InformationNeed(general_knowledge_allowed=True)))
     assert result.response_text == "南京常见小吃有鸭血粉丝汤。"
-    assert set(calls[0]["text_format"]["schema"]["properties"]) == {"analysis_summary", "response_text", "suggestions", "comparison", "evidence_refs"}
+    assert set(calls[0]["text_format"]["schema"]["properties"]) == {"analysis_summary", "response_text", "suggestions", "comparison", "evidence_refs", "visual_subjects"}
     assert calls[0]["instructions"].startswith(service.GENERAL_KNOWLEDGE_INSTRUCTIONS)
     assert "public summary" in calls[0]["instructions"]

@@ -18,9 +18,14 @@ router = APIRouter(prefix="/api/v1/agent-monitor", tags=["agent-monitor"])
 
 
 @router.get("/sessions/{session_id}/messages/{message_id}")
-async def dialogue_trace(session_id: uuid.UUID, message_id: uuid.UUID):
+async def dialogue_trace(session_id: uuid.UUID, message_id: uuid.UUID, db: AsyncSession = Depends(get_session)):
     from app.dialogue_observation import snapshot
-    return snapshot(session_id, message_id)
+    live = snapshot(session_id, message_id)
+    row = await db.get(AssistantSession, session_id)
+    message = next((m for m in row.messages if m.get("id") == str(message_id)), None) if row else None
+    if message and message.get("execution_summary"):
+        return {**live, "execution_summary": message["execution_summary"], "source": "persisted_session_and_process_local"}
+    return live
 
 STAGES = [("message", "User Message"), ("intent", "Intent Understanding"),
           ("goal", "Goal Extraction"), ("context", "Context Building"),

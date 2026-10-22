@@ -100,6 +100,30 @@ def formal_route_facts(context: dict, goals: PlanningGoals) -> dict:
     return {"days": days}
 
 
+def walking_route_evidence(context, snapshot, day_date):
+    """Inter-activity travel only. Transit access and on-site walking are unknown."""
+    represented = {str(a.replaces_activity_id) for a in snapshot.activities if a.replaces_activity_id}
+    protected = set(((context.get("decision_context") or {}).get("protected_constraints") or {}).get("protected_activity_ids") or [])
+    nodes = [(str(a.planned_start_time), a.candidate_id) for a in snapshot.activities if a.day_date.isoformat() == day_date]
+    for day in context.get("days", []):
+        if day["date"] != day_date:
+            continue
+        for a in day.get("activities", []):
+            if str(a["id"]) not in represented and (str(a["id"]) in protected or a.get("schedule_locked") or a.get("status") in {"active", "completed", "skipped"}):
+                nodes.append((str(a["scheduled_time"]), "activity:"+str(a["id"])))
+    refs = [ref for _, ref in sorted(nodes)]
+    expected = list(zip(refs, refs[1:]))
+    legs = sorted([leg for leg in snapshot.route_legs if leg.day_date.isoformat() == day_date], key=lambda leg:leg.position)
+    complete = len(legs) == len(expected) and all(
+        (leg.from_activity_ref, leg.to_activity_ref) == pair and leg.position == i
+        and not leg.is_estimated and leg.mode != "transit"
+        for i, (leg, pair) in enumerate(zip(legs, expected)))
+    minutes = sum(leg.duration_minutes for leg in legs if leg.mode == "walk")
+    return {"candidate_walking_minutes":minutes, "route_coverage":"complete" if complete else "unknown",
+            "has_estimated_routes":any(leg.is_estimated for leg in legs),
+            "walking_scope":"inter_activity_travel_only", "on_site_walking":"unknown", "transit_access_walking":"unknown"}
+
+
 def check_goal_satisfaction(*, goals: PlanningGoals, before_context: dict, snapshot: CandidatePlanSnapshot) -> GoalSatisfactionResult:
     selected = set(goals.target_days)
     activities = [item for item in snapshot.activities if not selected or item.day_date.isoformat() in selected]
@@ -138,13 +162,12 @@ def check_goal_satisfaction(*, goals: PlanningGoals, before_context: dict, snaps
         for day in before_context.get("days", []):
             if selected and day["date"] not in selected:
                 continue
-            walking = sum(leg.duration_minutes for leg in snapshot.route_legs
-                          if leg.mode == "walk" and leg.day_date.isoformat() == day["date"])
+            evidence = walking_route_evidence(before_context, snapshot, day["date"])
+            walking = evidence["candidate_walking_minutes"]
             results.append({
                 "goal": "max_walking_minutes", "type": "hard",
-                "status": "satisfied" if walking <= goals.hard_goals.max_walking_minutes else "unsatisfied",
-                "evidence": {"date": day["date"], "limit_scope": "daily", "limit_minutes": goals.hard_goals.max_walking_minutes,
-                             "candidate_walking_minutes": walking},
+                "status": "unsatisfied" if walking > goals.hard_goals.max_walking_minutes else "satisfied" if evidence["route_coverage"] == "complete" else "not_evaluable",
+                "evidence": {"date": day["date"], "limit_scope": "daily", "limit_minutes": goals.hard_goals.max_walking_minutes, **evidence},
             })
     if goals.soft_goals.minimize_walking:
         results.append({"goal": "minimize_walking", "type": "soft", "status": "not_evaluable",
@@ -212,21 +235,10 @@ def _effective_requirement_results(context: dict, snapshot: CandidatePlanSnapsho
                                 limitation="expenses_have_no_activity_link_prepaid_overlap_cannot_be_resolved")
                 status = "unsatisfied" if exposure > value else "satisfied" if spent is not None else "not_evaluable"
             elif key == "max_walking_minutes" and isinstance(value, int) and not isinstance(value, bool) and value >= 0:
-                minutes = sum(leg.duration_minutes for leg in snapshot.route_legs if leg.mode == "walk" and (not local or leg.day_date.isoformat() == day_date))
-                expected_legs = 0
-                for scoped_day in context.get("days", []):
-                    if local and scoped_day["date"] != day_date:
-                        continue
-                    nodes = sum(item.day_date.isoformat() == scoped_day["date"] for item in snapshot.activities)
-                    nodes += sum(str(item["id"]) not in represented and item.get("status") != "skipped"
-                                 and (str(item["id"]) in protected or item.get("schedule_locked") or item.get("status") in {"active", "completed"})
-                                 for item in scoped_day.get("activities", []))
-                    expected_legs += max(0, nodes - 1)
-                actual_legs = sum(not local or leg.day_date.isoformat() == day_date for leg in snapshot.route_legs)
-                evidence.update(limit_minutes=value, limit_scope="daily", candidate_walking_minutes=minutes,
-                                has_estimated_routes=any(leg.is_estimated for leg in snapshot.route_legs if leg.mode == "walk" and leg.day_date.isoformat() == day_date),
-                                route_coverage="complete" if actual_legs == expected_legs else "unknown")
-                status = "unsatisfied" if minutes > value else "satisfied" if actual_legs == expected_legs else "not_evaluable"
+                walking = walking_route_evidence(context, snapshot, day_date)
+                minutes = walking["candidate_walking_minutes"]
+                evidence.update(limit_minutes=value, limit_scope="daily", **walking)
+                status = "unsatisfied" if minutes > value else "satisfied" if walking["route_coverage"] == "complete" else "not_evaluable"
             elif key == "end_before" and isinstance(value, str) and re.fullmatch(r"(?:[01]\d|2[0-3]):[0-5]\d", value):
                 ends = [_end_time(str(item.planned_start_time), item.duration_minutes) for item in activities]
                 ends += [_end_time(str(item["scheduled_time"]), item["duration_minutes"]) for item in retained]

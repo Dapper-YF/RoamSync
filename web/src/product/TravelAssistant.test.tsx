@@ -23,6 +23,46 @@ function doneResponse(next: AssistantSession) {
 }
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); sessionStorage.clear(); localStorage.clear(); });
 
+it("starts an isolated new chat without deleting the prior messages", async () => {
+  vi.stubEnv("VITE_DISCOVERY_PRODUCT", "true");
+  const old = {...session(),messages:[{id:"old",user:"旧条件",assistant:"旧对话内容",context:{version:"assistant-context-v1",topic_id:"old-topic"}}]};
+  const fresh = {...session(),id:"fresh-session",messages:[]};
+  localStorage.setItem("roamsync.discovery.topic","old-topic");
+  const fetcher=vi.fn(async (_url:RequestInfo|URL,init?:RequestInit)=>new Response(JSON.stringify(JSON.parse(String(init?.body||"{}" )).new_session ? fresh : old),{headers:{"Content-Type":"application/json"}}));
+  vi.stubGlobal("fetch",fetcher);
+  setup();
+  await screen.findByText("旧对话内容");
+  await userEvent.click(screen.getByRole("button",{name:"新对话"}));
+  await waitFor(()=>expect(localStorage.getItem("roamsync.assistant.session.global")).toBe("fresh-session"));
+  expect(screen.queryByText("旧对话内容")).toBeNull();
+  expect(localStorage.getItem("roamsync.discovery.topic")).not.toBe("old-topic");
+  expect(old.messages).toHaveLength(1);
+  expect(fetcher.mock.calls.some(([,init])=>JSON.parse(String(init?.body||"{}" )).new_session)).toBe(true);
+});
+
+it("retries a persisted failed answer with a new message id and retains its diagnostic", async () => {
+  const failed: AssistantSession = { ...session(), messages: [{ id: "failed-turn", user: "列出成都热门景点", assistant: "这次回答没有完成，请重试。",
+    execution_summary: { version: 1, correlation_id: "failed-turn", answer_status: "failed" } }] };
+  const fetcher = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) => doneResponse({ ...failed, messages: [...failed.messages, { id: "new-turn", user: "列出成都热门景点", assistant: "成都景点概览" }] }));
+  vi.stubGlobal("fetch", fetcher);
+  setup("/assistant", { getAssistantSession: vi.fn().mockResolvedValue(failed) });
+  const button = await screen.findByRole("button", { name: "重试回答" });
+  await userEvent.click(button);
+  await screen.findByText("成都景点概览");
+  const payload = JSON.parse(fetcher.mock.calls[0][1]!.body as string);
+  expect(payload.message_id).not.toBe("failed-turn");
+  expect(payload.message).toBe("列出成都热门景点");
+  expect(screen.getByText("这次回答没有完成，请重试。")).toBeVisible();
+});
+
+it("offers retry for a legacy provider failure without execution metadata", async () => {
+  const failed: AssistantSession = { ...session(), messages: [{ id: "legacy-failure", user: "列出成都热门景点", assistant: "这次智能回答暂不可用。",
+    companion_result: { response_text: "这次智能回答暂不可用。", goal_type: "travel_chat", status: "needs_information", suggestions: [], resolved_suggestion_refs: [], runtime_trace: [],
+      information_gaps: [{ code: "provider_unavailable", message: "智能回答暂不可用。" }] } }] };
+  setup("/assistant", { getAssistantSession: vi.fn().mockResolvedValue(failed) });
+  expect(await screen.findByRole("button", { name: "重试回答" })).toBeEnabled();
+});
+
 it("does not project legacy or other Topic messages into C's active Topic", async () => {
   vi.stubEnv("VITE_ASSISTANT_CONTEXT_CONTRACT", "assistant-context-v1");
   const next: AssistantSession = { ...session(), messages: [

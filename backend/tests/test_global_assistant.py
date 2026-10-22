@@ -109,7 +109,9 @@ def test_route_estimate_uses_read_tool_and_never_model():
         message=message, goal=route_travel_goal(message), messages=[], assistant_context={"browsing_city": "南京"},
         read_tool_context={"route": {"status": "available", "result": {
             "mode": "walk", "distance_meters": 1234, "duration_seconds": 567}}}))
-    assert "1234米、567秒" in result.response_text
+    assert "约1.2公里、约10分钟" in result.response_text
+    assert "不含场所内游览和等候" in result.response_text
+    assert result.resolved_facts == []  # provider values are rendered, never a model fact
     assert "供应商估计" in result.response_text
 
 

@@ -13,6 +13,7 @@ export function PlanningGoalCard({ revision }: { revision: PlanRevision }) {
       {goals.softGoals.minimizeWalking && <li>尽量少走路</li>}
       {goals.softGoals.preserveExisting && <li>尽量保留现有活动</li>}
     </ul>
+    {goals.hardGoals.maxWalkingMinutes != null && <p>目前只核对活动间的交通步行；景区内部和公交换乘步行尚未完整核实，不能据此保证整日总步行量。</p>}
     <strong>方案检查结果</strong>
     <ul className="goal-result-list">
       {results.map((result) => <li key={result.goal} className={`goal-${result.status}`}>
@@ -25,6 +26,7 @@ export function PlanningGoalCard({ revision }: { revision: PlanRevision }) {
 
 function label(goal: string, evidence: Record<string, unknown>) {
   if (goal === "end_before") return `结束时间：${String(evidence.candidate_end ?? "未生成")}（要求 ${String(evidence.required_end_before)} 前）`;
+  if (goal === "max_walking_minutes" && evidence.walking_scope === "inter_activity_travel_only") return `活动间已知步行：${String(evidence.candidate_walking_minutes)} 分钟（上限 ${String(evidence.limit_minutes)} 分钟；${evidence.route_coverage === "complete" ? "交通路段完整" : "路线未完整核实"}）`;
   if (goal === "max_walking_minutes") return `步行：${String(evidence.candidate_walking_minutes)} 分钟（上限 ${String(evidence.limit_minutes)} 分钟）`;
   if (goal === "minimize_walking") return `步行变化：${String(evidence.before_walking_minutes)} → ${String(evidence.after_walking_minutes)} 分钟`;
   if (goal === "preserve_existing") return `保留 ${String(evidence.preserved_count)}/${String(evidence.before_activity_count)} 个原活动`;

@@ -30,6 +30,7 @@ import { createExploreRepository } from "../data/exploreRepository";
 import { readAssistantStream } from "../data/assistantStream";
 import {
   assistantTopic,
+  newAssistantTopic,
   productAssistantContext,
   type AssistantProductReadContext,
 } from "../data/productAssistantContext";
@@ -39,7 +40,7 @@ import "./TravelAssistant.css";
 import { createStreamBuffer } from "../data/streamBuffer";
 import { assistantRequest, arrangementAction, type Arrangement, type Revision, type Run } from "./arrangementApi";
 import { AssistantDecisions } from "./AssistantDecisions";
-import { AssistantAnswer, type AnswerSearch } from "../components/AssistantAnswer";
+import { AssistantAnswer, type AnswerSearch, type AnswerVisuals } from "../components/AssistantAnswer";
 
 interface RouteReadRequest {
   origin_place_id: string;
@@ -59,6 +60,7 @@ interface AssistantState {
   closeAssistant: () => void;
   context: TravelAssistantContext;
   resetContext: () => void;
+  startNewConversation: () => Promise<void>;
   session?: AssistantSession;
   draft: string;
   setDraft: (value: string) => void;
@@ -78,6 +80,7 @@ interface AssistantState {
   send: (
     routeRequest?: RouteReadRequest,
     routeMessage?: string,
+    freshAttempt?: boolean,
   ) => Promise<void>;
   retrySession: () => void;
   exploreRepository: ExploreRepository;
@@ -282,6 +285,19 @@ export function TravelAssistantProvider({
     setDraft("");
     setError("");
   };
+  const startNewConversation = async () => {
+    if (busy || loading || sending.current) return;
+    setLoading(true); setError("");
+    try {
+      const next = await assistantRequest<AssistantSession>("/assistant/sessions", {method:"POST",body:JSON.stringify({new_session:true})});
+      newAssistantTopic();
+      localStorage.setItem("roamsync.assistant.session.global", next.id);
+      setSessions(values => ({...values,global:next}));
+      setContext({}); setDraft(""); setSubmission(""); setStream(""); setAnalysis(""); setStatus("");
+      setArrangement(undefined); setRevision(undefined); setRun(undefined); retryMessage.current=null;
+    } catch (e) { setError(messageOf(e)); }
+    finally { setLoading(false); }
+  };
   const closeAssistant = useCallback(() => setOpened(false), []);
 
   useEffect(() => {
@@ -316,6 +332,7 @@ export function TravelAssistantProvider({
   const send = async (
     routeRequest?: RouteReadRequest,
     routeMessage?: string,
+    freshAttempt = false,
   ) => {
     const message = routeMessage ?? draft.trim();
     if (!message || !session || busy || loading || sending.current) return;
@@ -325,7 +342,7 @@ export function TravelAssistantProvider({
     const selectedContext = context;
     const previous = retryMessage.current;
     const id =
-      previous?.scope === scope && previous.message === message
+      !freshAttempt && previous?.scope === scope && previous.message === message
         ? previous.id
         : crypto.randomUUID();
     retryMessage.current = { scope, message, id };
@@ -411,6 +428,7 @@ export function TravelAssistantProvider({
     closeAssistant,
     context,
     resetContext,
+    startNewConversation,
     session,
     draft,
     setDraft,
@@ -563,6 +581,7 @@ function AssistantConversation({ drawer = false }: { drawer?: boolean }) {
             回到自由聊
           </button>
         )}
+        {import.meta.env.VITE_DISCOVERY_PRODUCT === "true" && <button onClick={() => void assistant.startNewConversation()} disabled={busy || loading}>新对话</button>}
       </div>
       {context.place && (
         <div className="travel-assistant-address">
@@ -654,7 +673,10 @@ function AssistantConversation({ drawer = false }: { drawer?: boolean }) {
                   <AssistantAnswer text={companionAnswer(
                     message.companion_result?.response_text ||
                       message.assistant,
-                  )} search={(message.read_tools as { web_search?: AnswerSearch } | undefined)?.web_search} />
+                  )} search={(message.read_tools as { web_search?: AnswerSearch } | undefined)?.web_search}
+                    visuals={(message.read_tools as { visuals?: AnswerVisuals } | undefined)?.visuals} />
+                  {(message.execution_summary?.answer_status === "failed" || (!message.execution_summary && message.companion_result?.information_gaps?.some(g => g.code === "provider_unavailable"))) &&
+                    <button type="button" disabled={busy || loading} onClick={() => void assistant.send(undefined, message.user, true)}>重试回答</button>}
                 </div>
                 {!!message.place_cards?.some(c => c.reason_kind === "retrieved_reference") && <AssistantPlaceMap cards={message.place_cards} />}
                 {!!message.place_cards?.some(c => c.reason_kind !== "retrieved_reference") && (

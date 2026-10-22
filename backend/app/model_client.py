@@ -1,10 +1,33 @@
 import json
 from types import SimpleNamespace
 from typing import Any
+from functools import wraps
+from time import perf_counter
 
 from openai import AsyncOpenAI, DefaultAsyncHttpxClient
 
 from app.config import Settings
+from app.assistant_reliability import active_turn
+
+
+def observe_model(operation):
+    @wraps(operation)
+    async def wrapped(client, settings, **kwargs):
+        turn = active_turn.get()
+        started = perf_counter()
+        try:
+            result = await operation(client, settings, **kwargs)
+        except Exception as exc:
+            if turn:
+                turn.failure("model", exc)
+            raise
+        if turn:
+            turn.record("model", "completed" if result.status == "completed" else "incomplete",
+                provider=settings.planner_provider, model=settings.planner_model,
+                finish_reason=getattr(result, "finish_reason", None),
+                duration_ms=round((perf_counter() - started) * 1000))
+        return result
+    return wrapped
 
 
 def build_model_client(settings: Settings) -> AsyncOpenAI:
@@ -18,11 +41,12 @@ def build_model_client(settings: Settings) -> AsyncOpenAI:
         api_key=settings.planner_api_key.get_secret_value(),
         base_url=settings.planner_base_url,
         timeout=settings.planner_timeout_seconds,
-        max_retries=settings.planner_max_retries,
+        max_retries=0 if active_turn.get() is not None else settings.planner_max_retries,
         http_client=transport,
     )
 
 
+@observe_model
 async def create_model_response(
     client: Any,
     settings: Settings,

@@ -20,6 +20,12 @@ export function assistantTopic(): string {
   }
 }
 
+export function newAssistantTopic(): string {
+  const topic = `discovery-${crypto.randomUUID()}`;
+  try { localStorage.setItem("roamsync.discovery.topic", topic); } catch { /* Session still isolates history. */ }
+  return topic;
+}
+
 export interface AssistantDiscoveryContext {
   city?: string;
   query?: string;

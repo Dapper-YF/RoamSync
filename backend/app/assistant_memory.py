@@ -1,0 +1,224 @@
+"""Server-owned conversational conditions; user evidence, never write authority."""
+import re
+from typing import Literal
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class MemoryUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    field: str = Field(pattern=r"^(city|start_date|duration_days|party_size|budget|preferences|requirements|images)$")
+    operation: str = Field(default="set", pattern=r"^(set|add|remove|clear)$")
+    value: str = Field(default="", max_length=240)
+    replaces: str = Field(default="", max_length=240)
+    source_quote: str = Field(min_length=1, max_length=300)
+    scope: Literal["personal", "destination"] = "personal"
+
+
+def local_today():
+    return datetime.now(ZoneInfo("Asia/Shanghai")).date()
+
+
+def reset_requested(message):
+    return bool(re.search(r"^(?:请|我们|那就|现在|先)?(?:换个话题|换一个话题|重新开始|开始新对话|另一次旅行|新的旅行|新的一次旅行)", message.strip()))
+
+
+def server_memory(envelope):
+    value = envelope.conversation_memory
+    return value if isinstance(value, dict) and value.get("version") == 1 else {"version": 1, "epoch": "", "slots": {}, "preferences": [], "requirements": []}
+
+
+def anchored_date(value, today):
+    relative = {"今天": 0, "明天": 1, "后天": 2}
+    if value in relative:
+        return (today + timedelta(days=relative[value])).isoformat()
+    week = re.fullmatch(r"(下下|下|本|这)?(?:周|星期)([一二三四五六日天])", value)
+    if week:
+        weekday = "一二三四五六日".index(week[2].replace("天", "日"))
+        offset = {"下下": 2, "下": 1, "本": 0, "这": 0}.get(week[1], 0)
+        result = today - timedelta(days=today.weekday()) + timedelta(days=offset * 7 + weekday)
+        if not week[1] and result < today:
+            result += timedelta(days=7)
+        return result.isoformat()
+    try:
+        if re.fullmatch(r"20\d{2}-\d{1,2}-\d{1,2}", value):
+            return date.fromisoformat(value).isoformat()
+        match = re.fullmatch(r"(?:(20\d{2})年)?(\d{1,2})月(\d{1,2})[日号]?", value)
+        if match:
+            chosen = date(int(match[1] or today.year), int(match[2]), int(match[3]))
+            if not match[1] and chosen < today:
+                chosen = chosen.replace(year=today.year + 1)
+            return chosen.isoformat()
+    except ValueError:
+        pass
+    return None
+
+
+def literal_conditions(message):
+    """Exact date/duration slot answers also work in the existing planning handoff."""
+    if re.search(r"如果|假如|假设|要是|[“”「」\"?？]|是否|吗|几天|合适|介绍|解释|朋友|听说|他|她|取消出发|不出发", message):
+        return []
+    updates = []
+    if re.search(r"我(?:们)?.{0,8}(?:去|到)|改去|目的地", message):
+        from app.companion_information import explicit_destination
+        city = explicit_destination(message)
+        if city and city in message:
+            updates.append(MemoryUpdate(field="city", value=city, source_quote=city))
+    date_token = r"今天|明天|后天|20\d{2}-\d{2}-\d{2}|(?:20\d{2}年)?\d{1,2}月\d{1,2}[日号]|(?:下下|下|本|这)?(?:周|星期)[一二三四五六日天]"
+    match = re.search(rf"({date_token})(?:\s*(?:开始|出发|去))|(?:出发(?:日期)?(?:改为|改成|为|是)?|改为|改成)\s*({date_token})", message)
+    if match:
+        updates.append(MemoryUpdate(field="start_date", value=match[1] or match[2], source_quote=match[0]))
+    duration = re.search(r"(?:游玩|玩|待|改为|改成|那就)([一二三四五六七八九十两\d]+天)", message)
+    if duration:
+        updates.append(MemoryUpdate(field="duration_days", value=duration[1], source_quote=duration[0]))
+    # High-precision personal declarations must not disappear when the single
+    # semantic selector omits a memory patch beside dates/duration. These are
+    # literal user data only; apply_memory still checks provenance and scope.
+    for clause in re.split(r"[，,。；;!?！？]", message):
+        clause = clause.strip()
+        if re.search(r"不是不吃辣|不再不吃辣|不用不吃辣|不必不吃辣|不用吃素|不再吃素", clause):
+            continue
+        match = re.fullmatch(r"(?:我(?:们)?(?:都)?|这次|全程|完全|严格)?\s*(不吃辣|不能吃辣|吃不了辣|吃素|少走路|慢慢逛|别太赶)", clause)
+        if match:
+            updates.append(MemoryUpdate(field="preferences", operation="add", value=match[1], source_quote=clause))
+    return updates
+
+
+def apply_memory(envelope, history, message, message_id, updates=(), *, today=None):
+    """Only exact current-user quotes can update persisted conditions.
+
+    A city correction keeps personal conditions, but drops old place focus.
+    A new conversation/task resets all local conditions and its prompt history.
+    """
+    from copy import deepcopy
+    memory = deepcopy(server_memory(envelope))
+    reset = reset_requested(message) and memory.get("epoch") != str(message_id)
+    if reset:
+        memory = {"version": 1, "epoch": str(message_id), "slots": {}, "preferences": [], "requirements": [], "detached_trip": True}
+        history = []
+        envelope = envelope.model_copy(update={"browsing_city": None, "discussing_place_id": None,
+            "discussing_place_ids": [], "discovery_context": None, "requirements": None, "requirement_records": [], "read_trip_id": None,
+            "read_draft_id": None, "read_draft_version": None, "action_target": None})
+    original_city = memory["slots"].get("city", {}).get("value") or envelope.browsing_city
+    accepted = []
+    for update in updates:
+        quote, value = update.source_quote, update.value.strip()
+        if re.match(r"^(?:如果|假如|假设|要是)", message.strip()) and not re.search(r"但我|不过我|我决定|还是决定", message):
+            continue
+        # Quoted, speculative or negated destination alternatives are not state.
+        if quote not in message or re.search(r"如果|假如|假设|要是|比如|他说|她说|有人说|攻略说|[“”「」\"]", quote):
+            continue
+        if any(quote in part for part in re.findall(r'[“「\"](.*?)[”」\"]', message)):
+            continue
+        prefix = message[:message.find(quote)]
+        if re.search(r"(?:如果|假如|假设|要是)[^，。；!?！？]*$", prefix):
+            continue
+        if re.search(r"(?:朋友|他说|她说|有人说|攻略说)[^，。；!?！？]*$", prefix):
+            continue
+        key, operation = update.field, update.operation
+        if key == "city" and value in {"哪里", "哪儿", "哪个城市", "什么城市", "某地", "未知", "未定"}:
+            continue
+        if key in {"preferences", "requirements"} and (operation == "remove" or update.replaces) and not re.search(r"取消|不再|不看|不要|不喜欢|不想|改|换|可以|现在|清除|撤销|忘掉", quote):
+            continue
+        if operation not in {"clear", "remove"} and (not value or value not in quote):
+            continue
+        if key == "city" and re.search(r"不去|别去|不要去|不想去|取消去", re.split(r"[，。；!?！？]", prefix)[-1] + quote):
+            continue
+        if operation == "clear" and not re.search(r"取消|不限|不设|清除|忘掉|不再|不要|无需|不用", quote):
+            continue
+        normalized = value
+        if key == "start_date" and operation not in {"clear", "remove"}:
+            normalized = anchored_date(value, today or local_today())
+            if not normalized:
+                continue
+        if key in {"duration_days", "party_size"} and operation not in {"clear", "remove"}:
+            from app.travel_language import chinese_number
+            token = re.search(r"[一二三四五六七八九十两\d]+", value)
+            number = chinese_number(token[0]) if token else 0
+            if not 1 <= number <= (31 if key == "duration_days" else 100):
+                continue
+            normalized = number
+        evidence = {"value": normalized, "source_quote": quote, "message_id": str(message_id), "scope": update.scope}
+        if key in {"preferences", "requirements"}:
+            items = memory[key]
+            if operation == "clear":
+                items = []
+            else:
+                remove = update.replaces or (value if operation == "remove" else "")
+                items = [item for item in items if item["value"] not in {remove, value}]
+                if operation != "remove":
+                    items.append(evidence)
+            memory[key] = items[-20:]
+        elif operation in {"clear", "remove"}:
+            memory["slots"].pop(key, None)
+        else:
+            memory["slots"][key] = evidence
+        accepted.append(key)
+    city = memory["slots"].get("city", {}).get("value")
+    changes = {"conversation_memory": memory}
+    if city:
+        changes["browsing_city"] = city
+    if city and original_city and city.removesuffix("市") != original_city.removesuffix("市"):
+        # Old recommendation IDs, POI focus and local constraints cannot cross cities.
+        history = []
+        memory["epoch"] = str(message_id)
+        memory["detached_trip"] = True
+        memory["requirements"] = [r for r in memory["requirements"] if r.get("scope", "personal") != "destination"]
+        changes.update(discussing_place_id=None, discussing_place_ids=[], discovery_context=None,
+            requirement_records=[], requirements=None, read_trip_id=None, read_draft_id=None, read_draft_version=None, action_target=None)
+    return envelope.model_copy(update=changes), history, accepted
+
+
+def memory_prompt(envelope):
+    memory = server_memory(envelope)
+    return {"slots": memory["slots"], "preferences": memory["preferences"], "requirements": memory["requirements"]}
+
+
+def bootstrap_memory(envelope, history):
+    """Conservative upgrade of older server messages, never assistant assertions.
+
+    Old relative dates without their observation time stay unresolved instead of
+    silently moving the user's departure to tomorrow again after deployment.
+    """
+    if envelope.conversation_memory.get("version") == 1:
+        return envelope
+    for turn in history:
+        text = turn.get("user", "")
+        if re.search(r"如果|假如|假设|要是|[“”「」\"]", text):
+            continue
+        updates = []
+        if re.search(r"(?:我|我们|这次).{0,5}(?:去|到)", text):
+            from app.companion_information import explicit_destination
+            city = explicit_destination(text)
+            if city and city in text:
+                updates.append(MemoryUpdate(field="city", value=city, source_quote=text[:300]))
+        absolute = re.search(r"20\d{2}-\d{2}-\d{2}", text)
+        if absolute and re.search(r"出发|去|开始", text):
+            updates.append(MemoryUpdate(field="start_date", value=absolute[0], source_quote=text[:300]))
+        duration = re.search(r"(?:玩|游玩|待|改成|改为|那就)([一二三四五六七八九十两\d]+天)", text)
+        if duration and not re.search(r"几天|合适|够吗|是否", text):
+            updates.append(MemoryUpdate(field="duration_days", value=duration[1], source_quote=duration[0]))
+        for clause in re.split(r"[，。；!?！？]", text):
+            if re.search(r"我(?:们)?(?:不?喜欢|偏好)|不吃辣|吃素|少走路|慢慢逛", clause):
+                literal = clause.strip()[:240]
+                if literal:
+                    updates.append(MemoryUpdate(field="preferences", operation="add", value=literal, source_quote=literal))
+        envelope, _, _ = apply_memory(envelope, [], text, turn.get("id", "legacy"), updates)
+    return envelope
+
+
+def condition_ack(envelope, message, changed):
+    if not changed or re.search(r"[?？]|吗|什么|哪些|如何|怎样|怎么|介绍|了解|想知道|聊|推荐|区别|解释|查询|搜索|看看|说说|建议|是否|能不能|列出|罗列|景点|攻略|展开|详细|告诉|给我|帮我", message):
+        return None
+    memory = server_memory(envelope)
+    names = {"city": "目的地", "start_date": "出发日期", "duration_days": "游玩天数", "party_size": "同行人数", "budget": "预算", "images": "配图偏好"}
+    parts = []
+    for key in dict.fromkeys(changed):
+        if key in {"preferences", "requirements"}:
+            values = "、".join(i["value"] for i in memory[key])
+            parts.append(("偏好" if key == "preferences" else "要求") + ("：" + values if values else "已清除"))
+        else:
+            value = memory["slots"].get(key, {}).get("value")
+            parts.append(names[key] + ("：" + str(value) if value is not None else "已清除"))
+    return "已更新这次聊天的条件：" + "；".join(parts) + "。"

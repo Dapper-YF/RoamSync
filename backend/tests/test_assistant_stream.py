@@ -126,3 +126,24 @@ def test_sse_failure_terminates_even_when_database_rollback_fails():
             await iterator.aclose()
 
     asyncio.run(scenario())
+
+
+def test_sse_conversation_conflict_has_safe_reason_and_correlation(caplog):
+    from fastapi import HTTPException
+    from app.assistant_service import AssistantToolError
+    async def scenario():
+        class DB:
+            async def rollback(self):pass
+        async def failed():
+            try:
+                raise AssistantToolError('对话已有新的决定，请重新读取当前状态后再查询。')
+            except AssistantToolError as exc:
+                raise HTTPException(422,{'message':str(exc)}) from exc
+        events=[]
+        async for frame in session_events(failed,DB(),correlation_id='correlated-message'):
+            events.append(json.loads(frame.removeprefix('data: ')))
+        assert events[-1]['code']=='conversation_changed'
+        assert events[-1]['correlation_id']=='correlated-message'
+        assert '重新读取' in events[-1]['message']
+    asyncio.run(scenario())
+    assert 'AssistantToolError' in caplog.text and 'correlated-message' in caplog.text

@@ -11,8 +11,10 @@ from app.place_content.contracts import Image
 class PlaceView(ContextModel):
     place_id: uuid.UUID
     name: str = Field(min_length=1, max_length=240)
+    aliases: list[str] = Field(default_factory=list, max_length=20)
     city: str = Field(min_length=1, max_length=120)
     category: str | None = None
+    provider_type: str | None = None
     address: str | None = None
     rating: float | None = Field(default=None, ge=0, le=5)
     reference_cost_yuan: float | None = Field(default=None, ge=0)
@@ -43,7 +45,10 @@ class PlaceAdviceSelection(ContextModel):
 
 def route_summary(route):
     value = route["result"]
-    return f"路线服务给出的{'步行' if value['mode'] == 'walk' else '驾车'}估计为{value['distance_meters']}米、{value['duration_seconds']}秒；这是供应商估计时间，不是实时到达保证。"
+    import math
+    distance = value['distance_meters']
+    label = f"约{distance / 1000:.1f}公里" if distance >= 1000 else f"约{math.ceil(distance)}米"
+    return f"高德{'步行' if value['mode'] == 'walk' else '驾车'}路线{label}、约{math.ceil(value['duration_seconds'] / 60)}分钟（供应商估计，不含场所内游览和等候）。"
 
 
 def render_place_advice(selection: PlaceAdviceSelection, context):
@@ -203,8 +208,8 @@ class ContentServicePlaces:
         from datetime import UTC, datetime
         if place.source.expires_at <= datetime.now(UTC):
             raise ValueError("expired Place")
-        return PlaceView(place_id=place.ref.place_id, name=place.name, city=place.city or place.district or "未知城市",
-            category=place.category, address=place.address, rating=place.rating,
+        return PlaceView(place_id=place.ref.place_id, name=place.name, aliases=place.aliases, city=place.city or place.district or "未知城市",
+            category=place.category, provider_type=place.provider_type, address=place.address, rating=place.rating,
             reference_cost_yuan=place.price.amount if place.price and place.category == "food" else None,
             longitude=place.location.longitude, latitude=place.location.latitude,
             coordinate_system="gcj02", source=place.source.source_url, retrieved_at=place.source.fetched_at.isoformat(),

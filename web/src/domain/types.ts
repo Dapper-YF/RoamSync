@@ -443,7 +443,7 @@ export type AssistantStreamEvent =
   | { type: "status"; message: string }
   | { type: "reset" }
   | { type: "done"; session: AssistantSession }
-  | { type: "error"; message: string };
+  | { type: "error"; message: string; code?: string; correlation_id?: string | null };
 
 export interface AssistantSession {
   id: string;
@@ -451,6 +451,9 @@ export interface AssistantSession {
   latest_run_id: string | null;
   messages: Array<{
     id: string; user: string; assistant: string; run_id?: string | null;
+    execution_summary?: { version: number; correlation_id: string; answer_status: "complete" | "partial" | "failed";
+      answer_attempts?: number; duration_ms?: number; selection?: { intent: string; capabilities: string[]; reason_code: string };
+      events?: Array<{ stage: string; status?: string; code?: string; category?: string }> };
     context?: { version: "assistant-context-v1"; topic_id: string;
       route_request?: { origin_place_id: string; destination_place_id: string; mode: "walk" | "driving" } | null };
     read_tools?: { comparison?: { status: "available" | "unavailable"; items: Array<{place_id:string;name:string;city:string;address:string|null;rating:number|null;reference_cost_yuan:number|null;source:string;retrieved_at:string}>;missing_count:number;semantics:"provider_reference_not_live_quote" }; route?: { status: "available" | "unavailable"; result?: { mode: "walk" | "driving"; distance_meters: number; duration_seconds: number } } };
@@ -466,6 +469,7 @@ export interface AssistantSession {
       resolved_suggestion_refs: string[];
       explanation?: { explanation_type: string; based_on_prior_decision: boolean; source_turn_ref?: string | null; source_decision_ref?: string | null; fact_freshness_warning?: string | null } | null;
       runtime_trace: string[];
+      information_gaps?: Array<{ code: string; message: string }>;
       answer_evidence_refs?: string[];
       knowledge_evidence?: Array<{ evidence_ref: string; text: string; source_reference: string;
         knowledge_type: string; scope: "stable" | "semi_stable"; document_id?: string | null;

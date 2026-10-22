@@ -155,6 +155,38 @@ class SemanticIntentProvider(Protocol):
     async def extract(self, message: str, context: dict[str, Any]) -> SemanticIntentDraft: ...
 
 
+class CurrentTurnModification:
+    """Only a server-validated current action; all entities are grounded afresh."""
+    async def extract(self, message, context):
+        return SemanticIntentDraft(primary_intent="replan_trip",
+            operations=[SemanticIntentOperation(operation="replan_trip", raw_text=message)],
+            confidence=.9, parser="hybrid", parser_version="current-turn-v1")
+
+
+def restore_current_turn_modification(run, trip_id, message, trip_version):
+    """Worker reuse is bound to the persisted run, request and unchanged version.
+
+    Client text/results cannot construct this provider. No saved IDs, dates or
+    constraints bypass the resolver; it supplies the already authorized verb.
+    """
+    if run is None or run.trip_id != trip_id or run.base_trip_version != trip_version or run.user_request != message:
+        return None
+    try:
+        resolution = PlanningIntentResolution.model_validate(run.intent_resolution)
+    except (ValueError, TypeError):
+        return None
+    draft = resolution.semantic_draft
+    if (draft is not None and draft.parser == "hybrid" and draft.parser_version == "current-turn-v1"
+        and resolution.request.user_request == message and resolution.request.trip_id == trip_id
+        and resolution.grounded_intent is not None and resolution.grounded_intent.trip_id == trip_id
+        and draft.primary_intent == "replan_trip"
+        and [op.operation for op in draft.operations] == ["replan_trip"]
+        and all(op.raw_text == message for op in draft.operations)
+        and resolution.policy_decision is not None and resolution.policy_decision.route == "plan_preview"):
+        return CurrentTurnModification()
+    return None
+
+
 @dataclass(frozen=True)
 class _ActivityEntity:
     id: uuid.UUID

@@ -23,6 +23,7 @@ router = APIRouter(prefix="/api/v1/assistant", tags=["assistant"])
 class SessionInput(BaseModel):
     session_id: uuid.UUID | None = None
     trip_id: uuid.UUID | None = None
+    new_session: bool = False
 
 
 class MessageInput(BaseModel):
@@ -51,7 +52,7 @@ async def respond(operation):
 
 @router.post("/sessions")
 async def session_endpoint(payload: SessionInput, db: AsyncSession = Depends(get_session)):
-    return await respond(get_or_create_session(db, payload.trip_id, session_id=payload.session_id))
+    return await respond(get_or_create_session(db, payload.trip_id, session_id=payload.session_id, new_session=payload.new_session))
 
 
 @router.post("/sessions/{session_id}/reset")
@@ -84,7 +85,7 @@ async def stream_message_endpoint(session_id: uuid.UUID, payload: MessageInput, 
             async def operation():
                 return await respond(send_message(db, session_id, payload.message.strip(), payload.message_id,
                     selected_day_id=payload.selected_day_id, selected_activity_id=payload.selected_activity_id, context=payload.context, place_port=place_port))
-            async for event in session_events(operation, db):
+            async for event in session_events(operation, db, correlation_id=str(payload.message_id)):
                 yield event
     return StreamingResponse(events(), media_type="text/event-stream",
         headers={"Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no"})

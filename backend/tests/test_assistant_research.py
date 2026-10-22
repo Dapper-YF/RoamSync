@@ -52,7 +52,8 @@ def test_fake_quote_is_discarded_and_extract_failure_is_not_page_read():
             "supports": [{"source_id": args[-1]["sources"][0]["source_id"], "snippet_id": "invented"}]}])
     bundle = asyncio.run(research(None, "火锅", [], ContextEnvelope(browsing_city="成都"), Port(),
         judge=judge, search=search, extract=extract, answer=answer))
-    assert "大家都说" not in bundle["assistant"] and "只取得搜索摘要" in bundle["assistant"]
+    assert "大家都说" not in bundle["assistant"]
+    assert all(s["read_level"] != "page_text" for s in bundle["read_tools"]["web_search"]["sources"])
     assert bundle["read_tools"]["web_search"]["sources"][-1]["read_level"] == "search_excerpt"
 
 def test_wrong_requested_branch_not_replaced_and_general_chat_ignored():

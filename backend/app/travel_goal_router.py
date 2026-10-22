@@ -9,7 +9,7 @@ import re
 from app.schemas import TravelGoalRouting
 
 _DISCOVERY = re.compile(r"不知道去哪|没想好去哪|目的地.{0,4}(?:没定|未定)|出去.{0,6}(?:休息|放松|散心)|散散心|想找个.{0,6}地方|周末想找个")
-_QUESTION = re.compile(r"为什么|如何|怎样|怎么|什么|哪个|好不好|是否|值得|适合|会不会|还是|[吗呢][？?。]*$|只问|只解释|先不修改|先别修改")
+_QUESTION = re.compile(r"为什么|如何|怎样|怎么|什么|哪个|星期几|周几|礼拜几|好不好|是否|值得|适合|会不会|还是|[吗呢][？?。]*$|只问|只解释|先不修改|先别修改")
 _INFORMATIONAL = re.compile(r"了解|介绍|聊聊|利弊|我喜欢|我不喜欢|历史|文化|理由|解释|推荐")
 _ACTION = re.compile(
     r"^(?:(?:那|就|我想|我希望|我准备|请|帮我|替我|给我|直接|请帮我)\s*)*"
@@ -33,6 +33,11 @@ def route_travel_goal(message: str, history: list[dict] | None = None, *, pendin
     text = message.strip()
     history = history or []
     clauses = [clause.strip() for clause in re.split(r"[，,。；;？?]|然后|并且|并(?=帮我|把|将)|就(?=帮我|请|把|将)", text) if clause.strip()]
+    # A date correction followed by a weekday question supplies consultation
+    # context. Explicit itinerary-edit clauses keep their existing authority.
+    weekday_question = bool(re.search(r"星期几|周几|礼拜几", text))
+    if weekday_question:
+        clauses = [c for c in clauses if not re.fullmatch(r"(?:改成|改为|换成)(?:20\d{2}年)?\d{1,2}月\d{1,2}[日号]?", c)]
     action = any(_ACTION.search(clause) and not _NEGATED.search(clause) and not _QUESTION.search(clause)
                  for clause in clauses)
     action = action or any(re.search(r"(?:请|帮我|替我|给我).{0,6}(?:形成|整理|保存).{0,12}(?:旅行安排|出游安排|安排建议|灵活安排)", clause)
@@ -43,7 +48,8 @@ def route_travel_goal(message: str, history: list[dict] | None = None, *, pendin
     previous = bool(re.search(r"刚才|之前|前面|第.{1,4}个建议|上面|那个安排|你推荐|^那", text) and history)
     references = list(dict.fromkeys(re.findall(r'[《「“"]([^》」”"]{1,40})[》」”"]', text)))[:20]
     common = dict(referenced_entities=references, referenced_previous_decision=previous,
-        live_fact_likely_required=bool(re.search(r"天气|营业|开放|闭馆|票价|门票|路况|实时|当前GPS|现在|今天", text)) and not (
+        live_fact_likely_required=bool(re.search(r"天气|营业|开放|闭馆|票价|门票|路况|实时|当前GPS", text)
+            or (re.search(r"现在|今天|明天|此刻", text) and re.search(r"人多|人少|排队|预约|名额|余票|能进|能去|有位|堵车|适合(?:去|出门|游玩)", text))) and not (
             bool(re.search(r"(?:我|自己).{0,25}(?:累了|太累|困了|没精神|想休息|不想走)", text))
             and not re.search(r"天气|营业|开放|闭馆|门票|路况|排队|人多|预约|能进|能去", text)))
     if _EXECUTION.search(text) and not _QUESTION.search(text) and not _NEGATED.search(text):

@@ -48,18 +48,37 @@ class ResearchAnswer(BaseModel):
 
 
 async def structured(settings, schema, instructions, value):
+    from app.assistant_reliability import active_turn, bounded_call, record_failure
     client = build_model_client(settings)
     try:
         for attempt in range(2):
-            reply = await create_model_response(client, settings, model=settings.planner_model,
-                instructions=instructions, input_text=json.dumps(value, ensure_ascii=False),
-                text_format={"type": "json_schema", "name": schema.__name__, "schema": schema.model_json_schema()},
-                reasoning_effort="low", max_output_tokens=4000)
+            turn = active_turn.get()
+            if turn:
+                turn.claim_answer()
+            if attempt:
+                emit("reset")
+            try:
+                reply = await bounded_call(lambda: create_model_response(client, settings, model=settings.planner_model,
+                    instructions=instructions, input_text=json.dumps(value, ensure_ascii=False),
+                    text_format={"type": "json_schema", "name": schema.__name__, "schema": schema.model_json_schema()},
+                    reasoning_effort="low", max_output_tokens=4000), stage="answer")
+            except Exception as exc:
+                from app.openai_planner import translate_model_error
+                if turn and not attempt and translate_model_error(exc).retryable and turn.remaining() > 1:
+                    continue
+                raise
             if reply.status != "completed":
+                from app.companion_provider import CompanionProviderError
+                error = CompanionProviderError("incomplete research response", finish_reason=getattr(reply, "finish_reason", None))
+                record_failure("answer", error)
+                if turn and not attempt and error.finish_reason not in {"sensitive", "content_filter"} and turn.remaining() > 1:
+                    instructions += " Keep the response short and return a complete JSON object."
+                    continue
                 raise ValueError("incomplete research response")
             try:
                 return schema.model_validate(json.loads(normalize_structured_json(reply.output_text), strict=False))
             except (ValidationError, json.JSONDecodeError) as exc:
+                record_failure("answer", exc)
                 if attempt:
                     raise
                 fields = [{"field": list(e["loc"]), "type": e["type"]} for e in exc.errors(include_input=False)] if isinstance(exc, ValidationError) else []
@@ -98,6 +117,16 @@ async def determine_lookup(settings, message, history, envelope):
 
 def same_city(a, b):
     return a.removesuffix("市") == b.removesuffix("市")
+
+
+def requested_place_matches(place, name, city):
+    """Provider-name/alias match for lookup only, never webpage citation identity."""
+    city = city.removesuffix("市")
+    def short(value):
+        return value.removeprefix(city + "市").removeprefix(city)
+    target, canonical = short(name), short(place.name)
+    return (canonical in {target + suffix for suffix in ("", "景区", "公园", "博物馆", "步行街")}
+            or name in place.aliases or target in place.aliases)
 
 
 def identity_matches(place, title, content):
@@ -148,6 +177,9 @@ async def research(settings, message, history, envelope, port, *, judge=determin
     intent = await judge(settings, message, history, envelope)
     if not intent.needed:
         return None
+    from app.travel_language import chinese_number
+    requested_count = re.search(r"(?:只|给我|推荐|列出|说|选)\s*([一二三四五六七八九十两\d]+)\s*(?:家|个|处)", message)
+    limit = min(3, max(1, chinese_number(requested_count[1]))) if requested_count else 3
     # Model city/entity names must be traceable to user/UI or persisted selected POIs.
     prior_places = [c["place"] for m in history[-3:] for c in m.get("place_cards", [])]
     user_text = " ".join([message, *[m.get("user", "") for m in history[-8:]],
@@ -185,23 +217,27 @@ async def research(settings, message, history, envelope, port, *, judge=determin
     candidates, sources, images, failures = [], [], [], []
     semaphore = asyncio.Semaphore(2)
     async def lookup(query, near):
+        from app.assistant_reliability import bounded_call
         async with semaphore:
             if hasattr(port, "research_search"):
-                return await port.research_search(query=query, city=city, near=near, limit=3, category=intent.category)
-            return await port.search(query=query, city=city, near=near, limit=3)
+                return await bounded_call(lambda: port.research_search(query=query, city=city, near=near, limit=3, category=intent.category), stage="poi")
+            return await bounded_call(lambda: port.search(query=query, city=city, near=near, limit=3), stage="poi")
     async def inspect(place):
+        from app.assistant_reliability import bounded_call
         async with semaphore:
             try:
-                fact = await search(settings, query=f"{city} {place.name} 特色 体验 评价", max_results=2, include_images=True)
+                fact = await bounded_call(lambda: search(settings, query=f"{city} {place.name} 特色 体验 评价", max_results=2, include_images=True), stage="web")
                 usable = [p for p in fact.payload.get("results", []) if isinstance(p, dict)
                     and public_image_url(p.get("url")) and identity_matches(place, str(p.get("title", "")), "")][:2]
                 extracted = {}
                 if usable:
                     progress(f"正在读取「{place.name}」的相关页面…")
                     try:
-                        payload = await extract(settings, urls=[p["url"] for p in usable])
+                        payload = await bounded_call(lambda: extract(settings, urls=[p["url"] for p in usable]), stage="web_extract")
                         extracted = {p["url"]: (p.get("raw_content") or "")[:8000] for p in payload.get("results", []) if p.get("url") in {s["url"] for s in usable}}
                     except Exception as exc:
+                        from app.assistant_reliability import record_failure
+                        record_failure("web_extract", exc)
                         failures.append({"place_id": str(place.place_id), "stage": "extract", "code": type(exc).__name__})
                 found = []
                 for p in usable:
@@ -218,6 +254,8 @@ async def research(settings, message, history, envelope, port, *, judge=determin
                 return found, [{**i, "place_id": str(place.place_id) if i.get("topic") == place.name else None,
                     "usage_basis": "search_reference"} for i in projected["images"]]
             except Exception as exc:
+                from app.assistant_reliability import record_failure
+                record_failure("web", exc)
                 failures.append({"place_id": str(place.place_id), "stage": "search", "code": type(exc).__name__})
                 return [], []
     try:
@@ -225,10 +263,11 @@ async def research(settings, message, history, envelope, port, *, judge=determin
             near = focus if intent.nearby else None
             if intent.nearby and near is None and intent.near_name and intent.near_name in user_text:
                 progress(f"正在确认「{intent.near_name}」的位置…")
+                from app.assistant_reliability import bounded_call
                 if hasattr(port, "research_search"):
-                    anchors = await port.research_search(query=intent.near_name, city=city, near=None, limit=3, category="attraction")
+                    anchors = await bounded_call(lambda: port.research_search(query=intent.near_name, city=city, near=None, limit=3, category="attraction"), stage="poi")
                 else:
-                    anchors = await port.search(query=intent.near_name, city=city, near=None, limit=3)
+                    anchors = await bounded_call(lambda: port.search(query=intent.near_name, city=city, near=None, limit=3), stage="poi")
                 matches = [p for p in anchors if same_city(p.city, city) and identity_matches(p, intent.near_name, "")
                     and p.coordinate_system == "gcj02" and p.longitude is not None and p.latitude is not None]
                 if len(matches) == 1:
@@ -261,13 +300,19 @@ async def research(settings, message, history, envelope, port, *, judge=determin
                         if main:
                             found = [main]
                     for place in found:
+                        if not intent.names and place.category != intent.category:
+                            geographic = any(t in " ".join([place.provider_type or "", *place.provider_tags]) for t in ("道路", "街道", "地名", "山", "湖", "广场"))
+                            if not (intent.category == "attraction" and place.category == "other" and geographic):
+                                continue
                         if same_city(place.city, city) and place.place_id not in {i.place_id for i in candidates}:
-                            if intent.names and not any(identity_matches(place, n, n) for n in queries):
+                            if intent.names and not any(requested_place_matches(place, n, city) for n in queries):
                                 continue
                             candidates.append(place)
                 except Exception as exc:
+                    from app.assistant_reliability import record_failure
+                    record_failure("poi", exc)
                     failures.append({"stage": "poi", "query": query, "code": getattr(exc, "code", type(exc).__name__)})
-            candidates = candidates[:3]
+            candidates = candidates[:limit]
             if not intent.names and intent.category == "attraction" and intent.query not in {"景点", "景区", "公园", "博物馆"}:
                 exact = [p for p in candidates if p.name in {intent.query, intent.query + "景区", intent.query + "公园"}]
                 if exact:
@@ -282,7 +327,7 @@ async def research(settings, message, history, envelope, port, *, judge=determin
         progress("部分资料读取超时，保留已取得的地点与资料。")
     except Exception:
         progress("地点服务暂未完成查询。")
-    candidates = candidates[:3]
+    candidates = candidates[:limit]
     if not candidates:
         return result("这次没有查到可确认的对应地点，暂不推荐猜测的店名。可以补充分店名或所在区域再查。", status="empty")
     # Existing locally reviewed licensed photos are usable without guessing licenses.
@@ -380,14 +425,17 @@ async def research(settings, message, history, envelope, port, *, judge=determin
                 clean_text = re.sub(r"[（(](?:(?:web|poi)_\w+)[^）)]*[）)]", "", p.text)
                 clean_text = re.sub(r"\b(?:web_\d+_\d+|poi_\d+)\b", "", clean_text)
                 sentences = []
+                rejected_paragraph = False
                 for sentence in re.split(r"(?<=[。！？])", clean_text):
                     # A public travel page is not a current official booking
                     # verification. This read adapter has no such authority.
                     if re.search(r"实名预约|不预约|放票|放.{0,8}名额|名额.{0,8}(?:抢|放|满)|现场.{0,8}门票|(?:必须|提前).{0,8}预约", sentence):
                         issues.append("unverified_booking_rule")
+                        rejected_paragraph = True
                         continue
                     if re.search(r"(?:基本|几乎|完全).{0,8}不用走|步数.{0,10}万|强度很低|走.{0,5}万步", sentence):
                         issues.append("unverified_walking_guarantee")
+                        rejected_paragraph = True
                         continue
                     # Media is a server/UI decision. The prose model receives
                     # text evidence, so it cannot attest image availability.
@@ -396,27 +444,33 @@ async def research(settings, message, history, envelope, port, *, judge=determin
                         continue
                     if not numbers(sentence).issubset(numbers(supporting_text)):
                         issues.append("unsupported_numeric_claim")
+                        rejected_paragraph = True
                         continue
                     if all(by_id[s.source_id]["read_level"] == "provider_reference" for s in valid) and re.search(
                             r"好评|差评|口碑|排队|用户.{0,6}(?:说|反馈|认为)|本地人|服务.{0,3}(?:好|差)", sentence):
                         issues.append("review_claim_without_review_source")
+                        rejected_paragraph = True
                         continue
                     if sentence.strip() and len("".join(sentences)) + len(sentence) <= 200:
                         sentences.append(sentence)
-                if not sentences:
+                if not sentences or rejected_paragraph:
                     continue
                 for support in valid:
                     by_id[support.source_id].setdefault("support_quotes", []).append(by_id[support.source_id]["snippets"][support.snippet_id])
                 paragraphs.append("".join(sentences).strip() + " " + " ".join(dict.fromkeys(f"[{sources.index(by_id[s.source_id]) + 1}]" for s in valid)))
                 used_places.add(p.place_index)
         except Exception as exc:
+            from app.assistant_reliability import record_failure
+            record_failure("answer", exc)
             fields = [".".join(map(str, e["loc"])) + ":" + e["type"] for e in exc.errors(include_input=False)] if isinstance(exc, ValidationError) else []
             issues.append(type(exc).__name__ + (":" + ";".join(fields[:3]) if fields else ""))
     if not paragraphs:
-        paragraphs.append("地点已经找到了，但现有资料还不足以支持这次选择，不能当作已经确认合适的推荐。你可以先查看地图和详情。")
-    if any(s["read_level"] == "search_excerpt" for s in sources) and not any(s["read_level"] == "page_text" for s in sources):
+        from app.assistant_practical import research_options, practical_next_step
+        paragraphs.append(research_options(candidates, sources, message))
+        paragraphs.append(practical_next_step(message, intent.category, city=city, memory=envelope.conversation_memory))
+    if intent.read_pages and re.search(r"评价|评论|口碑|网友|评分", message) and any(s["read_level"] == "search_excerpt" for s in sources) and not any(s["read_level"] == "page_text" for s in sources):
         paragraphs.append("网页部分目前只取得搜索摘要，尚未读到页面正文或完整用户评论。")
-    elif intent.read_pages and all(s["read_level"] == "provider_reference" for s in sources):
+    elif intent.read_pages and re.search(r"评价|评论|口碑|网友",message) and all(s["read_level"] == "provider_reference" for s in sources):
         paragraphs.append("本次先按高德参考信息比较，尚未取得可核对的相关网页或用户评论。")
     if "unverified_booking_rule" in issues and re.search(r"预约|入场|放票|名额", message):
         paragraphs.append("预约名额、放票时间和当天入场条件，本轮还没有通过官方渠道确认，不能把游记里的说法当作当前规则。")

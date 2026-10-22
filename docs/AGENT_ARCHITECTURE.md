@@ -1,5 +1,109 @@
 # RoamSync Agent v1 architecture contract
 
+## Practical answers and selective NO-GO extraction (2026-10-21)
+
+The two rejected experiments remain rejected as branches. Independently adapted
+hunks add literal current-clause quote recovery, category/count checks and final
+grounded walking-limit guards. Missing/estimated/transit route evidence is
+unknown, never zero walking; satisfaction covers inter-activity travel only,
+not on-site or transit-access walking. Final Validator and Accept both enforce
+the current grounded hard limit. UI states that scope.
+
+The single capability decision distinguishes a conditions-only update from an
+answer request that also changes memory. Authorization belongs to a literal
+affirmative current-user clause; other time/place restrictions do not silently
+cancel it. Quoted/hypothetical/revoked requests still fail closed. The existing
+tool router has one shared two-generation parsing/field-repair budget, including
+subsequent preview correction, and cannot bypass action-target/version guards.
+One-city flexible previews support 1–7 days (30 items maximum); 第N天 windows are
+checked against explicit creation dates and literal clocks. Ambiguous manual POI
+choices expose provider area/address instead of silently selecting the first.
+
+A server-validated current-trip modification enters the existing preview directly,
+without a second router rewriting it into an oral answer. Worker replay can reuse
+only the persisted current-turn operation bound to the same original request,
+Trip and unchanged base version. Grounding, target permissions, Validator and
+Accept still run against current server state; a version mismatch rejects reuse.
+
+Actual prior route values may inform follow-up advice, never prior model prose.
+Source gaps preserve useful identity and conditional decision strategies. One
+bounded answer repair shares the existing two-generation consultation budget;
+remaining recognized route/effort/merchant guarantees are removed atomically.
+Numeric travel durations/distances in general model prose also require repair or
+atomic removal; server-rendered route measurements retain provider attribution.
+This lexical check is not universal fact validation. No additional audit model,
+second planner, migration or image-layout change. Implementation/evidence and
+release status: QUALITY_INTEGRATION_20261021.md.
+
+## Assistant P1 illustrations and conversational conditions (2026-10-21)
+
+The same semantic decision may extract current-user condition deltas and judge
+whether illustrations help. Server-owned conversation_memory in session JSON
+retains exact source quotes/message IDs, anchored dates, scalar overrides and
+explicit preference replacement/removal. Client memory, speculative/quoted
+alternatives and third-party instructions do not confer state or write authority.
+Effective conditions supersede older prompt turns. City changes preserve personal
+conditions while dropping old POI focus and destination-bound requirements;
+topic epochs/new sessions isolate old context and old Trip reads. Compatibility
+adds optional POST sessions new_session=true, mutually exclusive with old IDs,
+and preserves old records. Existing planners, preview/Validator/Accept/version
+checks remain the only formal writers. No migration or additional decision model.
+Exact standalone personal declarations inside compound city/date messages have
+a bounded literal assist (for example 不吃辣), so a missing selector memory patch
+cannot silently drop them. It uses the same current-user evidence guards and
+confers no tool authority. Recall acceptance checks persisted values/provenance
+and reload, rather than accepting answer text that mentions an unsaved condition.
+
+Optional final-answer visual_subjects must occur in validated prose. At most two
+parallel actual image reads use public provider URLs/identity guards, one attempt
+per query and at most eighteen seconds within the remaining consultation budget.
+They cannot alter prose status or become factual citations. Browser images load
+without reserving blank cards; failures disappear. Topic images flow beside their
+matching paragraphs with no visible reference-photo badge; source/license
+disclosures remain accessible. Metadata retains usage semantics. No remote media
+proxy, model-authored URLs or invented licensing. Evidence/deployment status:
+ASSISTANT_P1_20261021.md and evidence/assistant-p1-20261021/release.json.
+
+## Assistant P0 reliability and semantic capability selection (2026-10-21)
+
+The configured local assistant uses one bounded semantic capability decision
+over scoped user history and server-read Place/Trip context. Stable advice and
+attraction overviews need no external tools; POI, web/Extract, route, existing
+fact resolvers and itinerary reads are selected as needed. Server provenance
+and current-utterance authority checks precede execution. Canonical provider
+names/aliases may ground lookup identity; ambiguous results require user choice.
+Planning intent hands the original user request to the existing writers,
+Validator/Accept and version fences, never to a second planner. Explicit UI
+command handlers remain. Legacy clients retain a separate history scope.
+
+Consultation uses a 90-second work deadline, at most one selection call, and
+at most two answer generations shared across repair and transient retry.
+SDK retries are disabled in this scope. No JSON-prefix salvage, authority
+relaxation, filtered-output retry or unvalidated partial publication is allowed.
+Read network work runs after committing the caller's read transaction; reply
+persistence locks/reloads and checks the session snapshot and message identity.
+
+Compound read requests preserve the union of approved capabilities. POI-to-web
+and endpoint-to-route dependencies stay ordered; independent route, fact, web
+and saved-itinerary parts run concurrently. Reader access to the caller's SQL
+session is serialized and committed before its external calls. Components share
+one answer-generation budget; timeout/failure retains validated sibling results.
+Public answer deltas are buffered until the components are assembled, so repairs
+cannot interleave contradictory partial streams. Generated prose/clarifications
+cannot claim unexecuted formal writes; existing saved state can still be described.
+
+Additive message execution_summary stores allowlisted correlation, capability,
+status, timing and failure events, without prompts, exception messages, secrets,
+raw provider prose or private reasoning. Monitor reads durable diagnostics after
+restart. SSE error may add code/correlation_id; conflict and provider failures
+remain distinct. PlaceView aliases default to empty. No migration or new formal
+write authority. Current webpage excerpts remain untrusted reference material,
+not live booking/opening verification. Existing image selection is retained.
+
+Change-control evidence and historical-root-cause limits:
+ASSISTANT_P0_20261021.md and evidence/assistant-p0-20261021/. Deployment status is
+owned by that report and release.json, not inferred from passing unit tests.
+
 
 ## Question-focused discovery and quality audit (2026-10-20)
 

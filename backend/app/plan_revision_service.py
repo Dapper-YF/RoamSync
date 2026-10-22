@@ -502,6 +502,15 @@ async def validate_candidate_plan(
     from app.planning_context import build_planning_context
     from app.candidate_decisions import review_candidate_decisions
     current_context = (await build_planning_context(session, trip_id)).model_dump(mode="json")
+    if intent_resolution is not None:
+        from app.planning_goals import extract_planning_goals, check_goal_satisfaction
+        goals = extract_planning_goals(user_request=intent_resolution.request.user_request,
+            intent_resolution=intent_resolution.model_dump(mode="json"), context=current_context)
+        checked = check_goal_satisfaction(goals=goals, before_context=current_context, snapshot=snapshot)
+        for result in checked.results:
+            if result.goal == "max_walking_minutes" and result.type == "hard" and result.status != "satisfied":
+                errors.append(PlanValidationIssue(code="walking_limit_exceeded" if result.status == "unsatisfied" else "walking_limit_unverifiable",
+                    message="活动间步行超过上限。" if result.status == "unsatisfied" else "现有路线不足以核实活动间步行上限。", details=result.evidence))
     review = review_candidate_decisions(current_context, snapshot)
     errors.extend(PlanValidationIssue.model_validate(issue) for issue in review["hard_errors"])
     return PlanValidationResult(valid=not errors, errors=errors, warnings=[])

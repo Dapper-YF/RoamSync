@@ -161,6 +161,11 @@ def build_planning_graph(
                 "day_count": len(context_data.get("days", [])), "candidate_count": len(context_data.get("candidates", [])),
             })
             await report_progress("intent", "正在核对你的需求与调整范围…")
+            from app.planning_intent_service import restore_current_turn_modification
+            stored_run = await session.get(PlanningRun, run_id)
+            current_operation = restore_current_turn_modification(stored_run, trip_id,
+                state["user_request"], context_data["trip"]["version"])
+            active_semantic_provider = current_operation or semantic_provider
             resolution = await resolve_planning_intent(
                 session,
                 trip_id,
@@ -170,7 +175,7 @@ def build_planning_graph(
                     selected_day_id=state.get("selected_day_id"),
                     selected_activity_id=state.get("selected_activity_id"),
                 ),
-                semantic_provider=semantic_provider,
+                semantic_provider=active_semantic_provider,
                 default_planning_intent=(
                     "create_plan" if state["run_type"] == "initial_plan" else "replan_trip"
                 ),
@@ -208,7 +213,7 @@ def build_planning_graph(
                 resolution = await resolve_planning_intent(session, trip_id, PlanningIntentParseRequest(
                     message=state["user_request"], entry_point=state.get("entry_point", "trip_planner"),
                     selected_day_id=state.get("selected_day_id"), selected_activity_id=state.get("selected_activity_id")),
-                    semantic_provider=semantic_provider)
+                    semantic_provider=active_semantic_provider)
             if (candidate_researcher is not None
                 and state.get("run_type") == "initial_plan"
                 and resolution.policy_decision is not None

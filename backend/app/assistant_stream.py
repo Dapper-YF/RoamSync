@@ -98,7 +98,7 @@ class PublicJsonStream:
             emit("analysis_delta" if key == "analysis_summary" else "answer_delta", delta=delta)
 
 
-async def session_events(operation, db):
+async def session_events(operation, db, *, correlation_id=None):
     """Keep the session lock/idempotency contract and cancel cleanly on disconnect."""
     queue = asyncio.Queue(maxsize=2048)
 
@@ -108,6 +108,8 @@ async def session_events(operation, db):
             session = await operation()
             await queue.put({"type": "done", "session": session})
         except Exception as exc:
+            from app.assistant_reliability import record_failure
+            record_failure("stream", exc, correlation_id)
             logging.getLogger(__name__).warning("Assistant streaming request failed: %s", type(exc).__name__)
             try:
                 await db.rollback()
@@ -118,7 +120,11 @@ async def session_events(operation, db):
                     "Assistant streaming rollback failed: %s", type(rollback_error).__name__)
             # No raw exception or provider payload in the browser.
             conflict = getattr(exc, "status_code", None) == 409
-            await queue.put({"type": "error", "message": "这份安排刚刚有了新修改。本次没有覆盖它，请刷新并核对后再试。" if conflict else "这次回答未能完成，请重试。"})
+            detail = getattr(exc, "detail", None)
+            public_message = detail.get("message", "") if isinstance(detail, dict) else ""
+            conversation_changed = isinstance(public_message, str) and public_message.startswith("对话已有新的决定")
+            await queue.put({"type": "error", "message": "对话刚刚有了新消息，请重新读取当前状态后再发送。" if conversation_changed else "这份安排刚刚有了新修改。本次没有覆盖它，请刷新并核对后再试。" if conflict else "这次回答未能完成，请重试。",
+                "code": "conversation_changed" if conversation_changed else "state_conflict" if conflict else "request_failed", "correlation_id": correlation_id})
         finally:
             stream_sink.reset(token)
 

@@ -161,7 +161,7 @@ reply 用自然中文说明下一步或缺什么，不能声称已创建、已�
 
 
 INSTRUCTIONS += """
-若prefer_flexible为true或用户要求允许留白，新建旅行用create_trip、flexible=true（限1—3天）。
+若prefer_flexible为true或用户要求允许留白，新建旅行用create_trip、flexible=true（限1—7天）。
 choices列出可采用的轻量建议：selected确定纳入但未定时间，optional可放弃，free_window明确留白，
 appointment仅用户提供的固定预约。selected/optional的start/end必须null，未定日期day_date也为null。
 label只写地点原名，不附加“预约”、星期、时间或括号备注；留白label可以写“自由活动”。
@@ -174,19 +174,37 @@ label只写地点原名，不附加“预约”、星期、时间或括号备注
 
 
 class AssistantRouter:
+    def __init__(self):
+        self._attempts = 0
+        self.diagnostics = []
+        self.correlation_id = None
+
     async def decide(self, context: dict) -> ToolDecision:
         settings = get_settings()
         if not settings.planner_api_key.get_secret_value() or not settings.planner_model:
             raise AssistantToolError("尚未配置 AI 服务，请先使用手动创建入口。")
         client = build_model_client(settings)
         try:
-            result = await create_model_response(client, settings, model=settings.planner_model,
-                instructions=INSTRUCTIONS, input_text=json.dumps(context, ensure_ascii=False),
-                text_format={"type": "json_schema", "name": "assistant_tool", "schema": ToolDecision.model_json_schema()},
-                reasoning_effort="low", max_output_tokens=8000)
-            if result.status != "completed" or not result.output_text:
-                raise AssistantToolError("这次需求没有解析完整，请重试。")
-            return ToolDecision.model_validate_json(normalize_structured_json(result.output_text))
+            while self._attempts < 2:
+                self._attempts += 1
+                result = await create_model_response(client, settings, model=settings.planner_model,
+                    instructions=INSTRUCTIONS, input_text=json.dumps(context, ensure_ascii=False),
+                    text_format={"type": "json_schema", "name": "assistant_tool", "schema": ToolDecision.model_json_schema()},
+                    reasoning_effort="low", max_output_tokens=8000)
+                if result.status != "completed" or not result.output_text:
+                    raise AssistantToolError("这次需求没有解析完整，请重试。")
+                try:
+                    return ToolDecision.model_validate_json(normalize_structured_json(result.output_text))
+                except ValueError as exc:
+                    from app.assistant_reliability import record_failure
+                    self.diagnostics.append({**record_failure("tool_decision", exc, self.correlation_id), "status":"failed"})
+                    if self._attempts >= 2:
+                        raise
+                    from pydantic import ValidationError
+                    fields = [{"field": list(e["loc"]), "type": e["type"]} for e in exc.errors(include_input=False, include_url=False)] if isinstance(exc, ValidationError) else [{"type": "invalid_json"}]
+                    context = {**context, "tool_schema_feedback": fields,
+                        "repair_policy": "Return a complete schema-valid decision. selected/optional have null start/end; free_window/appointment require known date and both explicit start/end. Omit invented extra choices; ask only when a requested time range is missing. Copy literal source quotes. Do not change the user-authorized operation."}
+            raise AssistantToolError("这次需求解析修复已达上限，请重试。")
         except AssistantToolError:
             raise
         except Exception as exc:
@@ -201,7 +219,14 @@ def session_response(row: AssistantSession) -> dict:
         "latest_run_id": str(row.latest_run_id) if row.latest_run_id else None}
 
 
-async def get_or_create_session(db: AsyncSession, trip_id: uuid.UUID | None, *, session_id: uuid.UUID | None = None) -> AssistantSession:
+async def get_or_create_session(db: AsyncSession, trip_id: uuid.UUID | None, *, session_id: uuid.UUID | None = None, new_session: bool = False) -> AssistantSession:
+    if new_session:
+        if trip_id is not None or session_id is not None:
+            raise AssistantToolError("新对话不能同时指定旧会话或旅行。")
+        row = AssistantSession(messages=[], applied_actions={})
+        db.add(row)
+        await db.commit()
+        return row
     if session_id is not None:
         row = await locked_session(db, session_id)
         if trip_id is not None and row.trip_id != trip_id:
@@ -246,7 +271,7 @@ async def source_signature(db: AsyncSession, trip: Trip) -> str:
     return hashlib.sha256(json.dumps(value).encode()).hexdigest()
 
 
-async def prepare_action(db: AsyncSession, decision: ToolDecision, current: Trip | None, allowed_trips: list[Trip], city_search=search_amap_cities, *, explicit_daily_budget: bool = False, user_text: str = "") -> dict:
+async def prepare_action(db: AsyncSession, decision: ToolDecision, current: Trip | None, allowed_trips: list[Trip], city_search=search_amap_cities, *, explicit_daily_budget: bool = False, user_text: str = "", current_message: str | None = None) -> dict:
     source_id = None if decision.tool == "create_trip" else decision.source_trip_id or (current.id if current else None)
     source = next((t for t in allowed_trips if t.id == source_id), None)
     if decision.tool != "create_trip" and source is None:
@@ -256,8 +281,8 @@ async def prepare_action(db: AsyncSession, decision: ToolDecision, current: Trip
     days_count = (decision.end_date - decision.start_date).days + 1
     if not 1 <= days_count <= 31:
         raise AssistantToolError("日期应按先后排列，一次旅行支持 1 至 31 天。")
-    if decision.flexible and days_count > 3:
-        raise AssistantToolError("轻量安排第一版支持单城市1—3天；更长旅行请先使用原规划能力。")
+    if decision.flexible and days_count > 7:
+        raise AssistantToolError("轻量安排支持单城市1—7天；更长旅行请先使用原规划能力。")
     today = datetime.now(ZoneInfo(source.timezone if source else "Asia/Shanghai")).date()
     if decision.end_date < today:
         raise AssistantToolError("这组日期已经过去，请提供这次出行的未来日期。")
@@ -295,8 +320,9 @@ async def prepare_action(db: AsyncSession, decision: ToolDecision, current: Trip
         "total_budget_fen": total, "daily_budget_fen": daily, "preferences": decision.preferences,
         "summary": {"create_trip": "创建新旅行，并根据已聊过的需求生成首版候选行程。", "reuse_trip": "参考旧旅行创建新旅行，继承适用偏好；消费与完成记录留在原旅行中。", "reschedule_trip": "按旅行天数整体移动已有安排，保持活动内容；实际消费和完成记录保持原样。"}[decision.tool]}
     if decision.flexible and decision.tool == "create_trip":
-        from app.flexible_creation import prepare_choices
+        from app.flexible_creation import prepare_choices, recover_creation_quotes
         try:
+            decision = decision.model_copy(update={"choices": recover_creation_quotes(decision, current_message if current_message is not None else user_text)})
             action["choices"] = await prepare_choices(decision, city, user_text)
         except ValueError as exc:
             raise AssistantToolError(str(exc)) from exc
@@ -306,12 +332,28 @@ async def prepare_action(db: AsyncSession, decision: ToolDecision, current: Trip
 
 
 @observe_message
-async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, message_id: uuid.UUID, *, router=None, companion_responder=None, companion_provider=None, companion_runtime=None, knowledge_tool=None, city_search=search_amap_cities, selected_day_id=None, selected_activity_id=None, context=None, place_port=None, researcher=None) -> AssistantSession:
+async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, message_id: uuid.UUID, *, router=None, companion_responder=None, companion_provider=None, companion_runtime=None, knowledge_tool=None, city_search=search_amap_cities, selected_day_id=None, selected_activity_id=None, context=None, place_port=None, researcher=None, capability_selector=None) -> AssistantSession:
     from app.assistant_places import ContentServicePlaces
     settings = get_settings()
+    semantic_goal, semantic_metadata = None, {}
+    if settings.assistant_semantic_tools and (
+        capability_selector is not None or (isinstance(place_port, ContentServicePlaces)
+        and settings.planner_api_key.get_secret_value() and router is None
+        and companion_responder is None and companion_provider is None and companion_runtime is None and researcher is None)):
+        from app.assistant_context import ContextEnvelope
+        incoming = ContextEnvelope.model_validate(context or {})
+        # These verified UI commands already have bounded dedicated handlers.
+        explicit_command = incoming.preview_action_id or incoming.read_draft_id or (
+            incoming.action_target and incoming.action_target.operation in {"edit_arrangement", "accept_plan"})
+        if not explicit_command:
+            from app.assistant_turn import semantic_turn
+            handled, semantic_goal, semantic_metadata = await semantic_turn(db, session_id, message,
+                message_id, context, place_port, settings, capability_selector)
+            if handled is not None:
+                return handled
     # The bounded discovery adapter finishes ALL network work before taking the
     # session row lock. Legacy injected runtimes and formal write paths are intact.
-    if context is not None and (researcher is not None or (
+    if semantic_goal is None and context is not None and (researcher is not None or (
         isinstance(place_port, ContentServicePlaces) and settings.planner_api_key.get_secret_value()
         and router is None and companion_responder is None and companion_provider is None and companion_runtime is None)):
         from app.assistant_context import ContextEnvelope, restore_context, capture_requirements, capture_effective_requirements
@@ -374,10 +416,14 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
     from app.assistant_places import load_places, place_cards, default_place_port, load_read_tools
     effective_messages = list(row.messages)
     envelope, focus, places, place_limitations = None, None, [], []
-    turn_metadata = {}
+    turn_metadata = dict(semantic_metadata)
     read_tools = {}
     if context is not None:
         envelope, effective_messages = restore_context(ContextEnvelope.model_validate(context), effective_messages)
+        if "_semantic_context" in semantic_metadata:
+            envelope = ContextEnvelope.model_validate(semantic_metadata.pop("_semantic_context"))
+            retained = set(semantic_metadata.pop("_semantic_history_ids", []))
+            effective_messages = [m for m in effective_messages if str(m.get("id")) in retained]
         # Client read IDs still pass the existing repository visibility boundary.
         if envelope.read_trip_id:
             await get_trip(db, envelope.read_trip_id)
@@ -452,12 +498,12 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
         if requirement_sync:
             read_tools["requirement_sync"] = {**requirement_sync,
                 "semantics": "explicit_requirement_records_only; activity_plan_unchanged"}
-        turn_metadata = {"context": envelope.model_dump(mode="json"), "read_tools": read_tools,
+        turn_metadata = {**semantic_metadata, "context": envelope.model_dump(mode="json"), "read_tools": read_tools,
             "requirement_sync": requirement_sync}
     # Route before trip enumeration, PlanningRun history or Planning Context.
     # Companion readers load only capabilities selected by InformationNeed.
     with observation_stage("travel_goal_routing"):
-        goal_routing = route_travel_goal(message, list(effective_messages[-12:]), pending_action=row.pending_action)
+        goal_routing = semantic_goal or route_travel_goal(message, list(effective_messages[-12:]), pending_action=row.pending_action)
     requirement_sync = turn_metadata.get("requirement_sync") or {}
     if requirement_sync.get("status") in {"scope_out_of_range", "version_conflict", "source_unavailable"}:
         reply = {"scope_out_of_range": "话题要求包含草稿之外的日期或活动，本次没有导入。请调整要求范围后重试。",
@@ -492,7 +538,10 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
         except (CompanionContractError, CompanionProviderError, PlannerProviderError) as exc:
             if envelope:
                 from app.companion_contracts import CompanionResult, InformationNeed, InformationGap
-                result = CompanionResult(response_text="这次智能回答暂不可用。你仍可以打开已核实的地点详情，稍后重试。",
+                from app.assistant_reliability import record_failure
+                detail = record_failure("answer", exc)
+                turn_metadata["execution_summary"] = {"version": 1, "correlation_id": str(message_id), "answer_status": "failed", "events": [detail]}
+                result = CompanionResult(response_text="这次回答没有完成，请重试。",
                     goal_type=goal_routing.goal_type, status="needs_information", information_need=InformationNeed(),
                     information_gaps=[InformationGap(code="provider_unavailable", message="智能回答暂不可用。")])
             elif isinstance(exc, CompanionProviderError):
@@ -617,12 +666,35 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
         context["planning_brief"] = brief.model_dump(mode="json")
         context["planning_brief_policy"] = "Brief 是用户需求摘要，不是正式活动或已接受候选。candidate_interests 只是用户选择的兴趣，只有 must_do 是明确必去要求；suggestion/raw_mention 不能作为 activity_N/candidate_N 或数据库身份。"
     router = router or AssistantRouter()
+    if isinstance(router, AssistantRouter):
+        router.correlation_id = str(message_id)
     user_text = "\n".join([str(item.get("user", "")) for item in history] + [message])
     context["user_source_text"] = user_text
+    conditions = None
+    if envelope and envelope.conversation_memory.get("version") == 1:
+        from app.assistant_memory import memory_prompt
+        conditions = memory_prompt(envelope)
+        context["effective_conditions"] = conditions
+        context["condition_policy"] = "服务器保存的用户明确条件，优先于历史已撤销条件；日期为原消息当日锚定的绝对日期。不重复追问已有条件，不将这些条件当作本轮写授权。"
     with observation_stage("assistant_tool_routing"):
-        decision = await router.decide(context)
+        if (direct_arrangement_edit and semantic_goal is not None
+            and semantic_goal.goal_type == "trip_modification" and semantic_goal.mutation_requested):
+            # Selection, target and version are already server-validated. A
+            # second routing model must not replace the requested preview with
+            # an oral promise or expand its scope.
+            decision = ToolDecision(tool="plan_trip", reply="准备候选调整。", source_trip_id=current.id, planning_request=message)
+        else:
+            decision = await router.decide(context)
     # Recheck arithmetic using user messages only, never the assistant's old dates.
     user_text = "\n".join([str(item.get("user", "")) for item in history] + [message])
+    if conditions:
+        slots = conditions["slots"]
+        if slots.get("start_date"):
+            user_text += "\n出发日期为" + slots["start_date"]["value"]
+        if slots.get("duration_days"):
+            user_text += f"\n游玩{slots['duration_days']['value']}天"
+        if decision.tool == "create_trip" and slots.get("start_date"):
+            decision.start_date = date.fromisoformat(slots["start_date"]["value"])
     # The model routes tools, but deterministic policy owns new-trip blockers.
     # This also catches an incomplete create_trip before prepare_action emits a
     # generic date error, and permits an explicit new city from a current Trip.
@@ -664,7 +736,7 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
             for creation_attempt in range(2):
                 try:
                     row.pending_action = await prepare_action(db, decision, current, trips, city_search,
-                        user_text=user_text,
+                        user_text=user_text, current_message=message,
                         explicit_daily_budget=bool(re.search(r"(?:每日|每天|一天)(?:的)?(?:预算|花费|开销)|(?:每日|每天|一天)\s*(?:不超过|最多|控制在)?\s*[一二三四五六七八九十百千万两\d.]+\s*(?:元|块)", user_text)))
                     break
                 except AssistantToolError as exc:
@@ -702,13 +774,28 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
             request = message if direct_arrangement_edit else rewritten_request or message
             turn_metadata["router_planning_request"] = rewritten_request
             has_plan = bool(await db.scalar(select(Activity.id).join(DayPlan).where(DayPlan.trip_id == target).limit(1)))
+            intent_adapter = None
+            if (direct_arrangement_edit and semantic_goal is not None
+                and semantic_goal.goal_type == "trip_modification" and semantic_goal.mutation_requested):
+                # Reuse the validated current-turn decision when the legacy
+                # intent vocabulary cannot parse its verb. This supplies only
+                # the operation; the existing resolver owns dates/identities,
+                # ambiguity, policy, Validator and subsequent Accept.
+                from app.planning_intent_service import CurrentTurnModification
+                intent_adapter = CurrentTurnModification()
             run = await create_planning_run(db, target, PlanningRunCreate(run_type="replan" if has_plan else "initial_plan", user_request=request,
-                selected_day_id=selected_day_id if target == row.trip_id else None, selected_activity_id=selected_activity_id if target == row.trip_id else None), commit=False)
+                selected_day_id=selected_day_id if target == row.trip_id else None, selected_activity_id=selected_activity_id if target == row.trip_id else None),
+                semantic_provider=intent_adapter, commit=False)
             if decision.tool == "plan_trip" and target == row.trip_id:
                 from app.candidate_edit import bind_initial_candidate
                 await bind_initial_candidate(db, previous_run_id, run)
             row.trip_id, row.latest_run_id = target, run.id
             row.pending_action = None
+    if isinstance(router, AssistantRouter) and router.diagnostics:
+        summary = dict(turn_metadata.get("execution_summary") or {"version":1, "correlation_id":str(message_id), "answer_status":"complete"})
+        summary["events"] = [*summary.get("events", []), *router.diagnostics]
+        summary["tool_decision_attempts"] = router._attempts
+        turn_metadata["execution_summary"] = summary
     row.messages = [*row.messages, {**turn_metadata, "id": str(message_id), "user": message, "assistant": reply, "tool": decision.tool,
         "run_id": str(row.latest_run_id) if row.latest_run_id else None,
         "goal_routing": goal_routing.model_dump(mode="json"),

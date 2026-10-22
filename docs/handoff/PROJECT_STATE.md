@@ -1,8 +1,113 @@
 # RoamSync project state
 
-Last updated: 2026-10-20
+Last updated: 2026-10-21
 
-## Official source integrated (2026-10-20, not deployed)
+## Practical answers and selective P1 integration (2026-10-21)
+
+VERIFIED implementation: selected hunks from two NO-GO experiments are adapted
+independently into the canonical source; branches remain rejected as wholes.
+Bounded answer repair removes recognized route/effort/merchant guarantees and
+invented numeric travel measurements, retaining useful differences and decision
+strategies. Existing preview supports one-city1–7days, and current-turn changes
+reuse the existing Graph/Validator/Accept with version-bound Worker restoration.
+Missing/estimated walking evidence is unknown; final hard-limit validation states
+its inter-activity scope. A literal personal-condition assist prevents an omitted
+selector patch from losing explicit diet alongside dates; provenance is required.
+
+MEASURED: two independent real browser/model/AMap continuous conversations pass
+through creation, adoption, modification, refresh; recovery adds failed Accept,
+unchanged formal state and reload/retry. Windows/Linux main1446 collected with
+dedicated24+1 database suites separately passing; final141 focused checks each.
+Web218/typecheck/build, actual3000 seven-turn strengthened memory/image smoke
+passed. Released by official script; API/Worker222 files each match. All26 tables
+unchanged during final deployment; only synthetic assistant messages change during
+smoke,179 Trips/851 Activities retained. The old text-only smoke's false positive
+is archived as FAILED. Existing host-port config15432 avoids Windows reservation
+of54329 while retaining roamsync_postgres_data and browser3000. See
+docs/QUALITY_INTEGRATION_20261021.md and evidence/release.json for exact scope.
+Lexical checks and transcript review do not certify universal factual quality.
+
+## Assistant illustrations and conversational conditions (2026-10-21)
+
+VERIFIED implementation: semantic selection and original answer generation select
+optional food/attraction/architecture illustrations; actual bounded image reads
+are separate from factual research and cannot fail a successful text answer.
+Topic photos flow beside matching paragraphs; no visible reference-photo badge,
+no pending/failed blank card, source/license disclosure retained.
+Server-owned context JSON persists explicit source-bound city/date/duration,
+preferences and requirements. Corrections replace old values; relative dates are
+anchored at capture. City changes keep personal conditions; topic epochs/new
+sessions isolate old POIs, conditions and Trip reads. A new-chat button preserves
+old records. No migration, extra planner, new write authority or extra decision
+model. Released to3000:221 backend files match; Windows/Linux1429 passed/1 skipped,
+Web218. Actual browser photo/inline layout, corrections, refresh/new-chat passed.
+All26 deployment table hashes match;179 trips/851 activities retained. See
+docs/ASSISTANT_P1_20261021.md for evidence, transient failures and release state.
+
+## Assistant reliability and semantic capabilities (2026-10-21)
+
+VERIFIED implementation: one server-validated semantic capability decision reuses
+existing POI/web/facts/routes/read-itinerary/planning services. Direct consultation
+has a shared 90-second budget and at most two answer attempts, typed sanitized
+failure diagnostics in session JSON, streaming reset and a fresh-ID retry UI.
+Independent read requests compose in parallel; dependencies and SQL session reads
+remain ordered. Write authority, preview/Validator/Accept/version guards stay in
+the existing planning flow; a follow-up date does not mint write authority.
+MEASURED: 72 fixed actual execution cases, five sequential private-original-context
+replays, five three-turn Chengdu conversations, 20 additional actual cases and
+seven compound/continuation turns. Historical unique root cause remains OPEN:
+the old failure record had no underlying diagnostic. Evidence and deployment
+status: docs/ASSISTANT_P0_20261021.md. Released to port 3000 through the official
+script; API/Worker each match 219 files. All 26 pre/post deployment table hashes
+match; browser smoke preserves formal trip tables (179 trips /851 activities).
+No migration or automatic image expansion.
+
+## Conversation quality and inline maps (2026-10-20)
+
+VERIFIED engineering: f1686e4 feature /8b90518 evidence integrated and deployed3000.
+Backend1366 passed /1 skipped, favorite PG separately1 passed; Web213/typecheck/build.
+MEASURED quality:50 actual-model scripted turns across10 scenarios and staged
+rechecks, with complete raw replies. Main30 manual review:3 usable,9 caveated,
+18 problematic. Not a user study or final-version accuracy estimate. Quality is
+PARTIAL despite passing transport/tests. See docs/CONVERSATION_QUALITY_20261020.md.
+Inline maps reuse ExploreMap; details remain. Photo captions/credit clutter moved
+to on-image disclosures. Retrieval/prose projection and narrow safety fixes added.
+No migration or new Agent architecture;216 runtime files match,26 tables unchanged.
+Prior status sections below are historical.
+
+## Evidence assistant on official localhost3000 (2026-10-20)
+
+VERIFIED: a53cc74 runtime / c7491bd evidence integrated by fast-forward; official
+Compose rebuilt from canonical source. API/Worker215 files match. Windows backend
+1358 passed /1 skipped, favorite PostgreSQL separately1 passed; Web211/typecheck/build.
+MEASURED: AMap real branches, Tavily Search/Extract page evidence, source-bound
+citations, actual process auto-collapse/restoration, Commons/reference photos and
+mobile UI. Live3000 photo loaded and source links restored. No production migration;
+26 pre-smoke business tables unchanged,179 Trips/851 Activities retained. README,
+nginx and1856 untracked files preserved. See docs/EVIDENCE_ASSISTANT_20261020.md.
+Full Dianping/Meituan reviews and universally grounded prose remain unproven.
+Prior deployment sections below are historical; this section is the latest status.
+
+## Official localhost deployment (2026-10-20)
+
+VERIFIED: user authorized deployment to3000. Product HEAD1e2dae1 rebuilt through
+scripts/start-roamsync.ps1; Web/API/Worker healthy. API and Worker each match214
+canonical runtime files. Web serves index-Do3I724E.js. Existing PostgreSQL volume
+retained;0036→0037 completed. All25 existing business table fingerprints unchanged
+before browser smoke;179 Trips/851 Activities retained. Backup restore succeeded
+in a separate PostgreSQL database. Backups: E:/Study/RoamSync-deployment-backups/20261020-3000.
+Docker build reran Web206 tests, typecheck/build. Live3000 real model consultation
+completed with thinking summary and no generic-knowledge disclosure. Deployment
+smoke does not replace prior isolated full-chain acceptance. Naturalness remains
+PARTIAL. README/nginx local changes preserved; no cleanup of untracked files.
+
+2026-10-20 follow-up af6b408 separates public thinking summary from final prose:
+dedicated muted card, explicit collapse control, auto-collapse when final response
+begins, saved summaries collapsed by default. Test evidence: Web208/typecheck and
+production build passed; post-deploy3000 health checks passed. Screenshot at
+E:/Study/RoamSync-deployment-backups/20261020-3000/thinking-answer-separated.png.
+
+## Official source integration evidence (before deployment)
 
 VERIFIED: canonical E:/Study/RoamSync, branch codex/official-v2-20261018,
 fast-forwarded25a62cb→8344b54→8c23a93 with complete history. Product code is now

@@ -282,7 +282,13 @@ class CompanionContext(Contract):
     resolved_facts: list[ResolvedFact] = Field(default_factory=list, max_length=32)
 
 
+class VisualSubject(Contract):
+    subject: str = Field(min_length=2, max_length=80)
+    kind: Literal["attraction", "food", "architecture"]
+
+
 class CompanionResult(Contract):
+    visual_subjects: list[VisualSubject] = Field(default_factory=list, max_length=3)
     analysis_summary: str = Field(default="", max_length=600)
     response_text: str = Field(min_length=1, max_length=5000)
     goal_type: CompanionGoal
@@ -331,6 +337,7 @@ class CompanionDraft(Contract):
     suggestions: list[SuggestionDraft] = Field(default_factory=list, max_length=10)
     comparison: CompanionComparison | None = None
     evidence_refs: list[str] = Field(default_factory=list, max_length=10)
+    visual_subjects: list[VisualSubject] = Field(default_factory=list, max_length=3)
 
 
 class AgentAnswerText(Contract):
@@ -347,6 +354,7 @@ class CompanionAnswerDraft(Contract):
     agent_claims: list[AgentAnswerText] = Field(default_factory=list, max_length=8)
     suggestions: list[SuggestionDraft] = Field(default_factory=list, max_length=10)
     comparison: CompanionComparison | None = None
+    visual_subjects: list[VisualSubject] = Field(default_factory=list, max_length=3)
 
 
 class GroundedAnswerClaim(Contract):

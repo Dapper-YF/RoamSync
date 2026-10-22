@@ -30,7 +30,7 @@ def _compact(text):
     return re.sub(r"\s+", "", text).replace("：", ":")
 
 
-def check_time_quote(choice, quote):
+def check_time_quote(choice, quote, start_date=None):
     # Deliberately bounded. Ambiguous/missing booking ranges require clarification.
     clocks = re.findall(r"(?<!\d)(\d{1,2}):(\d{2})(?!\d)", quote)
     expected = [(str(choice.start.hour), f"{choice.start.minute:02}"), (str(choice.end.hour), f"{choice.end.minute:02}")]
@@ -39,8 +39,43 @@ def check_time_quote(choice, quote):
         raise ValueError("请明确提供起止时间，例如14:00—15:00；不会猜测预约时长")
     tokens = [choice.day_date.isoformat(), f"{choice.day_date.month}月{choice.day_date.day}日",
         "周" + "一二三四五六日"[choice.day_date.weekday()], "星期" + "一二三四五六日"[choice.day_date.weekday()]]
+    if start_date is not None:
+        position = (choice.day_date - start_date).days + 1
+        if 1 <= position <= 7:
+            tokens += [f"第{position}天", "第" + "一二三四五六七"[position - 1] + "天"]
     if not any(token in quote for token in tokens):
         raise ValueError("时间范围还缺少与旅行日期一致的日期说明")
+
+
+def recover_creation_quotes(decision, user_message):
+    """Recover a malformed model quote from a unique literal current-user clause.
+
+    Does not invent choices, resolve ambiguity, alter kind/time, or accept them.
+    prepare_choices still validates identity, cancellation and precision.
+    """
+    clauses = [c.strip() for c in re.split(r"[，,。；;\n]", user_message) if c.strip()]
+    choices = []
+    for choice in decision.choices:
+        if choice.kind not in {"selected", "optional"} or choice.origin != "user_explicit":
+            choices.append(choice)
+            continue
+        label = re.split(r"[（(]|(?:已)?预约", choice.label, maxsplit=1)[0].strip()
+        quote = _compact(choice.source_quote)
+        if quote and quote in _compact(user_message) and _compact(label) in quote:
+            choices.append(choice)
+            continue
+        matches = [c for c in clauses if _compact(label) in _compact(c)]
+        unique = matches[0] if len(matches)==1 else ""
+        name = re.escape(_compact(label))
+        # Finite affirmative forms only. Do not interpret negation, questions or
+        # arbitrary surrounding language as consent to an item.
+        affirmative = re.fullmatch(
+            r"(?:(?:保留|纳入|选定)"+name+r"|"+name+r"(?:确定想去|确定要去|想去|必去)|"
+            +name+r"(?:还是|是|作为|只作|仅作)?(?:备选|可选))"
+            r"(?:但?(?:暂不排时间|时间未定|尚未排时间|暂不定))?", _compact(unique))
+        choices.append(choice.model_copy(update={"source_quote":unique})
+                       if label and unique and len(unique)<=600 and affirmative else choice)
+    return choices
 
 
 async def prepare_choices(decision, city, user_text):
@@ -69,11 +104,11 @@ async def prepare_choices(decision, city, user_text):
         if choice.kind in {"selected", "optional"} and re.search(r"未定|不定|暂不排|没定", quote):
             data["day_date"] = None
         if choice.kind == "free_window" and choice.origin == "user_explicit":
-            check_time_quote(choice, choice.source_quote.replace("：", ":"))
+            check_time_quote(choice, choice.source_quote.replace("：", ":"), decision.start_date)
         if choice.kind == "appointment":
             if choice.origin != "user_explicit" or not re.search(r"预约|订好|固定", quote) or re.search(r"取消|没订|未预约|不确定", quote):
                 raise ValueError("固定预约必须来自用户明确提供的信息")
-            check_time_quote(choice, choice.source_quote.replace("：", ":"))
+            check_time_quote(choice, choice.source_quote.replace("：", ":"), decision.start_date)
             if (choice.end.hour*60+choice.end.minute)-(choice.start.hour*60+choice.start.minute) < 5:
                 raise ValueError("预约起止时间不足5分钟，请核对原始时间")
             places = await search_amap_places(label, city["name"])

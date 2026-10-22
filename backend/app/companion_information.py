@@ -82,7 +82,7 @@ def determine_information_need(context: CompanionContext, selected: list[Compani
     prefs = not history and goal.goal_type in {"recommendation", "comparison", "travel_advice", "destination_discovery"}
     preference_only = bool(context.relevant_user_preferences and re.search(r"我.*(?:喜欢|偏好)|不喜欢", text)
                            and not re.search(r"[？?]|吗|为什么|有哪些|有什么", text))
-    fact_patterns = {"weather": r"天气|下雨|降雨|气温|日落|日出", "opening_hours": r"开门|关门|几点关|开放时间|营业|闭馆|闭园",
+    fact_patterns = {"weather": r"天气|下雨|降雨|气温|日落|日出(?!发)", "opening_hours": r"开门|关门|几点关|开放时间|营业|闭馆|闭园",
         "price": r"票价|门票|多少钱|价格|余票|预约", "traffic": r"路况|ETA|GPS|多久能到|堵车|班次|交通耗时|路线耗时|车程|从.{1,20}到.{1,20}(?:多久|多少分钟|多长时间)",
         "execution": r"玩.{0,5}多久|待.{0,5}多久|停留.{0,5}多久|走.{0,5}多久"}
     fact_types = [key for key, pattern in fact_patterns.items() if re.search(pattern, text, re.I)]
@@ -92,8 +92,11 @@ def determine_information_need(context: CompanionContext, selected: list[Compani
         fact_types.append("current_seasonal_conditions")
     if re.search(r"今天.{0,8}(?:桂花|花开|开花|花况)|(?:桂花|花开|开花).{0,8}(?:今天|现在|当前)|今年.{0,8}(?:桂花季|活动).{0,8}(?:几点|什么时候)", text):
         fact_types.append("current_seasonal_conditions")
-    if (re.search(r"活动|节庆|节日|音乐节|展览|灯会|新闻|管制|停运", text)
-        and re.search(r"今天|明天|近期|最近|本周|今年|\d{4}年|\d{1,2}月\d{1,2}[日号]|具体.*(?:时间|地点)|什么时候举办|举办时间|举办地点|哪天举办|哪里举办", text)):
+    event_clauses = re.split(r"[，,。；;]", text)
+    if any(re.search(r"活动|节庆|节日|音乐节|展览|灯会|新闻|管制|停运", clause)
+        and not re.search(r"不用|不要|不需要|无需|别给", clause)
+        and re.search(r"今天|明天|近期|最近|本周|今年|\d{4}年|\d{1,2}月\d{1,2}[日号]|具体.*(?:时间|地点)|什么时候举办|举办时间|举办地点|哪天举办|哪里举办", clause)
+        for clause in event_clauses):
         fact_types.append("dated_event")
     if re.search(r"(?:实际|实时|现在|今天|明天).{0,16}(?:交通|路线|耗时)|(?:交通|路线|耗时).{0,16}(?:实际|实时|现在|今天|明天)|坐车.{0,8}多久|预约状态|关闭状态|临时关闭", text):
         fact_types.append("current_conditions")
@@ -176,6 +179,13 @@ def determine_information_need(context: CompanionContext, selected: list[Compani
         season_tags=seasons, audience_tags=["senior"] if senior else [],
         filter_signals=(["explicit_season"] if seasons else []) + (["parent_word_to_senior_filter_not_age_fact"] if senior else []),
         answer_mode=answer_mode, requested_fact_topics=requested_topics)
+    selection = context.read_tool_context.get("capability_selection", {})
+    capabilities = selection.get("capabilities", [])
+    if "itinerary" in capabilities:
+        need = need.model_copy(update={"trip_context_required": True, "itinerary_required": True})
+    if "facts" in capabilities:
+        need = need.model_copy(update={"live_fact_required": True, "general_knowledge_allowed": False,
+            "fact_types": need.fact_types or ["current_conditions"]})
     specialist = bool(re.search(SPECIALIST_PATTERN, text)) and not decision and not live
     if specialist and not need.source_required:
         need = need.model_copy(update={"knowledge_required": True, "general_knowledge_allowed": False,

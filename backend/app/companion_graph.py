@@ -153,6 +153,12 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
             "resolved_entities": [EntityReference(kind="suggestion", value=s.suggestion_id) for s in selected],
             "pending_planning_handoff": conversation.pending_handoff,
         })
+        memory = (context.assistant_context or {}).get("conversation_memory", {})
+        if memory.get("version") == 1:
+            from app.companion_contracts import PreferenceStatement
+            context = context.model_copy(update={"current_destination": memory.get("slots", {}).get("city", {}).get("value") or context.current_destination,
+                "relevant_user_preferences": [PreferenceStatement(text=item["value"], source_turn_id=item["message_id"])
+                    for item in [*memory.get("preferences", []), *memory.get("requirements", [])]]})
         return {"context": context, "selected": selected, "gaps": gaps,
                 "trace": [*state["trace"], "resolve_conversation"]}
 
@@ -194,7 +200,8 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
             context = await reader.load(context, need)
             if need.fact_requirements and fact_tool is not None:
                 try:
-                    resolved = list(await fact_tool.resolve_facts(need.fact_requirements))
+                    from app.assistant_reliability import bounded_call
+                    resolved = list(await bounded_call(lambda: fact_tool.resolve_facts(need.fact_requirements), stage="facts"))
                     # Trust only typed results for these exact requirements in order.
                     if len(resolved) != len(need.fact_requirements) or any(r.requirement != q for r,q in zip(resolved,need.fact_requirements)):
                         raise ValueError("unrelated fact tool result")
@@ -372,7 +379,8 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
             # Factual answers are rendered from reviewed server-owned assertions;
             # no free-text generation runs for this mode.
             draft = CompanionAnswerDraft()
-        elif selected and interaction_status(context.current_message) in {"user_liked", "user_confirmed"}:
+        elif (selected and interaction_status(context.current_message) in {"user_liked", "user_confirmed"}
+              and not re.search(r"聊|比较|区别|怎么|为何|建议|推荐|介绍|告诉|说说|了解|[?？]", context.current_message)):
             draft = CompanionDraft(response_text="记住了，你对“" + "、".join(s.title for s in selected)
                 + "”感兴趣。这只是本次对话中的选择，没有加入正式行程。")
         elif need.knowledge_required and not context.knowledge_context and (
@@ -383,6 +391,10 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
             try:
                 generated = await provider.generate(context, need)
             except CompanionProviderError as exc:
+                from app.assistant_reliability import active_turn, record_failure
+                record_failure("answer", exc)
+                if active_turn.get() is not None:
+                    raise
                 # Do not retry or rewrite a request to bypass upstream filtering.
                 claim_issues.append("provider_filtered" if exc.finish_reason == "sensitive" else "provider_incomplete")
                 gaps.append(InformationGap(code="provider_unavailable", message="这次回答未能完成，没有可发布的模型结果。"))
@@ -525,6 +537,7 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
             grounding = "unverified_proposal"
         status = "needs_clarification" if (context.forecast_plan and context.forecast_plan.clarification) or (context.opening_hours_plan and context.opening_hours_plan.clarification) or any(g.code in {"unknown_suggestion", "ambiguous_suggestion"} for g in gaps) else "needs_information" if gaps else "completed"
         result = CompanionResult(response_text=response[:5000], analysis_summary=draft.analysis_summary,
+            visual_subjects=draft.visual_subjects,
             goal_type=context.travel_goal.goal_type,
             status=status, suggestions=suggestions, resolved_suggestion_refs=[s.suggestion_id for s in state["selected"]],
             interactions=[SuggestionInteraction(suggestion_id=s.suggestion_id, status=interaction_status(context.current_message),

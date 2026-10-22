@@ -84,7 +84,7 @@ async def fetch_open_meteo(
 
 @observed("search", provider="Tavily", purpose="Destination Research", input_summary=lambda args, kwargs: {"query": kwargs.get("query")},
           output_summary=lambda fact: {"query": fact.query, "sources": [{"title": item.get("title"), "url": item.get("url"), "content": item.get("content", "")[:800]} for item in fact.payload.get("results", [])], "source_count": len(fact.payload.get("results", []))})
-async def search_tavily(settings: Settings, *, query: str, max_results: int = 5, include_images: bool = False) -> SearchFact:
+async def search_tavily(settings: Settings, *, query: str, max_results: int = 5, include_images: bool = False, retry_attempts: int = 2) -> SearchFact:
     key = settings.search_api_key
     if not key:
         raise ExternalFactError("tavily provider is not configured")
@@ -109,12 +109,12 @@ async def search_tavily(settings: Settings, *, query: str, max_results: int = 5,
         except Exception as exc:
             raise ExternalFactError("search_provider_unavailable") from exc
 
-    for attempt in range(2):
+    for attempt in range(max(1, min(2, retry_attempts))):
         try:
             payload = await asyncio.to_thread(request)
             break
         except ExternalFactError as exc:
-            if attempt or str(exc) == "search_authentication_failed":
+            if attempt + 1 >= max(1, min(2, retry_attempts)) or str(exc) == "search_authentication_failed":
                 raise
             await asyncio.sleep(0.5)
     from datetime import datetime, UTC

@@ -6,13 +6,39 @@ remain owned by the existing server Fact Resolver renderers. No model retry.
 import re
 from dataclasses import dataclass, field
 
-MONEY = re.compile(r"(?:\d+(?:\.\d+)?|[一二三四五六七八九十百千两几数]+)(?:\s*[—–~至到-]\s*\d+)?\s*(?:元|块钱|美元|日元|欧元)")
+MONEY = re.compile(r"(?:\d+(?:\.\d+)?|[一二三四五六七八九十百千两几数]+)(?:\s*[—–~至到-]\s*\d+)?\s*(?:元|块(?:钱)?|美元|日元|欧元)")
 QUEUE = re.compile(r"(?:排队|等候|等待).{0,10}(?:\d+|[一二三四五六七八九十两几]+)\s*(?:分钟|小时)|(?:几乎|基本|完全)?(?:不(?:用|需要|需|要)|无需|免)排队|排队.{0,6}(?:很短|很快)|(?:保证|一定|肯定|必定).{0,10}(?:避开|躲开).{0,8}(?:排队|人流|人群)")
 CROWD = re.compile(r"(?:行人|游客|游人|人流|人群|旅行团|人)(?:非常|特别|相对|比较|更|很|通常|一般|往往)?(?:少(?:得多)?|不多|很少|多得多|很多)|(?:几乎|基本)(?:没有|不见)(?:人|游客|旅行团)|(?:一定|保证|肯定|必定|绝对|十分|非常|特别|相对|比较|很)(?:安静|清幽)|小而静|人(?:立刻|马上|也)少|(?:尤其|特别|一定|肯定|能)(?:安静|清静)|基本没什么人|人流(?:最|较)?集中|主街人多|人数多|人流明显更多|比.{0,18}(?:安静|清静|清净|清幽)|没有.{0,8}拥挤|(?:比.{0,18})?(?:安静|清静|清净|清幽)(?:得多|许多)|氛围安静|人流高峰.{0,15}(?:点|时)|(?:能|天然|最大程度).{0,8}(?:避开|躲开).{0,8}(?:排队|人流|人群)")
 OPERATING = re.compile(r"(?:今天|明天|今晚|现在|目前|当天|下午场|上午场).{0,20}(?:开门|开放|营业|闭馆|演出|场次|场多|多是|有\d+场)|(?:每天|每日|每晚|每周).{0,15}(?:开放|营业|演出|场)|(?:开门|开馆|营业|开放).{0,8}\d{1,2}(?:点|时|[:：]\d{2})|(?:今晚|当晚|晚上)(?:可以|可|能)?看一场|(?:偶有|常有|经常有).{0,20}(?:演出|场次)")
 AVAILABILITY = re.compile(r"(?:还有|有|剩余|剩下|可以|能|无需).{0,8}(?:预约名额|余票|空位)|(?:预约|门票|名额).{0,8}(?:充足|可用|售罄|约满|已满|有余|紧张|压力小)|(?:保证|一定|肯定).{0,8}(?:入馆|进馆|订到|约到)")
 PHOTO = re.compile(r"摄影|拍照|拍摄|出片|机位|构图|长焦|快门|感光度|镜头")
+FORMAL_WRITE = re.compile(r"(?:我(?:已经|已)|已经(?:为你|帮你)|已(?:为你|帮你|替你|把|将)).{0,40}(?:创建|保存|加入|加进|添加|调整|修改|安排|改期|采用)|(?:已经|已)安排好")
 HISTORICAL = re.compile(r"(?:公元|建于|始建|历史上|古代|唐代|宋代|明代|清代|民国时期|曾经|当时)")
+
+
+def unsupported_advice(sentence, request=""):
+    """Bounded assertion checks, never a certificate of overall factual truth.
+
+    General prose cannot turn proximity into a route result, a route result
+    into comfort, or a food style into an individual merchant's menu.
+    Conditional strategies and explicit evidence gaps remain useful advice.
+    """
+    if re.search(r"(?:不|不能|无法|尚未|未能)(?:保证|确认|证明|核实)|需要(?:另行)?核实|(?:若|如果|假如).{0,35}(?:确认|核实|查询|实测)|是否|吗[？?]", sentence):
+        return []
+    issues = []
+    # Travel times/distances must come from route results rendered by the
+    # server. General knowledge cannot invent them even inside an introduction.
+    quantity = r"(?:\d+(?:\.\d+)?|[一二三四五六七八九十百两半几]+)\s*(?:分钟|小时|公里|千米)"
+    if (re.search(r"(?:车程|路程|步行|驾车|开车|打车|坐车|乘车|走路).{0,12}" + quantity, sentence)
+        or re.search(quantity + r"\s*(?:左右|上下)?(?:车程|路程)", sentence)):
+        issues.append("output_unverified_travel_measurement")
+    if re.search(r"顺路|(?:步行|走路).{0,12}(?:轻松|不累|方便|可达|就到)|(?:路面|地势|道路).{0,8}平坦|(?:完全|很|非常|比较|相对|十分|更)?适合.{0,8}(?:老人|老年人|轮椅|推车)|(?:很近|相邻|隔壁|挨着).{0,18}(?:一起|一天|串|步行|走)|(?:半天|一天|\d+小时)(?:就|也)?(?:足够|够了|能逛完)", sentence):
+        issues.append("output_unverified_route_or_effort")
+    if re.search(r"(?:口碑|评价).{0,8}(?:好|稳定|不错|可靠)|(?:出品|味道).{0,6}(?:稳定|有保障)|(?:都|均|一定|肯定)(?:能|可以|有|提供|供应).{0,16}(?:清汤|菌汤|鸳鸯|不辣|素食)|(?:清汤).{0,20}(?:辣锅|红锅).{0,8}(?:舀|兑)", sentence):
+        issues.append("output_unverified_merchant_attribute")
+    if re.search(r"不吃辣|不能吃辣", request) and re.search(r"(?:直接点|点全|可以点|建议.{0,6})(?:鸳鸯|清油|微辣)|(?:红汤|红锅).{0,15}(?:兑淡|加汤)", sentence):
+        issues.append("output_diet_advice_without_menu_confirmation")
+    return issues
 
 
 @dataclass
@@ -30,10 +56,25 @@ def control_model_text(text: str, request: str) -> TextControl:
     This lexical coverage is intentionally measured, not claimed exhaustive.
     """
     output, issues, removed = [], [], 0
+    # Remove a rejected sentence as a unit, never leave its dependent fragments.
+    sentences = re.findall(r"[^。！？!?\n]+[。！？!?\n]*|[。！？!?\n]+", text)
+    retained = []
+    for sentence in sentences:
+        unsafe = unsupported_advice(sentence, request)
+        if unsafe:
+            issues.extend(unsafe)
+            removed += 1
+            if "\n" in sentence:
+                retained.append("\n" * sentence.count("\n"))
+        else:
+            retained.append(sentence)
+    text = "".join(retained)
     photo_requested = bool(PHOTO.search(request) or re.search(r"照片|照相",request))
     # Delimiters retained with each clause; do not truncate/salvage model JSON.
     for clause in re.findall(r"[^，,。；;！？!?\n]+[，,。；;！？!?\n]*|[，,。；;！？!?\n]+",text):
         reasons=[]
+        if FORMAL_WRITE.search(clause) and re.search(r"行程|旅行|安排|计划|活动", clause + request):
+            reasons.append("unexecuted_formal_write_claim")
         caveat = bool(re.search(r"不能保证|无法保证|不保证|无法确认|尚未确认|需要核实|需确认|不能确认", clause))
         if MONEY.search(clause) and not (re.search(r"预算|预留|控制在|支出上限",clause)
             and not re.search(r"票价|售价|收费|只需|只要|每人|茶位费",clause)):
@@ -58,6 +99,7 @@ def control_model_text(text: str, request: str) -> TextControl:
     if not removed:
         return TextControl(text)
     cleaned="".join(output).strip("，,；;。 \n")
+    cleaned=re.sub(r"[，,；;]+(?=\s*(?:\n|$))", "。", cleaned)
     cleaned=re.sub(r"[，,][ \t]*(\n+\s*\d+[.)）])",r"。\1",cleaned)
     # Remove empty headings/list items left by clause deletion, not numbers.
     cleaned=re.sub(r"(?m)^\s*\d+[.)、]\s*[^\n。]{0,35}[：:]\s*$","",cleaned).strip()

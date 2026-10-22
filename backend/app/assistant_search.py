@@ -62,7 +62,7 @@ def project_search(fact, message):
         url = public_image_url(item.get("url"))
         description = str(item.get("description") or "")[:300]
         filename = unquote(urlsplit(url).path.rsplit("/", 1)[-1]) if url else ""
-        identity_text = description + " " + filename
+        identity_text = str(item.get("title") or "")[:300] + " " + description + " " + filename
         exact_subject = len(subject) >= 2 and subject.casefold() in identity_text.casefold()
         # For an explicitly requested food illustration the dish is the subject,
         # not proof of where a stock/reference photograph was taken. Never apply
@@ -95,5 +95,9 @@ async def search_for_answer(settings, message):
         fact = await search_tavily(settings, query=message, max_results=4, include_images=True)
         return project_search(fact, message)
     except ExternalFactError as exc:
+        from app.assistant_reliability import record_failure
+        code = str(exc) if str(exc) in {"search_authentication_failed", "search_provider_unavailable", "tavily provider is not configured"} else "search_provider_unavailable"
+        exc.code = code
+        record_failure("web", exc)
         return {"status": "unavailable", "sources": [], "images": [], "provider": "tavily",
-            "error_code": str(exc) if str(exc) in {"search_authentication_failed", "search_provider_unavailable", "tavily provider is not configured"} else "search_provider_unavailable"}
+            "error_code": code}

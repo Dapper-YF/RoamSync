@@ -69,6 +69,8 @@ class ContextEnvelope(ContextModel):
     prefer_flexible: bool = False
     preview_action_id: uuid.UUID | None = None
     route_request: RouteReadRequest | None = None
+    # Incoming copies are ignored by restore_context; only saved server state wins.
+    conversation_memory: dict = Field(default_factory=dict)
 
 
 def scoped_history(messages: list[dict], topic_id: str) -> list[dict]:
@@ -81,11 +83,11 @@ def restore_context(incoming: ContextEnvelope, messages: list[dict]) -> tuple[Co
     history = scoped_history(messages, incoming.topic_id)
     previous = next((m["context"] for m in reversed(history) if m.get("context")), None)
     if not previous:
-        return incoming.model_copy(update={"requirement_records": []}), history
+        return incoming.model_copy(update={"requirement_records": [], "conversation_memory": {}}), history
     try:
         old = ContextEnvelope.model_validate(previous)
     except ValidationError:
-        return incoming.model_copy(update={"requirement_records": []}), []
+        return incoming.model_copy(update={"requirement_records": [], "conversation_memory": {}}), []
     # A new city starts a new local scope. Explicit null clears a field;
     # omission preserves it while moving between pages in the same topic.
     changed_city = "browsing_city" in incoming.model_fields_set and incoming.browsing_city != old.browsing_city
@@ -99,11 +101,12 @@ def restore_context(incoming: ContextEnvelope, messages: list[dict]) -> tuple[Co
         suffix = []
         for turn in reversed(history):
             saved = turn["context"]
-            if (saved.get("browsing_city"), saved.get("read_trip_id"), saved.get("read_draft_id")) != (previous.get("browsing_city"), previous.get("read_trip_id"), previous.get("read_draft_id")):
+            if (saved.get("browsing_city"), saved.get("read_trip_id"), saved.get("read_draft_id"), (saved.get("conversation_memory") or {}).get("epoch", "")) != (previous.get("browsing_city"), previous.get("read_trip_id"), previous.get("read_draft_id"), (previous.get("conversation_memory") or {}).get("epoch", "")):
                 break
             suffix.append(turn)
         history = list(reversed(suffix))
     values = incoming.model_dump()
+    values["conversation_memory"] = {} if changed_city or changed_trip or changed_draft else old.conversation_memory
     # State comes from server-persisted prior context, never client-invented
     # source IDs/statuses. Only explicitly global preferences survive a switch.
     from app.requirements import valid_records

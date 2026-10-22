@@ -6,6 +6,7 @@ export function AssistantDecisions() {
   const a = useTravelAssistant();
   const preview = a.session?.pending_action;
   const activities = a.arrangement?.days.flatMap(d => d.activities) ?? [];
+  const hasWalkingLimit = a.revision?.planning_goals?.hard_goals?.max_walking_minutes != null || a.revision?.goal_satisfaction?.results.some(r => r.evidence.walking_scope === "inter_activity_travel_only");
   const stale = a.run?.base_trip_version != null && a.arrangement != null && a.run.base_trip_version !== a.arrangement.version;
   return <>
     {preview && <section className="travel-assistant-decision" aria-label="待采用的安排建议"><h2>这份建议，由你决定</h2>
@@ -24,6 +25,7 @@ export function AssistantDecisions() {
           {old && `原来 ${clock(old.scheduled_time)} / ${old.duration_minutes}分钟 → `}{clock(i.planned_start_time)} / {i.duration_minutes}分钟{i.reason && <p>{i.reason}</p>}</li>;
       })}</ul>
       {a.revision.proposed_snapshot.route_legs?.map((leg, n) => <p key={n}>第{n + 1}段 · {leg.duration_minutes}分钟 · {leg.is_estimated ? "估算，尚未核实" : leg.provider}</p>)}
+      {hasWalkingLimit && <p>目前只核对活动间的交通步行；景区内部和公交换乘步行尚未完整核实，不能据此保证整日总步行量。</p>}
       <p>采用后才会保存；固定活动、留白及其他要求仍会检查。</p>
       {stale && <p role="alert">安排已有新修改，这份候选已过期。请保留当前安排，重新提出调整要求。</p>}
       <button disabled={a.busy || stale} onClick={() => void a.decideRevision(true)}>采用这次调整</button><button disabled={a.busy} onClick={() => void a.decideRevision(false)}>保留原安排</button>
