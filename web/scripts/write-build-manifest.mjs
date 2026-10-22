@@ -1,7 +1,7 @@
 // Source/build binding, stored outside the public web root in the final image.
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { basename, join, relative } from 'node:path';
 
 const root = process.cwd();
 const walk = (folder) => !existsSync(folder) ? [] : readdirSync(folder, { withFileTypes: true }).flatMap((entry) => {
@@ -10,7 +10,7 @@ const walk = (folder) => !existsSync(folder) ? [] : readdirSync(folder, { withFi
 });
 const hash = (path, normalize = false) => {
   const data = readFileSync(path);
-  const bytes = normalize && /\.(tsx?|m?js|css|json|html|lock|yaml|template|conf)$/.test(path)
+  const bytes = normalize && (/\.(tsx?|m?js|css|json|html|lock|yaml|template|conf)$/.test(path) || ['Dockerfile', '.dockerignore'].includes(basename(path)))
     ? Buffer.from(data.toString('utf8').replace(/\r\n/g, '\n')) : data;
   return createHash('sha256').update(bytes).digest('hex');
 };

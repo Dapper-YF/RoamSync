@@ -12,7 +12,7 @@ def runtime_files(root):
 
 def fingerprint(path):
     data = path.read_bytes()
-    if path.suffix in {".py", ".json", ".ini", ".toml", ".lock"}:
+    if path.suffix in {".py", ".json", ".ini", ".toml", ".lock"} or path.name in {"Dockerfile", ".dockerignore"}:
         data = data.replace(b"\r\n", b"\n")
     return hashlib.sha256(data).hexdigest()
 
