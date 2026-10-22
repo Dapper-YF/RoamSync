@@ -1,0 +1,26 @@
+{
+  "reviewer": "implementing agent; manual, unblinded; not an independent human/Astra review",
+  "axes": ["intent", "tools", "conditions", "facts", "usefulness", "completion"],
+  "records": [
+    {"case":"quanzhou-context","turn":1,"scores":[2,2,0,2,1,1],"critical":false,"note":"城市/日期/素食/总预算保存；三天、同行人数、20分钟限制的语义更新因非字面值被拒绝。不能把正文或历史中出现过当成状态完整。"},
+    {"case":"quanzhou-context","turn":2,"scores":[2,1,1,0,0,0],"critical":true,"note":"没有场所动线证据，却断言殿内有座位、院内位移短、基本不涉及连续走20分钟。这是未核实的省力保证。"},
+    {"case":"quanzhou-context","turn":3,"scores":[2,2,1,2,2,2],"critical":false,"note":"朋友假设没有覆盖本人泉州目的地；对当前表达处理正确，完整条件仍有第一轮缺口。"},
+    {"case":"quanzhou-context","turn":4,"scores":[2,2,1,2,2,2],"critical":false,"note":"日期按要求改为11月22日，未写正式旅行。"},
+    {"case":"quanzhou-context","turn":5,"scores":[1,0,0,2,0,0],"critical":false,"note":"路线用现有POI核实但别名没有唯一匹配；天气组件丢失已保存的出发日期，反问哪天。未捏造路线或预报。"},
+    {"case":"quanzhou-context","turn":6,"scores":[2,1,1,2,1,1],"critical":false,"note":"没有误写，保留内部步行未知；建议只有减点，未具体回应母亲连续步行限制。"},
+    {"case":"quanzhou-context","turn":7,"scores":[2,2,0,1,1,0],"critical":false,"note":"复述漏20分钟限制，三天和同行人数靠历史正文补出；另一个requirement_records还把不喜欢拍照打卡记为正向photography。"},
+    {"case":"kaifeng-changes","turn":1,"scores":[2,1,2,0,1,1],"critical":false,"note":"回答方向相关，但无实查便保证市场密度/交通和游客化差异，称两城都无需提前查摊位。不能认证这些泛化。"},
+    {"case":"kaifeng-changes","turn":2,"scores":[1,2,1,1,1,1],"critical":false,"note":"条件更新后继续大量推荐，新增晨雾等未核实体验描述；不是清晰简短的条件确认。"},
+    {"case":"kaifeng-changes","turn":3,"scores":[1,0,1,1,0,0],"critical":false,"note":"实际检索返回主题景区而非普通人日常场所；随后建议二选一试错，未完成用户摄影目标。"},
+    {"case":"kaifeng-changes","turn":4,"scores":[1,0,1,2,0,0],"critical":false,"note":"真照片需求仅走网页摘录，没有图片结果或准确说明具体照片缺口。未发现异地图片冒充。"},
+    {"case":"kaifeng-changes","turn":5,"scores":[0,0,1,2,0,0],"critical":false,"note":"顶层direct正确，下游却把假设调整讨论转成预报日期追问；没有执行删除。"},
+    {"case":"kaifeng-changes","turn":6,"scores":[2,2,2,2,2,2],"critical":false,"note":"取消预算保存为未知，未称预算无限。"},
+    {"case":"kaifeng-changes","turn":7,"scores":[2,2,2,2,2,2],"critical":false,"note":"重新开始后隔离日期、天数和摄影目标，进入敦煌咨询，不追问规划字段。"},
+    {"case":"ambiguous","turn":1,"scores":[2,2,2,1,2,2],"critical":false,"note":"遵循先确认具体鼓楼，不猜GPS或餐馆；多个鼓楼的列举未经本轮核实，因此事实项仅1。"},
+    {"case":"compound","turn":1,"scores":[1,0,2,2,0,0],"critical":false,"note":"路线重名时诚实展示候选，但完全遗漏独立的瘦西湖地址目标。"},
+    {"case":"fresh-rule","turn":1,"scores":[2,1,2,2,1,0],"critical":false,"note":"没有把旧公告当今年事实，但只给通用资料不足声明，没有清楚说明官方依据查到何处、哪个条件未确认。"},
+    {"case":"creation","turn":1,"scores":[1,1,2,2,0,0],"critical":false,"note":"顶层create已有日期，第二路由因choice格式失败修复后要求精确下午时段；未产生可采用候选。无未经授权写入。"},
+    {"case":"missing-target","turn":1,"scores":[1,1,0,2,0,0],"critical":false,"note":"用户问能否识别修改目标，系统追问日期和天数，没有准确解释当前没有选中哪份安排。"},
+    {"case":"rain-advice","turn":1,"scores":[0,0,2,2,0,0],"critical":false,"note":"明确假设、不要查实时天气，仍返回只支持未来小时预报的限制，完全没有比较室内外雨天体验。"}
+  ]
+}

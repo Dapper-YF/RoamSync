@@ -25,3 +25,11 @@ Matched-evidence probes additionally reuse synthetic explicitly labelled POIs
 with real model generation; they isolate reasoning and are not live venue facts.
 Same-question before/after dialogue runs use live services whose results may vary;
 their changes cannot by themselves isolate the implementation's causal effect.
+
+Execution addendum (does not change frozen questions or scoring): initial regression
+and intermediate development runs inadvertently shared roamsync_agent_b_test.
+Preserve them but do not use intermediate formal-table counts as write evidence.
+Final full development uses roamsync_agent_b_live_test; one-time holdout uses
+roamsync_agent_b_holdout_test. Both are exclusive and start with all five measured
+formal tables empty. Product code froze at c83a93c before the holdout. Further
+integration compatibility review is separate, never a holdout rerun or retuning.

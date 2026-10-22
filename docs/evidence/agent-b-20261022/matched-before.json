@@ -1,0 +1,567 @@
+{
+  "label": "baseline",
+  "synthetic_material_real_model": true,
+  "records": [
+    {
+      "case": "bounded-budget",
+      "raw": {
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "main",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": "柳州",
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": false,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "budget": {
+                "value": "晚饭人均最多60元",
+                "source_quote": "晚饭人均最多60元",
+                "message_id": "952e8513-66de-48c8-834d-6e21a4892c00",
+                "scope": "personal"
+              }
+            },
+            "preferences": [
+              {
+                "value": "完全不吃辣",
+                "source_quote": "完全不吃辣",
+                "message_id": "952e8513-66de-48c8-834d-6e21a4892c00",
+                "scope": "personal"
+              }
+            ],
+            "requirements": []
+          }
+        },
+        "read_tools": {
+          "web_search": {
+            "status": "available",
+            "provider": "amap+tavily",
+            "sources": [
+              {
+                "source_id": "poi_1",
+                "place_id": "f55355c1-30d8-4d2f-a12c-0783602c8940",
+                "url": "https://example.org/synthetic",
+                "title": "高德 · 测试甲店",
+                "read_level": "provider_reference",
+                "retrieved_at": "2026-10-22T08:00:00Z",
+                "excerpt": "测试甲店；合成测试地址；参考人均95.0元"
+              },
+              {
+                "source_id": "poi_2",
+                "place_id": "74fa2ee2-76ba-4b31-a3d9-c1e7bd9aa380",
+                "url": "https://example.org/synthetic",
+                "title": "高德 · 测试乙店",
+                "read_level": "provider_reference",
+                "retrieved_at": "2026-10-22T08:00:00Z",
+                "excerpt": "测试乙店；合成测试地址；参考人均42.0元"
+              },
+              {
+                "source_id": "poi_3",
+                "place_id": "c6f9a449-ed5f-46b7-90d2-0208f49d1e3f",
+                "url": "https://example.org/synthetic",
+                "title": "高德 · 测试丙店",
+                "read_level": "provider_reference",
+                "retrieved_at": "2026-10-22T08:00:00Z",
+                "excerpt": "测试丙店；合成测试地址"
+              }
+            ],
+            "images": [],
+            "semantics": "retrieved_reference_not_live_verification",
+            "progress": [
+              "正在查询柳州的真实地点…",
+              "正在结合已取得的地点信息和资料整理建议…"
+            ],
+            "answer_validation": [
+              "comparison_missing_place_evidence"
+            ],
+            "read_failures": []
+          }
+        },
+        "place_cards": [
+          {
+            "place": {
+              "place_id": "f55355c1-30d8-4d2f-a12c-0783602c8940",
+              "name": "测试甲店",
+              "aliases": [],
+              "city": "柳州",
+              "category": "food",
+              "provider_type": null,
+              "address": "合成测试地址",
+              "rating": null,
+              "reference_cost_yuan": 95.0,
+              "longitude": null,
+              "latitude": null,
+              "coordinate_system": "gcj02",
+              "source": "https://example.org/synthetic",
+              "retrieved_at": "2026-10-22T08:00:00Z",
+              "expires_at": null,
+              "external_ref": null,
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            "role": "recommendation",
+            "suggestion_ids": [],
+            "reason_kind": "retrieved_reference",
+            "detail_path": "/places/f55355c1-30d8-4d2f-a12c-0783602c8940"
+          },
+          {
+            "place": {
+              "place_id": "74fa2ee2-76ba-4b31-a3d9-c1e7bd9aa380",
+              "name": "测试乙店",
+              "aliases": [],
+              "city": "柳州",
+              "category": "food",
+              "provider_type": null,
+              "address": "合成测试地址",
+              "rating": null,
+              "reference_cost_yuan": 42.0,
+              "longitude": null,
+              "latitude": null,
+              "coordinate_system": "gcj02",
+              "source": "https://example.org/synthetic",
+              "retrieved_at": "2026-10-22T08:00:00Z",
+              "expires_at": null,
+              "external_ref": null,
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            "role": "recommendation",
+            "suggestion_ids": [],
+            "reason_kind": "retrieved_reference",
+            "detail_path": "/places/74fa2ee2-76ba-4b31-a3d9-c1e7bd9aa380"
+          },
+          {
+            "place": {
+              "place_id": "c6f9a449-ed5f-46b7-90d2-0208f49d1e3f",
+              "name": "测试丙店",
+              "aliases": [],
+              "city": "柳州",
+              "category": "food",
+              "provider_type": null,
+              "address": "合成测试地址",
+              "rating": null,
+              "reference_cost_yuan": null,
+              "longitude": null,
+              "latitude": null,
+              "coordinate_system": "gcj02",
+              "source": "https://example.org/synthetic",
+              "retrieved_at": "2026-10-22T08:00:00Z",
+              "expires_at": null,
+              "external_ref": null,
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            "role": "recommendation",
+            "suggestion_ids": [],
+            "reason_kind": "retrieved_reference",
+            "detail_path": "/places/c6f9a449-ed5f-46b7-90d2-0208f49d1e3f"
+          }
+        ],
+        "companion_result": {
+          "visual_subjects": [],
+          "analysis_summary": "正在查询柳州的真实地点…\n正在结合已取得的地点信息和资料整理建议…",
+          "response_text": "先保留这几个实际查到的选择：测试甲店（合成测试地址；高德参考消费约95元） [1]；测试乙店（合成测试地址；高德参考消费约42元） [2]；测试丙店（合成测试地址） [3]。\n\n我建议先按忌口筛选：点单前确认锅底、蘸料和配菜能否按要求处理，再看菜单总价决定；没核实前先作为候选。",
+          "goal_type": "recommendation",
+          "status": "completed",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_decision": "general_knowledge",
+            "knowledge_strategy": "selective",
+            "knowledge_reasons": [],
+            "source_required": false,
+            "optional_rag": false,
+            "knowledge_required": false,
+            "general_knowledge_allowed": false,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": true,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": null,
+          "runtime_trace": [],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "not_applicable",
+          "grounding_limitations": [],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        },
+        "assistant": "先保留这几个实际查到的选择：测试甲店（合成测试地址；高德参考消费约95元） [1]；测试乙店（合成测试地址；高德参考消费约42元） [2]；测试丙店（合成测试地址） [3]。\n\n我建议先按忌口筛选：点单前确认锅底、蘸料和配菜能否按要求处理，再看菜单总价决定；没核实前先作为候选。"
+      },
+      "seconds": 6.9815897999942536,
+      "trace": {
+        "version": 1,
+        "correlation_id": "342cba03-a913-46f0-933c-26a00970705b",
+        "answer_status": "captured",
+        "answer_attempts": 1,
+        "duration_ms": 6982,
+        "selection": {},
+        "events": [
+          {
+            "stage": "poi",
+            "status": "running",
+            "elapsed_ms": 1
+          },
+          {
+            "stage": "poi",
+            "status": "completed",
+            "elapsed_ms": 1
+          },
+          {
+            "stage": "answer",
+            "status": "running",
+            "elapsed_ms": 165
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 6705,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 6538
+          },
+          {
+            "stage": "answer",
+            "status": "completed",
+            "elapsed_ms": 6705
+          }
+        ]
+      }
+    },
+    {
+      "case": "budget-withdrawn",
+      "raw": {
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "main",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": "柳州",
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": false,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {},
+            "preferences": [
+              {
+                "value": "完全不吃辣",
+                "source_quote": "完全不吃辣",
+                "message_id": "952e8513-66de-48c8-834d-6e21a4892c00",
+                "scope": "personal"
+              }
+            ],
+            "requirements": []
+          }
+        },
+        "read_tools": {
+          "web_search": {
+            "status": "available",
+            "provider": "amap+tavily",
+            "sources": [
+              {
+                "source_id": "poi_1",
+                "place_id": "f55355c1-30d8-4d2f-a12c-0783602c8940",
+                "url": "https://example.org/synthetic",
+                "title": "高德 · 测试甲店",
+                "read_level": "provider_reference",
+                "retrieved_at": "2026-10-22T08:00:00Z",
+                "excerpt": "测试甲店；合成测试地址；参考人均95.0元"
+              },
+              {
+                "source_id": "poi_2",
+                "place_id": "74fa2ee2-76ba-4b31-a3d9-c1e7bd9aa380",
+                "url": "https://example.org/synthetic",
+                "title": "高德 · 测试乙店",
+                "read_level": "provider_reference",
+                "retrieved_at": "2026-10-22T08:00:00Z",
+                "excerpt": "测试乙店；合成测试地址；参考人均42.0元"
+              },
+              {
+                "source_id": "poi_3",
+                "place_id": "c6f9a449-ed5f-46b7-90d2-0208f49d1e3f",
+                "url": "https://example.org/synthetic",
+                "title": "高德 · 测试丙店",
+                "read_level": "provider_reference",
+                "retrieved_at": "2026-10-22T08:00:00Z",
+                "excerpt": "测试丙店；合成测试地址"
+              }
+            ],
+            "images": [],
+            "semantics": "retrieved_reference_not_live_verification",
+            "progress": [
+              "正在查询柳州的真实地点…",
+              "正在结合已取得的地点信息和资料整理建议…"
+            ],
+            "answer_validation": [
+              "citation_quote_or_identity_mismatch"
+            ],
+            "read_failures": []
+          }
+        },
+        "place_cards": [
+          {
+            "place": {
+              "place_id": "f55355c1-30d8-4d2f-a12c-0783602c8940",
+              "name": "测试甲店",
+              "aliases": [],
+              "city": "柳州",
+              "category": "food",
+              "provider_type": null,
+              "address": "合成测试地址",
+              "rating": null,
+              "reference_cost_yuan": 95.0,
+              "longitude": null,
+              "latitude": null,
+              "coordinate_system": "gcj02",
+              "source": "https://example.org/synthetic",
+              "retrieved_at": "2026-10-22T08:00:00Z",
+              "expires_at": null,
+              "external_ref": null,
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            "role": "recommendation",
+            "suggestion_ids": [],
+            "reason_kind": "retrieved_reference",
+            "detail_path": "/places/f55355c1-30d8-4d2f-a12c-0783602c8940"
+          },
+          {
+            "place": {
+              "place_id": "74fa2ee2-76ba-4b31-a3d9-c1e7bd9aa380",
+              "name": "测试乙店",
+              "aliases": [],
+              "city": "柳州",
+              "category": "food",
+              "provider_type": null,
+              "address": "合成测试地址",
+              "rating": null,
+              "reference_cost_yuan": 42.0,
+              "longitude": null,
+              "latitude": null,
+              "coordinate_system": "gcj02",
+              "source": "https://example.org/synthetic",
+              "retrieved_at": "2026-10-22T08:00:00Z",
+              "expires_at": null,
+              "external_ref": null,
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            "role": "recommendation",
+            "suggestion_ids": [],
+            "reason_kind": "retrieved_reference",
+            "detail_path": "/places/74fa2ee2-76ba-4b31-a3d9-c1e7bd9aa380"
+          },
+          {
+            "place": {
+              "place_id": "c6f9a449-ed5f-46b7-90d2-0208f49d1e3f",
+              "name": "测试丙店",
+              "aliases": [],
+              "city": "柳州",
+              "category": "food",
+              "provider_type": null,
+              "address": "合成测试地址",
+              "rating": null,
+              "reference_cost_yuan": null,
+              "longitude": null,
+              "latitude": null,
+              "coordinate_system": "gcj02",
+              "source": "https://example.org/synthetic",
+              "retrieved_at": "2026-10-22T08:00:00Z",
+              "expires_at": null,
+              "external_ref": null,
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            "role": "recommendation",
+            "suggestion_ids": [],
+            "reason_kind": "retrieved_reference",
+            "detail_path": "/places/c6f9a449-ed5f-46b7-90d2-0208f49d1e3f"
+          }
+        ],
+        "companion_result": {
+          "visual_subjects": [],
+          "analysis_summary": "正在查询柳州的真实地点…\n正在结合已取得的地点信息和资料整理建议…",
+          "response_text": "先保留这几个实际查到的选择：测试甲店（合成测试地址；高德参考消费约95元） [1]；测试乙店（合成测试地址；高德参考消费约42元） [2]；测试丙店（合成测试地址） [3]。\n\n我建议先按忌口筛选：点单前确认锅底、蘸料和配菜能否按要求处理，再看菜单总价决定；没核实前先作为候选。",
+          "goal_type": "recommendation",
+          "status": "completed",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_decision": "general_knowledge",
+            "knowledge_strategy": "selective",
+            "knowledge_reasons": [],
+            "source_required": false,
+            "optional_rag": false,
+            "knowledge_required": false,
+            "general_knowledge_allowed": false,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": true,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": null,
+          "runtime_trace": [],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "not_applicable",
+          "grounding_limitations": [],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        },
+        "assistant": "先保留这几个实际查到的选择：测试甲店（合成测试地址；高德参考消费约95元） [1]；测试乙店（合成测试地址；高德参考消费约42元） [2]；测试丙店（合成测试地址） [3]。\n\n我建议先按忌口筛选：点单前确认锅底、蘸料和配菜能否按要求处理，再看菜单总价决定；没核实前先作为候选。"
+      },
+      "seconds": 6.237140299999737,
+      "trace": {
+        "version": 1,
+        "correlation_id": "762d4d91-e8d5-4ead-be9d-023a1ed9d2c5",
+        "answer_status": "captured",
+        "answer_attempts": 1,
+        "duration_ms": 6237,
+        "selection": {},
+        "events": [
+          {
+            "stage": "poi",
+            "status": "running",
+            "elapsed_ms": 0
+          },
+          {
+            "stage": "poi",
+            "status": "completed",
+            "elapsed_ms": 0
+          },
+          {
+            "stage": "answer",
+            "status": "running",
+            "elapsed_ms": 66
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 6235,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 6167
+          },
+          {
+            "stage": "answer",
+            "status": "completed",
+            "elapsed_ms": 6235
+          }
+        ]
+      }
+    }
+  ]
+}
