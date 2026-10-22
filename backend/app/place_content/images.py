@@ -14,6 +14,23 @@ BY_ID = {item['provider_place_id']: item for item in CATALOG}
 ASSETS = {asset['filename'] for item in CATALOG for photo in item['files'] for asset in photo['assets'].values()}
 
 
+def reviewed_illustrations(city: str) -> list[dict]:
+    """Local reviewed imagery, never a live POI or availability claim."""
+    from .provider import normalize_poi
+
+    result = []
+    for entry in CATALOG:
+        if entry['city'].removesuffix('市') != city.strip().removesuffix('市'):
+            continue
+        place = normalize_poi({'id': entry['provider_place_id'], 'name': entry['name'],
+            'cityname': entry['city'], 'location': f"{entry['longitude']},{entry['latitude']}",
+            'typecode': '110000'})
+        if place.images:
+            result.append({'ref': place.ref, 'name': place.name, 'city': place.city,
+                'location': place.location, 'images': place.images})
+    return result
+
+
 def project_images(place: Place) -> Place:
     from .provider import stable_place_id
 

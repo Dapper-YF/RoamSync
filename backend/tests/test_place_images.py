@@ -59,6 +59,24 @@ def test_media_allowlist_and_no_open_proxy():
         assert client.get('/api/v1/media/place-images/' + name).status_code == 404
 
 
+def test_destination_catalog_is_local_city_scoped_and_reuses_approved_assets(monkeypatch):
+    app = FastAPI()
+    app.include_router(create_router(None))  # No search service or network required.
+    client = TestClient(app)
+    response = client.get('/api/v1/media/place-images', params={'city': '成都'})
+    assert response.status_code == 200
+    item, = response.json()['items']
+    assert item['name'] == '人民公园' and item['city'] == '成都市'
+    assert item['ref']['place_id'] == str(stable_place_id('B001C7X8QA'))
+    assert item['images'][0]['usage_basis'] == 'reviewed_commons_license'
+    assert client.get(item['images'][0]['url']).content.startswith(b'\xff\xd8')
+    assert client.get('/api/v1/media/place-images', params={'city': '没有照片的城市'}).json() == {'items': []}
+    assert client.get('/api/v1/media/place-images').status_code == 422
+    import app.place_content.images as images
+    monkeypatch.setattr(images, 'MEDIA', MEDIA / 'missing')
+    assert client.get('/api/v1/media/place-images', params={'city': '成都市'}).json() == {'items': []}
+
+
 def test_new_hangzhou_image_bindings_and_local_asset_http_projection():
     expected = {
         "B023B13L9M": ("杭州西湖风景名胜区", 120.121358, 30.222692),

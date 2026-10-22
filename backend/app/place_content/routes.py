@@ -13,7 +13,7 @@ from pydantic import ValidationError
 from app.map_transport import MapProviderError
 from .contracts import Favorite, FavoriteState, GeoPoint, Place, RouteQuery, RouteResult, SearchQuery, SearchResponse
 from .service import PlaceContentService, PlaceNotFoundError, project_freshness
-from .images import ASSETS, MEDIA
+from .images import ASSETS, MEDIA, reviewed_illustrations
 
 
 def unavailable_owner() -> str:
@@ -22,6 +22,10 @@ def unavailable_owner() -> str:
 
 def create_router(service: PlaceContentService, owner_dependency: Callable = unavailable_owner) -> APIRouter:
     router = APIRouter(prefix="/api/v1", tags=["travel-content"])
+
+    @router.get('/media/place-images')
+    def destination_images(city: str = Query(min_length=1, max_length=100)):
+        return {'items': reviewed_illustrations(city)}
 
     @router.get('/media/place-images/{filename}', include_in_schema=False)
     def place_image(filename: str):

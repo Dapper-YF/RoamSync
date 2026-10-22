@@ -10,9 +10,9 @@ function Photo({ photo, full = false }: { photo: ExplorePhoto; full?: boolean })
   const [failed, setFailed] = useState(false);
   return failed ? <div className="place-photo-missing" role="status">照片暂时无法加载 · 地点信息仍可使用</div> : <img src={full ? photo.url : photo.thumbnail_url || photo.url} alt={photo.title} loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setFailed(true)} />;
 }
-export function PlaceCover({ photos, to, onOpen }: { photos: ExplorePhoto[]; to?: string; onOpen?: () => void }) {
+export function PlaceCover({ photos, to, onOpen, full = false }: { photos: ExplorePhoto[]; to?: string; onOpen?: () => void; full?: boolean }) {
   if (!photos.length) return null; // Keep the accepted compact no-photo card.
-  return <figure className="place-photo-cover">{to ? <Link to={to} onClick={onOpen} aria-label={`查看${photos[0].title}`}><Photo key={photos[0].url} photo={photos[0]} /></Link> : <Photo key={photos[0].url} photo={photos[0]} />}<Credit photo={photos[0]} /></figure>;
+  return <figure className="place-photo-cover">{to ? <Link to={to} onClick={onOpen} aria-label={`查看${photos[0].title}`}><Photo key={photos[0].url} photo={photos[0]} full={full} /></Link> : <Photo key={photos[0].url} photo={photos[0]} full={full} />}<Credit photo={photos[0]} /></figure>;
 }
 export function PlaceGallery({ photos, name }: { photos: ExplorePhoto[]; name: string }) {
   const [index, setIndex] = useState(0);
