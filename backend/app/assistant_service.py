@@ -333,6 +333,16 @@ async def prepare_action(db: AsyncSession, decision: ToolDecision, current: Trip
 
 @observe_message
 async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, message_id: uuid.UUID, *, router=None, companion_responder=None, companion_provider=None, companion_runtime=None, knowledge_tool=None, city_search=search_amap_cities, selected_day_id=None, selected_activity_id=None, context=None, place_port=None, researcher=None, capability_selector=None) -> AssistantSession:
+    if selected_day_id or selected_activity_id:
+        scoped_session = await db.get(AssistantSession, session_id)
+        scoped_day = await db.get(DayPlan, selected_day_id) if selected_day_id else None
+        scoped_activity = await db.get(Activity, selected_activity_id) if selected_activity_id else None
+        if scoped_activity and scoped_day is None:
+            scoped_day = await db.get(DayPlan, scoped_activity.day_plan_id)
+            selected_day_id = scoped_day.id if scoped_day else None
+        if (scoped_session is None or scoped_day is None or scoped_session.trip_id != scoped_day.trip_id
+            or selected_activity_id and (scoped_activity is None or scoped_activity.day_plan_id != scoped_day.id)):
+            raise AssistantToolError("选中的日期或活动不属于当前旅行，请重新选择。")
     from app.assistant_places import ContentServicePlaces
     settings = get_settings()
     semantic_goal, semantic_metadata = None, {}
@@ -782,7 +792,7 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
                 # the operation; the existing resolver owns dates/identities,
                 # ambiguity, policy, Validator and subsequent Accept.
                 from app.planning_intent_service import CurrentTurnModification
-                intent_adapter = CurrentTurnModification()
+                intent_adapter = CurrentTurnModification(semantic_metadata.get("_semantic_requested_places", []))
             run = await create_planning_run(db, target, PlanningRunCreate(run_type="replan" if has_plan else "initial_plan", user_request=request,
                 selected_day_id=selected_day_id if target == row.trip_id else None, selected_activity_id=selected_activity_id if target == row.trip_id else None),
                 semantic_provider=intent_adapter, commit=False)

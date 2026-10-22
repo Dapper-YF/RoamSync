@@ -191,6 +191,8 @@ async def formal_write_conflict_handler(request, exc):
 from app.planner_repository import recalculate_formal_route
 from app.assistant_routes import router as assistant_router
 app.include_router(assistant_router)
+from app.saved_intentions import router as saved_intentions_router
+app.include_router(saved_intentions_router)
 from app.agent_monitor import router as agent_monitor_router
 app.include_router(agent_monitor_router)
 

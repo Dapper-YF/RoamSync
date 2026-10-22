@@ -43,6 +43,7 @@ class Settings(BaseSettings):
     decision_ledger_validation_mode: Literal["shadow", "enforced"] = "shadow"
     companion_knowledge_strategy: Literal["selective", "general_only", "forced_rag"] = "selective"
     assistant_semantic_tools: bool = True
+    saved_intentions_enabled: bool = True
 
     @property
     def search_api_key(self) -> str:

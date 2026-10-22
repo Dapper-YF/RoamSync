@@ -157,9 +157,13 @@ class SemanticIntentProvider(Protocol):
 
 class CurrentTurnModification:
     """Only a server-validated current action; all entities are grounded afresh."""
+    def __init__(self, place_mentions=()):
+        self.place_mentions = list(place_mentions)
+
     async def extract(self, message, context):
         return SemanticIntentDraft(primary_intent="replan_trip",
-            operations=[SemanticIntentOperation(operation="replan_trip", raw_text=message)],
+            operations=[SemanticIntentOperation(operation="replan_trip", raw_text=message,
+                place_mentions=[name for name in self.place_mentions if name in message])],
             confidence=.9, parser="hybrid", parser_version="current-turn-v1")
 
 
@@ -183,7 +187,7 @@ def restore_current_turn_modification(run, trip_id, message, trip_version):
         and [op.operation for op in draft.operations] == ["replan_trip"]
         and all(op.raw_text == message for op in draft.operations)
         and resolution.policy_decision is not None and resolution.policy_decision.route == "plan_preview"):
-        return CurrentTurnModification()
+        return CurrentTurnModification([name for op in draft.operations for name in op.place_mentions if name in message])
     return None
 
 

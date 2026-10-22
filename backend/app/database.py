@@ -824,6 +824,29 @@ class AssistantSession(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
 
+class SavedIntention(Base):
+    __tablename__ = "saved_intentions"
+    __table_args__ = (
+        UniqueConstraint("scope_session_id", "source_message_id", "source_index", name="uq_intention_source"),
+        CheckConstraint("status IN ('active','cancelled','transferred')", name="ck_intention_status"),
+    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    scope_session_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    source_session_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("assistant_sessions.id", ondelete="SET NULL"))
+    source_message_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
+    source_index: Mapped[int] = mapped_column(Integer, nullable=False)
+    source_text: Mapped[str] = mapped_column(Text, nullable=False)
+    captured_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    timezone: Mapped[str] = mapped_column(String(40), nullable=False, default="Asia/Shanghai")
+    place_text: Mapped[str] = mapped_column(String(160), nullable=False)
+    city_text: Mapped[str | None] = mapped_column(String(120))
+    intended_date: Mapped[date | None] = mapped_column(Date)
+    time_period: Mapped[str | None] = mapped_column(String(20))
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="active")
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    linked_arrangement_item_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("trip_arrangement_items.id", ondelete="SET NULL"))
+
+
 settings = get_settings()
 engine = create_async_engine(settings.database_url, pool_pre_ping=True)
 session_factory = async_sessionmaker(engine, expire_on_commit=False)

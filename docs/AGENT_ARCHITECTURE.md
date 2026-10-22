@@ -1,5 +1,36 @@
 # RoamSync Agent v1 architecture contract
 
+## Journey handbook and independent intentions (2026-10-22)
+
+The handbook is a read projection of existing Day/Activity/ArrangementItem and
+Revision state. Omitted protected activities remain visible and immutable;
+preview navigation never rejects a candidate. Day/activity UI IDs use the existing
+message fields and are checked against the session Trip before execution.
+
+The existing single capability decision may additionally propose saved_intentions
+with exact current-user source clauses, literal dates and fuzzy periods. A bounded
+service validates provenance and saves only an independent SavedIntention record,
+atomically with the reply. It never creates a Trip, Activity, appointment or order.
+Receipt time is stored before model work so retrying a message after midnight
+does not move relative dates. False/quoted/hypothetical/third-party sources fail
+closed. The rollout switch cannot acknowledge an unperformed save.
+
+Known local session IDs scope reads; there is no new all-user enumeration endpoint.
+Revoke uses expected intention version. Explicit transfer locks Trip first, checks
+both versions and date/city constraints, creates one existing ArrangementItem and
+marks the intention transferred in one transaction; it never assigns a clock.
+Source-session deletion sets the nullable source link to null, preserving the item.
+This is one additive table, migration 0038, with no new planner or graph workflow.
+
+Current-turn planning handoff also retains literal named-place queries from the
+same validated decision. Persisted Worker replay requires the same message, Trip
+and base version and re-grounds names; no model-authored identifiers confer rights.
+The existing research, Validator and Accept remain the only scheduled-plan writers.
+
+Change-control evidence, rejected attempts and release status:
+JOURNEY_HANDBOOK_20261022.md and evidence/handbook-20261022/. Prior baseline tests
+remain applicable; synthetic UI prototypes never establish real-provider success.
+
 ## Practical answers and selective NO-GO extraction (2026-10-21)
 
 The two rejected experiments remain rejected as branches. Independently adapted

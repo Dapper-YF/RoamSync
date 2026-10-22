@@ -1,6 +1,8 @@
 """Snapshot/read/revalidate/persist boundary for semantic assistant turns."""
 import asyncio
 import re
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import select
 
@@ -15,13 +17,25 @@ from app.travel_goal_router import route_travel_goal
 
 async def semantic_turn(db, session_id, message, message_id, incoming, port, settings, selector=None):
     from app.assistant_service import AssistantToolError
+    captured_at = datetime.now(ZoneInfo("Asia/Shanghai"))
+    intentions = []
+    focused_name = None
     legacy = incoming is None
     envelope = ContextEnvelope.model_validate(incoming or {"topic_id": "legacy"})
-    row = await db.get(AssistantSession, session_id)
+    row = await db.scalar(select(AssistantSession).where(AssistantSession.id == session_id)
+        .with_for_update().execution_options(populate_existing=True))
     if row is None:
         raise AssistantToolError("对话不存在，请重新打开助手。")
     if any(m.get("id") == str(message_id) for m in row.messages):
         return row, None, {}
+    # Persist receipt time before network work. A failed attempt retried after
+    # midnight with the same message ID must not move the user's "tomorrow".
+    capture_key = f"message-capture:{message_id}"
+    receipt = (row.applied_actions or {}).get(capture_key)
+    if isinstance(receipt, str):
+        captured_at = datetime.fromisoformat(receipt).astimezone(ZoneInfo("Asia/Shanghai"))
+    else:
+        row.applied_actions = {**(row.applied_actions or {}), capture_key: captured_at.isoformat()}
     source_messages = [m for m in row.messages if not m.get("context") or m["context"].get("topic_id") == "legacy"] if legacy else list(row.messages)
     envelope, history = restore_context(envelope, source_messages)
     if legacy:
@@ -72,6 +86,7 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                 if envelope.discussing_place_id:
                     place = await bounded_call(lambda: port.get_place(envelope.discussing_place_id), stage="place_context", limit=8)
                     if place:
+                        focused_name = place.name
                         history = [*history, {"user": "", "place_cards": [{"place": place.model_dump(mode="json")}]}]
                 changed = list(literal_changed)
                 try:
@@ -118,11 +133,20 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                 diagnostics.selection = {"intent": decision.intent, "capabilities": decision.capabilities,
                     "reason_code": decision.reason_code, "argument_source": "current_user_scoped_history_or_selected_place"}
                 goal = decision_goal(decision, baseline)
+                if settings.saved_intentions_enabled:
+                    from app.saved_intentions import validate_proposals
+                    intentions = validate_proposals(decision.saved_intentions, message, focused_name)
+                if intentions and decision.intent == "direct":
+                    goal = baseline.model_copy(update={"target_runtime": "companion", "goal_type": "travel_chat", "mutation_requested": False})
                 if goal.target_runtime != "companion":
-                    return None, goal, {"execution_summary": diagnostics.summary("complete"), "_semantic_context": envelope.model_dump(mode="json"), "_semantic_history_ids": [str(m.get("id")) for m in history]}
+                    return None, goal, {"execution_summary": diagnostics.summary("complete"), "_semantic_context": envelope.model_dump(mode="json"), "_semantic_history_ids": [str(m.get("id")) for m in history], "_semantic_requested_places": [name for name in decision.names if name in message]}
                 from app.assistant_memory import condition_ack
                 acknowledgement = condition_ack(envelope, message, changed) if decision.intent == "direct" and decision.response_purpose == "conditions_only" else None
-                if acknowledgement:
+                if intentions and decision.intent == "direct":
+                    bundle, status = failure_bundle(envelope, "正在保存这项明确打算。"), "complete"
+                elif decision.saved_intentions and not settings.saved_intentions_enabled:
+                    bundle, status = failure_bundle(envelope, "独立打算保存尚未启用。原话保留在这次对话中，但还没有保存为可独立查看的事项。"), "complete"
+                elif acknowledgement:
                     bundle, status = failure_bundle(envelope, acknowledgement), "complete"
                 else:
                     bundle, status = await answer_with_capabilities(settings, decision, message, history,
@@ -163,6 +187,13 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
         if snapshot_signature(fresh) != signature:
             await db.rollback()
             raise AssistantToolError("对话已有新的决定，请重新读取当前状态后再查询。")
+        if intentions and status != "failed" and decision.intent == "direct":
+            from app.saved_intentions import persist_proposals
+            city = (envelope.conversation_memory.get("slots", {}).get("city") or {}).get("value") or envelope.browsing_city
+            saved = await persist_proposals(db, session_id, message_id, intentions, captured_at, city)
+            text = "已记下：" + "；".join(f"{i['intended_date'] or '日期未定'} {i['time_period'] or '时间未定'} · {i['place_text']}" for i in saved)
+            text += "。具体地点尚待核对；没有创建旅行或调整其他活动。可在我的安排查看或撤销。"
+            bundle.update({"assistant": text, "saved_intentions": saved, "intention_write_result": "saved"})
         fresh.messages = [*fresh.messages, {**bundle, "id": str(message_id), "user": message,
             "tool": "reply", "run_id": None, "goal_routing": goal.model_dump(mode="json")}]
         await db.commit()

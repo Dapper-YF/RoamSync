@@ -54,11 +54,19 @@ class ItemSchedule(BaseModel):
 def item_dict(row):
     return {"id": row.id, "trip_id": row.trip_id, "kind": row.kind, "label": row.label,
             "source_ref": row.source_ref, "decision_ref": row.decision_ref, "place_id": row.place_id,
-            "day_date": row.day_date, "start": row.start_time, "end": row.end_time, "activity_id": row.activity_id}
+            "day_date": row.day_date, "start": row.start_time, "end": row.end_time, "activity_id": row.activity_id,
+            "time_period": getattr(row, "intention_time_period", None)}
 
 
 async def read_items(session, trip_id):
-    return list((await session.scalars(select(TripArrangementItem).where(TripArrangementItem.trip_id == trip_id).order_by(TripArrangementItem.id))).all())
+    rows = list((await session.scalars(select(TripArrangementItem).where(TripArrangementItem.trip_id == trip_id).order_by(TripArrangementItem.id))).all())
+    if rows:
+        from app.database import SavedIntention
+        transferred = await session.scalars(select(SavedIntention).where(SavedIntention.linked_arrangement_item_id.in_([r.id for r in rows])))
+        periods = {r.linked_arrangement_item_id: r.time_period for r in transferred}
+        for row in rows:
+            row.intention_time_period = periods.get(row.id)
+    return rows
 
 
 def identity(data):

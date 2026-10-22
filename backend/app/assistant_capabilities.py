@@ -13,6 +13,7 @@ from app.model_client import build_model_client, create_model_response
 from app.openai_planner import normalize_structured_json
 from app.schemas import TravelGoalRouting
 from app.assistant_memory import MemoryUpdate, memory_prompt, local_today
+from app.saved_intentions import IntentionProposal
 
 
 Capability = Literal["poi", "web", "route", "facts", "itinerary"]
@@ -42,6 +43,7 @@ class CapabilityDecision(BaseModel):
     illustrate: bool = False
     advice_focus: Literal["none", "walking_effort", "rest"] = "none"
     response_purpose: Literal["answer", "conditions_only"] = "answer"
+    saved_intentions: list[IntentionProposal] = Field(default_factory=list, max_length=5)
 
 
 class WebQuote(BaseModel):
@@ -72,6 +74,11 @@ SELECTION_INSTRUCTIONS += " memory_updates.scope=personal for diet/interests/pac
 SELECTION_INSTRUCTIONS += " advice_focus=walking_effort for a follow-up asking whether the discussed travel/route is tiring, easy, flat, suitable for limited mobility or 顺路, with intent=direct unless a NEW route lookup is requested. advice_focus=rest when the user simply wants to rest/cancel going out, without requesting alternatives. These are decision-help modes, never facts or write permission."
 SELECTION_INSTRUCTIONS += " response_purpose=conditions_only ONLY for a standalone update of personal trip conditions with no request to learn, compare, discuss choices or get advice. A message can BOTH update memory and ask a question: then use answer. 想了解成都 and 先聊选择 are answer. For compound creation requests, quote ONLY the affirmative creation clause; 暂不排时间/不要新增地点 constrain the requested result, not permission to create the explicitly requested preview."
 SELECTION_INSTRUCTIONS += " A request to compose an actionable CHANGE CANDIDATE for a saved itinerary is intent=modify, even when the user says 先给候选/等我确认再保存. That is the normal preview-and-Accept boundary, not a read-only consultation. 请协调第一天的安排 and 请把第一天活动改到12:30 both request modify; quote that exact action clause. intent=itinerary only reads/explains existing arrangements, never substitutes prose方案A/B for an executable requested adjustment. Keep unspecified dates, choices and free windows unchanged. The server and existing planning flow enforce authorization and adoption."
+
+
+SELECTION_INSTRUCTIONS += " For create/modify, names must include literal named venues the current user requests to add or arrange; never omit a requested place merely because capabilities=[]. These names are only queries for existing grounding/research, never invented IDs or approved writes."
+
+SELECTION_INSTRUCTIONS += " Extract saved_intentions ONLY for a CURRENT explicit personal decision to visit a particular place or an explicit request to remember it: 我明天下午去人民公园，几点再说 / 记下这里，日期未定. These independent intentions do NOT create a Trip, require dates, or schedule any activity. Use intent=direct, capabilities=[] for a standalone intention. place_text is literal current text or the selected place name when 这里 is explicit; source_quote is the exact full affirmative user clause, date_text copies literal relative/absolute date or empty, time_period copies an explicit period or empty. Never extract questions, hypothetical/quoted/third-party wishes, tentative comparisons, generic interests, negative statements or requests not to save. For an explicit itinerary planning request use the existing create/modify workflow and saved_intentions=[]; never duplicate it as independent items."
 
 
 async def select_capabilities(settings, message, history, envelope, trip_summary=None):
