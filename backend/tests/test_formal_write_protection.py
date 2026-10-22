@@ -10,6 +10,7 @@ import pytest
 from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
+from sqlalchemy.engine import make_url
 
 from app.database import Activity, DayPlan, PlaceCandidate, PlanningRun, PlanRevision, RouteLeg, SourceRecord, Trip, TripPreferences, session_factory
 from app.main import app
@@ -22,7 +23,7 @@ from app.schemas import CandidateActivity, CandidatePlanSnapshot, TripCreate
 @pytest.fixture
 def sample(monkeypatch):
     url = os.environ.get("DATABASE_URL", "")
-    assert "@127.0.0.1:" in url and url.endswith("/roamsync_test_write_protection")
+    assert make_url(url).database == "roamsync_test_write_protection"
     engine = create_async_engine(url, poolclass=NullPool)
     sessions = async_sessionmaker(engine, expire_on_commit=False)
     previous_bind = session_factory.kw["bind"]

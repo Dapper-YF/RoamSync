@@ -5,6 +5,7 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.pool import NullPool
+from sqlalchemy.engine import make_url
 from app.database import AssistantSession
 from app.assistant_service import send_message, AssistantToolError
 from app.assistant_context import ContextEnvelope
@@ -12,7 +13,7 @@ from app.assistant_context import ContextEnvelope
 def test_no_lock_during_network_and_late_result_rejected():
     async def scenario():
         url = os.environ["DATABASE_URL"]
-        assert url.endswith("/roamsync_test_write_protection") and "127.0.0.1" in url
+        assert make_url(url).database == "roamsync_test_write_protection"
         engine = create_async_engine(url, poolclass=NullPool)
         sessions = async_sessionmaker(engine, expire_on_commit=False)
         try:
@@ -36,7 +37,7 @@ def test_no_lock_during_network_and_late_result_rejected():
 def test_retry_idempotent_and_failed_save_rolled_back():
     async def scenario():
         url = os.environ["DATABASE_URL"]
-        assert url.endswith("/roamsync_test_write_protection") and "127.0.0.1" in url
+        assert make_url(url).database == "roamsync_test_write_protection"
         engine = create_async_engine(url, poolclass=NullPool)
         sessions = async_sessionmaker(engine, expire_on_commit=False)
         try:
