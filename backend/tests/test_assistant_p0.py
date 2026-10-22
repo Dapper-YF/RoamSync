@@ -8,6 +8,7 @@ import pytest
 from pydantic import ValidationError
 
 from app.assistant_capabilities import CapabilityDecision, validate_decision, route_answer, decision_goal
+
 from app.assistant_context import ContextEnvelope
 from app.assistant_places import PlaceView
 from app.assistant_reliability import TurnDiagnostics, active_turn, bounded_call, error_details, AnswerBudgetExceeded
@@ -253,3 +254,14 @@ def test_missing_target_does_not_block_an_independent_known_read(monkeypatch):
         assert calls==['lookup'] and status=='partial'
         assert '参考资料' in b['assistant'] and '请选择' in b['assistant']
     asyncio.run(run())
+
+
+def test_explicit_planning_venue_survives_empty_read_capabilities_but_is_still_source_checked():
+    text = '请在11月4日13:00安排人民公园，先生成候选。'
+    decision = CapabilityDecision(intent='modify', names=['人民公园'],
+        authorization_quote='安排人民公园', reason_code='explicit_write')
+    result = validate_decision(decision, text, [], ContextEnvelope())
+    assert result.intent == 'modify' and result.capabilities == []
+    assert result.names == ['人民公园']
+    invented = decision.model_copy(update={'names': ['杜甫草堂']})
+    assert validate_decision(invented, text, [], ContextEnvelope()).intent == 'clarify'

@@ -143,7 +143,7 @@ def validate_decision(decision, message, history, envelope, selected=()):
             cities = {p.get("city", "").removesuffix("市") for p in selected if p.get("city")}
             if len(cities) == 1:
                 decision = decision.model_copy(update={"city": cities.pop()})
-    if not set(decision.capabilities).intersection({"poi", "route"}):
+    if decision.intent not in {"create", "modify"} and not set(decision.capabilities).intersection({"poi", "route"}):
         # These adapters use the original question, not optional POI arguments.
         decision = decision.model_copy(update={"names": [], "origin": "", "destination": "", "near_name": ""})
     if decision.intent == "route" and not envelope.route_request:
