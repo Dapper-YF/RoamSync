@@ -168,6 +168,7 @@ async def matched_run(args, settings, output):
 
 
 def main():
+    global DB
     parser = argparse.ArgumentParser()
     parser.add_argument("--split", choices=("development", "holdout", "matched"), required=True)
     parser.add_argument("--label", required=True)
@@ -177,6 +178,8 @@ def main():
     parser.add_argument("--from-turn", type=int, default=1)
     parser.add_argument("--replay", type=Path)
     args = parser.parse_args()
+    if args.split == "holdout":
+        DB = DB.rsplit("/", 1)[0] + "/roamsync_agent_b_holdout_test"
     if args.from_turn != 1 and (not args.replay or not args.case):
         raise SystemExit("Tail replay requires a source trace and one named development case")
     if args.split == "holdout" and (args.replay or args.case or args.from_turn != 1):
