@@ -56,13 +56,16 @@ def main():
     parser.add_argument("--worker", default="roamsync-agent-worker-1")
     parser.add_argument("--web", default="roamsync-web")
     parser.add_argument("--no-worker", action="store_true")
+    parser.add_argument("--allow-stopped", action="store_true", help="verify build artifacts only; does not certify service readiness")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    if args.output.exists():
+        raise ValueError("evidence output must not already exist")
     spec = importlib.util.spec_from_file_location("runtime_manifest", ROOT / "backend/scripts/write_build_manifest.py")
     runtime = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(runtime)
     expected_backend = runtime.manifest(ROOT / "backend")["files"]
-    report = {"schema": 1, "git_head": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(), "checks": [], "passed": True}
+    report = {"schema": 1, "scope": "build_artifacts_only" if args.allow_stopped else "running_container_artifacts", "git_head": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(), "checks": [], "passed": True}
     for container, kind in [(args.api, "backend"), *([] if args.no_worker else [(args.worker, "backend")]), (args.web, "web")]:
         check = {"container": container, "kind": kind}
         try:
@@ -91,7 +94,7 @@ def main():
                 for name in ("alembic.ini", "pyproject.toml", "uv.lock", "Dockerfile", ".dockerignore", "scripts/write_build_manifest.py"):
                     live[name] = fingerprint(next(iter(copied_files(container, "/app/" + name).values())), name)
                 check["artifact_mismatches"] = sorted(p for p in set(live) | set(expected) if live.get(p) != expected.get(p))
-            check["passed"] = not check["source_mismatches"] and not check["artifact_mismatches"]
+            check["passed"] = not check["source_mismatches"] and not check["artifact_mismatches"] and (check["running"] or args.allow_stopped)
         except (subprocess.CalledProcessError, ValueError, KeyError, TypeError) as exc:
             check.update(passed=False, error_type=type(exc).__name__, reason="missing, invalid or mismatched build evidence; health is insufficient")
         report["checks"].append(check)

@@ -23,6 +23,8 @@ RUN node scripts/write-build-manifest.mjs
 
 FROM nginx:1.27-alpine AS production
 
+# Ship only attested application artifacts, not the base image's sample site.
+RUN rm -f /usr/share/nginx/html/index.html /usr/share/nginx/html/50x.html
 COPY nginx.local-product.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY --from=build /app/release-manifest.json /usr/share/nginx/roamsync-source-manifest.json
