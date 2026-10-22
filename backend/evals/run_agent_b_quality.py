@@ -12,7 +12,7 @@ from uuid import uuid4
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-DB = "postgresql+psycopg://agent_b_test:agent_b_test_only@127.0.0.1:15435/roamsync_agent_b_test"
+DB = "postgresql+psycopg://agent_b_test:agent_b_test_only@127.0.0.1:15435/roamsync_agent_b_live_test"
 
 
 def configure(source):
