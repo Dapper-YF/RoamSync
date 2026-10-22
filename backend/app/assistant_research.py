@@ -330,6 +330,8 @@ async def research(settings, message, history, envelope, port, *, judge=determin
     candidates = candidates[:limit]
     if not candidates:
         return result("这次没有查到可确认的对应地点，暂不推荐猜测的店名。可以补充分店名或所在区域再查。", status="empty")
+    from app.assistant_practical import research_decision_support, render_research_decision_support
+    decision_support = research_decision_support(envelope, candidates, intent.category)
     # Existing locally reviewed licensed photos are usable without guessing licenses.
     for place in candidates:
         for photo in place.images[:1]:
@@ -367,7 +369,11 @@ async def research(settings, message, history, envelope, port, *, judge=determin
     if missing_compared:
         paragraphs.append("这次还没核实到「" + "、".join(missing_compared) + "」，暂时不能做完整比较。先保留已查到的地点，不把资料较多的一方直接当成更合适。")
         issues.append("comparison_incomplete")
-    if sources and not missing_compared:
+    comparison = render_research_decision_support(decision_support, intent.category)
+    reference_only_decision = bool(comparison) and all(s["read_level"] == "provider_reference" for s in sources)
+    # Price arithmetic and a menu-evidence gap need no speculative prose call.
+    # Real page evidence still follows the existing source-bound generation.
+    if sources and not missing_compared and not reference_only_decision:
         try:
             draft = await answer(settings, ResearchAnswer,
                 CONVERSATIONAL_STYLE + "Answer this travel question naturally in concise Chinese. Only discuss supplied exact places. "
@@ -391,8 +397,15 @@ async def research(settings, message, history, envelope, port, *, judge=determin
                 "do not replace that with a landscape introduction. Do not invent benches, flat paths, boat timings, menus or comfort claims. "
                 "A brief practical suggestion may be conditional; lack of proof of an amenity is not proof that it exists. "
                 "If asked about non-spicy food, budget or suitability, prioritize those constraints and state the specific unresolved condition "
-                "instead of restating the restaurants' basic data. Do not rank food taste from price or score.",
+                "instead of restating the restaurants' basic data. Do not rank food taste from price or score. "
+                "effective_conditions are server-owned current user requirements and supersede older recent_users. "
+                "withdrawn conditions are unknown/revoked, not unlimited; never restore them from history. "
+                "decision_support contains deterministic, unit-compatible reference-price comparisons, not actual bills. "
+                "The server renders numeric comparisons and a dietary-verification note separately; do not repeat them. "
+                "A low reference cost does not establish menu, no-chili/vegetarian suitability, accessibility or internal walking. "
+                "Use current user conditions to explain a conditional choice and the specific unresolved requirement.",
                 {"request": message, "recent_users": [] if city_changed else [m.get("user", "") for m in history[-8:]],
+                 "effective_conditions": decision_support["conditions"], "decision_support": decision_support,
                  "places": [{"name": p.name, "place_id": str(p.place_id)} for p in candidates],
                  "sources": [{key: s[key] for key in ("source_id", "place_id", "title", "read_level", "snippets")} for s in sources]})
             by_id = {s["source_id"]: s for s in sources}
@@ -467,7 +480,10 @@ async def research(settings, message, history, envelope, port, *, judge=determin
     if not paragraphs:
         from app.assistant_practical import research_options, practical_next_step
         paragraphs.append(research_options(candidates, sources, message))
-        paragraphs.append(practical_next_step(message, intent.category, city=city, memory=envelope.conversation_memory))
+        if not comparison:
+            paragraphs.append(practical_next_step(message, intent.category, city=city, memory=envelope.conversation_memory))
+    if comparison:
+        paragraphs.append(comparison)
     if intent.read_pages and re.search(r"评价|评论|口碑|网友|评分", message) and any(s["read_level"] == "search_excerpt" for s in sources) and not any(s["read_level"] == "page_text" for s in sources):
         paragraphs.append("网页部分目前只取得搜索摘要，尚未读到页面正文或完整用户评论。")
     elif intent.read_pages and re.search(r"评价|评论|口碑|网友",message) and all(s["read_level"] == "provider_reference" for s in sources):
@@ -484,6 +500,8 @@ async def research(settings, message, history, envelope, port, *, judge=determin
         source["excerpt"] = source["excerpt"][:1000]
         source.pop("snippets", None)
     bundle = result(text, candidates, sources, images)
+    bundle["read_tools"]["decision_support"] = decision_support
+    bundle["read_tools"]["decision_support"]["reference_only_answer"] = reference_only_decision
     bundle["read_tools"]["web_search"]["answer_validation"] = issues
     bundle["read_tools"]["web_search"]["read_failures"] = failures
     return bundle
