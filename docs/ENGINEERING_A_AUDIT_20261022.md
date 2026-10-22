@@ -35,7 +35,7 @@
 | 9 | P2：观测覆盖不均、数据与契约持续增长 | 新 consultation 有 allowlisted execution_summary；legacy/Worker 仍 print 异常类，部分 fallback吞错；session JSON 的 messages/applied_actions 持续增长；成功对象/数组与 detail 字符串/结构化错误并存 | 大部分旧债；新增 receipt、memory、diagnostics 放大单行JSON更新成本 | 保留单次关联ID，逐步结构化 Worker/规划日志；历史消息分页/归档要维持幂等键，不能直接删 receipts；不全局包响应破坏客户端 |
 | 10 | P2：备份、回滚与测试操作依靠多份历史脚本 | 多种固定端口/固定 DB、重复脚本、tag 备份但不总是独立文件导出；API 启动自动 migrate、Worker依赖初始化；旧镜像不等于 schema 可回退 | 既有债 | A 新增一次性无网络恢复核验；保留旧镜像ID与本地tag；数据库回滚不可在有新写入后盲目恢复旧dump，须单独迁移/恢复方案 |
 
-另外，C 已独立发现探索搜索仍跳到旧 `/`（现已是助手入口）；属于 Oct22 产品路由升级遗留，C 正在处理，不能用 A 后端测试通过代替前端验收。
+另外，C 独立发现探索搜索仍跳到旧 `/`（现已是助手入口）；属于 Oct22 产品路由升级遗留，已在C候选修复并提供浏览器证据，不能用 A 后端测试通过代替前端验收。
 
 ## 3. 分层、职责与最小请求追踪
 
@@ -146,3 +146,27 @@ A分支 `codex/engineering-a-20261022`：`f5803b0`补必要合成夹具；`cc32e
 16个实现文件：backend/Dockerfile、evals/assistant_capability_cases.py、scripts/write_build_manifest.py、tests/_database_safety.py、conftest.py、test_database_safety.py、test_assistant_research_postgres.py、test_formal_write_protection.py；根compose.test.yaml；scripts/run-isolated-tests.py、verify-backup.py、verify-release.py、verify-roamsync.ps1；web/.dockerignore、Dockerfile、scripts/write-build-manifest.mjs。未修改Agent决策/Planner、前端产品组件或数据库schema。
 
 可移植证据在docs/evidence/engineering-a-20261022；原始失败、完整日志/JUnit、初始3133文件副本和私有清单在外置证据目录。测试报告不承诺生产模型效果；旧Web缺构建输入证明仍如实保留。构建来源证明只覆盖所列app/migrations/Web资源与配方，不能替代第三方依赖供应链审计、运行配置认证或服务启动验收。
+
+## 9. B/C接收、兼容复核及统一候选
+
+已接收B最终 `831ec24f1331638dd4388437910f5ae9325c1d29`（产品实现冻结于c83a93c）与C最终 `207c9b711707b76020be7acabb37218d25101360`；A交付至 `9f89fe3`。整合树 `E:/Study/RoamSync-abc-integration-20261022` / `codex/abc-integration-20261022`。提交3ae5b28接收B全部报告与证据；唯一合并冲突为LATEST_HANDOFF，人工保留A/B/C结论。PROJECT_STATE与AGENT_ARCHITECTURE为增补式审阅，不把B交付的“未部署”误改为“已发布”。B新增53文件做了正式.env秘密值精确匹配扫描，0命中；这不是完整凭据扫描证明。原文均为明确合成评测，不含正式用户会话转储。
+
+集成中主动发现一项旧数据兼容回归：基线selector把临时旅行要求也标personal，B开始跨新旅行保留personal，旧标签会被错误赋予更长寿命。`f39960c318d82188ddb829f9ab5c690377a753bb`加scope_version=2，只有新版明确personal可以保留；旧标签保守限于原旅程，3项反例通过。B复核进一步发现无conversation_memory的旧消息bootstrap也会提升成新版personal。A独立无网络镜像复现，再以2项测试先失败；`d6c587c76ed16c9bf8dba82755d6890cc066ee46`将历史重建显式标trip。历史条件仍可用于当前旅程，新回合明确personal可跨新旅程，旧歧义条件须重新确认。最终15项相关单元检查通过。一次无网络检查误带2项数据库用例，因无数据库连接失败，未当产品失败或通过；完整隔离回归覆盖它们。
+
+同时调整B专库夹具为接受明确的roamsync_test_write_protection，并由runner开启B持久化用例；未改变业务断言或生产配置。前一稳定整合树f39960c在全新tmpfs完成主1467、专25通过；追加bootstrap兼容修复并接收B最终报告后，在3ae5b28062fb6ebc400bff4ee7aa6db96bc33051重新构建测试镜像、创建全新tmpfs数据库，**主1469、专25、零跳过、零失败**，source_unchanged_during_run=true。主阶段194.671s、专阶段39.250s（包含迁移/容器启动；pytest分别176.39s/22.24s），属于回归耗时，不能当咨询响应性能。证据abc-final-tests.json、abc-tests-summary.json及两份JUnit；完整日志外置保留。
+
+统一Web在生产构建阶段通过**43文件239测试、类型检查、Vite构建**。存在既有React act警告，未把警告误写为全无诊断。构建未注入正式高德浏览器凭据，因此不替代C持真实配置浏览器地图证据。C的1440/390/320、真实高德与合成候选Validator/Accept、503恢复、409保护证据仍按原范围引用；没有声称A重新完成最终整合树真实模型全链。
+
+最终镜像核验：API/Worker各227个受管输入与实际文件、Web142输入与3资源都匹配。源码汇总SHA256：backend `8ea5ffac1b4a3fa286de8be985ddf7ea02cbcf774fdecf06e48a85e910c9c2c7`；web `359986933e21f200b1685e0adf43640d1c0dc9627c76af9b3c690ccc5ce3c8c2`。逐文件证据见candidate-*-manifest.json。验收显式为build_artifacts_only：停止容器不能证明API/Worker已启动或可用；默认不传allow-stopped时三者全部按预期失败。隔离Web index.html被替换时仅Web失败，准确指出index.html，API/Worker仍通过；新建未篡改容器后通过。正式旧镜像缺manifest也按预期拒绝。这三类失败均是门禁反例，非正式服务故障。
+
+B真实质量结果原样保留：一次保留20轮仅5通过、1项无场所证据的省力保证，**整体NO-GO**；存在下游重新解释、复合任务漏子目标、日期传递、条件规范化和否定投影错误、真实创建无候选。窄改善为撤销持久状态0/5→5/5、95/42对60的人均餐费差额+35/-18及未知菜单/缺价、纯POI两探针模型回答调用1→0。开发整轮中位15.614→16.562s，不能声称整体加速；纯POI回答平均6.609→0.266s不含实际检索，不能外推。评价由实施者完成、非盲评，也无外部独立复核。A兼容修复不在B冻结保留题测量范围，不通过重跑公开题提高分数。
+
+最终发布决定：**已具备接收和继续整合B/C的工程条件，已实际接收；尚不具备统一产品发布条件，禁止本轮部署。** 下一轮首要任务为单一服务端语义交接与一致条件投影，辅以新保留题及真实创建→候选→采用→修改→保留留白→恢复验收；并继续规划短事务、Worker fencing、可取消传输及公网owner隔离专项。本轮不冒险扩大这些改动。
+
+最终受测提交3ae5b28之后仅追加本报告、证据与交接文字，app/tests/构建配方未再变化。提交清单由`git log BASE_SHA..HEAD`可追溯；最终交付提交包含这些验收记录。不能把3ae5b28或交付HEAD当作已正式部署SHA。
+
+## 10. 正式环境保全复核
+
+结束前逐项比对初始清单，3133文件无改动，.env私有哈希一致。正式HEAD仍6b298ca；API、Worker、Web、Postgres及checkpoint-init容器ID、镜像ID和启动时间全部一致。只读REPEATABLE READ事务重新计算32表内容指纹，无表变化，179个Trip、851个Activity均保留。证据formal-preservation.json只含计数/散列，不含会话正文或数据库行。
+
+A创建的临时18036 API、无端口Web和早期tmpfs数据库已按精确容器名回收；最终构建证明用停止容器和镜像保留，供复核。不清理B/C资源、正式volume或用户文件。完整失败记录仍在外置证据目录；没有把原始备份加入Git。

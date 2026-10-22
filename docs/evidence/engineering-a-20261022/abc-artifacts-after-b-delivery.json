@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "scope": "build_artifacts_only",
+  "git_head": "3ae5b28062fb6ebc400bff4ee7aa6db96bc33051",
+  "checks": [
+    {
+      "container": "roamsync-abc-final-api",
+      "kind": "backend",
+      "image": "sha256:9ab09351e4afe39ce870d9082cce5dce85f6e646d503c7f4617d2f0867e4e3c4",
+      "container_id": "190bb974a212c0e1e908fa68a1ea237f2b99676b4244867ef47a11bb1ecc7636",
+      "running": false,
+      "source_mismatches": [],
+      "source_files": 227,
+      "artifact_mismatches": [],
+      "passed": true
+    },
+    {
+      "container": "roamsync-abc-final-worker",
+      "kind": "backend",
+      "image": "sha256:9ab09351e4afe39ce870d9082cce5dce85f6e646d503c7f4617d2f0867e4e3c4",
+      "container_id": "5c0011f94dc1893c331fdab3753dbc45aaa36b41a9704a6fe7c8e6f0df98f791",
+      "running": false,
+      "source_mismatches": [],
+      "source_files": 227,
+      "artifact_mismatches": [],
+      "passed": true
+    },
+    {
+      "container": "roamsync-abc-final-web",
+      "kind": "web",
+      "image": "sha256:f2a829b8fcdcb9d00d18e2dfef92cc37c25e85a1cc06dc436657608c38dcb2cc",
+      "container_id": "22b4021b8f19dca4400b784793a27837ce2b47a3027e5da6d405480cdc57e759",
+      "running": false,
+      "source_mismatches": [],
+      "source_files": 142,
+      "artifact_mismatches": [],
+      "artifact_files": 3,
+      "build": {
+        "VITE_DISCOVERY_PRODUCT": "true",
+        "VITE_TRAVEL_CONTENT_CONTRACT": "place-content-v1",
+        "VITE_ASSISTANT_CONTEXT_CONTRACT": "assistant-context-v1"
+      },
+      "passed": true
+    }
+  ],
+  "passed": true
+}

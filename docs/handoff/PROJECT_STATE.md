@@ -2,6 +2,33 @@
 
 Last updated: 2026-10-22
 
+## Engineering A and A/B/C isolated integration — NO-GO (2026-10-22)
+
+Common source baseline is f116ada6d6d46db7aeb48c29c8d5b45da379be00.
+A delivered test/migration fail-closed database gates, unique tmpfs regression
+projects, source/artifact build attestations and an isolated backup restore check.
+The existing backup restored with all32 table content fingerprints matching.
+Official3133-file inventory, .env hash, container/image/start identities and
+read-only32-table fingerprints remain unchanged; no official deployment or DB
+mutation. Full audit: docs/ENGINEERING_A_AUDIT_20261022.md.
+
+Candidate E:/Study/RoamSync-abc-integration-20261022 receives A9f89fe3,
+B831ec24 and C207c9b7. Only shared handoff prose conflicted and was manually
+combined. A integration patches f39960c/d6c587c prevent old ambiguous personal
+labels and historical bootstrap from acquiring durable cross-journey scope;
+new explicitly personal conditions remain eligible. No schema change.
+Combined Web239/type/build passed; final backend1469+25 passed with zero skips
+or failures, fresh tmpfs databases and unchanged source throughout the run.
+Final source regression and build-only artifact evidence accompany the audit.
+Artifact tampering, stopped containers and missing attestations fail closed.
+
+NO-GO: B once-only holdout5/20 with one critical unsupported effort guarantee;
+real creation/modification/adoption not fully completed. C's real map/viewport,
+503 recovery and stale409 evidence uses a synthetic validated candidate, not
+model end-to-end success. Public owner isolation, lock-across-network, Worker
+claim fencing and transport cancellation remain OPEN. B historical results
+below do not measure A's later compatibility patches. No deployment authorized.
+
 ## Agent quality B — isolated candidate, not released (2026-10-22)
 
 VERIFIED: B branches from A's common f116ada baseline in

@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "scope": "build_artifacts_only",
+  "git_head": "4c1d3214061dd14186b49b8a4959e211a2e10bb6",
+  "checks": [
+    {
+      "container": "roamsync-abc-attest-api",
+      "kind": "backend",
+      "image": "sha256:ba614b6fc4e23e9bdc6878a4a9500a4694e8de892bc4d4e5e2be81eb7b96ffd7",
+      "container_id": "f3d91fcafd72fd5cacfe61027ac0568aef3cf139b8e2641801de9d5ce28f5fcf",
+      "running": false,
+      "source_mismatches": [],
+      "source_files": 227,
+      "artifact_mismatches": [],
+      "passed": true
+    },
+    {
+      "container": "roamsync-abc-attest-worker",
+      "kind": "backend",
+      "image": "sha256:ba614b6fc4e23e9bdc6878a4a9500a4694e8de892bc4d4e5e2be81eb7b96ffd7",
+      "container_id": "9dd54fd18428797d25207ff5b2901e375c1fbce2c9ffdace86340e60506bc2d8",
+      "running": false,
+      "source_mismatches": [],
+      "source_files": 227,
+      "artifact_mismatches": [],
+      "passed": true
+    },
+    {
+      "container": "roamsync-abc-attest-web",
+      "kind": "web",
+      "image": "sha256:f2a829b8fcdcb9d00d18e2dfef92cc37c25e85a1cc06dc436657608c38dcb2cc",
+      "container_id": "318276c9d44c24d0ef437ab235bab6db7b6774a2f5ce1fd5b220af6384962e8c",
+      "running": false,
+      "source_mismatches": [],
+      "source_files": 142,
+      "artifact_mismatches": [
+        "index.html"
+      ],
+      "artifact_files": 3,
+      "build": {
+        "VITE_DISCOVERY_PRODUCT": "true",
+        "VITE_TRAVEL_CONTENT_CONTRACT": "place-content-v1",
+        "VITE_ASSISTANT_CONTEXT_CONTRACT": "assistant-context-v1"
+      },
+      "passed": false
+    }
+  ],
+  "passed": false
+}
