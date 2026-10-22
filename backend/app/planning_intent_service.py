@@ -266,14 +266,44 @@ def classify_planning_intent(
     return "unknown"
 
 
-async def resolve_planning_intent(
+@dataclass(frozen=True)
+class PlanningTripFacts:
+    id: uuid.UUID
+    destination: str
+    start_date: date
+    end_date: date
+    timezone: str
+    version: int
+
+
+@dataclass(frozen=True)
+class PlanningDayFacts:
+    id: uuid.UUID
+    date: date
+    position: int
+
+
+@dataclass(frozen=True)
+class PlanningCandidateFacts:
+    id: uuid.UUID
+    name: str
+
+
+@dataclass(frozen=True)
+class PlanningIntentSnapshot:
+    """Detached facts; safe to retain after closing a read transaction."""
+    trip: PlanningTripFacts
+    days: tuple[PlanningDayFacts, ...]
+    activities: tuple[_ActivityEntity, ...]
+    candidates: tuple[PlanningCandidateFacts, ...]
+    execution_current_date: date | None = None
+
+
+async def load_planning_intent_snapshot(
     session: AsyncSession,
     trip_id: uuid.UUID,
     payload: PlanningIntentParseRequest,
-    *,
-    semantic_provider: SemanticIntentProvider | None = None,
-    default_planning_intent: PlanningIntentType | None = None,
-) -> PlanningIntentResolution:
+) -> PlanningIntentSnapshot:
     trip = await session.get(Trip, trip_id)
     if trip is None:
         raise TripNotFoundError
@@ -284,8 +314,6 @@ async def resolve_planning_intent(
             )
         ).all()
     )
-    days_by_id = {day.id: day for day in days}
-    days_by_date = {day.date: day for day in days}
     activity_rows = list(
         (
             await session.execute(
@@ -312,7 +340,6 @@ async def resolve_planning_intent(
         )
         for activity, day, place in activity_rows
     ]
-    entities_by_id = {entity.id: entity for entity in entities}
     candidate_rows = list(
         (
             await session.scalars(
@@ -320,6 +347,63 @@ async def resolve_planning_intent(
             )
         ).all()
     )
+    execution = await session.scalar(
+        select(TripExecution).where(
+            TripExecution.trip_id == trip_id,
+            TripExecution.status.in_(("in_progress", "paused")),
+        )
+    )
+    return PlanningIntentSnapshot(
+        trip=PlanningTripFacts(trip.id, trip.destination, trip.start_date, trip.end_date, trip.timezone, trip.version),
+        days=tuple(PlanningDayFacts(day.id, day.date, day.position) for day in days),
+        activities=tuple(entities),
+        candidates=tuple(PlanningCandidateFacts(place.id, place.name) for place in candidate_rows),
+        execution_current_date=execution.current_date if execution is not None else None,
+    )
+
+
+async def resolve_planning_intent(
+    session: AsyncSession,
+    trip_id: uuid.UUID,
+    payload: PlanningIntentParseRequest,
+    *,
+    semantic_provider: SemanticIntentProvider | None = None,
+    default_planning_intent: PlanningIntentType | None = None,
+    prepared_draft: SemanticIntentDraft | None = None,
+) -> PlanningIntentResolution:
+    """Compatibility adapter; never commit the caller's transaction.
+
+    Network providers must use load_snapshot -> end read transaction ->
+    resolve_snapshot at their orchestration boundary. A prepared draft is pure
+    data and can be regrounded inside the caller's short write transaction.
+    """
+    snapshot = await load_planning_intent_snapshot(session, trip_id, payload)
+    return await resolve_planning_intent_snapshot(snapshot, payload,
+        semantic_provider=semantic_provider, default_planning_intent=default_planning_intent,
+        prepared_draft=prepared_draft)
+
+
+async def resolve_planning_intent_snapshot(
+    snapshot: PlanningIntentSnapshot,
+    payload: PlanningIntentParseRequest,
+    *,
+    semantic_provider: SemanticIntentProvider | None = None,
+    default_planning_intent: PlanningIntentType | None = None,
+    prepared_draft: SemanticIntentDraft | None = None,
+) -> PlanningIntentResolution:
+    """Resolve detached facts, optionally interpreting once outside SQL.
+
+    Supplied operations own semantics; current server facts still own dates,
+    identities, missing targets and policy. No model-authored UUID is trusted.
+    """
+    trip = snapshot.trip
+    trip_id = trip.id
+    days = list(snapshot.days)
+    days_by_id = {day.id: day for day in days}
+    days_by_date = {day.date: day for day in days}
+    entities = list(snapshot.activities)
+    entities_by_id = {entity.id: entity for entity in entities}
+    candidate_rows = list(snapshot.candidates)
 
     if payload.selected_day_id is not None and payload.selected_day_id not in days_by_id:
         raise IntentContextError(
@@ -335,32 +419,70 @@ async def resolve_planning_intent(
         )
 
     scope_message, names_full_range = _without_trip_date_range(payload.message, trip)
-    intent_type = classify_planning_intent(
-        scope_message,
-        has_activities=bool(entities),
-        has_selected_day=payload.selected_day_id is not None,
-        has_selected_activity=payload.selected_activity_id is not None,
-    )
+    intent_type = "unknown"
+    scope_operations = []
+    if prepared_draft is not None:
+        if any(op.raw_text not in payload.message for op in prepared_draft.operations):
+            raise ValueError("prepared_intent_source_mismatch")
+        operations = {op.operation for op in prepared_draft.operations}
+        intent_type = ("create_plan" if "create_plan" in operations else
+                       "replan_trip" if "replan_trip" in operations else
+                       "modify_day" if operations & {"add_activity", "remove_activity", "replace_activity",
+                           "reorder_activities", "optimize_route", "adjust_budget", "weather_replan"} else "unknown")
+        scope_operations = [op for op in prepared_draft.operations
+            if op.operation not in {"query_trip", "search_places", "general_chat", "unsupported"}] or prepared_draft.operations
+    else:
+        intent_type = classify_planning_intent(
+            scope_message, has_activities=bool(entities),
+            has_selected_day=payload.selected_day_id is not None,
+            has_selected_activity=payload.selected_activity_id is not None,
+        )
     # run_type is UI context, never authorization to turn arbitrary text into a plan.
     ambiguities: list[str] = []
     missing_fields: list[str] = []
     target_day: DayPlan | None = None
-    execution = await session.scalar(
-        select(TripExecution).where(
-            TripExecution.trip_id == trip_id,
-            TripExecution.status.in_(("in_progress", "paused")),
-        )
-    )
     local_today = datetime.now(ZoneInfo(trip.timezone)).date()
     relative_date_base = (
-        execution.current_date
-        if execution is not None
+        snapshot.execution_current_date
+        if snapshot.execution_current_date is not None
         else local_today if trip.start_date <= local_today <= trip.end_date else None
     )
     scope = _parse_time_scope(
         scope_message, trip, days, ambiguities, relative_date_base=relative_date_base
-    )
-    if names_full_range and scope is None and intent_type != "unknown":
+    ) if prepared_draft is None else None
+    if prepared_draft is not None:
+        # Scope belongs to the actual operation clause, never an earlier
+        # consultation about another day. Unsupported multi-day local writes
+        # clarify atomically instead of executing just their first operation.
+        operation_scopes = [_parse_time_scope(_without_trip_date_range(op.raw_text, trip)[0],
+            trip, days, ambiguities, relative_date_base=relative_date_base) for op in scope_operations]
+        ui_day = (days_by_id[payload.selected_day_id] if payload.selected_day_id is not None else
+                  days_by_id[entities_by_id[payload.selected_activity_id].day_id]
+                  if payload.selected_activity_id is not None else None)
+        # An unscoped operation refers to its UI selection, not a date borrowed
+        # from a different clause. Reconcile those targets before merging scope.
+        if intent_type == "modify_day":
+            operation_scopes = [_scope_for_day(ui_day, days, item)
+                if ui_day is not None and (item is None or
+                    (item.day_date is None and item.day_number is None)) else item
+                for item in operation_scopes]
+            if len(operation_scopes) > 1 and any(item is None or
+                    (item.day_date is None and item.day_number is None) for item in operation_scopes):
+                missing_fields.append("target_day")
+        operation_scopes = [item for item in operation_scopes if item is not None]
+        day_scopes = {(item.day_date, item.day_number) for item in operation_scopes
+                      if item.day_date is not None or item.day_number is not None}
+        if len(day_scopes) > 1:
+            ambiguities.append("multiple_operation_days")
+        elif operation_scopes:
+            scope = next((item for item in operation_scopes if item.day_date is not None
+                or item.day_number is not None), operation_scopes[0])
+            periods = {item.period for item in operation_scopes if item.period is not None}
+            if len(periods) > 1:
+                scope = scope.model_copy(update={"period": "full_day"})
+            elif periods:
+                scope = scope.model_copy(update={"period": next(iter(periods))})
+    if prepared_draft is None and names_full_range and scope is None and intent_type != "unknown":
         intent_type = "replan_trip" if entities else "create_plan"
     if scope is not None and scope.day_date is not None:
         target_day = days_by_date.get(scope.day_date)
@@ -414,9 +536,9 @@ async def resolve_planning_intent(
         target_day_id=target_day.id if target_day is not None else None,
     )
     questions = _clarification_questions(intent)
-    semantic_draft = _build_rule_semantic_draft(payload.message, intent_type, scope, scope_message=scope_message)
+    semantic_draft = prepared_draft or _build_rule_semantic_draft(payload.message, intent_type, scope, scope_message=scope_message)
     if (
-        semantic_provider is not None
+        prepared_draft is None and semantic_provider is not None
         and semantic_draft.primary_intent == "unsupported"
         and semantic_draft.confidence < 0.9
     ):
@@ -1258,6 +1380,8 @@ def _clarification_questions(intent: PlanningIntent) -> list[str]:
             questions.append("你提到的日期不在当前旅行范围内，请重新指定日期。")
         elif ambiguity == "conflicting_day_references":
             questions.append("你提到的第几天和具体日期不一致，请确认目标日期。")
+        elif ambiguity == "multiple_operation_days":
+            questions.append("这次局部调整涉及多个日期，暂未生成候选。请先选择一个日期，我会保留其余要求继续处理。")
         elif ambiguity.startswith("activity_not_found:"):
             questions.append(f"当前行程中没有找到“{ambiguity.split(':', 1)[1]}”，请重新指定活动。")
         elif ambiguity.startswith("activity_not_unique:"):
