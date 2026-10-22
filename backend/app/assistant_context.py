@@ -127,6 +127,9 @@ def capture_requirements(context: ContextEnvelope, message: str) -> ContextEnvel
     """
     if re.search(r"[?？]|吗|是否|适合|行程|旅行|Trip", message, re.I):
         return context
+    from app.requirement_language import current_user_evidence_reason, requirement_clauses
+    message = "，".join(clause for clause in requirement_clauses(message)
+                       if not current_user_evidence_reason(message, clause))
     budget = re.search(r"(?:这次|当前)?预算\s*(?:为|是|在|控制在)?\s*(\d+(?:\.\d{1,2})?)\s*元", message)
     party = re.search(r"(?:我们|一共|人数)?\s*(\d{1,2})\s*(?:个人|人出游|人同行)", message)
     clear_budget = bool(re.search(r"预算不限|不设预算|取消预算", message))
@@ -150,10 +153,8 @@ def capture_effective_requirements(context, message, *, message_id):
         scope = {"kind": "draft", "draft_id": str(context.read_draft_id), "city": context.browsing_city}
     elif context.read_trip_id:
         scope = {"kind": "trip", "trip_id": str(context.read_trip_id), "city": context.browsing_city}
-    if re.search(r"(?:全局偏好|长期偏好|以后所有旅行|每次旅行).*(?:喜欢|偏好|希望|要求)|我一直(?:喜欢|偏好)", message):
-        scope = {"kind": "global_preference"}
     records = capture_explicit_requirements(context.requirement_records, message,
-        scope=scope, source_ref=str(message_id))
+        scope=scope, source_ref=str(message_id), allow_global_scope=True)
     return context.model_copy(update={"requirement_records": records})
 
 

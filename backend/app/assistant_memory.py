@@ -55,6 +55,27 @@ def anchored_date(value, today):
     return None
 
 
+def _quoted_scalar(key, value, quote, today):
+    """Normalize only a single explicit quantity/date equal to the proposal."""
+    if key == "start_date":
+        tokens = re.findall(r"今天|明天|后天|20\d{2}-\d{1,2}-\d{1,2}|(?:20\d{2}年)?\d{1,2}月\d{1,2}[日号]?|(?:下下|下|本|这)?(?:周|星期)[一二三四五六日天]", quote)
+        dates = [anchored_date(token, today) for token in tokens]
+        proposed = anchored_date(value, today)
+        return proposed if len(dates) == 1 and proposed and dates[0] == proposed else None
+    from app.travel_language import chinese_number
+    numeral = r"[一二三四五六七八九十两\d]+"
+    unit = r"天" if key == "duration_days" else r"(?:个?人|位)"
+    proposed = re.fullmatch(rf"({numeral})\s*(?:{unit})?", value)
+    tokens = re.findall(rf"({numeral})\s*{unit}", quote)
+    # Mixed adult/child groups require a semantic sum, not a verified scalar.
+    if key == "party_size" and re.search(r"成人|儿童|孩子|小孩", quote):
+        return None
+    if not proposed or len(tokens) != 1:
+        return None
+    number = chinese_number(proposed[1])
+    return number if 1 <= number <= (31 if key == "duration_days" else 100) and number == chinese_number(tokens[0]) else None
+
+
 def literal_conditions(message):
     """Exact date/duration slot answers also work in the existing planning handoff."""
     if re.search(r"如果|假如|假设|要是|[“”「」\"?？]|是否|吗|几天|合适|介绍|解释|朋友|听说|他|她|取消出发|不出发", message):
@@ -117,43 +138,41 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
             "read_draft_id": None, "read_draft_version": None, "action_target": None, "route_request": None})
     original_city = memory["slots"].get("city", {}).get("value") or envelope.browsing_city
     accepted = []
+    from app.requirement_language import current_user_evidence_reason
+    diagnostics = []
     for update in updates:
         quote, value = update.source_quote, update.value.strip()
-        if re.match(r"^(?:如果|假如|假设|要是)", message.strip()) and not re.search(r"但我|不过我|我决定|还是决定", message):
-            continue
-        # Quoted, speculative or negated destination alternatives are not state.
-        if quote not in message or re.search(r"如果|假如|假设|要是|比如|他说|她说|有人说|攻略说|[“”「」\"]", quote):
-            continue
-        if any(quote in part for part in re.findall(r'[“「\"](.*?)[”」\"]', message)):
+        reason = current_user_evidence_reason(message, quote)
+        if reason:
+            diagnostics.append({"field": update.field, "reason": reason, "source_quote": quote, "message_id": str(message_id)})
             continue
         prefix = message[:message.find(quote)]
-        if re.search(r"(?:如果|假如|假设|要是)[^，。；!?！？]*$", prefix):
-            continue
-        if re.search(r"(?:朋友|他说|她说|有人说|攻略说)[^，。；!?！？]*$", prefix):
-            continue
         key, operation = update.field, update.operation
         if key == "city" and value in {"哪里", "哪儿", "哪个城市", "什么城市", "某地", "未知", "未定"}:
             continue
         if key in {"preferences", "requirements"} and (operation == "remove" or update.replaces) and not re.search(r"取消|不再|不看|不要|不喜欢|不想|改|换|可以|现在|清除|撤销|忘掉", quote):
             continue
-        if operation not in {"clear", "remove"} and (not value or value not in quote):
-            continue
+        normalized = value
+        if operation not in {"clear", "remove"}:
+            if key in {"duration_days", "party_size", "start_date"}:
+                normalized = _quoted_scalar(key, value, quote, today or local_today())
+                if normalized is None:
+                    diagnostics.append({"field": key, "reason": "unverified_date_value" if key == "start_date" else "unverified_numeric_value", "source_quote": quote, "message_id": str(message_id)})
+                    continue
+            elif key in {"preferences", "requirements"}:
+                # A literal fragment may still erase negation/subject/scope.
+                # Only removing a plain first-person declaration prefix is safe.
+                safe_literal = value and value in quote and re.fullmatch(r"(?:我(?:们)?(?:一直|都)?|这次)?\s*" + re.escape(value), quote)
+                if not safe_literal:
+                    normalized = value = quote
+                    diagnostics.append({"field": key, "reason": "preserved_literal_condition", "source_quote": quote, "message_id": str(message_id)})
+            elif not value or value not in quote:
+                diagnostics.append({"field": key, "reason": "value_not_in_source", "source_quote": quote, "message_id": str(message_id)})
+                continue
         if key == "city" and operation not in {"clear", "remove"} and re.search(r"不去|别去|不要去|不想去|取消去", re.split(r"[，。；!?！？]", prefix)[-1] + quote):
             continue
         if operation == "clear" and not re.search(r"取消|不限|不设|清除|忘掉|不再|不要|无需|不用|待定|(?:先|还|也)?不定|未定|没(?:有)?定|不确定", quote):
             continue
-        normalized = value
-        if key == "start_date" and operation not in {"clear", "remove"}:
-            normalized = anchored_date(value, today or local_today())
-            if not normalized:
-                continue
-        if key in {"duration_days", "party_size"} and operation not in {"clear", "remove"}:
-            from app.travel_language import chinese_number
-            token = re.search(r"[一二三四五六七八九十两\d]+", value)
-            number = chinese_number(token[0]) if token else 0
-            if not 1 <= number <= (31 if key == "duration_days" else 100):
-                continue
-            normalized = number
         evidence = {"value": normalized, "source_quote": quote, "message_id": str(message_id), "scope": update.scope, "scope_version": 2}
         withdrawn = memory.setdefault("withdrawn", {})
         withdrawal_key = key + (":" + (update.replaces or value) if key in {"preferences", "requirements"} and operation != "clear" else "")
@@ -180,6 +199,8 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
             memory["slots"][key] = evidence
         accepted.append(key)
     city = memory["slots"].get("city", {}).get("value")
+    # Latest-turn validation metadata is data, never an effective condition.
+    memory["diagnostics"] = diagnostics[-20:]
     memory["withdrawn"] = dict(list(memory.get("withdrawn", {}).items())[-40:])
     changes = {"conversation_memory": memory}
     # Scalar withdrawal must reach the older typed projection as well. It never
@@ -211,7 +232,7 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
 def memory_prompt(envelope):
     memory = server_memory(envelope)
     return {"slots": memory["slots"], "preferences": memory["preferences"], "requirements": memory["requirements"],
-            "withdrawn": memory.get("withdrawn", {})}
+            "withdrawn": memory.get("withdrawn", {}), "diagnostics": memory.get("diagnostics", [])}
 
 
 def bootstrap_memory(envelope, history):

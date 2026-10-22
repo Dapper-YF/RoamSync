@@ -128,7 +128,7 @@ def add_requirement(records, *, text, scope, source_ref, key="user_requirement",
     return [*result, record.model_dump(mode="json")]
 
 
-def capture_explicit_requirements(records, text, *, scope, source_ref, force=False, target_day_indices=None):
+def capture_explicit_requirements(records, text, *, scope, source_ref, force=False, target_day_indices=None, allow_global_scope=False):
     """Bounded user-only capture; no suggestion/like/favorite/lock inference.
 
     Untyped prose is preserved as an explicit statement, not an executable hard
@@ -142,24 +142,31 @@ def capture_explicit_requirements(records, text, *, scope, source_ref, force=Fal
     # UI-selected day scope covers the whole request. A textual ordinal only
     # scopes its own clause; a later day mention cannot scope earlier interests.
     default_days = target_day_indices or []
-    from app.requirement_language import requirement_clauses, clause_polarity, is_context_only_statement
+    from app.requirement_language import (requirement_clauses, clause_polarity,
+        is_context_only_statement, current_user_evidence_reason, term_is_negated,
+        has_continuous_walking_scope)
     clauses = requirement_clauses(text)
     for clause_index, clause in enumerate(clauses):
         if not clause.strip():
             continue
+        if current_user_evidence_reason(text, clause):
+            continue
         if is_context_only_statement(clause):
             continue
         if not force and (re.search(r"[?？]|吗|是否|怎么样|推荐|收藏|锁定", clause)
-                or not re.search(r"希望|要求|不要|不想|必须|一定|偏好|喜欢|慢游|轻松|紧凑|取消|撤销|预算|拍照|摄影|步行|少走路", clause)):
+                or not re.search(r"希望|要求|不要|不想|必须|不能|禁止|不得|一定|偏好|喜欢|慢游|轻松|紧凑|取消|撤销|预算|拍照|摄影|步行|少走路|(?:连续|单次|每次)走路", clause)):
             continue
         polarity = clause_polarity(clause)
         if polarity == 'historical_reference':
             continue
         local_ordinal = re.search(r"第([一二三四五六七八九十\d]+)天", clause)
         days = target_day_indices or ([chinese_number(local_ordinal[1])] if local_ordinal else default_days)
-        scopes = [{**scope, "kind": "day", "day_index": n} for n in days] or [scope]
+        # Durable scope belongs to this declaration only, never a later clause.
+        local_scope = ({"kind": "global_preference"} if allow_global_scope and re.search(
+            r"(?:全局偏好|长期偏好|以后所有旅行|每次旅行).*(?:喜欢|偏好|希望|要求)|我一直(?:喜欢|偏好)", clause) else scope)
+        scopes = [{**local_scope, "kind": "day", "day_index": n} for n in days] or [local_scope]
         revoke = polarity == 'revoke'
-        strength = "hard" if re.search(r"必须|(?<!不)一定|不能|禁止|不得", clause) else "soft"
+        strength = "hard" if re.search(r"必须|(?<!不)一定|不能|禁止|不得|不超过", clause) else "soft"
         atoms = []
         pace = re.search(r"慢游|轻松|宽松|少安排|紧凑|充实", clause)
         budget = re.search(r"(?:每日|每天|总)?预算\s*(?:为|是|在|控制在|不超过|最多|上限(?:为)?)?\s*(\d+(?:\.\d{1,2})?)\s*元", clause)
@@ -173,19 +180,25 @@ def capture_explicit_requirements(records, text, *, scope, source_ref, force=Fal
         if relaxed_limit or following_relaxation:
             limit_strength = "soft"
         numeric_text = clause.strip() + ("，" + following_relaxation.strip() if following_relaxation else "")
-        if pace:
-            atoms.append(("pace", "intensive" if pace[0] in {"紧凑", "充实"} else "relaxed", f"节奏：{pace[0]}", strength))
+        if pace and (revoke or not term_is_negated(clause, pace.start())):
+            atoms.append(("pace", "intensive" if pace[0] in {"紧凑", "充实"} else "relaxed", clause.strip(), strength))
         if budget:
             budget_key = "daily_budget_fen" if re.match(r"每日|每天", budget[0]) else "budget_fen"
             atoms.append((budget_key, int(Decimal(budget[1]) * 100), numeric_text, limit_strength))
-        if re.search(r"拍照|摄影", clause):
-            atoms.append(("interest", "photography", "偏好拍照、摄影", strength))
-        if walking:
+        photography = re.search(r"拍照|摄影", clause)
+        if photography and (revoke or not term_is_negated(clause, photography.start())):
+            atoms.append(("interest", "photography", clause.strip(), strength))
+        # A continuous/internal walking tolerance has no route-total predicate.
+        # Keep it verbatim for the planner to explain missing internal evidence.
+        limited_walking_scope = has_continuous_walking_scope(clause)
+        if walking and not limited_walking_scope:
             atoms.append(("max_walking_minutes", int(walking[1]), numeric_text, limit_strength))
         elif re.search(r"少走路|少步行|不想走太多|避免长距离步行", clause):
-            atoms.append(("walking_preference", "minimal", "尽量少步行", strength))
-        elif revoke and re.search(r"(?:步行|走路)(?:时间|距离)?(?:上限|限制|要求)", clause):
+            atoms.append(("walking_preference", "minimal", clause.strip(), strength))
+        elif revoke and not limited_walking_scope and re.search(r"(?:步行|走路)(?:时间|距离)?(?:上限|限制|要求)", clause):
             atoms.append(("max_walking_minutes", None, clause.strip(), "soft"))
+        if revoke and limited_walking_scope and re.search(r"步行|走路", clause):
+            atoms.append(("user_requirement", None, clause.strip(), "soft"))
         if revoke and not budget and re.search(r"(?:每日|每天|总)?预算(?:上限|限制|要求)?", clause):
             budget_key = "daily_budget_fen" if re.search(r"每日|每天", clause) else "budget_fen"
             atoms.append((budget_key, None, clause.strip(), "soft"))
@@ -194,13 +207,22 @@ def capture_explicit_requirements(records, text, *, scope, source_ref, force=Fal
                 avoid_strength = "hard" if strength == "hard" or re.search(r"不要(?:安排|去|包含)?" + word, clause) else "soft"
                 if re.search(r"不太想|尽量|如果可以|最好", clause):
                     avoid_strength = "soft"
-                atoms.append(("avoid_category", category, f"避免{word}类安排", avoid_strength))
+                atoms.append(("avoid_category", category, clause.strip(), avoid_strength))
         if not atoms and not revoke:
             atoms.append(("user_requirement", None, clause.strip()[:3000], strength))
         for local in scopes:
             for key, value, atom_text, atom_strength in atoms:
+                # Untyped continuous tolerances can be withdrawn locally, but
+                # cannot revoke the unrelated route/daily walking dimension.
+                replaced = [r["id"] for r in result if revoke and limited_walking_scope
+                    and key == "user_requirement" and r["key"] == "user_requirement"
+                    and r["status"] == "active" and re.search(r"步行|走路", r["text"])
+                    and has_continuous_walking_scope(r["text"])
+                    and all(r["scope"].get(k) == local.get(k) for k in ("trip_id", "draft_id", "topic_id", "city"))
+                    and (r["scope"] == RequirementScope.model_validate(local).model_dump(mode="json")
+                         or not any(r["scope"].get(k) for k in ("day_index", "date", "activity_id")))]
                 result = add_requirement(result, text=("撤销：" if revoke else "") + atom_text,
-                    scope=local, source_ref=source_ref, key=key, value=value, strength=atom_strength, revoke=revoke)
+                    scope=local, source_ref=source_ref, key=key, value=value, strength=atom_strength, revoke=revoke, supersedes=replaced)
     return result
 
 
