@@ -42,14 +42,17 @@ const empty: Scene = {
   view: "list",
   routes: {},
   maps: {},
-  returnTo: "/",
+  returnTo: "/explore",
 };
 function restore(): Scene {
   try {
     const value = JSON.parse(
       sessionStorage.getItem("roamsync.discovery.v1") || "null",
     );
-    return value ? { ...empty, ...value } : empty;
+    if (!value) return empty;
+    const returnTo = value.returnTo === '/' || value.returnTo?.startsWith('/?')
+      ? `/explore${value.returnTo.slice(1)}` : value.returnTo;
+    return { ...empty, ...value, returnTo: returnTo || '/explore' };
   } catch {
     return empty;
   }

@@ -155,7 +155,7 @@ function Shell() {
         </p>
       )}
       <Routes>
-        <Route path="/" element={<AssistantPage />} />
+        <Route path="/" element={new URLSearchParams(location.search).has('city') ? <Navigate to={`/explore${location.search}`} replace /> : <AssistantPage />} />
         <Route path="/arrangements" element={<Navigate to="/trips" replace />} />
         <Route path="/arrangements/:tripId" element={<ArrangementRedirect />} />
         <Route path="/explore" element={<Discover />} />
@@ -192,7 +192,7 @@ function Shell() {
           element={
             <main className="rxp-page">
               <State title="这个页面暂未开放">
-                继续探索城市、地点与路线。<Link to="/">回到探索</Link>
+                继续探索城市、地点与路线。<Link to="/explore">回到探索</Link>
               </State>
             </main>
           }
@@ -316,7 +316,7 @@ function Discover() {
         region: city,
         maps: { ...scene.maps, search: undefined },
       });
-      navigate(`/?${new URLSearchParams({ city, q: query, category })}`, {
+      navigate(`/explore?${new URLSearchParams({ city, q: query, category })}`, {
         replace: true,
       });
     } catch (e) {
@@ -1049,7 +1049,7 @@ function Favorites() {
   }, []);
   return (
     <main className="rxp-page">
-      <Back to="/" />
+      <Back to="/explore" />
       <span className="rxp-eyebrow">留住心动的地方</span>
       <h1>我的收藏</h1>
       {error ? (
@@ -1071,7 +1071,7 @@ function Favorites() {
       ) : (
         <State title="还没有收藏地点">
           <p>浏览地点时点一下收藏，下次在这里找到它。</p>
-          <Link to="/">
+          <Link to="/explore">
             去探索 <ArrowRight size={15} />
           </Link>
         </State>

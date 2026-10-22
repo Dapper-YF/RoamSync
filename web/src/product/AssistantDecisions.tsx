@@ -20,6 +20,7 @@ export function AssistantDecisions() {
     {a.run?.status === "failed" && <p role="alert">这次没能形成可采用的调整。{a.run.error_message} 原安排保持不变。</p>}
     {a.run?.status === "awaiting_clarification" && <p>{a.run.pending_interrupt?.questions?.join(" ")}</p>}
     {a.revision?.status === "pending" && <section className="travel-assistant-decision" aria-label="局部调整建议"><h2>核对这次调整</h2><p>{a.revision.reason}</p>
+      {a.arrangement&&<Link to={`/trips/${a.arrangement.trip.id}`} state={{reviewRevisionId:a.revision.id}} onClick={a.closeAssistant}>回到日程，查看完整改动与保留内容 →</Link>}
       <ul>{a.revision.proposed_snapshot.activities.map(i => {
         const old = activities.find(o => o.id === i.replaces_activity_id || o.place_id === i.place_candidate_id);
         return <li key={i.candidate_id}>{old?.display_name ?? "新地点（请核对方案说明）"} · {i.day_date}<br />

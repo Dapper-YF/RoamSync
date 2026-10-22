@@ -10,6 +10,7 @@ interface MapCanvasProps {
   routeLegs: RouteLeg[];
   selectedActivityId: string | null;
   onSelectActivity: (activityId: string) => void;
+  fitPadding?: [number, number, number, number];
 }
 
 type MapStatus = "loading" | "ready" | "missing-config" | "error";
@@ -38,7 +39,7 @@ interface AMapNamespace {
   Polyline: new (options: Record<string, unknown>) => AMapOverlay;
 }
 
-export function MapCanvas({ activities, center, accommodation, routeLegs, selectedActivityId, onSelectActivity }: MapCanvasProps) {
+export function MapCanvas({ activities, center, accommodation, routeLegs, selectedActivityId, onSelectActivity, fitPadding }: MapCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<AMapInstance | null>(null);
   const amapRef = useRef<AMapNamespace | null>(null);
@@ -130,8 +131,8 @@ export function MapCanvas({ activities, center, accommodation, routeLegs, select
           }));
     overlaysRef.current = [...alternativePolylines, ...routePolylines, ...markers, ...(accommodationMarker ? [accommodationMarker] : [])];
     mapRef.current.add(overlaysRef.current);
-    if (activities.length > 0) mapRef.current.setFitView(overlaysRef.current, false, [92, 92, 92, 430], 15);
-  }, [accommodation, activities, onSelectActivity, routeLegs, selectedActivityId, status]);
+    if (activities.length > 0) mapRef.current.setFitView(overlaysRef.current, false, fitPadding ?? [92, 92, 92, 430], 15);
+  }, [accommodation, activities, onSelectActivity, routeLegs, selectedActivityId, status, fitPadding]);
 
   useEffect(() => {
     if (status !== "ready" || !mapRef.current || !selectedActivityId) return;

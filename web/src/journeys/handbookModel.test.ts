@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {defaultHandbookDay,handbookRows,validMapRows} from './handbookModel';
+import {defaultHandbookDay,handbookRows,validMapRows,reviewDays,stopEnd} from './handbookModel';
 import type {Activity,DayPlan,PlanRevision} from '../domain/types';
 const a={id:'a',placeId:'park',name:'人民公园',originalName:'人民公园',category:'sight',neighborhood:'',scheduledTime:'13:00',durationMinutes:60,coordinates:[104,30],scheduleLocked:false,importance:'normal',estimatedCostFen:0,status:'planned',version:1,updatedAt:'',source:{id:'source',title:'测试',url:'',provider:'test',queriedAt:'',confidence:'medium'}} as Activity;
 const day={id:'d2',date:'2026-11-03',activities:[a]} as DayPlan;
@@ -10,4 +10,27 @@ describe('shared handbook read model',()=>{
  it('unaffected dates preserve activities and deliberate free time',()=>{const other={...day,id:'d3',date:'2026-11-04'};expect(handbookRows(other,[],revision)[0].state).toBe('saved');const rows=handbookRows(day,[{id:'free',label:'自由活动',kind:'free_window',day_date:day.date,start:'15:00',end:'16:00',activity_id:null} as never],revision);expect(rows.find(r=>r.id==='free')?.state).toBe('free')});
  it('removed activities do not become map markers and unknown coordinates are excluded',()=>{const empty={...revision,activities:[]};const rows=handbookRows(day,[],empty);expect(rows[0].state).toBe('removed');expect(validMapRows(rows)).toEqual([]);expect(validMapRows([{...handbookRows(day,[])[0],activity:{...a,coordinates:[NaN,0]}}])).toEqual([])});
  it('omitted fixed or execution-protected activities remain visible in preview',()=>{const empty={...revision,activities:[]};const fixed={...day,activities:[{...a,scheduleLocked:true}]};expect(handbookRows(fixed,[],empty)[0].state).toBe('saved');expect(validMapRows(handbookRows(fixed,[],empty))).toHaveLength(1);expect(handbookRows(day,[],empty,[],['a'])[0].state).toBe('saved')});
+ it('does not match an explicit foreign identity or merge two visits to the same place',()=>{
+  const repeated={...day,activities:[a,{...a,id:'return',scheduledTime:'17:00'}]};
+  const explicit=handbookRows(repeated,[],revision);expect(explicit.find(r=>r.id==='c')?.before?.id).toBe('a');expect(explicit.find(r=>r.id==='removed-return')?.state).toBe('removed');
+  const unbound={...revision,activities:[{...revision.activities[0],replacesActivityId:undefined}]};
+  expect(handbookRows(repeated,[],unbound).filter(r=>r.state==='changed')).toHaveLength(0);
+  expect(handbookRows(day,[],{...revision,activities:[{...revision.activities[0],replacesActivityId:'foreign'}]}).find(r=>r.id==='c')?.before).toBeUndefined();
+ });
+ it('reviews all dates when scope is absent, including removal of an entire day',()=>{
+  const other={...day,id:'d1',date:'2026-11-02'};
+  const summary=reviewDays([other,day],[],{...revision,planningGoals:undefined});
+  expect(summary.map(d=>d.date)).toEqual(['2026-11-02','2026-11-03']);expect(summary[0].changes[0].state).toBe('removed');
+  expect(reviewDays([other,day],[],revision).map(d=>d.date)).toEqual(['2026-11-03']);
+ });
+ it('retains an out-of-trip candidate date for review instead of hiding it',()=>{
+  expect(reviewDays([day],[],{...revision,activities:[{...revision.activities[0],dayDate:'2026-11-09'}]}).at(-1)?.day).toBeUndefined();
+  expect(stopEnd('23:30',90)).toBe('次日 01:00');
+ });
+ it('shows a place replacement on the new coordinates and detects cost-only changes',()=>{
+  const replaced={...revision,activities:[{...revision.activities[0],placeCandidateId:'new',plannedStartTime:'13:00',durationMinutes:60,estimatedCostFen:2000,locked:false}]};
+  const place={id:'new',name:'新地点',coordinates:[105,31],source:a.source} as never;
+  const row=handbookRows(day,[],replaced,[place])[0];expect(row.state).toBe('changed');expect(row.label).toBe('新地点');expect(validMapRows([row])[0].activity?.coordinates).toEqual([105,31]);
+  expect(handbookRows(day,[],{...replaced,activities:[{...replaced.activities[0],placeCandidateId:a.placeId} ]})[0].state).toBe('changed');
+ });
 });

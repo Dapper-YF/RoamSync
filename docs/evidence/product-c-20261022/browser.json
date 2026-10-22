@@ -1,0 +1,31 @@
+{
+  "environment": "isolated real API/AMap/Worker, synthetic schedule; review mode uses a synthetic candidate with actual route enrichment, Validator and Accept",
+  "checks": [
+    "saved timeline, deliberate free time, day-unscheduled and trip-undated are separate",
+    "1440/390/320: no overflow, 44px targets, one scoped input",
+    "real search stays in Explore, reload restores query, real favorite and trip-free route, correct return links",
+    "legacy search bookmarks remain compatible"
+  ],
+  "viewports": [
+    {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "adjustTop": 764.03125,
+      "smallTargets": 0
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "adjustTop": 632.875,
+      "smallTargets": 0
+    },
+    {
+      "width": 320,
+      "scrollWidth": 320,
+      "adjustTop": 663.921875,
+      "smallTargets": 0
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

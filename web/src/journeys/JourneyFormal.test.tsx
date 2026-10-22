@@ -23,6 +23,18 @@ it("the handbook binds a selected activity without opening a scheduling form",as
   expect(ask).toHaveBeenCalledWith(expect.objectContaining({tripId:'test-trip',selectedDayId:'day-1',selectedDayDate:'2099-01-01',selectedActivityId:activity.id}));
   expect(screen.queryByLabelText('希望怎样调整')).not.toBeInTheDocument();
 });
+it('opens a fresh revision on its changed day and continues that date without rejecting it',async()=>{
+  const api=ApiTripPlanningRepository.prototype;
+  vi.spyOn(api,'getTrip').mockResolvedValue({id:'test-trip',title:'验收旅行',destination:'成都',startDate:'2099-01-01',endDate:'2099-01-02',status:'upcoming',version:1} as Trip);
+  vi.spyOn(api,'getDays').mockResolvedValue([{id:'day-1',tripId:'test-trip',date:'2099-01-01',label:'第一天',theme:'',activities:[]},{id:'day-2',tripId:'test-trip',date:'2099-01-02',label:'第二天',theme:'',activities:[activity]}]);
+  vi.spyOn(api,'listPlanningRuns').mockResolvedValue([{id:'run',baseTripVersion:1,status:'awaiting_confirmation'}] as never);
+  vi.spyOn(api,'getPlanRevision').mockResolvedValue({id:'revision',planningRunId:'run',status:'pending',reason:'下午慢慢逛',planningGoals:{targetDays:['2099-01-02']},activities:[{candidateId:'changed',replacesActivityId:activity.id,placeCandidateId:activity.placeId,dayDate:'2099-01-02',plannedStartTime:'14:00',durationMinutes:60}]} as never);
+  const ask=vi.fn();mount(ask);
+  await screen.findByRole('region',{name:'调整预览'});
+  await waitFor(()=>expect(screen.getByRole('tab',{name:'第2天 01-02'})).toHaveAttribute('aria-selected','true'));
+  fireEvent.click(screen.getByRole('button',{name:/^继续商量$/}));
+  expect(ask).toHaveBeenCalledWith(expect.objectContaining({selectedDayId:'day-2',selectedDayDate:'2099-01-02'}));
+});
 it("binds an explicit activity adjustment to the existing day and activity identity", async () => {
   const create = vi.spyOn(ApiTripPlanningRepository.prototype, "createPlanningRun").mockResolvedValue({ id: "run-1" } as never);
   localStorage.setItem("roamsync.handbook.enabled","false");
