@@ -59,12 +59,15 @@ async def pulse(run_id):
 async def track_progress(run_id):
     token = active_run.set(run_id)
     parent = asyncio.current_task()
+    ownership_lost = False
     async def heartbeat():
+        nonlocal ownership_lost
         while True:
             try:
                 if await pulse(run_id) is False:
                     return
             except LostPlanningClaim:
+                ownership_lost = True
                 parent.cancel()
                 return
             except Exception:
@@ -73,6 +76,10 @@ async def track_progress(run_id):
     task = asyncio.create_task(heartbeat())
     try:
         yield
+    except asyncio.CancelledError:
+        if ownership_lost:
+            raise LostPlanningClaim("heartbeat detected a replacement execution") from None
+        raise
     finally:
         task.cancel()
         with suppress(asyncio.CancelledError):

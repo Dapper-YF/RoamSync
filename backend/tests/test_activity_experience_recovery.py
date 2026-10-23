@@ -190,6 +190,52 @@ def test_real_second_extend_leaves_one_active_run_for_f2_worker_refresh() -> Non
         assert fresh["impact"]["time_shift_minutes"] == 510
 
 
+def test_second_extend_preserves_active_checkpoint_and_real_resume():
+    """Infra probe: real checkpoints, not a synthetic product candidate."""
+    from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+    from langgraph.graph import StateGraph, START, END
+    from langgraph.types import Command, interrupt
+    from app.config import get_settings
+    from app.planning_claim import CHECKPOINT_THREAD, checkpoint_thread
+    with TestClient(app) as client:
+        _, current = _start_current(client)
+        asyncio.run(_pin_current_start(current["id"]))
+        assert _extend(client, current["id"], 480).status_code == 200
+        [run] = asyncio.run(_run_rows())
+        thread_id = f"experience-repeat-{run.id}"
+        async def prepare():
+            async with session_factory() as db:
+                row = await db.get(PlanningRun, run.id)
+                row.status = "planning"
+                row.trigger_snapshot = {**row.trigger_snapshot, CHECKPOINT_THREAD: thread_id,
+                    "decision_context_summary": {"sentinel": "preserve-provenance"}}
+                await db.commit()
+            async with AsyncPostgresSaver.from_conn_string(get_settings().checkpoint_database_url) as cp:
+                await cp.setup()
+                builder = StateGraph(dict)
+                builder.add_node("decision", lambda _state: {"decision": interrupt({"kind": "infra_probe"})})
+                builder.add_edge(START, "decision")
+                builder.add_edge("decision", END)
+                graph = builder.compile(checkpointer=cp)
+                await graph.ainvoke({"value": "synthetic infrastructure only"}, config={"configurable": {"thread_id": thread_id}})
+        asyncio.run(prepare())
+        assert _extend(client, current["id"], 30).status_code == 200
+        async def resume():
+            async with session_factory() as db:
+                row = await db.get(PlanningRun, run.id)
+                assert checkpoint_thread(row) == thread_id
+                assert row.trigger_snapshot["decision_context_summary"]["sentinel"] == "preserve-provenance"
+            async with AsyncPostgresSaver.from_conn_string(get_settings().checkpoint_database_url) as cp:
+                builder = StateGraph(dict)
+                builder.add_node("decision", lambda _state: {"decision": interrupt({"kind": "infra_probe"})})
+                builder.add_edge(START, "decision")
+                builder.add_edge("decision", END)
+                result = await builder.compile(checkpointer=cp).ainvoke(Command(resume="reject"),
+                    config={"configurable": {"thread_id": checkpoint_thread(row)}})
+                assert result["decision"] == "reject"
+        asyncio.run(resume())
+
+
 def test_rejected_fingerprint_is_suppressed_but_changed_facts_retrigger() -> None:
     with TestClient(app) as client:
         execution, current = _start_current(client)

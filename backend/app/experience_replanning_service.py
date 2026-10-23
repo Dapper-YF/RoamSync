@@ -45,7 +45,7 @@ async def ensure_experience_recovery(session: AsyncSession, activity_execution_i
     existing = await session.scalar(select(PlanningRun).where(PlanningRun.trip_id == execution.trip_id, PlanningRun.trigger_key == key, PlanningRun.status.in_(ACTIVE)).with_for_update())
     if existing is not None:
         if existing.status != "awaiting_confirmation":
-            existing.trigger_snapshot = snapshot
+            existing.trigger_snapshot = {**(existing.trigger_snapshot or {}), **snapshot}
             await session.commit()
             return existing
         revision = await session.scalar(select(PlanRevision).where(PlanRevision.planning_run_id == existing.id, PlanRevision.status == "pending").with_for_update())

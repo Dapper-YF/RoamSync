@@ -140,8 +140,92 @@ def test_heartbeat_ownership_loss_cancels_external_work(monkeypatch):
     async def scenario():
         async with progress.track_progress("synthetic"):
             await asyncio.Event().wait()
-    with pytest.raises(asyncio.CancelledError):
+    with pytest.raises(LostPlanningClaim):
         asyncio.run(scenario())
+
+
+def test_api_clarification_claim_is_fenced_after_worker_reclaim(monkeypatch):
+    from app.planning_claim import active_claim, CHECKPOINT_THREAD, LostPlanningClaim
+    from app.schemas import PlanningRunDecision
+    async def scenario():
+        async with database() as sessions:
+            monkeypatch.setattr(worker, "session_factory", sessions)
+            monkeypatch.setattr(runtime, "session_factory", sessions)
+            monkeypatch.setattr(progress, "session_factory", sessions)
+            rid = await queued_run(sessions)
+            async with sessions() as db:
+                row = await db.get(PlanningRun, rid)
+                row.status = "awaiting_clarification"
+                row.pending_interrupt = {"kind": "clarification", "questions": ["哪一天？"], "run_id": str(rid)}
+                row.trigger_snapshot = {CHECKPOINT_THREAD: "existing-interrupted-thread"}
+                await db.commit()
+            entered, release = asyncio.Event(), asyncio.Event()
+            observed = []
+            async def stalled(run_id, **_kwargs):
+                entered.set()
+                claim = active_claim.get()
+                observed.append(claim)
+                assert claim is not None, "API clarification has no execution claim"
+                async with sessions() as db:
+                    current = await db.get(PlanningRun, rid)
+                    assert current.worker_id == claim.token
+                    assert current.trigger_snapshot[CHECKPOINT_THREAD] == "existing-interrupted-thread"
+                    current.status = "planning"
+                    await db.commit()
+                await release.wait()
+                await runtime._mark_failed(run_id, "stale_api", "obsolete clarification")
+            monkeypatch.setattr(runtime, "_execute_planning_run", stalled)
+            task = asyncio.create_task(runtime.execute_planning_run(rid,
+                decision=PlanningRunDecision(decision="clarify", answer="第一天")))
+            try:
+                await asyncio.wait_for(entered.wait(), 3)
+                # Let the resumed execution reach its paused provider stage.
+                for _ in range(20):
+                    async with sessions() as db:
+                        if (await db.get(PlanningRun, rid)).status == "planning":
+                            break
+                    await asyncio.sleep(.01)
+                assert observed and observed[0] is not None
+                await expire(sessions, rid)
+                replacement = await worker.claim_next_run()
+                assert replacement.run_id == rid
+                release.set()
+                with pytest.raises(LostPlanningClaim):
+                    await task
+                async with sessions() as db:
+                    current = await db.get(PlanningRun, rid)
+                    assert current.worker_id == replacement.token and current.status == "researching"
+            finally:
+                release.set()
+                await asyncio.gather(task, return_exceptions=True)
+    asyncio.run(scenario())
+
+
+@pytest.mark.parametrize("ready", [False, True])
+def test_clarification_claim_requires_checkpoint_and_excludes_duplicate(monkeypatch, ready):
+    from app.schemas import PlanningRunDecision
+    async def scenario():
+        async with database() as sessions:
+            monkeypatch.setattr(runtime, "session_factory", sessions)
+            rid = await queued_run(sessions)
+            async with sessions() as db:
+                row = await db.get(PlanningRun, rid)
+                row.status = "awaiting_clarification"
+                row.pending_interrupt = {"kind": "clarification"} if ready else None
+                await db.commit()
+            decision = PlanningRunDecision(decision="clarify", answer="第一天")
+            if ready:
+                claim = await runtime._claim_clarification(rid, decision)
+                with pytest.raises(ValueError, match="not waiting"):
+                    await runtime._claim_clarification(rid, decision)
+            else:
+                with pytest.raises(ValueError, match="not ready"):
+                    await runtime._claim_clarification(rid, decision)
+            async with sessions() as db:
+                row = await db.get(PlanningRun, rid)
+                assert row.status == ("researching" if ready else "awaiting_clarification")
+                assert row.worker_id == (claim.token if ready else None)
+    asyncio.run(scenario())
 
 
 def test_reclaimed_attempt_has_separate_real_checkpoints_and_remains_acceptable(monkeypatch):

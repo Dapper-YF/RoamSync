@@ -20,6 +20,14 @@ execution; a normal approval/clarification interrupt stops heartbeat without
 cancelling its final checkpoint. Expired/null-lease orphan recovery respects a
 liveness grace; shutdown cancels and awaits work, and claim DB errors back off.
 
+API clarification resumes also acquire a unique execution claim under Trip→Run
+locks, require the persisted clarification interrupt, exclude duplicate resumes
+and preserve that interrupt's checkpoint thread. Lease loss returns HTTP409.
+Repeated experience extensions merge trigger metadata instead of discarding the
+checkpoint/provenance. Creation persists the grounded prepared_intent v1 envelope
+after dual-version checks, including the repaired preferences version; it is an
+internal server handoff, not a client authorization field.
+
 Accept, Validator, authorization and public version rules remain. No new table or
 migration. Experience snapshot refresh can be read-only and is applied with its
 fingerprint in the fenced final unit. Shared route cache evidence is independent

@@ -129,6 +129,18 @@ async def create_planning_run(
         await session.flush()
     trigger_snapshot = {**(trigger_snapshot or {}), "effective_requirements":
         valid_records(getattr(preferences, "requirement_records", []))}
+    # Persist only the decision grounded and policy-checked above, after both
+    # versions passed. Downstream may re-ground it, never ask a model to change
+    # the authorized task. Use the repaired preferences version for legacy trips.
+    if prepared_intent is not None:
+        trigger_snapshot["prepared_intent"] = {
+            "version": 1, "trip_id": str(trip_id), "user_request": payload.user_request,
+            "entry_point": payload.entry_point,
+            "selected_day_id": str(payload.selected_day_id) if payload.selected_day_id else None,
+            "selected_activity_id": str(payload.selected_activity_id) if payload.selected_activity_id else None,
+            "base_trip_version": trip.version, "preferences_version": preferences.version,
+            "draft": resolution.semantic_draft.model_dump(mode="json"),
+        }
     run = PlanningRun(
         trip_id=trip_id,
         run_type=payload.run_type,

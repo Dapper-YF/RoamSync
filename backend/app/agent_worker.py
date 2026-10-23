@@ -4,13 +4,13 @@ import uuid
 import logging
 from datetime import UTC, datetime, timedelta
 
-from sqlalchemy import or_, select, update, func
+from sqlalchemy import or_, select, func
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.config import get_settings
 from app.database import PlanningRun, session_factory
 from app.planning_graph_runtime import execute_planning_run
-from app.planning_claim import PlanningClaim, active_claim, LostPlanningClaim, CHECKPOINT_THREAD
+from app.planning_claim import PlanningClaim, active_claim, LostPlanningClaim, CHECKPOINT_THREAD, release_planning_claim
 
 logger = logging.getLogger(__name__)
 
@@ -63,17 +63,7 @@ async def execute_claimed_run(claim: PlanningClaim) -> None:
     finally:
         active_claim.reset(token)
         try:
-            async with session_factory() as session:
-                # A shutdown or unexpected exit makes unfinished work eligible
-                # for immediate recovery. Never clear a replacement's lease.
-                owned = (PlanningRun.id == claim.run_id, PlanningRun.worker_id == claim.token)
-                await session.execute(update(PlanningRun).where(*owned,
-                    PlanningRun.status.in_(("queued", "researching", "planning", "validating")))
-                    .values(worker_lease_expires_at=datetime.now(UTC)))
-                await session.execute(update(PlanningRun).where(*owned,
-                    PlanningRun.status.not_in(("queued", "researching", "planning", "validating")))
-                    .values(worker_id=None, worker_lease_expires_at=None))
-                await session.commit()
+            await release_planning_claim(session_factory, claim)
         except Exception as exc:
             logger.warning("Planning run %s lease cleanup failed: %s", claim.run_id, type(exc).__name__)
 

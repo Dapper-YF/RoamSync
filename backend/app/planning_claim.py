@@ -4,7 +4,7 @@ from contextvars import ContextVar
 from dataclasses import dataclass
 from datetime import UTC, datetime
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from app.database import PlanningRun, Trip
 
@@ -26,6 +26,17 @@ CHECKPOINT_THREAD = "worker_checkpoint_thread"
 
 def checkpoint_thread(run: PlanningRun) -> str:
     return (run.trigger_snapshot or {}).get(CHECKPOINT_THREAD) or str(run.id)
+
+
+async def release_planning_claim(sessions, claim: PlanningClaim):
+    async with sessions() as session:
+        owned = (PlanningRun.id == claim.run_id, PlanningRun.worker_id == claim.token)
+        working = ("queued", "researching", "planning", "validating")
+        await session.execute(update(PlanningRun).where(*owned, PlanningRun.status.in_(working))
+            .values(worker_lease_expires_at=datetime.now(UTC)))
+        await session.execute(update(PlanningRun).where(*owned, PlanningRun.status.not_in(working))
+            .values(worker_id=None, worker_lease_expires_at=None))
+        await session.commit()
 
 
 async def assert_planning_claim(session, run_id=None, trip_id=None):

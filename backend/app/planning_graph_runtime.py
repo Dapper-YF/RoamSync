@@ -1,12 +1,17 @@
 import asyncio
 import uuid
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
+from sqlalchemy import select
+import logging
 
 from app.destination_research import research_destination
 from app.initial_places_service import prepare_initial_candidates
 from app.planning_progress import track_progress
-from app.planning_claim import assert_planning_claim, checkpoint_thread, LostPlanningClaim
+from app.planning_claim import (
+    assert_planning_claim, checkpoint_thread, LostPlanningClaim, PlanningClaim,
+    active_claim, release_planning_claim,
+)
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.types import Command
 from pydantic import TypeAdapter
@@ -34,6 +39,7 @@ from app.schemas import PlanningPendingInterrupt, PlanningRunDecision
 
 
 pending_interrupt_adapter = TypeAdapter(PlanningPendingInterrupt)
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -83,6 +89,11 @@ async def execute_planning_run(
     provider: DraftProvider | None = None,
 ) -> PlanningExecutionResult:
     settings = get_settings()
+    resume_claim = None
+    claim_token = None
+    if decision is not None and decision.decision == "clarify" and active_claim.get() is None:
+        resume_claim = await _claim_clarification(run_id, decision)
+        claim_token = active_claim.set(resume_claim)
     try:
         async with asyncio.timeout(settings.agent_run_timeout_seconds):
             # Accept/reject resumes only database work, not a long model request.
@@ -98,6 +109,38 @@ async def execute_planning_run(
             {"category": "execution_timeout", "timeout_seconds": settings.agent_run_timeout_seconds},
         )
         return PlanningExecutionResult(pending_interrupt=None)
+    finally:
+        if claim_token is not None:
+            active_claim.reset(claim_token)
+            try:
+                await release_planning_claim(session_factory, resume_claim)
+            except Exception as exc:
+                logger.warning("Clarification lease cleanup failed: %s", type(exc).__name__)
+
+
+async def _claim_clarification(run_id, decision):
+    from app.database import Trip
+    async with session_factory() as session:
+        trip_id = await session.scalar(select(PlanningRun.trip_id).where(PlanningRun.id == run_id))
+        if trip_id is None:
+            raise PlanningRunNotFoundError
+        await session.scalar(select(Trip.id).where(Trip.id == trip_id).with_for_update())
+        run = await session.scalar(select(PlanningRun).where(PlanningRun.id == run_id)
+            .with_for_update().execution_options(populate_existing=True))
+        if run is None:
+            raise PlanningRunNotFoundError
+        _validate_decision(run, decision)
+        if (run.pending_interrupt or {}).get("kind") != "clarification":
+            raise ValueError("planning clarification checkpoint is not ready")
+        claim = PlanningClaim(run_id, trip_id, f"resume:{uuid.uuid4().hex}")
+        run.worker_id = claim.token
+        run.worker_lease_expires_at = datetime.now(UTC) + timedelta(seconds=get_settings().agent_lease_seconds)
+        # This atomic transition excludes a second clarification request. The
+        # existing checkpoint thread must be resumed, not replaced by a claim.
+        run.status = "researching"
+        run.pending_interrupt = None
+        await session.commit()
+        return claim
 
 
 async def _execute_planning_run(
@@ -111,7 +154,11 @@ async def _execute_planning_run(
         run = await session.get(PlanningRun, run_id)
         if run is None:
             raise PlanningRunNotFoundError
-        _validate_decision(run, decision)
+        if decision is not None and decision.decision == "clarify" and active_claim.get() is not None:
+            if run.status != "researching":
+                raise ValueError("clarification execution is no longer active")
+        else:
+            _validate_decision(run, decision)
 
     resume = None
     if decision is not None:

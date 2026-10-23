@@ -45,6 +45,7 @@ from app.planning_intent_service import (
 )
 from app.openai_intent_parser import build_semantic_intent_provider
 from app.planning_graph_runtime import execute_planning_run
+from app.planning_claim import LostPlanningClaim
 from app.planning_run_repository import (
     InvalidPlanningRunStateError,
     PlanRevisionNotFoundError,
@@ -693,6 +694,8 @@ async def decide_planning_run_endpoint(
         execution = await execute_planning_run(run_id, decision=payload)
         run = await get_planning_run(session, run_id)
         await session.refresh(run)
+    except LostPlanningClaim as exc:
+        raise HTTPException(status_code=409, detail="任务已由新执行接管，请刷新查看当前状态") from exc
     except PlanningRunNotFoundError as exc:
         raise HTTPException(status_code=404, detail="planning run not found") from exc
     except ValueError as exc:

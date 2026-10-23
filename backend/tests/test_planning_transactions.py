@@ -151,6 +151,14 @@ def test_prepared_intent_is_not_rerouted_by_legacy_classifier(monkeypatch):
                 monkeypatch.setattr(repository, "route_travel_goal", forbidden)
                 run = await repository.create_planning_run(caller, tid, payload, prepared_intent=prepared)
                 assert run.status == "queued"
+                envelope = run.trigger_snapshot["prepared_intent"]
+                assert envelope == {
+                    "version": 1, "trip_id": str(tid), "user_request": payload.user_request,
+                    "entry_point": payload.entry_point, "selected_day_id": None,
+                    "selected_activity_id": None, "base_trip_version": 1,
+                    "preferences_version": 1,
+                    "draft": run.intent_resolution["semantic_draft"],
+                }
     asyncio.run(scenario())
 
 
