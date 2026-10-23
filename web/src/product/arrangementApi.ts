@@ -7,7 +7,7 @@ export type Run = { id: string; status: string; base_trip_version?: number; erro
 export type Revision = { planning_goals?: { hard_goals?: { max_walking_minutes?: number | null } }; goal_satisfaction?: { results: { evidence: Record<string, unknown> }[] }; id: string; status: string; reason: string; proposed_snapshot: { activities: { candidate_id: string; replaces_activity_id: string | null; place_candidate_id: string; day_date: string; planned_start_time: string; duration_minutes: number; reason?: string }[]; route_legs?: { duration_minutes: number; provider: string; is_estimated: boolean }[] }; validation_result: { warnings?: { message: string }[] } };
 export type PlaceResult = { name: string; provider_place_id: string; address?: string; neighborhood?: string; description?: string; [key: string]: unknown };
 export const clock = (v?: string | null) => v?.slice(0, 5) ?? "";
-export const choiceLabels: Record<string, string> = { selected: "已选 · 时间未定", optional: "备选 · 可以不去", free_window: "保留空闲", cancelled: "已撤销", appointment: "你提供的固定预约" };
+export const choiceLabels: Record<string, string> = { selected: "已选 · 时间未定", optional: "备选 · 可以不去", free_window: "保留空闲", blank_day: "整天留白", cancelled: "已撤销", appointment: "你提供的固定预约" };
 
 export async function assistantRequest<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api/v1${url}`, { ...init, headers: { "Content-Type": "application/json", ...init?.headers } });

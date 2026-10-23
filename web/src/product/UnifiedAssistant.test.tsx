@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { Link, MemoryRouter, Route, Routes } from "react-router-dom";
 import { AssistantPage, TravelAssistantProvider, useTravelAssistant } from "./TravelAssistant";
@@ -111,4 +111,24 @@ it("completion in an old scope cannot cancel the new Trip read", async () => {
 it("declares existing date-change authority without weakening normal edits", () => {
   expect(arrangementAction("把出发日期改到2026-11-09", trip("A"), "m").operation).toBe("reschedule_trip");
   expect(arrangementAction("请调整第二天的安排", trip("A"), "m").operation).toBe("plan_trip");
+});
+it('shows a whole blank day with its date while preserving ordinary timed free windows',async()=>{
+  const writes:string[]=[];
+  vi.stubGlobal('fetch',vi.fn(async(url:string,init?:RequestInit)=>{
+    writes.push(url);
+    expect(init?.method).toBe('POST');
+    if(!url.endsWith('/assistant/sessions'))throw Error(url);
+    return response({...session(),pending_action:{id:'blank-preview',title:'三日打算',start_date:'2026-11-10',end_date:'2026-11-12',summary:'待核对',choices:[
+      {kind:'blank_day',label:'第二天什么都不排',origin:'user_explicit',day_date:'2026-11-11',start:null,end:null},
+      {kind:'free_window',label:'午后歇一会儿',origin:'user_explicit',day_date:'2026-11-10',start:'14:00:00',end:'15:30:00'},
+    ]}});
+  }));
+  mount();
+  const preview=await screen.findByRole('region',{name:'待采用的安排建议'});
+  const blank=within(preview).getByText('第二天什么都不排').closest('li')!;
+  expect(blank).toHaveTextContent('整天留白 · 2026-11-11');
+  expect(blank).not.toHaveTextContent(/00:00|23:59/);
+  expect(within(preview).getByText('午后歇一会儿').closest('li')).toHaveTextContent('保留空闲 · 2026-11-10 14:00—15:30');
+  expect(within(preview).getByRole('button',{name:'采用并保存这份安排'})).toBeEnabled();
+  expect(writes.every(url=>url.endsWith('/assistant/sessions'))).toBe(true);
 });

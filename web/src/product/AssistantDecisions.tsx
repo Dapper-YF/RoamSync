@@ -11,7 +11,7 @@ export function AssistantDecisions() {
   return <>
     {preview && <section className="travel-assistant-decision" aria-label="待采用的安排建议"><h2>这份建议，由你决定</h2>
       <p>{preview.start_date} — {preview.end_date}</p><p>{preview.summary}</p>
-      <ul>{preview.choices?.map((i, n) => <li key={n}><strong>{i.label}</strong> · {choiceLabels[i.kind]}{i.start && ` · ${i.day_date} ${clock(i.start)}—${clock(i.end)}`}</li>)}</ul>
+      <ul>{preview.choices?.map((i, n) => <li key={n}><strong>{i.label}</strong> · {choiceLabels[i.kind]}{i.kind === "blank_day" && i.day_date && ` · ${i.day_date}`}{i.start && ` · ${i.day_date} ${clock(i.start)}—${clock(i.end)}`}</li>)}</ul>
       <button disabled={a.busy} onClick={() => void a.decidePreview(true)}>采用并保存这份安排</button>
       <button disabled={a.busy} onClick={() => a.continueDiscussion()}>继续讨论</button>
       <button disabled={a.busy} onClick={() => void a.decidePreview(false)}>放弃这份建议</button>

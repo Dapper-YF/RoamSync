@@ -1,4 +1,4 @@
-import { render, screen, waitFor, fireEvent, cleanup, act } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent, cleanup, act, within } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NaturalAssistant } from "./NaturalAssistant";
@@ -11,6 +11,21 @@ beforeEach(() => { localStorage.clear(); });
 afterEach(() => { cleanup(); vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 describe("natural assistant result boundary", () => {
+  it('shows a dated whole-day creation preview without inventing clock times',async()=>{
+    vi.stubGlobal('fetch',vi.fn(async(url:string)=>{
+      if(!url.endsWith('/assistant/sessions'))throw Error(url);
+      return new Response(JSON.stringify({...session,trip_id:null,pending_action:{id:'blank-preview',title:'三日打算',start_date:'2026-11-10',end_date:'2026-11-12',summary:'待核对',choices:[
+        {kind:'blank_day',label:'第二天什么都不排',origin:'user_explicit',day_date:'2026-11-11',start:null,end:null},
+        {kind:'free_window',label:'午后歇一会儿',origin:'user_explicit',day_date:'2026-11-10',start:'14:00:00',end:'15:30:00'},
+      ]}}));
+    }));
+    mount('/');
+    const preview=await screen.findByRole('region',{name:'待采用的安排建议'});
+    const blank=within(preview).getByText('第二天什么都不排').closest('li')!;
+    expect(blank).toHaveTextContent('整天留白 · 2026-11-11');
+    expect(blank).not.toHaveTextContent(/00:00|23:59/);
+    expect(within(preview).getByText('午后歇一会儿').closest('li')).toHaveTextContent('保留空闲 · 2026-11-10 14:00—15:30');
+  });
   it("stops polling a terminal run instead of querying forever", async () => {
     vi.useFakeTimers();
     let reads = 0;
