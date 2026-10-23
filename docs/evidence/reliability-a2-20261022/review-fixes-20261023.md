@@ -40,3 +40,14 @@ B's final code. Unseen20 and complete real browser flow remain unverified.
 changed while the new recovery counterexample/repair was added. The runner correctly
 returned passed=false/source_unchanged=false. This run is retained as invalid for
 final source certification; do not count it as a final full regression pass.
+
+Integrated B523bbd7 supplies strict migration for old server checkpoint append
+format; expanded text never authorizes new operations. A runtime supplies a
+separate recoverable409 path for unbound history: same live claim restores the
+original interruption, preserves literal answers/receipts, and marks restart
+required so repeated submissions cannot append input or enter Worker retry loops.
+`legacy-runtime-red` reproduces the old generic409/failed handling mismatch;
+`legacy-runtime-green`:67 passed, zero errors/failures/skips, including real
+HTTP/database repeat409 retention and B's actual old/new PostgreSQL checkpoints.
+No relaxed source binding, Validator, permissions or Accept. The restart message
+requires a new explicit request; it does not claim to auto-repair unsafe history.

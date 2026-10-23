@@ -33,6 +33,7 @@ from app.planning_graph import (
     PlanningGraphState,
     UnavailableDraftProvider,
     build_planning_graph,
+    LegacyClarificationRestartRequired,
 )
 from app.planning_run_repository import PlanningRunNotFoundError
 from app.schemas import PlanningPendingInterrupt, PlanningRunDecision
@@ -129,6 +130,8 @@ async def _claim_clarification(run_id, decision):
             .with_for_update().execution_options(populate_existing=True))
         if run is None:
             raise PlanningRunNotFoundError
+        if (run.trigger_snapshot or {}).get("legacy_clarification_restart_required"):
+            raise LegacyClarificationRestartRequired()
         _validate_decision(run, decision)
         if (run.pending_interrupt or {}).get("kind") != "clarification":
             raise ValueError("planning clarification checkpoint is not ready")
@@ -209,6 +212,9 @@ async def _execute_planning_run(
                     persisted.pending_interrupt = result.pending_interrupt
                     await session.commit()
             return result
+    except LegacyClarificationRestartRequired:
+        await _restore_legacy_clarification_interrupt(run_id)
+        raise
     except PlannerNotConfiguredError as exc:
         await _mark_failed(run_id, "planner_not_configured", str(exc))
         return PlanningExecutionResult(pending_interrupt=None)
@@ -232,6 +238,27 @@ async def _execute_planning_run(
     except Exception as exc:
         await _mark_failed(run_id, "planning_graph_failed", str(exc))
         raise
+
+
+async def _restore_legacy_clarification_interrupt(run_id):
+    if active_claim.get() is None:
+        raise LostPlanningClaim("legacy recovery requires the current execution claim")
+    async with session_factory() as session:
+        await assert_planning_claim(session, run_id)
+        run = await session.get(PlanningRun, run_id)
+        snapshot = dict(run.trigger_snapshot or {})
+        receipts = snapshot.get("clarification_receipts", [])
+        receipt = receipts[-1] if receipts else None
+        if (not isinstance(receipt, dict) or receipt.get("original_request") != run.user_request
+                or receipt.get("checkpoint_thread") != checkpoint_thread(run)):
+            raise LostPlanningClaim("legacy recovery receipt does not match this checkpoint")
+        pending = pending_interrupt_adapter.validate_python({
+            "kind": "clarification", "run_id": str(run_id), "questions": receipt["questions"],
+        }).model_dump(mode="json")
+        run.status = "awaiting_clarification"
+        run.pending_interrupt = pending
+        run.trigger_snapshot = {**snapshot, "legacy_clarification_restart_required": True}
+        await session.commit()
 
 
 async def _mark_failed(run_id: uuid.UUID, code: str, message: str, details: dict | None = None) -> None:

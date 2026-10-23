@@ -31,6 +31,12 @@ The clarification claim atomically stores the literal answer, original question
 and request receipt. Replacement attempts read these server-owned answers in a
 fresh checkpoint and retain the total two-answer bound; a crash after claiming or
 during planning cannot silently discard a user's accepted clarification.
+Strictly bound old second-clarification checkpoints can migrate their server-stored
+append-format answers separately, retaining original authority and rechecking the
+prepared envelope. Unmigratable history returns recoverable HTTP409: its current
+claim restores the original interrupt, preserves answers/receipts and prevents
+automatic retry loops. A new explicit planning request is required; invalid old
+expanded text never grants new operations.
 
 Accept, Validator, authorization and public version rules remain. No new table or
 migration. Experience snapshot refresh can be read-only and is applied with its

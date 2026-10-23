@@ -269,6 +269,43 @@ def test_reclaim_keeps_accepted_clarification_after_api_exit(monkeypatch, window
     asyncio.run(scenario())
 
 
+def test_unmigratable_legacy_clarification_returns_recoverable_409(monkeypatch):
+    import httpx
+    from app.main import app
+    from app.planning_graph import LegacyClarificationRestartRequired
+    async def scenario():
+        async with database() as sessions:
+            monkeypatch.setattr(runtime, "session_factory", sessions)
+            monkeypatch.setattr(progress, "session_factory", sessions)
+            rid = await queued_run(sessions)
+            pending = {"kind":"clarification", "questions":["哪一天？"], "run_id":str(rid)}
+            async with sessions() as db:
+                row = await db.get(PlanningRun, rid)
+                row.status = "awaiting_clarification"
+                row.pending_interrupt = pending
+                await db.commit()
+                original = row.user_request
+            async def unbound_checkpoint(*_args, **_kwargs):
+                raise LegacyClarificationRestartRequired()
+            monkeypatch.setattr(runtime, "invoke_compiled_graph", unbound_checkpoint)
+            async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as client:
+                response = await client.post(f"/api/v1/planning-runs/{rid}/decision",
+                    json={"decision":"clarify", "answer":"第二天"})
+                repeated = await client.post(f"/api/v1/planning-runs/{rid}/decision",
+                    json={"decision":"clarify", "answer":"第三天"})
+            assert response.status_code == 409
+            assert response.json()["detail"]["code"] == "legacy_clarification_restart_required"
+            assert repeated.status_code == 409 and repeated.json() == response.json()
+            async with sessions() as db:
+                row = await db.get(PlanningRun, rid)
+                assert row.status == "awaiting_clarification" and row.pending_interrupt == pending
+                assert row.user_request == original and row.error_code is None
+                assert row.worker_id is None and row.worker_lease_expires_at is None
+                assert row.trigger_snapshot["clarification_answers"] == ["第二天"]
+                assert row.trigger_snapshot["clarification_receipts"][0]["answer"] == "第二天"
+    asyncio.run(scenario())
+
+
 def test_reclaimed_attempt_has_separate_real_checkpoints_and_remains_acceptable(monkeypatch):
     from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
     from app.config import get_settings

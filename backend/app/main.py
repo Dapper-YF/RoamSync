@@ -46,6 +46,7 @@ from app.planning_intent_service import (
 from app.openai_intent_parser import build_semantic_intent_provider
 from app.planning_graph_runtime import execute_planning_run
 from app.planning_claim import LostPlanningClaim
+from app.planning_graph import LegacyClarificationRestartRequired
 from app.planning_run_repository import (
     InvalidPlanningRunStateError,
     PlanRevisionNotFoundError,
@@ -694,6 +695,11 @@ async def decide_planning_run_endpoint(
         execution = await execute_planning_run(run_id, decision=payload)
         run = await get_planning_run(session, run_id)
         await session.refresh(run)
+    except LegacyClarificationRestartRequired as exc:
+        raise HTTPException(status_code=409, detail={
+            "code": "legacy_clarification_restart_required",
+            "message": "旧版澄清无法安全迁移，原请求和已提交答案已保留，请从原始请求重新发起规划。",
+        }) from exc
     except LostPlanningClaim as exc:
         raise HTTPException(status_code=409, detail="任务已由新执行接管，请刷新查看当前状态") from exc
     except PlanningRunNotFoundError as exc:
