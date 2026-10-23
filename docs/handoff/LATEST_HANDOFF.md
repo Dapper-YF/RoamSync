@@ -2,9 +2,13 @@
 
 ## Snapshot
 
+新任务：AI对话/我的安排重设计，分支codex/conversation-itinerary-redesign-20261023，沿用本隔离树，起点8dbf685。已对照正式6b298ca和三张用户参考图完成审计/设计，产品代码未改。设计及Astra Medium七项条件复核见docs/superpowers/specs/2026-10-23-conversation-itinerary-{design,astra-review}.md。设计已补齐条件，等待用户确认后实施；不是产品GO。
+
 2026-10-23 A2工程测量已冻结，产品NO-GO，未部署。隔离树E:/Study/RoamSync-reliability-a2-20261022，codex/reliability-a2-20261022。受测产品SHA=85d0bd5915a7d7168bf606b7f520fbae0ad6f237；后续仅报告/证据，产品diff为空。完整报告docs/ENGINEERING_A2_RELIABILITY_20261023.md。
 
 ## Current Freeze / Rehearsal Status
+
+新设计：Draft→PreparedPlan→同源图文摘要→同对象修改→明确保存后原子Validator/Accept→正式逐站图文时间轴。元数据不算候选；午餐/留白用现ArrangementItem；新协议与旧checkpoint显式版本分派；展示hash单向绑定；保存事务遵守原锁序/整体回滚。成都图库只有人民公园，宽窄巷子照片须另审核或无图降级。尚未实现、未做新真实验收，不得宣称完成。下一步先取得具体设计确认，再写实施计划/红绿反例。
 
 A已实施规划快照→事务外网络→重锁Trip/偏好双CAS；Worker唯一claim、写fencing、独立checkpoint、条件心跳/清理及故障退避；澄清答案/问题收据与claim原子持久化、体验元数据合并。B523bbd7严格迁移旧澄清，A85d0对不可安全恢复返回typed409并保留原问题/答案。无迁移；授权、版本、执行保护、Validator与Accept未放宽。旧新Worker禁止混跑。
 

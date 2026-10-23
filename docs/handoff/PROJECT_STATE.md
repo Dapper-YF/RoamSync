@@ -2,6 +2,17 @@
 
 Last updated: 2026-10-23
 
+## Conversation / itinerary redesign — design reviewed, implementation pending
+
+New branch codex/conversation-itinerary-redesign-20261023 starts from8dbf685 in
+the existing isolated A worktree; official6b298ca remains read-only. User P1/P2/P3
+requirements audited. Reuse Draft/PreparedPlan/promotion, add source-bound display,
+same-draft modifications, explicit versioned atomic adoption and exact-POI media;
+full timeline belongs in saved itinerary. Astra Medium reviewed seven contract
+conditions and confirmed their inclusion. Await user design approval before product
+implementation. No new product source, deployment, DB operation or real acceptance.
+Spec/review:docs/superpowers/specs/2026-10-23-conversation-itinerary-*.md.
+
 ## A2 final measurement candidate — NO-GO (2026-10-23)
 
 Product source is fixed at85d0bd5915a7d7168bf606b7f520fbae0ad6f237 in
