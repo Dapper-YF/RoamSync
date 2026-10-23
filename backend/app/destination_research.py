@@ -16,7 +16,7 @@ from app.maps_service import search_amap_places
 from app.model_client import build_model_client, create_model_response
 from app.planner_repository import save_candidate_snapshot
 from app.planning_errors import PlannerProviderError
-from app.travel_language import is_generic_place_quantity
+from app.travel_language import chinese_number, is_generic_place_quantity
 from app.planning_progress import report_progress
 from app.agent_observation import observed
 from app.planning_preparation import PlanningPreparationRequiredError, assert_planning_context_current
@@ -94,10 +94,138 @@ def match_place(name: str, items):
     return matches[0] if len(matches) == 1 else None
 
 
+def _approved_chosen_place_clauses(context: dict, user_request: str) -> dict[str, str]:
+    """Recheck literal choices; this internal hint grants no general discovery bypass.
+
+    Graph owns the approved semantic draft and original-message binding. Here a
+    bounded current selection must independently survive literal/authority checks.
+    Unrecognized wording keeps the ordinary web-backed discovery path.
+    """
+    names = context.get("approved_requested_places")
+    if (not isinstance(names, list) or not 1 <= len(names) <= 20
+            or any(not isinstance(name, str) or not 2 <= len(name) <= 100
+                   or name not in user_request or is_generic_place_quantity(name) for name in names)
+            or len(set(names)) != len(names)):
+        return {}
+    # This deliberately narrow path cannot reinterpret a conditional, quotation,
+    # example or reported selection as the user's current choice.
+    if re.search(r"假如|假设|假定|假若|设想|如果|要是|倘若|比如|例如|例子|朋友说|他说|她说|[‘’“”\"'「」]", user_request):
+        return {}
+    clauses = [part.strip() for part in re.split(r"[，,。；;!?！？\n]", user_request) if part.strip()]
+    blocked = r"不要|不用|不选|不去|不安排|不想|不能|不是|并非|没选|未选|别去|别选|先别|先不|暂不|取消|撤销|只问|只讨论|可能|也许|考虑|要不要|是否"
+    if any(re.search(r"推荐|再选|另(?:外)?选|再加|随便|补充.*(?:景点|地方|地点)", clause)
+           and not re.search(blocked, clause) for clause in clauses):
+        return {}
+    bounded = []
+    for clause in clauses:
+        if re.search(blocked, clause):
+            continue
+        match = re.search(r"(?:只|仅)(?:安排|排|去|游览|参观)(.*?)(?:这|上述|以上)([一二两三四五六七八九十\d]+)个(?:地方|地点|景点)", clause)
+        if (match and chinese_number(match[2]) == len(names)
+                and re.fullmatch(r"(?:请|麻烦|帮我|替我|我|我们|行程|本次|这次|的)*", clause[:match.start()].strip())
+                and re.fullmatch(r"(?:即可|就好|就行|吧|就可以|就够了)?", clause[match.end():].strip())):
+            listed = match[1]
+            for name in names:
+                listed = listed.replace(name, "")
+            if not re.sub(r"[\s、和及与]", "", listed):
+                bounded.append(clause)
+    if not bounded:
+        return {}
+    from app.assistant_capabilities import affirmative_action_source
+    if not any(affirmative_action_source(user_request, clause, r"安排|排|去|游览|参观") for clause in bounded):
+        return {}
+    result = {}
+    for name in names:
+        mentions = [clause for clause in clauses if name in clause]
+        # A later denial of a selected name cannot borrow the earlier authority.
+        if any(re.search(blocked, clause) for clause in mentions):
+            return {}
+        choices = []
+        for clause in mentions:
+            prefix, suffix = clause.split(name, 1)
+            for other in names:
+                prefix = prefix.replace(other, "")
+            prefix = re.sub(r"[\s、和及与]", "", prefix)
+            positive_prefix = re.fullmatch(
+                r"(?:请|麻烦|帮我|替我|我|我们|就|都|已经|明确|确定|希望|想|要|只|仅|先|一起|再|一并|现在|本次|这次)*"
+                r"(?:选择|选|安排|排|去|游览|参观|加入|包含)(?:了)?", prefix)
+            address_prefix = re.fullmatch(r"(?:我)?(?:就)?(?:选择|选).+的", prefix)
+            if ((positive_prefix or address_prefix or not prefix and re.match(r"(?:就)?(?:选择|选)", suffix))
+                    and affirmative_action_source(user_request, clause, r"选择|选|安排|排|去|游览|参观|加入|包含")):
+                choices.append(clause)
+        if len(choices) != 1:
+            return {}
+        result[name] = choices[0]
+    return result
+
+
+def _chosen_identity(name: str, clause: str, items):
+    # No web aliases, shortened names or prefix/suffix repairs in identity-only
+    # mode. Even match_place's ordinary scenic-name normalization is insufficient.
+    exact = [item for item in items if item.name == name]
+    prefix, suffix = clause.split(name, 1)
+    suffix = suffix.strip()
+    address = re.match(r"(?:(?:就)?(?:选择|选)(?:在|位于)?|地址(?:是|为|[：:]))(.+)", suffix)
+    if address:
+        chosen_address = re.sub(r"(?:的)?(?:那一个|那个|这一处|这一个|景区)$", "", address[1]).strip()
+        # maps_service retains the provider's actual address in description.
+        # Require the complete returned address, never a guessed district alias.
+        exact = [item for item in exact if item.description and item.description == chosen_address]
+    elif suffix.startswith(("（", "(")):
+        address = re.fullmatch(r"[（(](?:地址[：:]?)?(.+?)[）)]", suffix)
+        if not address:
+            return None
+        exact = [item for item in exact if item.description and item.description == address[1].strip()]
+    elif re.search(r"地址|[路街巷道号区]", suffix):
+        return None
+    # Do not ignore an address placed before the chosen name either.
+    if re.search(r"地址|[路街巷道号区]", prefix):
+        address = re.fullmatch(r"(?:我)?(?:就)?(?:选择|选)(.+)的", prefix.strip())
+        if not address:
+            return None
+        exact = [item for item in exact if item.description and item.description == address[1].strip()]
+    return match_place(name, exact) if len(exact) == 1 else None
+
+
+async def _research_chosen_identities(session, trip_id, *, context, clauses, search):
+    if session.in_transaction():
+        raise PlanningPreparationRequiredError("prepare destination research before opening the caller transaction")
+    staged, unresolved = [], []
+    for index, (name, clause) in enumerate(clauses.items()):
+        await report_progress("map_places", f"正在核实用户已选地点身份 {index + 1}/{len(clauses)}：{name}")
+        if index:
+            await asyncio.sleep(1.05)
+        items = await search(name, context["trip"].get("destination_adcode") or context["trip"]["destination"])
+        poi = _chosen_identity(name, clause, items)
+        if poi is None:
+            unresolved.append(name)
+        elif any(saved.provider_place_id == poi.provider_place_id for saved in staged):
+            unresolved.append(name)
+        else:
+            staged.append(poi)
+    if unresolved:
+        raise PlannerProviderError("planner_requested_place_unresolved", "未唯一匹配到你指定的地点：" + "、".join(unresolved) + "。请补充准确名称和地址后重新规划。", retryable=False)
+    await assert_planning_context_current(session, trip_id, context, lock=True)
+    await assert_planning_claim(session, trip_id=trip_id)
+    places = {}
+    for poi in staged:
+        place = await save_candidate_snapshot(session, trip_id, poi)
+        places[str(place.id)] = {"name": poi.name, "requested": True,
+            "reason": "用户明确选择；地图仅核实地点身份，特色、营业、票价仍待核实。",
+            "prominence": "尚未核实", "sources": [{"title": f"高德地点搜索：{poi.name}",
+                "url": poi.source_url, "content": poi.description}]}
+    await session.commit()
+    return {"status": "available", "places": places, "queried_at": None,
+            "evidence_kind": "map_identity_only", "provider": "amap", "model": None, "token_usage": 0}
+
+
 @observed("research", purpose="Resolve sourced destination candidates", output_summary=lambda result: result)
 async def research_destination(session, trip_id: uuid.UUID, *, context: dict, user_request: str,
                                external_facts: dict, client=None, search=search_amap_places) -> dict:
     from app.openai_planner import normalize_structured_json, translate_model_error
+    chosen_clauses = _approved_chosen_place_clauses(context, user_request)
+    if chosen_clauses:
+        return await _research_chosen_identities(session, trip_id, context=context, clauses=chosen_clauses, search=search)
     sources = search_results(external_facts)
     if not sources and (external_facts.get("search") or {}).get("reason") == "search_authentication_failed":
         raise PlannerProviderError("planner_search_authentication_failed", "网页检索服务凭据未通过验证，请更新搜索服务配置后重试。本次没有生成缺少检索依据的方案。", retryable=False)

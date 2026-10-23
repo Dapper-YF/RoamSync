@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="11" skipped="0" tests="21" time="14.778" timestamp="2026-10-23T12:52:15.390457+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_chosen_places" name="test_chosen_names_work_without_web_and_persist_actual_map_identity" time="1.419"><failure message="app.planning_errors.PlannerProviderError: 网页检索服务凭据未通过验证，请更新搜索服务配置后重试。本次没有生成缺少检索依据的方案。">sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x00000224BDC064D0&gt;, autoflush=True, expire_on_commit=False)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000224BDB25BA0&gt;
+
+    def test_chosen_names_work_without_web_and_persist_actual_map_identity(sessions, monkeypatch):
+        build, model = no_discovery(monkeypatch)
+        async def run():
+            trip_id, context = await new_trip(sessions)
+            searches = []
+            async def search(name, city):
+                searches.append((name, city))
+                assert not db.in_transaction(), "no business transaction across external map work"
+                return [synthetic_poi(name, "synthetic_" + str(len(searches)))]
+            try:
+                async with sessions() as db:
+                    result = await research.research_destination(db, trip_id, context=context,
+                        user_request="甲馆选测试区甲街12号，乙馆选测试区甲街12号。请创建一日候选，只排这两个地方。",
+                        external_facts={"search": {"status": "unavailable", "reason": "search_authentication_failed"}}, search=search)
+                    assert not db.in_transaction()
+                assert searches == [("甲馆", "330100"), ("乙馆", "330100")]
+                assert result["status"] == "available" and result["provider"] == "amap"
+                assert result["evidence_kind"] == "map_identity_only" and result["model"] is None and result["token_usage"] == 0
+                assert len(result["places"]) == 2
+                assert all(item["requested"] and item["reason"] == "用户明确选择；地图仅核实地点身份，特色、营业、票价仍待核实。"
+                    for item in result["places"].values())
+                places, sources, activities = await stored(sessions, trip_id)
+                assert {p.name for p in places} == {"甲馆", "乙馆"}
+                assert {p.slug for p in places} == {"amap-synthetic_1", "amap-synthetic_2"}
+                assert all(source.provider == "AMap POI" and source.url.startswith("https://www.amap.com/") for source in sources)
+                assert len(sources) == 2 and not activities
+                build.assert_not_called(); model.assert_not_awaited()
+            finally:
+                await clean_trip(sessions, trip_id)
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_chosen_places.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_chosen_places.py:81: in run
+    result = await research.research_destination(db, trip_id, context=context,
+app\agent_observation.py:134: in wrapper
+    return await function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+session = &lt;sqlalchemy.ext.asyncio.session.AsyncSession object at 0x00000224BDC12850&gt;
+trip_id = UUID('9ff8ba2a-1575-4b70-be63-cbb2bda28c76')
+
+    @observed("research", purpose="Resolve sourced destination candidates", output_summary=lambda result: result)
+    async def research_destination(session, trip_id: uuid.UUID, *, context: dict, user_request: str,
+                                   external_facts: dict, client=None, search=search_amap_places) -&gt; dict:
+        from app.openai_planner import normalize_structured_json, translate_model_error
+        sources = search_results(external_facts)
+        if not sources and (external_facts.get("search") or {}).get("reason") == "search_authentication_failed":
+&gt;           raise PlannerProviderError("planner_search_authentication_failed", "网页检索服务凭据未通过验证，请更新搜索服务配置后重试。本次没有生成缺少检索依据的方案。", retryable=False)
+E           app.planning_errors.PlannerProviderError: 网页检索服务凭据未通过验证，请更新搜索服务配置后重试。本次没有生成缺少检索依据的方案。
+
+app\destination_research.py:103: PlannerProviderError</failure></testcase><testcase classname="tests.test_agent_b2_chosen_places" name="test_unique_full_name_or_literal_address_selects_identity[items0-\u7532\u9986\u9009\u6d4b\u8bd5\u533a\u4e59\u8def8\u53f7\u3002\u8bf7\u521b\u5efa\u5019\u9009\uff0c\u53ea\u6392\u8fd9\u4e00\u4e2a\u5730\u65b9\u3002-synthetic_other]" time="0.186"><failure message="app.planning_errors.PlannerProviderError: 目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。">sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x00000224BF0CF710&gt;, autoflush=True, expire_on_commit=False)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000224BEB1FE10&gt;
+items = [PlaceSearchResultResponse(provider='amap', provider_place_id='synthetic_a', name='甲馆', category='culture', neighborho...tion_minutes=60, estimated_cost_fen=0, rating=0, tags=[], source_url='https://www.amap.com/search?id=synthetic_other')]
+message = '甲馆选测试区乙路8号。请创建候选，只排这一个地方。', expected_id = 'synthetic_other'
+
+    @pytest.mark.parametrize("items,message,expected_id", [
+        ([synthetic_poi(), synthetic_poi(identity="synthetic_other", address="测试区乙路8号")],
+            "甲馆选测试区乙路8号。请创建候选，只排这一个地方。", "synthetic_other"),
+        ([synthetic_poi()], "我选甲馆。请创建候选，只排这一个地方。", "synthetic_a"),
+        ([synthetic_poi()], "只安排甲馆这一个地方，创建候选。", "synthetic_a"),
+    ])
+    def test_unique_full_name_or_literal_address_selects_identity(sessions, monkeypatch, items, message, expected_id):
+        no_discovery(monkeypatch)
+        async def run():
+            trip_id, context = await new_trip(sessions, ("甲馆",))
+            try:
+                async with sessions() as db:
+                    result = await research.research_destination(db, trip_id, context=context, user_request=message,
+                        external_facts={}, search=AsyncMock(return_value=items))
+                places, sources, activities = await stored(sessions, trip_id)
+                assert len(result["places"]) == len(places) == len(sources) == 1 and not activities
+                assert places[0].slug == "amap-" + expected_id
+            finally:
+                await clean_trip(sessions, trip_id)
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_chosen_places.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_chosen_places.py:114: in run
+    result = await research.research_destination(db, trip_id, context=context, user_request=message,
+app\agent_observation.py:134: in wrapper
+    return await function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+session = &lt;sqlalchemy.ext.asyncio.session.AsyncSession object at 0x00000224BEBDC2B0&gt;
+trip_id = UUID('70c969e9-1262-4159-a0fc-40ecd40c29e3')
+
+    @observed("research", purpose="Resolve sourced destination candidates", output_summary=lambda result: result)
+    async def research_destination(session, trip_id: uuid.UUID, *, context: dict, user_request: str,
+                                   external_facts: dict, client=None, search=search_amap_places) -&gt; dict:
+        from app.openai_planner import normalize_structured_json, translate_model_error
+        sources = search_results(external_facts)
+        if not sources and (external_facts.get("search") or {}).get("reason") == "search_authentication_failed":
+            raise PlannerProviderError("planner_search_authentication_failed", "网页检索服务凭据未通过验证，请更新搜索服务配置后重试。本次没有生成缺少检索依据的方案。", retryable=False)
+        if not sources:
+&gt;           raise PlannerProviderError("planner_research_unavailable", "目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。", retryable=True)
+E           app.planning_errors.PlannerProviderError: 目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。
+
+app\destination_research.py:105: PlannerProviderError</failure></testcase><testcase classname="tests.test_agent_b2_chosen_places" name="test_unique_full_name_or_literal_address_selects_identity[items1-\u6211\u9009\u7532\u9986\u3002\u8bf7\u521b\u5efa\u5019\u9009\uff0c\u53ea\u6392\u8fd9\u4e00\u4e2a\u5730\u65b9\u3002-synthetic_a]" time="0.241"><failure message="app.planning_errors.PlannerProviderError: 目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。">sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x00000224BF2135D0&gt;, autoflush=True, expire_on_commit=False)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000224BEC26330&gt;
+items = [PlaceSearchResultResponse(provider='amap', provider_place_id='synthetic_a', name='甲馆', category='culture', neighborho...duration_minutes=60, estimated_cost_fen=0, rating=0, tags=[], source_url='https://www.amap.com/search?id=synthetic_a')]
+message = '我选甲馆。请创建候选，只排这一个地方。', expected_id = 'synthetic_a'
+
+    @pytest.mark.parametrize("items,message,expected_id", [
+        ([synthetic_poi(), synthetic_poi(identity="synthetic_other", address="测试区乙路8号")],
+            "甲馆选测试区乙路8号。请创建候选，只排这一个地方。", "synthetic_other"),
+        ([synthetic_poi()], "我选甲馆。请创建候选，只排这一个地方。", "synthetic_a"),
+        ([synthetic_poi()], "只安排甲馆这一个地方，创建候选。", "synthetic_a"),
+    ])
+    def test_unique_full_name_or_literal_address_selects_identity(sessions, monkeypatch, items, message, expected_id):
+        no_discovery(monkeypatch)
+        async def run():
+            trip_id, context = await new_trip(sessions, ("甲馆",))
+            try:
+                async with sessions() as db:
+                    result = await research.research_destination(db, trip_id, context=context, user_request=message,
+                        external_facts={}, search=AsyncMock(return_value=items))
+                places, sources, activities = await stored(sessions, trip_id)
+                assert len(result["places"]) == len(places) == len(sources) == 1 and not activities
+                assert places[0].slug == "amap-" + expected_id
+            finally:
+                await clean_trip(sessions, trip_id)
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_chosen_places.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_chosen_places.py:114: in run
+    result = await research.research_destination(db, trip_id, context=context, user_request=message,
+app\agent_observation.py:134: in wrapper
+    return await function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+session = &lt;sqlalchemy.ext.asyncio.session.AsyncSession object at 0x00000224BED00050&gt;
+trip_id = UUID('cd38eb9a-6448-4bed-abbc-a815e5344e29')
+
+    @observed("research", purpose="Resolve sourced destination candidates", output_summary=lambda result: result)
+    async def research_destination(session, trip_id: uuid.UUID, *, context: dict, user_request: str,
+                                   external_facts: dict, client=None, search=search_amap_places) -&gt; dict:
+        from app.openai_planner import normalize_structured_json, translate_model_error
+        sources = search_results(external_facts)
+        if not sources and (external_facts.get("search") or {}).get("reason") == "search_authentication_failed":
+            raise PlannerProviderError("planner_search_authentication_failed", "网页检索服务凭据未通过验证，请更新搜索服务配置后重试。本次没有生成缺少检索依据的方案。", retryable=False)
+        if not sources:
+&gt;           raise PlannerProviderError("planner_research_unavailable", "目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。", retryable=True)
+E           app.planning_errors.PlannerProviderError: 目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。
+
+app\destination_research.py:105: PlannerProviderError</failure></testcase><testcase classname="tests.test_agent_b2_chosen_places" name="test_unique_full_name_or_literal_address_selects_identity[items2-\u53ea\u5b89\u6392\u7532\u9986\u8fd9\u4e00\u4e2a\u5730\u65b9\uff0c\u521b\u5efa\u5019\u9009\u3002-synthetic_a]" time="0.236"><failure message="app.planning_errors.PlannerProviderError: 目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。">sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x00000224BEE67850&gt;, autoflush=True, expire_on_commit=False)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000224BED02140&gt;
+items = [PlaceSearchResultResponse(provider='amap', provider_place_id='synthetic_a', name='甲馆', category='culture', neighborho...duration_minutes=60, estimated_cost_fen=0, rating=0, tags=[], source_url='https://www.amap.com/search?id=synthetic_a')]
+message = '只安排甲馆这一个地方，创建候选。', expected_id = 'synthetic_a'
+
+    @pytest.mark.parametrize("items,message,expected_id", [
+        ([synthetic_poi(), synthetic_poi(identity="synthetic_other", address="测试区乙路8号")],
+            "甲馆选测试区乙路8号。请创建候选，只排这一个地方。", "synthetic_other"),
+        ([synthetic_poi()], "我选甲馆。请创建候选，只排这一个地方。", "synthetic_a"),
+        ([synthetic_poi()], "只安排甲馆这一个地方，创建候选。", "synthetic_a"),
+    ])
+    def test_unique_full_name_or_literal_address_selects_identity(sessions, monkeypatch, items, message, expected_id):
+        no_discovery(monkeypatch)
+        async def run():
+            trip_id, context = await new_trip(sessions, ("甲馆",))
+            try:
+                async with sessions() as db:
+                    result = await research.research_destination(db, trip_id, context=context, user_request=message,
+                        external_facts={}, search=AsyncMock(return_value=items))
+                places, sources, activities = await stored(sessions, trip_id)
+                assert len(result["places"]) == len(places) == len(sources) == 1 and not activities
+                assert places[0].slug == "amap-" + expected_id
+            finally:
+                await clean_trip(sessions, trip_id)
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_chosen_places.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_chosen_places.py:114: in run
+    result = await research.research_destination(db, trip_id, context=context, user_request=message,
+app\agent_observation.py:134: in wrapper
+    return await function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+session = &lt;sqlalchemy.ext.asyncio.session.AsyncSession object at 0x00000224BF0C49B0&gt;
+trip_id = UUID('9ee26551-7b79-40a4-a4fd-7809ad3e3b5b')
+
+    @observed("research", purpose="Resolve sourced destination candidates", output_summary=lambda result: result)
+    async def research_destination(session, trip_id: uuid.UUID, *, context: dict, user_request: str,
+                                   external_facts: dict, client=None, search=search_amap_places) -&gt; dict:
+        from app.openai_planner import normalize_structured_json, translate_model_error
+        sources = search_results(external_facts)
+        if not sources and (external_facts.get("search") or {}).get("reason") == "search_authentication_failed":
+            raise PlannerProviderError("planner_search_authentication_failed", "网页检索服务凭据未通过验证，请更新搜索服务配置后重试。本次没有生成缺少检索依据的方案。", retryable=False)
+        if not sources:
+&gt;           raise PlannerProviderError("planner_research_unavailable", "目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。", retryable=True)
+E           app.planning_errors.PlannerProviderError: 目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。
+
+app\destination_research.py:105: PlannerProviderError</failure></testcase><testcase classname="tests.test_agent_b2_chosen_places" name="test_unknown_ambiguous_alias_or_address_mismatch_has_zero_partial_writes[items0-\u6211\u9009\u7532\u9986]" time="0.246"><failure message="AssertionError: assert 'planner_research_unavailable' == 'planner_requ...ce_unresolved'&#10;  &#10;  - planner_requested_place_unresolved&#10;  + planner_research_unavailable">sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x00000224BED5EF10&gt;, autoflush=True, expire_on_commit=False)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000224BED03460&gt;
+items = [PlaceSearchResultResponse(provider='amap', provider_place_id='synthetic_a', name='甲馆', category='culture', neighborho...tion_minutes=60, estimated_cost_fen=0, rating=0, tags=[], source_url='https://www.amap.com/search?id=synthetic_other')]
+message = '我选甲馆'
+
+    @pytest.mark.parametrize("items,message", [
+        ([synthetic_poi(), synthetic_poi(identity="synthetic_other", address="测试区乙路8号")], "我选甲馆"),
+        ([synthetic_poi(), synthetic_poi(identity="synthetic_other")], "甲馆选测试区甲街12号"),
+        ([synthetic_poi()], "甲馆选测试区不存在路999号"),
+        ([], "我选甲馆"),
+        ([synthetic_poi("测试市甲馆")], "我选甲馆"),
+        ([synthetic_poi("甲馆停车场")], "我选甲馆"),
+    ])
+    def test_unknown_ambiguous_alias_or_address_mismatch_has_zero_partial_writes(sessions, monkeypatch, items, message):
+        no_discovery(monkeypatch)
+        async def run():
+            trip_id, context = await new_trip(sessions, ("乙馆", "甲馆"))
+            search = AsyncMock(side_effect=[[synthetic_poi("乙馆", "synthetic_b")], items])
+            try:
+                async with sessions() as db:
+                    with pytest.raises(PlannerProviderError) as caught:
+                        await research.research_destination(db, trip_id, context=context,
+                            user_request="我选乙馆，" + message + "。请创建候选，只排这两个地方。",
+                            external_facts={}, search=search)
+                    assert caught.value.code == "planner_requested_place_unresolved"
+                    assert not db.in_transaction()
+                assert await stored(sessions, trip_id) == ([], [], [])
+            finally:
+                await clean_trip(sessions, trip_id)
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_chosen_places.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        trip_id, context = await new_trip(sessions, ("乙馆", "甲馆"))
+        search = AsyncMock(side_effect=[[synthetic_poi("乙馆", "synthetic_b")], items])
+        try:
+            async with sessions() as db:
+                with pytest.raises(PlannerProviderError) as caught:
+                    await research.research_destination(db, trip_id, context=context,
+                        user_request="我选乙馆，" + message + "。请创建候选，只排这两个地方。",
+                        external_facts={}, search=search)
+&gt;               assert caught.value.code == "planner_requested_place_unresolved"
+E               AssertionError: assert 'planner_research_unavailable' == 'planner_requ...ce_unresolved'
+E                 
+E                 - planner_requested_place_unresolved
+E                 + planner_research_unavailable
+
+tests\test_agent_b2_chosen_places.py:143: AssertionError</failure></testcase><testcase classname="tests.test_agent_b2_chosen_places" name="test_unknown_ambiguous_alias_or_address_mismatch_has_zero_partial_writes[items1-\u7532\u9986\u9009\u6d4b\u8bd5\u533a\u7532\u885712\u53f7]" time="0.288"><failure message="AssertionError: assert 'planner_research_unavailable' == 'planner_requ...ce_unresolved'&#10;  &#10;  - planner_requested_place_unresolved&#10;  + planner_research_unavailable">sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x00000224BF0C8210&gt;, autoflush=True, expire_on_commit=False)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000224BEE00250&gt;
+items = [PlaceSearchResultResponse(provider='amap', provider_place_id='synthetic_a', name='甲馆', category='culture', neighborho...tion_minutes=60, estimated_cost_fen=0, rating=0, tags=[], source_url='https://www.amap.com/search?id=synthetic_other')]
+message = '甲馆选测试区甲街12号'
+
+    @pytest.mark.parametrize("items,message", [
+        ([synthetic_poi(), synthetic_poi(identity="synthetic_other", address="测试区乙路8号")], "我选甲馆"),
+        ([synthetic_poi(), synthetic_poi(identity="synthetic_other")], "甲馆选测试区甲街12号"),
+        ([synthetic_poi()], "甲馆选测试区不存在路999号"),
+        ([], "我选甲馆"),
+        ([synthetic_poi("测试市甲馆")], "我选甲馆"),
+        ([synthetic_poi("甲馆停车场")], "我选甲馆"),
+    ])
+    def test_unknown_ambiguous_alias_or_address_mismatch_has_zero_partial_writes(sessions, monkeypatch, items, message):
+        no_discovery(monkeypatch)
+        async def run():
+            trip_id, context = await new_trip(sessions, ("乙馆", "甲馆"))
+            search = AsyncMock(side_effect=[[synthetic_poi("乙馆", "synthetic_b")], items])
+            try:
+                async with sessions() as db:
+                    with pytest.raises(PlannerProviderError) as caught:
+                        await research.research_destination(db, trip_id, context=context,
+                            user_request="我选乙馆，" + message + "。请创建候选，只排这两个地方。",
+                            external_facts={}, search=search)
+                    assert caught.value.code == "planner_requested_place_unresolved"
+                    assert not db.in_transaction()
+                assert await stored(sessions, trip_id) == ([], [], [])
+            finally:
+                await clean_trip(sessions, trip_id)
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_chosen_places.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        trip_id, context = await new_trip(sessions, ("乙馆", "甲馆"))
+        search = AsyncMock(side_effect=[[synthetic_poi("乙馆", "synthetic_b")], items])
+        try:
+            async with sessions() as db:
+                with pytest.raises(PlannerProviderError) as caught:
+                    await research.research_destination(db, trip_id, context=context,
+                        user_request="我选乙馆，" + message + "。请创建候选，只排这两个地方。",
+                        external_facts={}, search=search)
+&gt;               assert caught.value.code == "planner_requested_place_unresolved"
+E               AssertionError: assert 'planner_research_unavailable' == 'planner_requ...ce_unresolved'
+E                 
+E                 - planner_requested_place_unresolved
+E                 + planner_research_unavailable
+
+tests\test_agent_b2_chosen_places.py:143: AssertionError</failure></testcase><testcase classname="tests.test_agent_b2_chosen_places" name="test_unknown_ambiguous_alias_or_address_mismatch_has_zero_partial_writes[items2-\u7532\u9986\u9009\u6d4b\u8bd5\u533a\u4e0d\u5b58\u5728\u8def999\u53f7]" time="0.207"><failure message="AssertionError: assert 'planner_research_unavailable' == 'planner_requ...ce_unresolved'&#10;  &#10;  - planner_requested_place_unresolved&#10;  + planner_research_unavailable">sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x00000224BF185490&gt;, autoflush=True, expire_on_commit=False)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000224BEE01050&gt;
+items = [PlaceSearchResultResponse(provider='amap', provider_place_id='synthetic_a', name='甲馆', category='culture', neighborho...duration_minutes=60, estimated_cost_fen=0, rating=0, tags=[], source_url='https://www.amap.com/search?id=synthetic_a')]
+message = '甲馆选测试区不存在路999号'
+
+    @pytest.mark.parametrize("items,message", [
+        ([synthetic_poi(), synthetic_poi(identity="synthetic_other", address="测试区乙路8号")], "我选甲馆"),
+        ([synthetic_poi(), synthetic_poi(identity="synthetic_other")], "甲馆选测试区甲街12号"),
+        ([synthetic_poi()], "甲馆选测试区不存在路999号"),
+        ([], "我选甲馆"),
+        ([synthetic_poi("测试市甲馆")], "我选甲馆"),
+        ([synthetic_poi("甲馆停车场")], "我选甲馆"),
+    ])
+    def test_unknown_ambiguous_alias_or_address_mismatch_has_zero_partial_writes(sessions, monkeypatch, items, message):
+        no_discovery(monkeypatch)
+        async def run():
+            trip_id, context = await new_trip(sessions, ("乙馆", "甲馆"))
+            search = AsyncMock(side_effect=[[synthetic_poi("乙馆", "synthetic_b")], items])
+            try:
+                async with sessions() as db:
+                    with pytest.raises(PlannerProviderError) as caught:
+                        await research.research_destination(db, trip_id, context=context,
+                            user_request="我选乙馆，" + message + "。请创建候选，只排这两个地方。",
+                            external_facts={}, search=search)
+                    assert caught.value.code == "planner_requested_place_unresolved"
+                    assert not db.in_transaction()
+                assert await stored(sessions, trip_id) == ([], [], [])
+            finally:
+                await clean_trip(sessions, trip_id)
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_chosen_places.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        trip_id, context = await new_trip(sessions, ("乙馆", "甲馆"))
+        search = AsyncMock(side_effect=[[synthetic_poi("乙馆", "synthetic_b")], items])
+        try:
+            async with sessions() as db:
+                with pytest.raises(PlannerProviderError) as caught:
+                    await research.research_destination(db, trip_id, context=context,
+                        user_request="我选乙馆，" + message + "。请创建候选，只排这两个地方。",
+                        external_facts={}, search=search)
+&gt;               assert caught.value.code == "planner_requested_place_unresolved"
+E               AssertionError: assert 'planner_research_unavailable' == 'planner_requ...ce_unresolved'
+E                 
+E                 - planner_requested_place_unresolved
+E                 + planner_research_unavailable
+
+tests\test_agent_b2_chosen_places.py:143: AssertionError</failure></testcase><testcase classname="tests.test_agent_b2_chosen_places" name="test_unknown_ambiguous_alias_or_address_mismatch_has_zero_partial_writes[items3-\u6211\u9009\u7532\u9986]" time="0.233"><failure message="AssertionError: assert 'planner_research_unavailable' == 'planner_requ...ce_unresolved'&#10;  &#10;  - planner_requested_place_unresolved&#10;  + planner_research_unavailable">sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x00000224BEF6F450&gt;, autoflush=True, expire_on_commit=False)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000224BF195A90&gt;
+items = [], message = '我选甲馆'
+
+    @pytest.mark.parametrize("items,message", [
+        ([synthetic_poi(), synthetic_poi(identity="synthetic_other", address="测试区乙路8号")], "我选甲馆"),
+        ([synthetic_poi(), synthetic_poi(identity="synthetic_other")], "甲馆选测试区甲街12号"),
+        ([synthetic_poi()], "甲馆选测试区不存在路999号"),
+        ([], "我选甲馆"),
+        ([synthetic_poi("测试市甲馆")], "我选甲馆"),
+        ([synthetic_poi("甲馆停车场")], "我选甲馆"),
+    ])
+    def test_unknown_ambiguous_alias_or_address_mismatch_has_zero_partial_writes(sessions, monkeypatch, items, message):
+        no_discovery(monkeypatch)
+        async def run():
+            trip_id, context = await new_trip(sessions, ("乙馆", "甲馆"))
+            search = AsyncMock(side_effect=[[synthetic_poi("乙馆", "synthetic_b")], items])
+            try:
+                async with sessions() as db:
+                    with pytest.raises(PlannerProviderError) as caught:
+                        await research.research_destination(db, trip_id, context=context,
+                            user_request="我选乙馆，" + message + "。请创建候选，只排这两个地方。",
+                            external_facts={}, search=search)
+                    assert caught.value.code == "planner_requested_place_unresolved"
+                    assert not db.in_transaction()
+                assert await stored(sessions, trip_id) == ([], [], [])
+            finally:
+                await clean_trip(sessions, trip_id)
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_chosen_places.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        trip_id, context = await new_trip(sessions, ("乙馆", "甲馆"))
+        search = AsyncMock(side_effect=[[synthetic_poi("乙馆", "synthetic_b")], items])
+        try:
+            async with sessions() as db:
+                with pytest.raises(PlannerProviderError) as caught:
+                    await research.research_destination(db, trip_id, context=context,
+                        user_request="我选乙馆，" + message + "。请创建候选，只排这两个地方。",
+                        external_facts={}, search=search)
+&gt;               assert caught.value.code == "planner_requested_place_unresolved"
+E               AssertionError: assert 'planner_research_unavailable' == 'planner_requ...ce_unresolved'
+E                 
+E                 - planner_requested_place_unresolved
+E                 + planner_research_unavailable
+
+tests\test_agent_b2_chosen_places.py:143: AssertionError</failure></testcase><testcase classname="tests.test_agent_b2_chosen_places" name="test_unknown_ambiguous_alias_or_address_mismatch_has_zero_partial_writes[items4-\u6211\u9009\u7532\u9986]" time="0.236"><failure message="AssertionError: assert 'planner_research_unavailable' == 'planner_requ...ce_unresolved'&#10;  &#10;  - planner_requested_place_unresolved&#10;  + planner_research_unavailable">sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x00000224BED51550&gt;, autoflush=True, expire_on_commit=False)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000224BF196D50&gt;
+items = [PlaceSearchResultResponse(provider='amap', provider_place_id='synthetic_a', name='测试市甲馆', category='culture', neighbo...duration_minutes=60, estimated_cost_fen=0, rating=0, tags=[], source_url='https://www.amap.com/search?id=synthetic_a')]
+message = '我选甲馆'
+
+    @pytest.mark.parametrize("items,message", [
+        ([synthetic_poi(), synthetic_poi(identity="synthetic_other", address="测试区乙路8号")], "我选甲馆"),
+        ([synthetic_poi(), synthetic_poi(identity="synthetic_other")], "甲馆选测试区甲街12号"),
+        ([synthetic_poi()], "甲馆选测试区不存在路999号"),
+        ([], "我选甲馆"),
+        ([synthetic_poi("测试市甲馆")], "我选甲馆"),
+        ([synthetic_poi("甲馆停车场")], "我选甲馆"),
+    ])
+    def test_unknown_ambiguous_alias_or_address_mismatch_has_zero_partial_writes(sessions, monkeypatch, items, message):
+        no_discovery(monkeypatch)
+        async def run():
+            trip_id, context = await new_trip(sessions, ("乙馆", "甲馆"))
+            search = AsyncMock(side_effect=[[synthetic_poi("乙馆", "synthetic_b")], items])
+            try:
+                async with sessions() as db:
+                    with pytest.raises(PlannerProviderError) as caught:
+                        await research.research_destination(db, trip_id, context=context,
+                            user_request="我选乙馆，" + message + "。请创建候选，只排这两个地方。",
+                            external_facts={}, search=search)
+                    assert caught.value.code == "planner_requested_place_unresolved"
+                    assert not db.in_transaction()
+                assert await stored(sessions, trip_id) == ([], [], [])
+            finally:
+                await clean_trip(sessions, trip_id)
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_chosen_places.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        trip_id, context = await new_trip(sessions, ("乙馆", "甲馆"))
+        search = AsyncMock(side_effect=[[synthetic_poi("乙馆", "synthetic_b")], items])
+        try:
+            async with sessions() as db:
+                with pytest.raises(PlannerProviderError) as caught:
+                    await research.research_destination(db, trip_id, context=context,
+                        user_request="我选乙馆，" + message + "。请创建候选，只排这两个地方。",
+                        external_facts={}, search=search)
+&gt;               assert caught.value.code == "planner_requested_place_unresolved"
+E               AssertionError: assert 'planner_research_unavailable' == 'planner_requ...ce_unresolved'
+E                 
+E                 - planner_requested_place_unresolved
+E                 + planner_research_unavailable
+
+tests\test_agent_b2_chosen_places.py:143: AssertionError</failure></testcase><testcase classname="tests.test_agent_b2_chosen_places" name="test_unknown_ambiguous_alias_or_address_mismatch_has_zero_partial_writes[items5-\u6211\u9009\u7532\u9986]" time="0.232"><failure message="AssertionError: assert 'planner_research_unavailable' == 'planner_requ...ce_unresolved'&#10;  &#10;  - planner_requested_place_unresolved&#10;  + planner_research_unavailable">sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x00000224BEC3AC10&gt;, autoflush=True, expire_on_commit=False)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000224BF1E4C90&gt;
+items = [PlaceSearchResultResponse(provider='amap', provider_place_id='synthetic_a', name='甲馆停车场', category='culture', neighbo...duration_minutes=60, estimated_cost_fen=0, rating=0, tags=[], source_url='https://www.amap.com/search?id=synthetic_a')]
+message = '我选甲馆'
+
+    @pytest.mark.parametrize("items,message", [
+        ([synthetic_poi(), synthetic_poi(identity="synthetic_other", address="测试区乙路8号")], "我选甲馆"),
+        ([synthetic_poi(), synthetic_poi(identity="synthetic_other")], "甲馆选测试区甲街12号"),
+        ([synthetic_poi()], "甲馆选测试区不存在路999号"),
+        ([], "我选甲馆"),
+        ([synthetic_poi("测试市甲馆")], "我选甲馆"),
+        ([synthetic_poi("甲馆停车场")], "我选甲馆"),
+    ])
+    def test_unknown_ambiguous_alias_or_address_mismatch_has_zero_partial_writes(sessions, monkeypatch, items, message):
+        no_discovery(monkeypatch)
+        async def run():
+            trip_id, context = await new_trip(sessions, ("乙馆", "甲馆"))
+            search = AsyncMock(side_effect=[[synthetic_poi("乙馆", "synthetic_b")], items])
+            try:
+                async with sessions() as db:
+                    with pytest.raises(PlannerProviderError) as caught:
+                        await research.research_destination(db, trip_id, context=context,
+                            user_request="我选乙馆，" + message + "。请创建候选，只排这两个地方。",
+                            external_facts={}, search=search)
+                    assert caught.value.code == "planner_requested_place_unresolved"
+                    assert not db.in_transaction()
+                assert await stored(sessions, trip_id) == ([], [], [])
+            finally:
+                await clean_trip(sessions, trip_id)
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_chosen_places.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        trip_id, context = await new_trip(sessions, ("乙馆", "甲馆"))
+        search = AsyncMock(side_effect=[[synthetic_poi("乙馆", "synthetic_b")], items])
+        try:
+            async with sessions() as db:
+                with pytest.raises(PlannerProviderError) as caught:
+                    await research.research_destination(db, trip_id, context=context,
+                        user_request="我选乙馆，" + message + "。请创建候选，只排这两个地方。",
+                        external_facts={}, search=search)
+&gt;               assert caught.value.code == "planner_requested_place_unresolved"
+E               AssertionError: assert 'planner_research_unavailable' == 'planner_requ...ce_unresolved'
+E                 
+E                 - planner_requested_place_unresolved
+E                 + planner_research_unavailable
+
+tests\test_agent_b2_chosen_places.py:143: AssertionError</failure></testcase><testcase classname="tests.test_agent_b2_chosen_places" name="test_unapproved_nonliteral_negative_hypothetical_or_unbounded_choice_still_needs_web[\u4e0d\u8981\u53bb\u7532\u9986\u3002\u8bf7\u521b\u5efa\u5019\u9009\uff0c\u53ea\u6392\u8fd9\u4e00\u4e2a\u5730\u65b9\u3002-approved0]" time="0.314" /><testcase classname="tests.test_agent_b2_chosen_places" name="test_unapproved_nonliteral_negative_hypothetical_or_unbounded_choice_still_needs_web[\u5047\u8bbe\u6211\u9009\u7532\u9986\uff0c\u8bf7\u521b\u5efa\u5019\u9009\uff0c\u53ea\u6392\u8fd9\u4e00\u4e2a\u5730\u65b9\u3002-approved1]" time="0.352" /><testcase classname="tests.test_agent_b2_chosen_places" name="test_unapproved_nonliteral_negative_hypothetical_or_unbounded_choice_still_needs_web[\u5982\u679c\u6709\u7a7a\uff0c\u6211\u9009\u7532\u9986\u3002\u8bf7\u521b\u5efa\u5019\u9009\uff0c\u53ea\u6392\u8fd9\u4e00\u4e2a\u5730\u65b9\u3002-approved2]" time="0.319" /><testcase classname="tests.test_agent_b2_chosen_places" name="test_unapproved_nonliteral_negative_hypothetical_or_unbounded_choice_still_needs_web[\u670b\u53cb\u8bf4\u6211\u9009\u7532\u9986\u3002\u8bf7\u521b\u5efa\u5019\u9009\uff0c\u53ea\u6392\u8fd9\u4e00\u4e2a\u5730\u65b9\u3002-approved3]" time="0.345" /><testcase classname="tests.test_agent_b2_chosen_places" name="test_unapproved_nonliteral_negative_hypothetical_or_unbounded_choice_still_needs_web[\u4ed6\u8bf4\u2018\u6211\u9009\u7532\u9986\uff0c\u53ea\u6392\u8fd9\u4e00\u4e2a\u5730\u65b9\u2019\u3002\u8bf7\u521b\u5efa\u5019\u9009\u3002-approved4]" time="0.294" /><testcase classname="tests.test_agent_b2_chosen_places" name="test_unapproved_nonliteral_negative_hypothetical_or_unbounded_choice_still_needs_web[\u7532\u9986\u53ef\u80fd\u5408\u9002\u3002\u8bf7\u521b\u5efa\u5019\u9009\uff0c\u53ea\u6392\u8fd9\u4e00\u4e2a\u5730\u65b9\u3002-approved5]" time="0.228" /><testcase classname="tests.test_agent_b2_chosen_places" name="test_unapproved_nonliteral_negative_hypothetical_or_unbounded_choice_still_needs_web[\u6211\u9009\u7532\u9986\u3002\u8bf7\u521b\u5efa\u5019\u9009\u3002-approved6]" time="0.199" /><testcase classname="tests.test_agent_b2_chosen_places" name="test_unapproved_nonliteral_negative_hypothetical_or_unbounded_choice_still_needs_web[\u6211\u9009\u7532\u9986\u3002\u8bf7\u521b\u5efa\u5019\u9009\uff0c\u53ea\u6392\u8fd9\u4e24\u4e2a\u5730\u65b9\u3002-approved7]" time="0.190" /><testcase classname="tests.test_agent_b2_chosen_places" name="test_unapproved_nonliteral_negative_hypothetical_or_unbounded_choice_still_needs_web[\u6211\u9009\u7532\u9986\u3002\u8bf7\u521b\u5efa\u5019\u9009\uff0c\u53ea\u6392\u8fd9\u4e00\u4e2a\u5730\u65b9\u3002-approved8]" time="0.196" /><testcase classname="tests.test_agent_b2_chosen_places" name="test_unapproved_nonliteral_negative_hypothetical_or_unbounded_choice_still_needs_web[\u6211\u9009\u7532\u9986\u3002\u8bf7\u521b\u5efa\u5019\u9009\uff0c\u53ea\u6392\u8fd9\u4e24\u4e2a\u5730\u65b9\u3002-approved9]" time="0.205" /><testcase classname="tests.test_agent_b2_chosen_places" name="test_map_only_identity_still_checks_versions_before_persisting" time="0.135"><failure message="app.planning_errors.PlannerProviderError: 目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。">sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x00000224BEEB7010&gt;, autoflush=True, expire_on_commit=False)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000224BEFC0C50&gt;
+
+    def test_map_only_identity_still_checks_versions_before_persisting(sessions, monkeypatch):
+        no_discovery(monkeypatch)
+        async def run():
+            trip_id, context = await new_trip(sessions, ("甲馆",))
+            async def search(*args):
+                async with sessions() as changed:
+                    trip = await changed.get(Trip, trip_id)
+                    trip.version += 1
+                    await changed.commit()
+                return [synthetic_poi()]
+            try:
+                async with sessions() as db:
+                    with pytest.raises(PlannerConstraintsUnsatisfiedError, match="planning_facts_changed"):
+                        await research.research_destination(db, trip_id, context=context,
+                            user_request="我选甲馆。请创建候选，只排这一个地方。", external_facts={}, search=search)
+                    await db.rollback()
+                assert await stored(sessions, trip_id) == ([], [], [])
+            finally:
+                await clean_trip(sessions, trip_id)
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_chosen_places.py:200: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_chosen_places.py:194: in run
+    await research.research_destination(db, trip_id, context=context,
+app\agent_observation.py:134: in wrapper
+    return await function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+session = &lt;sqlalchemy.ext.asyncio.session.AsyncSession object at 0x00000224BEE42E40&gt;
+trip_id = UUID('de8aebb8-140b-46d4-b53f-9475e313924b')
+
+    @observed("research", purpose="Resolve sourced destination candidates", output_summary=lambda result: result)
+    async def research_destination(session, trip_id: uuid.UUID, *, context: dict, user_request: str,
+                                   external_facts: dict, client=None, search=search_amap_places) -&gt; dict:
+        from app.openai_planner import normalize_structured_json, translate_model_error
+        sources = search_results(external_facts)
+        if not sources and (external_facts.get("search") or {}).get("reason") == "search_authentication_failed":
+            raise PlannerProviderError("planner_search_authentication_failed", "网页检索服务凭据未通过验证，请更新搜索服务配置后重试。本次没有生成缺少检索依据的方案。", retryable=False)
+        if not sources:
+&gt;           raise PlannerProviderError("planner_research_unavailable", "目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。", retryable=True)
+E           app.planning_errors.PlannerProviderError: 目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。
+
+app\destination_research.py:105: PlannerProviderError</failure></testcase></testsuite></testsuites>
