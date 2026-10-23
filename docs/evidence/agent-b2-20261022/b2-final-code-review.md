@@ -171,3 +171,61 @@ with LostPlanningClaim instead of overwriting state; no promise is made to resto
 an obsolete owner's interrupt. Database outages, process termination during
 recovery, and full worker concurrency behavior remain outside this exact-change
 approval. Overall release NO-GO and known public behavior blockers remain.
+
+## Public frozen quality/evidence sanity audit
+
+Read-only audit of public-development-review-freeze.md and its baseline/frozen
+JSON captures. No new tests, model calls, DB queries or evaluation runs; no C
+directories or sealed material accessed. Independently checked the matching
+16 unique case/turn/user records, fixture hash, selected actual memory states,
+pending creation payload, final answers, recorded read tools and arithmetic.
+
+The stated strict 2/16 to 7/16 comparison is defensible under the disclosed
+task-specific rubric: five additional usable turns, or 12.5% to 43.75% on these
+same reused public inputs (+31.25 percentage points). This is not an estimate of
+generalization, a measured multiplier of intelligence, or causal attribution of
+all sampled prose changes to code. Family date correction, budget withdrawal and
+narrow recall improve in persisted conversation memory, not just acknowledgments.
+Independent address-task execution also improves, but its answer remains only a
+district; creation now yields a confirmation payload, but first-afternoon scope
+is not an effective scheduled/period field. Neither is a completed task pass.
+
+The two critical frozen assurances are supported by final text: family/2 says
+the tactic is easy to fit within the father's 15-minute limit, and family/3 says
+it fits that limit exactly. Neither record has route, internal-walking or seating
+evidence. Family/2 has optional illustrative images explicitly labeled as not
+factual evidence. These do not substantiate the assurance. The baseline/frozen
+critical counts 1/2 use the report's narrow numerical-compliance definition;
+they must not be described as exhaustive counts of all unsupported claims.
+Broader seating, diet and weather-immunity claims also fail. There is no supported
+claim of improved safety in this replay.
+
+Both saved before/after formal-table snapshots are zero for Trip, Activity,
+PlanningRun, PlanRevision and SavedIntention. All recorded trip/run IDs are null;
+the frozen capture has one pending confirmation. This supports no observed
+automatic formal write in the recorder's synthetic scope, not a fresh database
+audit, not absence of conversation/session writes, and not an exercised
+adoption/modification/reload/recovery lifecycle.
+
+Two additional reporting limits should accompany any broader claims:
+
+- Compound-address's user-visible [1] does correspond to the retained AMap
+  source/excerpt for the district-only result. However, decision_support retains
+  reference_source_id=poi_1 while aggregated and task sources use task_2_poi_1.
+  The capture therefore does not establish fully consistent internal source-ID
+  binding. This does not turn that already-failed address answer into a pass or
+  demonstrate a fabricated visible citation.
+- The father's walking requirement is retained with scope=personal, and the
+  address query's Yangzhou city slot also has scope=personal in this capture.
+  Thus condition-value retention is demonstrably better for the reviewed turns,
+  but correct lifetime/scope across later journeys is not established. Those
+  cross-journey consequences were not exercised or newly scored here.
+
+The clearest remaining weakness is converting a remembered constraint into an
+unsupported claim that a proposed venue or tactic satisfies it. Other material
+gaps are dropping companion information, failing to answer the unverified-facts
+part of broad recall, and returning structurally valid but incomplete address or
+creation results. The defensible improvement claim is better condition updates,
+task separation and confirmation preparation, with 7/16 finite public turns
+usable and two critical assurances still blocking release. Runtime completion,
+test counts and lower recorded latency do not change that quality conclusion.
