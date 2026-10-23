@@ -19,6 +19,7 @@ from app.planning_errors import PlannerProviderError
 from app.travel_language import is_generic_place_quantity
 from app.planning_progress import report_progress
 from app.agent_observation import observed
+from app.planning_preparation import PlanningPreparationRequiredError, assert_planning_context_current
 
 
 logger = logging.getLogger(__name__)
@@ -101,6 +102,8 @@ async def research_destination(session, trip_id: uuid.UUID, *, context: dict, us
         raise PlannerProviderError("planner_search_authentication_failed", "网页检索服务凭据未通过验证，请更新搜索服务配置后重试。本次没有生成缺少检索依据的方案。", retryable=False)
     if not sources:
         raise PlannerProviderError("planner_research_unavailable", "目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。", retryable=True)
+    if session.in_transaction():
+        raise PlanningPreparationRequiredError("prepare destination research before opening the caller transaction")
     settings = get_settings()
     owned_client = client is None
     client = client or build_model_client(settings)
@@ -197,7 +200,7 @@ async def research_destination(session, trip_id: uuid.UUID, *, context: dict, us
     if not staged and not existing_places:
         raise PlannerProviderError("planner_research_unavailable", "检索到的景点未能匹配地图地点，请重试；本次没有随机替换景点。", retryable=True)
     # Serialize idempotent POI insertion after network work. Never delete saved places.
-    await session.scalar(select(Trip).where(Trip.id == trip_id).with_for_update())
+    await assert_planning_context_current(session, trip_id, context, lock=True)
     places = dict(existing_places)
     for name, poi in staged:
         place = await save_candidate_snapshot(session, trip_id, poi)

@@ -181,16 +181,26 @@ def test_route_collection_covers_two_target_days_with_bounded_calls(monkeypatch)
     trip_id = uuid.uuid4()
     candidates = [uuid.uuid4(), uuid.uuid4()]
     anchors = [uuid.uuid4(), uuid.uuid4()]
-    places = {place_id: SimpleNamespace(id=place_id, trip_id=trip_id) for place_id in [*candidates, *anchors]}
+    places = {place_id: SimpleNamespace(id=place_id, trip_id=trip_id, name="fixture", longitude=118.1, latitude=32.1) for place_id in [*candidates, *anchors]}
     class Session:
+        bind = None
+        def in_transaction(self):
+            return False
+        async def __aenter__(self):
+            return self
+        async def __aexit__(self, *_args):
+            pass
         async def get(self, _model, place_id):
+            if place_id == trip_id:
+                return SimpleNamespace(destination_citycode="", destination="南京")
             return places.get(place_id)
+    monkeypatch.setattr("sqlalchemy.ext.asyncio.async_sessionmaker", lambda *_a, **_k: Session)
     calls = []
-    async def route(_session, origin, destination, mode):
+    async def route(_sessions, origin, destination, mode, city):
         calls.append((origin.id, destination.id, mode))
         return SimpleNamespace(is_estimated=False, duration_minutes=15, distance_meters=800,
                                provider="AMap Route 2.0", expires_at=NOW + timedelta(hours=1))
-    monkeypatch.setattr(maps_service, "resolve_route_result", route)
+    monkeypatch.setattr(maps_service, "resolve_detached_route_result", route)
     ctx = {"preferences": {"transport_modes": ["walk"]},
            "candidates": [{"id": str(place_id)} for place_id in candidates],
            "days": [{"date": f"2026-10-{day}", "activities": [{"id": f"fixed-{day}", "place_id": str(anchor),

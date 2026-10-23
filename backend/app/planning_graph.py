@@ -28,7 +28,8 @@ from app.agent_observation import observed, project_state, record
 from app.maps_service import MapProviderError
 from app.planning_errors import GoalConstraintsUnsatisfiedError, PlannerConstraintsUnsatisfiedError, PlannerNotConfiguredError
 from app.planning_goals import can_repair_hard_goals, check_goal_satisfaction, extract_planning_goals, formal_route_facts, hard_goal_feedback
-from app.planning_intent_service import SemanticIntentProvider, resolve_planning_intent
+from app.planning_intent_service import SemanticIntentProvider, resolve_planning_intent, load_planning_intent_snapshot, resolve_planning_intent_snapshot
+from app.planning_preparation import assert_planning_context_current
 from app.planning_run_repository import reject_revision, save_plan_revision
 from app.navigation.recovery import RecoveryActivity, enumerate_recovery_options
 from app.schemas import (
@@ -171,65 +172,62 @@ def build_planning_graph(
             current_operation = restore_current_turn_modification(stored_run, trip_id,
                 state["user_request"], context_data["trip"]["version"])
             active_semantic_provider = current_operation or semantic_provider
-            resolution = await resolve_planning_intent(
-                session,
-                trip_id,
-                PlanningIntentParseRequest(
-                    message=state["user_request"],
-                    entry_point=state.get("entry_point", "trip_planner"),
-                    selected_day_id=state.get("selected_day_id"),
-                    selected_activity_id=state.get("selected_activity_id"),
-                ),
-                semantic_provider=active_semantic_provider,
-                prepared_draft=approved_draft,
-                default_planning_intent=(
-                    "create_plan" if state["run_type"] == "initial_plan" else "replan_trip"
-                ),
-            )
-            trace("resolve_intent", "decision", refs=("user_request", "itinerary"), data={
-                "route": resolution.policy_decision.route if resolution.policy_decision else None,
-                "requires_clarification": resolution.requires_clarification,
-            })
-            operations = set(resolution.grounded_intent.operation_types) if resolution.grounded_intent else set()
-            research_intent = resolution.request.intent
-            needs_destination_research = should_research_destinations(
-                operations, research_intent, resolution.grounded_intent
-            )
-            await record("research_decision", "completed", data={"destination_research_required": needs_destination_research,
-                         "destination_research_available": destination_researcher is not None})
-            external_facts = await _collect_external_facts(
-                context_data, state["user_request"], include_search=needs_destination_research
-            )
-            context_data["external_facts"] = external_facts
-            trace("external_facts", "tool_result", refs=("trip", "preferences"), data={
-                "search_status": external_facts.get("search", {}).get("status"),
-                "weather_status": external_facts.get("weather", {}).get("status"),
-            })
-            await report_progress("intent", "网页检索已结束，正在核对你的需求与调整范围…")
-            if destination_researcher is not None and needs_destination_research:
-                research = await destination_researcher(session, trip_id, context={**context_data, "research_target_day_ids": [str(day_id) for day_id in (resolution.grounded_intent.target_day_ids if resolution.grounded_intent else [])]},
+            intent_payload = PlanningIntentParseRequest(
+                message=state["user_request"], entry_point=state.get("entry_point", "trip_planner"),
+                selected_day_id=state.get("selected_day_id"),
+                selected_activity_id=state.get("selected_activity_id"))
+            intent_snapshot = await load_planning_intent_snapshot(session, trip_id, intent_payload)
+        original_context = context_data
+        resolution = await resolve_planning_intent_snapshot(
+            intent_snapshot, intent_payload, semantic_provider=active_semantic_provider,
+            prepared_draft=approved_draft,
+            default_planning_intent="create_plan" if state["run_type"] == "initial_plan" else "replan_trip")
+        trace("resolve_intent", "decision", refs=("user_request", "itinerary"), data={
+            "route": resolution.policy_decision.route if resolution.policy_decision else None,
+            "requires_clarification": resolution.requires_clarification,
+        })
+        operations = set(resolution.grounded_intent.operation_types) if resolution.grounded_intent else set()
+        needs_destination_research = should_research_destinations(
+            operations, resolution.request.intent, resolution.grounded_intent)
+        await record("research_decision", "completed", data={"destination_research_required": needs_destination_research,
+                     "destination_research_available": destination_researcher is not None})
+        external_facts = await _collect_external_facts(
+            context_data, state["user_request"], include_search=needs_destination_research)
+        context_data["external_facts"] = external_facts
+        trace("external_facts", "tool_result", refs=("trip", "preferences"), data={
+            "search_status": external_facts.get("search", {}).get("status"),
+            "weather_status": external_facts.get("weather", {}).get("status"),
+        })
+        await report_progress("intent", "网页检索已结束，正在核对你的需求与调整范围…")
+        if destination_researcher is not None and needs_destination_research:
+            async with session_factory() as session:
+                research = await destination_researcher(session, trip_id,
+                    context={**context_data, "research_target_day_ids": [str(day_id) for day_id in
+                        (resolution.grounded_intent.target_day_ids if resolution.grounded_intent else [])]},
                     user_request=state["user_request"], external_facts=external_facts)
-                trace("destination_research", "tool_result", refs=("external_facts", "preferences"), data={
-                    "status": research.get("status"), "place_count": len(research.get("places", {})),
-                })
+            trace("destination_research", "tool_result", refs=("external_facts", "preferences"), data={
+                "status": research.get("status"), "place_count": len(research.get("places", {})),
+            })
+            async with session_factory() as session:
+                await assert_planning_context_current(session, trip_id, original_context)
                 context = await build_planning_context(session, trip_id)
                 context_data = context.model_dump(mode="json")
                 context_data["external_facts"] = external_facts
                 context_data["destination_research"] = research
-                resolution = await resolve_planning_intent(session, trip_id, PlanningIntentParseRequest(
-                    message=state["user_request"], entry_point=state.get("entry_point", "trip_planner"),
-                    selected_day_id=state.get("selected_day_id"), selected_activity_id=state.get("selected_activity_id")),
+                resolution = await resolve_planning_intent(session, trip_id, intent_payload,
                     prepared_draft=resolution.semantic_draft)
-            if (candidate_researcher is not None
-                and state.get("run_type") == "initial_plan"
-                and resolution.policy_decision is not None
-                and resolution.policy_decision.route == "plan_preview"
-                and not context.candidates
-                and not any(day.activities for day in context.days)):
+        if (candidate_researcher is not None and state.get("run_type") == "initial_plan"
+            and resolution.policy_decision is not None and resolution.policy_decision.route == "plan_preview"
+            and not context.candidates and not any(day.activities for day in context.days)):
+            async with session_factory() as session:
                 await candidate_researcher(session, trip_id)
+            async with session_factory() as session:
+                await assert_planning_context_current(session, trip_id, original_context)
                 context = await build_planning_context(session, trip_id)
                 context_data = context.model_dump(mode="json")
                 context_data["external_facts"] = external_facts
+        async with session_factory() as session:
+            await assert_planning_context_current(session, trip_id, original_context)
             run = await session.get(PlanningRun, run_id)
             if run is None:
                 raise RuntimeError("planning run disappeared")
@@ -262,7 +260,6 @@ def build_planning_graph(
                         "day_end_feasible", "downstream_schedule",
                     )},
                 }
-            run.intent_resolution = resolution.model_dump(mode="json")
             if run.disruption_event_id is not None:
                 disruption = await session.get(TripDisruptionEvent, run.disruption_event_id)
                 if disruption is None or disruption.status != "active":
@@ -310,90 +307,93 @@ def build_planning_graph(
             context_data["weather_sensitive"] = bool(
                 resolution.grounded_intent and resolution.grounded_intent.constraints.weather_sensitive
             )
-            context_data["candidate_route_facts"] = await collect_candidate_route_facts(
-                session, context_data, target_dates=set(goals.target_days),
-            )
-            _, context_data["candidate_comparison"] = compare_candidates(
-                context_data, context_data.get("candidates", []), allowed_dates=set(goals.target_days),
-            )
-            context_data["formal_route_facts"] = formal_route_facts(context_data, goals)
             decision_memory = await retrieve_decision_memory(
                 session, trip_id=trip_id, target_days=goals.target_days,
-                base_trip_version=run.base_trip_version,
-            )
-            context_data["decision_context"] = build_decision_context(
-                context=context_data,
-                goals=context_data["planning_goals"],
-                resolution=resolution.model_dump(mode="json"),
-                decision_memory=decision_memory,
-            )
-            # Persist a compact, non-prompt provenance record with the run so
-            # live evaluations can establish what the Planner was allowed to
-            # see without recording hidden reasoning or provider input text.
+                base_trip_version=run.base_trip_version)
             existing_snapshot = dict(run.trigger_snapshot or {})
-            decision = context_data["decision_context"]
-            execution = decision["execution_context"]
-            existing_snapshot["decision_context_summary"] = {
-                "candidate_comparison": context_data["candidate_comparison"],
-                "candidate_route_fact_count": len(context_data["candidate_route_facts"]),
-                "effective_requirement_ids": [item["id"] for item in context_data["effective_requirements"]],
-                "target_days": goals.target_days,
-                "formal_activity_count": sum(
-                    len(day["activities"])
-                    for day in decision["formal_itinerary"]["days"]
-                ),
-                "route_fact_statuses": [
-                    {"date": day["date"], "status": day["route_fact_status"]}
-                    for day in decision["route_context"]["days"]
-                ],
-                "protected_activity_ids": decision["protected_constraints"]["protected_activity_ids"],
-                "editable_activity_ids": decision["protected_constraints"]["editable_activity_ids"],
-                "execution_fields_present": {
-                    key: execution.get(key) is not None
-                    for key in ("current_activity_id", "navigation_target_activity_id", "current_eta",
-                                "delay_minutes", "minimum_downstream_slack_minutes", "first_impacted_activity_id")
-                },
-                "provenance": decision["provenance"],
-                "decision_memory": {
-                    "count": len(decision_memory),
-                    "source_revision_ids": [item["source_revision_id"] for item in decision_memory],
-                    "source_run_ids": [item["source_run_id"] for item in decision_memory],
-                    "feedback": [
-                        {
-                            "source_revision_id": item["source_revision_id"],
-                            "reason_code": item["rejection_reason_code"],
-                            "reason_text": item["rejection_reason_text"],
-                        }
-                        for item in decision_memory
-                    ],
-                },
-            }
-            run.trigger_snapshot = existing_snapshot
-            trace("goal_extracted", "goal", refs=("user_request", "grounded_intent"), data={
-                "hard_goal_count": sum(value is not None for value in goals.hard_goals.model_dump().values()),
-                "soft_goals": goals.soft_goals.model_dump(mode="json"),
-            })
-            trace("decision_context_built", "context", refs=("planning_goals", "formal_route_facts", "execution_recovery"), data={
-                "target_days": goals.target_days,
-                "formal_route_day_count": len(context_data["formal_route_facts"].get("days", [])),
-                "route_context_available": any(
-                    day["route_fact_status"] == "available"
-                    for day in context_data["decision_context"]["route_context"]["days"]
-                ),
-                "protected_count": len(context_data["decision_context"]["protected_constraints"]["protected_activity_ids"]),
-                "editable_count": len(context_data["decision_context"]["protected_constraints"]["editable_activity_ids"]),
-            })
-            trace("memory_retrieved", "decision_memory", refs=("rejected_plan_revisions",), data={
+        async with session_factory() as route_session:
+            context_data["candidate_route_facts"] = await collect_candidate_route_facts(
+                route_session, context_data, target_dates=set(goals.target_days))
+        _, context_data["candidate_comparison"] = compare_candidates(
+            context_data, context_data.get("candidates", []), allowed_dates=set(goals.target_days))
+        context_data["formal_route_facts"] = formal_route_facts(context_data, goals)
+        context_data["decision_context"] = build_decision_context(
+            context=context_data, goals=context_data["planning_goals"],
+            resolution=resolution.model_dump(mode="json"), decision_memory=decision_memory)
+        # Persist a compact, non-prompt provenance record with the run so
+        # live evaluations can establish what the Planner was allowed to
+        # see without recording hidden reasoning or provider input text.
+        decision = context_data["decision_context"]
+        execution = decision["execution_context"]
+        existing_snapshot["decision_context_summary"] = {
+            "candidate_comparison": context_data["candidate_comparison"],
+            "candidate_route_fact_count": len(context_data["candidate_route_facts"]),
+            "effective_requirement_ids": [item["id"] for item in context_data["effective_requirements"]],
+            "target_days": goals.target_days,
+            "formal_activity_count": sum(
+                len(day["activities"])
+                for day in decision["formal_itinerary"]["days"]
+            ),
+            "route_fact_statuses": [
+                {"date": day["date"], "status": day["route_fact_status"]}
+                for day in decision["route_context"]["days"]
+            ],
+            "protected_activity_ids": decision["protected_constraints"]["protected_activity_ids"],
+            "editable_activity_ids": decision["protected_constraints"]["editable_activity_ids"],
+            "execution_fields_present": {
+                key: execution.get(key) is not None
+                for key in ("current_activity_id", "navigation_target_activity_id", "current_eta",
+                            "delay_minutes", "minimum_downstream_slack_minutes", "first_impacted_activity_id")
+            },
+            "provenance": decision["provenance"],
+            "decision_memory": {
                 "count": len(decision_memory),
                 "source_revision_ids": [item["source_revision_id"] for item in decision_memory],
-            })
+                "source_run_ids": [item["source_run_id"] for item in decision_memory],
+                "feedback": [
+                    {
+                        "source_revision_id": item["source_revision_id"],
+                        "reason_code": item["rejection_reason_code"],
+                        "reason_text": item["rejection_reason_text"],
+                    }
+                    for item in decision_memory
+                ],
+            },
+        }
+        trace("goal_extracted", "goal", refs=("user_request", "grounded_intent"), data={
+            "hard_goal_count": sum(value is not None for value in goals.hard_goals.model_dump().values()),
+            "soft_goals": goals.soft_goals.model_dump(mode="json"),
+        })
+        trace("decision_context_built", "context", refs=("planning_goals", "formal_route_facts", "execution_recovery"), data={
+            "target_days": goals.target_days,
+            "formal_route_day_count": len(context_data["formal_route_facts"].get("days", [])),
+            "route_context_available": any(
+                day["route_fact_status"] == "available"
+                for day in context_data["decision_context"]["route_context"]["days"]
+            ),
+            "protected_count": len(context_data["decision_context"]["protected_constraints"]["protected_activity_ids"]),
+            "editable_count": len(context_data["decision_context"]["protected_constraints"]["editable_activity_ids"]),
+        })
+        trace("memory_retrieved", "decision_memory", refs=("rejected_plan_revisions",), data={
+            "count": len(decision_memory),
+            "source_revision_ids": [item["source_revision_id"] for item in decision_memory],
+        })
+        async with session_factory() as session:
+            await assert_planning_context_current(session, trip_id, original_context, lock=True)
+            run = await session.scalar(select(PlanningRun).where(PlanningRun.id == run_id)
+                .with_for_update().execution_options(populate_existing=True))
+            if run is None or run.status not in {"queued", "researching", "planning", "validating"}:
+                raise PlannerConstraintsUnsatisfiedError(["planning_run_no_longer_active"])
+            run.intent_resolution = resolution.model_dump(mode="json")
+            run.trigger_snapshot = {**(run.trigger_snapshot or {}),
+                "decision_context_summary": existing_snapshot["decision_context_summary"]}
             run.token_usage += context_data.get("destination_research", {}).get("token_usage", 0)
-            await session.commit()
-            await record("goal", "completed", data=goals.model_dump(mode="json"))
-            from app.agent_observation import project_context
-            await record("context", "completed", data=project_context(context_data))
             if resolution.requires_clarification:
-                await _set_run_status(session, run_id, "awaiting_clarification")
+                run.status = "awaiting_clarification"
+            await session.commit()
+        await record("goal", "completed", data=goals.model_dump(mode="json"))
+        from app.agent_observation import project_context
+        await record("context", "completed", data=project_context(context_data))
         return {
             "planning_context": context_data,
             "intent_resolution": resolution.model_dump(mode="json"),
@@ -543,16 +543,20 @@ def build_planning_graph(
         async with session_factory() as session:
             await _set_run_status(session, run_id, "validating")
             run = await session.get(PlanningRun, run_id)
+            enforce_execution = bool(run and (run.disruption_event_id or run.trigger_type == "experience_impact"))
+        async with session_factory() as route_session:
             await report_progress("routes", "候选活动已生成，正在查询实际交通路线…")
             try:
-                snapshot = await enrich_candidate_routes(session, trip_id, snapshot,
-                    enforce_execution_invariants=bool(run and (run.disruption_event_id or run.trigger_type == "experience_impact")))
+                snapshot = await enrich_candidate_routes(route_session, trip_id, snapshot,
+                    enforce_execution_invariants=enforce_execution)
             except MapProviderError as exc:
                 if exc.code != "map_route_unavailable":
                     raise
                 return {"proposed_snapshot": snapshot.model_dump(mode="json"), "validation_result": {
                     "valid": False, "errors": [{"code": "route_unavailable", "message": str(exc), "details": getattr(exc, "route_details", {})}], "warnings": []},
                     "required_day_dates": [day.isoformat() for day in sorted(required_dates)]}
+        async with session_factory() as session:
+            await assert_planning_context_current(session, trip_id, state["planning_context"])
             await report_progress("validation", "路线查询已完成，正在核对时间、日期与预算冲突…")
             result = await validate_candidate_plan(
                 session,
@@ -562,7 +566,7 @@ def build_planning_graph(
                 intent_resolution=PlanningIntentResolution.model_validate(
                     state["intent_resolution"]
                 ),
-                enforce_execution_invariants=bool(run and (run.disruption_event_id or run.trigger_type == "experience_impact")),
+                enforce_execution_invariants=enforce_execution,
                 candidate_edit_base=candidate_base_from_context(state),
             )
             trace("validate", "validation", refs=("candidate", "route_facts", "budget"), data={
@@ -581,7 +585,7 @@ def build_planning_graph(
                         session, trip_id, repaired,
                         required_dates=required_dates,
                         intent_resolution=PlanningIntentResolution.model_validate(state["intent_resolution"]),
-                        enforce_execution_invariants=bool(run and (run.disruption_event_id or run.trigger_type == "experience_impact")),
+                        enforce_execution_invariants=enforce_execution,
                         candidate_edit_base=candidate_base_from_context(state),
                     )
                     if repaired_result.valid:

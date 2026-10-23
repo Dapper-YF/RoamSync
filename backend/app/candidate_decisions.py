@@ -521,8 +521,10 @@ async def collect_candidate_route_facts(session, context: dict, *, target_dates:
     proof of infeasibility. The normal candidate route enrichment still runs.
     """
     import uuid
-    from app.database import PlaceCandidate
-    from app.maps_service import MapProviderError, resolve_route_result
+    from app.database import PlaceCandidate, Trip
+    from app.maps_service import MapProviderError, resolve_detached_route_result, RoutePlace
+    from sqlalchemy.ext.asyncio import async_sessionmaker
+    from app.planning_preparation import PlanningPreparationRequiredError
     anchors_by_day = {}
     for day in context.get("days", []):
         if day["date"] not in target_dates:
@@ -542,16 +544,28 @@ async def collect_candidate_route_facts(session, context: dict, *, target_dates:
     result = []
     pairs = [(candidate, day_date, anchor) for candidate in context.get("candidates", [])
              for day_date, anchor in anchors if str(candidate["id"]) != str(anchor["place_id"])]
-    for candidate, day_date, anchor in pairs[:limit]:
+    if session.in_transaction():
+        raise PlanningPreparationRequiredError("prepare route ranking before opening the caller transaction")
+    sessions = async_sessionmaker(session.bind, expire_on_commit=False)
+    prepared_pairs = []
+    async with sessions() as reader:
+        for candidate, day_date, anchor in pairs[:limit]:
+            origin = await reader.get(PlaceCandidate, uuid.UUID(str(candidate["id"])))
+            destination = await reader.get(PlaceCandidate, uuid.UUID(str(anchor["place_id"])))
+            if origin is None or destination is None or origin.trip_id != destination.trip_id:
+                prepared_pairs.append((candidate, day_date, anchor, None, None, ""))
+                continue
+            trip = await reader.get(Trip, origin.trip_id)
+            prepared_pairs.append((candidate, day_date, anchor, RoutePlace.from_place(origin),
+                RoutePlace.from_place(destination), trip.destination_citycode or trip.destination if trip else ""))
+    for candidate, day_date, anchor, origin, destination, city in prepared_pairs:
         base = {"candidate_id": str(candidate["id"]), "date": day_date, "to_activity_id": str(anchor["id"]),
                 "direction": "candidate_to_fixed_activity", "mode": mode, "status": "unknown"}
-        origin = await session.get(PlaceCandidate, uuid.UUID(str(candidate["id"])))
-        destination = await session.get(PlaceCandidate, uuid.UUID(str(anchor["place_id"])))
-        if origin is None or destination is None or origin.trip_id != destination.trip_id:
+        if origin is None or destination is None:
             result.append({**base, "reason": "place_identity_unavailable"})
             continue
         try:
-            route = await resolve_route_result(session, origin, destination, mode)
+            route = await resolve_detached_route_result(sessions, origin, destination, mode, city)
             result.append({**base, "status": "unknown" if route.is_estimated else "available",
                            "reason": "estimate_not_provider_evidence" if route.is_estimated else "provider_estimated_directed_leg",
                            "duration_minutes": route.duration_minutes, "distance_meters": route.distance_meters,

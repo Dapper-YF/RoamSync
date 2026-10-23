@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from app.database import TripPreferences
+from app.database import Trip, TripPreferences
 from app.planning_intent_service import (
     SemanticIntentProvider, load_planning_intent_snapshot,
     resolve_planning_intent_snapshot,
@@ -18,6 +18,19 @@ from app.schemas import (
 
 class PlanningPreparationRequiredError(RuntimeError):
     """A caller must prepare network work before opening its atomic transaction."""
+
+
+async def assert_planning_context_current(session, trip_id, context, *, lock=False):
+    """Compare the same facts before/after external work; never rebase intent."""
+    from app.planning_errors import PlannerConstraintsUnsatisfiedError
+    trip_query = select(Trip.version).where(Trip.id == trip_id)
+    pref_query = select(TripPreferences.version).where(TripPreferences.trip_id == trip_id)
+    if lock:
+        trip_query, pref_query = trip_query.with_for_update(), pref_query.with_for_update()
+    trip_version = await session.scalar(trip_query)
+    pref_version = await session.scalar(pref_query)
+    if trip_version != context["trip"]["version"] or pref_version != context["preferences"]["version"]:
+        raise PlannerConstraintsUnsatisfiedError(["planning_facts_changed"])
 
 
 @dataclass(frozen=True)

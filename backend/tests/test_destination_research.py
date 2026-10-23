@@ -15,10 +15,18 @@ from app.planning_intent_service import classify_planning_intent
 from app.schemas import PlaceSearchResultResponse
 
 
+def research_session():
+    from unittest.mock import Mock
+    db = AsyncMock()
+    db.in_transaction = Mock(return_value=False)
+    db.scalar.return_value = 1  # Unit projection of Trip/preferences version.
+    return db
+
+
 def test_first_plan_searches_without_candidates_coordinates_or_weather():
     search = AsyncMock(return_value=SearchFact("tavily", "now", "query", {"results": [{"title": "大理旅游"}]}))
     with patch("app.planning_graph.get_settings", return_value=Settings(app_env="development", tavily_api_key="test")), patch("app.planning_graph.search_tavily", search), patch("app.planning_graph.fetch_open_meteo", AsyncMock()) as weather:
-        result = asyncio.run(_collect_external_facts({"trip": {"destination": "大理市"}, "candidates": []}, "规划行程"))
+        result = asyncio.run(_collect_external_facts({"trip": {"version":1,"destination": "大理市"}, "candidates": []}, "规划行程"))
     assert result["search"]["status"] == "available"
     assert "代表性热门景点" in search.call_args.kwargs["query"]
     weather.assert_not_awaited()
@@ -30,7 +38,7 @@ def test_same_day_replan_can_skip_destination_search_but_still_fetch_weather():
         provider="open-meteo", queried_at="now", latitude=30.2, longitude=120.1,
         payload={"daily": {"temperature_2m_max": [22]}},
     ))
-    context = {"trip": {"destination": "杭州市", "center_latitude": 30.2, "center_longitude": 120.1,
+    context = {"trip": {"version":1,"destination": "杭州市", "center_latitude": 30.2, "center_longitude": 120.1,
         "start_date": "2026-10-20", "end_date": "2026-10-20", "timezone": "Asia/Shanghai"}, "candidates": []}
     with patch("app.planning_graph.get_settings", return_value=Settings(app_env="development", tavily_api_key="test")), \
          patch("app.planning_graph.search_tavily", search), patch("app.planning_graph.fetch_open_meteo", weather):
@@ -44,7 +52,7 @@ def test_same_day_replan_can_skip_destination_search_but_still_fetch_weather():
 def test_weather_failure_does_not_discard_search():
     search = AsyncMock(return_value=SearchFact("tavily", "now", "query", {"results": [{"title": "大理旅游"}]}))
     with patch("app.planning_graph.get_settings", return_value=Settings(app_env="development", tavily_api_key="test")), patch("app.planning_graph.search_tavily", search), patch("app.planning_graph.fetch_open_meteo", AsyncMock(side_effect=ExternalFactError("forecast unavailable"))):
-        result = asyncio.run(_collect_external_facts({"trip": {"destination": "大理市", "center_latitude": 25, "center_longitude": 100, "start_date": "2027-01-01", "end_date": "2027-01-03", "timezone": "Asia/Shanghai"}}, "规划行程"))
+        result = asyncio.run(_collect_external_facts({"trip": {"version":1,"destination": "大理市", "center_latitude": 25, "center_longitude": 100, "start_date": "2027-01-01", "end_date": "2027-01-03", "timezone": "Asia/Shanghai"}}, "规划行程"))
     assert result["search"]["status"] == "available"
     assert result["weather"]["status"] == "unavailable"
     assert result["status"] == "partial"
@@ -57,7 +65,7 @@ def test_named_places_get_focused_sources_without_losing_broad_search(focused_fa
     search = AsyncMock(side_effect=[SearchFact("tavily", "now", "broad", {"results": [common]}),
         ExternalFactError("unavailable") if focused_fails else SearchFact("tavily", "now", "focus", {"results": [focus, common]})])
     with patch("app.planning_graph.get_settings", return_value=Settings(app_env="development", tavily_api_key="test")), patch("app.planning_graph.search_tavily", search):
-        result = asyncio.run(_collect_external_facts({"trip": {"destination": "大理市"}, "candidates": []}, "希望包含龙龛码头、最美S湾"))
+        result = asyncio.run(_collect_external_facts({"trip": {"version":1,"destination": "大理市"}, "candidates": []}, "希望包含龙龛码头、最美S湾"))
     assert search.await_count == 2
     assert "最美S湾" in search.call_args_list[1].kwargs["query"]
     assert "最美S湾" not in search.call_args_list[0].kwargs["query"]
@@ -104,7 +112,7 @@ def test_requested_alias_requires_web_evidence_and_is_disclosed(valid_evidence, 
         return [poi("磻溪S弯景点")] if name == canonical else [poi("不相关餐馆")]
     async def scenario():
         with patch("app.destination_research.save_candidate_snapshot", AsyncMock(return_value=SimpleNamespace(id=uuid.uuid4()))):
-            return await research_destination(AsyncMock(), uuid.uuid4(), context={"trip": {"destination": "大理市"}, "days": [{"date": "2026-10-20", "activities": []}], "preferences": {}},
+            return await research_destination(research_session(), uuid.uuid4(), context={"trip": {"version":1,"destination": "大理市"}, "days": [{"date": "2026-10-20", "activities": []}], "preferences": {"version": 1}},
                 user_request="希望去最美S湾", external_facts={"search": {"payload": {"results": [source, {"title": "其他景点", "url": "https://example.com/other", "content": "大理古城"}]}}}, client=client, search=search)
     if valid_evidence:
         result = asyncio.run(scenario())
@@ -124,9 +132,9 @@ def test_research_grounds_named_choices_and_rejects_fabricated_citations():
     source = {"title": "龙龛码头旅行", "url": "https://example.com/guide", "content": "龙龛码头可以欣赏湖岸风光。"}
     facts = {"search": {"payload": {"results": [source]}, "queried_at": "now"}}
     search = AsyncMock(return_value=[poi("随机公园"), poi("龙龛码头", "requested")])
-    db, saved_id = AsyncMock(), uuid.uuid4()
+    db, saved_id = research_session(), uuid.uuid4()
     with patch("app.destination_research.save_candidate_snapshot", AsyncMock(return_value=SimpleNamespace(id=saved_id))) as save:
-        result = asyncio.run(research_destination(db, uuid.uuid4(), context={"trip": {"destination": "大理市"}, "days": [{"date": "2026-10-20", "activities": []}, {"date": "2026-10-21", "activities": []}], "preferences": {}}, user_request="我想去龙龛码头", external_facts=facts, client=client, search=search))
+        result = asyncio.run(research_destination(db, uuid.uuid4(), context={"trip": {"version":1,"destination": "大理市"}, "days": [{"date": "2026-10-20", "activities": []}, {"date": "2026-10-21", "activities": []}], "preferences": {"version": 1}}, user_request="我想去龙龛码头", external_facts=facts, client=client, search=search))
     search.assert_awaited_once_with("龙龛码头", "大理市")
     assert save.call_args.args[2].provider_place_id == "requested"
     assert result["places"][str(saved_id)]["requested"] is True
@@ -143,7 +151,7 @@ def test_descriptive_alias_does_not_choose_between_two_sourced_places():
     search = AsyncMock(return_value=[])
     with patch("app.destination_research.asyncio.sleep", AsyncMock()), patch("app.destination_research.save_candidate_snapshot", AsyncMock()) as save:
         with pytest.raises(PlannerProviderError, match="未唯一匹配"):
-            asyncio.run(research_destination(AsyncMock(), uuid.uuid4(), context={"trip": {"destination": "大理市"}, "days": [{"date": "2026-10-20", "activities": []}], "preferences": {}},
+            asyncio.run(research_destination(research_session(), uuid.uuid4(), context={"trip": {"version":1,"destination": "大理市"}, "days": [{"date": "2026-10-20", "activities": []}], "preferences": {"version": 1}},
                 user_request="想去最美S湾", external_facts={"search": {"payload": {"results": [source]}}}, client=client, search=search))
     assert search.call_args_list[0].args[0] == "最美S湾"
     save.assert_not_awaited()
@@ -152,7 +160,7 @@ def test_descriptive_alias_does_not_choose_between_two_sourced_places():
 def test_no_web_evidence_fails_without_random_map_fallback():
     search = AsyncMock()
     with pytest.raises(PlannerProviderError, match="网页检索"):
-        asyncio.run(research_destination(AsyncMock(), uuid.uuid4(), context={}, user_request="规划行程", external_facts={}, search=search))
+        asyncio.run(research_destination(research_session(), uuid.uuid4(), context={}, user_request="规划行程", external_facts={}, search=search))
     search.assert_not_awaited()
 
 
@@ -215,8 +223,8 @@ def test_existing_formal_place_is_grounded_before_map_research():
     client = SimpleNamespace(responses=SimpleNamespace(create=AsyncMock(return_value=SimpleNamespace(status="completed",output_text=json.dumps(output),usage=None))))
     source = {"title":"杭州大剧院", "content":"杭州大剧院的文化活动", "url":"https://example.com/theater"}
     search=AsyncMock()
-    db=AsyncMock()
-    context={"preferences":{}, "trip":{"destination":"杭州"}, "days":[{"id":"day-1", "date":"2026-10-20", "activities":[{"id":activity_id,"place_id":place_id,"display_name":"杭州大剧院演出"}]}],"candidates":[{"id":place_id,"name":"杭州大剧院"}],"research_target_day_ids":["day-1"]}
+    db=research_session()
+    context={"preferences": {"version": 1}, "trip":{"version":1,"destination":"杭州"}, "days":[{"id":"day-1", "date":"2026-10-20", "activities":[{"id":activity_id,"place_id":place_id,"display_name":"杭州大剧院演出"}]}],"candidates":[{"id":place_id,"name":"杭州大剧院"}],"research_target_day_ids":["day-1"]}
     with patch("app.destination_research.save_candidate_snapshot",AsyncMock()) as save:
         result=asyncio.run(research_destination(db,uuid.uuid4(),context=context,user_request="请保留杭州大剧院",external_facts={"search":{"payload":{"results":[source]}}},client=client,search=search))
     assert result["places"][place_id]["existing_activity_id"]==activity_id
