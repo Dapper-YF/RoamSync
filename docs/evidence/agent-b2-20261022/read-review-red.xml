@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="7" time="5.977" timestamp="2026-10-23T10:09:30.500097+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_read_operations" name="test_separate_address_is_not_consumed_by_route_endpoint_lookup" time="0.012" /><testcase classname="tests.test_agent_b2_read_operations" name="test_task_source_and_argument_provenance_are_checked" time="0.001" /><testcase classname="tests.test_agent_b2_read_operations" name="test_task_cannot_borrow_other_current_clause_or_invent_query[changes0]" time="0.002"><failure message="AssertionError: assert 'route' == 'clarify'&#10;  &#10;  - clarify&#10;  + route">changes = {'names': ['何园'], 'query': '何园'}
+
+    @pytest.mark.parametrize("changes", [{"names":["何园"], "query":"何园"},
+        {"names":[], "query":"豪华酒店", "category":"lodging"}])
+    def test_task_cannot_borrow_other_current_clause_or_invent_query(changes):
+        decision = compound()
+        decision.read_tasks[1] = decision.read_tasks[1].model_copy(update=changes)
+        text = "查扬州何园到个园的驾车路线；另外查瘦西湖的地址"
+        result = capabilities.validate_decision(decision, text, [], ContextEnvelope())
+&gt;       assert result.intent == "clarify"
+E       AssertionError: assert 'route' == 'clarify'
+E         
+E         - clarify
+E         + route
+
+tests\test_agent_b2_read_operations.py:55: AssertionError</failure></testcase><testcase classname="tests.test_agent_b2_read_operations" name="test_task_cannot_borrow_other_current_clause_or_invent_query[changes1]" time="0.002"><failure message="AssertionError: assert 'route' == 'clarify'&#10;  &#10;  - clarify&#10;  + route">changes = {'category': 'lodging', 'names': [], 'query': '豪华酒店'}
+
+    @pytest.mark.parametrize("changes", [{"names":["何园"], "query":"何园"},
+        {"names":[], "query":"豪华酒店", "category":"lodging"}])
+    def test_task_cannot_borrow_other_current_clause_or_invent_query(changes):
+        decision = compound()
+        decision.read_tasks[1] = decision.read_tasks[1].model_copy(update=changes)
+        text = "查扬州何园到个园的驾车路线；另外查瘦西湖的地址"
+        result = capabilities.validate_decision(decision, text, [], ContextEnvelope())
+&gt;       assert result.intent == "clarify"
+E       AssertionError: assert 'route' == 'clarify'
+E         
+E         - clarify
+E         + route
+
+tests\test_agent_b2_read_operations.py:55: AssertionError</failure></testcase><testcase classname="tests.test_agent_b2_read_operations" name="test_hypothetical_fact_task_cannot_upgrade_direct_consultation" time="0.001"><failure message="AssertionError: assert (not ['facts'])&#10; +  where ['facts'] = CapabilityDecision(intent='direct', capabilities=['facts'], city='', query='', category='attraction', names=[], origin...es=[], origin='', destination='', mode='unknown', nearby=False, near_name='', fact_kind='weather')], fact_kind='other').capabilities">def test_hypothetical_fact_task_cannot_upgrade_direct_consultation():
+        text = "只是假设景德镇下雨，聊聊如何取舍，不查天气"
+        decision = capabilities.CapabilityDecision.model_validate({"intent":"direct", "reason_code":"stable_knowledge",
+            "read_tasks":[{"source_quote":text,"capabilities":["facts"],"fact_kind":"weather"}]})
+        result = capabilities.validate_decision(decision, text, [], ContextEnvelope())
+&gt;       assert not result.capabilities and not result.read_tasks
+E       AssertionError: assert (not ['facts'])
+E        +  where ['facts'] = CapabilityDecision(intent='direct', capabilities=['facts'], city='', query='', category='attraction', names=[], origin...es=[], origin='', destination='', mode='unknown', nearby=False, near_name='', fact_kind='weather')], fact_kind='other').capabilities
+
+tests\test_agent_b2_read_operations.py:63: AssertionError</failure></testcase><testcase classname="tests.test_agent_b2_read_operations" name="test_read_failure_keeps_other_task_and_records_its_status" time="0.005" /><testcase classname="tests.test_agent_b2_read_operations" name="test_approved_hypothetical_consultation_cannot_reopen_weather_lookup" time="0.112" /></testsuite></testsuites>

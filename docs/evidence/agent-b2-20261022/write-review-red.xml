@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="9" time="8.031" timestamp="2026-10-23T10:38:27.200070+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_operation_handoff" name="test_single_approved_creation_prepares_preview_without_second_router" time="0.340" /><testcase classname="tests.test_agent_b2_operation_handoff" name="test_creation_cannot_invent_dates_or_expand_literal_place_label" time="0.002" /><testcase classname="tests.test_agent_b2_operation_handoff" name="test_draft_operations_require_original_source_and_literal_place_mentions" time="0.001" /><testcase classname="tests.test_agent_b2_operation_handoff" name="test_literal_whole_day_blank_has_no_invented_user_clock_range" time="0.003" /><testcase classname="tests.test_agent_b2_operation_handoff" name="test_partial_day_blank_is_not_promoted_to_whole_day" time="0.001" /><testcase classname="tests.test_agent_b2_operation_handoff" name="test_whole_day_preview_adoption_survives_reload_and_is_idempotent" time="0.531" /><testcase classname="tests.test_agent_b2_operation_handoff" name="test_meal_budget_does_not_become_trip_total_budget" time="0.002"><failure message="AssertionError: assert ('create_trip' == 'create_trip'&#10;  &#10;    create_trip and 7000 is None)&#10; +  where 7000 = ToolDecision(tool='create_trip', reply='准备创建预览。', source_trip_id=None, destination='绍兴', title=None, start_date=dateti...s='请创建绍兴2026年11月29日至30日的安排，每顿饭预算70元。', planning_request='请创建绍兴2026年11月29日至30日的安排，每顿饭预算70元。', flexible=True, choices=[]).total_budget_fen">def test_meal_budget_does_not_become_trip_total_budget():
+        from app.assistant_context import ContextEnvelope
+        from app.assistant_operation import approved_tool_decision
+        message="请创建绍兴2026年11月29日至30日的安排，每顿饭预算70元。"
+        decision=CapabilityDecision.model_validate({"intent":"create","reason_code":"explicit_write",
+            "authorization_quote":message,"creation":{"destination":"绍兴","start_date":"2026-11-29",
+                "end_date":"2026-11-30","total_budget_fen":7000,"flexible":True}})
+        result=approved_tool_decision(decision,message,ContextEnvelope(),today=date(2026,10,22))
+&gt;       assert result.tool=="create_trip" and result.total_budget_fen is None
+E       AssertionError: assert ('create_trip' == 'create_trip'
+E         
+E           create_trip and 7000 is None)
+E        +  where 7000 = ToolDecision(tool='create_trip', reply='准备创建预览。', source_trip_id=None, destination='绍兴', title=None, start_date=dateti...s='请创建绍兴2026年11月29日至30日的安排，每顿饭预算70元。', planning_request='请创建绍兴2026年11月29日至30日的安排，每顿饭预算70元。', flexible=True, choices=[]).total_budget_fen
+
+tests\test_agent_b2_operation_handoff.py:133: AssertionError</failure></testcase><testcase classname="tests.test_agent_b2_operation_handoff" name="test_selected_place_date_cannot_conflict_with_its_own_source_quote" time="0.006"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">def test_selected_place_date_cannot_conflict_with_its_own_source_quote():
+        from app.flexible_creation import prepare_choices
+        from app.assistant_service import ToolDecision
+        proposal=ToolDecision(tool="create_trip",reply="预览",destination="绍兴",start_date=date(2026,11,29),
+            end_date=date(2026,11,30),flexible=True,choices=[{"kind":"selected","label":"鲁迅故里",
+            "source_quote":"第一天去鲁迅故里","day_date":"2026-11-30"}])
+&gt;       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_agent_b2_operation_handoff.py:143: Failed</failure></testcase><testcase classname="tests.test_agent_b2_operation_handoff" name="test_one_affirmative_action_does_not_authorize_negated_peer_operation" time="0.002"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">def test_one_affirmative_action_does_not_authorize_negated_peer_operation():
+        from app.assistant_operation import approved_draft
+        message="请调整第二天路线；不要加入乙馆。"
+        decision=CapabilityDecision.model_validate({"intent":"modify","reason_code":"explicit_write",
+            "authorization_quote":"请调整第二天路线","planning_draft":{"primary_intent":"add_activity",
+                "operations":[{"operation":"add_activity","raw_text":"不要加入乙馆","place_mentions":["乙馆"]}],
+                "confidence":.99,"parser_version":"model-output"}})
+&gt;       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_agent_b2_operation_handoff.py:154: Failed</failure></testcase></testsuite></testsuites>

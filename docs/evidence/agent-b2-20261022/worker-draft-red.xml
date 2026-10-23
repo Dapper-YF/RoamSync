@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="11" time="2.220" timestamp="2026-10-23T10:14:06.147413+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_snapshot_is_frozen_and_does_not_keep_mutable_orm_rows" time="0.073" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_draft_keeps_query_without_calling_model_or_changing_task" time="0.020" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_remove_regrounds_actual_day_activity_and_keeps_other_days" time="0.012" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_draft_never_bypasses_foreign_ui_target_or_missing_place" time="0.008" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_operation_owns_date_and_period_in_compound_request[\u5148\u89e3\u91ca\u7b2c\u4e00\u5929\u7532\u9986\u7684\u5b89\u6392\uff1b-\u7b2c\u4e8c\u5929\u52a0\u5165\u4e59\u9986-None]" time="0.006" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_operation_owns_date_and_period_in_compound_request[\u7b2c\u4e00\u5929\u4e0a\u5348\u5148\u56de\u7b54\u95ee\u9898\uff1b-\u7b2c\u4e8c\u5929\u4e0b\u5348\u52a0\u5165\u4e59\u9986-afternoon]" time="0.006" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_incompatible_prepared_operation_days_do_not_silently_mutate_first_day" time="0.007" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_period_only_operation_reconciles_its_own_ui_day[0-clarify]" time="0.005" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_period_only_operation_reconciles_its_own_ui_day[1-plan_preview]" time="0.006" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_period_only_operation_reconciles_its_own_ui_day[None-clarify]" time="0.005" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_worker_restores_same_approved_draft_only_for_matching_run_identity" time="0.006"><failure message="AssertionError: worker must restore the grounded operation instead of reinterpreting it&#10;assert False&#10; +  where False = callable(None)">def test_worker_restores_same_approved_draft_only_for_matching_run_identity():
+        async def run():
+            session = ReadSession()
+            request = PlanningIntentParseRequest(message="第二天把甲馆撤掉")
+            snapshot = await loader()(session, session.trip.id, request)
+            draft = SemanticIntentDraft(primary_intent="remove_activity", operations=[
+                SemanticIntentOperation(operation="remove_activity", raw_text=request.message, activity_mentions=["甲馆"])],
+                confidence=.99, parser="hybrid", parser_version="approved-operation-v2")
+            resolution = await resolver()(snapshot, request, prepared_draft=draft)
+            stored = SimpleNamespace(trip_id=session.trip.id, base_trip_version=3, user_request=request.message,
+                intent_resolution=resolution.model_dump(mode="json"))
+            restore = getattr(service, "restore_approved_planning_draft", None)
+            assert callable(restore), "worker must restore the grounded operation instead of reinterpreting it"
+            assert restore(stored, session.trip.id, request.message, 3) == draft
+            assert restore(stored, session.trip.id, request.message, 4) is None
+            assert restore(stored, uuid4(), request.message, 3) is None
+            assert restore(stored, session.trip.id, "改成别的任务", 3) is None
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_planning_snapshot.py:191: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        session = ReadSession()
+        request = PlanningIntentParseRequest(message="第二天把甲馆撤掉")
+        snapshot = await loader()(session, session.trip.id, request)
+        draft = SemanticIntentDraft(primary_intent="remove_activity", operations=[
+            SemanticIntentOperation(operation="remove_activity", raw_text=request.message, activity_mentions=["甲馆"])],
+            confidence=.99, parser="hybrid", parser_version="approved-operation-v2")
+        resolution = await resolver()(snapshot, request, prepared_draft=draft)
+        stored = SimpleNamespace(trip_id=session.trip.id, base_trip_version=3, user_request=request.message,
+            intent_resolution=resolution.model_dump(mode="json"))
+        restore = getattr(service, "restore_approved_planning_draft", None)
+&gt;       assert callable(restore), "worker must restore the grounded operation instead of reinterpreting it"
+E       AssertionError: worker must restore the grounded operation instead of reinterpreting it
+E       assert False
+E        +  where False = callable(None)
+
+tests\test_agent_b2_planning_snapshot.py:186: AssertionError</failure></testcase></testsuite></testsuites>

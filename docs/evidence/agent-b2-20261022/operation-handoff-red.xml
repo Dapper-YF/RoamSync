@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="3" time="6.323" timestamp="2026-10-23T10:10:04.009109+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_operation_handoff" name="test_single_approved_creation_prepares_preview_without_second_router" time="0.249"><failure message="TypeError: 'NoneType' object is not subscriptable">sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000023D6B856990&gt;, autoflush=True, expire_on_commit=False)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000023D6B84C9D0&gt;
+
+    def test_single_approved_creation_prepares_preview_without_second_router(sessions, monkeypatch):
+        message = "请创建绍兴2026年11月29日至30日的安排，第一天下午去鲁迅故里，第二天留空，先看候选等我采用。"
+        async def selector(*args):
+            return CapabilityDecision.model_validate({"intent":"create", "reason_code":"explicit_write",
+                "authorization_quote":"请创建绍兴2026年11月29日至30日的安排", "names":["鲁迅故里"],
+                "creation":{"destination":"绍兴", "start_date":"2026-11-29", "end_date":"2026-11-30",
+                    "flexible":True, "choices":[{"kind":"selected", "label":"鲁迅故里", "day_date":"2026-11-29",
+                        "source_quote":"第一天下午去鲁迅故里"}]}})
+        async def forbidden(*args):
+            raise AssertionError("a second router changed the approved creation")
+        monkeypatch.setattr(AssistantRouter, "decide", forbidden)
+        async def cities(*args):
+            return [CitySuggestionResponse(name="绍兴市", adcode="330600", citycode="0575", longitude=120.58, latitude=30.0)]
+        async def run():
+            async with sessions() as db:
+                row = AssistantSession(messages=[], applied_actions={})
+                db.add(row); await db.commit()
+                row = await send_message(db, row.id, message, uuid4(), capability_selector=selector,
+                    city_search=cities, context={"topic_id":"b2-create", "prefer_flexible":True})
+                assert row.trip_id is None and row.latest_run_id is None
+                assert row.pending_action["choices"][0]["label"] == "鲁迅故里"
+                assert row.pending_action["user_request"] == message
+                assert "第二天留空" in row.pending_action["preferences"]
+                assert "第一天下午去鲁迅故里" in row.messages[-1]["assistant"]
+                assert row.pending_action["total_budget_fen"] is None
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_operation_handoff.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        async with sessions() as db:
+            row = AssistantSession(messages=[], applied_actions={})
+            db.add(row); await db.commit()
+            row = await send_message(db, row.id, message, uuid4(), capability_selector=selector,
+                city_search=cities, context={"topic_id":"b2-create", "prefer_flexible":True})
+            assert row.trip_id is None and row.latest_run_id is None
+&gt;           assert row.pending_action["choices"][0]["label"] == "鲁迅故里"
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           TypeError: 'NoneType' object is not subscriptable
+
+tests\test_agent_b2_operation_handoff.py:43: TypeError</failure></testcase><testcase classname="tests.test_agent_b2_operation_handoff" name="test_creation_cannot_invent_dates_or_expand_literal_place_label" time="0.001"><failure message="ModuleNotFoundError: No module named 'app.assistant_operation'">def test_creation_cannot_invent_dates_or_expand_literal_place_label():
+&gt;       from app.assistant_operation import approved_tool_decision
+E       ModuleNotFoundError: No module named 'app.assistant_operation'
+
+tests\test_agent_b2_operation_handoff.py:52: ModuleNotFoundError</failure></testcase><testcase classname="tests.test_agent_b2_operation_handoff" name="test_draft_operations_require_original_source_and_literal_place_mentions" time="0.001"><failure message="ModuleNotFoundError: No module named 'app.assistant_operation'">def test_draft_operations_require_original_source_and_literal_place_mentions():
+&gt;       from app.assistant_operation import approved_draft
+E       ModuleNotFoundError: No module named 'app.assistant_operation'
+
+tests\test_agent_b2_operation_handoff.py:62: ModuleNotFoundError</failure></testcase></testsuite></testsuites>

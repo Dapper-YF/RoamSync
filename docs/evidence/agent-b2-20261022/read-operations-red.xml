@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="4" time="6.184" timestamp="2026-10-22T23:10:10.951683+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_read_operations" name="test_separate_address_is_not_consumed_by_route_endpoint_lookup" time="0.001"><failure message="pydantic_core._pydantic_core.ValidationError: 1 validation error for CapabilityDecision&#10;read_tasks&#10;  Extra inputs are not permitted [type=extra_forbidden, input_value=[{'source_quote': '查扬..., 'query': '瘦西湖'}], input_type=list]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000024497DE6FD0&gt;
+
+    def test_separate_address_is_not_consumed_by_route_endpoint_lookup(monkeypatch):
+        calls = []
+        async def leaf(settings, decision, message, *args, **kwargs):
+            calls.append((message, decision.origin, decision.names))
+            return {"assistant": message, "place_cards": [], "read_tools": {"poi": {"names": decision.names}}}, "complete"
+        monkeypatch.setattr(capabilities, "_answer_leaf", leaf)
+&gt;       decision = compound()
+                   ^^^^^^^^^^
+
+tests\test_agent_b2_read_operations.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def compound():
+&gt;       return capabilities.CapabilityDecision.model_validate({
+            "intent": "route", "capabilities": ["poi", "route"], "city": "扬州",
+            "origin": "何园", "destination": "个园", "mode": "driving", "reason_code": "route_requested",
+            "read_tasks": [
+                {"source_quote": "查扬州何园到个园的驾车路线", "capabilities": ["poi", "route"],
+                 "city": "扬州", "origin": "何园", "destination": "个园", "mode": "driving"},
+                {"source_quote": "另外查瘦西湖的地址", "capabilities": ["poi"],
+                 "city": "扬州", "names": ["瘦西湖"], "query": "瘦西湖"}]})
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for CapabilityDecision
+E       read_tasks
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=[{'source_quote': '查扬..., 'query': '瘦西湖'}], input_type=list]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests\test_agent_b2_read_operations.py:13: ValidationError</failure></testcase><testcase classname="tests.test_agent_b2_read_operations" name="test_task_source_and_argument_provenance_are_checked" time="0.002"><failure message="pydantic_core._pydantic_core.ValidationError: 1 validation error for CapabilityDecision&#10;read_tasks&#10;  Extra inputs are not permitted [type=extra_forbidden, input_value=[{'source_quote': '查扬..., 'query': '瘦西湖'}], input_type=list]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden">def test_task_source_and_argument_provenance_are_checked():
+        text = "查扬州何园到个园的驾车路线；另外查瘦西湖的地址"
+        for field, value in [("source_quote", "替用户去订票"), ("names", ["不存在的模型自拟地点"])]:
+&gt;           decision = compound()
+                       ^^^^^^^^^^
+
+tests\test_agent_b2_read_operations.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def compound():
+&gt;       return capabilities.CapabilityDecision.model_validate({
+            "intent": "route", "capabilities": ["poi", "route"], "city": "扬州",
+            "origin": "何园", "destination": "个园", "mode": "driving", "reason_code": "route_requested",
+            "read_tasks": [
+                {"source_quote": "查扬州何园到个园的驾车路线", "capabilities": ["poi", "route"],
+                 "city": "扬州", "origin": "何园", "destination": "个园", "mode": "driving"},
+                {"source_quote": "另外查瘦西湖的地址", "capabilities": ["poi"],
+                 "city": "扬州", "names": ["瘦西湖"], "query": "瘦西湖"}]})
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for CapabilityDecision
+E       read_tasks
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=[{'source_quote': '查扬..., 'query': '瘦西湖'}], input_type=list]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests\test_agent_b2_read_operations.py:13: ValidationError</failure></testcase><testcase classname="tests.test_agent_b2_read_operations" name="test_read_failure_keeps_other_task_and_records_its_status" time="0.002"><failure message="pydantic_core._pydantic_core.ValidationError: 1 validation error for CapabilityDecision&#10;read_tasks&#10;  Extra inputs are not permitted [type=extra_forbidden, input_value=[{'source_quote': '查扬..., 'query': '瘦西湖'}], input_type=list]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000002449E068050&gt;
+
+    def test_read_failure_keeps_other_task_and_records_its_status(monkeypatch):
+        async def leaf(settings, decision, message, *args, **kwargs):
+            if decision.origin:
+                raise TimeoutError("route unavailable")
+            return {"assistant": "地址检索结果", "place_cards": [], "read_tools": {}}, "complete"
+        monkeypatch.setattr(capabilities, "_answer_leaf", leaf)
+&gt;       decision = compound()
+                   ^^^^^^^^^^
+
+tests\test_agent_b2_read_operations.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def compound():
+&gt;       return capabilities.CapabilityDecision.model_validate({
+            "intent": "route", "capabilities": ["poi", "route"], "city": "扬州",
+            "origin": "何园", "destination": "个园", "mode": "driving", "reason_code": "route_requested",
+            "read_tasks": [
+                {"source_quote": "查扬州何园到个园的驾车路线", "capabilities": ["poi", "route"],
+                 "city": "扬州", "origin": "何园", "destination": "个园", "mode": "driving"},
+                {"source_quote": "另外查瘦西湖的地址", "capabilities": ["poi"],
+                 "city": "扬州", "names": ["瘦西湖"], "query": "瘦西湖"}]})
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for CapabilityDecision
+E       read_tasks
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=[{'source_quote': '查扬..., 'query': '瘦西湖'}], input_type=list]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests\test_agent_b2_read_operations.py:13: ValidationError</failure></testcase><testcase classname="tests.test_agent_b2_read_operations" name="test_approved_hypothetical_consultation_cannot_reopen_weather_lookup" time="0.002"><failure message="TypeError: CompanionRuntime.__init__() got an unexpected keyword argument 'approved_need'">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000002449DFAD490&gt;
+
+    def test_approved_hypothetical_consultation_cannot_reopen_weather_lookup(monkeypatch):
+        import app.companion_graph as graph
+        def forbidden(*args):
+            raise AssertionError("downstream reinterpreted approved task")
+        monkeypatch.setattr(graph, "determine_information_need", forbidden)
+        class Reader:
+            async def load(self, context, need):
+                assert not need.live_fact_required
+                return context
+        class Provider:
+            async def generate(self, context, need):
+                return CompanionDraft(response_text="如果下雨，可以先比较室内展览，再核实各馆开放情况。")
+        need = InformationNeed(general_knowledge_allowed=True, knowledge_reasons=["approved_direct_consultation"])
+&gt;       runtime = CompanionRuntime(Reader(), Provider(), approved_need=need)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: CompanionRuntime.__init__() got an unexpected keyword argument 'approved_need'
+
+tests\test_agent_b2_read_operations.py:74: TypeError</failure></testcase></testsuite></testsuites>

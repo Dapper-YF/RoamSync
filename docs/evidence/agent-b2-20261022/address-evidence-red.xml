@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="9.811" timestamp="2026-10-23T12:56:48.762408+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_read_operations" name="test_address_only_task_renders_actual_fields_without_sibling_claims" time="0.050"><failure message="AssertionError: assert ('电信南街33号' in '你想找哪个城市的店或景点？告诉我城市后，我再查具体地点。')&#10; +  where '电信南街33号' = PlaceView(place_id=UUID('e4d23b80-0861-4601-adda-35de320e9818'), name='六公里老火锅(玉林店)', aliases=[], city='成都市', category=...l_ref=None, images=[], opening_hours_reference=None, provider_tags=[], missing_facts=['实时价格', '当前营业状态', '评论', '酒店可用性']).address">def test_address_only_task_renders_actual_fields_without_sibling_claims():
+        from test_assistant_research import PLACE
+        from app.assistant_research import research, LookupIntent, ResearchAnswer
+        async def judge(*args):
+            return LookupIntent(needed=True, city="成都", query=PLACE.name, names=[PLACE.name], read_pages=False)
+        class Port:
+            async def search(self, **kwargs):
+                return [PLACE]
+        calls=[]
+        async def invented_sibling(*args):
+            calls.append(True)
+            return ResearchAnswer(paragraphs=[{"text":"其他地点没有查到资料。", "place_index":1,
+                "supports":[{"source_id":"poi_1","snippet_id":"s1"}]}])
+        bundle=asyncio.run(research(None,f"查{PLACE.name}和另一个景点的位置",[],
+            ContextEnvelope(),Port(),judge=judge,answer=invented_sibling))
+        assert not calls
+&gt;       assert PLACE.address in bundle["assistant"] and PLACE.name in bundle["assistant"]
+E       AssertionError: assert ('电信南街33号' in '你想找哪个城市的店或景点？告诉我城市后，我再查具体地点。')
+E        +  where '电信南街33号' = PlaceView(place_id=UUID('e4d23b80-0861-4601-adda-35de320e9818'), name='六公里老火锅(玉林店)', aliases=[], city='成都市', category=...l_ref=None, images=[], opening_hours_reference=None, provider_tags=[], missing_facts=['实时价格', '当前营业状态', '评论', '酒店可用性']).address
+
+tests\test_agent_b2_read_operations.py:39: AssertionError</failure></testcase></testsuite></testsuites>

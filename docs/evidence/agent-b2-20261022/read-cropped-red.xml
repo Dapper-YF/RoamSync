@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="8" time="6.441" timestamp="2026-10-23T10:28:21.461691+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_read_operations" name="test_separate_address_is_not_consumed_by_route_endpoint_lookup" time="0.017" /><testcase classname="tests.test_agent_b2_read_operations" name="test_task_source_and_argument_provenance_are_checked" time="0.002" /><testcase classname="tests.test_agent_b2_read_operations" name="test_task_cannot_borrow_other_current_clause_or_invent_query[changes0]" time="0.002" /><testcase classname="tests.test_agent_b2_read_operations" name="test_task_cannot_borrow_other_current_clause_or_invent_query[changes1]" time="0.001" /><testcase classname="tests.test_agent_b2_read_operations" name="test_hypothetical_fact_task_cannot_upgrade_direct_consultation" time="0.001" /><testcase classname="tests.test_agent_b2_read_operations" name="test_cropped_fact_quote_does_not_escape_hypothetical_parent_clause" time="0.003"><failure message="AssertionError: assert ('facts' == 'clarify'&#10;  &#10;  - clarify&#10;  + facts)">def test_cropped_fact_quote_does_not_escape_hypothetical_parent_clause():
+        text = "只是假设景德镇下雨，聊聊如何取舍，不查天气"
+        decision = capabilities.CapabilityDecision.model_validate({"intent":"facts", "reason_code":"current_information",
+            "read_tasks":[{"source_quote":"景德镇下雨","capabilities":["facts"],"fact_kind":"weather"}]})
+        result = capabilities.validate_decision(decision, text, [], ContextEnvelope())
+&gt;       assert result.intent == "clarify" and not result.capabilities
+E       AssertionError: assert ('facts' == 'clarify'
+E         
+E         - clarify
+E         + facts)
+
+tests\test_agent_b2_read_operations.py:71: AssertionError</failure></testcase><testcase classname="tests.test_agent_b2_read_operations" name="test_read_failure_keeps_other_task_and_records_its_status" time="0.006" /><testcase classname="tests.test_agent_b2_read_operations" name="test_approved_hypothetical_consultation_cannot_reopen_weather_lookup" time="0.156" /></testsuite></testsuites>

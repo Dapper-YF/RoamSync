@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="7" time="2.353" timestamp="2026-10-22T23:00:32.248884+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_snapshot_is_frozen_and_does_not_keep_mutable_orm_rows" time="0.038" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_draft_keeps_query_without_calling_model_or_changing_task" time="0.020" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_remove_regrounds_actual_day_activity_and_keeps_other_days" time="0.020" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_draft_never_bypasses_foreign_ui_target_or_missing_place" time="0.007" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_operation_owns_date_and_period_in_compound_request[\u5148\u89e3\u91ca\u7b2c\u4e00\u5929\u7532\u9986\u7684\u5b89\u6392\uff1b-\u7b2c\u4e8c\u5929\u52a0\u5165\u4e59\u9986-None]" time="0.008"><failure message="AssertionError: assert datetime.date(2026, 11, 18) == datetime.date(2026, 11, 19)&#10; +  where datetime.date(2026, 11, 18) = PlanningTimeScope(day_number=1, day_date=datetime.date(2026, 11, 18), period=None).day_date&#10; +    where PlanningTimeScope(day_number=1, day_date=datetime.date(2026, 11, 18), period=None) = PlanningIntent(intent_type='modify_day', source_text='先解释第一天甲馆的安排；第二天加入乙馆', time_scope=PlanningTimeScope(day_number=1,...ne), protected_activity_ids=[], requested_place_queries=['乙馆'], requested_pace=None, missing_fields=[], ambiguities=[]).time_scope&#10; +      where PlanningIntent(intent_type='modify_day', source_text='先解释第一天甲馆的安排；第二天加入乙馆', time_scope=PlanningTimeScope(day_number=1,...ne), protected_activity_ids=[], requested_place_queries=['乙馆'], requested_pace=None, missing_fields=[], ambiguities=[]) = PlanningRequest(trip_id=UUID('a5c02561-a519-4c12-81bf-7865b1e40be8'), user_request='先解释第一天甲馆的安排；第二天加入乙馆', intent=Plann..._planner', selected_day_id=None, selected_activity_id=None, target_day_id=UUID('83d961f6-c843-4049-9ccf-0d531bdca227')).intent&#10; +        where PlanningRequest(trip_id=UUID('a5c02561-a519-4c12-81bf-7865b1e40be8'), user_request='先解释第一天甲馆的安排；第二天加入乙馆', intent=Plann..._planner', selected_day_id=None, selected_activity_id=None, target_day_id=UUID('83d961f6-c843-4049-9ccf-0d531bdca227')) = PlanningIntentResolution(request=PlanningRequest(trip_id=UUID('a5c02561-a519-4c12-81bf-7865b1e40be8'), user_request='先...review_change', risk_level='medium', requires_confirmation=True, reasons=['formal_plan_change'], route='plan_preview')).request&#10; +  and   datetime.date(2026, 11, 19) = namespace(id=UUID('a564e40a-fc6c-4e19-bf41-d73e7083b0ba'), date=datetime.date(2026, 11, 19), position=1).date">prefix = '先解释第一天甲馆的安排；', clause = '第二天加入乙馆', period = None
+
+    @pytest.mark.parametrize("prefix,clause,period", [
+        ("先解释第一天甲馆的安排；", "第二天加入乙馆", None),
+        ("第一天上午先回答问题；", "第二天下午加入乙馆", "afternoon"),
+    ])
+    def test_prepared_operation_owns_date_and_period_in_compound_request(prefix, clause, period):
+        async def run():
+            session = ReadSession()
+            session.place.name = "乙馆"
+            request = PlanningIntentParseRequest(message=prefix + clause)
+            snapshot = await loader()(session, session.trip.id, request)
+            draft = SemanticIntentDraft(primary_intent="add_activity", operations=[
+                SemanticIntentOperation(operation="add_activity", raw_text=clause, date_expression="第二天",
+                    period=period, place_mentions=["乙馆"])], confidence=.99, parser_version="approved-operation-v2")
+            result = await resolver()(snapshot, request, prepared_draft=draft)
+            assert result.request.intent.time_scope.day_date == session.days[1].date
+            assert result.request.intent.time_scope.period == period
+            assert result.grounded_intent.target_day_ids == [session.days[1].id]
+            assert result.policy_decision.route == "plan_preview"
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_planning_snapshot.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        session = ReadSession()
+        session.place.name = "乙馆"
+        request = PlanningIntentParseRequest(message=prefix + clause)
+        snapshot = await loader()(session, session.trip.id, request)
+        draft = SemanticIntentDraft(primary_intent="add_activity", operations=[
+            SemanticIntentOperation(operation="add_activity", raw_text=clause, date_expression="第二天",
+                period=period, place_mentions=["乙馆"])], confidence=.99, parser_version="approved-operation-v2")
+        result = await resolver()(snapshot, request, prepared_draft=draft)
+&gt;       assert result.request.intent.time_scope.day_date == session.days[1].date
+E       AssertionError: assert datetime.date(2026, 11, 18) == datetime.date(2026, 11, 19)
+E        +  where datetime.date(2026, 11, 18) = PlanningTimeScope(day_number=1, day_date=datetime.date(2026, 11, 18), period=None).day_date
+E        +    where PlanningTimeScope(day_number=1, day_date=datetime.date(2026, 11, 18), period=None) = PlanningIntent(intent_type='modify_day', source_text='先解释第一天甲馆的安排；第二天加入乙馆', time_scope=PlanningTimeScope(day_number=1,...ne), protected_activity_ids=[], requested_place_queries=['乙馆'], requested_pace=None, missing_fields=[], ambiguities=[]).time_scope
+E        +      where PlanningIntent(intent_type='modify_day', source_text='先解释第一天甲馆的安排；第二天加入乙馆', time_scope=PlanningTimeScope(day_number=1,...ne), protected_activity_ids=[], requested_place_queries=['乙馆'], requested_pace=None, missing_fields=[], ambiguities=[]) = PlanningRequest(trip_id=UUID('a5c02561-a519-4c12-81bf-7865b1e40be8'), user_request='先解释第一天甲馆的安排；第二天加入乙馆', intent=Plann..._planner', selected_day_id=None, selected_activity_id=None, target_day_id=UUID('83d961f6-c843-4049-9ccf-0d531bdca227')).intent
+E        +        where PlanningRequest(trip_id=UUID('a5c02561-a519-4c12-81bf-7865b1e40be8'), user_request='先解释第一天甲馆的安排；第二天加入乙馆', intent=Plann..._planner', selected_day_id=None, selected_activity_id=None, target_day_id=UUID('83d961f6-c843-4049-9ccf-0d531bdca227')) = PlanningIntentResolution(request=PlanningRequest(trip_id=UUID('a5c02561-a519-4c12-81bf-7865b1e40be8'), user_request='先...review_change', risk_level='medium', requires_confirmation=True, reasons=['formal_plan_change'], route='plan_preview')).request
+E        +  and   datetime.date(2026, 11, 19) = namespace(id=UUID('a564e40a-fc6c-4e19-bf41-d73e7083b0ba'), date=datetime.date(2026, 11, 19), position=1).date
+
+tests\test_agent_b2_planning_snapshot.py:132: AssertionError</failure></testcase><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_operation_owns_date_and_period_in_compound_request[\u7b2c\u4e00\u5929\u4e0a\u5348\u5148\u56de\u7b54\u95ee\u9898\uff1b-\u7b2c\u4e8c\u5929\u4e0b\u5348\u52a0\u5165\u4e59\u9986-afternoon]" time="0.006"><failure message="AssertionError: assert datetime.date(2026, 11, 18) == datetime.date(2026, 11, 19)&#10; +  where datetime.date(2026, 11, 18) = PlanningTimeScope(day_number=1, day_date=datetime.date(2026, 11, 18), period='morning').day_date&#10; +    where PlanningTimeScope(day_number=1, day_date=datetime.date(2026, 11, 18), period='morning') = PlanningIntent(intent_type='modify_day', source_text='第一天上午先回答问题；第二天下午加入乙馆', time_scope=PlanningTimeScope(day_number=1...g'), protected_activity_ids=[], requested_place_queries=['乙馆'], requested_pace=None, missing_fields=[], ambiguities=[]).time_scope&#10; +      where PlanningIntent(intent_type='modify_day', source_text='第一天上午先回答问题；第二天下午加入乙馆', time_scope=PlanningTimeScope(day_number=1...g'), protected_activity_ids=[], requested_place_queries=['乙馆'], requested_pace=None, missing_fields=[], ambiguities=[]) = PlanningRequest(trip_id=UUID('e2c83a81-6725-405f-ac6c-d668f85ce4e4'), user_request='第一天上午先回答问题；第二天下午加入乙馆', intent=Plan..._planner', selected_day_id=None, selected_activity_id=None, target_day_id=UUID('20488800-282b-45cb-b54f-1c45f6c59975')).intent&#10; +        where PlanningRequest(trip_id=UUID('e2c83a81-6725-405f-ac6c-d668f85ce4e4'), user_request='第一天上午先回答问题；第二天下午加入乙馆', intent=Plan..._planner', selected_day_id=None, selected_activity_id=None, target_day_id=UUID('20488800-282b-45cb-b54f-1c45f6c59975')) = PlanningIntentResolution(request=PlanningRequest(trip_id=UUID('e2c83a81-6725-405f-ac6c-d668f85ce4e4'), user_request='第...review_change', risk_level='medium', requires_confirmation=True, reasons=['formal_plan_change'], route='plan_preview')).request&#10; +  and   datetime.date(2026, 11, 19) = namespace(id=UUID('b66c3f93-1b58-42cc-b6f6-913cf14fdb33'), date=datetime.date(2026, 11, 19), position=1).date">prefix = '第一天上午先回答问题；', clause = '第二天下午加入乙馆', period = 'afternoon'
+
+    @pytest.mark.parametrize("prefix,clause,period", [
+        ("先解释第一天甲馆的安排；", "第二天加入乙馆", None),
+        ("第一天上午先回答问题；", "第二天下午加入乙馆", "afternoon"),
+    ])
+    def test_prepared_operation_owns_date_and_period_in_compound_request(prefix, clause, period):
+        async def run():
+            session = ReadSession()
+            session.place.name = "乙馆"
+            request = PlanningIntentParseRequest(message=prefix + clause)
+            snapshot = await loader()(session, session.trip.id, request)
+            draft = SemanticIntentDraft(primary_intent="add_activity", operations=[
+                SemanticIntentOperation(operation="add_activity", raw_text=clause, date_expression="第二天",
+                    period=period, place_mentions=["乙馆"])], confidence=.99, parser_version="approved-operation-v2")
+            result = await resolver()(snapshot, request, prepared_draft=draft)
+            assert result.request.intent.time_scope.day_date == session.days[1].date
+            assert result.request.intent.time_scope.period == period
+            assert result.grounded_intent.target_day_ids == [session.days[1].id]
+            assert result.policy_decision.route == "plan_preview"
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_planning_snapshot.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        session = ReadSession()
+        session.place.name = "乙馆"
+        request = PlanningIntentParseRequest(message=prefix + clause)
+        snapshot = await loader()(session, session.trip.id, request)
+        draft = SemanticIntentDraft(primary_intent="add_activity", operations=[
+            SemanticIntentOperation(operation="add_activity", raw_text=clause, date_expression="第二天",
+                period=period, place_mentions=["乙馆"])], confidence=.99, parser_version="approved-operation-v2")
+        result = await resolver()(snapshot, request, prepared_draft=draft)
+&gt;       assert result.request.intent.time_scope.day_date == session.days[1].date
+E       AssertionError: assert datetime.date(2026, 11, 18) == datetime.date(2026, 11, 19)
+E        +  where datetime.date(2026, 11, 18) = PlanningTimeScope(day_number=1, day_date=datetime.date(2026, 11, 18), period='morning').day_date
+E        +    where PlanningTimeScope(day_number=1, day_date=datetime.date(2026, 11, 18), period='morning') = PlanningIntent(intent_type='modify_day', source_text='第一天上午先回答问题；第二天下午加入乙馆', time_scope=PlanningTimeScope(day_number=1...g'), protected_activity_ids=[], requested_place_queries=['乙馆'], requested_pace=None, missing_fields=[], ambiguities=[]).time_scope
+E        +      where PlanningIntent(intent_type='modify_day', source_text='第一天上午先回答问题；第二天下午加入乙馆', time_scope=PlanningTimeScope(day_number=1...g'), protected_activity_ids=[], requested_place_queries=['乙馆'], requested_pace=None, missing_fields=[], ambiguities=[]) = PlanningRequest(trip_id=UUID('e2c83a81-6725-405f-ac6c-d668f85ce4e4'), user_request='第一天上午先回答问题；第二天下午加入乙馆', intent=Plan..._planner', selected_day_id=None, selected_activity_id=None, target_day_id=UUID('20488800-282b-45cb-b54f-1c45f6c59975')).intent
+E        +        where PlanningRequest(trip_id=UUID('e2c83a81-6725-405f-ac6c-d668f85ce4e4'), user_request='第一天上午先回答问题；第二天下午加入乙馆', intent=Plan..._planner', selected_day_id=None, selected_activity_id=None, target_day_id=UUID('20488800-282b-45cb-b54f-1c45f6c59975')) = PlanningIntentResolution(request=PlanningRequest(trip_id=UUID('e2c83a81-6725-405f-ac6c-d668f85ce4e4'), user_request='第...review_change', risk_level='medium', requires_confirmation=True, reasons=['formal_plan_change'], route='plan_preview')).request
+E        +  and   datetime.date(2026, 11, 19) = namespace(id=UUID('b66c3f93-1b58-42cc-b6f6-913cf14fdb33'), date=datetime.date(2026, 11, 19), position=1).date
+
+tests\test_agent_b2_planning_snapshot.py:132: AssertionError</failure></testcase><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_incompatible_prepared_operation_days_do_not_silently_mutate_first_day" time="0.006"><failure message="AssertionError: assert 'plan_preview' == 'clarify'&#10;  &#10;  - clarify&#10;  + plan_preview">def test_incompatible_prepared_operation_days_do_not_silently_mutate_first_day():
+        async def run():
+            session = ReadSession()
+            request = PlanningIntentParseRequest(message="第一天加入甲馆；第二天也加入甲馆")
+            snapshot = await loader()(session, session.trip.id, request)
+            draft = SemanticIntentDraft(primary_intent="add_activity", operations=[
+                SemanticIntentOperation(operation="add_activity", raw_text=clause, place_mentions=["甲馆"])
+                for clause in request.message.split("；")], confidence=.99, parser_version="approved-operation-v2")
+            result = await resolver()(snapshot, request, prepared_draft=draft)
+            assert result.policy_decision.route == "clarify"
+            assert result.requires_clarification
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_planning_snapshot.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        session = ReadSession()
+        request = PlanningIntentParseRequest(message="第一天加入甲馆；第二天也加入甲馆")
+        snapshot = await loader()(session, session.trip.id, request)
+        draft = SemanticIntentDraft(primary_intent="add_activity", operations=[
+            SemanticIntentOperation(operation="add_activity", raw_text=clause, place_mentions=["甲馆"])
+            for clause in request.message.split("；")], confidence=.99, parser_version="approved-operation-v2")
+        result = await resolver()(snapshot, request, prepared_draft=draft)
+&gt;       assert result.policy_decision.route == "clarify"
+E       AssertionError: assert 'plan_preview' == 'clarify'
+E         
+E         - clarify
+E         + plan_preview
+
+tests\test_agent_b2_planning_snapshot.py:148: AssertionError</failure></testcase></testsuite></testsuites>

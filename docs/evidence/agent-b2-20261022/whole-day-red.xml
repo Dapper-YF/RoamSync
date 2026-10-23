@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="5" time="8.013" timestamp="2026-10-23T10:30:22.991505+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_operation_handoff" name="test_single_approved_creation_prepares_preview_without_second_router" time="0.041"><failure message="sqlalchemy.exc.InterfaceError: (psycopg.InterfaceError) Psycopg cannot use the 'ProactorEventLoop' to run in async mode. Please use a compatible event loop, for instance by running 'asyncio.run(..., loop_factory=asyncio.SelectorEventLoop(selectors.SelectSelector()))'&#10;(Background on this error at: https://sqlalche.me/e/20/rvf5)">self = &lt;sqlalchemy.engine.base.Connection object at 0x0000017743490830&gt;
+engine = Engine(postgresql+psycopg://agent_b_test:***@127.0.0.1:15435/roamsync_test)
+connection = None, _has_events = None, _allow_revalidate = True
+_allow_autobegin = True
+
+    def __init__(
+        self,
+        engine: Engine,
+        connection: Optional[PoolProxiedConnection] = None,
+        _has_events: Optional[bool] = None,
+        _allow_revalidate: bool = True,
+        _allow_autobegin: bool = True,
+    ):
+        """Construct a new Connection."""
+        self.engine = engine
+        self.dialect = dialect = engine.dialect
+    
+        if connection is None:
+            try:
+&gt;               self._dbapi_connection = engine.raw_connection()
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:144: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:3319: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:448: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:1272: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\impl.py:307: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:389: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:122: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\create.py:667: in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\default.py:630: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\psycopg.py:796: in connect
+    await_only(creator_fn(*arg, **kw))
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:132: in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:196: in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+cls = &lt;class 'psycopg.AsyncConnection'&gt;, conninfo = '', autocommit = False
+prepare_threshold = 5
+context = &lt;psycopg.adapt.AdaptersMap object at 0x000001774229DA90&gt;
+row_factory = None, cursor_factory = None
+kwargs = {'dbname': 'roamsync_test', 'host': '127.0.0.1', 'password': 'agent_b_test_only', 'port': 15435, ...}
+loop = &lt;ProactorEventLoop running=False closed=True debug=False&gt;
+_asyncio_run_snippet = "running 'asyncio.run(..., loop_factory=asyncio.SelectorEventLoop(selectors.SelectSelector()))'"
+
+    @classmethod
+    async def connect(
+        cls,
+        conninfo: str = "",
+        *,
+        autocommit: bool = False,
+        prepare_threshold: int | None = 5,
+        context: AdaptContext | None = None,
+        row_factory: AsyncRowFactory[Row] | None = None,
+        cursor_factory: type[AsyncCursor[Row]] | None = None,
+        **kwargs: ConnParam,
+    ) -&gt; Self:
+        """
+        Connect to a database server and return a new `AsyncConnection` instance.
+        """
+        if True:  # ASYNC
+            if sys.platform == "win32":
+                loop = asyncio.get_running_loop()
+                if isinstance(loop, asyncio.ProactorEventLoop):
+    
+                    from ._compat import _asyncio_run_snippet
+    
+&gt;                   raise e.InterfaceError(
+                        "Psycopg cannot use the 'ProactorEventLoop' to run in async"
+                        " mode. Please use a compatible event loop, for instance by"
+                        + f" {_asyncio_run_snippet}"
+                    )
+E                   psycopg.InterfaceError: Psycopg cannot use the 'ProactorEventLoop' to run in async mode. Please use a compatible event loop, for instance by running 'asyncio.run(..., loop_factory=asyncio.SelectorEventLoop(selectors.SelectSelector()))'
+
+..\..\RoamSync\backend\.venv\Lib\site-packages\psycopg\connection_async.py:107: InterfaceError
+
+The above exception was the direct cause of the following exception:
+
+sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000017743466E50&gt;, autoflush=True, expire_on_commit=False)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000017743470B00&gt;
+
+    def test_single_approved_creation_prepares_preview_without_second_router(sessions, monkeypatch):
+        message = "请创建绍兴2026年11月29日至30日的安排，第一天下午去鲁迅故里，第二天留空，先看候选等我采用。"
+        async def selector(*args):
+            return CapabilityDecision.model_validate({"intent":"create", "reason_code":"explicit_write",
+                "authorization_quote":"请创建绍兴2026年11月29日至30日的安排", "names":["鲁迅故里"],
+                "creation":{"destination":"绍兴", "start_date":"2026-11-29", "end_date":"2026-11-30",
+                    "flexible":True, "choices":[{"kind":"selected", "label":"鲁迅故里", "day_date":"2026-11-29",
+                        "source_quote":"第一天下午去鲁迅故里"}]}})
+        async def forbidden(*args):
+            raise AssertionError("a second router changed the approved creation")
+        monkeypatch.setattr(AssistantRouter, "decide", forbidden)
+        async def cities(*args):
+            return [CitySuggestionResponse(name="绍兴市", adcode="330600", citycode="0575", longitude=120.58, latitude=30.0)]
+        async def run():
+            async with sessions() as db:
+                row = AssistantSession(messages=[], applied_actions={})
+                db.add(row); await db.commit()
+                row = await send_message(db, row.id, message, uuid4(), capability_selector=selector,
+                    city_search=cities, context={"topic_id":"b2-create", "prefer_flexible":True})
+                assert row.trip_id is None and row.latest_run_id is None
+                assert row.pending_action["choices"][0]["label"] == "鲁迅故里"
+                assert row.pending_action["user_request"] == message
+                assert "第二天留空" in row.pending_action["preferences"]
+                assert "第一天下午去鲁迅故里" in row.messages[-1]["assistant"]
+                assert row.pending_action["total_budget_fen"] is None
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_operation_handoff.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_operation_handoff.py:39: in run
+    db.add(row); await db.commit()
+                 ^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\ext\asyncio\session.py:999: in commit
+    await greenlet_spawn(self.sync_session.commit)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:201: in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:2035: in commit
+    trans.commit(_to_root=True)
+&lt;string&gt;:2: in commit
+    ???
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\state_changes.py:137: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:1316: in commit
+    self._prepare_impl()
+&lt;string&gt;:2: in _prepare_impl
+    ???
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\state_changes.py:137: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:1290: in _prepare_impl
+    self.session.flush()
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:4353: in flush
+    self._flush(objects)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:4488: in _flush
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:122: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:4449: in _flush
+    flush_context.execute()
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py:465: in execute
+    rec.execute(self)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py:641: in execute
+    util.preloaded.orm_persistence.save_obj(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py:69: in save_obj
+    ) in _organize_states_for_save(base_mapper, states, uowtransaction):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py:224: in _organize_states_for_save
+    for state, dict_, mapper, connection in _connections_for_states(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py:1760: in _connections_for_states
+    connection = uowtransaction.transaction.connection(base_mapper)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:2: in connection
+    ???
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\state_changes.py:137: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:1041: in connection
+    return self._connection_for_bind(bind, execution_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:2: in _connection_for_bind
+    ???
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\state_changes.py:137: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:1177: in _connection_for_bind
+    conn = self._parent._connection_for_bind(
+&lt;string&gt;:2: in _connection_for_bind
+    ???
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\state_changes.py:137: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:1191: in _connection_for_bind
+    conn = bind.connect()
+           ^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:3295: in connect
+    return self._connection_cls(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:146: in __init__
+    Connection._handle_dbapi_exception_noconnection(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:2450: in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:144: in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:3319: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:448: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:1272: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\impl.py:307: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:389: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:122: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\create.py:667: in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\default.py:630: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\psycopg.py:796: in connect
+    await_only(creator_fn(*arg, **kw))
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:132: in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:196: in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+cls = &lt;class 'psycopg.AsyncConnection'&gt;, conninfo = '', autocommit = False
+prepare_threshold = 5
+context = &lt;psycopg.adapt.AdaptersMap object at 0x000001774229DA90&gt;
+row_factory = None, cursor_factory = None
+kwargs = {'dbname': 'roamsync_test', 'host': '127.0.0.1', 'password': 'agent_b_test_only', 'port': 15435, ...}
+loop = &lt;ProactorEventLoop running=False closed=True debug=False&gt;
+_asyncio_run_snippet = "running 'asyncio.run(..., loop_factory=asyncio.SelectorEventLoop(selectors.SelectSelector()))'"
+
+    @classmethod
+    async def connect(
+        cls,
+        conninfo: str = "",
+        *,
+        autocommit: bool = False,
+        prepare_threshold: int | None = 5,
+        context: AdaptContext | None = None,
+        row_factory: AsyncRowFactory[Row] | None = None,
+        cursor_factory: type[AsyncCursor[Row]] | None = None,
+        **kwargs: ConnParam,
+    ) -&gt; Self:
+        """
+        Connect to a database server and return a new `AsyncConnection` instance.
+        """
+        if True:  # ASYNC
+            if sys.platform == "win32":
+                loop = asyncio.get_running_loop()
+                if isinstance(loop, asyncio.ProactorEventLoop):
+    
+                    from ._compat import _asyncio_run_snippet
+    
+&gt;                   raise e.InterfaceError(
+                        "Psycopg cannot use the 'ProactorEventLoop' to run in async"
+                        " mode. Please use a compatible event loop, for instance by"
+                        + f" {_asyncio_run_snippet}"
+                    )
+E                   sqlalchemy.exc.InterfaceError: (psycopg.InterfaceError) Psycopg cannot use the 'ProactorEventLoop' to run in async mode. Please use a compatible event loop, for instance by running 'asyncio.run(..., loop_factory=asyncio.SelectorEventLoop(selectors.SelectSelector()))'
+E                   (Background on this error at: https://sqlalche.me/e/20/rvf5)
+
+..\..\RoamSync\backend\.venv\Lib\site-packages\psycopg\connection_async.py:107: InterfaceError</failure></testcase><testcase classname="tests.test_agent_b2_operation_handoff" name="test_creation_cannot_invent_dates_or_expand_literal_place_label" time="0.002" /><testcase classname="tests.test_agent_b2_operation_handoff" name="test_draft_operations_require_original_source_and_literal_place_mentions" time="0.001" /><testcase classname="tests.test_agent_b2_operation_handoff" name="test_literal_whole_day_blank_has_no_invented_user_clock_range" time="0.001"><failure message="pydantic_core._pydantic_core.ValidationError: 1 validation error for CapabilityDecision&#10;creation.choices.0&#10;  Value error, 时间范围需要完整且明确 [type=value_error, input_value={'kind': 'free_window', '...art': None, 'end': None}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/value_error">def test_literal_whole_day_blank_has_no_invented_user_clock_range():
+&gt;       decision = CapabilityDecision.model_validate({"intent":"create", "reason_code":"explicit_write",
+            "authorization_quote":"请创建绍兴11月29日到30日的安排", "creation":{"destination":"绍兴",
+            "start_date":"2026-11-29", "end_date":"2026-11-30", "flexible":True,
+            "choices":[{"kind":"free_window","label":"第二天留白","source_quote":"第二天留白",
+                "day_date":"2026-11-30","start":None,"end":None}]}})
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for CapabilityDecision
+E       creation.choices.0
+E         Value error, 时间范围需要完整且明确 [type=value_error, input_value={'kind': 'free_window', '...art': None, 'end': None}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/value_error
+
+tests\test_agent_b2_operation_handoff.py:74: ValidationError</failure></testcase><testcase classname="tests.test_agent_b2_operation_handoff" name="test_partial_day_blank_is_not_promoted_to_whole_day" time="0.001" /></testsuite></testsuites>

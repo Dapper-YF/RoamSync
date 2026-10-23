@@ -1,0 +1,368 @@
+{
+  "split": "development",
+  "label": "b2-whole-day-development",
+  "source_sha": "6f93f6b4d9378f299e0a7dbbf4e22768f5a05ccf",
+  "fixture_sha256": "089b5842d407bb2645b21372aea2eda1959edf4a433b988375bcae078210034b",
+  "model": "glm-5.3-flash",
+  "provider": "glm",
+  "synthetic": true,
+  "records": [
+    {
+      "case": "bounded-create",
+      "turn": 1,
+      "user": "帮我创建绍兴11月29日到30日的安排，第一天下午想去鲁迅故里，第二天留白；先给我可采用的候选，不要自动采用，也不用编出具体几点。",
+      "session_id": "c4eb6a95-c5ed-42ab-9038-00f9014e77a5",
+      "raw": {
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "548fc4af-4089-4aab-8f30-7cdd5e32f7c6",
+          "answer_status": "complete",
+          "answer_attempts": 0,
+          "duration_ms": 7792,
+          "selection": {
+            "intent": "create",
+            "capabilities": [],
+            "reason_code": "explicit_write",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 172
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 7778,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 7588
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 7778
+            },
+            {
+              "stage": "context",
+              "status": "completed",
+              "elapsed_ms": 7791,
+              "fields": [
+                "city",
+                "start_date"
+              ]
+            }
+          ]
+        },
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": "绍兴",
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [
+            {
+              "id": "req_7bf1766e9a45572fb410fb7eea6a2a1e",
+              "text": "不要自动采用",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "548fc4af-4089-4aab-8f30-7cdd5e32f7c6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_b207b77f164a5c0684ad881b8d276195",
+              "text": "不要自动采用",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "548fc4af-4089-4aab-8f30-7cdd5e32f7c6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": "绍兴",
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            }
+          ],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "city": {
+                "value": "绍兴",
+                "source_quote": "帮我创建绍兴11月29日到30日的安排",
+                "message_id": "548fc4af-4089-4aab-8f30-7cdd5e32f7c6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              "start_date": {
+                "value": "2026-11-29",
+                "source_quote": "绍兴11月29日到30日的安排",
+                "message_id": "548fc4af-4089-4aab-8f30-7cdd5e32f7c6",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            },
+            "preferences": [],
+            "requirements": [],
+            "diagnostics": [],
+            "withdrawn": {}
+          }
+        },
+        "read_tools": {},
+        "requirement_sync": null,
+        "id": "548fc4af-4089-4aab-8f30-7cdd5e32f7c6",
+        "user": "帮我创建绍兴11月29日到30日的安排，第一天下午想去鲁迅故里，第二天留白；先给我可采用的候选，不要自动采用，也不用编出具体几点。",
+        "assistant": "请核对：绍兴市，2026-11-29 至 2026-11-30，共 2 天，未设置预算上限。确认后执行。\n鲁迅故里：纳入，时间未定\n留白一天：整天留白\n保留原要求：帮我创建绍兴11月29日到30日的安排，第一天下午想去鲁迅故里，第二天留白；先给我可采用的候选，不要自动采用，也不用编出具体几点。",
+        "tool": "create_trip",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "trip_planning",
+          "confidence": 0.9,
+          "target_runtime": "planning",
+          "mutation_requested": true,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_explicit_user_request"
+          ]
+        },
+        "planning_brief": null
+      },
+      "trip_id": null,
+      "pending_action": {
+        "id": "d24845d6-b4a8-418b-afd5-d4cfce3b0dd4",
+        "tool": "create_trip",
+        "source_trip_id": null,
+        "source_signature": null,
+        "source_title": null,
+        "city": {
+          "name": "绍兴市",
+          "adcode": "330600",
+          "citycode": "0575",
+          "longitude": 120.582886,
+          "latitude": 30.051549
+        },
+        "title": "绍兴市2日之旅",
+        "start_date": "2026-11-29",
+        "end_date": "2026-11-30",
+        "total_budget_fen": null,
+        "daily_budget_fen": null,
+        "preferences": "帮我创建绍兴11月29日到30日的安排，第一天下午想去鲁迅故里，第二天留白；先给我可采用的候选，不要自动采用，也不用编出具体几点。",
+        "summary": "采用后保存已选、备选、固定预约和留白；不自动填满每天。地点建议尚不等于已核实事实。",
+        "choices": [
+          {
+            "kind": "selected",
+            "label": "鲁迅故里",
+            "origin": "user_explicit",
+            "source_quote": "第一天下午想去鲁迅故里",
+            "day_date": "2026-11-29",
+            "start": null,
+            "end": null
+          },
+          {
+            "kind": "blank_day",
+            "label": "留白一天",
+            "origin": "user_explicit",
+            "source_quote": "第二天留白",
+            "day_date": "2026-11-30",
+            "start": null,
+            "end": null
+          }
+        ],
+        "flexible": true,
+        "user_request": "帮我创建绍兴11月29日到30日的安排，第一天下午想去鲁迅故里，第二天留白；先给我可采用的候选，不要自动采用，也不用编出具体几点。",
+        "approved_draft": {
+          "primary_intent": "create_plan",
+          "operations": [
+            {
+              "operation": "create_plan",
+              "raw_text": "帮我创建绍兴11月29日到30日的安排，第一天下午想去鲁迅故里，第二天留白；先给我可采用的候选，不要自动采用，也不用编出具体几点。",
+              "date_expression": "11月29日到30日",
+              "period": "afternoon",
+              "activity_mentions": [
+                "鲁迅故里"
+              ],
+              "place_mentions": [
+                "鲁迅故里"
+              ],
+              "constraints": {
+                "budget_must_not_increase": false,
+                "max_additional_cost_fen": null,
+                "preferred_environment": null,
+                "max_walking_minutes": null,
+                "requested_pace": null,
+                "weather_sensitive": false,
+                "preserve_completed": true
+              }
+            }
+          ],
+          "confidence": 0.95,
+          "missing_fields": [],
+          "ambiguities": [],
+          "parser": "hybrid",
+          "parser_version": "approved-operation-v2"
+        },
+        "topic_id": "agent-b"
+      },
+      "latest_run_id": null,
+      "seconds": 8.201,
+      "choices": [
+        {
+          "intent": "create",
+          "capabilities": [],
+          "city": "绍兴",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "帮我创建绍兴11月29日到30日的安排，第一天下午想去鲁迅故里，第二天留白",
+          "reason_code": "explicit_write",
+          "memory_updates": [
+            {
+              "field": "city",
+              "operation": "set",
+              "value": "绍兴",
+              "replaces": "",
+              "source_quote": "帮我创建绍兴11月29日到30日的安排",
+              "scope": "trip"
+            },
+            {
+              "field": "start_date",
+              "operation": "set",
+              "value": "11月29日",
+              "replaces": "",
+              "source_quote": "绍兴11月29日到30日的安排",
+              "scope": "trip"
+            }
+          ],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": [],
+          "read_tasks": [],
+          "fact_kind": "other",
+          "creation": {
+            "destination": "绍兴",
+            "start_date": "2026-11-29",
+            "end_date": "2026-11-30",
+            "total_budget_fen": null,
+            "flexible": true,
+            "choices": [
+              {
+                "kind": "selected",
+                "label": "鲁迅故里",
+                "origin": "user_explicit",
+                "source_quote": "第一天下午想去鲁迅故里",
+                "day_date": "2026-11-29",
+                "start": null,
+                "end": null
+              },
+              {
+                "kind": "blank_day",
+                "label": "留白一天",
+                "origin": "user_explicit",
+                "source_quote": "第二天留白",
+                "day_date": "2026-11-30",
+                "start": null,
+                "end": null
+              }
+            ]
+          },
+          "planning_draft": {
+            "primary_intent": "create_plan",
+            "operations": [
+              {
+                "operation": "create_plan",
+                "raw_text": "帮我创建绍兴11月29日到30日的安排，第一天下午想去鲁迅故里，第二天留白；先给我可采用的候选，不要自动采用，也不用编出具体几点。",
+                "date_expression": "11月29日到30日",
+                "period": "afternoon",
+                "activity_mentions": [
+                  "鲁迅故里"
+                ],
+                "place_mentions": [
+                  "鲁迅故里"
+                ],
+                "constraints": {
+                  "budget_must_not_increase": false,
+                  "max_additional_cost_fen": null,
+                  "preferred_environment": null,
+                  "max_walking_minutes": null,
+                  "requested_pace": null,
+                  "weather_sensitive": false,
+                  "preserve_completed": true
+                }
+              }
+            ],
+            "confidence": 0.95,
+            "missing_fields": [],
+            "ambiguities": [],
+            "parser": "rules",
+            "parser_version": "rules-1"
+          }
+        }
+      ],
+      "calls": []
+    }
+  ],
+  "before": {
+    "Trip": 0,
+    "Activity": 0,
+    "PlanningRun": 0,
+    "PlanRevision": 0,
+    "SavedIntention": 0
+  },
+  "after": {
+    "Trip": 0,
+    "Activity": 0,
+    "PlanningRun": 0,
+    "PlanRevision": 0,
+    "SavedIntention": 0
+  }
+}

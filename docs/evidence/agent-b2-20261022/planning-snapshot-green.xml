@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="4" time="2.190" timestamp="2026-10-22T22:55:27.368373+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_snapshot_is_frozen_and_does_not_keep_mutable_orm_rows" time="0.032"><failure message="TypeError: 'Rows' object is not iterable">def test_snapshot_is_frozen_and_does_not_keep_mutable_orm_rows():
+        session = ReadSession()
+        request = PlanningIntentParseRequest(message="看看当前安排")
+&gt;       snapshot = asyncio.run(loader()(session, session.trip.id, request))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_agent_b2_planning_snapshot.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+session = &lt;test_agent_b2_planning_snapshot.ReadSession object at 0x00000285769FF230&gt;
+trip_id = UUID('7f4fad0c-07ac-4deb-b718-3a4036e76d39')
+payload = PlanningIntentParseRequest(message='看看当前安排', entry_point='trip_planner', selected_day_id=None, selected_activity_id=None)
+
+    async def load_planning_intent_snapshot(
+        session: AsyncSession,
+        trip_id: uuid.UUID,
+        payload: PlanningIntentParseRequest,
+    ) -&gt; PlanningIntentSnapshot:
+        trip = await session.get(Trip, trip_id)
+        if trip is None:
+            raise TripNotFoundError
+        days = list(
+            (
+                await session.scalars(
+                    select(DayPlan).where(DayPlan.trip_id == trip_id).order_by(DayPlan.position)
+                )
+            ).all()
+        )
+&gt;       activity_rows = list(
+            (
+                await session.execute(
+                    select(Activity, DayPlan, PlaceCandidate)
+                    .join(DayPlan, Activity.day_plan_id == DayPlan.id)
+                    .join(PlaceCandidate, Activity.place_candidate_id == PlaceCandidate.id)
+                    .where(DayPlan.trip_id == trip_id)
+                )
+            ).tuples()
+        )
+E       TypeError: 'Rows' object is not iterable
+
+app\planning_intent_service.py:317: TypeError</failure></testcase><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_draft_keeps_query_without_calling_model_or_changing_task" time="0.003"><failure message="TypeError: 'Rows' object is not iterable">def test_prepared_draft_keeps_query_without_calling_model_or_changing_task():
+        async def run():
+            session = ReadSession()
+            request = PlanningIntentParseRequest(message="分析第二天甲馆的安排，只解释，不调整")
+            snapshot = await loader()(session, session.trip.id, request)
+            class ExplodingProvider:
+                async def extract(self, *args): raise AssertionError("second interpretation")
+            draft = SemanticIntentDraft(primary_intent="query_trip", operations=[
+                SemanticIntentOperation(operation="query_trip", raw_text=request.message)],
+                confidence=.99, parser="hybrid", parser_version="approved-operation-v2")
+            resolution = await resolver()(snapshot, request, prepared_draft=draft, semantic_provider=ExplodingProvider())
+            assert resolution.semantic_draft == draft
+            assert resolution.policy_decision.route == "answer"
+            assert resolution.grounded_intent.operation_types == ["query_trip"]
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_planning_snapshot.py:78: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_planning_snapshot.py:68: in run
+    snapshot = await loader()(session, session.trip.id, request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+session = &lt;test_agent_b2_planning_snapshot.ReadSession object at 0x0000028576AD6850&gt;
+trip_id = UUID('2350a09e-f5f9-4c99-a5f3-6590c64ee842')
+payload = PlanningIntentParseRequest(message='分析第二天甲馆的安排，只解释，不调整', entry_point='trip_planner', selected_day_id=None, selected_activity_id=None)
+
+    async def load_planning_intent_snapshot(
+        session: AsyncSession,
+        trip_id: uuid.UUID,
+        payload: PlanningIntentParseRequest,
+    ) -&gt; PlanningIntentSnapshot:
+        trip = await session.get(Trip, trip_id)
+        if trip is None:
+            raise TripNotFoundError
+        days = list(
+            (
+                await session.scalars(
+                    select(DayPlan).where(DayPlan.trip_id == trip_id).order_by(DayPlan.position)
+                )
+            ).all()
+        )
+&gt;       activity_rows = list(
+            (
+                await session.execute(
+                    select(Activity, DayPlan, PlaceCandidate)
+                    .join(DayPlan, Activity.day_plan_id == DayPlan.id)
+                    .join(PlaceCandidate, Activity.place_candidate_id == PlaceCandidate.id)
+                    .where(DayPlan.trip_id == trip_id)
+                )
+            ).tuples()
+        )
+E       TypeError: 'Rows' object is not iterable
+
+app\planning_intent_service.py:317: TypeError</failure></testcase><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_remove_regrounds_actual_day_activity_and_keeps_other_days" time="0.004"><failure message="TypeError: 'Rows' object is not iterable">def test_prepared_remove_regrounds_actual_day_activity_and_keeps_other_days():
+        async def run():
+            session = ReadSession()
+            request = PlanningIntentParseRequest(message="第二天把甲馆撤掉，其他日期不动")
+            snapshot = await loader()(session, session.trip.id, request)
+            draft = SemanticIntentDraft(primary_intent="remove_activity", operations=[
+                SemanticIntentOperation(operation="remove_activity", raw_text=request.message,
+                    activity_mentions=["甲馆"], date_expression="第二天")],
+                confidence=.99, parser="hybrid", parser_version="approved-operation-v2")
+            result = await resolver()(snapshot, request, prepared_draft=draft)
+            assert result.semantic_draft == draft
+            assert result.request.intent.intent_type == "modify_day"
+            assert result.grounded_intent.target_day_ids == [session.days[1].id]
+            assert result.grounded_intent.target_activity_ids == [session.activity.id]
+            assert result.policy_decision.route == "plan_preview"
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_planning_snapshot.py:96: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_planning_snapshot.py:85: in run
+    snapshot = await loader()(session, session.trip.id, request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+session = &lt;test_agent_b2_planning_snapshot.ReadSession object at 0x0000028576AD74D0&gt;
+trip_id = UUID('bb523d65-b483-438f-b8c6-c73f835d5f25')
+payload = PlanningIntentParseRequest(message='第二天把甲馆撤掉，其他日期不动', entry_point='trip_planner', selected_day_id=None, selected_activity_id=None)
+
+    async def load_planning_intent_snapshot(
+        session: AsyncSession,
+        trip_id: uuid.UUID,
+        payload: PlanningIntentParseRequest,
+    ) -&gt; PlanningIntentSnapshot:
+        trip = await session.get(Trip, trip_id)
+        if trip is None:
+            raise TripNotFoundError
+        days = list(
+            (
+                await session.scalars(
+                    select(DayPlan).where(DayPlan.trip_id == trip_id).order_by(DayPlan.position)
+                )
+            ).all()
+        )
+&gt;       activity_rows = list(
+            (
+                await session.execute(
+                    select(Activity, DayPlan, PlaceCandidate)
+                    .join(DayPlan, Activity.day_plan_id == DayPlan.id)
+                    .join(PlaceCandidate, Activity.place_candidate_id == PlaceCandidate.id)
+                    .where(DayPlan.trip_id == trip_id)
+                )
+            ).tuples()
+        )
+E       TypeError: 'Rows' object is not iterable
+
+app\planning_intent_service.py:317: TypeError</failure></testcase><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_draft_never_bypasses_foreign_ui_target_or_missing_place" time="0.004"><failure message="TypeError: 'Rows' object is not iterable">def test_prepared_draft_never_bypasses_foreign_ui_target_or_missing_place():
+        async def run():
+            session = ReadSession()
+            request = PlanningIntentParseRequest(message="第二天加入乙馆")
+            snapshot = await loader()(session, session.trip.id, request)
+            foreign = request.model_copy(update={"selected_day_id": uuid4()})
+            with pytest.raises(service.IntentContextError):
+                await resolver()(snapshot, foreign)
+            draft = SemanticIntentDraft(primary_intent="add_activity", operations=[
+                SemanticIntentOperation(operation="add_activity", raw_text=request.message,
+                    date_expression="第二天", place_mentions=["乙馆"])],
+                confidence=.99, parser="hybrid", parser_version="approved-operation-v2")
+            result = await resolver()(snapshot, request, prepared_draft=draft)
+            assert result.grounded_intent.unresolved_place_mentions == ["乙馆"]
+            assert result.policy_decision.route == "clarify"
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_planning_snapshot.py:114: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_planning_snapshot.py:103: in run
+    snapshot = await loader()(session, session.trip.id, request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+session = &lt;test_agent_b2_planning_snapshot.ReadSession object at 0x0000028576AED5B0&gt;
+trip_id = UUID('537d4893-c969-4ba1-8eba-de7fcca2bdc6')
+payload = PlanningIntentParseRequest(message='第二天加入乙馆', entry_point='trip_planner', selected_day_id=None, selected_activity_id=None)
+
+    async def load_planning_intent_snapshot(
+        session: AsyncSession,
+        trip_id: uuid.UUID,
+        payload: PlanningIntentParseRequest,
+    ) -&gt; PlanningIntentSnapshot:
+        trip = await session.get(Trip, trip_id)
+        if trip is None:
+            raise TripNotFoundError
+        days = list(
+            (
+                await session.scalars(
+                    select(DayPlan).where(DayPlan.trip_id == trip_id).order_by(DayPlan.position)
+                )
+            ).all()
+        )
+&gt;       activity_rows = list(
+            (
+                await session.execute(
+                    select(Activity, DayPlan, PlaceCandidate)
+                    .join(DayPlan, Activity.day_plan_id == DayPlan.id)
+                    .join(PlaceCandidate, Activity.place_candidate_id == PlaceCandidate.id)
+                    .where(DayPlan.trip_id == trip_id)
+                )
+            ).tuples()
+        )
+E       TypeError: 'Rows' object is not iterable
+
+app\planning_intent_service.py:317: TypeError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,5346 @@
+{
+  "split": "development",
+  "label": "before",
+  "source_sha": "97c6065f5f2034bc230c5c7deee928f4093d3db6",
+  "fixture_sha256": "089b5842d407bb2645b21372aea2eda1959edf4a433b988375bcae078210034b",
+  "model": "glm-5.3-flash",
+  "provider": "glm",
+  "synthetic": true,
+  "records": [
+    {
+      "case": "different-trip",
+      "turn": 1,
+      "user": "我一直吃素。这次去赣州，12月2日出发玩四天，跟两位朋友同行。",
+      "session_id": "4e999831-6faa-44f2-b7a1-4fda9d56fed8",
+      "raw": {
+        "assistant": "已更新这次聊天的条件：目的地：赣州；出发日期：2026-12-02；游玩天数：4；偏好：吃素。",
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": "赣州",
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "city": {
+                "value": "赣州",
+                "source_quote": "这次去赣州",
+                "message_id": "9bda6b35-3426-4dcc-82c8-4adf93a3918c",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              "start_date": {
+                "value": "2026-12-02",
+                "source_quote": "12月2日出发",
+                "message_id": "9bda6b35-3426-4dcc-82c8-4adf93a3918c",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              "duration_days": {
+                "value": 4,
+                "source_quote": "玩四天",
+                "message_id": "9bda6b35-3426-4dcc-82c8-4adf93a3918c",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            },
+            "preferences": [
+              {
+                "value": "吃素",
+                "source_quote": "我一直吃素",
+                "message_id": "9bda6b35-3426-4dcc-82c8-4adf93a3918c",
+                "scope": "personal",
+                "scope_version": 2
+              }
+            ],
+            "requirements": [],
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "9bda6b35-3426-4dcc-82c8-4adf93a3918c",
+          "answer_status": "complete",
+          "answer_attempts": 0,
+          "duration_ms": 7893,
+          "selection": {
+            "intent": "direct",
+            "capabilities": [],
+            "reason_code": "stable_knowledge",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 56
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 7889,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 7828
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 7889
+            },
+            {
+              "stage": "context",
+              "status": "completed",
+              "elapsed_ms": 7892,
+              "fields": [
+                "city",
+                "start_date",
+                "duration_days",
+                "preferences"
+              ]
+            }
+          ]
+        },
+        "id": "9bda6b35-3426-4dcc-82c8-4adf93a3918c",
+        "user": "我一直吃素。这次去赣州，12月2日出发玩四天，跟两位朋友同行。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.55,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_stable_knowledge"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 9.48,
+      "choices": [
+        {
+          "intent": "direct",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "stable_knowledge",
+          "memory_updates": [
+            {
+              "field": "city",
+              "operation": "set",
+              "value": "赣州",
+              "replaces": "",
+              "source_quote": "这次去赣州",
+              "scope": "trip"
+            },
+            {
+              "field": "start_date",
+              "operation": "set",
+              "value": "12月2日",
+              "replaces": "",
+              "source_quote": "12月2日出发",
+              "scope": "trip"
+            },
+            {
+              "field": "duration_days",
+              "operation": "set",
+              "value": "四天",
+              "replaces": "",
+              "source_quote": "玩四天",
+              "scope": "trip"
+            },
+            {
+              "field": "party_size",
+              "operation": "set",
+              "value": "3",
+              "replaces": "",
+              "source_quote": "跟两位朋友同行",
+              "scope": "trip"
+            },
+            {
+              "field": "preferences",
+              "operation": "add",
+              "value": "吃素",
+              "replaces": "",
+              "source_quote": "我一直吃素",
+              "scope": "personal"
+            }
+          ],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "conditions_only",
+          "saved_intentions": []
+        }
+      ],
+      "calls": []
+    },
+    {
+      "case": "different-trip",
+      "turn": 2,
+      "user": "朋友说如果去福州会更好拍，他的话先不算我的决定。",
+      "session_id": "4e999831-6faa-44f2-b7a1-4fda9d56fed8",
+      "raw": {
+        "assistant": "你朋友说的有他的道理，不过两座城各有擅长的画面，先看你想拍什么再决定值不值得改。\n\n福州的优势在于“旧建筑+闽江水系”的组合：三坊七巷的白墙黛瓦、马鞍墙和里坊格局很完整，拍人文和建筑层次的选择多；上下杭沿河的老商埠、烟台山的近代洋楼群，再加闽江夜景，题材跨度大，也确实更容易出“成套”的照片。\n\n赣州不差，只是风格不同：宋代的古城墙沿章江、贡江延展，建春门的浮桥是全国少见的还在使用的浮桥，郁孤台一带的历史街区也比较上镜。适合喜欢古意和市井感的镜头；但整体景点的规模和知名度不如福州，出片的上限可能低一点。\n\n如果这趟以拍照为主要目的，福州的题材确实更丰富；如果更在意轻松、不被打卡人群推着走，赣州也有它的味道。另外你们12月初出发，两地天气都比较阴冷，福州靠海、江景的开阔感会占些便宜。你先不定，等想清楚更想要“题材多”还是“更清静”，再去跟朋友商量也来得及。",
+        "companion_result": {
+          "visual_subjects": [
+            {
+              "subject": "三坊七巷",
+              "kind": "architecture"
+            },
+            {
+              "subject": "建春门浮桥",
+              "kind": "attraction"
+            },
+            {
+              "subject": "宋代古城墙",
+              "kind": "architecture"
+            }
+          ],
+          "analysis_summary": "用户在比较赣州与福州的出片程度，尚未改变目的地，只需给出中性参考意见。",
+          "response_text": "你朋友说的有他的道理，不过两座城各有擅长的画面，先看你想拍什么再决定值不值得改。\n\n福州的优势在于“旧建筑+闽江水系”的组合：三坊七巷的白墙黛瓦、马鞍墙和里坊格局很完整，拍人文和建筑层次的选择多；上下杭沿河的老商埠、烟台山的近代洋楼群，再加闽江夜景，题材跨度大，也确实更容易出“成套”的照片。\n\n赣州不差，只是风格不同：宋代的古城墙沿章江、贡江延展，建春门的浮桥是全国少见的还在使用的浮桥，郁孤台一带的历史街区也比较上镜。适合喜欢古意和市井感的镜头；但整体景点的规模和知名度不如福州，出片的上限可能低一点。\n\n如果这趟以拍照为主要目的，福州的题材确实更丰富；如果更在意轻松、不被打卡人群推着走，赣州也有它的味道。另外你们12月初出发，两地天气都比较阴冷，福州靠海、江景的开阔感会占些便宜。你先不定，等想清楚更想要“题材多”还是“更清静”，再去跟朋友商量也来得及。",
+          "goal_type": "travel_chat",
+          "status": "completed",
+          "suggestions": [
+            {
+              "place_ref": null,
+              "suggestion_id": "suggestion_43cc47dbe0245a0ebab0f8f6502fc3f1",
+              "suggestion_type": "strategy",
+              "title": "以拍照为主可考虑改去福州",
+              "summary": "三坊七巷、上下杭、烟台山加闽江夜景，建筑与水景题材更成套。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "以拍照为主可考虑改去福州"
+                }
+              ],
+              "destination": "赣州",
+              "reasons": [
+                "题材跨度大，人文建筑和夜景都有",
+                "朋友提议但最终仍由你决定"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-22T14:51:47.659524Z",
+              "conversation_turn_id": "106248cd-e199-472a-8bd5-737e5f5cb46c",
+              "status": "suggested"
+            },
+            {
+              "place_ref": null,
+              "suggestion_id": "suggestion_42eec2b69c1f5d02bb5bcf3cd1d049f5",
+              "suggestion_type": "strategy",
+              "title": "赣州主打清静古意",
+              "summary": "宋代古城墙、建春门浮桥、郁孤台历史街区，画面安静、游客压力较小。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "赣州主打清静古意"
+                }
+              ],
+              "destination": "赣州",
+              "reasons": [
+                "浮桥等景观少见且独特",
+                "适合喜欢古意和市井感的镜头"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-22T14:51:47.659524Z",
+              "conversation_turn_id": "106248cd-e199-472a-8bd5-737e5f5cb46c",
+              "status": "suggested"
+            }
+          ],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": {
+            "options": [
+              "赣州",
+              "福州"
+            ],
+            "dimensions": [
+              "拍摄题材丰富度",
+              "建筑特色",
+              "水景/夜景",
+              "游客压力",
+              "12月天气影响"
+            ],
+            "summary": "福州题材更丰富：三坊七巷古建、上下杭沿河老街、烟台山洋楼群加闽江夜景，出片上限更高。赣州胜在清静：宋代城墙、建春门浮桥、郁孤台街区更有古意和市井感，但景点规模与知名度较低。12月初两地天气都偏阴冷，福州江景开阔感略占优。若以拍照为主选福州，想轻松清静则赣州也有独特味道。"
+          },
+          "explanation": null,
+          "information_need": {
+            "knowledge_decision": "general_knowledge",
+            "knowledge_strategy": "selective",
+            "knowledge_reasons": [
+              "stable_model_knowledge_no_retrieval"
+            ],
+            "source_required": false,
+            "optional_rag": false,
+            "knowledge_required": false,
+            "general_knowledge_allowed": true,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": "赣州",
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "unverified_proposal",
+          "grounding_limitations": [
+            "model_general_knowledge_unverified"
+          ],
+          "claims": [],
+          "claim_validation_issues": [
+            "output_unverified_crowding"
+          ],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        },
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": "赣州",
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "city": {
+                "value": "赣州",
+                "source_quote": "这次去赣州",
+                "message_id": "9bda6b35-3426-4dcc-82c8-4adf93a3918c",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              "start_date": {
+                "value": "2026-12-02",
+                "source_quote": "12月2日出发",
+                "message_id": "9bda6b35-3426-4dcc-82c8-4adf93a3918c",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              "duration_days": {
+                "value": 4,
+                "source_quote": "玩四天",
+                "message_id": "9bda6b35-3426-4dcc-82c8-4adf93a3918c",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            },
+            "preferences": [
+              {
+                "value": "吃素",
+                "source_quote": "我一直吃素",
+                "message_id": "9bda6b35-3426-4dcc-82c8-4adf93a3918c",
+                "scope": "personal",
+                "scope_version": 2
+              }
+            ],
+            "requirements": [],
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "106248cd-e199-472a-8bd5-737e5f5cb46c",
+          "answer_status": "complete",
+          "answer_attempts": 1,
+          "duration_ms": 21672,
+          "selection": {
+            "intent": "direct",
+            "capabilities": [],
+            "reason_code": "stable_knowledge",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 68
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 1580,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 1508
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 1580
+            },
+            {
+              "stage": "companion",
+              "status": "running",
+              "elapsed_ms": 1650
+            },
+            {
+              "stage": "answer",
+              "status": "running",
+              "elapsed_ms": 1707
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 21641,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 19934
+            },
+            {
+              "stage": "answer",
+              "status": "completed",
+              "elapsed_ms": 21641
+            },
+            {
+              "stage": "companion",
+              "status": "completed",
+              "elapsed_ms": 21671
+            }
+          ]
+        },
+        "id": "106248cd-e199-472a-8bd5-737e5f5cb46c",
+        "user": "朋友说如果去福州会更好拍，他的话先不算我的决定。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.55,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_stable_knowledge"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 21.77,
+      "choices": [
+        {
+          "intent": "direct",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "stable_knowledge",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": []
+        }
+      ],
+      "calls": []
+    },
+    {
+      "case": "different-trip",
+      "turn": 3,
+      "user": "把这次目的地先取消，日期也待定，四天暂时保留。",
+      "session_id": "4e999831-6faa-44f2-b7a1-4fda9d56fed8",
+      "raw": {
+        "assistant": "已更新这次聊天的条件：出发日期已清除；目的地已清除。",
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "c32411fb-e138-40b7-ad29-ff1ca20bed51",
+            "slots": {
+              "duration_days": {
+                "value": 4,
+                "source_quote": "玩四天",
+                "message_id": "9bda6b35-3426-4dcc-82c8-4adf93a3918c",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            },
+            "preferences": [
+              {
+                "value": "吃素",
+                "source_quote": "我一直吃素",
+                "message_id": "9bda6b35-3426-4dcc-82c8-4adf93a3918c",
+                "scope": "personal",
+                "scope_version": 2
+              }
+            ],
+            "requirements": [],
+            "withdrawn": {
+              "start_date": {
+                "source_quote": "日期也待定",
+                "message_id": "c32411fb-e138-40b7-ad29-ff1ca20bed51",
+                "state": "unknown"
+              },
+              "city": {
+                "source_quote": "把这次目的地先取消",
+                "message_id": "c32411fb-e138-40b7-ad29-ff1ca20bed51",
+                "state": "unknown"
+              }
+            },
+            "detached_trip": true
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "c32411fb-e138-40b7-ad29-ff1ca20bed51",
+          "answer_status": "complete",
+          "answer_attempts": 0,
+          "duration_ms": 4192,
+          "selection": {
+            "intent": "direct",
+            "capabilities": [],
+            "reason_code": "stable_knowledge",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 46
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 4192,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 4141
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 4192
+            },
+            {
+              "stage": "context",
+              "status": "completed",
+              "elapsed_ms": 4192,
+              "fields": [
+                "start_date",
+                "city"
+              ]
+            }
+          ]
+        },
+        "id": "c32411fb-e138-40b7-ad29-ff1ca20bed51",
+        "user": "把这次目的地先取消，日期也待定，四天暂时保留。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.96,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_stable_knowledge"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 4.291,
+      "choices": [
+        {
+          "intent": "direct",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "stable_knowledge",
+          "memory_updates": [
+            {
+              "field": "city",
+              "operation": "clear",
+              "value": "",
+              "replaces": "",
+              "source_quote": "把这次目的地先取消",
+              "scope": "personal"
+            },
+            {
+              "field": "start_date",
+              "operation": "clear",
+              "value": "",
+              "replaces": "",
+              "source_quote": "日期也待定",
+              "scope": "personal"
+            }
+          ],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "conditions_only",
+          "saved_intentions": []
+        }
+      ],
+      "calls": []
+    },
+    {
+      "case": "shantou-family",
+      "turn": 1,
+      "user": "我和爸爸去汕头，11月18日出发待三天。这趟尽量少走路，爸爸每次连续步行不能超过15分钟，我不吃牛肉，每顿每人最多70元。先只聊选择。",
+      "session_id": "526dc5f2-a1fe-4a2b-9db5-b25eb292bc1d",
+      "raw": {
+        "assistant": "先只聊方向。\n\n按这些条件，汕头比较适合你们的活动形态大致是三种：\n\n一是小公园片区一带的骑楼老城。中山纪念亭、百货大楼周边路面平、范围小，适合拆成几个短段逛，每段控制在十几分钟内，坐在骑楼下或店里歇脚再走下一段。代价是周边停车和打车上下客位置有限，建议让车停在近处再走过去。\n\n二是海滨路和石炮台公园一线。海边步道平坦，走累了随时有座位，观海长廊可以只走一小截就返回，对单段步行限制最友好。\n\n三是吃的选择上，不吃牛肉意味着牛肉火锅这条主线可以直接跳过，问题不大——汕头的蚝烙、粿条汤、砂锅粥、肠粉、猪杂汤、卤鹅、甜品豆花都用得上你们的人均70元预算，大多是坐下来点单的堂食形态，不需要边走边吃。唯一要留意的是卤鹅和粿汁这类，点单时确认一下浇头，避免默认搭配里带了牛肉丸或牛腩。\n\n总体我建议以小公园老城+海滨线为主骨架，吃喝都选堂食店，把每段步行拆短；等你们想具体定哪几家店或哪一天放什么，再说下一步。",
+        "companion_result": {
+          "visual_subjects": [],
+          "analysis_summary": "围绕少步行、单段步行≤15分钟、不吃牛肉、人均70元以内，先给汕头可选方向而非排行程。",
+          "response_text": "先只聊方向。\n\n按这些条件，汕头比较适合你们的活动形态大致是三种：\n\n一是小公园片区一带的骑楼老城。中山纪念亭、百货大楼周边路面平、范围小，适合拆成几个短段逛，每段控制在十几分钟内，坐在骑楼下或店里歇脚再走下一段。代价是周边停车和打车上下客位置有限，建议让车停在近处再走过去。\n\n二是海滨路和石炮台公园一线。海边步道平坦，走累了随时有座位，观海长廊可以只走一小截就返回，对单段步行限制最友好。\n\n三是吃的选择上，不吃牛肉意味着牛肉火锅这条主线可以直接跳过，问题不大——汕头的蚝烙、粿条汤、砂锅粥、肠粉、猪杂汤、卤鹅、甜品豆花都用得上你们的人均70元预算，大多是坐下来点单的堂食形态，不需要边走边吃。唯一要留意的是卤鹅和粿汁这类，点单时确认一下浇头，避免默认搭配里带了牛肉丸或牛腩。\n\n总体我建议以小公园老城+海滨线为主骨架，吃喝都选堂食店，把每段步行拆短；等你们想具体定哪几家店或哪一天放什么，再说下一步。",
+          "goal_type": "travel_chat",
+          "status": "completed",
+          "suggestions": [
+            {
+              "place_ref": null,
+              "suggestion_id": "suggestion_d24d7d82924f56b7abc0230669d62cc2",
+              "suggestion_type": "place",
+              "title": "小公园骑楼老城短段游览",
+              "summary": "平路骑楼街区，适合拆成15分钟内的短段步行，中途可坐下歇脚。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "小公园骑楼老城短段游览"
+                }
+              ],
+              "destination": "汕头",
+              "reasons": [
+                "路面平、范围紧凑，符合爸爸单段步行限制",
+                "堂食小吃密集，吃喝不额外走路"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-22T14:51:56.588065Z",
+              "conversation_turn_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+              "status": "suggested"
+            },
+            {
+              "place_ref": null,
+              "suggestion_id": "suggestion_c8deb65b3af4516f808ddb23d5fd702e",
+              "suggestion_type": "place",
+              "title": "海滨路观海长廊与石炮台公园",
+              "summary": "平坦海滨步道，随时可坐可返回，对步行限制最友好。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "海滨路观海长廊与石炮台公园"
+                }
+              ],
+              "destination": "汕头",
+              "reasons": [
+                "步道平坦有座椅，可任意缩短",
+                "与老城同在城区，便于拆分安排"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-22T14:51:56.588065Z",
+              "conversation_turn_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+              "status": "suggested"
+            },
+            {
+              "place_ref": null,
+              "suggestion_id": "suggestion_8b719a36610c5ab681606b1cc3c2b790",
+              "suggestion_type": "strategy",
+              "title": "跳过牛肉火锅主线，选蚝烙、粿条汤、砂锅粥、卤鹅等堂食",
+              "summary": "不吃牛肉直接排除牛肉火锅，选坐下点单的堂食形式。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "跳过牛肉火锅主线，选蚝烙、粿条汤、砂锅粥、卤鹅等堂食"
+                }
+              ],
+              "destination": "汕头",
+              "reasons": [
+                "堂食减少走动",
+                "点卤鹅、粿汁时确认浇头不含牛肉丸或牛腩"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-22T14:51:56.588065Z",
+              "conversation_turn_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+              "status": "suggested"
+            }
+          ],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_decision": "general_knowledge",
+            "knowledge_strategy": "selective",
+            "knowledge_reasons": [
+              "stable_model_knowledge_no_retrieval"
+            ],
+            "source_required": false,
+            "optional_rag": false,
+            "knowledge_required": false,
+            "general_knowledge_allowed": true,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": "汕头",
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "unverified_proposal",
+          "grounding_limitations": [
+            "model_general_knowledge_unverified"
+          ],
+          "claims": [],
+          "claim_validation_issues": [
+            "output_unverified_price",
+            "output_unverified_travel_measurement"
+          ],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        },
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [
+            {
+              "id": "req_4f3ffc00d79c5a04bfc5bbe71fc1f2e3",
+              "text": "尽量少步行",
+              "key": "walking_preference",
+              "value": "minimal",
+              "source": {
+                "kind": "user_explicit",
+                "ref": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_7aed0ef4c0655e7b95d439e0d2ba7e0c",
+              "text": "爸爸每次连续步行不能超过15分钟",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "hard",
+              "status": "active",
+              "supersedes": []
+            }
+          ],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "start_date": {
+                "value": "2026-11-18",
+                "source_quote": "11月18日出发",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              "duration_days": {
+                "value": 3,
+                "source_quote": "待三天",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            },
+            "preferences": [
+              {
+                "value": "不吃牛肉",
+                "source_quote": "我不吃牛肉",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "personal",
+                "scope_version": 2
+              }
+            ],
+            "requirements": [
+              {
+                "value": "尽量少走路",
+                "source_quote": "这趟尽量少走路",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              {
+                "value": "爸爸每次连续步行不能超过15分钟",
+                "source_quote": "爸爸每次连续步行不能超过15分钟",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              {
+                "value": "每顿每人最多70元",
+                "source_quote": "每顿每人最多70元",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            ],
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+          "answer_status": "complete",
+          "answer_attempts": 2,
+          "duration_ms": 40044,
+          "selection": {
+            "intent": "direct",
+            "capabilities": [],
+            "reason_code": "stable_knowledge",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 177
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 10835,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 10655
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 10835
+            },
+            {
+              "stage": "context",
+              "status": "completed",
+              "elapsed_ms": 10836,
+              "fields": [
+                "start_date",
+                "duration_days",
+                "requirements",
+                "preferences"
+              ]
+            },
+            {
+              "stage": "companion",
+              "status": "running",
+              "elapsed_ms": 10932
+            },
+            {
+              "stage": "answer",
+              "status": "running",
+              "elapsed_ms": 11027
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 33311,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 22284
+            },
+            {
+              "stage": "answer",
+              "status": "completed",
+              "elapsed_ms": 33311
+            },
+            {
+              "stage": "answer_validation",
+              "status": "repair_requested",
+              "elapsed_ms": 33312,
+              "codes": [
+                "output_unverified_travel_measurement"
+              ]
+            },
+            {
+              "stage": "answer",
+              "status": "failed",
+              "elapsed_ms": 33312,
+              "code": "unverified_advice",
+              "category": "contract_failure",
+              "exception_chain": [
+                "AdviceContractError"
+              ],
+              "http_status": null,
+              "finish_reason": null,
+              "validation": []
+            },
+            {
+              "stage": "answer",
+              "status": "running",
+              "elapsed_ms": 33312
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 40036,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 6724
+            },
+            {
+              "stage": "answer",
+              "status": "completed",
+              "elapsed_ms": 40036
+            },
+            {
+              "stage": "companion",
+              "status": "completed",
+              "elapsed_ms": 40044
+            }
+          ]
+        },
+        "id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+        "user": "我和爸爸去汕头，11月18日出发待三天。这趟尽量少走路，爸爸每次连续步行不能超过15分钟，我不吃牛肉，每顿每人最多70元。先只聊选择。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.55,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_stable_knowledge"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 40.214,
+      "choices": [
+        {
+          "intent": "direct",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "stable_knowledge",
+          "memory_updates": [
+            {
+              "field": "party_size",
+              "operation": "set",
+              "value": "2",
+              "replaces": "",
+              "source_quote": "我和爸爸去汕头",
+              "scope": "trip"
+            },
+            {
+              "field": "requirements",
+              "operation": "add",
+              "value": "尽量少走路",
+              "replaces": "",
+              "source_quote": "这趟尽量少走路",
+              "scope": "trip"
+            },
+            {
+              "field": "requirements",
+              "operation": "add",
+              "value": "爸爸每次连续步行不能超过15分钟",
+              "replaces": "",
+              "source_quote": "爸爸每次连续步行不能超过15分钟",
+              "scope": "trip"
+            },
+            {
+              "field": "preferences",
+              "operation": "add",
+              "value": "不吃牛肉",
+              "replaces": "",
+              "source_quote": "我不吃牛肉",
+              "scope": "personal"
+            },
+            {
+              "field": "requirements",
+              "operation": "add",
+              "value": "每顿每人最多70元",
+              "replaces": "",
+              "source_quote": "每顿每人最多70元",
+              "scope": "trip"
+            }
+          ],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": []
+        }
+      ],
+      "calls": []
+    },
+    {
+      "case": "different-trip",
+      "turn": 4,
+      "user": "你现在能确认的条件还有哪些？",
+      "session_id": "4e999831-6faa-44f2-b7a1-4fda9d56fed8",
+      "raw": {
+        "assistant": "目前还确认有效的条件有两个：一是你们说过的玩四天，时长还保留着；二是你的个人偏好——一直吃素，这个我会继续记着，之后推荐餐厅或当地美食时会先考虑素食是否好找。\n\n之前提过的目的地和出发日期都已经按你的要求取消了，现在处于待定状态，我不会擅自从旧记录里恢复。也就是说，除了“四天、吃素”这两点，其他都还是空白，等你定了想去的城市再继续就行。",
+        "companion_result": {
+          "visual_subjects": [],
+          "analysis_summary": "当前有效条件只剩四天时长和吃素偏好；目的地与日期均已撤销。",
+          "response_text": "目前还确认有效的条件有两个：一是你们说过的玩四天，时长还保留着；二是你的个人偏好——一直吃素，这个我会继续记着，之后推荐餐厅或当地美食时会先考虑素食是否好找。\n\n之前提过的目的地和出发日期都已经按你的要求取消了，现在处于待定状态，我不会擅自从旧记录里恢复。也就是说，除了“四天、吃素”这两点，其他都还是空白，等你定了想去的城市再继续就行。",
+          "goal_type": "travel_chat",
+          "status": "completed",
+          "suggestions": [
+            {
+              "place_ref": null,
+              "suggestion_id": "suggestion_809a61451bed53d9a4d25f626947af76",
+              "suggestion_type": "strategy",
+              "title": "保留四天与吃素偏好",
+              "summary": "四天时长和素食偏好作为后续推荐的有效条件继续保留，目的地和日期待用户重新确定。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "保留四天与吃素偏好"
+                }
+              ],
+              "destination": null,
+              "reasons": [
+                "用户明确要求保留四天",
+                "吃素是持续有效的个人偏好"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-22T14:52:06.047266Z",
+              "conversation_turn_id": "4b0b41d5-ac3f-4327-a6f8-c77b4621d138",
+              "status": "suggested"
+            }
+          ],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_decision": "general_knowledge",
+            "knowledge_strategy": "selective",
+            "knowledge_reasons": [
+              "stable_model_knowledge_no_retrieval"
+            ],
+            "source_required": false,
+            "optional_rag": false,
+            "knowledge_required": false,
+            "general_knowledge_allowed": true,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": null,
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "unverified_proposal",
+          "grounding_limitations": [
+            "model_general_knowledge_unverified"
+          ],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        },
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "c32411fb-e138-40b7-ad29-ff1ca20bed51",
+            "slots": {
+              "duration_days": {
+                "value": 4,
+                "source_quote": "玩四天",
+                "message_id": "9bda6b35-3426-4dcc-82c8-4adf93a3918c",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            },
+            "preferences": [
+              {
+                "value": "吃素",
+                "source_quote": "我一直吃素",
+                "message_id": "9bda6b35-3426-4dcc-82c8-4adf93a3918c",
+                "scope": "personal",
+                "scope_version": 2
+              }
+            ],
+            "requirements": [],
+            "withdrawn": {
+              "start_date": {
+                "source_quote": "日期也待定",
+                "message_id": "c32411fb-e138-40b7-ad29-ff1ca20bed51",
+                "state": "unknown"
+              },
+              "city": {
+                "source_quote": "把这次目的地先取消",
+                "message_id": "c32411fb-e138-40b7-ad29-ff1ca20bed51",
+                "state": "unknown"
+              }
+            },
+            "detached_trip": true
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "4b0b41d5-ac3f-4327-a6f8-c77b4621d138",
+          "answer_status": "complete",
+          "answer_attempts": 1,
+          "duration_ms": 13988,
+          "selection": {
+            "intent": "direct",
+            "capabilities": [],
+            "reason_code": "stable_knowledge",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 47
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 5288,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 5237
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 5288
+            },
+            {
+              "stage": "companion",
+              "status": "running",
+              "elapsed_ms": 5367
+            },
+            {
+              "stage": "answer",
+              "status": "running",
+              "elapsed_ms": 5424
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 13977,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 8552
+            },
+            {
+              "stage": "answer",
+              "status": "completed",
+              "elapsed_ms": 13977
+            },
+            {
+              "stage": "companion",
+              "status": "completed",
+              "elapsed_ms": 13988
+            }
+          ]
+        },
+        "id": "4b0b41d5-ac3f-4327-a6f8-c77b4621d138",
+        "user": "你现在能确认的条件还有哪些？",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.93,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_stable_knowledge"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 14.135,
+      "choices": [
+        {
+          "intent": "direct",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "stable_knowledge",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": []
+        }
+      ],
+      "calls": []
+    },
+    {
+      "case": "different-trip",
+      "turn": 5,
+      "user": "另一趟旅行，我自己去镇江，只先了解城市，不创建安排。",
+      "session_id": "4e999831-6faa-44f2-b7a1-4fda9d56fed8",
+      "raw": {
+        "assistant": "镇江是个适合慢慢走的小城，最出名的是“三山”——金山、北固山、焦山，都在市区沿江一带。金山以金山寺和“水漫金山”的传说著称，建筑依山而建；北固山与三国故事相关，甘露寺就在山上；焦山要坐短途渡船上去，碑刻和古树多，节奏最舒缓。三处选一两个细看，比都打卡更舒服。\n\n市区里西津渡古街值得留半天，是老码头渡口留下来的街区，青石坡道和元代的过街石塔保存得不错，街道两旁有小吃和小店，慢走加吃点东西正好。镇江博物馆也在附近，馆藏以西周青铜器和历代瓷器为主。\n\n吃的方面，镇江以“三怪”闻名——香醋、肴肉、锅盖面，不过肴肉是水晶蹄髈，你不吃素的话就不涉及；锅盖面一般以荤浇头为主，素面很多店有但不是默认选项，点之前问一下汤底和浇头是否含荤会更稳妥。恒顺香醋博物馆在市里，可以顺便了解醋的酿法。金山湖边傍晚散步也不错，看得到江景。\n\n周边稍远的是茅山，道教名山，但从市区过去要专门安排，第一次去可以先不排。",
+        "companion_result": {
+          "visual_subjects": [
+            {
+              "subject": "金山寺",
+              "kind": "architecture"
+            },
+            {
+              "subject": "西津渡古街",
+              "kind": "attraction"
+            },
+            {
+              "subject": "锅盖面",
+              "kind": "food"
+            }
+          ],
+          "analysis_summary": "用户单独去镇江、只了解城市。按城市概况介绍主要景点，区分市区与周边，并顺带提及素食相关的注意点，不建行程。",
+          "response_text": "镇江是个适合慢慢走的小城，最出名的是“三山”——金山、北固山、焦山，都在市区沿江一带。金山以金山寺和“水漫金山”的传说著称，建筑依山而建；北固山与三国故事相关，甘露寺就在山上；焦山要坐短途渡船上去，碑刻和古树多，节奏最舒缓。三处选一两个细看，比都打卡更舒服。\n\n市区里西津渡古街值得留半天，是老码头渡口留下来的街区，青石坡道和元代的过街石塔保存得不错，街道两旁有小吃和小店，慢走加吃点东西正好。镇江博物馆也在附近，馆藏以西周青铜器和历代瓷器为主。\n\n吃的方面，镇江以“三怪”闻名——香醋、肴肉、锅盖面，不过肴肉是水晶蹄髈，你不吃素的话就不涉及；锅盖面一般以荤浇头为主，素面很多店有但不是默认选项，点之前问一下汤底和浇头是否含荤会更稳妥。恒顺香醋博物馆在市里，可以顺便了解醋的酿法。金山湖边傍晚散步也不错，看得到江景。\n\n周边稍远的是茅山，道教名山，但从市区过去要专门安排，第一次去可以先不排。",
+          "goal_type": "travel_chat",
+          "status": "completed",
+          "suggestions": [
+            {
+              "place_ref": null,
+              "suggestion_id": "suggestion_7581251c12195138b668f66bef4bce10",
+              "suggestion_type": "place",
+              "title": "金山风景区",
+              "summary": "金山寺依山而建，与“水漫金山”传说相关，是镇江最知名的一处。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "金山风景区"
+                }
+              ],
+              "destination": "镇江",
+              "reasons": [
+                "市区沿江，标识清晰，适合作为首站了解城市传说与文化"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-22T14:52:32.988638Z",
+              "conversation_turn_id": "a17711fb-6685-48e9-a9b8-53b813ab3af4",
+              "status": "suggested"
+            },
+            {
+              "place_ref": null,
+              "suggestion_id": "suggestion_e43b6fbb31365db6aacc30890a8cf05a",
+              "suggestion_type": "place",
+              "title": "西津渡古街",
+              "summary": "老码头渡口街区，有青石坡道和元代过街石塔，适合慢走加吃点东西。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "西津渡古街"
+                }
+              ],
+              "destination": "镇江",
+              "reasons": [
+                "历史街区氛围完整，与镇江博物馆相邻，适合留半天"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-22T14:52:32.988638Z",
+              "conversation_turn_id": "a17711fb-6685-48e9-a9b8-53b813ab3af4",
+              "status": "suggested"
+            },
+            {
+              "place_ref": null,
+              "suggestion_id": "suggestion_2b78301e72655249b51db40a9989d144",
+              "suggestion_type": "place",
+              "title": "焦山",
+              "summary": "需乘短途渡船登岛，以碑刻和古树见长，节奏舒缓。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "焦山"
+                }
+              ],
+              "destination": "镇江",
+              "reasons": [
+                "三山中体验最特别的一处，江心岛屿环境清幽"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-22T14:52:32.988638Z",
+              "conversation_turn_id": "a17711fb-6685-48e9-a9b8-53b813ab3af4",
+              "status": "suggested"
+            },
+            {
+              "place_ref": null,
+              "suggestion_id": "suggestion_8e7d39b4a68b57729e87dbc1f0c170bb",
+              "suggestion_type": "experience",
+              "title": "锅盖面素面确认",
+              "summary": "镇江锅盖面多以荤浇头为主，素面需点单前确认汤底和浇头是否含荤。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "锅盖面素面确认"
+                }
+              ],
+              "destination": "镇江",
+              "reasons": [
+                "用户吃素，避免默认面食含猪油或荤汤"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-22T14:52:32.988638Z",
+              "conversation_turn_id": "a17711fb-6685-48e9-a9b8-53b813ab3af4",
+              "status": "suggested"
+            }
+          ],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_decision": "general_knowledge",
+            "knowledge_strategy": "selective",
+            "knowledge_reasons": [
+              "stable_model_knowledge_no_retrieval"
+            ],
+            "source_required": false,
+            "optional_rag": false,
+            "knowledge_required": false,
+            "general_knowledge_allowed": true,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": "镇江",
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "unverified_proposal",
+          "grounding_limitations": [
+            "model_general_knowledge_unverified"
+          ],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        },
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": "镇江",
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "a17711fb-6685-48e9-a9b8-53b813ab3af4",
+            "slots": {
+              "city": {
+                "value": "镇江",
+                "source_quote": "我自己去镇江",
+                "message_id": "a17711fb-6685-48e9-a9b8-53b813ab3af4",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            },
+            "preferences": [
+              {
+                "value": "吃素",
+                "source_quote": "我一直吃素",
+                "message_id": "9bda6b35-3426-4dcc-82c8-4adf93a3918c",
+                "scope": "personal",
+                "scope_version": 2
+              }
+            ],
+            "requirements": [],
+            "detached_trip": true,
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "a17711fb-6685-48e9-a9b8-53b813ab3af4",
+          "answer_status": "complete",
+          "answer_attempts": 1,
+          "duration_ms": 26752,
+          "selection": {
+            "intent": "direct",
+            "capabilities": [],
+            "reason_code": "stable_knowledge",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 98
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 6573,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 6469
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 6573
+            },
+            {
+              "stage": "context",
+              "status": "completed",
+              "elapsed_ms": 6574,
+              "fields": [
+                "city"
+              ]
+            },
+            {
+              "stage": "companion",
+              "status": "running",
+              "elapsed_ms": 6644
+            },
+            {
+              "stage": "answer",
+              "status": "running",
+              "elapsed_ms": 6698
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 26738,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 20040
+            },
+            {
+              "stage": "answer",
+              "status": "completed",
+              "elapsed_ms": 26738
+            },
+            {
+              "stage": "companion",
+              "status": "completed",
+              "elapsed_ms": 26751
+            }
+          ]
+        },
+        "id": "a17711fb-6685-48e9-a9b8-53b813ab3af4",
+        "user": "另一趟旅行，我自己去镇江，只先了解城市，不创建安排。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.55,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_stable_knowledge"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 26.888,
+      "choices": [
+        {
+          "intent": "direct",
+          "capabilities": [],
+          "city": "镇江",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "stable_knowledge",
+          "memory_updates": [
+            {
+              "field": "city",
+              "operation": "set",
+              "value": "镇江",
+              "replaces": "",
+              "source_quote": "我自己去镇江",
+              "scope": "trip"
+            }
+          ],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": []
+        }
+      ],
+      "calls": []
+    },
+    {
+      "case": "compound-address",
+      "turn": 1,
+      "user": "查一下扬州何园开车到个园的路线，另外给我瘦西湖的地址。一个查不到也请继续回答另一个。",
+      "session_id": "aa052114-72bc-4545-b5a9-eed91e163ddf",
+      "raw": {
+        "assistant": "起点或终点有重名、或未找到准确匹配，请确认具体地点后再查路线。\n\n高德返回的候选地点：\n何园：徐凝门大街66号\n个园：盐阜东路10号\n个园：邗江区",
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": "扬州",
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "city": {
+                "value": "扬州",
+                "source_quote": "扬州",
+                "message_id": "d6acfb34-3354-4228-96ca-9a2d21beffc8",
+                "scope": "personal",
+                "scope_version": 2
+              }
+            },
+            "preferences": [],
+            "requirements": [],
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [
+          {
+            "place": {
+              "place_id": "17d85e21-585d-5b9e-a6f8-3fffc4b681fe",
+              "name": "何园",
+              "aliases": [],
+              "city": "扬州市",
+              "category": "attraction",
+              "provider_type": "风景名胜;风景名胜;国家级景点",
+              "address": "徐凝门大街66号",
+              "rating": 4.8,
+              "reference_cost_yuan": null,
+              "longitude": 119.448798,
+              "latitude": 32.38563,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0202002FA",
+              "retrieved_at": "2026-10-22T14:52:36.606625+00:00",
+              "expires_at": "2026-10-22T15:52:36.606625+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0202002FA"
+              },
+              "images": [],
+              "opening_hours_reference": "1月至2月,12月 周一至周日 07:30-17:15 最晚进入16:45；3月至5月,9月至11月 周一至周日 07:30-17:30 最晚进入17:00；6月至8月 周一至周日 07:30-18:00 最晚进入17:30",
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            "role": "discussed",
+            "suggestion_ids": [],
+            "reason_kind": "retrieved_reference",
+            "detail_path": "/places/17d85e21-585d-5b9e-a6f8-3fffc4b681fe"
+          },
+          {
+            "place": {
+              "place_id": "3cc58a6f-0c5e-538a-8420-e71d20e39b7d",
+              "name": "个园",
+              "aliases": [],
+              "city": "扬州市",
+              "category": "attraction",
+              "provider_type": "风景名胜;风景名胜;国家级景点",
+              "address": "盐阜东路10号",
+              "rating": 4.8,
+              "reference_cost_yuan": null,
+              "longitude": 119.443696,
+              "latitude": 32.399141,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0202007R2",
+              "retrieved_at": "2026-10-22T14:52:36.571292+00:00",
+              "expires_at": "2026-10-22T15:52:36.571292+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0202007R2"
+              },
+              "images": [],
+              "opening_hours_reference": "周一至周日 07:15-17:45,19:00-22:00；白天游园门票及各类免费证件晚间不可使用，请白天游园的游客务必在18:00前出园",
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            "role": "discussed",
+            "suggestion_ids": [],
+            "reason_kind": "retrieved_reference",
+            "detail_path": "/places/3cc58a6f-0c5e-538a-8420-e71d20e39b7d"
+          },
+          {
+            "place": {
+              "place_id": "49c6e37f-5b82-5a23-a9e0-1fedfd9859db",
+              "name": "个园",
+              "aliases": [],
+              "city": "扬州市",
+              "category": "other",
+              "provider_type": "地名地址信息;热点地名;热点地名",
+              "address": "邗江区",
+              "rating": null,
+              "reference_cost_yuan": null,
+              "longitude": 119.444791,
+              "latitude": 32.401447,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0KU4APWM1",
+              "retrieved_at": "2026-10-22T14:52:36.634044+00:00",
+              "expires_at": "2026-10-22T15:52:36.634044+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0KU4APWM1"
+              },
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            "role": "discussed",
+            "suggestion_ids": [],
+            "reason_kind": "retrieved_reference",
+            "detail_path": "/places/49c6e37f-5b82-5a23-a9e0-1fedfd9859db"
+          }
+        ],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "d6acfb34-3354-4228-96ca-9a2d21beffc8",
+          "answer_status": "partial",
+          "answer_attempts": 0,
+          "duration_ms": 3676,
+          "selection": {
+            "intent": "route",
+            "capabilities": [
+              "poi",
+              "route"
+            ],
+            "reason_code": "route_requested",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 46
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 2982,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 2932
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 2982
+            },
+            {
+              "stage": "context",
+              "status": "completed",
+              "elapsed_ms": 2983,
+              "fields": [
+                "city"
+              ]
+            },
+            {
+              "stage": "poi",
+              "status": "running",
+              "elapsed_ms": 2983
+            },
+            {
+              "stage": "poi",
+              "status": "running",
+              "elapsed_ms": 2983
+            },
+            {
+              "stage": "poi",
+              "status": "completed",
+              "elapsed_ms": 3657
+            },
+            {
+              "stage": "poi",
+              "status": "completed",
+              "elapsed_ms": 3675
+            }
+          ]
+        },
+        "id": "d6acfb34-3354-4228-96ca-9a2d21beffc8",
+        "user": "查一下扬州何园开车到个园的路线，另外给我瘦西湖的地址。一个查不到也请继续回答另一个。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.55,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_route_requested"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 3.759,
+      "choices": [
+        {
+          "intent": "route",
+          "capabilities": [
+            "poi",
+            "route"
+          ],
+          "city": "扬州",
+          "query": "何园 开车到个园 路线；瘦西湖 地址",
+          "category": "attraction",
+          "names": [
+            "何园",
+            "个园",
+            "瘦西湖"
+          ],
+          "origin": "何园",
+          "destination": "个园",
+          "mode": "driving",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "route_requested",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": []
+        }
+      ],
+      "calls": [
+        {
+          "tool": "research_search",
+          "args": [],
+          "kwargs": {
+            "query": "何园",
+            "city": "扬州",
+            "near": null,
+            "limit": 5,
+            "category": "attraction"
+          },
+          "result": [
+            {
+              "place_id": "17d85e21-585d-5b9e-a6f8-3fffc4b681fe",
+              "name": "何园",
+              "aliases": [],
+              "city": "扬州市",
+              "category": "attraction",
+              "provider_type": "风景名胜;风景名胜;国家级景点",
+              "address": "徐凝门大街66号",
+              "rating": 4.8,
+              "reference_cost_yuan": null,
+              "longitude": 119.448798,
+              "latitude": 32.38563,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0202002FA",
+              "retrieved_at": "2026-10-22T14:52:36.606625+00:00",
+              "expires_at": "2026-10-22T15:52:36.606625+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0202002FA"
+              },
+              "images": [],
+              "opening_hours_reference": "1月至2月,12月 周一至周日 07:30-17:15 最晚进入16:45；3月至5月,9月至11月 周一至周日 07:30-17:30 最晚进入17:00；6月至8月 周一至周日 07:30-18:00 最晚进入17:30",
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            {
+              "place_id": "f31d0481-76a9-5dd3-b014-132940dac3bb",
+              "name": "何园(公交站)",
+              "aliases": [],
+              "city": "扬州市",
+              "category": "other",
+              "provider_type": "交通设施服务;公交车站;公交车站相关",
+              "address": "古城微巴1号线;古城微巴2号线",
+              "rating": null,
+              "reference_cost_yuan": null,
+              "longitude": 119.449508,
+              "latitude": 32.386177,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=BV10381975",
+              "retrieved_at": "2026-10-22T14:52:36.652830+00:00",
+              "expires_at": "2026-10-22T15:52:36.652830+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "BV10381975"
+              },
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            {
+              "place_id": "f77baae2-375d-5b6b-9c08-0590b404c8c1",
+              "name": "何园东门停车场",
+              "aliases": [],
+              "city": "扬州市",
+              "category": "other",
+              "provider_type": "交通设施服务;停车场;公共停车场",
+              "address": "徐凝门大街66号何园内(东北角)",
+              "rating": null,
+              "reference_cost_yuan": null,
+              "longitude": 119.449275,
+              "latitude": 32.386052,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0FFFDJV4M",
+              "retrieved_at": "2026-10-22T14:52:36.698346+00:00",
+              "expires_at": "2026-10-22T15:52:36.698346+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0FFFDJV4M"
+              },
+              "images": [],
+              "opening_hours_reference": "周一至周日 00:00-24:00",
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            {
+              "place_id": "fd406ce4-7239-5251-a984-7fe77061726e",
+              "name": "何园-近月亭",
+              "aliases": [],
+              "city": "扬州市",
+              "category": "attraction",
+              "provider_type": "风景名胜;风景名胜相关;旅游景点",
+              "address": "徐凝门大街66号何园内(东北角)",
+              "rating": 3.0,
+              "reference_cost_yuan": null,
+              "longitude": 119.449047,
+              "latitude": 32.386141,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0FFK4DZHA",
+              "retrieved_at": "2026-10-22T14:52:36.730914+00:00",
+              "expires_at": "2026-10-22T15:52:36.730914+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0FFK4DZHA"
+              },
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            {
+              "place_id": "d36e327f-2c7b-5c5b-a575-56ea469bcf5d",
+              "name": "何园票务中心",
+              "aliases": [],
+              "city": "扬州市",
+              "category": "other",
+              "provider_type": "生活服务;售票处;公园景点售票处",
+              "address": "徐凝门大街70号何园-购物中心",
+              "rating": null,
+              "reference_cost_yuan": null,
+              "longitude": 119.449472,
+              "latitude": 32.385958,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B020216CYW",
+              "retrieved_at": "2026-10-22T14:52:36.760713+00:00",
+              "expires_at": "2026-10-22T15:52:36.760713+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B020216CYW"
+              },
+              "images": [],
+              "opening_hours_reference": "周一至周日 07:00-17:30",
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            }
+          ],
+          "seconds": 0.692
+        },
+        {
+          "tool": "research_search",
+          "args": [],
+          "kwargs": {
+            "query": "个园",
+            "city": "扬州",
+            "near": null,
+            "limit": 5,
+            "category": "attraction"
+          },
+          "result": [
+            {
+              "place_id": "3cc58a6f-0c5e-538a-8420-e71d20e39b7d",
+              "name": "个园",
+              "aliases": [],
+              "city": "扬州市",
+              "category": "attraction",
+              "provider_type": "风景名胜;风景名胜;国家级景点",
+              "address": "盐阜东路10号",
+              "rating": 4.8,
+              "reference_cost_yuan": null,
+              "longitude": 119.443696,
+              "latitude": 32.399141,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0202007R2",
+              "retrieved_at": "2026-10-22T14:52:36.571292+00:00",
+              "expires_at": "2026-10-22T15:52:36.571292+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0202007R2"
+              },
+              "images": [],
+              "opening_hours_reference": "周一至周日 07:15-17:45,19:00-22:00；白天游园门票及各类免费证件晚间不可使用，请白天游园的游客务必在18:00前出园",
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            {
+              "place_id": "49c6e37f-5b82-5a23-a9e0-1fedfd9859db",
+              "name": "个园",
+              "aliases": [],
+              "city": "扬州市",
+              "category": "other",
+              "provider_type": "地名地址信息;热点地名;热点地名",
+              "address": "邗江区",
+              "rating": null,
+              "reference_cost_yuan": null,
+              "longitude": 119.444791,
+              "latitude": 32.401447,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0KU4APWM1",
+              "retrieved_at": "2026-10-22T14:52:36.634044+00:00",
+              "expires_at": "2026-10-22T15:52:36.634044+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0KU4APWM1"
+              },
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            {
+              "place_id": "a130c140-9128-5dff-a783-e9b295f31ecc",
+              "name": "个园北门停车场",
+              "aliases": [],
+              "city": "扬州市",
+              "category": "other",
+              "provider_type": "交通设施服务;停车场;公共停车场",
+              "address": "盐阜东路10号个园内(北侧)",
+              "rating": null,
+              "reference_cost_yuan": null,
+              "longitude": 119.443558,
+              "latitude": 32.400345,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B02020I72X",
+              "retrieved_at": "2026-10-22T14:52:36.681044+00:00",
+              "expires_at": "2026-10-22T15:52:36.681044+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B02020I72X"
+              },
+              "images": [],
+              "opening_hours_reference": "周一至周日 00:00-24:00",
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            {
+              "place_id": "764cf3eb-7d06-512b-a09e-c48b2139411d",
+              "name": "个园(公交站)",
+              "aliases": [],
+              "city": "扬州市",
+              "category": "other",
+              "provider_type": "交通设施服务;公交车站;公交车站相关",
+              "address": "27路;古城微巴1号线;游1路;游3路",
+              "rating": null,
+              "reference_cost_yuan": null,
+              "longitude": 119.445338,
+              "latitude": 32.400872,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=BV10140726",
+              "retrieved_at": "2026-10-22T14:52:36.712926+00:00",
+              "expires_at": "2026-10-22T15:52:36.712926+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "BV10140726"
+              },
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            },
+            {
+              "place_id": "98ac17f6-1ba1-5c47-a32e-aacd79fee023",
+              "name": "个园停车场(入口)",
+              "aliases": [],
+              "city": "扬州市",
+              "category": "other",
+              "provider_type": "交通设施服务;停车场;停车场入口",
+              "address": "盐阜东路10号个园内(北侧)个园北门停车场",
+              "rating": null,
+              "reference_cost_yuan": null,
+              "longitude": 119.443451,
+              "latitude": 32.400514,
+              "coordinate_system": "gcj02",
+              "source": "https://www.amap.com/search?id=B0FFGBCVF9",
+              "retrieved_at": "2026-10-22T14:52:36.744463+00:00",
+              "expires_at": "2026-10-22T15:52:36.744463+00:00",
+              "external_ref": {
+                "provider": "amap",
+                "namespace": "poi",
+                "provider_place_id": "B0FFGBCVF9"
+              },
+              "images": [],
+              "opening_hours_reference": null,
+              "provider_tags": [],
+              "missing_facts": [
+                "实时价格",
+                "当前营业状态",
+                "评论",
+                "酒店可用性"
+              ]
+            }
+          ],
+          "seconds": 0.674
+        }
+      ]
+    },
+    {
+      "case": "hypothetical",
+      "turn": 1,
+      "user": "假设在景德镇碰上下雨，室内博物馆和露天市集该怎么比较？不要查实时天气，也不要新建或修改安排。",
+      "session_id": "7e9afe9b-dabc-4725-9c39-b8a76b5818a0",
+      "raw": {
+        "assistant": "我目前只支持未来小时预报，不能核实当前实测天气、过去天气或气象预警。",
+        "companion_result": {
+          "visual_subjects": [],
+          "analysis_summary": "",
+          "response_text": "我目前只支持未来小时预报，不能核实当前实测天气、过去天气或气象预警。",
+          "goal_type": "travel_chat",
+          "status": "needs_information",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_decision": "live_fact_required",
+            "knowledge_strategy": "selective",
+            "knowledge_reasons": [
+              "dynamic_fact_requires_provider"
+            ],
+            "source_required": false,
+            "optional_rag": false,
+            "knowledge_required": false,
+            "general_knowledge_allowed": false,
+            "knowledge_types": [],
+            "live_fact_required": true,
+            "forecast_required": true,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [
+              "weather"
+            ],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [
+            {
+              "code": "live_fact_unavailable",
+              "message": "我目前只支持未来小时预报，不能核实当前实测天气、过去天气或气象预警。"
+            }
+          ],
+          "planning_handoff": null,
+          "conversation_destination": null,
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "live_verification_required",
+          "grounding_limitations": [],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": {
+            "requirements": [],
+            "place_result": null,
+            "location_label": "",
+            "timezone": null,
+            "message": "我目前只支持未来小时预报，不能核实当前实测天气、过去天气或气象预警。",
+            "clarification": false
+          },
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        },
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [
+            {
+              "id": "req_7b22220848de55cb9d303a42edec65d5",
+              "text": "也不要新建或修改安排",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "f0f4c571-9c7c-4c56-889a-fbd90c92aab0"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            }
+          ],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {},
+            "preferences": [],
+            "requirements": [],
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "f0f4c571-9c7c-4c56-889a-fbd90c92aab0",
+          "answer_status": "partial",
+          "answer_attempts": 0,
+          "duration_ms": 2510,
+          "selection": {
+            "intent": "direct",
+            "capabilities": [],
+            "reason_code": "stable_knowledge",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 49
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 2418,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 2365
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 2418
+            },
+            {
+              "stage": "companion",
+              "status": "running",
+              "elapsed_ms": 2489
+            },
+            {
+              "stage": "companion",
+              "status": "completed",
+              "elapsed_ms": 2509
+            }
+          ]
+        },
+        "id": "f0f4c571-9c7c-4c56-889a-fbd90c92aab0",
+        "user": "假设在景德镇碰上下雨，室内博物馆和露天市集该怎么比较？不要查实时天气，也不要新建或修改安排。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.94,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_stable_knowledge"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 2.586,
+      "choices": [
+        {
+          "intent": "direct",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "stable_knowledge",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": []
+        }
+      ],
+      "calls": []
+    },
+    {
+      "case": "shantou-family",
+      "turn": 2,
+      "user": "我更想看骑楼和居民日常，不喜欢挨个去网红打卡点。你会怎么挑地方？",
+      "session_id": "526dc5f2-a1fe-4a2b-9db5-b25eb292bc1d",
+      "raw": {
+        "assistant": "我会把小公园老城当\"驻点\"而不是路线来逛。\n\n主战场选小公园片区（中山纪念亭、安平路、升平路一带），这里骑楼最集中。具体走法是每次只走一段十几分钟的街，然后坐进骑楼下的茶店或老字号歇脚，再走下一段，这样爸爸的单段步行不会超。看居民日常主要靠时间点：清晨和傍晚是本地人买菜、吃粿条汤的时段，比白天专程赶某个点更真实，而且这两个时段你们可以只是坐着看。\n\n既然不喜欢挨个打卡，我会主动删掉几类：纯粹拍照的墙绘墙、需要排长队的网红甜品店、以及离老城远、只为一个场景专程跑一趟的地方。吃就留一间能坐下来、顺带看街景的老字号，比如安平路一带的蚝烙或粿汁店——点卤鹅、粿汁时记得确认浇头里没有牛肉丸或牛腩。\n\n老城之外如果想换换景，可以考虑留半天给石炮台公园和海滨路一线，步道平、有座位、随时能折返，属于备选，泡老城的话砍掉也没损失。",
+        "companion_result": {
+          "visual_subjects": [
+            {
+              "subject": "小公园",
+              "kind": "architecture"
+            },
+            {
+              "subject": "骑楼",
+              "kind": "architecture"
+            }
+          ],
+          "analysis_summary": "以骑楼和居民日常为主，把小公园老城当驻点慢逛，用清晨傍晚的市井时段替代逐点打卡，远点只作可砍的备选。",
+          "response_text": "我会把小公园老城当\"驻点\"而不是路线来逛。\n\n主战场选小公园片区（中山纪念亭、安平路、升平路一带），这里骑楼最集中。具体走法是每次只走一段十几分钟的街，然后坐进骑楼下的茶店或老字号歇脚，再走下一段，这样爸爸的单段步行不会超。看居民日常主要靠时间点：清晨和傍晚是本地人买菜、吃粿条汤的时段，比白天专程赶某个点更真实，而且这两个时段你们可以只是坐着看。\n\n既然不喜欢挨个打卡，我会主动删掉几类：纯粹拍照的墙绘墙、需要排长队的网红甜品店、以及离老城远、只为一个场景专程跑一趟的地方。吃就留一间能坐下来、顺带看街景的老字号，比如安平路一带的蚝烙或粿汁店——点卤鹅、粿汁时记得确认浇头里没有牛肉丸或牛腩。\n\n老城之外如果想换换景，可以考虑留半天给石炮台公园和海滨路一线，步道平、有座位、随时能折返，属于备选，泡老城的话砍掉也没损失。",
+          "goal_type": "travel_chat",
+          "status": "completed",
+          "suggestions": [
+            {
+              "place_ref": null,
+              "suggestion_id": "suggestion_3a2093f579f15124a9f8200afc607bf6",
+              "suggestion_type": "strategy",
+              "title": "删掉纯打卡点，只留可堂食看街的老店",
+              "summary": "跳过墙绘墙、排队网红店和单点远跑，留一间老字号坐下吃。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "删掉纯打卡点，只留可堂食看街的老店"
+                }
+              ],
+              "destination": "我更想看骑楼",
+              "reasons": [
+                "呼应不喜欢挨个打卡",
+                "堂食减少体力消耗"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-22T14:52:39.687352Z",
+              "conversation_turn_id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+              "status": "suggested"
+            },
+            {
+              "place_ref": null,
+              "suggestion_id": "suggestion_266ed7c68e685df0b97b38fbe35fbaaa",
+              "suggestion_type": "place",
+              "title": "石炮台公园与海滨路备选半天",
+              "summary": "步道平、有座位、可随时折返，可作老城之外的可选半天。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "石炮台公园与海滨路备选半天"
+                }
+              ],
+              "destination": "我更想看骑楼",
+              "reasons": [
+                "不增加步行负担",
+                "不感兴趣可直接砍掉"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-22T14:52:39.687352Z",
+              "conversation_turn_id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+              "status": "suggested"
+            }
+          ],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_decision": "general_knowledge",
+            "knowledge_strategy": "selective",
+            "knowledge_reasons": [
+              "stable_model_knowledge_no_retrieval"
+            ],
+            "source_required": false,
+            "optional_rag": false,
+            "knowledge_required": false,
+            "general_knowledge_allowed": true,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": "我更想看骑楼",
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "unverified_proposal",
+          "grounding_limitations": [
+            "model_general_knowledge_unverified"
+          ],
+          "claims": [],
+          "claim_validation_issues": [
+            "output_unverified_travel_measurement"
+          ],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        },
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [
+            {
+              "id": "req_4f3ffc00d79c5a04bfc5bbe71fc1f2e3",
+              "text": "尽量少步行",
+              "key": "walking_preference",
+              "value": "minimal",
+              "source": {
+                "kind": "user_explicit",
+                "ref": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_7aed0ef4c0655e7b95d439e0d2ba7e0c",
+              "text": "爸爸每次连续步行不能超过15分钟",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "hard",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_02b5eefc22ca5b5493660172a42e30ce",
+              "text": "不喜欢挨个去网红打卡点",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "d2fab386-3992-4157-844b-ef7c679eb34d"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            }
+          ],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "start_date": {
+                "value": "2026-11-18",
+                "source_quote": "11月18日出发",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              "duration_days": {
+                "value": 3,
+                "source_quote": "待三天",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            },
+            "preferences": [
+              {
+                "value": "不吃牛肉",
+                "source_quote": "我不吃牛肉",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "personal",
+                "scope_version": 2
+              },
+              {
+                "value": "想看骑楼和居民日常",
+                "source_quote": "我更想看骑楼和居民日常",
+                "message_id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+                "scope": "topic",
+                "scope_version": 2
+              },
+              {
+                "value": "不喜欢挨个去网红打卡点",
+                "source_quote": "不喜欢挨个去网红打卡点",
+                "message_id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+                "scope": "topic",
+                "scope_version": 2
+              }
+            ],
+            "requirements": [
+              {
+                "value": "尽量少走路",
+                "source_quote": "这趟尽量少走路",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              {
+                "value": "爸爸每次连续步行不能超过15分钟",
+                "source_quote": "爸爸每次连续步行不能超过15分钟",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              {
+                "value": "每顿每人最多70元",
+                "source_quote": "每顿每人最多70元",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            ],
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [],
+        "read_tools": {
+          "visuals": {
+            "status": "available",
+            "images": [
+              {
+                "url": "https://tgi1.jia.com/115/098/15098811.l.jpg",
+                "description": "A meticulously designed小公园 features winding pathways, vibrant flowerbeds, neatly trimmed hedges, and decorative elements like a central circular garden and a small pavilion, all nestled between paved roads and lush rolling hills.",
+                "source_url": "https://tgi1.jia.com/115/098/15098811.l.jpg",
+                "topic": "小公园",
+                "usage_basis": "search_reference",
+                "illustration_kind": "architecture"
+              }
+            ],
+            "requested": false,
+            "semantics": "optional_topic_illustrations_not_factual_evidence"
+          }
+        },
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+          "answer_status": "complete",
+          "answer_attempts": 2,
+          "duration_ms": 59736,
+          "selection": {
+            "intent": "direct",
+            "capabilities": [],
+            "reason_code": "stable_knowledge",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 50
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 10604,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 10551
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 10604
+            },
+            {
+              "stage": "context",
+              "status": "completed",
+              "elapsed_ms": 10605,
+              "fields": [
+                "preferences"
+              ]
+            },
+            {
+              "stage": "companion",
+              "status": "running",
+              "elapsed_ms": 10692
+            },
+            {
+              "stage": "answer",
+              "status": "running",
+              "elapsed_ms": 10769
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 30202,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 19433
+            },
+            {
+              "stage": "answer",
+              "status": "completed",
+              "elapsed_ms": 30202
+            },
+            {
+              "stage": "answer_validation",
+              "status": "repair_requested",
+              "elapsed_ms": 30203,
+              "codes": [
+                "output_unverified_travel_measurement"
+              ]
+            },
+            {
+              "stage": "answer",
+              "status": "failed",
+              "elapsed_ms": 30203,
+              "code": "unverified_advice",
+              "category": "contract_failure",
+              "exception_chain": [
+                "AdviceContractError"
+              ],
+              "http_status": null,
+              "finish_reason": null,
+              "validation": []
+            },
+            {
+              "stage": "answer",
+              "status": "running",
+              "elapsed_ms": 30204
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 43015,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 12811
+            },
+            {
+              "stage": "answer",
+              "status": "completed",
+              "elapsed_ms": 43015
+            },
+            {
+              "stage": "companion",
+              "status": "completed",
+              "elapsed_ms": 43021
+            },
+            {
+              "stage": "images",
+              "status": "running",
+              "elapsed_ms": 43042
+            },
+            {
+              "stage": "images",
+              "status": "running",
+              "elapsed_ms": 43042
+            },
+            {
+              "stage": "images",
+              "status": "completed",
+              "elapsed_ms": 53728
+            },
+            {
+              "stage": "images",
+              "status": "failed",
+              "elapsed_ms": 59735,
+              "code": "timeout",
+              "category": "timeout",
+              "exception_chain": [
+                "ExternalFactError",
+                "TimeoutError"
+              ],
+              "http_status": null,
+              "finish_reason": null,
+              "validation": []
+            }
+          ]
+        },
+        "id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+        "user": "我更想看骑楼和居民日常，不喜欢挨个去网红打卡点。你会怎么挑地方？",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.92,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_stable_knowledge"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 59.821,
+      "choices": [
+        {
+          "intent": "direct",
+          "capabilities": [],
+          "city": "汕头",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "stable_knowledge",
+          "memory_updates": [
+            {
+              "field": "preferences",
+              "operation": "add",
+              "value": "想看骑楼和居民日常",
+              "replaces": "",
+              "source_quote": "我更想看骑楼和居民日常",
+              "scope": "topic"
+            },
+            {
+              "field": "preferences",
+              "operation": "add",
+              "value": "不喜欢挨个去网红打卡点",
+              "replaces": "",
+              "source_quote": "不喜欢挨个去网红打卡点",
+              "scope": "topic"
+            }
+          ],
+          "illustrate": true,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": []
+        }
+      ],
+      "calls": []
+    },
+    {
+      "case": "shantou-family",
+      "turn": 3,
+      "user": "如果那天下雨，骑楼街和有室内展厅的博物馆怎么取舍？先不要查天气，也别写入安排。",
+      "session_id": "526dc5f2-a1fe-4a2b-9db5-b25eb292bc1d",
+      "raw": {
+        "assistant": "我建议减少目的地数量，先选最想看的一处，另一处保留备选。还没有实际路线和场所内部步行信息，不能据此保证轻松或顺路。",
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [
+            {
+              "id": "req_4f3ffc00d79c5a04bfc5bbe71fc1f2e3",
+              "text": "尽量少步行",
+              "key": "walking_preference",
+              "value": "minimal",
+              "source": {
+                "kind": "user_explicit",
+                "ref": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_7aed0ef4c0655e7b95d439e0d2ba7e0c",
+              "text": "爸爸每次连续步行不能超过15分钟",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "hard",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_02b5eefc22ca5b5493660172a42e30ce",
+              "text": "不喜欢挨个去网红打卡点",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "d2fab386-3992-4157-844b-ef7c679eb34d"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            }
+          ],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "start_date": {
+                "value": "2026-11-18",
+                "source_quote": "11月18日出发",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              "duration_days": {
+                "value": 3,
+                "source_quote": "待三天",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            },
+            "preferences": [
+              {
+                "value": "不吃牛肉",
+                "source_quote": "我不吃牛肉",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "personal",
+                "scope_version": 2
+              },
+              {
+                "value": "想看骑楼和居民日常",
+                "source_quote": "我更想看骑楼和居民日常",
+                "message_id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+                "scope": "topic",
+                "scope_version": 2
+              },
+              {
+                "value": "不喜欢挨个去网红打卡点",
+                "source_quote": "不喜欢挨个去网红打卡点",
+                "message_id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+                "scope": "topic",
+                "scope_version": 2
+              }
+            ],
+            "requirements": [
+              {
+                "value": "尽量少走路",
+                "source_quote": "这趟尽量少走路",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              {
+                "value": "爸爸每次连续步行不能超过15分钟",
+                "source_quote": "爸爸每次连续步行不能超过15分钟",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              {
+                "value": "每顿每人最多70元",
+                "source_quote": "每顿每人最多70元",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            ],
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "015100cd-2312-4c19-bae5-ccaeb70a02c9",
+          "answer_status": "complete",
+          "answer_attempts": 0,
+          "duration_ms": 3643,
+          "selection": {
+            "intent": "direct",
+            "capabilities": [],
+            "reason_code": "stable_knowledge",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 46
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 3642,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 3593
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 3642
+            }
+          ]
+        },
+        "id": "015100cd-2312-4c19-bae5-ccaeb70a02c9",
+        "user": "如果那天下雨，骑楼街和有室内展厅的博物馆怎么取舍？先不要查天气，也别写入安排。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.93,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_stable_knowledge"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 3.741,
+      "choices": [
+        {
+          "intent": "direct",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "stable_knowledge",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "walking_effort",
+          "response_purpose": "answer",
+          "saved_intentions": []
+        }
+      ],
+      "calls": []
+    },
+    {
+      "case": "bounded-create",
+      "turn": 1,
+      "user": "帮我创建绍兴11月29日到30日的安排，第一天下午想去鲁迅故里，第二天留白；先给我可采用的候选，不要自动采用，也不用编出具体几点。",
+      "session_id": "ff184bdf-d89d-48bd-bf68-e86ac9f5de3c",
+      "raw": {
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "e0e3fb35-a074-4ac8-8a88-e45674de8243",
+          "answer_status": "complete",
+          "answer_attempts": 0,
+          "duration_ms": 8245,
+          "selection": {
+            "intent": "create",
+            "capabilities": [],
+            "reason_code": "explicit_write",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 55
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 8241,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 8180
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 8241
+            },
+            {
+              "stage": "context",
+              "status": "completed",
+              "elapsed_ms": 8245,
+              "fields": [
+                "start_date",
+                "city"
+              ]
+            },
+            {
+              "stage": "tool_decision",
+              "code": "schema_failure",
+              "category": "schema_failure",
+              "exception_chain": [
+                "ValidationError"
+              ],
+              "http_status": null,
+              "finish_reason": null,
+              "validation": [
+                {
+                  "field": "choices.1",
+                  "type": "value_error"
+                }
+              ],
+              "status": "failed"
+            }
+          ],
+          "tool_decision_attempts": 2
+        },
+        "_semantic_requested_places": [
+          "鲁迅故里"
+        ],
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": "绍兴",
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [
+            {
+              "id": "req_c202c76d2280578eab0bd106d3d4c10b",
+              "text": "不要自动采用",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "e0e3fb35-a074-4ac8-8a88-e45674de8243"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_6dfaa037709a58a7897bac88e708f603",
+              "text": "不要自动采用",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "e0e3fb35-a074-4ac8-8a88-e45674de8243"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": "绍兴",
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            }
+          ],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "start_date": {
+                "value": "2026-11-29",
+                "source_quote": "绍兴11月29日到30日的安排",
+                "message_id": "e0e3fb35-a074-4ac8-8a88-e45674de8243",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              "city": {
+                "value": "绍兴",
+                "source_quote": "绍兴",
+                "message_id": "e0e3fb35-a074-4ac8-8a88-e45674de8243",
+                "scope": "personal",
+                "scope_version": 2
+              }
+            },
+            "preferences": [],
+            "requirements": [],
+            "withdrawn": {}
+          }
+        },
+        "read_tools": {},
+        "requirement_sync": null,
+        "id": "e0e3fb35-a074-4ac8-8a88-e45674de8243",
+        "user": "帮我创建绍兴11月29日到30日的安排，第一天下午想去鲁迅故里，第二天留白；先给我可采用的候选，不要自动采用，也不用编出具体几点。",
+        "assistant": "这次需求解析修复已达上限，请重试。",
+        "tool": "create_trip",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "trip_planning",
+          "confidence": 0.9,
+          "target_runtime": "planning",
+          "mutation_requested": true,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_explicit_user_request"
+          ]
+        },
+        "planning_brief": null
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 25.487,
+      "choices": [
+        {
+          "intent": "create",
+          "capabilities": [],
+          "city": "绍兴",
+          "query": "",
+          "category": "attraction",
+          "names": [
+            "鲁迅故里"
+          ],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "帮我创建绍兴11月29日到30日的安排",
+          "reason_code": "explicit_write",
+          "memory_updates": [
+            {
+              "field": "start_date",
+              "operation": "set",
+              "value": "11月29日",
+              "replaces": "",
+              "source_quote": "绍兴11月29日到30日的安排",
+              "scope": "trip"
+            },
+            {
+              "field": "duration_days",
+              "operation": "set",
+              "value": "2天",
+              "replaces": "",
+              "source_quote": "绍兴11月29日到30日的安排",
+              "scope": "trip"
+            }
+          ],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": [
+            {
+              "place_text": "鲁迅故里",
+              "source_quote": "第一天下午想去鲁迅故里",
+              "date_text": "11月29日",
+              "time_period": "下午"
+            }
+          ]
+        }
+      ],
+      "calls": []
+    },
+    {
+      "case": "shantou-family",
+      "turn": 4,
+      "user": "出发改成11月20日，其他要求保留。",
+      "session_id": "526dc5f2-a1fe-4a2b-9db5-b25eb292bc1d",
+      "raw": {
+        "assistant": "好，出发日期按11月20日算，三天、少走路、看骑楼和居民日常这些要求都保留，之前的方向不用变。",
+        "companion_result": {
+          "visual_subjects": [],
+          "analysis_summary": "仅确认出发日期改为11月20日，其余偏好不变，无需补充内容。",
+          "response_text": "好，出发日期按11月20日算，三天、少走路、看骑楼和居民日常这些要求都保留，之前的方向不用变。",
+          "goal_type": "travel_chat",
+          "status": "completed",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_decision": "general_knowledge",
+            "knowledge_strategy": "selective",
+            "knowledge_reasons": [
+              "stable_model_knowledge_no_retrieval"
+            ],
+            "source_required": false,
+            "optional_rag": false,
+            "knowledge_required": false,
+            "general_knowledge_allowed": true,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": "我更想看骑楼",
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "not_applicable",
+          "grounding_limitations": [
+            "model_general_knowledge_unverified"
+          ],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        },
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [
+            {
+              "id": "req_4f3ffc00d79c5a04bfc5bbe71fc1f2e3",
+              "text": "尽量少步行",
+              "key": "walking_preference",
+              "value": "minimal",
+              "source": {
+                "kind": "user_explicit",
+                "ref": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_7aed0ef4c0655e7b95d439e0d2ba7e0c",
+              "text": "爸爸每次连续步行不能超过15分钟",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "hard",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_02b5eefc22ca5b5493660172a42e30ce",
+              "text": "不喜欢挨个去网红打卡点",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "d2fab386-3992-4157-844b-ef7c679eb34d"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_6a64eeb62a915a76b7956a4b80a4a7d6",
+              "text": "其他要求保留",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "e007edaa-afb0-4c1e-9a22-3ab9e97bcbb5"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            }
+          ],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "start_date": {
+                "value": "2026-11-18",
+                "source_quote": "11月18日出发",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              "duration_days": {
+                "value": 3,
+                "source_quote": "待三天",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            },
+            "preferences": [
+              {
+                "value": "不吃牛肉",
+                "source_quote": "我不吃牛肉",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "personal",
+                "scope_version": 2
+              },
+              {
+                "value": "想看骑楼和居民日常",
+                "source_quote": "我更想看骑楼和居民日常",
+                "message_id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+                "scope": "topic",
+                "scope_version": 2
+              },
+              {
+                "value": "不喜欢挨个去网红打卡点",
+                "source_quote": "不喜欢挨个去网红打卡点",
+                "message_id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+                "scope": "topic",
+                "scope_version": 2
+              }
+            ],
+            "requirements": [
+              {
+                "value": "尽量少走路",
+                "source_quote": "这趟尽量少走路",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              {
+                "value": "爸爸每次连续步行不能超过15分钟",
+                "source_quote": "爸爸每次连续步行不能超过15分钟",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              {
+                "value": "每顿每人最多70元",
+                "source_quote": "每顿每人最多70元",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            ],
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "e007edaa-afb0-4c1e-9a22-3ab9e97bcbb5",
+          "answer_status": "complete",
+          "answer_attempts": 1,
+          "duration_ms": 7971,
+          "selection": {
+            "intent": "direct",
+            "capabilities": [],
+            "reason_code": "stable_knowledge",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 47
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 3673,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 3623
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 3673
+            },
+            {
+              "stage": "companion",
+              "status": "running",
+              "elapsed_ms": 3755
+            },
+            {
+              "stage": "answer",
+              "status": "running",
+              "elapsed_ms": 3839
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 7965,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 4126
+            },
+            {
+              "stage": "answer",
+              "status": "completed",
+              "elapsed_ms": 7965
+            },
+            {
+              "stage": "companion",
+              "status": "completed",
+              "elapsed_ms": 7970
+            }
+          ]
+        },
+        "id": "e007edaa-afb0-4c1e-9a22-3ab9e97bcbb5",
+        "user": "出发改成11月20日，其他要求保留。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.55,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_stable_knowledge"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 8.061,
+      "choices": [
+        {
+          "intent": "direct",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "stable_knowledge",
+          "memory_updates": [
+            {
+              "field": "start_date",
+              "operation": "set",
+              "value": "2026-11-20",
+              "replaces": "",
+              "source_quote": "出发改成11月20日",
+              "scope": "trip"
+            }
+          ],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "conditions_only",
+          "saved_intentions": []
+        }
+      ],
+      "calls": []
+    },
+    {
+      "case": "missing-target",
+      "turn": 1,
+      "user": "我想把第二天下午那项取消，你现在能确认是哪份安排、哪一个活动吗？不明确就先别操作。",
+      "session_id": "35ba933c-052c-4ffc-a181-da8c8210f689",
+      "raw": {
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "bed84042-9f2e-4371-84a1-da33b7fb427c",
+          "answer_status": "complete",
+          "answer_attempts": 0,
+          "duration_ms": 6688,
+          "selection": {
+            "intent": "modify",
+            "capabilities": [],
+            "reason_code": "explicit_write",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 57
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 6688,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 6624
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 6688
+            }
+          ]
+        },
+        "_semantic_requested_places": [],
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {},
+            "preferences": [],
+            "requirements": [],
+            "withdrawn": {}
+          }
+        },
+        "read_tools": {},
+        "requirement_sync": null,
+        "id": "bed84042-9f2e-4371-84a1-da33b7fb427c",
+        "user": "我想把第二天下午那项取消，你现在能确认是哪份安排、哪一个活动吗？不明确就先别操作。",
+        "assistant": "准备什么时候去，打算玩几天？",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "trip_modification",
+          "confidence": 0.9,
+          "target_runtime": "planning",
+          "mutation_requested": true,
+          "trip_context_required": true,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_explicit_user_request"
+          ]
+        },
+        "planning_brief": null
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 12.11,
+      "choices": [
+        {
+          "intent": "modify",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "目前还没有找到对应的行程安排，请确认要修改的是哪一份行程，以及第二天下午具体是哪一项活动。",
+          "authorization_quote": "我想把第二天下午那项取消",
+          "reason_code": "explicit_write",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": []
+        }
+      ],
+      "calls": []
+    },
+    {
+      "case": "shantou-family",
+      "turn": 5,
+      "user": "你现在记得哪些有效条件？哪些还没核实？",
+      "session_id": "526dc5f2-a1fe-4a2b-9db5-b25eb292bc1d",
+      "raw": {
+        "assistant": "我倾向于认为：已记住的有效条件：\n\n行程——2026年11月20日出发，汕头，待三天。\n\n口味——不吃牛肉。\n\n偏好——想看骑楼和居民日常，不喜欢挨个去网红打卡点。\n\n还没核实的部分：\n\n一是小公园老城各段街巷的实际步行长度、坡度和歇脚座位情况，我只按骑楼街区普遍紧凑来判断，具体到某一段能否15分钟内走完没有依据。\n二是具体店家的菜单细节，比如卤鹅、粿汁的默认浇头里是否带牛肉丸或牛腩，要坐下点单时确认。\n三是博物馆类场所的室内展厅规模和馆内步行量，那天下雨怎么取舍还缺这块信息。\n\n这些都要等你们定下具体去哪几家、哪一天，再逐项核。\n\n目前没有适用于这个问题的可靠资料。",
+        "companion_result": {
+          "visual_subjects": [],
+          "analysis_summary": "汇总当前有效条件与尚未核实的信息。",
+          "response_text": "我倾向于认为：已记住的有效条件：\n\n行程——2026年11月20日出发，汕头，待三天。\n\n口味——不吃牛肉。\n\n偏好——想看骑楼和居民日常，不喜欢挨个去网红打卡点。\n\n还没核实的部分：\n\n一是小公园老城各段街巷的实际步行长度、坡度和歇脚座位情况，我只按骑楼街区普遍紧凑来判断，具体到某一段能否15分钟内走完没有依据。\n二是具体店家的菜单细节，比如卤鹅、粿汁的默认浇头里是否带牛肉丸或牛腩，要坐下点单时确认。\n三是博物馆类场所的室内展厅规模和馆内步行量，那天下雨怎么取舍还缺这块信息。\n\n这些都要等你们定下具体去哪几家、哪一天，再逐项核。\n\n目前没有适用于这个问题的可靠资料。",
+          "goal_type": "travel_chat",
+          "status": "needs_information",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_decision": "rag_candidate",
+            "knowledge_strategy": "selective",
+            "knowledge_reasons": [
+              "explicit_source_request"
+            ],
+            "source_required": true,
+            "optional_rag": false,
+            "knowledge_required": true,
+            "general_knowledge_allowed": false,
+            "knowledge_types": [
+              "travel_strategy"
+            ],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [
+            {
+              "code": "knowledge_unsupported_query",
+              "message": "目前没有适用于这个问题的可靠资料。"
+            }
+          ],
+          "planning_handoff": null,
+          "conversation_destination": "我更想看骑楼",
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": {
+            "quality_rejections": [],
+            "accepted_evidence_count": 0,
+            "status": "unavailable",
+            "outcome": "unsupported_query",
+            "advisory": null,
+            "retrieval_mode": null,
+            "retrieved_at": null,
+            "retrieved_document_refs": [],
+            "retrieved_chunk_refs": []
+          },
+          "grounding_status": "insufficient_evidence",
+          "grounding_limitations": [],
+          "claims": [
+            {
+              "claim_id": "claim_bd353a7c8f4f556197ee52beba010e53",
+              "text": "已记住的有效条件：\n\n行程——2026年11月20日出发，汕头，待三天。\n\n口味——不吃牛肉。\n\n偏好——想看骑楼和居民日常，不喜欢挨个去网红打卡点。\n\n还没核实的部分：\n\n一是小公园老城各段街巷的实际步行长度、坡度和歇脚座位情况，我只按骑楼街区普遍紧凑来判断，具体到某一段能否15分钟内走完没有依据。\n二是具体店家的菜单细节，比如卤鹅、粿汁的默认浇头里是否带牛肉丸或牛腩，要坐下点单时确认。\n三是博物馆类场所的室内展厅规模和馆内步行量，那天下雨怎么取舍还缺这块信息。\n\n这些都要等你们定下具体去哪几家、哪一天，再逐项核。",
+              "claim_type": "agent_inference",
+              "evidence_refs": [],
+              "assertion_ids": [],
+              "applicability": {
+                "scope": "destination",
+                "target": "汕头"
+              },
+              "support_status": "not_applicable",
+              "applicability_status": "not_applicable",
+              "attribution_status": "not_applicable",
+              "source_attributions": []
+            }
+          ],
+          "claim_validation_issues": [
+            "output_unverified_travel_measurement",
+            "output_unverified_price"
+          ],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        },
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [
+            {
+              "id": "req_4f3ffc00d79c5a04bfc5bbe71fc1f2e3",
+              "text": "尽量少步行",
+              "key": "walking_preference",
+              "value": "minimal",
+              "source": {
+                "kind": "user_explicit",
+                "ref": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_7aed0ef4c0655e7b95d439e0d2ba7e0c",
+              "text": "爸爸每次连续步行不能超过15分钟",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "hard",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_02b5eefc22ca5b5493660172a42e30ce",
+              "text": "不喜欢挨个去网红打卡点",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "d2fab386-3992-4157-844b-ef7c679eb34d"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_6a64eeb62a915a76b7956a4b80a4a7d6",
+              "text": "其他要求保留",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "e007edaa-afb0-4c1e-9a22-3ab9e97bcbb5"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            }
+          ],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "start_date": {
+                "value": "2026-11-18",
+                "source_quote": "11月18日出发",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              "duration_days": {
+                "value": 3,
+                "source_quote": "待三天",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            },
+            "preferences": [
+              {
+                "value": "不吃牛肉",
+                "source_quote": "我不吃牛肉",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "personal",
+                "scope_version": 2
+              },
+              {
+                "value": "想看骑楼和居民日常",
+                "source_quote": "我更想看骑楼和居民日常",
+                "message_id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+                "scope": "topic",
+                "scope_version": 2
+              },
+              {
+                "value": "不喜欢挨个去网红打卡点",
+                "source_quote": "不喜欢挨个去网红打卡点",
+                "message_id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+                "scope": "topic",
+                "scope_version": 2
+              }
+            ],
+            "requirements": [
+              {
+                "value": "尽量少走路",
+                "source_quote": "这趟尽量少走路",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              {
+                "value": "爸爸每次连续步行不能超过15分钟",
+                "source_quote": "爸爸每次连续步行不能超过15分钟",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              {
+                "value": "每顿每人最多70元",
+                "source_quote": "每顿每人最多70元",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            ],
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "05c4c6a8-2df9-4bb8-b06d-551a98baec99",
+          "answer_status": "partial",
+          "answer_attempts": 1,
+          "duration_ms": 13099,
+          "selection": {
+            "intent": "direct",
+            "capabilities": [],
+            "reason_code": "stable_knowledge",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 47
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 4009,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 3958
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 4009
+            },
+            {
+              "stage": "companion",
+              "status": "running",
+              "elapsed_ms": 4118
+            },
+            {
+              "stage": "answer",
+              "status": "running",
+              "elapsed_ms": 4196
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 13089,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 8893
+            },
+            {
+              "stage": "answer",
+              "status": "completed",
+              "elapsed_ms": 13089
+            },
+            {
+              "stage": "companion",
+              "status": "completed",
+              "elapsed_ms": 13099
+            }
+          ]
+        },
+        "id": "05c4c6a8-2df9-4bb8-b06d-551a98baec99",
+        "user": "你现在记得哪些有效条件？哪些还没核实？",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.55,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_stable_knowledge"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 13.215,
+      "choices": [
+        {
+          "intent": "direct",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "stable_knowledge",
+          "memory_updates": [
+            {
+              "field": "start_date",
+              "operation": "set",
+              "value": "2026-11-20",
+              "replaces": "2026-11-18",
+              "source_quote": "出发改成11月20日",
+              "scope": "trip"
+            }
+          ],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": []
+        }
+      ],
+      "calls": []
+    },
+    {
+      "case": "shantou-family",
+      "turn": 6,
+      "user": "取消每顿预算，忌口和爸爸的步行要求还要。",
+      "session_id": "526dc5f2-a1fe-4a2b-9db5-b25eb292bc1d",
+      "raw": {
+        "assistant": "已更新这次聊天的条件：预算已清除。",
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [
+            {
+              "id": "req_4f3ffc00d79c5a04bfc5bbe71fc1f2e3",
+              "text": "尽量少步行",
+              "key": "walking_preference",
+              "value": "minimal",
+              "source": {
+                "kind": "user_explicit",
+                "ref": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_7aed0ef4c0655e7b95d439e0d2ba7e0c",
+              "text": "爸爸每次连续步行不能超过15分钟",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "hard",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_02b5eefc22ca5b5493660172a42e30ce",
+              "text": "不喜欢挨个去网红打卡点",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "d2fab386-3992-4157-844b-ef7c679eb34d"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_6a64eeb62a915a76b7956a4b80a4a7d6",
+              "text": "其他要求保留",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "e007edaa-afb0-4c1e-9a22-3ab9e97bcbb5"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_c36ef3c64d5156ad8925ca47fb074da5",
+              "text": "撤销：取消每顿预算",
+              "key": "budget_fen",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "7b941e06-7e1d-4067-a702-a7ddcf2a7fbe"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "revoked",
+              "supersedes": []
+            },
+            {
+              "id": "req_b6fc7ad6e9a45bba88401032bde5de42",
+              "text": "忌口和爸爸的步行要求还要",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "7b941e06-7e1d-4067-a702-a7ddcf2a7fbe"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            }
+          ],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "start_date": {
+                "value": "2026-11-18",
+                "source_quote": "11月18日出发",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              "duration_days": {
+                "value": 3,
+                "source_quote": "待三天",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            },
+            "preferences": [
+              {
+                "value": "不吃牛肉",
+                "source_quote": "我不吃牛肉",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "personal",
+                "scope_version": 2
+              },
+              {
+                "value": "想看骑楼和居民日常",
+                "source_quote": "我更想看骑楼和居民日常",
+                "message_id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+                "scope": "topic",
+                "scope_version": 2
+              },
+              {
+                "value": "不喜欢挨个去网红打卡点",
+                "source_quote": "不喜欢挨个去网红打卡点",
+                "message_id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+                "scope": "topic",
+                "scope_version": 2
+              }
+            ],
+            "requirements": [
+              {
+                "value": "尽量少走路",
+                "source_quote": "这趟尽量少走路",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              {
+                "value": "爸爸每次连续步行不能超过15分钟",
+                "source_quote": "爸爸每次连续步行不能超过15分钟",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              {
+                "value": "每顿每人最多70元",
+                "source_quote": "每顿每人最多70元",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            ],
+            "withdrawn": {
+              "budget": {
+                "source_quote": "取消每顿预算",
+                "message_id": "7b941e06-7e1d-4067-a702-a7ddcf2a7fbe",
+                "state": "unknown"
+              }
+            }
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "7b941e06-7e1d-4067-a702-a7ddcf2a7fbe",
+          "answer_status": "complete",
+          "answer_attempts": 0,
+          "duration_ms": 5507,
+          "selection": {
+            "intent": "direct",
+            "capabilities": [],
+            "reason_code": "stable_knowledge",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 54
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 5507,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 5447
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 5507
+            },
+            {
+              "stage": "context",
+              "status": "completed",
+              "elapsed_ms": 5507,
+              "fields": [
+                "budget"
+              ]
+            }
+          ]
+        },
+        "id": "7b941e06-7e1d-4067-a702-a7ddcf2a7fbe",
+        "user": "取消每顿预算，忌口和爸爸的步行要求还要。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.96,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": true,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_stable_knowledge"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 5.589,
+      "choices": [
+        {
+          "intent": "direct",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "stable_knowledge",
+          "memory_updates": [
+            {
+              "field": "budget",
+              "operation": "clear",
+              "value": "",
+              "replaces": "",
+              "source_quote": "取消每顿预算",
+              "scope": "personal"
+            }
+          ],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "conditions_only",
+          "saved_intentions": []
+        }
+      ],
+      "calls": []
+    },
+    {
+      "case": "shantou-family",
+      "turn": 7,
+      "user": "现在的日期、预算和步行要求分别是什么？",
+      "session_id": "526dc5f2-a1fe-4a2b-9db5-b25eb292bc1d",
+      "raw": {
+        "assistant": "目前记着的有效条件是这样的：\n\n日期：2026年11月20日出发，去汕头，待三天。\n\n预算：你之前已明确取消。\n\n\n\n另外也还记着：不吃牛肉，想看骑楼和居民日常，不喜欢挨个去网红打卡点。",
+        "companion_result": {
+          "visual_subjects": [],
+          "analysis_summary": "核对已存条件：日期为2026年11月20日出发，每顿预算已撤销，步行限制仍有效。",
+          "response_text": "目前记着的有效条件是这样的：\n\n日期：2026年11月20日出发，去汕头，待三天。\n\n预算：你之前已明确取消。\n\n\n\n另外也还记着：不吃牛肉，想看骑楼和居民日常，不喜欢挨个去网红打卡点。",
+          "goal_type": "travel_chat",
+          "status": "completed",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_decision": "general_knowledge",
+            "knowledge_strategy": "selective",
+            "knowledge_reasons": [
+              "stable_model_knowledge_no_retrieval"
+            ],
+            "source_required": false,
+            "optional_rag": false,
+            "knowledge_required": false,
+            "general_knowledge_allowed": true,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": "我更想看骑楼",
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "not_applicable",
+          "grounding_limitations": [
+            "model_general_knowledge_unverified"
+          ],
+          "claims": [],
+          "claim_validation_issues": [
+            "output_unverified_travel_measurement",
+            "output_unverified_price"
+          ],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        },
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "agent-b",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [
+            {
+              "id": "req_4f3ffc00d79c5a04bfc5bbe71fc1f2e3",
+              "text": "尽量少步行",
+              "key": "walking_preference",
+              "value": "minimal",
+              "source": {
+                "kind": "user_explicit",
+                "ref": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_7aed0ef4c0655e7b95d439e0d2ba7e0c",
+              "text": "爸爸每次连续步行不能超过15分钟",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "hard",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_02b5eefc22ca5b5493660172a42e30ce",
+              "text": "不喜欢挨个去网红打卡点",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "d2fab386-3992-4157-844b-ef7c679eb34d"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_6a64eeb62a915a76b7956a4b80a4a7d6",
+              "text": "其他要求保留",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "e007edaa-afb0-4c1e-9a22-3ab9e97bcbb5"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            },
+            {
+              "id": "req_c36ef3c64d5156ad8925ca47fb074da5",
+              "text": "撤销：取消每顿预算",
+              "key": "budget_fen",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "7b941e06-7e1d-4067-a702-a7ddcf2a7fbe"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "revoked",
+              "supersedes": []
+            },
+            {
+              "id": "req_b6fc7ad6e9a45bba88401032bde5de42",
+              "text": "忌口和爸爸的步行要求还要",
+              "key": "user_requirement",
+              "value": null,
+              "source": {
+                "kind": "user_explicit",
+                "ref": "7b941e06-7e1d-4067-a702-a7ddcf2a7fbe"
+              },
+              "scope": {
+                "kind": "topic",
+                "topic_id": "agent-b",
+                "draft_id": null,
+                "trip_id": null,
+                "city": null,
+                "day_index": null,
+                "date": null,
+                "activity_id": null
+              },
+              "strength": "soft",
+              "status": "active",
+              "supersedes": []
+            }
+          ],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {
+              "start_date": {
+                "value": "2026-11-18",
+                "source_quote": "11月18日出发",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              "duration_days": {
+                "value": 3,
+                "source_quote": "待三天",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            },
+            "preferences": [
+              {
+                "value": "不吃牛肉",
+                "source_quote": "我不吃牛肉",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "personal",
+                "scope_version": 2
+              },
+              {
+                "value": "想看骑楼和居民日常",
+                "source_quote": "我更想看骑楼和居民日常",
+                "message_id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+                "scope": "topic",
+                "scope_version": 2
+              },
+              {
+                "value": "不喜欢挨个去网红打卡点",
+                "source_quote": "不喜欢挨个去网红打卡点",
+                "message_id": "d2fab386-3992-4157-844b-ef7c679eb34d",
+                "scope": "topic",
+                "scope_version": 2
+              }
+            ],
+            "requirements": [
+              {
+                "value": "尽量少走路",
+                "source_quote": "这趟尽量少走路",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              {
+                "value": "爸爸每次连续步行不能超过15分钟",
+                "source_quote": "爸爸每次连续步行不能超过15分钟",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              },
+              {
+                "value": "每顿每人最多70元",
+                "source_quote": "每顿每人最多70元",
+                "message_id": "2d2d1dcb-dc37-4778-8509-7cf41c7fa2a6",
+                "scope": "trip",
+                "scope_version": 2
+              }
+            ],
+            "withdrawn": {
+              "budget": {
+                "source_quote": "取消每顿预算",
+                "message_id": "7b941e06-7e1d-4067-a702-a7ddcf2a7fbe",
+                "state": "unknown"
+              }
+            }
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "b42b5f8a-de2b-4e4e-ae44-d1ee24c7073e",
+          "answer_status": "complete",
+          "answer_attempts": 2,
+          "duration_ms": 19885,
+          "selection": {
+            "intent": "direct",
+            "capabilities": [],
+            "reason_code": "stable_knowledge",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 46
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 5427,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 5378
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 5427
+            },
+            {
+              "stage": "companion",
+              "status": "running",
+              "elapsed_ms": 5507
+            },
+            {
+              "stage": "answer",
+              "status": "running",
+              "elapsed_ms": 5572
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 11569,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 5996
+            },
+            {
+              "stage": "answer",
+              "status": "completed",
+              "elapsed_ms": 11569
+            },
+            {
+              "stage": "answer_validation",
+              "status": "repair_requested",
+              "elapsed_ms": 11569,
+              "codes": [
+                "output_unverified_travel_measurement"
+              ]
+            },
+            {
+              "stage": "answer",
+              "status": "failed",
+              "elapsed_ms": 11569,
+              "code": "unverified_advice",
+              "category": "contract_failure",
+              "exception_chain": [
+                "AdviceContractError"
+              ],
+              "http_status": null,
+              "finish_reason": null,
+              "validation": []
+            },
+            {
+              "stage": "answer",
+              "status": "running",
+              "elapsed_ms": 11570
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 19876,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 8307
+            },
+            {
+              "stage": "answer",
+              "status": "completed",
+              "elapsed_ms": 19876
+            },
+            {
+              "stage": "companion",
+              "status": "completed",
+              "elapsed_ms": 19885
+            }
+          ]
+        },
+        "id": "b42b5f8a-de2b-4e4e-ae44-d1ee24c7073e",
+        "user": "现在的日期、预算和步行要求分别是什么？",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.92,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_stable_knowledge"
+          ]
+        }
+      },
+      "trip_id": null,
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 20.224,
+      "choices": [
+        {
+          "intent": "direct",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "stable_knowledge",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": []
+        }
+      ],
+      "calls": []
+    }
+  ],
+  "before": {
+    "Trip": 0,
+    "Activity": 0,
+    "PlanningRun": 0,
+    "PlanRevision": 0,
+    "SavedIntention": 0
+  },
+  "after": {
+    "Trip": 0,
+    "Activity": 0,
+    "PlanningRun": 0,
+    "PlanRevision": 0,
+    "SavedIntention": 0
+  }
+}

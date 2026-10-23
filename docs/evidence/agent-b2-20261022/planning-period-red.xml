@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="10" time="2.119" timestamp="2026-10-22T23:07:08.396752+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_snapshot_is_frozen_and_does_not_keep_mutable_orm_rows" time="0.032" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_draft_keeps_query_without_calling_model_or_changing_task" time="0.017" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_remove_regrounds_actual_day_activity_and_keeps_other_days" time="0.011" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_draft_never_bypasses_foreign_ui_target_or_missing_place" time="0.011" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_operation_owns_date_and_period_in_compound_request[\u5148\u89e3\u91ca\u7b2c\u4e00\u5929\u7532\u9986\u7684\u5b89\u6392\uff1b-\u7b2c\u4e8c\u5929\u52a0\u5165\u4e59\u9986-None]" time="0.006" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_prepared_operation_owns_date_and_period_in_compound_request[\u7b2c\u4e00\u5929\u4e0a\u5348\u5148\u56de\u7b54\u95ee\u9898\uff1b-\u7b2c\u4e8c\u5929\u4e0b\u5348\u52a0\u5165\u4e59\u9986-afternoon]" time="0.006" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_incompatible_prepared_operation_days_do_not_silently_mutate_first_day" time="0.004" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_period_only_operation_reconciles_its_own_ui_day[0-clarify]" time="0.007"><failure message="AssertionError: assert 'plan_preview' == 'clarify'&#10;  &#10;  - clarify&#10;  + plan_preview">selected_index = 0, expected_route = 'clarify'
+
+    @pytest.mark.parametrize("selected_index,expected_route", [(0, "clarify"), (1, "plan_preview"), (None, "clarify")])
+    def test_period_only_operation_reconciles_its_own_ui_day(selected_index, expected_route):
+        async def run():
+            session = ReadSession()
+            session.place.name = "乙馆"
+            request = PlanningIntentParseRequest(message="下午优化路线；第二天加入乙馆",
+                selected_day_id=session.days[selected_index].id if selected_index is not None else None)
+            snapshot = await loader()(session, session.trip.id, request)
+            draft = SemanticIntentDraft(primary_intent="optimize_route", operations=[
+                SemanticIntentOperation(operation="optimize_route", raw_text="下午优化路线", period="afternoon"),
+                SemanticIntentOperation(operation="add_activity", raw_text="第二天加入乙馆",
+                    date_expression="第二天", place_mentions=["乙馆"])], confidence=.99,
+                parser_version="approved-operation-v2")
+            result = await resolver()(snapshot, request, prepared_draft=draft)
+            assert result.policy_decision.route == expected_route
+            if expected_route == "plan_preview":
+                assert result.grounded_intent.target_day_ids == [session.days[1].id]
+                assert result.request.intent.time_scope.period == "afternoon"
+&gt;       asyncio.run(run())
+
+tests\test_agent_b2_planning_snapshot.py:171: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        session = ReadSession()
+        session.place.name = "乙馆"
+        request = PlanningIntentParseRequest(message="下午优化路线；第二天加入乙馆",
+            selected_day_id=session.days[selected_index].id if selected_index is not None else None)
+        snapshot = await loader()(session, session.trip.id, request)
+        draft = SemanticIntentDraft(primary_intent="optimize_route", operations=[
+            SemanticIntentOperation(operation="optimize_route", raw_text="下午优化路线", period="afternoon"),
+            SemanticIntentOperation(operation="add_activity", raw_text="第二天加入乙馆",
+                date_expression="第二天", place_mentions=["乙馆"])], confidence=.99,
+            parser_version="approved-operation-v2")
+        result = await resolver()(snapshot, request, prepared_draft=draft)
+&gt;       assert result.policy_decision.route == expected_route
+E       AssertionError: assert 'plan_preview' == 'clarify'
+E         
+E         - clarify
+E         + plan_preview
+
+tests\test_agent_b2_planning_snapshot.py:167: AssertionError</failure></testcase><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_period_only_operation_reconciles_its_own_ui_day[1-plan_preview]" time="0.005" /><testcase classname="tests.test_agent_b2_planning_snapshot" name="test_period_only_operation_reconciles_its_own_ui_day[None-clarify]" time="0.005" /></testsuite></testsuites>
