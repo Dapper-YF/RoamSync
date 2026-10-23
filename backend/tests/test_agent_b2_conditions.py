@@ -197,3 +197,66 @@ def test_walking_upper_limit_withdrawal_cannot_revoke_a_lower_bound_predicate(lo
     records = capture_explicit_requirements([], "妈妈连续步行不超过20分钟，" + lower_text, scope=scope, source_ref="first")
     records = capture_explicit_requirements(records, "撤销妈妈连续步行上限", scope=scope, source_ref="withdraw")
     assert [r["text"] for r in project_requirements(records, trip_id="trip")] == [lower_text]
+
+
+def recall_fixture():
+    text = "我去汕头，11月23日出发，玩三天，我们两个人同行，晚餐人均最多70元，我不吃辣，爸爸连续步行不超过15分钟，不喜欢挨个拍照打卡"
+    updates = [
+        MemoryUpdate(field="city", value="汕头", source_quote="我去汕头", scope="trip"),
+        MemoryUpdate(field="start_date", value="2026-11-23", source_quote="11月23日出发", scope="trip"),
+        MemoryUpdate(field="duration_days", value="3天", source_quote="玩三天", scope="trip"),
+        MemoryUpdate(field="party_size", value="2人", source_quote="我们两个人同行", scope="trip"),
+        MemoryUpdate(field="budget", value="晚餐人均最多70元", source_quote="晚餐人均最多70元", scope="trip"),
+        MemoryUpdate(field="preferences", operation="add", value="不吃辣", source_quote="我不吃辣", scope="personal"),
+        MemoryUpdate(field="requirements", operation="add", value="爸爸连续步行不超过15分钟", source_quote="爸爸连续步行不超过15分钟", scope="trip"),
+        MemoryUpdate(field="preferences", operation="add", value="不喜欢挨个拍照打卡", source_quote="不喜欢挨个拍照打卡", scope="trip"),
+    ]
+    return apply_memory(ContextEnvelope(), [], text, "recall-source", updates, today=date(2026, 10, 22))[0]
+
+
+def test_deterministic_recall_keeps_budget_and_continuous_parent_walking_together():
+    from app.assistant_memory import recall_conditions
+    result = recall_conditions(recall_fixture())
+    assert isinstance(result, str)
+    for condition in ("目的地：汕头", "出发日期：2026-11-23", "游玩天数：3天", "同行人数：2人",
+                      "预算：晚餐人均最多70元", "我不吃辣", "爸爸连续步行不超过15分钟", "不喜欢挨个拍照打卡"):
+        assert condition in result
+    assert "保证" not in result and "满足你的全部条件" not in result
+
+
+def test_deterministic_recall_exposes_budget_withdrawal_and_pending_date_without_old_values():
+    from app.assistant_memory import recall_conditions
+    env = apply_memory(recall_fixture(), [], "取消晚餐预算，日期待定", "withdraw-source", [
+        MemoryUpdate(field="budget", operation="clear", source_quote="取消晚餐预算", scope="trip"),
+        MemoryUpdate(field="start_date", operation="clear", source_quote="日期待定", scope="trip"),
+    ])[0]
+    result = recall_conditions(env)
+    assert "预算：已撤销" in result and "出发日期：待定" in result
+    assert "70元" not in result and "2026-11-23" not in result
+    assert "爸爸连续步行不超过15分钟" in result and "我不吃辣" in result
+
+
+def test_deterministic_recall_leaves_unknown_values_unknown_and_ignores_rejected_hypothesis():
+    from app.assistant_memory import recall_conditions
+    env, accepted, _ = remember("假如明天出发", MemoryUpdate(field="start_date", value="2026-10-23", source_quote="明天出发"))
+    assert accepted == []
+    result = recall_conditions(env)
+    for condition in ("目的地：未确定", "出发日期：未确定", "游玩天数：未确定", "同行人数：未确定", "预算：未确定"):
+        assert condition in result
+    assert "2026-10-23" not in result and "假如明天出发" not in result
+
+
+def test_deterministic_recall_does_not_invent_destination_from_a_browsing_city():
+    from app.assistant_memory import recall_conditions
+    result = recall_conditions(ContextEnvelope(browsing_city="洛阳"))
+    assert "目的地：未确定" in result and "洛阳" not in result
+
+
+def test_deterministic_recall_does_not_restore_removed_preference_from_withdrawal_provenance():
+    from app.assistant_memory import recall_conditions
+    env = apply_memory(recall_fixture(), [], "不再要求不吃辣", "diet-withdrawal", [
+        MemoryUpdate(field="preferences", operation="remove", value="不吃辣", source_quote="不再要求不吃辣", scope="personal"),
+    ])[0]
+    result = recall_conditions(env)
+    assert "我不吃辣" not in result and "不再要求不吃辣" not in result
+    assert "不喜欢挨个拍照打卡" in result and "爸爸连续步行不超过15分钟" in result

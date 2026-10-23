@@ -254,6 +254,34 @@ def memory_prompt(envelope):
             "withdrawn": memory.get("withdrawn", {}), "diagnostics": memory.get("diagnostics", [])}
 
 
+def recall_conditions(envelope):
+    """Render current server-owned conditions without semantic compression.
+
+    Browsing context, history, rejected proposals and external places provide no
+    additional confirmed condition. The approved semantic decision selects when
+    this renderer is used; it never classifies the question or calls a model.
+    """
+    memory = server_memory(envelope)
+    slots, withdrawn = memory["slots"], memory.get("withdrawn", {})
+    lines = []
+    for key, label, unit in (("city", "目的地", ""), ("start_date", "出发日期", ""),
+                            ("duration_days", "游玩天数", "天"), ("party_size", "同行人数", "人"),
+                            ("budget", "预算", "")):
+        value = slots.get(key, {}).get("value")
+        if value is not None and value != "":
+            rendered = str(value) + (unit if isinstance(value, int) and not isinstance(value, bool) else "")
+        elif key in withdrawn:
+            rendered = "待定" if key == "start_date" else "已撤销"
+        else:
+            rendered = "未确定"
+        lines.append(label + "：" + rendered)
+    for key, label in (("preferences", "偏好"), ("requirements", "要求")):
+        literal = [item.get("source_quote") or item.get("value") for item in memory[key]]
+        literal = [value for value in literal if isinstance(value, str) and value]
+        lines.append(label + "：" + ("；".join(literal) if literal else "已撤销" if key in withdrawn else "未确定"))
+    return "这次聊天当前的有效条件：\n" + "\n".join(lines)
+
+
 def bootstrap_memory(envelope, history):
     """Conservative upgrade of older server messages, never assistant assertions.
 

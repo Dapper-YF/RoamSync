@@ -118,3 +118,33 @@ Fresh final run with the same ten-file command and selector policy above:
 39 cases, including 14 review additions and unchanged original counterexamples.
 Owned-file `git diff --check` passed. No schema, model, provider, permission,
 production, or Obsidian changes were made.
+
+## Deterministic approved condition recall (2026-10-23)
+
+Root's public development integration reported that a model answer omitted the
+stored meal budget and a parent's continuous walking constraint. Added only
+`recall_conditions(envelope) -> str` to `assistant_memory.py`, plus five tests in
+the existing development file. Root owns semantic selection/integration of the
+new purpose. This renderer has no question input, classification regex, model,
+history lookup, or external-place guarantee.
+
+Test-first run before implementation: **5 failed / 39 passed**, each new failure
+because the requested renderer did not yet exist. Behavioral cases cover:
+
+- Current city/date/duration/headcount, 70-yuan meal budget, literal diet/photo
+  preferences and father's continuous 15-minute walking constraint in one answer.
+- Budget cancellation and pending date remain visible without their old values.
+- Unknown slots remain unknown; rejected hypothetical/diagnostic data adds none.
+- A browsing city does not invent an authorized destination condition.
+- Removed diet preference cannot return through withdrawal provenance.
+
+Only current `server_memory` slots/collections and scalar withdrawal state are
+rendered. Preference/requirement source wording is retained verbatim (legacy
+records lacking a quote use their literal value). Browsing context and legacy
+typed fields without this provenance do not supply missing scalar values.
+
+New file run: **44 passed in 0.40 seconds**. Fresh ten-file regression after the
+final helper text change: **155 passed in 14.31 seconds**, exit 0, no skips, using
+the same isolated test database and Windows selector launcher documented above.
+Owned-file `git diff --check` passed. This verifies rendering; root still needs
+the approved same-decision routing and repeated real dialogue evidence.
