@@ -63,6 +63,14 @@ def test_hypothetical_fact_task_cannot_upgrade_direct_consultation():
     assert not result.capabilities and not result.read_tasks
 
 
+def test_cropped_fact_quote_does_not_escape_hypothetical_parent_clause():
+    text = "只是假设景德镇下雨，聊聊如何取舍，不查天气"
+    decision = capabilities.CapabilityDecision.model_validate({"intent":"facts", "reason_code":"current_information",
+        "read_tasks":[{"source_quote":"景德镇下雨","capabilities":["facts"],"fact_kind":"weather"}]})
+    result = capabilities.validate_decision(decision, text, [], ContextEnvelope())
+    assert result.intent == "clarify" and not result.capabilities
+
+
 def test_read_failure_keeps_other_task_and_records_its_status(monkeypatch):
     async def leaf(settings, decision, message, *args, **kwargs):
         if decision.origin:

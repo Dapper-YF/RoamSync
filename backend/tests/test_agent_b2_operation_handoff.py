@@ -68,3 +68,55 @@ def test_draft_operations_require_original_source_and_literal_place_mentions():
             "authorization_quote":message, "planning_draft":draft})
         with pytest.raises(ValueError):
             approved_draft(decision, message)
+
+
+def test_literal_whole_day_blank_has_no_invented_user_clock_range():
+    decision = CapabilityDecision.model_validate({"intent":"create", "reason_code":"explicit_write",
+        "authorization_quote":"请创建绍兴11月29日到30日的安排", "creation":{"destination":"绍兴",
+        "start_date":"2026-11-29", "end_date":"2026-11-30", "flexible":True,
+        "choices":[{"kind":"free_window","label":"第二天留白","source_quote":"第二天留白",
+            "day_date":"2026-11-30","start":None,"end":None}]}})
+    choice = decision.creation.choices[0]
+    assert choice.kind == "blank_day" and choice.start is None and choice.end is None
+
+
+def test_partial_day_blank_is_not_promoted_to_whole_day():
+    with pytest.raises(ValueError):
+        CapabilityDecision.model_validate({"intent":"create", "reason_code":"explicit_write",
+            "authorization_quote":"请创建绍兴安排", "creation":{"destination":"绍兴",
+            "start_date":"2026-11-29", "end_date":"2026-11-30", "flexible":True,
+            "choices":[{"kind":"free_window","label":"第二天下午留白","source_quote":"第二天下午留白",
+                "day_date":"2026-11-30"}]}})
+
+
+def test_whole_day_preview_adoption_survives_reload_and_is_idempotent(sessions, monkeypatch):
+    from sqlalchemy import select
+    from app.assistant_service import confirm_action
+    from app.arrangement_service import free_days
+    from app.database import DayPlan, Activity
+    message = "请创建绍兴2026年11月29日至30日的安排，第二天留白，先给我候选。"
+    async def selector(*args):
+        return CapabilityDecision.model_validate({"intent":"create","reason_code":"explicit_write",
+            "authorization_quote":"请创建绍兴2026年11月29日至30日的安排",
+            "creation":{"destination":"绍兴","start_date":"2026-11-29","end_date":"2026-11-30","flexible":True,
+                "choices":[{"kind":"blank_day","label":"第二天留白","source_quote":"第二天留白","day_date":"2026-11-30"}]}})
+    async def cities(*args):
+        return [CitySuggestionResponse(name="绍兴市", adcode="330600", citycode="0575", longitude=120.58, latitude=30.0)]
+    async def run():
+        async with sessions() as db:
+            row=AssistantSession(messages=[],applied_actions={});db.add(row);await db.commit()
+            sid=row.id
+            row=await send_message(db,sid,message,uuid4(),capability_selector=selector,city_search=cities,
+                context={"topic_id":"b2-blank","prefer_flexible":True})
+            assert row.trip_id is None
+            action=row.pending_action["id"]
+        async with sessions() as db:
+            row=await confirm_action(db,sid,action,True)
+            tid=row.trip_id
+            assert await free_days(db,tid)=={date(2026,11,30)}
+            assert not list((await db.scalars(select(Activity).join(DayPlan).where(DayPlan.trip_id==tid))).all())
+        async with sessions() as db:
+            row=await confirm_action(db,sid,action,True)
+            assert row.trip_id==tid and row.pending_action is None
+            assert await free_days(db,tid)=={date(2026,11,30)}
+    asyncio.run(run())

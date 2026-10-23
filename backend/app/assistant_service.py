@@ -772,7 +772,7 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
             budget_text = (f"总预算 {action['total_budget_fen'] / 100:g} 元，每日预算 {action['daily_budget_fen'] / 100:.2f} 元" if action["total_budget_fen"] is not None else "未设置预算上限")
             reply = f"请核对：{action['city']['name']}，{action['start_date']} 至 {action['end_date']}，共 {count} 天，{budget_text}。确认后执行。"
             if action.get("flexible"):
-                labels = {"selected": "纳入，时间未定", "optional": "备选", "free_window": "保留空闲", "appointment": "你提供的固定预约"}
+                labels = {"selected": "纳入，时间未定", "optional": "备选", "free_window": "保留空闲", "appointment": "你提供的固定预约", "blank_day":"整天留白"}
                 reply += "\n" + "\n".join(f"{i['label']}：{labels[i['kind']]}" + (f"，{i['day_date']} {i['start']}—{i['end']}" if i.get("start") else "") for i in action["choices"])
                 if action.get("user_request"):
                     reply += "\n保留原要求：" + action["user_request"]

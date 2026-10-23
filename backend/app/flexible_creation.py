@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 class CreationChoice(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    kind: Literal["selected", "optional", "free_window", "appointment"]
+    kind: Literal["selected", "optional", "free_window", "appointment", "blank_day"]
     label: str = Field(min_length=1, max_length=160)
     origin: Literal["user_explicit", "ai_suggestion"] = "user_explicit"
     source_quote: str = Field(default="", max_length=600)
@@ -18,6 +18,10 @@ class CreationChoice(BaseModel):
 
     @model_validator(mode="after")
     def precision(self):
+        if self.kind == "blank_day":
+            if self.day_date is None or self.start is not None or self.end is not None:
+                raise ValueError("整天留白只接受日期，不补写用户钟点")
+            return self
         if self.kind in {"appointment", "free_window"}:
             if self.day_date is None or self.start is None or self.end is None or self.start >= self.end:
                 raise ValueError("时间范围需要完整且明确")
@@ -28,6 +32,23 @@ class CreationChoice(BaseModel):
 
 def _compact(text):
     return re.sub(r"\s+", "", text).replace("：", ":")
+
+
+def whole_day_quote(quote, day_date, start_date):
+    """An entire named day, not an unspecified partial-day time window."""
+    if not day_date or not start_date:
+        return False
+    from app.travel_language import chinese_number
+    quote = _compact(quote)
+    match = re.fullmatch(r"(?:请|把)?(?:第([一二三四五六七八九十两\d]+)天|(?:(20\d{2})年)?(\d{1,2})月(\d{1,2})[日号]?|(20\d{2}-\d{1,2}-\d{1,2}))"
+        r"(?:全天|整天|一整天)?(?:先|都|全部)?(?:留白|留空|空着|不安排(?:活动|地点|行程)?)(?:吧|。)?", quote)
+    if not match:
+        return False
+    if match[1]:
+        return chinese_number(match[1]) == (day_date-start_date).days+1
+    if match[5]:
+        return match[5] == day_date.isoformat()
+    return (int(match[2] or day_date.year), int(match[3]), int(match[4])) == (day_date.year, day_date.month, day_date.day)
 
 
 def check_time_quote(choice, quote, start_date=None):
@@ -86,10 +107,10 @@ async def prepare_choices(decision, city, user_text):
         quote = _compact(choice.source_quote)
         # A display caption may include '(备选)' or '预约'. It is not a POI
         # identity; strip only these known captions before checking the quote.
-        label = re.split(r"[（(]|(?:已)?预约", choice.label, maxsplit=1)[0].strip() if choice.kind != "free_window" else choice.label
+        label = re.split(r"[（(]|(?:已)?预约", choice.label, maxsplit=1)[0].strip() if choice.kind not in {"free_window", "blank_day"} else choice.label
         label = label or choice.label
         core_name = label.removeprefix(city["name"].rstrip("市")).strip() or label
-        if choice.origin == "user_explicit" and (not quote or quote not in source or _compact(core_name) not in quote and choice.kind != "free_window"):
+        if choice.origin == "user_explicit" and (not quote or quote not in source or _compact(core_name) not in quote and choice.kind not in {"free_window", "blank_day"}):
             raise ValueError(f"事项「{choice.label}」缺少含名称的逐字用户原话；请从user_source_text复制完整原句，不能概括或补写")
         if choice.day_date and not decision.start_date <= choice.day_date <= decision.end_date:
             raise ValueError("建议日期超出本次旅行")
@@ -105,6 +126,9 @@ async def prepare_choices(decision, city, user_text):
             data["day_date"] = None
         if choice.kind == "free_window" and choice.origin == "user_explicit":
             check_time_quote(choice, choice.source_quote.replace("：", ":"), decision.start_date)
+        if choice.kind == "blank_day" and (choice.origin != "user_explicit" or
+                not whole_day_quote(choice.source_quote, choice.day_date, decision.start_date)):
+            raise ValueError("整天留白需明确整天及对应日期，局部时段不能扩大为全天")
         if choice.kind == "appointment":
             if choice.origin != "user_explicit" or not re.search(r"预约|订好|固定", quote) or re.search(r"取消|没订|未预约|不确定", quote):
                 raise ValueError("固定预约必须来自用户明确提供的信息")
@@ -134,11 +158,12 @@ async def adopt_choices(db, trip, action):
         if data.kind == "appointment":
             place = await save_candidate_snapshot(db, trip.id, PlaceSearchResultResponse.model_validate(choice["place_snapshot"]))
             pid = place.id
+        blank_day = data.kind == "blank_day"
         item = await write_item(db, trip.id, ItemWrite(id=item_id, expected_version=trip.version,
-            kind="selected" if data.kind == "appointment" else data.kind, label=data.label,
+            kind="free_window" if blank_day else "selected" if data.kind == "appointment" else data.kind, label=data.label,
             source_ref=f"preview:{action['id']}:{index}:{data.origin}", place_id=pid,
-            day_date=data.day_date, start=data.start if data.kind == "free_window" else None,
-            end=data.end if data.kind == "free_window" else None), commit=False)
+            day_date=data.day_date, start=time(0) if blank_day else data.start if data.kind == "free_window" else None,
+            end=time(23,59) if blank_day else data.end if data.kind == "free_window" else None), commit=False)
         item.decision_ref = f"adopt-preview:{action['id']}"
         if data.kind == "appointment":
             day = await db.scalar(select(DayPlan.id).where(DayPlan.trip_id == trip.id, DayPlan.date == data.day_date))

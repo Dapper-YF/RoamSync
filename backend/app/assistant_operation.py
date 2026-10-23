@@ -5,7 +5,7 @@ No model, Session, generated IDs or write authority lives in this module.
 import re
 from datetime import date, timedelta
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.flexible_creation import CreationChoice
 from app.schemas import SemanticIntentDraft
@@ -19,6 +19,27 @@ class CreationProposal(BaseModel):
     total_budget_fen: int | None = Field(default=None, gt=0, le=100_000_000)
     flexible: bool = False
     choices: list[CreationChoice] = Field(default_factory=list, max_length=30)
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_literal_whole_day(cls, value):
+        if not isinstance(value, dict):
+            return value
+        from app.flexible_creation import whole_day_quote
+        result = dict(value)
+        result["choices"] = []
+        for item in value.get("choices", []):
+            if isinstance(item, dict) and item.get("kind") == "free_window" and not item.get("start") and not item.get("end"):
+                start, day = value.get("start_date"), item.get("day_date")
+                try:
+                    start = date.fromisoformat(start) if isinstance(start, str) else start
+                    day = date.fromisoformat(day) if isinstance(day, str) else day
+                    if whole_day_quote(item.get("source_quote", ""), day, start):
+                        item = {**item, "kind":"blank_day", "label":item["source_quote"]}
+                except (ValueError, TypeError):
+                    pass
+            result["choices"].append(item)
+        return result
 
 
 def approved_draft(decision, message):
@@ -78,8 +99,10 @@ def approved_tool_decision(decision, message, envelope, *, today):
         if budget not in amounts:
             return ToolDecision(tool="reply", reply="请确认旅行总预算的金额与口径。")
     for choice in proposal.choices:
-        if choice.origin != "user_explicit" or choice.source_quote not in message or choice.label not in choice.source_quote:
+        if choice.origin != "user_explicit" or choice.source_quote not in message or choice.kind != "blank_day" and choice.label not in choice.source_quote:
             return ToolDecision(tool="reply", reply="请确认各地点或留白对应的原始要求。")
+    preferences = "\n".join(dict.fromkeys([*[p["value"] for p in
+        [*effective.get("preferences", []), *effective.get("requirements", [])]], message]))
     return ToolDecision(tool="create_trip", reply="准备创建预览。", destination=city,
         start_date=start, end_date=end, total_budget_fen=budget, flexible=proposal.flexible,
-        choices=proposal.choices, preferences=message, planning_request=message)
+        choices=proposal.choices, preferences=preferences, planning_request=message)
