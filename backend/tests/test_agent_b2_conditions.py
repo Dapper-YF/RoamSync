@@ -143,3 +143,57 @@ def test_continuous_parent_walking_condition_survives_normal_chat_capture():
     env = capture_effective_requirements(ContextEnvelope(), text, message_id="walking-source")
     effective = project_requirements(env.requirement_records, topic_id="main")
     assert [(r["key"], r["text"], r["source"]["ref"]) for r in effective] == [("user_requirement", text, "walking-source")]
+
+
+@pytest.mark.parametrize("field,value,text", [
+    ("duration_days", "3天", "这次不玩三天"),
+    ("duration_days", "4天", "这次不是改为四天"),
+    ("party_size", "2人", "这次不是两个人同行"),
+    ("start_date", "2026-10-23", "不是明天出发"),
+])
+def test_negated_scalar_cannot_become_an_affirmative_effective_condition(field, value, text):
+    env, accepted, _ = remember(text, MemoryUpdate(field=field, value=value, source_quote=text, scope="trip"))
+    assert accepted == [] and field not in memory_prompt(env)["slots"]
+    assert memory_prompt(env)["diagnostics"][-1]["reason"] in {"unverified_numeric_value", "unverified_date_value"}
+
+
+def test_literal_quote_cropping_cannot_hide_scalar_negation():
+    env, accepted, _ = remember("这次不玩三天", MemoryUpdate(field="duration_days", value="3天", source_quote="玩三天", scope="trip"))
+    assert accepted == [] and "duration_days" not in memory_prompt(env)["slots"]
+
+
+@pytest.mark.parametrize("field,value,text,want", [
+    ("duration_days", "4天", "这次不玩三天，改玩四天", 4),
+    ("duration_days", "4天", "不玩三天改四天", 4),
+    ("party_size", "3人", "这次不是两个人同行，改为三个人同行", 3),
+    ("start_date", "2026-10-24", "不是明天出发，改为后天出发", "2026-10-24"),
+])
+def test_affirmative_scalar_correction_keeps_only_the_approved_value(field, value, text, want):
+    env, accepted, _ = remember(text, MemoryUpdate(field=field, value=value, source_quote=text, scope="trip"))
+    assert accepted == [field]
+    assert memory_prompt(env)["slots"][field]["value"] == want
+
+
+def test_continuous_walking_withdrawal_only_applies_to_explicit_matching_subject():
+    scope = {"kind": "trip", "trip_id": "trip"}
+    records = capture_explicit_requirements([], "妈妈连续步行不超过20分钟，孩子连续步行不超过10分钟", scope=scope, source_ref="first")
+    records = capture_explicit_requirements(records, "撤销妈妈连续步行上限", scope=scope, source_ref="withdraw")
+    assert [(r["key"], r["text"]) for r in project_requirements(records, trip_id="trip")] == [
+        ("user_requirement", "孩子连续步行不超过10分钟")]
+
+
+def test_ambiguous_continuous_walking_withdrawal_preserves_different_subjects():
+    scope = {"kind": "trip", "trip_id": "trip"}
+    records = capture_explicit_requirements([], "妈妈连续步行不超过20分钟，孩子连续步行不超过10分钟", scope=scope, source_ref="first")
+    records = capture_explicit_requirements(records, "撤销连续步行上限", scope=scope, source_ref="withdraw")
+    assert [r["text"] for r in project_requirements(records, trip_id="trip")] == [
+        "妈妈连续步行不超过20分钟", "孩子连续步行不超过10分钟"]
+
+
+@pytest.mark.parametrize("lower", ["至少5分钟", "超过5分钟", "不少于5分钟"])
+def test_walking_upper_limit_withdrawal_cannot_revoke_a_lower_bound_predicate(lower):
+    scope = {"kind": "trip", "trip_id": "trip"}
+    lower_text = "妈妈连续步行" + lower
+    records = capture_explicit_requirements([], "妈妈连续步行不超过20分钟，" + lower_text, scope=scope, source_ref="first")
+    records = capture_explicit_requirements(records, "撤销妈妈连续步行上限", scope=scope, source_ref="withdraw")
+    assert [r["text"] for r in project_requirements(records, trip_id="trip")] == [lower_text]

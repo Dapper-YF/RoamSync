@@ -144,7 +144,7 @@ def capture_explicit_requirements(records, text, *, scope, source_ref, force=Fal
     default_days = target_day_indices or []
     from app.requirement_language import (requirement_clauses, clause_polarity,
         is_context_only_statement, current_user_evidence_reason, term_is_negated,
-        has_continuous_walking_scope)
+        has_continuous_walking_scope, continuous_walking_identity)
     clauses = requirement_clauses(text)
     for clause_index, clause in enumerate(clauses):
         if not clause.strip():
@@ -218,6 +218,8 @@ def capture_explicit_requirements(records, text, *, scope, source_ref, force=Fal
                     and key == "user_requirement" and r["key"] == "user_requirement"
                     and r["status"] == "active" and re.search(r"步行|走路", r["text"])
                     and has_continuous_walking_scope(r["text"])
+                    and continuous_walking_identity(clause) is not None
+                    and continuous_walking_identity(r["text"]) == continuous_walking_identity(clause)
                     and all(r["scope"].get(k) == local.get(k) for k in ("trip_id", "draft_id", "topic_id", "city"))
                     and (r["scope"] == RequirementScope.model_validate(local).model_dump(mode="json")
                          or not any(r["scope"].get(k) for k in ("day_index", "date", "activity_id")))]

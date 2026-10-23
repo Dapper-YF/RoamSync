@@ -55,18 +55,37 @@ def anchored_date(value, today):
     return None
 
 
-def _quoted_scalar(key, value, quote, today):
-    """Normalize only a single explicit quantity/date equal to the proposal."""
+def _affirmative_scalar_token(message, start, end):
+    """A literal quantity is not an assertion when its clause negates it."""
+    punctuation = r"[，,。；;!?！？\n]"
+    correction = r"改(?:为|成|玩|到|(?=[一二三四五六七八九十两\d]|$))|而是"
+    prefix = re.split(punctuation, message[:start])[-1]
+    correction_end = 0
+    for marker in re.finditer(correction, prefix):
+        # A negated correction is not an affirmative clause boundary either.
+        if not re.search(r"(?:不|没|别|非)(?:是|有|要|想|再|会|能)?\s*$", prefix[:marker.start()]):
+            correction_end = marker.end()
+    prefix = prefix[correction_end:]
+    suffix = re.split(punctuation + "|" + correction, message[end:])[0]
+    return not (re.search(r"不|没|别|取消|撤销", prefix)
+                or re.match(r"\s*(?:不(?:是|要|去|出发|开始|玩|待|同行|出游)|没|取消|撤销)", suffix))
+
+
+def _quoted_scalar(key, value, quote, today, message):
+    """Normalize a single affirmative quoted quantity/date equal to proposal."""
+    quote_start = message.find(quote)
     if key == "start_date":
-        tokens = re.findall(r"今天|明天|后天|20\d{2}-\d{1,2}-\d{1,2}|(?:20\d{2}年)?\d{1,2}月\d{1,2}[日号]?|(?:下下|下|本|这)?(?:周|星期)[一二三四五六日天]", quote)
-        dates = [anchored_date(token, today) for token in tokens]
+        tokens = re.finditer(r"今天|明天|后天|20\d{2}-\d{1,2}-\d{1,2}|(?:20\d{2}年)?\d{1,2}月\d{1,2}[日号]?|(?:下下|下|本|这)?(?:周|星期)[一二三四五六日天]", quote)
+        dates = [anchored_date(token[0], today) for token in tokens
+                 if _affirmative_scalar_token(message, quote_start + token.start(), quote_start + token.end())]
         proposed = anchored_date(value, today)
         return proposed if len(dates) == 1 and proposed and dates[0] == proposed else None
     from app.travel_language import chinese_number
     numeral = r"[一二三四五六七八九十两\d]+"
     unit = r"天" if key == "duration_days" else r"(?:个?人|位)"
     proposed = re.fullmatch(rf"({numeral})\s*(?:{unit})?", value)
-    tokens = re.findall(rf"({numeral})\s*{unit}", quote)
+    tokens = [token[1] for token in re.finditer(rf"({numeral})\s*{unit}", quote)
+              if _affirmative_scalar_token(message, quote_start + token.start(), quote_start + token.end())]
     # Mixed adult/child groups require a semantic sum, not a verified scalar.
     if key == "party_size" and re.search(r"成人|儿童|孩子|小孩", quote):
         return None
@@ -155,7 +174,7 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
         normalized = value
         if operation not in {"clear", "remove"}:
             if key in {"duration_days", "party_size", "start_date"}:
-                normalized = _quoted_scalar(key, value, quote, today or local_today())
+                normalized = _quoted_scalar(key, value, quote, today or local_today(), message)
                 if normalized is None:
                     diagnostics.append({"field": key, "reason": "unverified_date_value" if key == "start_date" else "unverified_numeric_value", "source_quote": quote, "message_id": str(message_id)})
                     continue

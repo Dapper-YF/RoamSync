@@ -81,3 +81,40 @@ parser. Unsupported paraphrases remain literal; no internal walking, menu, weath
 or other missing external evidence becomes a verified guarantee. This test result
 does not replace the independent frozen holdout, real action-chain validation, or
 root's integrated review and release gates.
+
+## Independent root review repairs (2026-10-23)
+
+Root's scoped review of `6d069dd` found two real counterexamples: negated scalar
+quotes became affirmative memory, and withdrawing a mother's continuous walking
+limit also withdrew a child's separate limit. Repairs stayed within the original
+six-file ownership boundary; this follow-up changes three app files, the same
+development test file, and this evidence file. C's sealed questions were not read.
+
+Test-first evidence before the initial repair: **9 failed / 25 passed**. The nine
+new failures were negated duration/headcount/departure, cropped quote hiding the
+duration negation, affirmative corrections for all three dimensions, a mother's
+withdrawal deleting a child's limit, and an unspecified-subject withdrawal deleting
+both. Follow-up red tests exposed upper-bound withdrawal deleting a lower-bound
+predicate (1 failed / 34 passed), `超过5分钟` being mistaken for an upper limit
+(1 failed / 36 passed), and the compact correction `不玩三天改四天` plus negated
+correction `这次不是改为四天` (2 failed / 37 passed). The latter red cases were
+retained across the usage interruption and repaired after resuming on October 23.
+
+Scalar equality now additionally requires an affirmative token in the original
+message, including text outside a cropped source quote. Explicit affirmative
+correction boundaries may separate a rejected old value from the new one;
+negating the correction does not create an affirmative boundary. A rejected
+numeric/date proposal leaves the effective slot unresolved and records the
+existing structured unverified-value diagnostic.
+
+Continuous walking withdrawal now matches a literal subject, walking mode, and
+upper/lower-bound relation before linking a scoped tombstone. A mother's limit
+does not match a child's. A missing, compound, or otherwise uncertain subject or
+predicate cannot revoke named conditions; these remain active for clarification.
+This remains a conservative identity check, not a semantic person resolver.
+
+Fresh final run with the same ten-file command and selector policy above:
+**150 passed in 11.57 seconds**, exit 0, no skips. The development file now has
+39 cases, including 14 review additions and unchanged original counterexamples.
+Owned-file `git diff --check` passed. No schema, model, provider, permission,
+production, or Obsidian changes were made.

@@ -39,6 +39,31 @@ def has_continuous_walking_scope(clause: str) -> bool:
     return bool(re.search(r"连续|单次|每次|一次|内部|(?:内|里面|里).{0,8}(?:步行|走路)", clause))
 
 
+def continuous_walking_identity(clause: str) -> tuple[str, str, str] | None:
+    """Literal subject + walking predicate; uncertain identities never match.
+
+    This is not a person resolver: an unspecified subject cannot stand in for
+    a named subject, and an internal scope cannot stand in for continuous scope.
+    """
+    text = re.sub(r"第[一二三四五六七八九十\d]+天", "", clause)
+    text = re.sub(r"^(?:请|现在|这次|撤销|取消|不再要求|：|\s)+", "", text)
+    walking = re.search(r"(?P<mode>连续|单次|每次|一次)(?:步行|走路)", text)
+    if not walking:
+        return None
+    subject = text[:walking.start()].strip()
+    # A compound or qualified subject needs an explicit identity/clarification.
+    if re.search(r"和|与|及|、|或|在|内|里", subject):
+        return None
+    predicate = text[walking.end():]
+    if re.search(r"(?:不|不能|不得|不应)超过|最多|上限", predicate):
+        relation = "upper_bound"
+    elif re.search(r"至少|下限|不少于", predicate):
+        relation = "lower_bound"
+    else:
+        return None
+    return subject, walking["mode"], relation
+
+
 def is_context_only_statement(clause: str) -> bool:
     """Recognize complete provenance/experience assertions, not word mentions.
 
