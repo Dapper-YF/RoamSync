@@ -56,7 +56,8 @@ async def run(args, settings):
         row=AssistantSession(messages=[],applied_actions={});db.add(row);await db.commit();sid=row.id
     async def turn(message,context=None,*,selected_day_id=None):
         mid=uuid4();entry={"stage":"dialogue","user":message,"message_id":str(mid),"selections":[],
-            "selected_day_id":str(selected_day_id) if selected_day_id else None}
+            "selected_day_id":str(selected_day_id) if selected_day_id else None,"model_outputs":[]}
+        observation=capture.MODEL_OUTPUTS.set(entry["model_outputs"])
         async def selector(*params):
             decision=await select_capabilities(*params)
             entry["selections"].append(decision.model_dump(mode="json"));return decision
@@ -70,14 +71,17 @@ async def run(args, settings):
                 entry.update(raw=row.messages[-1],pending_action=row.pending_action,
                     trip_id=str(row.trip_id) if row.trip_id else None,run_id=str(row.latest_run_id) if row.latest_run_id else None)
         except Exception as exc:entry.update(error_type=type(exc).__name__,error=str(exc))
+        finally:capture.MODEL_OUTPUTS.reset(observation)
         entry["seconds"]=round(time.monotonic()-start,3);report["records"].append(entry);save()
         print(json.dumps({"stage":"dialogue","seconds":entry["seconds"],"error":entry.get("error_type")}),flush=True)
         return entry
     async def worker(rid):
-        start=time.monotonic();entry={"stage":"worker","run_id":rid}
+        start=time.monotonic();entry={"stage":"worker","run_id":rid,"model_outputs":[]}
+        observation=capture.MODEL_OUTPUTS.set(entry["model_outputs"])
         try:
             await execute_planning_run(UUID(rid))
         except Exception as exc:entry.update(error_type=type(exc).__name__,error=str(exc))
+        finally:capture.MODEL_OUTPUTS.reset(observation)
         entry.update(seconds=round(time.monotonic()-start,3),snapshot=await snapshot())
         report["records"].append(entry);save();return entry
     try:

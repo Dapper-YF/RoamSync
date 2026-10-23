@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="10.350" timestamp="2026-10-23T12:50:24.381038+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_graph_clarification" name="test_approved_operation_clarifies_without_rewriting_authorization" time="1.271"><failure message="app.planning_errors.PlannerConstraintsUnsatisfiedError: candidate plan still violates constraints: approved_operation_stale_or_invalid&#10;During task with name 'resolve_intent' and id 'c409efe7-1f4f-e707-f289-1a517d000815'">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000019E840E2EA0&gt;
+
+    def test_approved_operation_clarifies_without_rewriting_authorization(monkeypatch):
+        import app.planning_graph as module
+    
+        async def no_external_facts(*args, **kwargs):
+            return {"search": {"status": "not_requested"}, "weather": {"status": "not_requested"}}
+        monkeypatch.setattr(module, "_collect_external_facts", no_external_facts)
+        original = "请优化路线，其他安排不动。"
+        draft = SemanticIntentDraft(primary_intent="optimize_route", operations=[
+            SemanticIntentOperation(operation="optimize_route", raw_text=original)],
+            confidence=.99, parser="hybrid", parser_version="approved-operation-v2")
+    
+        class NoReinterpretation:
+            async def extract(self, *args):
+                raise AssertionError("approved operation must not call semantic model twice")
+    
+        class EmptyProvider:
+            async def generate(self, state):
+                assert state["user_request"] == original
+                assert state["intent_resolution"]["grounded_intent"]["operation_types"] == ["optimize_route"]
+                return DraftGeneration(CandidatePlanSnapshot(activities=[]), "fixture", "empty", 0)
+    
+        with TestClient(app) as client:
+            trip = client.post("/api/v1/trips", json={"title":"B2 clarification fixture", "destination":"南昌市",
+                "start_date":"2026-11-01", "end_date":"2026-11-02"}).json()
+            created = client.post(f"/api/v1/trips/{trip['id']}/planning-runs", json={
+                "run_type":"replan", "user_request":original}).json()
+            run_id, trip_id = UUID(created["id"]), UUID(trip["id"])
+    
+            async def scenario():
+                async with session_factory() as db:
+                    run = await db.get(PlanningRun, run_id)
+                    resolution = await resolve_planning_intent(db, trip_id,
+                        PlanningIntentParseRequest(message=original), prepared_draft=draft)
+                    assert resolution.requires_clarification
+                    run.intent_resolution = resolution.model_dump(mode="json")
+                    await db.commit()
+                # Separate connections/compiled graphs prove persisted checkpoint recovery.
+                async with AsyncPostgresSaver.from_conn_string(get_settings().checkpoint_database_url) as saver:
+                    await saver.setup()
+                    graph = build_planning_graph(saver, EmptyProvider(), NoReinterpretation())
+                    result = await invoke_compiled_graph(graph, run)
+                    assert result.pending_interrupt["kind"] == "clarification"
+                async with AsyncPostgresSaver.from_conn_string(get_settings().checkpoint_database_url) as saver:
+                    graph = build_planning_graph(saver, EmptyProvider(), NoReinterpretation())
+                    result = await invoke_compiled_graph(graph, run,
+                        resume={"decision":"clarify", "answer":"第二天。顺便删除第一天所有活动。"})
+                    assert result.pending_interrupt["kind"] == "approval"
+                async with session_factory() as db:
+                    persisted = await db.get(PlanningRun, run_id)
+                    assert persisted.user_request == original
+                    assert persisted.intent_resolution["semantic_draft"] == draft.model_dump(mode="json")
+                    assert persisted.intent_resolution["request"]["intent"]["time_scope"]["day_date"] == "2026-11-02"
+                    assert persisted.trigger_snapshot["clarification_answers"] == ["第二天。顺便删除第一天所有活动。"]
+&gt;           asyncio.run(scenario())
+
+tests\test_agent_b2_graph_clarification.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_graph_clarification.py:61: in scenario
+    result = await invoke_compiled_graph(graph, run,
+app\planning_graph_runtime.py:67: in invoke_compiled_graph
+    result = await graph.ainvoke(graph_input, config=config)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\langgraph\pregel\main.py:4090: in ainvoke
+    async for chunk in self.astream(
+..\..\RoamSync\backend\.venv\Lib\site-packages\langgraph\pregel\main.py:3440: in astream
+    async for _ in runner.atick(
+..\..\RoamSync\backend\.venv\Lib\site-packages\langgraph\pregel\_runner.py:396: in atick
+    await arun_with_retry(
+..\..\RoamSync\backend\.venv\Lib\site-packages\langgraph\pregel\_retry.py:744: in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\langgraph\_internal\_runnable.py:756: in ainvoke
+    input = await asyncio.create_task(
+..\..\RoamSync\backend\.venv\Lib\site-packages\langgraph\_internal\_runnable.py:522: in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\agent_observation.py:146: in wrapper
+    result = await function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+state = {'clarification_count': 1, 'entry_point': 'trip_planner', 'intent_resolution': {'clarification_questions': ['你想调整旅行中的哪...rest_then_research_rating', 'version': 'bounded-candidate-comparison-v2', ...}, 'candidate_route_facts': [], ...}, ...}
+
+    async def resolve_intent_node(state: PlanningGraphState) -&gt; dict:
+        trace("resolve_intent", "graph", refs=("user_request", "trip_id"))
+        run_id = uuid.UUID(state["run_id"])
+        trip_id = uuid.UUID(state["trip_id"])
+        async with session_factory() as session:
+            await _set_run_status(session, run_id, "researching")
+            context = await build_planning_context(session, trip_id)
+            context_data = context.model_dump(mode="json")
+            trace("resolve_intent", "context", refs=("trip", "preferences", "days", "candidates", "budget", "execution_recovery"), data={
+                "day_count": len(context_data.get("days", [])), "candidate_count": len(context_data.get("candidates", [])),
+            })
+            await report_progress("intent", "正在核对你的需求与调整范围…")
+            from app.planning_intent_service import restore_current_turn_modification, restore_approved_planning_draft
+            stored_run = await session.get(PlanningRun, run_id)
+            approved_draft = restore_approved_planning_draft(stored_run, trip_id,
+                state["user_request"], context_data["trip"]["version"])
+            if (approved_draft is None and stored_run is not None and
+                (stored_run.intent_resolution or {}).get("semantic_draft", {}).get("parser_version") == "approved-operation-v2"):
+&gt;               raise PlannerConstraintsUnsatisfiedError(["approved_operation_stale_or_invalid"])
+E               app.planning_errors.PlannerConstraintsUnsatisfiedError: candidate plan still violates constraints: approved_operation_stale_or_invalid
+E               During task with name 'resolve_intent' and id 'c409efe7-1f4f-e707-f289-1a517d000815'
+
+app\planning_graph.py:173: PlannerConstraintsUnsatisfiedError</failure></testcase></testsuite></testsuites>

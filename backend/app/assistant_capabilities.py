@@ -131,6 +131,8 @@ async def select_capabilities(settings, message, history, envelope, trip_summary
 
 
 def validate_decision(decision, message, history, envelope, selected=(), *, _task=False):
+    from app.assistant_operation import normalize_creation_evidence
+    decision=normalize_creation_evidence(decision,message)
     # Arguments carry provenance, not model-owned identities. No invented UUIDs.
     user_text = " ".join([message, envelope.browsing_city or "",
         *[m.get("user", "") for m in history[-8:]],
@@ -206,7 +208,8 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
             (re.search(r"怎么|怎样|如何|会怎样|是什么|什么意思|是否|好不好", message)
              and not re.search(r"(?:请|帮我|替我|给我|能不能帮我|能否帮我).{0,30}(?:安排|规划|调整|修改|生成|保存)", message)) or
             re.search(r"假如|假设|如果|先别|先不|暂不|不要修改|不要安排|不用修改|只(?:问|了解|讨论)", quote) or
-            _non_authorizing_context(message, quote)):
+            not affirmative_action_source(message, quote,
+                r"规划|安排|创建|生成|制定|保存|整理|协调|加入|添加|删除|删掉|取消|撤销|改|调整|换|挪|移|重排|保留|延长|结束|再待|多待")):
             return decision.model_copy(update={"intent": "direct", "capabilities": [], "authorization_quote": "",
                 "reason_code": "stable_knowledge"})
         decision = decision.model_copy(update={"capabilities": []})
@@ -256,14 +259,14 @@ def _task_decision(decision, task):
         "read_tasks": [], "clarification": "", "illustrate": False, "advice_focus": "none"})
 
 
-def _non_authorizing_context(message, quote):
+def _non_authorizing_context(message, quote, *, start=None):
     """A literal affirmative quote cannot escape its negated/quoted clause.
 
     Other clauses may constrain time/place without cancelling this action.
     Quotation marks and hypothetical scopes never grant write permission.
     """
-    start = message.find(quote)
-    if start < 0:
+    start = message.find(quote) if start is None else start
+    if start < 0 or message[start:start + len(quote)] != quote:
         return True
     if re.search(r'[“「"].{0,80}(?:安排|修改|规划|创建|生成|保存).{0,80}[”」"]', quote):
         return True
@@ -272,10 +275,41 @@ def _non_authorizing_context(message, quote):
     if before.count('"') % 2 or before.count('“') > before.count('”') or before.count('「') > before.count('」'):
         return True
     prefix = re.split(r"[，,。；;!?！？]", before)[-1]
-    if re.search(r"假如|假设|如果|先别|先不|暂不|不要|不用|不需要|只(?:问|了解|讨论)", prefix):
+    if re.search(r"假如|假设|如果|先别|先不|暂不|不要|不用|不必|无需|不许|不准|不需要|只(?:问|了解|讨论)", prefix) or re.search(r"(?:不|别)(?:再|想|要)?\s*$", prefix):
         return True
     # A request explicitly revoked later in the same turn stays revoked.
     return bool(re.search(r"(?:先别|先不|暂不|不要|不用|取消)(?:帮我)?(?:创建|形成|生成|保存|安排|规划|修改|调整)(?:(?:这份|新的?|整个)?(?:行程|安排|计划|旅行))?(?:了|吧)?(?=[，,。；;!?！？]|$)", message[start + len(quote):]))
+
+
+def affirmative_action_source(message, quote, verbs):
+    """An exact quote needs an affirmative occurrence of its own action."""
+    if not quote or _non_authorizing_context(message, quote):
+        return False
+    return any(not _non_authorizing_context(quote, match[0], start=match.start())
+               for match in re.finditer(verbs, quote))
+
+
+def affirmative_entity_source(message, quote, verbs, name):
+    """Bind an action to this entity, not a positive action about its peer.
+
+    Ambiguous coordinated prose stays unapproved; it does not borrow a verb
+    across an intervening name. The semantic proposal still owns the operation.
+    """
+    if not name or name not in quote or _non_authorizing_context(message, quote):
+        return False
+    clauses = [part for part in re.split(r"[，,。；;\n]|但是|但|而且", quote) if name in part]
+    if len(clauses) != 1 or clauses[0].count(name) != 1:
+        return False
+    clause = clauses[0]
+    start = clause.index(name)
+    end = start + len(name)
+    for action in re.finditer(verbs, clause):
+        gap = clause[action.end():start] if action.end() <= start else clause[end:action.start()] if action.start() >= end else None
+        if gap is None or not re.fullmatch(r"(?:一下|一趟|参观|游览|确定|要|作为|是|的|也|先|再|就|暂时|暂|不|别|不要|不用|无需|不必|路线|顺序|时间|停留|时长)*", gap):
+            continue
+        if not _non_authorizing_context(clause, action[0], start=action.start()):
+            return True
+    return False
 
 
 def decision_goal(decision, baseline):
@@ -506,6 +540,23 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
                 task.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)
     labels = {"route": "路线", "places": "地点", "web": "参考资料", "facts": "天气与实时信息", "itinerary": "已保存的安排", "direct": "建议"}
+    # Citations are local to each component until assembly. Namespace source IDs
+    # and map visible indices once, preserving every successful sibling source.
+    import copy
+    normalized_outputs, aggregated_sources = [], []
+    for task_index, (bundle, component_status) in enumerate(outputs):
+        bundle = copy.deepcopy(bundle)
+        search = bundle.get("read_tools", {}).get("web_search", {})
+        sources = search.get("sources", [])
+        offset = len(aggregated_sources)
+        for source in sources:
+            source["source_id"] = f"task_{task_index + 1}_" + str(source.get("source_id", "source"))
+        if sources:
+            bundle["assistant"] = re.sub(r"\[(\d+)\]", lambda match:
+                f"[{int(match[1]) + offset}]" if 1 <= int(match[1]) <= len(sources) else match[0], bundle["assistant"])
+        aggregated_sources.extend(sources)
+        normalized_outputs.append((bundle, component_status))
+    outputs = normalized_outputs
     text = "\n\n".join(f"{labels[kind]}：\n{bundle['assistant']}" for (kind, _, _, _), (bundle, _) in zip(jobs, outputs))
     cards, tools = {}, {}
     for bundle, _ in outputs:
@@ -514,6 +565,8 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
         facts = (bundle.get("companion_result") or {}).get("resolved_facts")
         if facts:
             tools["facts"] = {"status": "available", "result": facts}
+    if aggregated_sources:
+        tools["web_search"] = {**tools.get("web_search", {}), "sources": aggregated_sources}
     tools["tasks"] = [{"source_quote": question, "capabilities": caps, "status": status,
         "validated_arguments": base.model_dump(mode="json", include={"city", "query", "names", "origin", "destination", "mode", "near_name", "category", "fact_kind"}),
         "read_tools": bundle.get("read_tools", {}),

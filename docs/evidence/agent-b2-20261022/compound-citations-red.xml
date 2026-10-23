@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="7.889" timestamp="2026-10-23T12:59:50.006294+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_read_operations" name="test_compound_citations_are_aggregated_and_remapped" time="0.019"><failure message="AssertionError: assert ['瘦西湖'] == ['何园', '瘦西湖']&#10;  &#10;  At index 0 diff: '瘦西湖' != '何园'&#10;  Right contains one more item: '瘦西湖'&#10;  Use -v to get more diff">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001AEAA920770&gt;
+
+    def test_compound_citations_are_aggregated_and_remapped(monkeypatch):
+        async def leaf(settings, decision, message, *args, **kwargs):
+            name = decision.names[0] if decision.names else "何园"
+            return {"assistant": name+"的实际资料。 [1]", "place_cards": [], "read_tools": {
+                "web_search": {"sources":[{"source_id":"poi_1","place_id":name,
+                    "url":"https://example.org/"+name,"title":name,"read_level":"provider_reference"}]}}}, "complete"
+        monkeypatch.setattr(capabilities,"_answer_leaf",leaf)
+        result,_=asyncio.run(capabilities.answer_with_capabilities(None,compound(),"复合请求",[],
+            ContextEnvelope(),None,None,None,"s","t",route_travel_goal("复合请求")))
+        sources=result["read_tools"]["web_search"]["sources"]
+&gt;       assert [s["title"] for s in sources]==["何园","瘦西湖"]
+E       AssertionError: assert ['瘦西湖'] == ['何园', '瘦西湖']
+E         
+E         At index 0 diff: '瘦西湖' != '何园'
+E         Right contains one more item: '瘦西湖'
+E         Use -v to get more diff
+
+tests\test_agent_b2_read_operations.py:53: AssertionError</failure></testcase></testsuite></testsuites>

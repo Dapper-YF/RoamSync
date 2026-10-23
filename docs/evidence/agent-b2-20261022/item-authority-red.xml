@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="6" skipped="0" tests="6" time="7.892" timestamp="2026-10-23T12:51:55.633526+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_operation_handoff" name="test_complete_negated_operation_cannot_borrow_peer_authority[\u522b\u52a0\u5165\u4e59\u9986]" time="0.007"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">clause = '别加入乙馆'
+
+    @pytest.mark.parametrize("clause", ["别加入乙馆", "不必加入乙馆", "无需加入乙馆"])
+    def test_complete_negated_operation_cannot_borrow_peer_authority(clause):
+        from app.assistant_operation import approved_draft
+        message=f"请调整第二天路线；{clause}。"
+        decision=CapabilityDecision.model_validate({"intent":"modify", "reason_code":"explicit_write",
+            "authorization_quote":"请调整第二天路线", "planning_draft":{"primary_intent":"add_activity",
+                "operations":[{"operation":"add_activity","raw_text":clause,"place_mentions":["乙馆"]}],
+                "confidence":.99,"parser_version":"model-output"}})
+&gt;       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_agent_b2_operation_handoff.py:170: Failed</failure></testcase><testcase classname="tests.test_agent_b2_operation_handoff" name="test_complete_negated_operation_cannot_borrow_peer_authority[\u4e0d\u5fc5\u52a0\u5165\u4e59\u9986]" time="0.001"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">clause = '不必加入乙馆'
+
+    @pytest.mark.parametrize("clause", ["别加入乙馆", "不必加入乙馆", "无需加入乙馆"])
+    def test_complete_negated_operation_cannot_borrow_peer_authority(clause):
+        from app.assistant_operation import approved_draft
+        message=f"请调整第二天路线；{clause}。"
+        decision=CapabilityDecision.model_validate({"intent":"modify", "reason_code":"explicit_write",
+            "authorization_quote":"请调整第二天路线", "planning_draft":{"primary_intent":"add_activity",
+                "operations":[{"operation":"add_activity","raw_text":clause,"place_mentions":["乙馆"]}],
+                "confidence":.99,"parser_version":"model-output"}})
+&gt;       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_agent_b2_operation_handoff.py:170: Failed</failure></testcase><testcase classname="tests.test_agent_b2_operation_handoff" name="test_complete_negated_operation_cannot_borrow_peer_authority[\u65e0\u9700\u52a0\u5165\u4e59\u9986]" time="0.002"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">clause = '无需加入乙馆'
+
+    @pytest.mark.parametrize("clause", ["别加入乙馆", "不必加入乙馆", "无需加入乙馆"])
+    def test_complete_negated_operation_cannot_borrow_peer_authority(clause):
+        from app.assistant_operation import approved_draft
+        message=f"请调整第二天路线；{clause}。"
+        decision=CapabilityDecision.model_validate({"intent":"modify", "reason_code":"explicit_write",
+            "authorization_quote":"请调整第二天路线", "planning_draft":{"primary_intent":"add_activity",
+                "operations":[{"operation":"add_activity","raw_text":clause,"place_mentions":["乙馆"]}],
+                "confidence":.99,"parser_version":"model-output"}})
+&gt;       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_agent_b2_operation_handoff.py:170: Failed</failure></testcase><testcase classname="tests.test_agent_b2_operation_handoff" name="test_flexible_item_requires_its_own_affirmative_choice[\u4e0d\u8981\u52a0\u5165\u4e59\u9986]" time="0.012"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">clause = '不要加入乙馆'
+
+    @pytest.mark.parametrize("clause", ["不要加入乙馆", "如果有空就去乙馆", "乙馆先别加入"])
+    def test_flexible_item_requires_its_own_affirmative_choice(clause):
+        from app.assistant_operation import approved_tool_decision
+        from app.assistant_context import ContextEnvelope
+        from app.flexible_creation import prepare_choices
+        message=f"请创建绍兴2026年11月29日的一日安排，{clause}。"
+        decision=CapabilityDecision.model_validate({"intent":"create","reason_code":"explicit_write",
+            "authorization_quote":"请创建绍兴2026年11月29日的一日安排",
+            "creation":{"destination":"绍兴","start_date":"2026-11-29","end_date":"2026-11-29",
+                "flexible":True,"choices":[{"kind":"selected","label":"乙馆","source_quote":clause}]}})
+        tool=approved_tool_decision(decision,message,ContextEnvelope(),today=date(2026,10,23))
+&gt;       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_agent_b2_operation_handoff.py:185: Failed</failure></testcase><testcase classname="tests.test_agent_b2_operation_handoff" name="test_flexible_item_requires_its_own_affirmative_choice[\u5982\u679c\u6709\u7a7a\u5c31\u53bb\u4e59\u9986]" time="0.005"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">clause = '如果有空就去乙馆'
+
+    @pytest.mark.parametrize("clause", ["不要加入乙馆", "如果有空就去乙馆", "乙馆先别加入"])
+    def test_flexible_item_requires_its_own_affirmative_choice(clause):
+        from app.assistant_operation import approved_tool_decision
+        from app.assistant_context import ContextEnvelope
+        from app.flexible_creation import prepare_choices
+        message=f"请创建绍兴2026年11月29日的一日安排，{clause}。"
+        decision=CapabilityDecision.model_validate({"intent":"create","reason_code":"explicit_write",
+            "authorization_quote":"请创建绍兴2026年11月29日的一日安排",
+            "creation":{"destination":"绍兴","start_date":"2026-11-29","end_date":"2026-11-29",
+                "flexible":True,"choices":[{"kind":"selected","label":"乙馆","source_quote":clause}]}})
+        tool=approved_tool_decision(decision,message,ContextEnvelope(),today=date(2026,10,23))
+&gt;       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_agent_b2_operation_handoff.py:185: Failed</failure></testcase><testcase classname="tests.test_agent_b2_operation_handoff" name="test_flexible_item_requires_its_own_affirmative_choice[\u4e59\u9986\u5148\u522b\u52a0\u5165]" time="0.005"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">clause = '乙馆先别加入'
+
+    @pytest.mark.parametrize("clause", ["不要加入乙馆", "如果有空就去乙馆", "乙馆先别加入"])
+    def test_flexible_item_requires_its_own_affirmative_choice(clause):
+        from app.assistant_operation import approved_tool_decision
+        from app.assistant_context import ContextEnvelope
+        from app.flexible_creation import prepare_choices
+        message=f"请创建绍兴2026年11月29日的一日安排，{clause}。"
+        decision=CapabilityDecision.model_validate({"intent":"create","reason_code":"explicit_write",
+            "authorization_quote":"请创建绍兴2026年11月29日的一日安排",
+            "creation":{"destination":"绍兴","start_date":"2026-11-29","end_date":"2026-11-29",
+                "flexible":True,"choices":[{"kind":"selected","label":"乙馆","source_quote":clause}]}})
+        tool=approved_tool_decision(decision,message,ContextEnvelope(),today=date(2026,10,23))
+&gt;       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_agent_b2_operation_handoff.py:185: Failed</failure></testcase></testsuite></testsuites>

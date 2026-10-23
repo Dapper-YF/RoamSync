@@ -20,6 +20,43 @@ def compound():
              "city": "扬州", "names": ["瘦西湖"], "query": "瘦西湖"}]})
 
 
+def test_address_only_task_renders_actual_fields_without_sibling_claims():
+    from test_assistant_research import PLACE
+    from app.assistant_research import research, LookupIntent, ResearchAnswer
+    async def judge(*args):
+        return LookupIntent(needed=True, city="成都", query=PLACE.name, names=[PLACE.name], read_pages=False)
+    class Port:
+        async def search(self, **kwargs):
+            return [PLACE]
+    calls=[]
+    async def invented_sibling(*args):
+        calls.append(True)
+        return ResearchAnswer(paragraphs=[{"text":"其他地点没有查到资料。", "place_index":1,
+            "supports":[{"source_id":"poi_1","snippet_id":"s1"}]}])
+    bundle=asyncio.run(research(None,f"查成都{PLACE.name}和另一个景点的位置",[],
+        ContextEnvelope(),Port(),judge=judge,answer=invented_sibling))
+    assert not calls
+    assert PLACE.address in bundle["assistant"] and PLACE.name in bundle["assistant"]
+    assert "其他地点" not in bundle["assistant"]
+
+
+def test_compound_citations_are_aggregated_and_remapped(monkeypatch):
+    async def leaf(settings, decision, message, *args, **kwargs):
+        name = decision.names[0] if decision.names else "何园"
+        return {"assistant": name+"的实际资料。 [1]", "place_cards": [], "read_tools": {
+            "web_search": {"sources":[{"source_id":"poi_1","place_id":name,
+                "url":"https://example.org/"+name,"title":name,"read_level":"provider_reference"}]}}}, "complete"
+    monkeypatch.setattr(capabilities,"_answer_leaf",leaf)
+    result,_=asyncio.run(capabilities.answer_with_capabilities(None,compound(),"复合请求",[],
+        ContextEnvelope(),None,None,None,"s","t",route_travel_goal("复合请求")))
+    sources=result["read_tools"]["web_search"]["sources"]
+    assert [s["title"] for s in sources]==["何园","瘦西湖"]
+    assert len({s["source_id"] for s in sources})==2
+    assert "何园的实际资料。 [1]" in result["assistant"]
+    assert "瘦西湖的实际资料。 [2]" in result["assistant"]
+    assert result["read_tools"]["tasks"][1]["read_tools"]["web_search"]["sources"][0]["source_id"]==sources[1]["source_id"]
+
+
 def test_separate_address_is_not_consumed_by_route_endpoint_lookup(monkeypatch):
     calls = []
     async def leaf(settings, decision, message, *args, **kwargs):

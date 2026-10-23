@@ -9,11 +9,30 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+from contextvars import ContextVar
 from uuid import uuid4
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 DB = "postgresql+psycopg://agent_b_test:agent_b_test_only@127.0.0.1:15435/roamsync_agent_b2_live_test"
+MODEL_OUTPUTS = ContextVar("b2_eval_model_outputs", default=None)
+
+
+def observe_model_outputs():
+    """Development evidence only: observe real structured public model output."""
+    import importlib
+    for name in ("assistant_capabilities", "companion_provider", "openai_planner", "destination_research"):
+        module=importlib.import_module("app."+name)
+        original=module.create_model_response
+        if getattr(original,"_b2_observed",False):continue
+        async def observed(*args,_fn=original,_stage=name,**kwargs):
+            result=await _fn(*args,**kwargs)
+            collector=MODEL_OUTPUTS.get()
+            if collector is not None:
+                collector.append({"stage":_stage,"status":result.status,"output_text":result.output_text})
+            return result
+        observed._b2_observed=True
+        module.create_model_response=observed
 
 
 def configure(source):
@@ -32,6 +51,7 @@ def configure(source):
     os.environ.update(DATABASE_URL=DB, LANGGRAPH_DATABASE_URL=DB.replace("+psycopg", ""), APP_ENV="test",
                       PLANNER_MAX_RETRIES="0", ALLOW_MAP_ESTIMATES="false")
     get_settings.cache_clear()
+    observe_model_outputs()
     return get_settings()
 
 
@@ -107,7 +127,8 @@ async def dialogue_run(args, settings, output):
                     value = await select_capabilities(*a)
                     choices.append(value.model_dump(mode="json"))
                     return value
-                record = {"case": case["id"], "turn": index, "user": message, "session_id": str(sid)}
+                record = {"case": case["id"], "turn": index, "user": message, "session_id": str(sid),"model_outputs":[]}
+                observation=MODEL_OUTPUTS.set(record["model_outputs"])
                 start = time.monotonic()
                 try:
                     async with factory() as db:
@@ -118,6 +139,8 @@ async def dialogue_run(args, settings, output):
                                       pending_action=row.pending_action, latest_run_id=str(row.latest_run_id) if row.latest_run_id else None)
                 except Exception as exc:
                     record["error_type"] = type(exc).__name__
+                finally:
+                    MODEL_OUTPUTS.reset(observation)
                 record.update(seconds=round(time.monotonic() - start, 3), choices=choices, calls=calls)
                 report["records"].append(record)
                 dump(output, report)

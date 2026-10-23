@@ -167,9 +167,12 @@ def build_planning_graph(
             from app.planning_intent_service import restore_current_turn_modification, restore_approved_planning_draft
             stored_run = await session.get(PlanningRun, run_id)
             approved_draft = restore_approved_planning_draft(stored_run, trip_id,
-                state["user_request"], context_data["trip"]["version"])
+                state["user_request"], context_data["trip"]["version"],
+                preferences_version=context_data["preferences"]["version"])
+            clarification_answers = tuple((stored_run.trigger_snapshot or {}).get("clarification_answers", []))
             if (approved_draft is None and stored_run is not None and
-                (stored_run.intent_resolution or {}).get("semantic_draft", {}).get("parser_version") == "approved-operation-v2"):
+                ("prepared_intent" in (stored_run.trigger_snapshot or {}) or
+                 (stored_run.intent_resolution or {}).get("semantic_draft", {}).get("parser_version") == "approved-operation-v2")):
                 raise PlannerConstraintsUnsatisfiedError(["approved_operation_stale_or_invalid"])
             current_operation = restore_current_turn_modification(stored_run, trip_id,
                 state["user_request"], context_data["trip"]["version"])
@@ -183,6 +186,7 @@ def build_planning_graph(
         resolution = await resolve_planning_intent_snapshot(
             intent_snapshot, intent_payload, semantic_provider=active_semantic_provider,
             prepared_draft=approved_draft,
+            clarification_answers=clarification_answers,
             default_planning_intent="create_plan" if state["run_type"] == "initial_plan" else "replan_trip")
         trace("resolve_intent", "decision", refs=("user_request", "itinerary"), data={
             "route": resolution.policy_decision.route if resolution.policy_decision else None,
@@ -193,6 +197,10 @@ def build_planning_graph(
             operations, resolution.request.intent, resolution.grounded_intent)
         await record("research_decision", "completed", data={"destination_research_required": needs_destination_research,
                      "destination_research_available": destination_researcher is not None})
+        if approved_draft is not None and operations == {"create_plan"} and all(
+                op.raw_text == state["user_request"] for op in approved_draft.operations):
+            context_data["approved_requested_places"] = list(dict.fromkeys(
+                name for op in approved_draft.operations for name in op.place_mentions))
         external_facts = await _collect_external_facts(
             context_data, state["user_request"], include_search=needs_destination_research)
         context_data["external_facts"] = external_facts
@@ -217,7 +225,7 @@ def build_planning_graph(
                 context_data["external_facts"] = external_facts
                 context_data["destination_research"] = research
                 resolution = await resolve_planning_intent(session, trip_id, intent_payload,
-                    prepared_draft=resolution.semantic_draft)
+                    prepared_draft=resolution.semantic_draft, clarification_answers=clarification_answers)
         if (candidate_researcher is not None and state.get("run_type") == "initial_plan"
             and resolution.policy_decision is not None and resolution.policy_decision.route == "plan_preview"
             and not context.candidates and not any(day.activities for day in context.days)):
@@ -407,6 +415,7 @@ def build_planning_graph(
             "planning_context": context_data,
             "intent_resolution": resolution.model_dump(mode="json"),
             "planning_goals": goals.model_dump(mode="json"),
+            "clarification_count": len(clarification_answers),
         }
 
     def route_after_intent(state: PlanningGraphState) -> str:
@@ -458,7 +467,7 @@ def build_planning_graph(
             await session.commit()
         return {"outcome": "answered"}
 
-    def clarify_node(state: PlanningGraphState) -> dict:
+    async def clarify_node(state: PlanningGraphState) -> dict:
         resolution = PlanningIntentResolution.model_validate(state["intent_resolution"])
         if state.get("clarification_count", 0) >= 2:
             raise ValueError("planning intent is still ambiguous after two clarifications")
@@ -472,8 +481,25 @@ def build_planning_graph(
         answer = str(response.get("answer") or "").strip()
         if not answer:
             raise ValueError("clarification answer cannot be blank")
+        # The answer fills a missing target, not the original authority. Keep
+        # it server-owned and checkpoint-replay-idempotent at this question's index.
+        async with session_factory() as session:
+            run_id = uuid.UUID(state["run_id"])
+            await assert_planning_claim(session, run_id)
+            run = await session.scalar(select(PlanningRun).where(PlanningRun.id == run_id)
+                .with_for_update().execution_options(populate_existing=True))
+            if run is None or run.user_request != state["user_request"]:
+                raise PlannerConstraintsUnsatisfiedError(["clarification_original_request_changed"])
+            snapshot = dict(run.trigger_snapshot or {})
+            answers = list(snapshot.get("clarification_answers", []))
+            index = state.get("clarification_count", 0)
+            if len(answers) > index and answers[index] != answer:
+                raise PlannerConstraintsUnsatisfiedError(["clarification_answer_changed"])
+            if len(answers) == index:
+                snapshot["clarification_answers"] = [*answers, answer]
+                run.trigger_snapshot = snapshot
+            await session.commit()
         return {
-            "user_request": f"{state['user_request']}\n用户补充：{answer}",
             "clarification_count": state.get("clarification_count", 0) + 1,
         }
 

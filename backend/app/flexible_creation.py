@@ -112,6 +112,11 @@ async def prepare_choices(decision, city, user_text):
         core_name = label.removeprefix(city["name"].rstrip("市")).strip() or label
         if choice.origin == "user_explicit" and (not quote or quote not in source or _compact(core_name) not in quote and choice.kind not in {"free_window", "blank_day"}):
             raise ValueError(f"事项「{choice.label}」缺少含名称的逐字用户原话；请从user_source_text复制完整原句，不能概括或补写")
+        if choice.origin == "user_explicit" and choice.kind in {"selected", "optional"}:
+            from app.assistant_capabilities import affirmative_entity_source
+            if not affirmative_entity_source(user_text, choice.source_quote,
+                    r"去|选|保留|纳入|加入|添加|安排|备选|可选", core_name):
+                raise ValueError("每个地点都需要其自身的肯定选择，否定或假设讨论不能保存为已选事项")
         if choice.day_date and not decision.start_date <= choice.day_date <= decision.end_date:
             raise ValueError("建议日期超出本次旅行")
         if choice.kind in {"selected", "optional"} and choice.origin == "user_explicit" and choice.day_date:

@@ -371,9 +371,15 @@ async def research(settings, message, history, envelope, port, *, judge=determin
         issues.append("comparison_incomplete")
     comparison = render_research_decision_support(decision_support, intent.category)
     reference_only_decision = bool(comparison) and all(s["read_level"] == "provider_reference" for s in sources)
+    location_only = not intent.read_pages and bool(re.search(r"位置|地址|在哪", message))
+    if location_only:
+        # Each subtask owns its supplied POIs. Rendering actual address fields
+        # cannot invent a failure about a sibling queried in parallel.
+        paragraphs.extend(f"高德标注：{place.name}，{place.address or '地址未提供'}。 [{index + 1}]"
+            for index, place in enumerate(candidates))
     # Price arithmetic and a menu-evidence gap need no speculative prose call.
     # Real page evidence still follows the existing source-bound generation.
-    if sources and not missing_compared and not reference_only_decision:
+    if sources and not missing_compared and not reference_only_decision and not location_only:
         try:
             draft = await answer(settings, ResearchAnswer,
                 CONVERSATIONAL_STYLE + "Answer this travel question naturally in concise Chinese. Only discuss supplied exact places. "

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="7.625" timestamp="2026-10-23T12:57:15.793835+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_read_operations" name="test_address_only_task_renders_actual_fields_without_sibling_claims" time="0.056"><failure message="assert not [True]">def test_address_only_task_renders_actual_fields_without_sibling_claims():
+        from test_assistant_research import PLACE
+        from app.assistant_research import research, LookupIntent, ResearchAnswer
+        async def judge(*args):
+            return LookupIntent(needed=True, city="成都", query=PLACE.name, names=[PLACE.name], read_pages=False)
+        class Port:
+            async def search(self, **kwargs):
+                return [PLACE]
+        calls=[]
+        async def invented_sibling(*args):
+            calls.append(True)
+            return ResearchAnswer(paragraphs=[{"text":"其他地点没有查到资料。", "place_index":1,
+                "supports":[{"source_id":"poi_1","snippet_id":"s1"}]}])
+        bundle=asyncio.run(research(None,f"查成都{PLACE.name}和另一个景点的位置",[],
+            ContextEnvelope(),Port(),judge=judge,answer=invented_sibling))
+&gt;       assert not calls
+E       assert not [True]
+
+tests\test_agent_b2_read_operations.py:38: AssertionError</failure></testcase></testsuite></testsuites>
