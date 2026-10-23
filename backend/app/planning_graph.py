@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from typing import Any, Protocol, TypedDict
 from collections.abc import Awaitable, Callable
+from types import SimpleNamespace
 
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
@@ -12,7 +13,7 @@ from sqlalchemy import select
 
 from app.candidate_route_service import enrich_candidate_routes
 from app.candidate_schedule import repair_route_schedule
-from app.database import PlanningRun, PlanRevision, TripDisruptionEvent, session_factory
+from app.database import PlanningRun, PlanRevision, TripPreferences, TripDisruptionEvent, session_factory
 from app.config import get_settings
 from app.external_facts import ExternalFactError, fetch_open_meteo, search_tavily
 from app.plan_revision_service import accept_plan_revision, validate_candidate_plan
@@ -42,7 +43,104 @@ from app.schemas import (
     PlanningIntentParseRequest,
     PlanningIntentResolution,
     PlanValidationIssue,
+    SemanticIntentDraft,
 )
+
+
+class LegacyClarificationRestartRequired(ValueError):
+    def __init__(self):
+        super().__init__("legacy_clarification_restart_required")
+
+
+async def _migrate_legacy_clarification(session, run, state, answer):
+    """Recover only the exact pre-upgrade server checkpoint append format.
+
+    The expanded request and its old operations are never authorization. Only
+    the run's original request and a fully validated original prepared envelope
+    may supply operations; supplements can fill the existing missing-day slot.
+    The caller owns the claim-fenced transaction and commits both writes.
+    """
+    fail = LegacyClarificationRestartRequired
+    expanded = state.get("user_request")
+    count = state.get("clarification_count")
+    separator = "\n用户补充："
+    if (type(count) is not int or not 1 <= count < 2 or len(answer) > 4000
+            or not isinstance(expanded, str)
+            or not expanded.startswith(run.user_request + separator)):
+        raise fail()
+    supplements = expanded[len(run.user_request + separator):].split(separator)
+    if (len(supplements) != count or any(not value.strip() or value != value.strip()
+            or len(value) > 4000 for value in supplements)):
+        raise fail()
+    try:
+        old = PlanningIntentResolution.model_validate(state.get("intent_resolution"))
+    except (ValueError, TypeError):
+        raise fail() from None
+    request = old.request
+    if (state.get("trip_id") != str(run.trip_id) or state.get("run_type") != run.run_type
+            or request.trip_id != run.trip_id or request.user_request != expanded
+            or request.intent.source_text != expanded or old.grounded_intent is None
+            or old.grounded_intent.trip_id != run.trip_id or not old.requires_clarification
+            or old.policy_decision is None or old.policy_decision.route != "clarify"):
+        raise fail()
+    for field in ("entry_point", "selected_day_id", "selected_activity_id"):
+        value = getattr(run, field)
+        if (getattr(request, field) != value
+                or state.get(field, "trip_planner" if field == "entry_point" else None)
+                != (str(value) if isinstance(value, uuid.UUID) else value)):
+            raise fail()
+    snapshot = dict(run.trigger_snapshot or {})
+    stored_answers = snapshot.get("clarification_answers", [])
+    if (not isinstance(stored_answers, list) or any(not isinstance(value, str)
+            or not value.strip() or len(value) > 4000 for value in stored_answers)):
+        raise fail()
+    merged = [*supplements, answer]
+    if stored_answers not in ([], supplements, merged):
+        # API claim receipts contain only the newly accepted answer on old runs.
+        # Check its binding before inserting legacy history ahead of it.
+        from app.planning_claim import checkpoint_thread
+        receipts = snapshot.get("clarification_receipts", [])
+        receipt = receipts[-1] if isinstance(receipts, list) and receipts else None
+        if (stored_answers != [answer] or not isinstance(receipt, dict)
+                or receipt.get("answer") != answer
+                or receipt.get("original_request") != run.user_request
+                or receipt.get("checkpoint_thread") != checkpoint_thread(run)):
+            raise fail()
+    payload = PlanningIntentParseRequest(message=run.user_request, entry_point=run.entry_point,
+        selected_day_id=run.selected_day_id, selected_activity_id=run.selected_activity_id)
+    facts = await load_planning_intent_snapshot(session, run.trip_id, payload)
+    prepared = None
+    if "prepared_intent" in snapshot:
+        # Reconstruct only the helper's validation input. Nothing from the old
+        # expanded operations is handed to the new resolver or persisted.
+        from app.planning_intent_service import restore_approved_planning_draft
+        marker = snapshot["prepared_intent"]
+        try:
+            marker_draft = SemanticIntentDraft.model_validate(marker["draft"])
+        except (ValueError, TypeError, KeyError):
+            raise fail() from None
+        probe = old.model_copy(update={
+            "request": request.model_copy(update={"user_request":run.user_request}),
+            "semantic_draft":marker_draft,
+        })
+        bound_run = SimpleNamespace(trip_id=run.trip_id, base_trip_version=run.base_trip_version,
+            user_request=run.user_request, entry_point=run.entry_point,
+            selected_day_id=run.selected_day_id, selected_activity_id=run.selected_activity_id,
+            trigger_snapshot=snapshot, intent_resolution=probe.model_dump(mode="json"))
+        prefs = await session.get(TripPreferences, run.trip_id)
+        if prefs is None:
+            raise fail()
+        prepared = restore_approved_planning_draft(bound_run, run.trip_id, run.user_request,
+            facts.trip.version, preferences_version=prefs.version)
+        if prepared is None:
+            raise fail()
+    resolution = await resolve_planning_intent_snapshot(facts, payload,
+        prepared_draft=prepared, clarification_answers=tuple(merged))
+    run.intent_resolution = resolution.model_dump(mode="json")
+    run.trigger_snapshot = {**snapshot, "clarification_answers":merged,
+        "legacy_clarification_migrated":True}
+    return {"user_request":run.user_request, "intent_resolution":run.intent_resolution,
+        "clarification_count":len(merged)}
 
 
 class PlanningGraphState(TypedDict, total=False):
@@ -176,7 +274,8 @@ def build_planning_graph(
                 raise PlannerConstraintsUnsatisfiedError(["approved_operation_stale_or_invalid"])
             current_operation = restore_current_turn_modification(stored_run, trip_id,
                 state["user_request"], context_data["trip"]["version"])
-            active_semantic_provider = current_operation or semantic_provider
+            active_semantic_provider = (None if (stored_run.trigger_snapshot or {}).get(
+                "legacy_clarification_migrated") else current_operation or semantic_provider)
             intent_payload = PlanningIntentParseRequest(
                 message=state["user_request"], entry_point=state.get("entry_point", "trip_planner"),
                 selected_day_id=state.get("selected_day_id"),
@@ -468,8 +567,20 @@ def build_planning_graph(
         return {"outcome": "answered"}
 
     async def clarify_node(state: PlanningGraphState) -> dict:
-        resolution = PlanningIntentResolution.model_validate(state["intent_resolution"])
-        if state.get("clarification_count", 0) >= 2:
+        try:
+            resolution = PlanningIntentResolution.model_validate(state["intent_resolution"])
+        except (ValueError, TypeError):
+            async with session_factory() as session:
+                run = await session.get(PlanningRun, uuid.UUID(state["run_id"]))
+                if run is not None and run.user_request != state.get("user_request"):
+                    raise LegacyClarificationRestartRequired() from None
+            raise
+        count = state.get("clarification_count", 0)
+        if type(count) is not int or count >= 2:
+            async with session_factory() as session:
+                run = await session.get(PlanningRun, uuid.UUID(state["run_id"]))
+                if run is not None and run.user_request != state["user_request"]:
+                    raise LegacyClarificationRestartRequired()
             raise ValueError("planning intent is still ambiguous after two clarifications")
         response = interrupt(
             {
@@ -488,8 +599,12 @@ def build_planning_graph(
             await assert_planning_claim(session, run_id)
             run = await session.scalar(select(PlanningRun).where(PlanningRun.id == run_id)
                 .with_for_update().execution_options(populate_existing=True))
-            if run is None or run.user_request != state["user_request"]:
+            if run is None:
                 raise PlannerConstraintsUnsatisfiedError(["clarification_original_request_changed"])
+            if run.user_request != state["user_request"]:
+                migrated = await _migrate_legacy_clarification(session, run, state, answer)
+                await session.commit()
+                return migrated
             snapshot = dict(run.trigger_snapshot or {})
             answers = list(snapshot.get("clarification_answers", []))
             index = state.get("clarification_count", 0)

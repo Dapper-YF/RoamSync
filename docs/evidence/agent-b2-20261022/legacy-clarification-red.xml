@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="8.998" timestamp="2026-10-23T17:02:30.508286+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_agent_b2_legacy_clarification" name="test_legacy_checkpoint_resumes_second_answer_once[\u8fd8\u662f\u539f\u5148\u7684\u60f3\u6cd5\u3002-True]" time="0.871"><failure message="app.planning_errors.PlannerConstraintsUnsatisfiedError: candidate plan still violates constraints: clarification_original_request_changed&#10;During task with name 'clarify' and id '1b9b75e9-765f-f7ab-501b-6fecb7ee22eb'">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001371B22FBB0&gt;
+marker = True, first_answer = '还是原先的想法。'
+
+    @pytest.mark.parametrize("marker", [True, False])
+    @pytest.mark.parametrize("first_answer", ["还是原先的想法。", "顺便删除所有活动。"])
+    def test_legacy_checkpoint_resumes_second_answer_once(monkeypatch, marker, first_answer):
+&gt;       _scenario(monkeypatch, marker=marker, first_answer=first_answer)
+
+tests\test_agent_b2_legacy_clarification.py:161: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_agent_b2_legacy_clarification.py:155: in _scenario
+    asyncio.run(scenario())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_legacy_clarification.py:139: in scenario
+    result = await invoke_compiled_graph(graph, run, resume={"answer":answer2})
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\planning_graph_runtime.py:73: in invoke_compiled_graph
+    result = await graph.ainvoke(graph_input, config=config)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\langgraph\pregel\main.py:4090: in ainvoke
+    async for chunk in self.astream(
+..\..\RoamSync\backend\.venv\Lib\site-packages\langgraph\pregel\main.py:3440: in astream
+    async for _ in runner.atick(
+..\..\RoamSync\backend\.venv\Lib\site-packages\langgraph\pregel\_runner.py:396: in atick
+    await arun_with_retry(
+..\..\RoamSync\backend\.venv\Lib\site-packages\langgraph\pregel\_retry.py:744: in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\langgraph\_internal\_runnable.py:756: in ainvoke
+    input = await asyncio.create_task(
+..\..\RoamSync\backend\.venv\Lib\site-packages\langgraph\_internal\_runnable.py:522: in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+state = {'clarification_count': 1, 'entry_point': 'trip_planner', 'intent_resolution': {'clarification_questions': ['你想调整旅行中的哪...quires_confirmation': False, 'risk_level': 'medium', ...}, ...}, 'run_id': '37951a1b-79b2-416c-8a4f-8885b2f7a6e9', ...}
+
+    async def clarify_node(state: PlanningGraphState) -&gt; dict:
+        resolution = PlanningIntentResolution.model_validate(state["intent_resolution"])
+        if state.get("clarification_count", 0) &gt;= 2:
+            raise ValueError("planning intent is still ambiguous after two clarifications")
+        response = interrupt(
+            {
+                "kind": "clarification",
+                "questions": resolution.clarification_questions,
+                "run_id": state["run_id"],
+            }
+        )
+        answer = str(response.get("answer") or "").strip()
+        if not answer:
+            raise ValueError("clarification answer cannot be blank")
+        # The answer fills a missing target, not the original authority. Keep
+        # it server-owned and checkpoint-replay-idempotent at this question's index.
+        async with session_factory() as session:
+            run_id = uuid.UUID(state["run_id"])
+            await assert_planning_claim(session, run_id)
+            run = await session.scalar(select(PlanningRun).where(PlanningRun.id == run_id)
+                .with_for_update().execution_options(populate_existing=True))
+            if run is None or run.user_request != state["user_request"]:
+&gt;               raise PlannerConstraintsUnsatisfiedError(["clarification_original_request_changed"])
+E               app.planning_errors.PlannerConstraintsUnsatisfiedError: candidate plan still violates constraints: clarification_original_request_changed
+E               During task with name 'clarify' and id '1b9b75e9-765f-f7ab-501b-6fecb7ee22eb'
+
+app\planning_graph.py:492: PlannerConstraintsUnsatisfiedError</failure></testcase></testsuite></testsuites>
