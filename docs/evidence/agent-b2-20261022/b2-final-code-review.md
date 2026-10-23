@@ -132,3 +132,42 @@ checkpoint runtime. It clears the earlier Graph-code review exclusion only for
 523bbd7; other dirty changes remain outside scope. Known public behavior blockers
 and the overall NO-GO above remain unchanged. No network, DB, product-source or
 test mutation was performed by this reviewer.
+
+## Scoped recoverable runtime addendum — fc2aa5d
+
+Reviewed the exact five-file change fc2aa5d17e141a83140bcb51d5c87c3d820c8705
+(A source 85d0bd5915a7d7168bf606b7f520fbae0ad6f237), plus the existing claim,
+release and progress helpers necessary to assess its concurrency behavior.
+Approve this exact recovery fix for the finite candidate. No actionable P0/P1
+established in the scoped inspection; this does not approve the entire A branch.
+
+The typed legacy exception is caught before generic Graph failure handling, so
+that path restores the pending clarification instead of calling _mark_failed.
+Recovery refuses to run without an active claim. With one, assert_planning_claim
+locks Trip then Run and checks token, expiry and status before any restoration.
+The fresh session reads the same locked run and verifies the last receipt's
+original request and checkpoint thread. Only status, reconstructed pending
+questions and the restart-required flag change; answers, receipts, original
+request and checkpoint identity are preserved. Restoration commits before the
+typed exception reaches main.py's structured HTTP 409 mapping.
+
+The restart-required flag is checked inside the locked clarification claim path
+before answer/receipt append or ownership transition. Thus ordinary repeated API
+submissions return the restart conflict without appending again. Existing outer
+cleanup releases only a matching run/token; after successful restoration it clears
+that owner's lease, and after a takeover it cannot clear the replacement owner's
+lease. The heartbeat treats the restored awaiting_clarification state as a normal
+interrupt and cannot move it back to researching. No added network call occurs
+within the restoration transaction.
+
+Evidence limits: inspected the new API test asserting repeated 409, restored
+interrupt, retained original/answer and cleared owner lease. It replaces Graph
+invocation with the typed exception and is not by itself a legacy-checkpoint
+integration test. The earlier Graph addendum covers the migration side; current
+fixed-source integration execution remains coordinator evidence, not independently
+rerun here. No DB/network calls or source/test edits were made by this reviewer.
+Missing/mismatched receipt or expired/lost claim deliberately aborts restoration
+with LostPlanningClaim instead of overwriting state; no promise is made to restore
+an obsolete owner's interrupt. Database outages, process termination during
+recovery, and full worker concurrency behavior remain outside this exact-change
+approval. Overall release NO-GO and known public behavior blockers remain.

@@ -1,31 +1,71 @@
 # Latest Handoff
 
-## Snapshot
+## A2 final measurement candidate — NO-GO (2026-10-23)
 
-2026-10-22 第二轮A2准备，产品源码未改。共同起点6a65ece3acc3ea9a32087c11a2cbbe05173862dc是隔离候选，非正式部署。A2树E:/Study/RoamSync-reliability-a2-20261022，codex/reliability-a2-20261022。正式E:/Study/RoamSync、3000和正式数据库保持不动。
+Product source is fixed at85d0bd5915a7d7168bf606b7f520fbae0ad6f237 in
+E:/Study/RoamSync-reliability-a2-20261022, codex/reliability-a2-20261022.
+Later commits import documentation/evidence only. BASE remains
+f116ada6d6d46db7aeb48c29c8d5b45da379be00; previous combined6a65ece3 was never deployed.
 
-## Current Freeze / Rehearsal Status
+Implemented A roots: detached planning snapshots; network outside business
+transactions; Trip/preferences double CAS; unique Worker claims, fenced writes,
+per-attempt checkpoint, conditional heartbeat/cleanup, bounded DB backoff;
+atomic clarification answers/receipts and metadata preservation. B strict legacy
+checkpoint migration and A typed409 restore original questions/answers and
+require a new explicit request when unsafe. No migration or relaxed authority,
+Validator, version, execution protection or Accept. Old/new Workers cannot mix.
 
-设计待确认，未实施。B为主线，统一一次语义决策到服务端operation、条件投影、复合任务与创建闭环；A先持锁跨网络根因，再Worker失联恢复；C只验收真实安排/探索/聊天及交互断点。新统一门槛docs/QUALITY_GATE_V2_20261022.md，A可审查设计docs/PLANNING_RELIABILITY_A2_DESIGN_20261022.md。brainstorming技能显式要求行为改动前设计确认，已向用户提交一次确认，期间只做准备与验证。
+B code received through523bbd7 (optional compatibility + old checkpoint migration),
+with prepared recovery, immutable source authorization, independent day answers,
+map identity bridge and compound source aggregation. C route continuity/blank-day
+preview received. This is partial operation unification, not a single semantic
+decision across all legacy paths. B's address bridge remains a conservative rule.
 
-## Prior milestone baseline (before shadow split)
+MEASURED final combined-full-5:1713 main +25 dedicated, zero failures/skips;
+source unchanged. Source manifest hashc79ae375d4aa3ac01a8523275cc25712aef48596110fe9d49d898a1bfb33a4bb.
+Web243/type/build passed, same inputs. API230 inputs and Web143 inputs/3 artifacts
+match final source; build-only stopped containers do not prove runtime readiness.
+API LF manifest584d075f687036f77023f9450ee8d600efcfe9cd4262e03539698a8dbe243a68.
+Focused red/green and real PG takeover/checkpoint/Accept evidence retained;
+counts overlap and cannot be added. A67 and B84 runtime/legacy checks pass.
+B Astra independently approved exact85d0 fix, not entire system/release.
+Full-2 source drift and full-4 actual optional failure remain preserved.
 
-第一轮统一BASE f116ada；整合6a65ece接收A9f89fe3/B831ec24/C207c9b7及旧记忆兼容f39960c/d6c587c。正式仍6b298ca。第一轮3项工程修复、239前端/1469+25后端通过；B旧保留题5/20、1关键无证据保证，整体NO-GO。既有完整报告docs/ENGINEERING_A_AUDIT_20261022.md。
+Final public Edge browser:4 complete input/SSE turns, confirmation, reload and
+Trip page on fresh synthetic15435 DB/API18048/Web3048. Two real addresses/sources
+are correct, but walking follow-up loses goals. Actual confirmed create produces
+Trip1/Day1/Run1 and planner_requested_place_unresolved, zero Revision/Activity.
+No actual candidate Accept/modify/503/409 full chain achieved. Root reload returns
+free chat; Trip page preserves empty day/failure.1440/390/320 no overflow/pageerror.
+API/Worker/Web owned process trees stopped after evidence; test data retained.
+Final B public16 is7/16 versus baseline2/16, with2 critical unsupported walking
+assurances. Not unseen reliability, no controlled global speed claim.
 
-## Prior verification
+C sealed20 hash8bb1a83faa83659cf6ceb95745e29934922629012c176061b986dba23bef7da2
+remains independent. SHA gate rejected initial DB readiness after A docs-only HEAD
+advance; no question call occurred. C now uses exact85d0 own clean worktree/fresh
+DB for one measurement. Result pending; do not claim quality gate passed.
 
-MEASURED：A2从共同起点构建新测试镜像，在全新随机项目/tmpfs库重跑主1469、专25，零失败/零跳过，source_unchanged=true。阶段188.234s/36.828s（含迁移与容器开销），不是咨询性能。证据docs/evidence/reliability-a2-20261022/baseline-tests.json；全日志/JUnit外置E:/Study/RoamSync-a2-evidence-20261022/baseline-tests，测试资源已自动回收。
+Official HEAD6b298caddb79125991bfc5183ddeefc09029f31c and3133 original files,
+ignored env and container IDs/images remain unchanged. External runtime outage
+left all four official containers exited255. A did not stop/start/redeploy official
+services or write/migrate/clean official DB; latest verification does not connect
+to DB. A test-container start was policy denied; different already-running
+synthetic PG used, no bypass. Original README/Nginx/untracked work preserved.
+Public owner/Trip/session isolation P0, provider cancellation, repeated decisions
+and unsupported assurance remain OPEN. Four gates still required; NO deployment.
+Full report:docs/ENGINEERING_A2_RELIABILITY_20261023.md.
 
-VERIFIED代码追踪：create_planning_run锁Trip后可await模型；commit=False上层可能已有会话锁或未提交Trip，不能直接commit释放。save_plan_revision默认路线enrich跨锁，但正式Graph.persist显式enrich_routes=False，不误称全部Worker都会走该分支。TripPreferences.version独立，必须复核双版本。
+## Reproduction and next decision
 
-A/B接口已对齐：B load_planning_intent_snapshot(session,trip_id,payload)返回脱ORM frozen快照；resolve_planning_intent_snapshot(snapshot,payload,*,semantic_provider=None,prepared_draft=None,default_planning_intent=None)无session解析；prepared_draft有值仅grounding/policy。A新增PreparedPlanningIntent绑定原文、Trip、selected IDs、Trip/偏好版本及draft，锁内复核，不把客户端resolution当授权。B先交helper提交，A尚未接入实现。
+Run scripts/run-isolated-tests.py with a new output folder; it creates unique
+tmpfs databases and source-bound evidence. Never point tests/migrations at15432.
+verify-release.py --allow-stopped is build-only; verify-backup.py restores only
+in its own network=none/tmpfs container. Prior32-table backup recovery passed,
+but no new production dump or database fingerprint was made during this round.
 
-## Prior blockers (historical)
-
-C在Git外只读封存新20题与预先规则，SHA256=8bb1a83faa83659cf6ceb95745e29934922629012c176061b986dba23bef7da2。题面不发A/B或共享Git，冻结后独占库评测，目标≥16/20且零关键保证；阶段目标非普遍可靠性证明，非独立人类盲评。C公开流程基线库roamsync_product_c2_baseline_test，3044/18044，保留题另库。
-
-OPEN：重复解释、条件规范值/否定投影、复合任务/创建失败；规划短事务/Worker claim fencing/传输取消；公网owner隔离P0。完整真实咨询→检索→建议→创建→采用→修改→刷新→异常恢复、同输入旧新对照、最终统一浏览器/工程验收都必须完成后再评审部署。本轮没有部署授权。
-
-## Interview framing
-
-当前交付是已验证起点、具体根因、A/B接口和四项门槛，不是新的产品修复或质量通过。后续先按确认后的设计实施并保存失败反例，再验收。无Obsidian写入。
+Receive C aggregate and scoped evidence without exposing sealed questions to B.
+Freeze product code throughout measurement; any subsequent code changes require
+fresh source-bound regression and independent questions. Product release remains
+blocked even if engineering tests pass. A owns final compatibility/integration;
+no automatic deployment and no Obsidian record.

@@ -1,0 +1,502 @@
+{
+  "product_head": "fc2aa5d17e141a83140bcb51d5c87c3d820c8705",
+  "b_owned_measurement_freeze": "523bbd7c9ed30577043c9319d2d795cc6ad3c916",
+  "a_runtime_source": "85d0bd5915a7d7168bf606b7f520fbae0ad6f237",
+  "a_runtime_cherry": "fc2aa5d17e141a83140bcb51d5c87c3d820c8705",
+  "source_base": "6a65ece3acc3ea9a32087c11a2cbbe05173862dc",
+  "development_fixture_sha256": "089b5842d407bb2645b21372aea2eda1959edf4a433b988375bcae078210034b",
+  "c_holdout_known_hash_only": "8bb1a83faa83659cf6ceb95745e29934922629012c176061b986dba23bef7da2",
+  "c_holdout_read_by_b": false,
+  "c_holdout_run_by_b": false,
+  "app_source_files": {
+    "backend/app/__init__.py": "06960f41e4aab9800d4109cb2a937fef641e7040ec5c39d85b2b87081437dbaf",
+    "backend/app/activity_experience_impact.py": "28c428af4ff9e1ab7d814ad6a7541fe019685897c1c3085e59de2bad3e23eefe",
+    "backend/app/agent_monitor.py": "d498eb9e2951dc6d17e5615a2fda0253189ec46fdbb0b326984e73115436443f",
+    "backend/app/agent_observation.py": "665d402fdaf64a136304b7a08756971617e73aaecffe05143643b6221d7709fc",
+    "backend/app/agent_worker.py": "369105323f98de09d1cbb01758f260de2eb437329552d7bb48de6c4157954079",
+    "backend/app/arrangement_routes.py": "b014ab20f3fc11c98bf926af85519e0515caf75e0a9e1cb3176003e36a4cf619",
+    "backend/app/arrangement_service.py": "cf7b507acbcd8032f1236ecacc328e9f4f6c938190e76008eb6c0f50a6ae849e",
+    "backend/app/assistant_arrangement.py": "bfee994a51b133aea4418abafba27a69893621f91138148775cc585b6d21bb8d",
+    "backend/app/assistant_capabilities.py": "ca588b777c03628fa562389b0b2b9fb3a46e0580a07912af4cee0f4018ede719",
+    "backend/app/assistant_context.py": "f198ff3519e289f4da46d7e64b280929ce243820e5048e0c83be1cde03aab357",
+    "backend/app/assistant_images.py": "31976c1c2bd684ccd976941906471b7e0f831cd12ed3c535a3fd9baaf18114a4",
+    "backend/app/assistant_memory.py": "e66a7d6611d73ef1618442cc5a26731abf0a2987030a917b652543b6801898ee",
+    "backend/app/assistant_operation.py": "207404c8c9ad67fe241e1f52cfc615586dc647468556ba2a3d793c1759562c02",
+    "backend/app/assistant_places.py": "9f56fe56d89c927d9f16c5ef84a302bee9567b440044544f8e4117b7deba306f",
+    "backend/app/assistant_practical.py": "ce1f429356ad908a22b547eb7a0d72de96f26f79e0e64da18db49ec8376fd0a2",
+    "backend/app/assistant_reliability.py": "5460e99300298535f655a690c35e0c816199f4ef93c20d9a92d8d826c91ed5f0",
+    "backend/app/assistant_research.py": "9764837a5bd1e5810ca1b054e78d5a9e9164d1158a139c57637a680eaa83bc72",
+    "backend/app/assistant_routes.py": "9d6ba24879fcb05750ec4065109435878532edcc30fa228e23ac3b863979d330",
+    "backend/app/assistant_search.py": "f5a6d10ae834afa733a3f9fb0e03e8ca7774b59bd5a4f5e8664b7dfe6c90187a",
+    "backend/app/assistant_service.py": "37c0ee96cd8265dc4adf9692200fdef1b9dd69deb36a07500b9920c00af94286",
+    "backend/app/assistant_stream.py": "cbf0ad99375f29328a1db58073fe6d331f95380952af282a0d7273bf374bd57d",
+    "backend/app/assistant_style.py": "e3a79d839174daa11ec25f035d9b5480e43c2be4b569724e5c08f24dc041e261",
+    "backend/app/assistant_turn.py": "869a824aae41d9fce98850d4105609f037d6ae69cf83299e14d47d492be7617c",
+    "backend/app/candidate_decisions.py": "a89babe19e9bdcfd1b5f0b68faec11443fa08841cffdcd6543be872b9c5c39bd",
+    "backend/app/candidate_edit.py": "11049f6b944645abda2184001b31e2af1bc111a6d005bdcd5c0523d491d2448c",
+    "backend/app/candidate_route_service.py": "a0874bb1324d4a8ebfb8c1e559db55b520c4121bac5f8b1040de6e119eacad63",
+    "backend/app/candidate_schedule.py": "13a5e487dafcdedce79efb4e247e8a9ba34854295d1749410fd438c29a408cbc",
+    "backend/app/companion_answer_reliability.py": "d809576ab22e2bb66ccb35cb7b02189707b922aaee685efa84f480ccf7338030",
+    "backend/app/companion_context.py": "1d166d8901153111dcc539d61c9e01972d67a7a7bbdab43a8be612f21863e4d9",
+    "backend/app/companion_contracts.py": "7b647e311c5fd2158471400c5fae8290c378c75547622e0d4b0595d9b093b87e",
+    "backend/app/companion_evidence_quality.py": "9ba484e3593eb68e9847aa1699a2856f1b83f2989b83cef7b3200709eabbc03f",
+    "backend/app/companion_facts.py": "ac2d6006dc33012b3791771553aa8c5e15be5f49c42643bb36b11a7815ffb917",
+    "backend/app/companion_graph.py": "ca7ba4824058b0ddbad5ca3a3a7fd005527158f5ace3bdcb30ef4e8b3537116f",
+    "backend/app/companion_grounding.py": "f317075bf52c2a66dfabfb11338ce48b869f501afbcb7d571b124817309d8a9c",
+    "backend/app/companion_information.py": "60b550d89cf4e751bf515395ee98027c584d5df4055b8ee4aaa1f6d2c264a188",
+    "backend/app/companion_knowledge.py": "3b58aa98439f75667b6a9eb7fbcda5ea628c1aed7908a7cad7fa155980b03a1e",
+    "backend/app/companion_provider.py": "b249a1380c1787fd8fba75a285e9a732fe30df432106554606a06ed7fd522519",
+    "backend/app/companion_runtime.py": "fdaf7246f960229b798308dc92ec481a7817435658bc6b24f7d791701013685c",
+    "backend/app/companion_state.py": "94c18658304d016219d4c7cca3b5e7b05bab01addc8935602e48a2f53e4f4df1",
+    "backend/app/config.py": "0dd515fbb57a9f381f4a332ae3bb901c63ce5024d23bc8010a09347929210995",
+    "backend/app/database.py": "b475538eeafa7a0a4ac425406efe32c1e085804fa9b7233a649b5e824e8be158",
+    "backend/app/decision_context.py": "0f3d3dbd934e6186aa09c31ac0e6d2b699e186190c0c2b362a3f7a3027dc130b",
+    "backend/app/decision_ledger.py": "61f1303d7b1b85d40176319cca93cd0f21453160e85ad8ef9d4ae9dfd705df75",
+    "backend/app/decision_memory.py": "710a3d7486aee90770413aeb889b623a6aeeec8691c0585c4cd4dc68da508b1d",
+    "backend/app/demo_preflight.py": "d12effa0f1d2004dab43f9d36df9a11bf3161eb09b41b95d38542fc811243573",
+    "backend/app/demo_seed.py": "405f5d3fb5ebc3f3cdbcf1a77e46ef982010161f00af2e330e7576b90974198a",
+    "backend/app/destination_research.py": "08115ab25c87b71715dee0e423cef2f848a4e22dd1e10516fc6c91131d63a25b",
+    "backend/app/dialogue_observation.py": "ccecddd08b05acb184936df92cd09aab46e9910f5ef6521667f158a2d48b4be7",
+    "backend/app/draft_promotion/__init__.py": "86d4d82a33789798a6fa4dd8688400c248198a6bde4766be6ecbc1672b208b7c",
+    "backend/app/draft_promotion/contracts.py": "7bff82fb1b4ec9da0968cc630cd201e77761920108446aa030ebfa607e7cf55e",
+    "backend/app/draft_promotion/guard.py": "47be2676d8d28921ce3f5c2980841e5ab2583847ba40d686c76dffb5f6b9032e",
+    "backend/app/draft_promotion/materialize.py": "3757fa9e1f95b1847a70010d9fd5bc5063eb0327bf3306f4b203e5eade18667c",
+    "backend/app/draft_promotion/preparation.py": "6bce872c83cf9ac4faa7ceb6171f4ea15e037fc583d057a03ae7155a482812dd",
+    "backend/app/draft_promotion/repository.py": "c8dcfb216174f72d3d0ab0a1ed6b4e57e255bc7b5cc6dc491652f7006f6c2590",
+    "backend/app/draft_promotion/routes.py": "7d5fdd40a87aa73ea9305fae3c41f6c8b5a50ead060cc54c05313970f9382ea9",
+    "backend/app/draft_promotion/service.py": "40f2dd9977b9b6386eff0b1b7cc867c545963772734536ed297a4998fe209738",
+    "backend/app/draft_requirement_bridge.py": "d8ab5e97fcff82cce5a6523661cbed84d68b86827b333f35f1e7e9324b475511",
+    "backend/app/drafts/__init__.py": "ca10436fcba856c77b09ef7b3f48b24e16e783ae2262700feeafa553c89ca16f",
+    "backend/app/drafts/contracts.py": "e4e30f061788c0408c094ee2fea5cb9e68a681768362278fdaea1bb04dad0169",
+    "backend/app/drafts/repository.py": "6a4723ee09e15e46aaf0233f35bd54cef9b06816b034bdd55ad3d3b8de6d5c00",
+    "backend/app/drafts/routes.py": "acb2a4ff8adf26b8e7cea6fd0b4a3d0dc0e2d17faa9e5d8ec2efb9edcc3ede30",
+    "backend/app/drafts/service.py": "c6741691e1dd4373c5699252bc5a3334a766afed6792330770b7a49586732ab7",
+    "backend/app/experience_replanning_service.py": "01b40cb34a5ad92454a5c43da1c915bd272c999c76d3b027d750ddfcd4f8ff4d",
+    "backend/app/external_facts.py": "05e90b7655cd80e060db21d9a57be2081b4fb0770958ce51d336bc893cae09be",
+    "backend/app/flexible_creation.py": "906ff5376064a5cebf7655e9fe23d9562f0eefe4b0a109cf885499d6df67a94b",
+    "backend/app/forecast_location_extraction.py": "19c66b29dcf430a1dbd854eb56487eb50b1372ca2fd61182106534f7c4f44bc9",
+    "backend/app/formal_write.py": "8eb2cc6e2ac2668632f61bf4bbedb9f3917382e541c52eb235f52dc203a07c16",
+    "backend/app/goal_aware_demo.py": "a44699e55bce4b8f9828709d4265a66b58062f2097fedf52baf786340108d939",
+    "backend/app/init_checkpoints.py": "b4423d7606a45b92c254fe0c6e5e232aca3dc8502971a744a38e9986040a0cbf",
+    "backend/app/initial_places_service.py": "05a85b80caed7b29e892d27379a56bf4e93750329eb7e3aef3265e5c1267d94c",
+    "backend/app/integration_init.py": "feb661f84557cfc4d50841c722c1387041bc4f97f6510b2c2225c19245949570",
+    "backend/app/integration_runtime.py": "51b8cfa3e52364129c6c29e6a1bd6c04c967255d84a588e0b88e37575f7fbcf2",
+    "backend/app/main.py": "856e25added55bb35f0df8f8da02afba087e3d6f7472df3bac0bad26e0b2252f",
+    "backend/app/map_transport.py": "502d63d705dfd53a17b9a44228de8a12e48a79b858f2baa983247f204277633d",
+    "backend/app/maps_service.py": "5f9a5fb2dc6127a0aad533416ebca659505b9dae9cc87b2c3c9a9ee8e7785d8f",
+    "backend/app/mobile_access.py": "1e5ea8d0bf1aaa550a0f6f92d2b0e12b74730f5be51f9e215f9848fbb44e9f26",
+    "backend/app/model_client.py": "60ed235be1b88202862be6e858b63d4279db54d51b8e13aa5d7e68537974ba73",
+    "backend/app/navigation/__init__.py": "d803760a2c06007c6dcdde7eca2a0f1bd5778e3ab9ae03700bf1aa7bf44d4137",
+    "backend/app/navigation/delay_impact.py": "5d23b73cfb5efcb7007c5f4c9ff87efd2ad8b4ef21890f155e0b6383d2859c24",
+    "backend/app/navigation/disruption_service.py": "1c5abb76464a44f341d19f67382aa7e6cf5432755c54869803622b07708c967c",
+    "backend/app/navigation/event_detector.py": "8815b68676dafc4c7e1b9d170cca518ad340c0cf9c53f8bcbdffb6c8942658d6",
+    "backend/app/navigation/execution_context.py": "21cffdc41bcf714ccc54aebb19786537d53a4f2645b87390903517940014bb84",
+    "backend/app/navigation/execution_projection.py": "d69b99079bf4dbc96ee05a9b0f3494524d89a6245ef43237a9dafda513a64e12",
+    "backend/app/navigation/execution_read_model.py": "4c0931b5274ef54112d2bd925fb0db01496c4e3b831738fdf9e3756d21acce92",
+    "backend/app/navigation/fake_routing_provider.py": "3b47bc1223b8e5e3d6cee751b4b48c12e5b1bd0f9ddea63f2f5d12d1b58851d7",
+    "backend/app/navigation/observation_ingestion.py": "0da5f8f76121ee620c0851e71972bf7baa37eb69872f1662038e5550dd281365",
+    "backend/app/navigation/providers.py": "3794a0611cf7ed90d78f5e60f0ead75d057609849b12b314edc602bbfb66c635",
+    "backend/app/navigation/recovery.py": "cedce23aba7390b629d9766dfd8eb26b9ead1e750113db812be84b3576b6d264",
+    "backend/app/navigation/session_service.py": "badc675dfe24544c2d69bd1b009c186739291451f35f3e44cbbe52aab79e3e3c",
+    "backend/app/navigation/start_navigation.py": "36a7629b8e5fc60c56b516db4a68f5610b639731d5bcd2235b16086dd8d68bcf",
+    "backend/app/openai_intent_parser.py": "345f5143fc2de2d0bb749c6cf81cfd5061bcfd1627ae5600b6660830b51c76a6",
+    "backend/app/openai_planner.py": "8e3ba71d1bb68499c0d866f98b17e79955bac4e14e43cc902da18887e57ffdb4",
+    "backend/app/place_content/__init__.py": "3614a3f9ff5538fcaf09614030581b837407949ce4d58c055ba31dee51a08e22",
+    "backend/app/place_content/contracts.py": "2cdaa9de1f8f7980dbe6d2baa16a74ee90f91ff853457218a9968626431afe0b",
+    "backend/app/place_content/dev_app.py": "13c491fd647be780e91f015f6a3e470a1f86271b3342b62475e00e5a4d52cb0b",
+    "backend/app/place_content/experiences.py": "a1b277fdf62417a8f3474557876e7271aa7379550fb4b397b644d7cd7c90f2c0",
+    "backend/app/place_content/images.py": "d48375c57e642b174c1c584d8c6a33508e0e5bb4fb95b991f1b7479855f50e13",
+    "backend/app/place_content/provider.py": "b78c2cbb8e0b03521fbf054ea651a04af6a4ef89ef5a9bc03c2a0e7b2032a8a8",
+    "backend/app/place_content/repository.py": "6e5db39643ac6bf898a64ffbc1d719725d095c82347222307e3d51ccb3ae8c93",
+    "backend/app/place_content/routes.py": "63f9d9d8fcc1bc32b095d0905a414739d546aedb2ea0479b7debcbd0d5bceba6",
+    "backend/app/place_content/service.py": "6917b6746bf4daf0b120b6a396583954529087bfdc52a43c20c66fd3a06ad303",
+    "backend/app/plan_revision_service.py": "f5445a5ba43b304ac22010136fc8b295b5a45aaeb03bfa447549f8bd9ad6f9e4",
+    "backend/app/planner_entity_resolution.py": "197f043ef9067a36490ecda946e95125c5f19bfd6f5053143e37cce89657e5a8",
+    "backend/app/planner_references.py": "70fd672582dd4c3d80772c71d0b5a0dd9c7549f39835d86f0f662f235c057a30",
+    "backend/app/planner_repository.py": "059a1ed52531fbc13fc3c041c5310641db792374ad51969077f01e94cfdbe441",
+    "backend/app/planning_claim.py": "222123b56fc21a91af700a96fa63857c97a5228c35ad47b6fe77c2ab651df291",
+    "backend/app/planning_context.py": "fff33b21765dcf2687b2c8756d20c780265a01f8804626fa0356dde8953e7a10",
+    "backend/app/planning_errors.py": "5780fc8c6be2cd420e46224082afa8817fdd1e9b4b1bf032cfc7349b23303842",
+    "backend/app/planning_explanation.py": "1b27aa562a351851d8a545460cba3b29541f6bf33f4329c441fc17dc1cd9e18c",
+    "backend/app/planning_goals.py": "553a3e2fb1d3ca48008ef5189b9136a53f1f69ae7a6cdbd87e7263d61cf639fa",
+    "backend/app/planning_graph.py": "ca9afa7f772570b5ea2a73c00fd122c9f24ebeac2a912af8f1e05a689cd0c4a8",
+    "backend/app/planning_graph_runtime.py": "f1cc467ac83ef62b64b389f4ed761a09c953f0c8087b5cb6d4f574b983f8891c",
+    "backend/app/planning_intent_service.py": "68b367629396d9ef5ed55053ba728d10bdb41d66ef8b60924247d849244bd907",
+    "backend/app/planning_preparation.py": "e270780080bf46cf2c23096fdda403913c314f66400f7ed0ff292f91de1ff5d6",
+    "backend/app/planning_progress.py": "e99dd62bb168ce4c4747cf6a70db92301c2a56d93ee92ab5408f385b7354060a",
+    "backend/app/planning_run_repository.py": "5247dadc6578783159d26bbbed519477062692048e7ba581d9adec18e1c63084",
+    "backend/app/repository.py": "5e51db3514bf13f37e229e827fdf517a11a64e5ce8bd31e642f192ef58971fcb",
+    "backend/app/requirement_language.py": "61874ec1ac9ba8e20b8cd05d0f1151f6c9cd865095d5b797cdc098d1b11bf64f",
+    "backend/app/requirement_routes.py": "febe30a501bbab64647956902cc4a919c413d8f2f071005bc0e5b485fec7fbdd",
+    "backend/app/requirements.py": "15c5cbf43fb84303053cae4b07f29a4c8826407d37ed6a8eabb91f615185d829",
+    "backend/app/saved_intentions.py": "babf99f12053fa267ff7ad96803f8db7ba040258b22b759fa92c4daf4afe839f",
+    "backend/app/saved_plan_notes.py": "df6889fadcc8e50cf8c5f57438d182223d3d8238721abc34104f1405255b1fa0",
+    "backend/app/schemas.py": "7acc9f4dff3dbacc2311636b44eaf0d97c9146c6b407033f9411b347d9d35c1a",
+    "backend/app/seed_demo.py": "c687e51dbfe4863d457e7f752a081a2a166440cbff8fa8767b324d50bf7c47b0",
+    "backend/app/timeline_impact.py": "98c2df2f74397d9f4f57161948f2ec5b787faabffecda57a8ae99bcccb06c9fe",
+    "backend/app/tourism_knowledge/__init__.py": "0074d856db72334b7f4f1d67685a4c19490915a09c0bfb7d2f7cf58912d6d39e",
+    "backend/app/tourism_knowledge/boundary.py": "0577d13f3c41402fb6db7421ca16079fda2c2b3d49a28b0c50df360bb03935f5",
+    "backend/app/tourism_knowledge/ingestion.py": "1805f99f0e97d48e3acb3efe281b2350cdffd808d44ca193a3d396f87759adf4",
+    "backend/app/tourism_knowledge/interfaces.py": "4b3564e27adb0ac8bbb228ec58d319fd9cb13dba15d1a1947ab06ea6f13854e6",
+    "backend/app/tourism_knowledge/models.py": "8b8e16c682e0f16b6cdd2701d4dc636ec53cbb8d479f05d86a34855ddc434ba7",
+    "backend/app/tourism_knowledge/ranking.py": "e1bd5dccf30cf23166b1de24f7e821faee7d56f269395d8946ee2934ecb39210",
+    "backend/app/tourism_knowledge/repository.py": "e9fdaba1d3261d6c88fe10d2eac2729dbdaade8ee42b19e29301909f2089de05",
+    "backend/app/tourism_knowledge/service.py": "c4ecb9cbe38ba6dbdae24a2f44a0efc95e5c3be1b6b54494921095f03bae5ce3",
+    "backend/app/tourism_knowledge_adapter.py": "d62ab37a40abc9b14300ae38420509789f511c15387ce85326d4d9b60ebd3cce",
+    "backend/app/travel_decision_demo.py": "6698eb937d89eb3fbe69ce919f905c291b74a4712ae64c327e0933560c141f5b",
+    "backend/app/travel_facts/__init__.py": "8e3db938f2395d528f5d43c9ca0eaaa6eb143856bab2429f55cf6838bf65a87c",
+    "backend/app/travel_facts/adapters.py": "b9bc9f5a2940132638f557d686e1471ded2a2dcd5c701e125635c4bfdb39783e",
+    "backend/app/travel_facts/execution.py": "6a32f590f83ea09449cbf65a6bbf4d27c67f47aa5134576ef699cb7956e574cb",
+    "backend/app/travel_facts/interfaces.py": "45610e53ac9b7583698b7424afc81d32fc409c49f7fd052587e9ebaef33fcb0e",
+    "backend/app/travel_facts/models.py": "22d07310c433b092d416b6210c0a51d07b94dd3b1093ed585bcf9f48dc80ddec",
+    "backend/app/travel_facts/normalization.py": "934e5b2cbcefabfc13ea13a3acc5b36ea5fd682bbb6520410be209a9430925f5",
+    "backend/app/travel_facts/official_collector.py": "4fed1afcd1f0d4eef905cfdef178b03dfc73d635217bcbec1f5bc71b10232cad",
+    "backend/app/travel_facts/opening_hours.py": "4ec289eb5fb0b54cbe4b6cf9b97d6b791458444deccbc093ee02a30d38d6a9c9",
+    "backend/app/travel_facts/policies.py": "a3236eabf611ce87bd8bc6e021d3ac6cc055b4d5b84efe87166c0b0e7b9700f1",
+    "backend/app/travel_facts/repository.py": "a787d189edc7d34d024a0905bec9daaf145121329b4187515f1521811e3219e6",
+    "backend/app/travel_facts/resolution.py": "b405357d2ab51c089c8d6828d2a287c7830a60bdcbc7bba845010efe583e08ae",
+    "backend/app/travel_facts/search_evidence.py": "3c99e12fd913907dc181ef76a37463017ddf91ec2b78b9dedbe13d6eec8bb879",
+    "backend/app/travel_facts/service.py": "3b254f76249ee0e5d6780fc9ef493b64302473f4c344bb67f583a1daaa5ebddf",
+    "backend/app/travel_facts/source_review.py": "85d964d5431cfa0578479029030f22eb1fa34e2ee49cb0e7a58ccfde67aecbf4",
+    "backend/app/travel_goal_router.py": "89a011bbbfe13c5a978c55829e6d664d6a47518714a8b129795faa93fef022a4",
+    "backend/app/travel_language.py": "c7167c3b285bbb2993ef37abc86a8f715748a60919488426aa0428d1fb1a8901",
+    "backend/app/travel_preferences/__init__.py": "c63a3247e3f401aa47ddd6853ed37b54515c9e1e9de2a007c13ab916835c0d99",
+    "backend/app/travel_preferences/contracts.py": "b668c03b78230573b2b37ba71ae685e28418c4f6f44eb609e797aec61cccf6ab",
+    "backend/app/travel_preferences/routes.py": "25360f57539fd2539c4e6899d6d249b67e0e61d796da4e6b8d9fd657b92e8fda",
+    "backend/app/travel_preferences/service.py": "f4a882308b167dbbf5fb40c8300f5f422a77cd511f00dd8c7d3353690af920c9",
+    "backend/app/trip_execution_service.py": "e86f93f83bcecb5e8bb5133af425df06f810ee7f6da551f4e9c4f5f22bb976b4"
+  },
+  "evidence_files": {
+    "docs/evidence/agent-b2-20261022/a-runtime-integration-ready.json": {
+      "sha256": "8e8bdd201202dd6181c272bc4fdab907f7a75e32528f420110bc6dced80b64c2",
+      "bytes": 281
+    },
+    "docs/evidence/agent-b2-20261022/a-runtime-integration-ready.xml": {
+      "sha256": "47d33bb4b2e4c00b5c22843690e880de70642f79ba60b3ffec932611683765f9",
+      "bytes": 12941
+    },
+    "docs/evidence/agent-b2-20261022/address-evidence-red-valid.xml": {
+      "sha256": "6c9c8cc8b3f5d90465eb09b63b9be56af45b65fd538417fbae37a05d376743a2",
+      "bytes": 1480
+    },
+    "docs/evidence/agent-b2-20261022/address-evidence-red.xml": {
+      "sha256": "b6b288e67b4d4de925669336e961d1943878c9c83d6cf9889592d0864ecf860a",
+      "bytes": 2490
+    },
+    "docs/evidence/agent-b2-20261022/adjacent-review-final.xml": {
+      "sha256": "d02402d7253aeb5b3ba2952bec381dcb41d00b28657bad693dfae5bcba4a2211",
+      "bytes": 12559
+    },
+    "docs/evidence/agent-b2-20261022/adjacent-review-green.xml": {
+      "sha256": "99400a6d4fbdde11a334d327e6e66d2a292d246d0623c0b437b0206aa41e3803",
+      "bytes": 4361
+    },
+    "docs/evidence/agent-b2-20261022/adjacent-review-red.xml": {
+      "sha256": "f2e881cb31a1d302f9a127bc46af1a4812f9e056a10d856e4bfcf43f892a4237",
+      "bytes": 23443
+    },
+    "docs/evidence/agent-b2-20261022/arrangement-write-compat.xml": {
+      "sha256": "25480ac3a104017ffe4c94d95cd3e1cc5dbf3f07dbc54e8667b252bb36d8dd4d",
+      "bytes": 7553
+    },
+    "docs/evidence/agent-b2-20261022/authority-and-clarification-green.xml": {
+      "sha256": "3a654d521bda46c8f33c5232621054ebb1a04eaff8026ad74a4cbd0e23fb6d95",
+      "bytes": 10592
+    },
+    "docs/evidence/agent-b2-20261022/authority-scoped-final.xml": {
+      "sha256": "95069acfabd2307db3f9e608c664799588f78a0c1dc374008d8eac8c74cdea75",
+      "bytes": 15943
+    },
+    "docs/evidence/agent-b2-20261022/authority-scoped-green.xml": {
+      "sha256": "6069216b77f887da5935e8555adc8ae71111140c4f430e64bfe525007b98cfef",
+      "bytes": 241
+    },
+    "docs/evidence/agent-b2-20261022/b2-final-code-review.md": {
+      "sha256": "648c5538a96cc55bcbd1fc341be021e8323ad55d40b7c263945437f7577dbff2",
+      "bytes": 10652
+    },
+    "docs/evidence/agent-b2-20261022/b2-final-focused.xml": {
+      "sha256": "74a4627df49733587f7c77af6b97cb5f898ae15b506631842ae5531e85fd3f20",
+      "bytes": 63563
+    },
+    "docs/evidence/agent-b2-20261022/b2-final-write-protection.xml": {
+      "sha256": "c9a63522c82d2dfddcf0320c14dc928ba4d8e12ead307fb1e497217b4188367f",
+      "bytes": 241
+    },
+    "docs/evidence/agent-b2-20261022/b2-regression-intermediate.xml": {
+      "sha256": "19c3496e0b69b06eda663686580a62e3c6d627fa564bc165dc7bc517e82af91a",
+      "bytes": 41746
+    },
+    "docs/evidence/agent-b2-20261022/b2-source-fixed-regression.json": {
+      "sha256": "a22c97946b0bd25ab65b4e10c1afe47cdb3748a809db7da070bb29316fa6959c",
+      "bytes": 287
+    },
+    "docs/evidence/agent-b2-20261022/b2-source-fixed-regression.xml": {
+      "sha256": "720e5c492fd3be5d459f4e1c0f05b1a6b793cdad9d2fcd453ec83c99a5d16890",
+      "bytes": 66578
+    },
+    "docs/evidence/agent-b2-20261022/blank-adoption-green.xml": {
+      "sha256": "552be1154c70b23939d2cfd73e12f1c801950f8f9d8e4d80742829e281da63a5",
+      "bytes": 2285
+    },
+    "docs/evidence/agent-b2-20261022/chosen-places-authority-red.xml": {
+      "sha256": "86df0cc2ded9fef3912b45769faf128067059fdebe7eb944d81270667580cb90",
+      "bytes": 12962
+    },
+    "docs/evidence/agent-b2-20261022/chosen-places-compat-config-failed.xml": {
+      "sha256": "ddcae25b7250bc66c6d96df218029102ccfc08067c4d36c4ca08c77da96c92e2",
+      "bytes": 52221
+    },
+    "docs/evidence/agent-b2-20261022/chosen-places-compat-green.xml": {
+      "sha256": "f3d07190a9d32b166d13e3138a3d6c995cc50ab48fcdbff6b80468b8c021b92e",
+      "bytes": 13007
+    },
+    "docs/evidence/agent-b2-20261022/chosen-places-final.xml": {
+      "sha256": "b4afab170b593941001a57a26ddaa741a122b110924ce52187273f44dadc7534",
+      "bytes": 14280
+    },
+    "docs/evidence/agent-b2-20261022/chosen-places-green.xml": {
+      "sha256": "74b3202507dc2fdeffd8e9044a2457480eff805d585826e5b330e265d77a2844",
+      "bytes": 5494
+    },
+    "docs/evidence/agent-b2-20261022/chosen-places-intermediate.xml": {
+      "sha256": "657def2f12771faa597e58fe137d3ed50f569f1ca79a98b103fc4c9c2db97f79",
+      "bytes": 13302
+    },
+    "docs/evidence/agent-b2-20261022/chosen-places-red.xml": {
+      "sha256": "fc9296e83225141dc8e25ca38a1d70b1e3c4ca7eb97ca961084571e4100e6808",
+      "bytes": 52378
+    },
+    "docs/evidence/agent-b2-20261022/chosen-places-scope-red.xml": {
+      "sha256": "09ebd6294a184f44896f2cbfb193594e8682612e9b8f2395e8ae64344d825466",
+      "bytes": 9748
+    },
+    "docs/evidence/agent-b2-20261022/compound-citations-red.xml": {
+      "sha256": "87200535bd18516fc3a148d97d8a6b01d8b41927c78917d71a36443966225951",
+      "bytes": 1895
+    },
+    "docs/evidence/agent-b2-20261022/creation-extraction-boundary.xml": {
+      "sha256": "07c02d54331b2a49a51ce107e754f65c0a76ab80a213f1a23afb85929af00a2b",
+      "bytes": 6978
+    },
+    "docs/evidence/agent-b2-20261022/development-after-candidate.json": {
+      "sha256": "de2b8c0d5ed41871d262632e8bbf03cba2367b7c160f756da80dc6bf1612abfa",
+      "bytes": 174459
+    },
+    "docs/evidence/agent-b2-20261022/development-after-d5be594.json": {
+      "sha256": "806bdf2ecc175296c0dbcd10a00942c70022fa244132cd027b4cdfec7753a9e6",
+      "bytes": 243226
+    },
+    "docs/evidence/agent-b2-20261022/development-after-freeze-fc2aa5d.json": {
+      "sha256": "adccb10f600146afc1cfe295ec33058b4dbdecfd59e58709963d25bed7292687",
+      "bytes": 254619
+    },
+    "docs/evidence/agent-b2-20261022/development-before.json": {
+      "sha256": "83a297f88a180ce7b82f494f59c099544e4eb3e537c546cd0b959d0da738fc25",
+      "bytes": 202124
+    },
+    "docs/evidence/agent-b2-20261022/development-integration.json": {
+      "sha256": "f2b5b59e9fdbd6402ba78793e9bc73b548fc49222d572a9ef92d281b62d3aa65",
+      "bytes": 221885
+    },
+    "docs/evidence/agent-b2-20261022/ENVIRONMENT_NOTES.md": {
+      "sha256": "d67918810845f6c4ee366e814daa2de033b74633203fc4ced10b6c948e6b9769",
+      "bytes": 2568
+    },
+    "docs/evidence/agent-b2-20261022/fact-date-red.xml": {
+      "sha256": "50eeddf5f07acb9a56dabe8c266ffdcc8712160cc39b7f18728c2cd91d0cb587",
+      "bytes": 2077
+    },
+    "docs/evidence/agent-b2-20261022/graph-clarification-red.xml": {
+      "sha256": "e2bdc5feb36799c2115a6edb7a9db77987eb9e31f4a972f1d90b9561705df489",
+      "bytes": 8710
+    },
+    "docs/evidence/agent-b2-20261022/handoff-compat.xml": {
+      "sha256": "69f8dd017f8f959b779e63262cb71e007ff29f42e4c0e338eb1269af553f1cd4",
+      "bytes": 5721
+    },
+    "docs/evidence/agent-b2-20261022/item-authority-red.xml": {
+      "sha256": "f67ff1a285c5e2923ccbb244cab895c8d1d4d938f489bafd78e385ec276e6369",
+      "bytes": 8156
+    },
+    "docs/evidence/agent-b2-20261022/legacy-clarification-green.xml": {
+      "sha256": "e8820aed59170adff21e179effc12c3b81064f5ba967125718d0f46abd55642e",
+      "bytes": 3581
+    },
+    "docs/evidence/agent-b2-20261022/legacy-clarification-red.xml": {
+      "sha256": "b98f8432e5b793bc54b73b8280343a83e8539bbe7944f6497018ffb893620b24",
+      "bytes": 5301
+    },
+    "docs/evidence/agent-b2-20261022/operation-handoff-green.xml": {
+      "sha256": "63102285344efd5d0a751d85c95b3ea14491c4c22f81f85b61414b35f8ce51a3",
+      "bytes": 9347
+    },
+    "docs/evidence/agent-b2-20261022/operation-handoff-red.xml": {
+      "sha256": "46907ac1263c60554966bc1c8a5d3f814f3335f4c130565b83999b28c4ca6614",
+      "bytes": 5339
+    },
+    "docs/evidence/agent-b2-20261022/optional-compatibility-and-write-final.xml": {
+      "sha256": "4e9e8be243175094cb2247967d1ffb7f4c9f35b0e64c55fb04da6124232f5a7a",
+      "bytes": 15773
+    },
+    "docs/evidence/agent-b2-20261022/planning-intents-compat.xml": {
+      "sha256": "2386d5a8ddd7c38dedb68abb19e35805d7a4a780959317513dc33f244a9b4341",
+      "bytes": 18272
+    },
+    "docs/evidence/agent-b2-20261022/planning-period-green.xml": {
+      "sha256": "0f97c49280274a66fc75e0ca1c389729aa7f1e71a716a0eecd6c4c7226729888",
+      "bytes": 19423
+    },
+    "docs/evidence/agent-b2-20261022/planning-period-red.xml": {
+      "sha256": "630a57f9c79ea75e162113b8894074d69078fa77402e431acc6c1e278b3347eb",
+      "bytes": 5553
+    },
+    "docs/evidence/agent-b2-20261022/planning-scope-green.xml": {
+      "sha256": "d72b2f26daebb7a6b6f8888021fe39ad6c4f089ce39fbce334a9e020204684ad",
+      "bytes": 1557
+    },
+    "docs/evidence/agent-b2-20261022/planning-scope-red.xml": {
+      "sha256": "5d0347f9e059ce7f887c1e67186e1c3bce040124e310cb129661ec6618fe5860",
+      "bytes": 17942
+    },
+    "docs/evidence/agent-b2-20261022/planning-snapshot-final.xml": {
+      "sha256": "1650b12ebbe4f6bd4f9a7205fcfa3bfad9314eca9ba853ba5a491c11d6b25460",
+      "bytes": 851
+    },
+    "docs/evidence/agent-b2-20261022/planning-snapshot-green.xml": {
+      "sha256": "d03282934631b61b65d1f164a115b5736d05a1f1b2184e19a9597bbb2614f7b8",
+      "bytes": 13940
+    },
+    "docs/evidence/agent-b2-20261022/planning-snapshot-red.xml": {
+      "sha256": "c5720a927b3fdad2939d4f5dd9a427d6d5c6c5871eab3f72dd8db2944367ea7d",
+      "bytes": 9538
+    },
+    "docs/evidence/agent-b2-20261022/prepared-replay-final-green.xml": {
+      "sha256": "e930834af85a4b95bd2f72955f6291ec5630660bc1d5b2f90fae79d9eb02f13b",
+      "bytes": 24239
+    },
+    "docs/evidence/agent-b2-20261022/prepared-replay-green.xml": {
+      "sha256": "2e98a8b3f20b6b62551059cbee50a0f7d7bc6ebcad68aa73a24c9d5afc548344",
+      "bytes": 5673
+    },
+    "docs/evidence/agent-b2-20261022/prepared-replay-red.xml": {
+      "sha256": "93d5a2b61c1bf374f1c41bc0cbf3020623257f3f05c0b13995feee133068d979",
+      "bytes": 62293
+    },
+    "docs/evidence/agent-b2-20261022/prepared-replay-regression-env-failed.xml": {
+      "sha256": "037e14c3d85a54eb6db1fde1fdb32b07332539994b6bfb5aa824162c62ad88da",
+      "bytes": 110099
+    },
+    "docs/evidence/agent-b2-20261022/prepared-replay-regression-green.xml": {
+      "sha256": "511715547447280b88ab7aa9182156754af8b5f69d2224cbe2090f6ab3749456",
+      "bytes": 24094
+    },
+    "docs/evidence/agent-b2-20261022/public-development-review-final.md": {
+      "sha256": "ec0df557b4dda1d02d7e23fa8355e61a1c547e3552e13449f57e93163b8b14e7",
+      "bytes": 16042
+    },
+    "docs/evidence/agent-b2-20261022/public-development-review-freeze.md": {
+      "sha256": "81efbe4e719df477a65b4ae2e9848ea1caa3e8167fbac0cdc35d1306e58ef00d",
+      "bytes": 16400
+    },
+    "docs/evidence/agent-b2-20261022/public-workflow-first.json": {
+      "sha256": "6715daa8ce5ee5a055719a9ce6796c8773e52c893a8a5378785054d03c60b491",
+      "bytes": 54040
+    },
+    "docs/evidence/agent-b2-20261022/public-workflow-observed-v2.json": {
+      "sha256": "3711eed589346671cab993052cf4170a0f38397e2942729247006ead8fb60969",
+      "bytes": 82901
+    },
+    "docs/evidence/agent-b2-20261022/public-workflow-observed.json": {
+      "sha256": "b25bca951bb4e682dbd8911773a9ad99f03839a3010f958c961d7b0d1a3e6239",
+      "bytes": 65620
+    },
+    "docs/evidence/agent-b2-20261022/public-workflow-source-commit.json": {
+      "sha256": "3cd3febc5f118fe8b165b9523e32e7280ce6db7b0f2a355102c5b44d0604f1f6",
+      "bytes": 102261
+    },
+    "docs/evidence/agent-b2-20261022/PUBLIC_RESPONSES.md": {
+      "sha256": "6e8141dff0e5a1948f822e4d1a1844fb8a14afbee0cdc4e1cba489c57b64a1d9",
+      "bytes": 33255
+    },
+    "docs/evidence/agent-b2-20261022/read-cropped-red.xml": {
+      "sha256": "af3c3de366c08627b980a2adf553ab134d564ac4ef02b15547ac17f302c2e931",
+      "bytes": 2247
+    },
+    "docs/evidence/agent-b2-20261022/read-operations-green.xml": {
+      "sha256": "8e48752618ec0029a1a86cdb737960ce6ae05b218c4d8f5c0c598d108e3fd4ec",
+      "bytes": 8450
+    },
+    "docs/evidence/agent-b2-20261022/read-operations-red.xml": {
+      "sha256": "c82af6be515a7e7ae898b3ca16cca7ae5339c7729e2a9f230c8aab1f190dab2d",
+      "bytes": 8501
+    },
+    "docs/evidence/agent-b2-20261022/read-review-red.xml": {
+      "sha256": "9d86e2e5f9668f047ea9cf338b9a415b0dbcc056bf2c18b4b49f0360c3ce2339",
+      "bytes": 4371
+    },
+    "docs/evidence/agent-b2-20261022/real-enqueue-contract.xml": {
+      "sha256": "1166af09b91983f866527c77a4d9b9a8c17c97fb5c33889f6f2b83b7c69cb49a",
+      "bytes": 2510
+    },
+    "docs/evidence/agent-b2-20261022/target-authority-red.xml": {
+      "sha256": "c5905a503eae033e31cd8e5ed1bbbc49aef13be398b70964f0f98f432cc8080c",
+      "bytes": 6335
+    },
+    "docs/evidence/agent-b2-20261022/target-citation-recovery-final.xml": {
+      "sha256": "594e845651894d0c67cc7e6ae5fd014b95f130f7f4578e2acb46ba38dfc5e84e",
+      "bytes": 38456
+    },
+    "docs/evidence/agent-b2-20261022/target-citation-recovery-green.xml": {
+      "sha256": "02f09c0d7cadc25532e02cb4063bd9974bf659f8eb4804fe0e5261d0f8914c71",
+      "bytes": 8643
+    },
+    "docs/evidence/agent-b2-20261022/task2-conditions.md": {
+      "sha256": "274bcdbbb4366db0289fe44174d372da2a8db069c8bc4197ecc59af951a0ff7d",
+      "bytes": 8873
+    },
+    "docs/evidence/agent-b2-20261022/test-runs.json": {
+      "sha256": "f9e21b86aa8519063e9a30b28ed7a2d3f400ec6bf7e9bbcb3901d99b5e1bbdfa",
+      "bytes": 9337
+    },
+    "docs/evidence/agent-b2-20261022/total-authority-red.xml": {
+      "sha256": "b30760cedb5a54457826ec2f0e80e1be27e643651b26b3af153b53e0b56a1d46",
+      "bytes": 22134
+    },
+    "docs/evidence/agent-b2-20261022/whole-day-green.xml": {
+      "sha256": "52c160164119b50a84d6d45d916c377acbe7faca29840ca84cd10ca48f1d6843",
+      "bytes": 2137
+    },
+    "docs/evidence/agent-b2-20261022/whole-day-live.json": {
+      "sha256": "b67b570e6d1b857a80941cde6dc3693439b242af5989e9a51e908f17e938511e",
+      "bytes": 13431
+    },
+    "docs/evidence/agent-b2-20261022/whole-day-red.xml": {
+      "sha256": "09f0067b379f42efaa74a03361435d79d8a7c368007c43d97753d377db001692",
+      "bytes": 20813
+    },
+    "docs/evidence/agent-b2-20261022/worker-draft-red.xml": {
+      "sha256": "b98b2301ab9dddb1b5962cec4be1d0400190113f90caae829a2ff0d7d19681a3",
+      "bytes": 5709
+    },
+    "docs/evidence/agent-b2-20261022/write-fences-green.xml": {
+      "sha256": "fc3c8b6e14a07a1cb516e942fbec526f75a48671904d7ea911804cb988ac26ad",
+      "bytes": 11421
+    },
+    "docs/evidence/agent-b2-20261022/write-review-green.xml": {
+      "sha256": "e1491ef1ada3de4f451549d3d0d1fb06f6ade4bf499e50b74b1be422eb94f2bf",
+      "bytes": 2719
+    },
+    "docs/evidence/agent-b2-20261022/write-review-red.xml": {
+      "sha256": "ccc688b6021d469b5309b2c144465992dcd1a1fa6fc7b76e69d3a35444af89c4",
+      "bytes": 5073
+    }
+  },
+  "limitations": [
+    "Intermediate live runs may predate a full source commit; use fixed d5be594 JSON for same-input final public comparison.",
+    "No held-out result or release approval is implied.",
+    "Repeated overlapping test suites are not additive."
+  ],
+  "product_source_commit": "fc2aa5d17e141a83140bcb51d5c87c3d820c8705",
+  "evidence_generated_from_head": "3fd381c06837872b424bc458b69098156d9c11f4"
+}

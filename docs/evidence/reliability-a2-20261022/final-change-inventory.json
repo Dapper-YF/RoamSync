@@ -1,0 +1,191 @@
+{
+  "base": "6a65ece3acc3ea9a32087c11a2cbbe05173862dc",
+  "tested_product_sha": "85d0bd5915a7d7168bf606b7f520fbae0ad6f237",
+  "commits": [
+    {
+      "sha": "590b1fe774aeaa8f77fcd22e9bd4d553aaf77ca9",
+      "title": "docs(reliability): prepare A2 transaction design and common quality gates"
+    },
+    {
+      "sha": "67620eed5ae91288846285196ad1be3e496b72c4",
+      "title": "refactor: resolve prepared planning intent from detached facts"
+    },
+    {
+      "sha": "3a45fe25fddd0f37322a9bf52cfeec42312d0006",
+      "title": "fix(planning): prepare intent outside transactions and fence stale input"
+    },
+    {
+      "sha": "4e21b8cfe34f1575d654b484c57fac2ee2e8fed0",
+      "title": "fix(planning): preserve prepared decision without legacy rerouting"
+    },
+    {
+      "sha": "81cb57d6af1091500982cae2f197af98bd3f60e6",
+      "title": "fix(planning): resolve candidate route evidence before business locks"
+    },
+    {
+      "sha": "e9847f17c695d5b09598cc957155dfc8ee4f3d30",
+      "title": "fix: preserve grounded conditions and requirement polarity"
+    },
+    {
+      "sha": "2fb3ebb5357a1f8e0c1d5620b6a5412fe9a6b019",
+      "title": "fix: reject negated scalars and scope walking withdrawals"
+    },
+    {
+      "sha": "9abb2fd3cd7d7801ce031477a9683d0abb94617b",
+      "title": "feat(agent): carry source-bound operations through reads and previews"
+    },
+    {
+      "sha": "4aa8c651667df54ef59804c2324ec75c9ed63609",
+      "title": "fix(planning): close graph sessions around external research and route work"
+    },
+    {
+      "sha": "cf9f9ad2f19231980d2fdaaeccaa88c7080aa437",
+      "title": "fix(agent): ground whole-day blanks and fact task source context"
+    },
+    {
+      "sha": "81cd117dcf23ebd4f1c40330c4ff30058e0389ac",
+      "title": "fix(web): preserve route continuity across free time"
+    },
+    {
+      "sha": "9357d6a66b2117010e2c49671ce7cc1754eb7d24",
+      "title": "fix(web): display dated whole-day creation previews"
+    },
+    {
+      "sha": "4423e03874a1fe723f579cdf02437356e2a7fd52",
+      "title": "fix(worker): fence execution attempts and isolate recovery checkpoints"
+    },
+    {
+      "sha": "62976af7d3f84470023eedaaa033bbd275e0f68b",
+      "title": "feat: render approved condition recall without model compression"
+    },
+    {
+      "sha": "ae52693fcfdaff750e5970a979fc01f9ff154dac",
+      "title": "fix(agent): bind action clauses dates and budget units to original evidence"
+    },
+    {
+      "sha": "8dd7d2376a17c3ddbbbfb09218876680783e77d1",
+      "title": "fix: fence clarification resumes and preserve planning provenance"
+    },
+    {
+      "sha": "7c4b498554761ba14f9d7f8a299a4802ca6fd53d",
+      "title": "fix: persist accepted clarification before execution claim commits"
+    },
+    {
+      "sha": "ce8000cbafb592b8e72f0d3be0557d3d89af6a0a",
+      "title": "fix(planning): replay prepared drafts and bound day clarifications"
+    },
+    {
+      "sha": "8872972501c08358071a6322508d8ea28be489db",
+      "title": "fix: verify explicitly bounded user chosen places with map identity"
+    },
+    {
+      "sha": "1ff2587c1f37161448e75eee98033051eb4379a4",
+      "title": "fix(agent): preserve authorized targets and aggregate independent evidence"
+    },
+    {
+      "sha": "7f905476862c1832d414822a45521d14685bff05",
+      "title": "fix(agent): retain conditional optional choices without granting plan authority"
+    },
+    {
+      "sha": "442d33cfdd8de51aaff72e8f834da721c0d9bc13",
+      "title": "fix(agent): migrate bound legacy clarification checkpoints safely"
+    },
+    {
+      "sha": "85d0bd5915a7d7168bf606b7f520fbae0ad6f237",
+      "title": "fix: preserve legacy clarification state on recoverable restart conflicts"
+    }
+  ],
+  "files_name_status": [
+    "M\tbackend/app/agent_observation.py",
+    "M\tbackend/app/agent_worker.py",
+    "M\tbackend/app/assistant_capabilities.py",
+    "M\tbackend/app/assistant_context.py",
+    "M\tbackend/app/assistant_memory.py",
+    "A\tbackend/app/assistant_operation.py",
+    "M\tbackend/app/assistant_research.py",
+    "M\tbackend/app/assistant_service.py",
+    "M\tbackend/app/assistant_turn.py",
+    "M\tbackend/app/candidate_decisions.py",
+    "M\tbackend/app/candidate_route_service.py",
+    "M\tbackend/app/companion_graph.py",
+    "M\tbackend/app/companion_runtime.py",
+    "M\tbackend/app/destination_research.py",
+    "M\tbackend/app/experience_replanning_service.py",
+    "M\tbackend/app/flexible_creation.py",
+    "M\tbackend/app/initial_places_service.py",
+    "M\tbackend/app/main.py",
+    "M\tbackend/app/maps_service.py",
+    "A\tbackend/app/planning_claim.py",
+    "M\tbackend/app/planning_graph.py",
+    "M\tbackend/app/planning_graph_runtime.py",
+    "M\tbackend/app/planning_intent_service.py",
+    "A\tbackend/app/planning_preparation.py",
+    "M\tbackend/app/planning_progress.py",
+    "M\tbackend/app/planning_run_repository.py",
+    "M\tbackend/app/requirement_language.py",
+    "M\tbackend/app/requirements.py",
+    "A\tbackend/evals/run_agent_b2_quality.py",
+    "A\tbackend/evals/run_agent_b2_workflow.py",
+    "M\tbackend/tests/test_activity_experience_recovery.py",
+    "A\tbackend/tests/test_agent_b2_chosen_places.py",
+    "A\tbackend/tests/test_agent_b2_conditions.py",
+    "A\tbackend/tests/test_agent_b2_graph_clarification.py",
+    "A\tbackend/tests/test_agent_b2_legacy_clarification.py",
+    "A\tbackend/tests/test_agent_b2_operation_handoff.py",
+    "A\tbackend/tests/test_agent_b2_planning_snapshot.py",
+    "A\tbackend/tests/test_agent_b2_prepared_replay.py",
+    "A\tbackend/tests/test_agent_b2_read_operations.py",
+    "M\tbackend/tests/test_agent_worker.py",
+    "M\tbackend/tests/test_candidate_decisions.py",
+    "M\tbackend/tests/test_conversation_regressions.py",
+    "M\tbackend/tests/test_destination_research.py",
+    "M\tbackend/tests/test_formal_write_protection.py",
+    "A\tbackend/tests/test_graph_network_transactions.py",
+    "M\tbackend/tests/test_map_network.py",
+    "A\tbackend/tests/test_planning_route_transactions.py",
+    "A\tbackend/tests/test_planning_transactions.py",
+    "A\tbackend/tests/test_worker_ownership.py",
+    "M\tdocs/AGENT_ARCHITECTURE.md",
+    "A\tdocs/PLANNING_RELIABILITY_A2_DESIGN_20261022.md",
+    "A\tdocs/PLANNING_RELIABILITY_A2_IMPLEMENTATION_20261022.md",
+    "A\tdocs/QUALITY_GATE_V2_20261022.md",
+    "A\tdocs/evidence/agent-b2-20261022/address-evidence-red-valid.xml",
+    "A\tdocs/evidence/agent-b2-20261022/chosen-places-authority-red.xml",
+    "A\tdocs/evidence/agent-b2-20261022/chosen-places-compat-config-failed.xml",
+    "A\tdocs/evidence/agent-b2-20261022/chosen-places-compat-green.xml",
+    "A\tdocs/evidence/agent-b2-20261022/chosen-places-final.xml",
+    "A\tdocs/evidence/agent-b2-20261022/chosen-places-green.xml",
+    "A\tdocs/evidence/agent-b2-20261022/chosen-places-intermediate.xml",
+    "A\tdocs/evidence/agent-b2-20261022/chosen-places-red.xml",
+    "A\tdocs/evidence/agent-b2-20261022/chosen-places-scope-red.xml",
+    "A\tdocs/evidence/agent-b2-20261022/compound-citations-red.xml",
+    "A\tdocs/evidence/agent-b2-20261022/graph-clarification-red.xml",
+    "A\tdocs/evidence/agent-b2-20261022/item-authority-red.xml",
+    "A\tdocs/evidence/agent-b2-20261022/legacy-clarification-green.xml",
+    "A\tdocs/evidence/agent-b2-20261022/legacy-clarification-red.xml",
+    "A\tdocs/evidence/agent-b2-20261022/optional-compatibility-and-write-final.xml",
+    "A\tdocs/evidence/agent-b2-20261022/prepared-replay-final-green.xml",
+    "A\tdocs/evidence/agent-b2-20261022/prepared-replay-green.xml",
+    "A\tdocs/evidence/agent-b2-20261022/prepared-replay-red.xml",
+    "A\tdocs/evidence/agent-b2-20261022/prepared-replay-regression-env-failed.xml",
+    "A\tdocs/evidence/agent-b2-20261022/prepared-replay-regression-green.xml",
+    "A\tdocs/evidence/agent-b2-20261022/target-authority-red.xml",
+    "A\tdocs/evidence/agent-b2-20261022/target-citation-recovery-green.xml",
+    "A\tdocs/evidence/agent-b2-20261022/task2-conditions.md",
+    "A\tdocs/evidence/agent-b2-20261022/total-authority-red.xml",
+    "A\tdocs/evidence/reliability-a2-20261022/baseline-tests.json",
+    "A\tdocs/evidence/reliability-a2-20261022/creation-transactions.json",
+    "A\tdocs/evidence/reliability-a2-20261022/graph-transactions.json",
+    "A\tdocs/evidence/reliability-a2-20261022/review-fixes-20261023.md",
+    "A\tdocs/evidence/reliability-a2-20261022/route-transactions.json",
+    "A\tdocs/evidence/reliability-a2-20261022/worker-ownership.json",
+    "M\tdocs/handoff/LATEST_HANDOFF.md",
+    "M\tweb/src/journeys/HandbookJourney.tsx",
+    "A\tweb/src/journeys/HandbookRouteContinuity.test.tsx",
+    "M\tweb/src/product/AssistantDecisions.tsx",
+    "M\tweb/src/product/NaturalAssistant.test.tsx",
+    "M\tweb/src/product/NaturalAssistant.tsx",
+    "M\tweb/src/product/UnifiedAssistant.test.tsx",
+    "M\tweb/src/product/arrangementApi.ts"
+  ]
+}

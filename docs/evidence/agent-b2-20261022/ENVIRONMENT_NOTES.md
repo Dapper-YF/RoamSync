@@ -9,3 +9,5 @@
 - All test credentials in these files are explicit synthetic credentials. No .env, secret value, private conversation, or hidden model reasoning is included.
 
 - First source-fingerprint wrapper attempt failed before test execution because a relative Path was compared with an absolute cwd. No result artifact or quality claim was produced; corrected wrapper hashes repository-relative paths and records both before/after.
+
+- A-runtime integration first attempt did not complete any test before another Docker stop (FinishedAt=2026-10-23T13:47:38.156009284Z, exit255/OOM=false). Verified its exact parent command, stopped only B wrapper/interpreter45192/50276, restarted synthetic15435 and obtained pg_isready accepting connections. A-runtime-integration-ready uses a new output path; the interrupted run is not a pass/failure measurement.
