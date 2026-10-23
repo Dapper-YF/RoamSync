@@ -289,7 +289,7 @@ def affirmative_action_source(message, quote, verbs):
                for match in re.finditer(verbs, quote))
 
 
-def affirmative_entity_source(message, quote, verbs, name):
+def affirmative_entity_source(message, quote, verbs, name, *, allow_optional=False):
     """Bind an action to this entity, not a positive action about its peer.
 
     Ambiguous coordinated prose stays unapproved; it does not borrow a verb
@@ -305,7 +305,10 @@ def affirmative_entity_source(message, quote, verbs, name):
     end = start + len(name)
     for action in re.finditer(verbs, clause):
         gap = clause[action.end():start] if action.end() <= start else clause[end:action.start()] if action.start() >= end else None
-        if gap is None or not re.fullmatch(r"(?:一下|一趟|参观|游览|确定|要|作为|是|的|也|先|再|就|暂时|暂|不|别|不要|不用|无需|不必|路线|顺序|时间|停留|时长)*", gap):
+        gap_pattern = r"(?:一下|一趟|参观|游览|确定|要|作为|是|的|也|先|再|就|暂时|暂|不|别|不要|不用|无需|不必|路线|顺序|时间|停留|时长"
+        if allow_optional:
+            gap_pattern += r"|有时间|看情况|不一定|可去可不去"
+        if gap is None or not re.fullmatch(gap_pattern + r")*", gap):
             continue
         if not _non_authorizing_context(clause, action[0], start=action.start()):
             return True

@@ -115,7 +115,7 @@ async def prepare_choices(decision, city, user_text):
         if choice.origin == "user_explicit" and choice.kind in {"selected", "optional"}:
             from app.assistant_capabilities import affirmative_entity_source
             if not affirmative_entity_source(user_text, choice.source_quote,
-                    r"去|选|保留|纳入|加入|添加|安排|备选|可选", core_name):
+                    r"去|选|保留|纳入|加入|添加|安排|备选|可选", core_name, allow_optional=True):
                 raise ValueError("每个地点都需要其自身的肯定选择，否定或假设讨论不能保存为已选事项")
         if choice.day_date and not decision.start_date <= choice.day_date <= decision.end_date:
             raise ValueError("建议日期超出本次旅行")
