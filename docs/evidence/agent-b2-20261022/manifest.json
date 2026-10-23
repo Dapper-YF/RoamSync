@@ -239,6 +239,14 @@
       "sha256": "552be1154c70b23939d2cfd73e12f1c801950f8f9d8e4d80742829e281da63a5",
       "bytes": 2285
     },
+    "docs/evidence/agent-b2-20261022/c2-independent-measurement-report.md": {
+      "sha256": "9bd913f242242fd9c619226498fbd35946726cda74cab21b49590f1e2918b2b3",
+      "bytes": 7125
+    },
+    "docs/evidence/agent-b2-20261022/c2-independent-result.json": {
+      "sha256": "8673844be66f44d9b7ceac762b25b01c13b84c2fd0e9de0caa4064caf6d0ad4c",
+      "bytes": 2273
+    },
     "docs/evidence/agent-b2-20261022/chosen-places-authority-red.xml": {
       "sha256": "86df0cc2ded9fef3912b45769faf128067059fdebe7eb944d81270667580cb90",
       "bytes": 12962
@@ -439,6 +447,10 @@
       "sha256": "1166af09b91983f866527c77a4d9b9a8c17c97fb5c33889f6f2b83b7c69cb49a",
       "bytes": 2510
     },
+    "docs/evidence/agent-b2-20261022/source-equivalence.json": {
+      "sha256": "ae9f8be1574695edc9e73bab4955276fce3aa96eaa02ca3cd6ea532b932cc871",
+      "bytes": 419
+    },
     "docs/evidence/agent-b2-20261022/target-authority-red.xml": {
       "sha256": "c5905a503eae033e31cd8e5ed1bbbc49aef13be398b70964f0f98f432cc8080c",
       "bytes": 6335
@@ -493,11 +505,23 @@
     }
   },
   "limitations": [
-    "Intermediate live runs may predate a full source commit; use fixed d5be594 JSON for same-input final public comparison.",
-    "No held-out result or release approval is implied.",
+    "Use frozen fc2aa5d capture for the final public same-input comparison; earlier captures remain historical evidence.",
+    "C once-only strict2/20 result is a separate fixture, not a before/after comparison or release approval.",
+    "B reads only the published C report and aggregate metadata; private questions, raw SSE and screenshots remain with C.",
     "Repeated overlapping test suites are not additive."
   ],
   "product_source_commit": "fc2aa5d17e141a83140bcb51d5c87c3d820c8705",
-  "evidence_generated_from_head": "3fd381c06837872b424bc458b69098156d9c11f4",
-  "hash_basis": "Actual working-tree bytes at capture; a Git checkout may normalize line endings. Git source commit is the portable identity."
+  "evidence_generated_from_head": "a22815eaf9bf30e22557284510b1f64911acd339",
+  "hash_basis": "Actual working-tree bytes at capture; a Git checkout may normalize line endings. Git source commit is the portable identity.",
+  "c_holdout_question_read_by_b": false,
+  "c_published_report_read_by_b": true,
+  "c_measurement_result": "docs/evidence/agent-b2-20261022/c2-independent-result.json",
+  "c_published_docs_commit": "a4532b266c36de13e90820c1588d76ab85dde19d",
+  "c_strict_usable": {
+    "count": 2,
+    "planned_sessions": 20,
+    "valid_sessions": 19,
+    "critical_valid": 1,
+    "invalid": 1
+  }
 }
