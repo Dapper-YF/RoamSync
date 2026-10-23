@@ -1,3 +1,4 @@
+import json
 import logging
 import re
 import uuid
@@ -191,7 +192,7 @@ def restore_current_turn_modification(run, trip_id, message, trip_version):
     return None
 
 
-def restore_approved_planning_draft(run, trip_id, message, trip_version):
+def restore_approved_planning_draft(run, trip_id, message, trip_version, *, preferences_version=None):
     """Replay semantics, never model IDs, only for the matching persisted run."""
     if (run is None or run.trip_id != trip_id or run.base_trip_version != trip_version
             or run.user_request != message):
@@ -201,12 +202,44 @@ def restore_approved_planning_draft(run, trip_id, message, trip_version):
     except (ValueError, TypeError):
         return None
     draft = resolution.semantic_draft
-    if (draft is None or draft.parser != "hybrid" or draft.parser_version != "approved-operation-v2"
-            or resolution.request.user_request != message or resolution.request.trip_id != trip_id
+    if (draft is None or resolution.request.user_request != message or resolution.request.trip_id != trip_id
             or resolution.grounded_intent is None or resolution.grounded_intent.trip_id != trip_id
             or resolution.policy_decision is None or resolution.policy_decision.route not in {"plan_preview", "clarify"}
             or any(op.raw_text not in message or any(name not in op.raw_text for name in
                 [*op.place_mentions, *op.activity_mentions]) for op in draft.operations)):
+        return None
+    trigger = getattr(run, "trigger_snapshot", None)
+    if isinstance(trigger, dict) and "prepared_intent" in trigger:
+        # This envelope is written only after repository version/policy checks.
+        # A present but invalid marker must never fall back to a legacy parser.
+        marker = trigger["prepared_intent"]
+        if (not isinstance(marker, dict) or type(marker.get("version")) is not int
+                or marker["version"] != 1
+                or type(marker.get("preferences_version")) is not int
+                or marker["preferences_version"] < 1
+                or type(marker.get("base_trip_version")) is not int):
+            return None
+        if preferences_version is not None and marker["preferences_version"] != preferences_version:
+            return None
+        request = resolution.request
+        if any(getattr(run, field, None) != getattr(request, field) for field in
+                ("entry_point", "selected_day_id", "selected_activity_id")):
+            return None
+        expected = {
+            "version": 1, "trip_id": str(trip_id), "user_request": message,
+            "entry_point": request.entry_point,
+            "selected_day_id": str(request.selected_day_id) if request.selected_day_id else None,
+            "selected_activity_id": str(request.selected_activity_id) if request.selected_activity_id else None,
+            "base_trip_version": trip_version, "preferences_version": marker["preferences_version"],
+            "draft": draft.model_dump(mode="json"),
+        }
+        try:
+            matches = json.dumps(marker, sort_keys=True, allow_nan=False) == json.dumps(expected, sort_keys=True)
+        except (TypeError, ValueError):
+            return None
+        if not matches:
+            return None
+    elif draft.parser != "hybrid" or draft.parser_version != "approved-operation-v2":
         return None
     return draft.model_copy(deep=True)
 
@@ -390,6 +423,7 @@ async def resolve_planning_intent(
     semantic_provider: SemanticIntentProvider | None = None,
     default_planning_intent: PlanningIntentType | None = None,
     prepared_draft: SemanticIntentDraft | None = None,
+    clarification_answers: tuple[str, ...] = (),
 ) -> PlanningIntentResolution:
     """Compatibility adapter; never commit the caller's transaction.
 
@@ -400,7 +434,7 @@ async def resolve_planning_intent(
     snapshot = await load_planning_intent_snapshot(session, trip_id, payload)
     return await resolve_planning_intent_snapshot(snapshot, payload,
         semantic_provider=semantic_provider, default_planning_intent=default_planning_intent,
-        prepared_draft=prepared_draft)
+        prepared_draft=prepared_draft, clarification_answers=clarification_answers)
 
 
 async def resolve_planning_intent_snapshot(
@@ -410,6 +444,7 @@ async def resolve_planning_intent_snapshot(
     semantic_provider: SemanticIntentProvider | None = None,
     default_planning_intent: PlanningIntentType | None = None,
     prepared_draft: SemanticIntentDraft | None = None,
+    clarification_answers: tuple[str, ...] = (),
 ) -> PlanningIntentResolution:
     """Resolve detached facts, optionally interpreting once outside SQL.
 
@@ -528,6 +563,20 @@ async def resolve_planning_intent_snapshot(
         if len(protected_days) == 1:
             target_day = days_by_id[protected_days.pop()]
             scope = _scope_for_day(target_day, days, scope)
+
+    if (intent_type == "modify_day" and target_day is None and clarification_answers
+            and not ambiguities and (scope is None or
+                (scope.day_date is None and scope.day_number is None))):
+        # Answers fill only a missing target. They never enter operation parsing,
+        # entity extraction, constraints, source text, or the persisted draft.
+        answer_ambiguities: list[str] = []
+        answer_scope = _parse_time_scope(clarification_answers[-1], trip, days,
+            answer_ambiguities, relative_date_base=relative_date_base)
+        if answer_scope is not None and not answer_ambiguities:
+            target_day = days_by_date.get(answer_scope.day_date)
+            if target_day is not None:
+                scope = _scope_for_day(target_day, days, scope)
+                missing_fields = [field for field in missing_fields if field != "target_day"]
 
     if intent_type in {"create_plan", "replan_trip"} and not trip.destination.strip():
         missing_fields.append("destination")
