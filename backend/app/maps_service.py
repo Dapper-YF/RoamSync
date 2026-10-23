@@ -5,6 +5,7 @@ import logging
 import math
 import time as clock_time
 import uuid
+from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any
 from urllib.parse import urlencode
@@ -12,6 +13,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
 from sqlalchemy import delete, select
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
@@ -279,31 +281,76 @@ async def resolve_route_result(
     destination: PlaceCandidate,
     mode: str,
 ) -> RouteCache:
-    cache_key = hashlib.sha256(
-        f"{float(origin.longitude):.5f},{float(origin.latitude):.5f}:"
-        f"{float(destination.longitude):.5f},{float(destination.latitude):.5f}:{mode}".encode()
-    ).hexdigest()
+    cache_key = route_cache_key(origin, destination, mode)
     cached = await session.get(RouteCache, cache_key)
     now = datetime.now(UTC)
     settings = get_settings()
-    if (
+    if usable_route_cache(cached, now, settings):
+        logger.info("amap route cache hit mode=%s", mode)
+        return cached
+    trip = await session.get(Trip, origin.trip_id)
+    evidence = await fetch_route_evidence(origin, destination, mode,
+        trip.destination_citycode or trip.destination if trip else "")
+    if cached is None:
+        cached = RouteCache(cache_key=cache_key)
+        session.add(cached)
+    for key, value in evidence.cache_values(mode).items():
+        setattr(cached, key, value)
+    return cached
+
+
+def route_cache_key(origin, destination, mode: str) -> str:
+    return hashlib.sha256(
+        f"{float(origin.longitude):.5f},{float(origin.latitude):.5f}:"
+        f"{float(destination.longitude):.5f},{float(destination.latitude):.5f}:{mode}".encode()
+    ).hexdigest()
+
+
+@dataclass(frozen=True)
+class RoutePlace:
+    id: uuid.UUID
+    trip_id: uuid.UUID
+    name: str
+    longitude: float
+    latitude: float
+
+    @classmethod
+    def from_place(cls, place: PlaceCandidate):
+        return cls(place.id, place.trip_id, place.name, float(place.longitude), float(place.latitude))
+
+
+def usable_route_cache(cached, now, settings) -> bool:
+    return (
         cached is not None
         and cached.expires_at > now
         and (cached.is_estimated or bool(cached.path))
-        and (not cached.is_estimated or not settings.amap_rest_key)
-    ):
-        logger.info("amap route cache hit mode=%s", mode)
-        return cached
+        and (not cached.is_estimated or (settings.allow_map_estimates and not settings.amap_rest_key))
+    )
+
+
+@dataclass(frozen=True)
+class RouteEvidence:
+    distance_meters: int
+    duration_minutes: int
+    provider: str
+    is_estimated: bool
+    path: list
+    alternatives: list
+    expires_at: datetime
+
+    def cache_values(self, mode: str) -> dict:
+        return {"mode": mode, **{key: getattr(self, key) for key in self.__dataclass_fields__}}
+
+
+async def fetch_route_evidence(origin, destination, mode: str, city: str) -> RouteEvidence:
+    """Network-only boundary. Inputs contain coordinates; no ORM/session access."""
+    settings = get_settings()
 
     result = None
     if settings.amap_rest_key:
         try:
-            trip = await session.get(Trip, origin.trip_id)
             result = await _fetch_amap_route(
-                origin,
-                destination,
-                mode,
-                trip.destination_citycode or trip.destination if trip else "",
+                origin, destination, mode, city,
             )
         except MapProviderError:
             if not settings.allow_map_estimates:
@@ -313,24 +360,30 @@ async def resolve_route_result(
     distance, duration, provider, estimated, path, alternatives = result or _estimated_route(
         origin, destination, mode
     )
-    if cached is None:
-        cached = RouteCache(cache_key=cache_key)
-        session.add(cached)
-    cached.mode = mode
-    cached.distance_meters = distance
-    cached.duration_minutes = duration
-    cached.provider = provider
-    cached.is_estimated = estimated
-    cached.path = path
-    cached.alternatives = alternatives
-    cached.expires_at = now + timedelta(seconds=settings.route_cache_ttl_seconds)
     logger.info(
         "amap route resolved mode=%s provider=%s estimated=%s",
         mode,
         provider,
         estimated,
     )
-    return cached
+    return RouteEvidence(distance, duration, provider, estimated, path, alternatives,
+        datetime.now(UTC) + timedelta(seconds=settings.route_cache_ttl_seconds))
+
+
+async def resolve_detached_route_result(sessions, origin, destination, mode: str, city: str) -> RouteEvidence:
+    """Read cache, release connection, fetch, then upsert cache independently."""
+    key = route_cache_key(origin, destination, mode)
+    async with sessions() as reader:
+        cached = await reader.get(RouteCache, key)
+        if usable_route_cache(cached, datetime.now(UTC), get_settings()):
+            return RouteEvidence(**{name: getattr(cached, name) for name in RouteEvidence.__dataclass_fields__})
+    evidence = await fetch_route_evidence(origin, destination, mode, city)
+    async with sessions() as writer:
+        values = evidence.cache_values(mode)
+        await writer.execute(insert(RouteCache).values(cache_key=key, **values)
+            .on_conflict_do_update(index_elements=[RouteCache.cache_key], set_=values))
+        await writer.commit()
+    return evidence
 
 
 async def _fetch_amap_route(

@@ -4,10 +4,11 @@ from dataclasses import dataclass
 from datetime import UTC, date, datetime, time
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from app.database import Activity, DayPlan, PlaceCandidate
-from app.maps_service import resolve_route_result, MapProviderError
+from app.database import Activity, DayPlan, PlaceCandidate, Trip
+from app.maps_service import resolve_detached_route_result, MapProviderError, RoutePlace
+from app.planning_preparation import PlanningPreparationRequiredError
 from app.schemas import CandidatePlanSnapshot, CandidateRouteLeg
 from app.agent_observation import observed
 
@@ -18,7 +19,7 @@ class _PlanNode:
     day_date: date
     planned_start_time: time
     duration_minutes: int
-    place: PlaceCandidate
+    place: RoutePlace
     transport_mode_to_here: str
 
 
@@ -38,6 +39,17 @@ async def enrich_candidate_routes(
     under stable ``activity:<uuid>`` references.
     """
 
+    if session.in_transaction():
+        raise PlanningPreparationRequiredError("prepare routes before opening the caller transaction")
+    sessions = async_sessionmaker(session.bind, expire_on_commit=False)
+    async with sessions() as reader:
+        nodes_by_day = await _load_plan_nodes(reader, trip_id, snapshot, enforce_execution_invariants)
+        trip = await reader.get(Trip, trip_id)
+        city = trip.destination_citycode or trip.destination if trip else ""
+    return await _resolve_nodes(sessions, snapshot, nodes_by_day, city)
+
+
+async def _load_plan_nodes(session, trip_id, snapshot, enforce_execution_invariants):
     day_rows = list(
         (await session.scalars(select(DayPlan).where(DayPlan.trip_id == trip_id))).all()
     )
@@ -76,7 +88,7 @@ async def enrich_candidate_routes(
                 day_date=day.date,
                 planned_start_time=activity.scheduled_time,
                 duration_minutes=activity.duration_minutes,
-                place=place,
+                place=RoutePlace.from_place(place),
                 transport_mode_to_here=day.route_mode,
             )
         )
@@ -103,11 +115,15 @@ async def enrich_candidate_routes(
                 day_date=item.day_date,
                 planned_start_time=item.planned_start_time,
                 duration_minutes=item.duration_minutes,
-                place=place,
+                place=RoutePlace.from_place(place),
                 transport_mode_to_here=item.transport_mode_to_here,
             )
         )
 
+    return nodes_by_day
+
+
+async def _resolve_nodes(sessions, snapshot, nodes_by_day, city):
     route_legs: list[CandidateRouteLeg] = []
     for day_date, nodes in sorted(nodes_by_day.items()):
         ordered = sorted(nodes, key=lambda node: (node.planned_start_time, node.activity_ref))
@@ -115,7 +131,8 @@ async def enrich_candidate_routes(
             zip(ordered, ordered[1:], strict=False)
         ):
             try:
-                result = await resolve_route_result(session, origin.place, destination.place, destination.transport_mode_to_here)
+                result = await resolve_detached_route_result(
+                    sessions, origin.place, destination.place, destination.transport_mode_to_here, city)
             except MapProviderError as exc:
                 if exc.code != "map_route_unavailable":
                     raise

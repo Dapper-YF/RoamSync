@@ -31,7 +31,7 @@ def sample(monkeypatch):
     async def route(*_args):
         return SimpleNamespace(distance_meters=600, duration_minutes=10, provider="write-test-fixture", is_estimated=False, path=[], alternatives=[])
     monkeypatch.setattr("app.maps_service.resolve_route_result", route)
-    monkeypatch.setattr("app.candidate_route_service.resolve_route_result", route)
+    monkeypatch.setattr("app.candidate_route_service.resolve_detached_route_result", route)
     async def setup():
         async with sessions() as s, s.begin():
             trip = await create_trip(s, TripCreate(title="formal write isolation test", destination="南京市",
@@ -80,6 +80,8 @@ async def pending_revision(x):
             day_date=x.days[0].date, place_candidate_id=a.place_candidate_id, planned_start_time=a.scheduled_time,
             duration_minutes=a.duration_minutes, estimated_cost_fen=0, transport_mode_to_here="walk",
             replaces_activity_id=a.id, source_ids=[x.places[n].source_record_id]) for n, a in enumerate(x.activities)])
+        # Persist fixture setup before the network preparation boundary.
+        await s.commit()
         revision = await save_plan_revision(s, run.id, before_snapshot={}, proposed_snapshot=snapshot,
             reason="stale-write regression", difference_summary={}, validation_result={"valid": True, "errors": [], "warnings": []},
             source_ids=[], enrich_routes=True)

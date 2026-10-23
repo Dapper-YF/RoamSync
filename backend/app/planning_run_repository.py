@@ -3,14 +3,14 @@ from datetime import UTC, datetime
 
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.candidate_route_service import enrich_candidate_routes
 from app.database import CandidateRouteLeg, PlanningRun, PlanRevision, TripDisruptionEvent, TripPreferences
 from app.repository import get_trip
 from app.travel_goal_router import route_travel_goal
 from app.requirements import valid_records
-from app.planning_preparation import PreparedPlanningIntent, prepare_planning_intent
+from app.planning_preparation import PreparedPlanningIntent, prepare_planning_intent, PlanningPreparationRequiredError
 from app.planning_intent_service import (
     SemanticIntentProvider,
     UnsupportedPlanningIntentError,
@@ -210,6 +210,24 @@ async def save_plan_revision(
     enrich_routes: bool = True,
     commit: bool = True,
 ) -> PlanRevision:
+    prepared_preferences_version = None
+    check_preferences = False
+    if enrich_routes:
+        if session.in_transaction():
+            raise PlanningPreparationRequiredError("prepare candidate routes before opening the caller transaction")
+        sessions = async_sessionmaker(session.bind, expire_on_commit=False)
+        async with sessions() as reader:
+            prepared_run = await get_planning_run(reader, run_id)
+            if prepared_run.status not in {"queued", "researching", "planning", "validating"}:
+                raise InvalidPlanningRunStateError
+            prepared_trip_id = prepared_run.trip_id
+            prepared_base_version = prepared_run.base_trip_version
+            prepared_preferences_version = await reader.scalar(select(TripPreferences.version).where(
+                TripPreferences.trip_id == prepared_trip_id))
+            enforce_execution = bool(prepared_run.disruption_event_id or prepared_run.trigger_type == "experience_impact")
+        proposed_snapshot = await enrich_candidate_routes(
+            session, prepared_trip_id, proposed_snapshot, enforce_execution_invariants=enforce_execution)
+        check_preferences = True
     run = await get_planning_run(session, run_id)
     from app.formal_write import lock_trip
     trip = await lock_trip(session, run.trip_id)
@@ -218,11 +236,14 @@ async def save_plan_revision(
         raise InvalidPlanningRunStateError
     if trip.version != run.base_trip_version:
         raise StalePlanningRunError
-    if enrich_routes:
-        proposed_snapshot = await enrich_candidate_routes(
-            session, run.trip_id, proposed_snapshot,
-            enforce_execution_invariants=bool(run.disruption_event_id or run.trigger_type == "experience_impact"),
-        )
+    if enrich_routes and run.base_trip_version != prepared_base_version:
+        raise StalePlanningRunError
+    preferences = await session.scalar(select(TripPreferences).where(
+        TripPreferences.trip_id == trip.id).with_for_update().execution_options(populate_existing=True))
+    expected_preferences = (before_snapshot.get("preferences") or {}).get("version")
+    if ((check_preferences and (preferences.version if preferences else None) != prepared_preferences_version)
+        or (expected_preferences is not None and (preferences.version if preferences else None) != expected_preferences)):
+        raise StalePlanningRunError("规划期间旅行偏好已变化，请重新生成候选")
 
     previous = await session.scalar(
         select(PlanRevision)

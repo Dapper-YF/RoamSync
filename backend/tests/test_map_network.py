@@ -47,3 +47,16 @@ def test_map_qps_limit_backs_off_once_and_recovers(monkeypatch):
 def test_map_qps_limit_exhaustion_has_a_specific_error():
     error = maps_service._provider_response_error({"status": "0", "info": "CUQPS_HAS_EXCEEDED_THE_LIMIT"}, "失败")
     assert error.code == "map_rate_limited" and error.status_code == 429
+
+
+def test_cached_estimate_requires_explicit_estimate_permission():
+    from datetime import UTC, datetime, timedelta
+    from types import SimpleNamespace
+    now = datetime.now(UTC)
+    cached = SimpleNamespace(expires_at=now + timedelta(hours=1), is_estimated=True, path=[])
+    assert not maps_service.usable_route_cache(cached, now,
+        SimpleNamespace(amap_rest_key="", allow_map_estimates=False))
+    assert maps_service.usable_route_cache(cached, now,
+        SimpleNamespace(amap_rest_key="", allow_map_estimates=True))
+    assert not maps_service.usable_route_cache(cached, now,
+        SimpleNamespace(amap_rest_key="real-key", allow_map_estimates=True))

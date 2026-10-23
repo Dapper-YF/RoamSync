@@ -483,6 +483,7 @@ def test_accepted_experience_recovery_rebases_execution_without_rebuilding_facts
                     replaces_activity_id=activity.id,
                 )]
                 candidates.extend(await _unchanged_other_days(session, day.date))
+                await session.commit()  # End fixture reads before route preparation.
                 revision = await save_plan_revision(
                     session, run.id, before_snapshot={},
                     proposed_snapshot=CandidatePlanSnapshot(activities=candidates),
@@ -592,6 +593,7 @@ def test_recovery_accept_new_stop_can_continue_without_recreating_lived_facts() 
                     ),
                 ])
                 snapshot.activities.extend(await _unchanged_other_days(session, days[0].date))
+                await session.commit()  # End fixture reads before route preparation.
                 revision = await save_plan_revision(
                     session, run.id, before_snapshot={}, proposed_snapshot=snapshot,
                     reason="Synthetic recovery shortens the unstarted visit and retains other days",
@@ -643,6 +645,7 @@ def test_accept_rechecks_requirements_changed_after_candidate_generation() -> No
                     estimated_cost_fen=activity.estimated_cost_fen, transport_mode_to_here="walk",
                     source_ids=[place.source_record_id], replaces_activity_id=activity.id,
                 ), *await _unchanged_other_days(session, day.date)])
+                await session.commit()  # End fixture reads before route preparation.
                 revision = await save_plan_revision(session, run.id, before_snapshot={},
                     proposed_snapshot=snapshot, reason="Synthetic legal candidate before requirement edit",
                     difference_summary={}, validation_result={}, source_ids=[])
