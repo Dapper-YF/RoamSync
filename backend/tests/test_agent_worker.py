@@ -43,3 +43,53 @@ def test_worker_executes_two_claimed_runs_without_serializing(monkeypatch) -> No
         asyncio.run(worker.main())
 
     assert peak_active == 2
+
+
+def test_worker_recovers_after_a_transient_claim_database_failure(monkeypatch):
+    from sqlalchemy.exc import OperationalError
+    calls, delays = [], []
+    class StopWorker(Exception):
+        pass
+    async def claim():
+        calls.append(True)
+        if len(calls) == 1:
+            raise OperationalError("synthetic claim", {}, OSError("synthetic interruption"))
+        raise StopWorker
+    async def sleep(delay):
+        delays.append(delay)
+    monkeypatch.setattr(worker, "claim_next_run", claim)
+    monkeypatch.setattr(worker.asyncio, "sleep", sleep)
+    with pytest.raises(StopWorker):
+        asyncio.run(worker.main())
+    assert len(calls) == 2 and len(delays) == 1 and 0 < delays[0] <= 30
+
+
+def test_worker_shutdown_cancels_and_awaits_inflight_execution(monkeypatch):
+    entered, cancelled = None, []
+    class StopWorker(Exception):
+        pass
+    async def scenario():
+        nonlocal entered
+        entered = asyncio.Event()
+        calls = 0
+        async def claim():
+            nonlocal calls
+            calls += 1
+            if calls == 1:
+                return uuid.uuid4()
+            await entered.wait()
+            raise StopWorker
+        async def execute(_claim):
+            entered.set()
+            try:
+                await asyncio.Event().wait()
+            finally:
+                cancelled.append(True)
+        settings = get_settings().model_copy(update={"agent_worker_concurrency": 2})
+        monkeypatch.setattr(worker, "get_settings", lambda: settings)
+        monkeypatch.setattr(worker, "claim_next_run", claim)
+        monkeypatch.setattr(worker, "execute_claimed_run", execute)
+        with pytest.raises(StopWorker):
+            await worker.main()
+    asyncio.run(scenario())
+    assert cancelled == [True]

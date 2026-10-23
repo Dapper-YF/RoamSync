@@ -10,6 +10,7 @@ from app.database import CandidateRouteLeg, PlanningRun, PlanRevision, TripDisru
 from app.repository import get_trip
 from app.travel_goal_router import route_travel_goal
 from app.requirements import valid_records
+from app.planning_claim import assert_planning_claim
 from app.planning_preparation import PreparedPlanningIntent, prepare_planning_intent, PlanningPreparationRequiredError
 from app.planning_intent_service import (
     SemanticIntentProvider,
@@ -231,6 +232,7 @@ async def save_plan_revision(
     run = await get_planning_run(session, run_id)
     from app.formal_write import lock_trip
     trip = await lock_trip(session, run.trip_id)
+    await assert_planning_claim(session, run_id)
     run = await session.scalar(select(PlanningRun).where(PlanningRun.id == run_id).with_for_update().execution_options(populate_existing=True))
     if run.status not in {"queued", "researching", "planning", "validating"}:
         raise InvalidPlanningRunStateError

@@ -6,6 +6,7 @@ from datetime import UTC, datetime
 from app.destination_research import research_destination
 from app.initial_places_service import prepare_initial_candidates
 from app.planning_progress import track_progress
+from app.planning_claim import assert_planning_claim, checkpoint_thread, LostPlanningClaim
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.types import Command
 from pydantic import TypeAdapter
@@ -46,7 +47,7 @@ async def invoke_compiled_graph(
     *,
     resume: dict | None = None,
 ) -> PlanningExecutionResult:
-    config = {"configurable": {"thread_id": str(run.id)}}
+    config = {"configurable": {"thread_id": checkpoint_thread(run)}}
     graph_input: PlanningGraphState | Command
     if resume is None:
         graph_input = {
@@ -106,6 +107,7 @@ async def _execute_planning_run(
     provider: DraftProvider | None = None,
 ) -> PlanningExecutionResult:
     async with session_factory() as session:
+        await assert_planning_claim(session, run_id)
         run = await session.get(PlanningRun, run_id)
         if run is None:
             raise PlanningRunNotFoundError
@@ -137,6 +139,7 @@ async def _execute_planning_run(
             )
             result = await invoke_compiled_graph(graph, run, resume=resume)
             async with session_factory() as session:
+                await assert_planning_claim(session, run_id)
                 persisted = await session.get(PlanningRun, run_id)
                 if persisted is not None:
                     persisted.pending_interrupt = result.pending_interrupt
@@ -160,6 +163,8 @@ async def _execute_planning_run(
     except MapProviderError as exc:
         await _mark_failed(run_id, "planner_map_unavailable", str(exc), {"map_error_code": exc.code, "category": "provider_failure"})
         return PlanningExecutionResult(pending_interrupt=None)
+    except LostPlanningClaim:
+        raise
     except Exception as exc:
         await _mark_failed(run_id, "planning_graph_failed", str(exc))
         raise
@@ -167,6 +172,7 @@ async def _execute_planning_run(
 
 async def _mark_failed(run_id: uuid.UUID, code: str, message: str, details: dict | None = None) -> None:
     async with session_factory() as session:
+        await assert_planning_claim(session, run_id)
         run = await session.get(PlanningRun, run_id)
         if run is None or run.status not in {"queued", "researching", "planning", "validating"}:
             return

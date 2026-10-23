@@ -24,6 +24,7 @@ from app.decision_memory import retrieve_decision_memory
 from app.decision_ledger import reconcile_route_repair_ledger, validate_decision_ledger
 from app.planning_explanation import describe_plan_changes
 from app.planning_progress import report_progress
+from app.planning_claim import assert_planning_claim
 from app.agent_observation import observed, project_state, record
 from app.maps_service import MapProviderError
 from app.planning_errors import GoalConstraintsUnsatisfiedError, PlannerConstraintsUnsatisfiedError, PlannerNotConfiguredError
@@ -106,6 +107,7 @@ class UnavailableDraftProvider:
 async def _set_run_status(
     session: AsyncSession, run_id: uuid.UUID, status: str
 ) -> None:
+    await assert_planning_claim(session, run_id)
     run = await session.get(PlanningRun, run_id)
     if run is None:
         raise RuntimeError("planning run disappeared")
@@ -238,12 +240,16 @@ def build_planning_graph(
                 raise PlannerConstraintsUnsatisfiedError(["candidate_edit_base_unavailable"]) from exc
             if candidate_base is not None:
                 context_data["candidate_edit_base"] = candidate_base.model_dump(mode="json")
+            refreshed_trigger = {}
+            refreshed_fingerprint = None
             if run.trigger_type == "experience_impact":
                 from app.experience_replanning_service import refresh_experience_trigger_snapshot
                 try:
-                    experience = await refresh_experience_trigger_snapshot(session, run)
+                    experience = await refresh_experience_trigger_snapshot(session, run, update_run=False)
                 except ValueError as exc:
                     raise PlannerConstraintsUnsatisfiedError([str(exc)]) from exc
+                refreshed_trigger = experience
+                refreshed_fingerprint = experience["fingerprint"]
                 recovery = context_data.setdefault("execution_recovery", {})
                 # Deliberately curated execution constraint, not an ORM or raw
                 # trigger dump. The validator independently protects this activity.
@@ -380,13 +386,16 @@ def build_planning_graph(
         })
         async with session_factory() as session:
             await assert_planning_context_current(session, trip_id, original_context, lock=True)
+            await assert_planning_claim(session, run_id)
             run = await session.scalar(select(PlanningRun).where(PlanningRun.id == run_id)
                 .with_for_update().execution_options(populate_existing=True))
             if run is None or run.status not in {"queued", "researching", "planning", "validating"}:
                 raise PlannerConstraintsUnsatisfiedError(["planning_run_no_longer_active"])
             run.intent_resolution = resolution.model_dump(mode="json")
-            run.trigger_snapshot = {**(run.trigger_snapshot or {}),
+            run.trigger_snapshot = {**(run.trigger_snapshot or {}), **refreshed_trigger,
                 "decision_context_summary": existing_snapshot["decision_context_summary"]}
+            if refreshed_fingerprint is not None:
+                run.trigger_fingerprint = refreshed_fingerprint
             run.token_usage += context_data.get("destination_research", {}).get("token_usage", 0)
             if resolution.requires_clarification:
                 run.status = "awaiting_clarification"
@@ -438,6 +447,7 @@ def build_planning_graph(
         if not result.text.strip():
             raise ValueError("assistant returned an empty answer")
         async with session_factory() as session:
+            await assert_planning_claim(session, uuid.UUID(state["run_id"]))
             run = await session.get(PlanningRun, uuid.UUID(state["run_id"]))
             run.response_text = result.text.strip()
             run.status = "answered"
@@ -472,6 +482,7 @@ def build_planning_graph(
         assert_decision_context_invariants(state["planning_context"]["decision_context"])
         async with session_factory() as session:
             await _set_run_status(session, uuid.UUID(state["run_id"]), "planning")
+            await assert_planning_claim(session, uuid.UUID(state["run_id"]))
             run = await session.get(PlanningRun, uuid.UUID(state["run_id"]))
             if run is not None:
                 snapshot = dict(run.trigger_snapshot or {})
@@ -503,6 +514,7 @@ def build_planning_graph(
             "candidate_count": len(generation.snapshot.activities), "decision_count": len(generation.snapshot.decision_ledger or []), "token_usage": generation.token_usage,
         })
         async with session_factory() as session:
+            await assert_planning_claim(session, uuid.UUID(state["run_id"]))
             run = await session.get(PlanningRun, uuid.UUID(state["run_id"]))
             if run is None:
                 raise RuntimeError("planning run disappeared")

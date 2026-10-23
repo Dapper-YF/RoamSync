@@ -15,6 +15,7 @@ from urllib.parse import urlsplit, urlunsplit
 from sqlalchemy import select, text
 
 from app.database import PlanningRun, session_factory
+from app.planning_claim import assert_planning_claim
 
 logger = logging.getLogger(__name__)
 FORBIDDEN = re.compile(r"secret|password|credential|authorization|cookie|apikey|accesstoken|refreshtoken|prompt|instructions|reasoning|chainofthought|thought|rawrequest|rawresponse|headers", re.I)
@@ -104,6 +105,7 @@ async def record(stage, status, *, run_id=None, data=None, duration_ms=None, cal
     async def persist():
         async with session_factory() as db:
             await db.execute(text("SET LOCAL lock_timeout = '250ms'"))
+            await assert_planning_claim(db, uuid.UUID(str(run_id)))
             run = await db.scalar(select(PlanningRun).where(PlanningRun.id == uuid.UUID(str(run_id))).with_for_update())
             if run is None:
                 return

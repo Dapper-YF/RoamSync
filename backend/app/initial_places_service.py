@@ -12,6 +12,7 @@ from app.planning_errors import PlannerConstraintsUnsatisfiedError
 from app.repository import get_trip_preferences
 from app.schemas import PlaceSearchResultResponse
 from app.planning_preparation import PlanningPreparationRequiredError, assert_planning_context_current
+from app.planning_claim import assert_planning_claim
 
 PlaceSearch = Callable[[str, str], Awaitable[list[PlaceSearchResultResponse]]]
 
@@ -43,6 +44,7 @@ async def prepare_initial_candidates(
         raise PlannerConstraintsUnsatisfiedError(["initial_places_unavailable"])
     # Lock the trip and recheck so concurrent first plans do not duplicate candidates.
     await assert_planning_context_current(session, trip_id, versions, lock=True)
+    await assert_planning_claim(session, trip_id=trip_id)
     if await get_candidates(session, trip_id):
         return
     for item in snapshots.values():

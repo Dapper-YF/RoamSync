@@ -84,14 +84,17 @@ def test_progress_milestones_are_persisted_and_heartbeat_does_not_fake_advanceme
             async with session_factory() as db:
                 run = await db.get(PlanningRun, run_id)
                 run.worker_id = "test-worker"
-                run.worker_lease_expires_at = datetime.now(UTC) - timedelta(seconds=1)
+                run.worker_lease_expires_at = datetime.now(UTC) + timedelta(seconds=30)
                 await db.commit()
             token = active_run.set(run_id)
+            from app.planning_claim import PlanningClaim, active_claim
+            claim_token = active_claim.set(PlanningClaim(run_id, DEMO_TRIP_ID, "test-worker"))
             try:
                 await report_progress("research_model", "已取得8条资料，等待模型返回")
                 await pulse(run_id)
             finally:
                 active_run.reset(token)
+                active_claim.reset(claim_token)
             async with session_factory() as db:
                 run = await db.get(PlanningRun, run_id)
                 assert run.progress["stage"] == "research_model"

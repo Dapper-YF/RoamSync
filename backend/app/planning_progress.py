@@ -7,6 +7,7 @@ from datetime import UTC, datetime, timedelta
 from sqlalchemy import select, update
 from app.config import get_settings
 from app.database import PlanningRun, session_factory
+from app.planning_claim import active_claim, assert_planning_claim, LostPlanningClaim
 
 active_run = ContextVar("progress_run", default=None)
 WORKING = ("queued", "researching", "planning", "validating")
@@ -19,7 +20,10 @@ async def report_progress(stage: str, message: str):
         return
     now = datetime.now(UTC)
     async with session_factory() as db:
+        await assert_planning_claim(db, run_id)
         run = await db.scalar(select(PlanningRun).where(PlanningRun.id == run_id, PlanningRun.status.in_(WORKING)).with_for_update())
+        if run is not None and active_claim.get() is None and run.worker_id is not None:
+            return
         if run is not None:
             run.progress = {**(run.progress or {}), "stage": stage, "message": message, "updated_at": now.isoformat()}
             run.heartbeat_at = now
@@ -28,21 +32,41 @@ async def report_progress(stage: str, message: str):
 
 async def pulse(run_id):
     now = datetime.now(UTC)
+    claim = active_claim.get()
+    if claim is not None and claim.run_id != run_id:
+        raise LostPlanningClaim("heartbeat does not match execution")
     async with session_factory() as db:
-        await db.execute(update(PlanningRun).where(PlanningRun.id == run_id, PlanningRun.status.in_(WORKING)).values(heartbeat_at=now))
-        # Only claimed jobs own a lease. Keep long provider calls from being reclaimed.
-        await db.execute(update(PlanningRun).where(PlanningRun.id == run_id, PlanningRun.status.in_(WORKING), PlanningRun.worker_id.is_not(None)).values(
-            worker_lease_expires_at=now + timedelta(seconds=get_settings().agent_lease_seconds)))
+        conditions = [PlanningRun.id == run_id, PlanningRun.status.in_(WORKING)]
+        values = {"heartbeat_at": now}
+        if claim is not None:
+            conditions.extend([PlanningRun.worker_id == claim.token, PlanningRun.worker_lease_expires_at > now])
+            values["worker_lease_expires_at"] = now + timedelta(seconds=get_settings().agent_lease_seconds)
+        else:
+            conditions.append(PlanningRun.worker_id.is_(None))
+        result = await db.execute(update(PlanningRun).where(*conditions).values(**values))
+        if claim is not None and result.rowcount != 1:
+            row = await db.get(PlanningRun, run_id)
+            if (row is not None and row.worker_id == claim.token
+                and row.worker_lease_expires_at is not None and row.worker_lease_expires_at > datetime.now(UTC)
+                and row.status in {"awaiting_confirmation", "awaiting_clarification", "answered"}):
+                return False  # Normal interrupt/completion, not ownership loss.
+            raise LostPlanningClaim("heartbeat lease expired or changed owner")
         await db.commit()
+        return result.rowcount == 1
 
 
 @asynccontextmanager
 async def track_progress(run_id):
     token = active_run.set(run_id)
+    parent = asyncio.current_task()
     async def heartbeat():
         while True:
             try:
-                await pulse(run_id)
+                if await pulse(run_id) is False:
+                    return
+            except LostPlanningClaim:
+                parent.cancel()
+                return
             except Exception:
                 logger.warning("Planning heartbeat write failed", exc_info=False)
             await asyncio.sleep(15)

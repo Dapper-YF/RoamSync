@@ -1,5 +1,35 @@
 # RoamSync Agent v1 architecture contract
 
+## A2 planning transaction and execution ownership candidate (2026-10-23; not released)
+
+Planning reads immutable server facts in short sessions, then resolves semantic,
+web/model/POI and route evidence outside transactions. Prepared intent binds the
+original request, page IDs, Trip version and independent preferences version.
+Write units lock and recheck these facts; stale evidence fails rather than being
+rebased onto a new user decision. Prepared operations skip the legacy router and
+are only grounded/policy-checked downstream. Atomic commit=False callers must
+prepare first; repositories never commit/rollback a caller just to permit I/O.
+
+Each Worker claim has a unique token and independent checkpoint thread recorded
+in existing trigger_snapshot.worker_checkpoint_thread. Legacy runs without this
+field still resume thread_id=run.id. A reclaimed attempt cannot publish revision,
+status, provider metadata, trigger, failure, progress or pending-interrupt writes;
+short leased write units lock Trip then Run and check owner and live lease.
+Heartbeat and cleanup use conditional writes. An obsolete heartbeat cancels its
+execution; a normal approval/clarification interrupt stops heartbeat without
+cancelling its final checkpoint. Expired/null-lease orphan recovery respects a
+liveness grace; shutdown cancels and awaits work, and claim DB errors back off.
+
+Accept, Validator, authorization and public version rules remain. No new table or
+migration. Experience snapshot refresh can be read-only and is applied with its
+fingerprint in the fenced final unit. Shared route cache evidence is independent
+of business transactions and cache estimates still require explicit permission.
+
+Do not run old/new workers concurrently on these candidates: old code does not
+understand ownership tokens/checkpoint selection. Four product gates and full
+combined regression remain required; P0 user/Trip/session ownership for public
+access remains unresolved. Evidence: docs/evidence/reliability-a2-20261022/.
+
 ## Agent quality B isolated extension (2026-10-22; not released)
 
 Candidate c83a93c from f116ada extends only server-owned session conditions:

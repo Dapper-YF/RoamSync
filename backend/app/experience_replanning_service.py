@@ -92,7 +92,7 @@ async def _snapshot(session: AsyncSession, execution: TripExecution, item: Activ
     return facts
 
 
-async def refresh_experience_trigger_snapshot(session: AsyncSession, run: PlanningRun) -> dict:
+async def refresh_experience_trigger_snapshot(session: AsyncSession, run: PlanningRun, *, update_run: bool = True) -> dict:
     """Worker-side fence: queued work must plan from the latest persisted facts."""
     trigger = run.trigger_snapshot or {}
     item = await session.get(ActivityExecution, uuid.UUID(str(trigger["activity_execution_id"])))
@@ -103,6 +103,7 @@ async def refresh_experience_trigger_snapshot(session: AsyncSession, run: Planni
     if impact.impact_state != "infeasible":
         raise ValueError("experience impact is no longer infeasible")
     latest = await _snapshot(session, execution, item, impact.model_dump(mode="json"))
-    run.trigger_snapshot = latest
-    run.trigger_fingerprint = latest["fingerprint"]
+    if update_run:
+        run.trigger_snapshot = {**(run.trigger_snapshot or {}), **latest}
+        run.trigger_fingerprint = latest["fingerprint"]
     return latest

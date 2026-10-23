@@ -20,6 +20,7 @@ from app.travel_language import is_generic_place_quantity
 from app.planning_progress import report_progress
 from app.agent_observation import observed
 from app.planning_preparation import PlanningPreparationRequiredError, assert_planning_context_current
+from app.planning_claim import assert_planning_claim
 
 
 logger = logging.getLogger(__name__)
@@ -201,6 +202,7 @@ async def research_destination(session, trip_id: uuid.UUID, *, context: dict, us
         raise PlannerProviderError("planner_research_unavailable", "检索到的景点未能匹配地图地点，请重试；本次没有随机替换景点。", retryable=True)
     # Serialize idempotent POI insertion after network work. Never delete saved places.
     await assert_planning_context_current(session, trip_id, context, lock=True)
+    await assert_planning_claim(session, trip_id=trip_id)
     places = dict(existing_places)
     for name, poi in staged:
         place = await save_candidate_snapshot(session, trip_id, poi)
