@@ -169,3 +169,23 @@ def test_period_only_operation_reconciles_its_own_ui_day(selected_index, expecte
             assert result.grounded_intent.target_day_ids == [session.days[1].id]
             assert result.request.intent.time_scope.period == "afternoon"
     asyncio.run(run())
+
+
+def test_worker_restores_same_approved_draft_only_for_matching_run_identity():
+    async def run():
+        session = ReadSession()
+        request = PlanningIntentParseRequest(message="第二天把甲馆撤掉")
+        snapshot = await loader()(session, session.trip.id, request)
+        draft = SemanticIntentDraft(primary_intent="remove_activity", operations=[
+            SemanticIntentOperation(operation="remove_activity", raw_text=request.message, activity_mentions=["甲馆"])],
+            confidence=.99, parser="hybrid", parser_version="approved-operation-v2")
+        resolution = await resolver()(snapshot, request, prepared_draft=draft)
+        stored = SimpleNamespace(trip_id=session.trip.id, base_trip_version=3, user_request=request.message,
+            intent_resolution=resolution.model_dump(mode="json"))
+        restore = getattr(service, "restore_approved_planning_draft", None)
+        assert callable(restore), "worker must restore the grounded operation instead of reinterpreting it"
+        assert restore(stored, session.trip.id, request.message, 3) == draft
+        assert restore(stored, session.trip.id, request.message, 4) is None
+        assert restore(stored, uuid4(), request.message, 3) is None
+        assert restore(stored, session.trip.id, "改成别的任务", 3) is None
+    asyncio.run(run())

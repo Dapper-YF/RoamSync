@@ -125,7 +125,7 @@ def _selected_assertions(context: CompanionContext, need: InformationNeed):
 
 def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider,
                           knowledge_tool: KnowledgeToolPort | None = None, fact_tool: FactToolPort | None = None,
-                          knowledge_strategy: str = "selective"):
+                          knowledge_strategy: str = "selective", *, approved_need: InformationNeed | None = None):
     async def interpret_goal(state):
         context = state["context"]
         if context.travel_goal.target_runtime != "companion":
@@ -139,7 +139,8 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
         if context.travel_goal.clarification_needed and not gaps:
             gaps = [InformationGap(code="ambiguous_suggestion", message="你指的是哪个目的地或哪条建议？请补充一下。")]
         if not re.search(r"第.+(?:个|项)|suggestion_[0-9a-f]{32}", context.current_message) and (
-            is_formal_decision_question(context.current_message) or determine_information_need(context, []).live_fact_required
+            is_formal_decision_question(context.current_message) or (approved_need if approved_need is not None
+                else determine_information_need(context, [])).live_fact_required
             or re.search(r"历史|文化|来历", context.current_message)):
             # A raw knowledge/fact/schedule subject is not a Suggestion ref just
             # because its name also occurs in one or more recommendation batches.
@@ -164,7 +165,8 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
 
     async def information_need(state):
         context = state["context"]
-        need = apply_knowledge_strategy(determine_information_need(context, state["selected"]), knowledge_strategy)
+        need = (approved_need.model_copy(deep=True) if approved_need is not None else
+            apply_knowledge_strategy(determine_information_need(context, state["selected"]), knowledge_strategy))
         if (context.assistant_context or {}).get("read_trip_id"):
             need = need.model_copy(update={"trip_context_required": True,
                 "itinerary_required": need.itinerary_required or bool(re.search(r"行程|旅行", context.current_message))})

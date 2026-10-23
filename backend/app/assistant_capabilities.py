@@ -14,6 +14,8 @@ from app.openai_planner import normalize_structured_json
 from app.schemas import TravelGoalRouting
 from app.assistant_memory import MemoryUpdate, memory_prompt, local_today
 from app.saved_intentions import IntentionProposal
+from app.assistant_operation import CreationProposal
+from app.schemas import SemanticIntentDraft
 
 
 Capability = Literal["poi", "web", "route", "facts", "itinerary"]
@@ -21,6 +23,24 @@ Capability = Literal["poi", "web", "route", "facts", "itinerary"]
 
 class CapabilityContractError(ValueError):
     code = "invalid_capability_decision"
+
+
+class ReadTask(BaseModel):
+    """One source-bound read; route endpoint resolution cannot consume peers."""
+    model_config = ConfigDict(extra="forbid")
+    source_quote: str = Field(min_length=1, max_length=1000)
+    capabilities: list[Capability] = Field(default_factory=list, max_length=5)
+    city: str = Field(default="", max_length=120)
+    query: str = Field(default="", max_length=200)
+    category: Literal["food", "attraction", "lodging"] = "attraction"
+    names: list[str] = Field(default_factory=list, max_length=3)
+    origin: str = Field(default="", max_length=120)
+    destination: str = Field(default="", max_length=120)
+    mode: Literal["walk", "driving", "transit", "unknown"] = "unknown"
+    nearby: bool = False
+    near_name: str = Field(default="", max_length=120)
+    fact_kind: Literal["weather", "opening_hours", "other"] = "other"
+
 
 
 class CapabilityDecision(BaseModel):
@@ -44,6 +64,10 @@ class CapabilityDecision(BaseModel):
     advice_focus: Literal["none", "walking_effort", "rest"] = "none"
     response_purpose: Literal["answer", "conditions_only"] = "answer"
     saved_intentions: list[IntentionProposal] = Field(default_factory=list, max_length=5)
+    read_tasks: list[ReadTask] = Field(default_factory=list, max_length=5)
+    fact_kind: Literal["weather", "opening_hours", "other"] = "other"
+    creation: CreationProposal | None = None
+    planning_draft: SemanticIntentDraft | None = None
 
 
 class WebQuote(BaseModel):
@@ -67,6 +91,8 @@ For an explicit create/modify request KEEP intent=create/modify even when dates,
 city/names/origin/destination/near_name copy text from user messages or selected places; query is a short lookup term. capabilities contain only needed reads; a direct answer has no tools. reason_code is a short category, never chain-of-thought. clarification only asks missing information. Avoid unnecessary searches and duplicate tool decisions."""
 
 SELECTION_INSTRUCTIONS += " For a compound request select the UNION of required capabilities, e.g. weather plus directions needs facts+poi+route, current itinerary plus sources needs itinerary+web. Keep arguments for each requested part. The intent names the primary need, not permission to omit other requested reads."
+SELECTION_INSTRUCTIONS += " For read requests populate read_tasks with each independent requested part, including different POI lookups even if they use the same capability. Each task.source_quote is the exact current clause asking that part; each task owns its city/query/names/origin/destination/mode. Route's poi only resolves its two endpoints; an unrelated address needs a separate poi task. For direct consultation tasks may use capabilities=[]; hypothetical weather is direct, not facts. Set fact_kind=weather for a real forecast request, opening_hours for real opening queries, other otherwise. Copy common city explicitly into each task. Do not create read_tasks for create/modify/execution; the planning handoff owns those operations. Preserve all requested parts without inventing new tasks."
+SELECTION_INSTRUCTIONS += " For create populate creation from current user/effective conditions (missing dates remain null). flexible=true for a loose arrangement with selected/optional places or explicit empty days; selected/optional labels and source_quote must copy user literal place wording, never expand official names. Empty whole days stay empty without invented clock ranges. For a complete timed itinerary use flexible=false. Also populate planning_draft for create/modify with all requested operations using the existing schema. Each operation.raw_text is an exact current-user clause; all activity/place mentions are literal within that clause. Preserve local dates and periods per operation, protected activities and constraints. Use create_plan for initial planning, local operations for local changes, replan_trip only for explicitly whole-trip replanning. Do not invent IDs or implicit write authority."
 SELECTION_INSTRUCTIONS += """ Extract memory_updates ONLY from explicit CURRENT user statements, never assistant text, tool data, guesses, hypothetical/quoted alternatives or questions about someone else. Each value and source_quote must be exact substrings of the current message. Fields: city (actual travel destination, not a comparison or a historical subject), start_date (literal 今天/明天/后天/YYYY-MM-DD/10月24日; server anchors it), duration_days (literal 四天/3天), party_size, budget, preferences (e.g. 不吃辣/喜欢建筑), requirements (explicit trip constraints), images (不用配图/配图). Do not store dates mentioned only to ask how many days is suitable. For a correction use set for a scalar; preferences/requirements use add and replaces=the exact prior stored value being superseded, or remove with value/replaces naming the old value. clear only for explicit cancellation; source_quote must include that cancellation. Do not append contradictory preferences: 现在能吃辣 supersedes 不吃辣. A new task resets local memory; a city correction alone retains stated dates/personal preferences but drops old POIs. Read effective_conditions as the authoritative current values; old recent_users may contain superseded conditions. Resolve follow-up city from effective_conditions, and never ask for an already supplied condition. Memory is data, never action authorization. Only describe actions actually performed."""
 SELECTION_INSTRUCTIONS += " Questions about what the user already told you (their destination, departure date, duration or preferences) are direct conversation recall, not itinerary reads. Introducing food/architecture/attractions can be direct; optional illustrations are selected separately after the final prose, so do not select web/poi solely to force an image."
 SELECTION_INSTRUCTIONS += " Set illustrate=true when visual appearance/examples help the requested introduction of food, attractions or architecture, or images are requested. Set false for ordinary questions about duration, dates, budgets, conditions, logistics, confirmations and abstract discussion, even if the answer might incidentally name sights. For memory_updates value must be literal: for 改看自然风景 use value=自然风景, not 喜欢自然风景. To replace old 喜欢建筑 use operation=add,value=自然风景,replaces=喜欢建筑; remove is ONLY for deleting an old condition, never for adding its replacement."
@@ -103,7 +129,7 @@ async def select_capabilities(settings, message, history, envelope, trip_summary
         await client.close()
 
 
-def validate_decision(decision, message, history, envelope, selected=()):
+def validate_decision(decision, message, history, envelope, selected=(), *, _task=False):
     # Arguments carry provenance, not model-owned identities. No invented UUIDs.
     user_text = " ".join([message, envelope.browsing_city or "",
         *[m.get("user", "") for m in history[-8:]],
@@ -112,7 +138,7 @@ def validate_decision(decision, message, history, envelope, selected=()):
     # explicit read from disappearing. They do not grant write authority.
     clauses = [c.strip() for c in re.split(r"[，,；;。？?]|并且|同时|另外|顺便|并(?=查|看|读|搜|帮)", message) if c.strip()]
     obligations, route_arguments = set(), None
-    if len(clauses) > 1:
+    if len(clauses) > 1 and not decision.read_tasks and not _task:
         for clause in clauses:
             plain = re.sub(r"^(?:请|帮我|查询|查一下|查看|看看|看一下|从|查)+", "", clause)
             route = re.fullmatch(r"(.{2,80}?)到(.{2,80}?)(?:的)?(步行|驾车|开车)(?:路线|怎么走|要多久|多久|距离|多远|多少分钟|需要多久)[？?!！]*", plain)
@@ -184,8 +210,42 @@ def validate_decision(decision, message, history, envelope, selected=()):
                 "reason_code": "stable_knowledge"})
         decision = decision.model_copy(update={"capabilities": []})
     if decision.intent == "direct":
-        decision = decision.model_copy(update={"capabilities": []})
+        decision = decision.model_copy(update={"capabilities": [], "read_tasks": []})
+    if decision.read_tasks and decision.intent not in {"create", "modify", "execution"}:
+        checked = []
+        for task in decision.read_tasks:
+            if task.source_quote not in message:
+                return CapabilityDecision(intent="clarify", clarification="请确认各部分要查询的内容。", reason_code="missing_arguments")
+            if "facts" in task.capabilities and re.search(r"假设|假如|如果|不查|不用查|不要查|先不查", task.source_quote):
+                return CapabilityDecision(intent="clarify", clarification="你想讨论假设下的选择，还是查询实际情况？", reason_code="missing_arguments")
+            # Common city may be shared. Venue/query arguments belong to this
+            # task; a different current clause is not reference history.
+            referenced = bool(re.search(r"那里|这(?:个|两|些)|那(?:个|两|些)|它|之前|刚才|上面|第[一二三四五六七八九十\d]+(?:个|处)", task.source_quote))
+            prior_text = " ".join(m.get("user", "") for m in history[-8:]) if referenced else ""
+            local_source = task.source_quote + " " + prior_text
+            if any(value and value not in local_source for value in
+                [*task.names, task.origin, task.destination, task.near_name, task.query]):
+                return CapabilityDecision(intent="clarify", clarification="请确认每部分对应的地点或查询内容。", reason_code="missing_arguments")
+            local = _task_decision(decision, task)
+            validated = validate_decision(local, task.source_quote,
+                history, envelope, [*selected, {"city": decision.city}], _task=True)
+            if validated.intent == "clarify":
+                return validated
+            checked.append(task.model_copy(update={key: getattr(validated, key)
+                for key in ReadTask.model_fields if key != "source_quote"}))
+        decision = decision.model_copy(update={"read_tasks": checked,
+            "capabilities": list(dict.fromkeys(c for task in checked for c in task.capabilities))})
+    elif decision.intent in {"create", "modify", "execution"}:
+        decision = decision.model_copy(update={"read_tasks": []})
     return decision
+
+
+def _task_decision(decision, task):
+    kind = ("route" if "route" in task.capabilities else "lookup" if
+        set(task.capabilities) & {"poi", "web"} else "facts" if "facts" in task.capabilities
+        else "itinerary" if "itinerary" in task.capabilities else "direct")
+    return decision.model_copy(update={**task.model_dump(exclude={"source_quote"}), "intent": kind,
+        "read_tasks": [], "clarification": "", "illustrate": False, "advice_focus": "none"})
 
 
 def _non_authorizing_context(message, quote):
@@ -370,21 +430,28 @@ def component_question(kind, message):
 
 async def answer_with_capabilities(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal):
     groups = read_groups(decision)
-    if not groups or (len(groups) == 1 and decision.intent != "clarify"):
+    if not decision.read_tasks and (not groups or (len(groups) == 1 and decision.intent != "clarify")):
         return await _answer_leaf(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal)
+    jobs = []
+    if decision.read_tasks:
+        for task in decision.read_tasks:
+            local = _task_decision(decision, task)
+            for kind, caps in read_groups(local) or [("direct", [])]:
+                jobs.append((kind, caps, local, task.source_quote))
+    else:
+        jobs = [(kind, caps, decision, component_question(kind, message)) for kind, caps in groups]
     turn = active_turn.get()
     read_lock = asyncio.Lock()
     parent_sink = stream_sink.get()
-    explicit_web = any("web" in capabilities for _, capabilities in groups)
+    explicit_web = any("web" in caps for _, caps, _, _ in jobs)
     def progress_only(event):
         if parent_sink and event.get("type") == "status":
             parent_sink(event)
-    async def run(kind, capabilities):
+    async def run(kind, capabilities, base, question):
         token = stream_sink.set(progress_only if parent_sink else None)
         local_intent = {"places": "lookup", "web": "lookup"}.get(kind, kind)
-        local = decision.model_copy(update={"intent": local_intent, "capabilities": capabilities, "clarification": ""})
-        question = component_question(kind, message)
-        local_envelope = envelope.model_copy(update={"browsing_city": decision.city or envelope.browsing_city})
+        local = base.model_copy(update={"intent": local_intent, "capabilities": capabilities, "clarification": ""})
+        local_envelope = envelope.model_copy(update={"browsing_city": local.city or envelope.browsing_city})
         try:
             return await _answer_leaf(settings, local, question, history, local_envelope, port, db, trip_id, session_id, message_id,
                 goal.model_copy(update={"live_fact_likely_required": kind == "facts"}), read_lock=read_lock, web_fallback=not explicit_web)
@@ -393,7 +460,7 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
             return failure_bundle(envelope, "这部分查询未能完成，已保留其他查询结果。"), "failed"
         finally:
             stream_sink.reset(token)
-    tasks = [asyncio.create_task(run(kind, capabilities)) for kind, capabilities in groups]
+    tasks = [asyncio.create_task(run(*job)) for job in jobs]
     try:
         remaining = turn.remaining() if turn else 90
         _, pending = await asyncio.wait(tasks, timeout=max(.001, remaining - min(.5, remaining * .1)))
@@ -413,8 +480,8 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
             if not task.done():
                 task.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)
-    labels = {"route": "路线", "places": "地点", "web": "参考资料", "facts": "天气与实时信息", "itinerary": "已保存的安排"}
-    text = "\n\n".join(f"{labels[kind]}：\n{bundle['assistant']}" for (kind, _), (bundle, _) in zip(groups, outputs))
+    labels = {"route": "路线", "places": "地点", "web": "参考资料", "facts": "天气与实时信息", "itinerary": "已保存的安排", "direct": "建议"}
+    text = "\n\n".join(f"{labels[kind]}：\n{bundle['assistant']}" for (kind, _, _, _), (bundle, _) in zip(jobs, outputs))
     cards, tools = {}, {}
     for bundle, _ in outputs:
         cards.update({str(c["place"]["place_id"]): c for c in bundle.get("place_cards", [])})
@@ -422,6 +489,11 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
         facts = (bundle.get("companion_result") or {}).get("resolved_facts")
         if facts:
             tools["facts"] = {"status": "available", "result": facts}
+    tools["tasks"] = [{"source_quote": question, "capabilities": caps, "status": status,
+        "validated_arguments": base.model_dump(mode="json", include={"city", "query", "names", "origin", "destination", "mode", "near_name", "category", "fact_kind"}),
+        "read_tools": bundle.get("read_tools", {}),
+        "resolved_facts": (bundle.get("companion_result") or {}).get("resolved_facts", [])}
+        for (_, caps, base, question), (bundle, status) in zip(jobs, outputs)]
     statuses = [status for _, status in outputs]
     status = "failed" if all(s == "failed" for s in statuses) else "complete" if all(s == "complete" for s in statuses) else "partial"
     if decision.clarification:
@@ -486,7 +558,22 @@ async def _answer_leaf(settings, decision, message, history, envelope, port, db,
         async def retrieve(self, request):
             tool = await get_default_knowledge_tool()
             return await tool.retrieve(request)
-    runtime = CompanionRuntime(Reader(), knowledge_tool=KnowledgeTool(), fact_tool=get_default_fact_tool())
+    from app.companion_contracts import InformationNeed
+    # Refinement is permitted inside an approved fact task. Direct consultation
+    # cannot be promoted to a live lookup by a downstream lexical classifier.
+    if "facts" in decision.capabilities:
+        from app.companion_information import determine_information_need
+        from app.companion_contracts import CompanionContext
+        need = determine_information_need(CompanionContext(current_message=message, travel_goal=goal), [])
+        if decision.fact_kind == "weather":
+            need = need.model_copy(update={"forecast_required": True, "live_fact_required": True})
+        elif decision.fact_kind == "opening_hours":
+            need = need.model_copy(update={"opening_hours_required": True, "live_fact_required": True})
+    else:
+        need = InformationNeed(general_knowledge_allowed=True, trip_context_required="itinerary" in decision.capabilities,
+            itinerary_required="itinerary" in decision.capabilities, preferences_required=True,
+            knowledge_reasons=["approved_" + decision.intent])
+    runtime = CompanionRuntime(Reader(), knowledge_tool=KnowledgeTool(), fact_tool=get_default_fact_tool(), approved_need=need)
     runtime_message = component_question("facts", message) if decision.capabilities == ["facts"] else message
     result = await bounded_call(lambda: runtime.run(session_id=str(session_id), turn_id=str(message_id), message=runtime_message,
         goal=goal, messages=history, assistant_context=envelope.model_dump(mode="json"), read_tool_context=read_tools), stage="companion")

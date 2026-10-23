@@ -358,7 +358,7 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
         if not explicit_command:
             from app.assistant_turn import semantic_turn
             handled, semantic_goal, semantic_metadata = await semantic_turn(db, session_id, message,
-                message_id, context, place_port, settings, capability_selector)
+                message_id, context, place_port, settings, capability_selector, city_search=city_search)
             if handled is not None:
                 return handled
     # The bounded discovery adapter finishes ALL network work before taking the
@@ -408,6 +408,10 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
     row = await locked_session(db, session_id)
     if any(m["id"] == str(message_id) for m in row.messages):
         return row
+    if "_semantic_session_signature" in semantic_metadata:
+        from app.assistant_research import snapshot_signature
+        if snapshot_signature(row) != semantic_metadata.pop("_semantic_session_signature"):
+            raise AssistantToolError("对话已有新的决定，请重新读取当前状态后再操作。")
     from app.assistant_context import ContextEnvelope, restore_context, check_action_target, capture_requirements, capture_effective_requirements
     if context is not None:
         from app.assistant_arrangement import apply_arrangement_message
@@ -618,7 +622,7 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
         and envelope.action_target.operation == "plan_trip"
         and goal_routing.mutation_requested
         and not re.search(r"建议|suggestion_|第[一二三四五六七八九十\d]+条", message))
-    brief = None if direct_arrangement_edit or (envelope and envelope.prefer_flexible and row.trip_id is None) else build_planning_brief(str(row.id), str(message_id), message, goal_routing, list(effective_messages))
+    brief = None if "_semantic_tool_decision" in semantic_metadata or direct_arrangement_edit or (envelope and envelope.prefer_flexible and row.trip_id is None) else build_planning_brief(str(row.id), str(message_id), message, goal_routing, list(effective_messages))
     if brief and envelope:
         brief = brief.model_copy(update={"effective_requirements": envelope.requirement_records})
     if brief and brief.status == "needs_clarification":
@@ -687,7 +691,9 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
         context["effective_conditions"] = conditions
         context["condition_policy"] = "服务器保存的用户明确条件，优先于历史已撤销条件；日期为原消息当日锚定的绝对日期。不重复追问已有条件，不将这些条件当作本轮写授权。"
     with observation_stage("assistant_tool_routing"):
-        if (direct_arrangement_edit and semantic_goal is not None
+        if "_semantic_tool_decision" in semantic_metadata:
+            decision = ToolDecision.model_validate(semantic_metadata["_semantic_tool_decision"])
+        elif (direct_arrangement_edit and semantic_goal is not None
             and semantic_goal.goal_type == "trip_modification" and semantic_goal.mutation_requested):
             # Selection, target and version are already server-validated. A
             # second routing model must not replace the requested preview with
@@ -745,12 +751,12 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
         try:
             for creation_attempt in range(2):
                 try:
-                    row.pending_action = await prepare_action(db, decision, current, trips, city_search,
+                    row.pending_action = semantic_metadata.get("_semantic_prepared_action") or await prepare_action(db, decision, current, trips, city_search,
                         user_text=user_text, current_message=message,
                         explicit_daily_budget=bool(re.search(r"(?:每日|每天|一天)(?:的)?(?:预算|花费|开销)|(?:每日|每天|一天)\s*(?:不超过|最多|控制在)?\s*[一二三四五六七八九十百千万两\d.]+\s*(?:元|块)", user_text)))
                     break
                 except AssistantToolError as exc:
-                    if creation_attempt or not decision.flexible or decision.tool != "create_trip":
+                    if creation_attempt or "_semantic_tool_decision" in semantic_metadata or not decision.flexible or decision.tool != "create_trip":
                         raise
                     # One bounded repair of invalid creation fields, never a write.
                     context["creation_validation_feedback"] = str(exc)
@@ -768,6 +774,8 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
             if action.get("flexible"):
                 labels = {"selected": "纳入，时间未定", "optional": "备选", "free_window": "保留空闲", "appointment": "你提供的固定预约"}
                 reply += "\n" + "\n".join(f"{i['label']}：{labels[i['kind']]}" + (f"，{i['day_date']} {i['start']}—{i['end']}" if i.get("start") else "") for i in action["choices"])
+                if action.get("user_request"):
+                    reply += "\n保留原要求：" + action["user_request"]
         except AssistantToolError as exc:
             row.pending_action = None
             reply = str(exc)
@@ -781,7 +789,7 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
             # persisted Trip already provide the authority and context. Router
             # prose is diagnostic only: it must not invent names or scope.
             rewritten_request = decision.planning_request.strip()
-            request = message if direct_arrangement_edit else rewritten_request or message
+            request = message if direct_arrangement_edit or "_semantic_tool_decision" in semantic_metadata else rewritten_request or message
             turn_metadata["router_planning_request"] = rewritten_request
             has_plan = bool(await db.scalar(select(Activity.id).join(DayPlan).where(DayPlan.trip_id == target).limit(1)))
             intent_adapter = None
@@ -793,9 +801,21 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
                 # ambiguity, policy, Validator and subsequent Accept.
                 from app.planning_intent_service import CurrentTurnModification
                 intent_adapter = CurrentTurnModification(semantic_metadata.get("_semantic_requested_places", []))
-            run = await create_planning_run(db, target, PlanningRunCreate(run_type="replan" if has_plan else "initial_plan", user_request=request,
-                selected_day_id=selected_day_id if target == row.trip_id else None, selected_activity_id=selected_activity_id if target == row.trip_id else None),
-                semantic_provider=intent_adapter, commit=False)
+            payload = PlanningRunCreate(run_type="replan" if has_plan else "initial_plan", user_request=request,
+                selected_day_id=selected_day_id if target == row.trip_id else None, selected_activity_id=selected_activity_id if target == row.trip_id else None)
+            prepared = None
+            if semantic_metadata.get("_semantic_draft") or intent_adapter is not None:
+                from app.planning_preparation import PreparedPlanningIntent
+                from app.schemas import SemanticIntentDraft
+                target_trip = next(t for t in trips if t.id == target)
+                pref = await db.get(TripPreferences, target)
+                draft = (SemanticIntentDraft.model_validate(semantic_metadata["_semantic_draft"])
+                    if semantic_metadata.get("_semantic_draft") else await intent_adapter.extract(request, {}))
+                prepared = PreparedPlanningIntent(target, request, payload.entry_point, payload.selected_day_id,
+                    payload.selected_activity_id, target_trip.version, pref.version if pref else None,
+                    draft)
+            run = await create_planning_run(db, target, payload,
+                semantic_provider=intent_adapter if prepared is None else None, prepared_intent=prepared, commit=False)
             if decision.tool == "plan_trip" and target == row.trip_id:
                 from app.candidate_edit import bind_initial_candidate
                 await bind_initial_candidate(db, previous_run_id, run)
@@ -806,6 +826,7 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
         summary["events"] = [*summary.get("events", []), *router.diagnostics]
         summary["tool_decision_attempts"] = router._attempts
         turn_metadata["execution_summary"] = summary
+    turn_metadata = {key: value for key, value in turn_metadata.items() if not key.startswith("_semantic_")}
     row.messages = [*row.messages, {**turn_metadata, "id": str(message_id), "user": message, "assistant": reply, "tool": decision.tool,
         "run_id": str(row.latest_run_id) if row.latest_run_id else None,
         "goal_routing": goal_routing.model_dump(mode="json"),
@@ -905,7 +926,15 @@ async def confirm_action(db: AsyncSession, session_id: uuid.UUID, action_id: str
     if action["tool"] != "reschedule_trip" and not action.get("flexible"):
         await db.flush()
         has_plan = bool(await db.scalar(select(Activity.id).join(DayPlan).where(DayPlan.trip_id == trip.id).limit(1)))
-        run = await create_planning_run(db, trip.id, PlanningRunCreate(run_type="replan" if has_plan else "initial_plan", user_request="请根据已保存的日期、预算和旅行偏好生成完整行程。"), commit=False)
+        request = action.get("user_request") or "请根据已保存的日期、预算和旅行偏好生成完整行程。"
+        payload = PlanningRunCreate(run_type="replan" if has_plan else "initial_plan", user_request=request)
+        prepared = None
+        if action.get("approved_draft"):
+            from app.planning_preparation import PreparedPlanningIntent
+            from app.schemas import SemanticIntentDraft
+            prepared = PreparedPlanningIntent(trip.id, request, payload.entry_point, None, None,
+                trip.version, preferences.version, SemanticIntentDraft.model_validate(action["approved_draft"]))
+        run = await create_planning_run(db, trip.id, payload, prepared_intent=prepared, commit=False)
         row.latest_run_id = run.id
     row.pending_action = None
     row.applied_actions = {**row.applied_actions, action_id: str(trip.id)}

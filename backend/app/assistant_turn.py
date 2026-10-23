@@ -15,7 +15,7 @@ from app.database import AssistantSession, Trip
 from app.travel_goal_router import route_travel_goal
 
 
-async def semantic_turn(db, session_id, message, message_id, incoming, port, settings, selector=None):
+async def semantic_turn(db, session_id, message, message_id, incoming, port, settings, selector=None, *, city_search=None):
     from app.assistant_service import AssistantToolError
     captured_at = datetime.now(ZoneInfo("Asia/Shanghai"))
     intentions = []
@@ -140,7 +140,27 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                 if intentions and decision.intent == "direct":
                     goal = baseline.model_copy(update={"target_runtime": "companion", "goal_type": "travel_chat", "mutation_requested": False})
                 if goal.target_runtime != "companion":
-                    return None, goal, {"execution_summary": diagnostics.summary("complete"), "_semantic_context": envelope.model_dump(mode="json"), "_semantic_history_ids": [str(m.get("id")) for m in history], "_semantic_requested_places": [name for name in decision.names if name in message]}
+                    from app.assistant_operation import approved_draft, approved_tool_decision
+                    draft = approved_draft(decision, message)
+                    metadata = {"execution_summary": diagnostics.summary("complete"),
+                        "_semantic_context": envelope.model_dump(mode="json"),
+                        "_semantic_history_ids": [str(m.get("id")) for m in history],
+                        "_semantic_requested_places": [name for name in decision.names if name in message],
+                        "_semantic_session_signature": signature}
+                    if decision.intent in {"create", "modify"}:
+                        tool = approved_tool_decision(decision, message, envelope, today=captured_at.date())
+                        metadata["_semantic_tool_decision"] = tool.model_dump(mode="json")
+                        if draft:
+                            metadata["_semantic_draft"] = draft.model_dump(mode="json")
+                        if tool.tool == "create_trip":
+                            from app.assistant_service import prepare_action
+                            kwargs = {"city_search": city_search} if city_search is not None else {}
+                            action = await prepare_action(db, tool, None, [], user_text=message, current_message=message, **kwargs)
+                            action["user_request"] = message
+                            if draft:
+                                action["approved_draft"] = draft.model_dump(mode="json")
+                            metadata["_semantic_prepared_action"] = action
+                    return None, goal, metadata
                 from app.assistant_memory import condition_ack
                 acknowledgement = condition_ack(envelope, message, changed) if decision.intent == "direct" and decision.response_purpose == "conditions_only" else None
                 if intentions and decision.intent == "direct":

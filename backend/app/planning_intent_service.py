@@ -191,6 +191,26 @@ def restore_current_turn_modification(run, trip_id, message, trip_version):
     return None
 
 
+def restore_approved_planning_draft(run, trip_id, message, trip_version):
+    """Replay semantics, never model IDs, only for the matching persisted run."""
+    if (run is None or run.trip_id != trip_id or run.base_trip_version != trip_version
+            or run.user_request != message):
+        return None
+    try:
+        resolution = PlanningIntentResolution.model_validate(run.intent_resolution)
+    except (ValueError, TypeError):
+        return None
+    draft = resolution.semantic_draft
+    if (draft is None or draft.parser != "hybrid" or draft.parser_version != "approved-operation-v2"
+            or resolution.request.user_request != message or resolution.request.trip_id != trip_id
+            or resolution.grounded_intent is None or resolution.grounded_intent.trip_id != trip_id
+            or resolution.policy_decision is None or resolution.policy_decision.route not in {"plan_preview", "clarify"}
+            or any(op.raw_text not in message or any(name not in op.raw_text for name in
+                [*op.place_mentions, *op.activity_mentions]) for op in draft.operations)):
+        return None
+    return draft.model_copy(deep=True)
+
+
 @dataclass(frozen=True)
 class _ActivityEntity:
     id: uuid.UUID
