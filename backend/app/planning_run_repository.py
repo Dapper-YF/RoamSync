@@ -87,7 +87,7 @@ async def create_planning_run(
             raise StalePlanningRunError("disruption belongs to an older itinerary")
     # Explicit API selection does not authorize turning a question into a run.
     # Persisted disruption/experience facts retain their deterministic authority.
-    if disruption is None and trigger_type is None:
+    if prepared_intent is None and disruption is None and trigger_type is None:
         goal = route_travel_goal(payload.user_request)
         if goal.target_runtime == "execution" or (goal.target_runtime == "companion" and goal.confidence >= 0.9):
             raise UnsupportedPlanningIntentError(

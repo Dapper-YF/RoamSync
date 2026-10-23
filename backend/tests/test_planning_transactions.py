@@ -138,6 +138,22 @@ def test_prepared_intent_is_bound_to_original_request():
     asyncio.run(scenario())
 
 
+def test_prepared_intent_is_not_rerouted_by_legacy_classifier(monkeypatch):
+    from app.planning_preparation import prepare_planning_intent
+    async def scenario():
+        async with database() as sessions:
+            tid = await new_trip(sessions)
+            async with sessions() as caller:
+                payload = PlanningRunCreate(user_request="请帮我规划南京完整行程")
+                prepared = await prepare_planning_intent(caller, tid, payload)
+                def forbidden(_message):
+                    pytest.fail("legacy router reinterpreted a prepared semantic decision")
+                monkeypatch.setattr(repository, "route_travel_goal", forbidden)
+                run = await repository.create_planning_run(caller, tid, payload, prepared_intent=prepared)
+                assert run.status == "queued"
+    asyncio.run(scenario())
+
+
 @pytest.mark.parametrize("failure", [RuntimeError, asyncio.CancelledError])
 def test_provider_failure_or_cancel_leaves_no_business_lock(monkeypatch, failure):
     force_semantic_fallback(monkeypatch)
