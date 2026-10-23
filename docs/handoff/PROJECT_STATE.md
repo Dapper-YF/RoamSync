@@ -44,9 +44,13 @@ Final B public16 is7/16 versus baseline2/16, with2 critical unsupported walking
 assurances. Not unseen reliability, no controlled global speed claim.
 
 C sealed20 hash8bb1a83faa83659cf6ceb95745e29934922629012c176061b986dba23bef7da2
-remains independent. SHA gate rejected initial DB readiness after A docs-only HEAD
-advance; no question call occurred. C now uses exact85d0 own clean worktree/fresh
-DB for one measurement. Result pending; do not claim quality gate passed.
+completed once on exact85d0 clean worktree/fresh DB: strict usable2/20 (2/19 valid),
+basic mandatory3/20 includes one effective critical guarantee,16 product failures,
+one harness-invalid case retained without rerun. All23 turns complete; formal5
+tables unchanged,Run/Revision0; no candidate/Accept/503/409 proof. C public report
+a4532b2 imported without private prompts/raw. Prior init SHA/config guard failures
+and six EOL-only checkout differences retained. Overall final NO-GO, no release.
+Used questions must not be presented as unseen again.
 
 Official HEAD6b298caddb79125991bfc5183ddeefc09029f31c and3133 original files,
 ignored env and container IDs/images remain unchanged. External runtime outage

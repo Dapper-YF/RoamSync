@@ -1,0 +1,205 @@
+{
+  "result": "NO-GO",
+  "basic_pass": 3,
+  "product_fail": 16,
+  "invalid": 1,
+  "planned_cases": 20,
+  "valid_cases": 19,
+  "critical_valid_cases": 1,
+  "critical_observed_invalid_cases": 1,
+  "score_boundary": "Basic mandatory continuity observations passed in one case that separately failed the critical dietary evidence gate. Critical gate is not hidden by the basic score.",
+  "validity": "One conversation invalid: browser initialization script reran on a map-related frame and changed topic ID between turns. No rerun; not attributed as a product memory bug. No case denominator reduction for target scoring.",
+  "measurement": {
+    "cases": 20,
+    "attempted_turns": 23,
+    "expected_turns": 23,
+    "distinct_sessions": 20,
+    "distinct_topics": 21,
+    "harness_errors": 0,
+    "source_unchanged": true,
+    "config_unchanged": true,
+    "latency_seconds": {
+      "median": 9.737,
+      "max": 56.297
+    },
+    "formal_changed_cases": []
+  },
+  "harness_counter_boundary": "Runtime exception counters are zero; post-run integrity audit nevertheless invalidated one case due to topic change.",
+  "formal": "All5 formal tables unchanged in each case. PlanningRun/Revision0. No unauthorized mutation observed; candidate/Validator/Accept/version protection not exercised.",
+  "source": {
+    "source": "E:\\Study\\RoamSync-c2-sealed-85d0-20261023",
+    "sha": "85d0bd5915a7d7168bf606b7f520fbae0ad6f237",
+    "source_digest": "54e4593da42c8defcc6103b8f228edb9df84c07e551524da09a50a5d42b019c0",
+    "config_fingerprint": "3cc0d7971519c1add80330b01b514ec5950a47fb9d5e9be65a4f159a3e39e398",
+    "config": {
+      "planner_provider": "glm",
+      "planner_model": "glm-5.3-flash",
+      "planner_reasoning_effort": "high",
+      "planner_timeout_seconds": "90.0",
+      "planner_max_retries": "0",
+      "planner_max_output_tokens": "20000",
+      "planner_max_candidates": "40",
+      "credential_presence": {
+        "planner_api_key": true,
+        "amap_rest_key": true,
+        "tavily_api_key": true,
+        "roamsync_tavily_api_key": true
+      },
+      "endpoint_hashes": {
+        "planner_base_url": "0413b53d28826c51b400bc9ebc578639bf6a4ff94d3e43fbcbc468bd51945602",
+        "planner_proxy_url": "bb6f4247f695f779592450033c6a023c0deae3c5d2f6bfde77df9954e770a7b1",
+        "tavily_base_url": "088debf43e9156779928af390825f9e74a539b024e331eebe3b957dd4399067f",
+        "tavily_proxy_url": "bb6f4247f695f779592450033c6a023c0deae3c5d2f6bfde77df9954e770a7b1"
+      }
+    },
+    "modified_files": []
+  },
+  "checkout_equivalence": {
+    "only_crlf_lf_differences": [
+      "backend/app/planning_claim.py",
+      "backend/app/planning_preparation.py",
+      "backend/tests/test_graph_network_transactions.py",
+      "backend/tests/test_planning_route_transactions.py",
+      "backend/tests/test_planning_transactions.py",
+      "backend/tests/test_worker_ownership.py"
+    ],
+    "all_product_files_equivalent_after_eol_normalization": true
+  },
+  "a_original_raw_digest": "d891256839e3dfa9a48e4934942480a6017c6b736684c1c7cb411979e3280cb7",
+  "started_utc": "2026-10-23T14:07:08.052Z",
+  "finished_utc": "2026-10-23T14:17:01.978Z",
+  "timezone": "Asia/Shanghai",
+  "browser": {
+    "engine": "Microsoft Edge",
+    "version": "155.0.4283.62",
+    "desktop_width": 1440,
+    "mobile_widths": [
+      390,
+      320
+    ],
+    "mobile_cases": 3,
+    "no_horizontal_overflow": true,
+    "pageerrors": 0,
+    "other_observations": [
+      "favicon404",
+      "AMap canvas performance warning",
+      "map tile requests aborted during lifecycle; not a failed model-turn transport"
+    ]
+  },
+  "sealed_sha256": "8bb1a83faa83659cf6ceb95745e29934922629012c176061b986dba23bef7da2",
+  "case_status": [
+    {
+      "id": "C2-01",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-02",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-03",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-04",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-05",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-06",
+      "status": "pass",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-07",
+      "status": "pass",
+      "critical_gate_failed": true
+    },
+    {
+      "id": "C2-08",
+      "status": "invalid",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-09",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-10",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-11",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-12",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-13",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-14",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-15",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-16",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-17",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-18",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-19",
+      "status": "fail",
+      "critical_gate_failed": false
+    },
+    {
+      "id": "C2-20",
+      "status": "pass",
+      "critical_gate_failed": false
+    }
+  ],
+  "failure_classes": [
+    "generic clarification after sufficient input",
+    "generic conservative boilerplate without useful next step",
+    "compound task incomplete",
+    "hard dietary requirement asserted without evidence",
+    "prose timetable without protected candidate",
+    "creation metadata confirmation before actual candidate",
+    "selected modification tool ValueError",
+    "linked trip activities unavailable to answer"
+  ],
+  "reviewer": "C custodian manual review; separate development line, not external independent human blind test",
+  "pre_measurement_infra": "Failed first init kept ready=false after docs-only HEAD movement; exact85d0 worktree and another fresh DB used before first question. Clean-terminal config guard refusal also happened before DB/provider/question execution. No production/container operations.",
+  "deployment": "none; isolated15435 C exclusive database, API18046/Web3046"
+}
