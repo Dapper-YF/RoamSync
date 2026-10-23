@@ -228,6 +228,47 @@ def test_clarification_claim_requires_checkpoint_and_excludes_duplicate(monkeypa
     asyncio.run(scenario())
 
 
+@pytest.mark.parametrize("window", ["claimed", "planning"])
+def test_reclaim_keeps_accepted_clarification_after_api_exit(monkeypatch, window):
+    from app.schemas import PlanningRunDecision
+    from app.planning_claim import checkpoint_thread
+    async def scenario():
+        async with database() as sessions:
+            monkeypatch.setattr(runtime, "session_factory", sessions)
+            monkeypatch.setattr(worker, "session_factory", sessions)
+            rid = await queued_run(sessions)
+            async with sessions() as db:
+                row = await db.get(PlanningRun, rid)
+                row.status = "awaiting_clarification"
+                row.pending_interrupt = {"kind": "clarification", "questions": ["哪一天？"], "run_id": str(rid)}
+                await db.commit()
+                original = row.user_request
+            await runtime._claim_clarification(rid, PlanningRunDecision(decision="clarify", answer="第一天"))
+            if window == "planning":
+                async with sessions() as db:
+                    (await db.get(PlanningRun, rid)).status = "planning"
+                    await db.commit()
+            await expire(sessions, rid)
+            replacement = await worker.claim_next_run()
+            assert replacement.run_id == rid
+            async with sessions() as db:
+                row = await db.get(PlanningRun, rid)
+                assert row.user_request == original
+                assert row.trigger_snapshot["clarification_answers"] == ["第一天"]
+                receipt = row.trigger_snapshot["clarification_receipts"][0]
+                assert receipt["questions"] == ["哪一天？"] and receipt["answer"] == "第一天"
+                assert receipt["original_request"] == original
+                observed = {}
+                class Probe:
+                    async def ainvoke(self, value, config):
+                        observed.update(value)
+                        assert config["configurable"]["thread_id"] == checkpoint_thread(row)
+                        return {}
+                await runtime.invoke_compiled_graph(Probe(), row)
+                assert observed["clarification_count"] == 1
+    asyncio.run(scenario())
+
+
 def test_reclaimed_attempt_has_separate_real_checkpoints_and_remains_acceptable(monkeypatch):
     from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
     from app.config import get_settings

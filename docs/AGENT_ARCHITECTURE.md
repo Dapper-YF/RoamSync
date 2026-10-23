@@ -27,6 +27,10 @@ Repeated experience extensions merge trigger metadata instead of discarding the
 checkpoint/provenance. Creation persists the grounded prepared_intent v1 envelope
 after dual-version checks, including the repaired preferences version; it is an
 internal server handoff, not a client authorization field.
+The clarification claim atomically stores the literal answer, original question
+and request receipt. Replacement attempts read these server-owned answers in a
+fresh checkpoint and retain the total two-answer bound; a crash after claiming or
+during planning cannot silently discard a user's accepted clarification.
 
 Accept, Validator, authorization and public version rules remain. No new table or
 migration. Experience snapshot refresh can be read-only and is applied with its

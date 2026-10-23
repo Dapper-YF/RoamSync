@@ -66,7 +66,7 @@ async def invoke_compiled_graph(
             "selected_activity_id": (
                 str(run.selected_activity_id) if run.selected_activity_id else None
             ),
-            "clarification_count": 0,
+            "clarification_count": len((run.trigger_snapshot or {}).get("clarification_answers", [])),
         }
     else:
         graph_input = Command(resume=resume)
@@ -132,6 +132,23 @@ async def _claim_clarification(run_id, decision):
         _validate_decision(run, decision)
         if (run.pending_interrupt or {}).get("kind") != "clarification":
             raise ValueError("planning clarification checkpoint is not ready")
+        answer = str(decision.answer or "").strip()
+        if not answer:
+            raise ValueError("clarification answer cannot be blank")
+        snapshot = dict(run.trigger_snapshot or {})
+        answers = list(snapshot.get("clarification_answers", []))
+        if len(answers) >= 2:
+            raise ValueError("planning intent is still ambiguous after two clarifications")
+        # The receipt and execution ownership commit together. A replacement
+        # starts a fresh checkpoint with these answers, never loses accepted input
+        # or resumes a checkpoint that an obsolete execution could still write.
+        snapshot["clarification_answers"] = [*answers, answer]
+        snapshot["clarification_receipts"] = [*snapshot.get("clarification_receipts", []), {
+            "original_request": run.user_request,
+            "questions": list(run.pending_interrupt.get("questions", [])),
+            "answer": answer, "checkpoint_thread": checkpoint_thread(run),
+        }]
+        run.trigger_snapshot = snapshot
         claim = PlanningClaim(run_id, trip_id, f"resume:{uuid.uuid4().hex}")
         run.worker_id = claim.token
         run.worker_lease_expires_at = datetime.now(UTC) + timedelta(seconds=get_settings().agent_lease_seconds)

@@ -8,6 +8,14 @@ clarification changed its authorization text; ordinary prepared semantic decisio
 were discarded before Graph execution. A owns the first two and persistence;
 B owns downstream decision restoration and constrained clarification.
 
+Second review found a further Important recovery gap: API claim committed before
+the literal clarification answer was durable. The replacement checkpoint would
+lose it. `clarification-recovery-red` fails both real PostgreSQL windows (after
+claim, during planning). The repair stores answers plus original question/request
+receipts atomically with the claim; fresh Graph input counts persisted answers.
+`clarification-recovery-green`: 46 passed, zero errors/failures/skips. B's resolver
+restoration remains required for end-to-end semantic recovery.
+
 External evidence root: E:/Study/RoamSync-a2-evidence-20261022/.
 `review-gaps-red`: two real PostgreSQL counterexamples fail on the unpatched code
 (lost checkpoint pointer, API has no active claim). `review-envelope-red`: missing
@@ -27,3 +35,8 @@ Prior complete regression `combined-full-1` measured 1592 main +25 dedicated;
 Web243/type/build passed on ae52693 before these review repairs. Those results
 are not proof of this later source. Full combined regression must run again after
 B's final code. Unseen20 and complete real browser flow remain unverified.
+
+`combined-full-2` test image passed 1596 main +25 dedicated, but the source manifest
+changed while the new recovery counterexample/repair was added. The runner correctly
+returned passed=false/source_unchanged=false. This run is retained as invalid for
+final source certification; do not count it as a final full regression pass.
