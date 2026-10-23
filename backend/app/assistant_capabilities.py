@@ -62,7 +62,7 @@ class CapabilityDecision(BaseModel):
     memory_updates: list[MemoryUpdate] = Field(default_factory=list, max_length=16)
     illustrate: bool = False
     advice_focus: Literal["none", "walking_effort", "rest"] = "none"
-    response_purpose: Literal["answer", "conditions_only"] = "answer"
+    response_purpose: Literal["answer", "conditions_only", "conditions_recall"] = "answer"
     saved_intentions: list[IntentionProposal] = Field(default_factory=list, max_length=5)
     read_tasks: list[ReadTask] = Field(default_factory=list, max_length=5)
     fact_kind: Literal["weather", "opening_hours", "other"] = "other"
@@ -99,6 +99,7 @@ SELECTION_INSTRUCTIONS += " Set illustrate=true when visual appearance/examples 
 SELECTION_INSTRUCTIONS += " memory_updates.scope=personal only for the user's general diet/interests/mobility, not a temporary travel-party condition. scope=trip for this journey's dates/duration/budget/party and temporary pace/interests; scope=destination for named-POI/local-city constraints; scope=topic for a temporary discussion constraint. City correction retains trip/personal conditions but drops topic/destination conditions. A new journey clears trip conditions; a fresh conversation clears all. Explicit 不定/待定/还没定 withdraws an earlier scalar with operation=clear and the full literal source clause. effective_conditions.withdrawn contains revoked or superseded conditions, not active preferences; never restore them from old messages."
 SELECTION_INSTRUCTIONS += " advice_focus=walking_effort for a follow-up asking whether the discussed travel/route is tiring, easy, flat, suitable for limited mobility or 顺路, with intent=direct unless a NEW route lookup is requested. advice_focus=rest when the user simply wants to rest/cancel going out, without requesting alternatives. These are decision-help modes, never facts or write permission."
 SELECTION_INSTRUCTIONS += " response_purpose=conditions_only ONLY for a standalone update of personal trip conditions with no request to learn, compare, discuss choices or get advice. A message can BOTH update memory and ask a question: then use answer. 想了解成都 and 先聊选择 are answer. For compound creation requests, quote ONLY the affirmative creation clause; 暂不排时间/不要新增地点 constrain the requested result, not permission to create the explicitly requested preview."
+SELECTION_INSTRUCTIONS += " Set response_purpose=conditions_recall and intent=direct for a request to recall/list the user's currently effective travel conditions (dates, budget, mobility, diet, interests, withdrawals or unknown slots). The server renders those from verified session memory without inventing facts about venues. Do not use it for advice/comparisons or actual external-fact lookup questions."
 SELECTION_INSTRUCTIONS += " A request to compose an actionable CHANGE CANDIDATE for a saved itinerary is intent=modify, even when the user says 先给候选/等我确认再保存. That is the normal preview-and-Accept boundary, not a read-only consultation. 请协调第一天的安排 and 请把第一天活动改到12:30 both request modify; quote that exact action clause. intent=itinerary only reads/explains existing arrangements, never substitutes prose方案A/B for an executable requested adjustment. Keep unspecified dates, choices and free windows unchanged. The server and existing planning flow enforce authorization and adoption."
 
 
@@ -216,6 +217,10 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
         for task in decision.read_tasks:
             if task.source_quote not in message:
                 return CapabilityDecision(intent="clarify", clarification="请确认各部分要查询的内容。", reason_code="missing_arguments")
+            tail = message[message.index(task.source_quote)+len(task.source_quote):]
+            cancellations = re.finditer(r"(?:先|暂时|暂)?(?:不|别|不用|不要)(?:再)?(?:查询|搜索|查|搜|看)([^，,。；;?？!！]*)", tail)
+            if any(not (obj := re.sub(r"[了吧呀呢\s]+$", "", match[1])) or obj in task.source_quote for match in cancellations):
+                continue
             if "facts" in task.capabilities and (_non_authorizing_context(message, task.source_quote) or
                     re.search(r"假设|假如|如果|不查|不用查|不要查|先不查", task.source_quote)):
                 return CapabilityDecision(intent="clarify", clarification="你想讨论假设下的选择，还是查询实际情况？", reason_code="missing_arguments")
@@ -234,6 +239,8 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
                 return validated
             checked.append(task.model_copy(update={key: getattr(validated, key)
                 for key in ReadTask.model_fields if key != "source_quote"}))
+        if not checked:
+            return CapabilityDecision(intent="clarify", clarification="已按后面的要求取消这次查询。", reason_code="stable_knowledge")
         decision = decision.model_copy(update={"read_tasks": checked,
             "capabilities": list(dict.fromkeys(c for task in checked for c in task.capabilities))})
     elif decision.intent in {"create", "modify", "execution"}:
@@ -429,6 +436,23 @@ def component_question(kind, message):
     return "解释当前已保存行程的安排依据。" if kind == "itinerary" and re.search(r"为什么|理由|解释", message) else "当前已保存的行程有哪些安排？" if kind == "itinerary" else message
 
 
+def approved_fact_question(message, envelope):
+    """Anchor a user's departure reference to effective memory, never history."""
+    from datetime import date
+    explicit = re.search(r"今天|明天|后天|现在|当前|实时|\d{1,2}月\d{1,2}|20\d{2}-\d{1,2}-\d{1,2}", message)
+    if explicit:
+        # The existing forecast parser consumes calendar Chinese dates. This
+        # lossless formatting does not change the requested date or tool need.
+        return re.sub(r"(20\d{2})-(\d{1,2})-(\d{1,2})", lambda m:
+            f"{int(m[1])}年{int(m[2])}月{int(m[3])}日", message)
+    if re.search(r"出发那天|出发当天", message) and not re.search(r"返程|回程|周[一二三四五六日天]|星期[一二三四五六日天]", message):
+        entry = memory_prompt(envelope).get("slots", {}).get("start_date", {})
+        if entry.get("value"):
+            target = date.fromisoformat(entry["value"])
+            return message + f"（对应有效出发日期：{target.year}年{target.month}月{target.day}日）"
+    return message
+
+
 async def answer_with_capabilities(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal):
     groups = read_groups(decision)
     if not decision.read_tasks and (not groups or (len(groups) == 1 and decision.intent != "clarify")):
@@ -514,6 +538,9 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
 async def _answer_leaf(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal, *, read_lock=None, web_fallback=True):
     """Run approved reads outside SQL transactions, using existing provider adapters."""
     turn = active_turn.get()
+    if decision.intent == "direct" and decision.response_purpose == "conditions_recall":
+        from app.assistant_memory import recall_conditions
+        return failure_bundle(envelope, recall_conditions(envelope)), "complete"
     if decision.intent == "direct" and decision.advice_focus in {"walking_effort", "rest"}:
         from app.assistant_practical import previous_reads, walking_followup
         text = "那就先休息，不必再加一处。" if decision.advice_focus == "rest" else walking_followup(previous_reads(history))
@@ -576,6 +603,8 @@ async def _answer_leaf(settings, decision, message, history, envelope, port, db,
             knowledge_reasons=["approved_" + decision.intent])
     runtime = CompanionRuntime(Reader(), knowledge_tool=KnowledgeTool(), fact_tool=get_default_fact_tool(), approved_need=need)
     runtime_message = component_question("facts", message) if decision.capabilities == ["facts"] else message
+    if "facts" in decision.capabilities:
+        runtime_message = approved_fact_question(runtime_message, envelope)
     result = await bounded_call(lambda: runtime.run(session_id=str(session_id), turn_id=str(message_id), message=runtime_message,
         goal=goal, messages=history, assistant_context=envelope.model_dump(mode="json"), read_tool_context=read_tools), stage="companion")
     if "facts" in decision.capabilities and result.information_gaps and not result.forecast_plan and web_fallback:

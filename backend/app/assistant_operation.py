@@ -51,6 +51,26 @@ def approved_draft(decision, message):
         raise ValueError("操作及地点必须绑定本次用户原句")
     if decision.intent not in {"create", "modify"}:
         raise ValueError("读取决策不能授予规划操作")
+    from app.assistant_capabilities import _non_authorizing_context
+    verbs = {"add_activity":r"加入|添加|增加|纳入|放进", "remove_activity":r"撤掉|撤销|取消|删除|删掉|不去",
+        "replace_activity":r"换成|换掉|替换", "reorder_activities":r"移到|挪|晚|提前|延后|调整|顺序|改",
+        "optimize_route":r"优化|协调|调整", "adjust_budget":r"控制|调整|预算", "weather_replan":r"调整|改|换",
+        "create_plan":r"创建|生成|安排|规划", "replan_trip":r"重排|重做|重新|调整|安排|规划"}
+    for op in draft.operations:
+        if op.operation not in verbs:
+            continue
+        # Copy the containing clause from its beginning. A model cannot strip
+        # a date/negator and borrow authority from another positive operation.
+        if message.count(op.raw_text) != 1:
+            raise ValueError("操作原句存在多个对应位置，请明确各项操作")
+        prefix = re.split(r"[，,。；;!?！？\n]", message[:message.index(op.raw_text)])[-1].strip()
+        if prefix and not re.fullmatch(r"(?:请|麻烦|帮我|替我|请你|给我|现在|实际)*", prefix):
+            raise ValueError("操作必须保留完整原句限定条件")
+        matches = list(re.finditer(verbs[op.operation], op.raw_text))
+        if (_non_authorizing_context(message, op.raw_text) or
+                matches and all(_non_authorizing_context(op.raw_text, match[0]) for match in matches) or
+                re.match(r"\s*(?:假设|假如|如果|先别|不要|不用)", op.raw_text)):
+            raise ValueError("每个操作都需要本次肯定请求，否定或假设子句不授予操作权限")
     return draft.model_copy(update={"parser":"hybrid", "parser_version":"approved-operation-v2"}, deep=True)
 
 
@@ -88,16 +108,23 @@ def approved_tool_decision(decision, message, envelope, *, today):
     start = date.fromisoformat(saved_start) if saved_start else (quoted[0] if quoted else None)
     if start is None or proposal.start_date is not None and proposal.start_date != start:
         return ToolDecision(tool="reply", reply="请明确这次的出发日期。")
-    duration = (slots.get("duration_days") or {}).get("value")
-    end = start + timedelta(days=int(duration)-1) if duration else quoted[-1] if len(quoted)>1 else None
+    from app.travel_language import trip_duration
+    duration = (slots.get("duration_days") or {}).get("value") or trip_duration(decision.authorization_quote)
+    end = quoted[-1] if len(quoted)>1 else start + timedelta(days=int(duration)-1) if duration else None
     if end is None or proposal.end_date is not None and proposal.end_date != end:
         return ToolDecision(tool="reply", reply="准备玩几天，还是已经有返程日期了？")
     budget = proposal.total_budget_fen
     if budget is not None:
         source = str((slots.get("budget") or {}).get("value", "")) + " " + decision.authorization_quote
-        amounts = [round(float(m[0])*100) for m in re.finditer(r"\d+(?:\.\d+)?(?=\s*元)", source)]
+        # A matching amount does not prove its unit. Only an explicit total
+        # can populate the formal Trip total; other budgets remain verbatim.
+        total_clauses = [part for part in re.split(r"[，,。；;\n]", source)
+            if re.search(r"(?:旅行|行程|整趟|这次)?(?:总预算|全部预算|花费总额)", part)
+            and not re.search(r"不是|取消|撤销|待定|不限", part)]
+        amounts = [round(float(m[1])*100) for part in total_clauses for m in re.finditer(
+            r"(?:总预算|全部预算|花费总额)\s*(?:为|是|约|最多|不超过|控制在)?\s*(\d+(?:\.\d+)?)\s*元", part)]
         if budget not in amounts:
-            return ToolDecision(tool="reply", reply="请确认旅行总预算的金额与口径。")
+            budget = None
     for choice in proposal.choices:
         if choice.origin != "user_explicit" or choice.source_quote not in message or choice.kind != "blank_day" and choice.label not in choice.source_quote:
             return ToolDecision(tool="reply", reply="请确认各地点或留白对应的原始要求。")

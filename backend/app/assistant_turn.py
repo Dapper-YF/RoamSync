@@ -155,11 +155,15 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                         if tool.tool == "create_trip":
                             from app.assistant_service import prepare_action
                             kwargs = {"city_search": city_search} if city_search is not None else {}
-                            action = await prepare_action(db, tool, None, [], user_text=message, current_message=message, **kwargs)
-                            action["user_request"] = message
-                            if draft:
-                                action["approved_draft"] = draft.model_dump(mode="json")
-                            metadata["_semantic_prepared_action"] = action
+                            try:
+                                action = await prepare_action(db, tool, None, [], user_text=message, current_message=message, **kwargs)
+                            except AssistantToolError as exc:
+                                metadata["_semantic_tool_decision"] = {"tool":"reply", "reply":str(exc)}
+                            else:
+                                action["user_request"] = message
+                                if draft:
+                                    action["approved_draft"] = draft.model_dump(mode="json")
+                                metadata["_semantic_prepared_action"] = action
                     return None, goal, metadata
                 from app.assistant_memory import condition_ack
                 acknowledgement = condition_ack(envelope, message, changed) if decision.intent == "direct" and decision.response_purpose == "conditions_only" else None

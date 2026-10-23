@@ -120,3 +120,69 @@ def test_whole_day_preview_adoption_survives_reload_and_is_idempotent(sessions, 
             assert row.trip_id==tid and row.pending_action is None
             assert await free_days(db,tid)=={date(2026,11,30)}
     asyncio.run(run())
+
+
+def test_meal_budget_does_not_become_trip_total_budget():
+    from app.assistant_context import ContextEnvelope
+    from app.assistant_operation import approved_tool_decision
+    message="请创建绍兴2026年11月29日至30日的安排，每顿饭预算70元。"
+    decision=CapabilityDecision.model_validate({"intent":"create","reason_code":"explicit_write",
+        "authorization_quote":message,"creation":{"destination":"绍兴","start_date":"2026-11-29",
+            "end_date":"2026-11-30","total_budget_fen":7000,"flexible":True}})
+    result=approved_tool_decision(decision,message,ContextEnvelope(),today=date(2026,10,22))
+    assert result.tool=="create_trip" and result.total_budget_fen is None
+    assert "每顿饭预算70元" in result.preferences
+
+
+def test_selected_place_date_cannot_conflict_with_its_own_source_quote():
+    from app.flexible_creation import prepare_choices
+    from app.assistant_service import ToolDecision
+    proposal=ToolDecision(tool="create_trip",reply="预览",destination="绍兴",start_date=date(2026,11,29),
+        end_date=date(2026,11,30),flexible=True,choices=[{"kind":"selected","label":"鲁迅故里",
+        "source_quote":"第一天去鲁迅故里","day_date":"2026-11-30"}])
+    with pytest.raises(ValueError):
+        asyncio.run(prepare_choices(proposal,{"name":"绍兴市"},"第一天去鲁迅故里"))
+
+
+def test_one_affirmative_action_does_not_authorize_negated_peer_operation():
+    from app.assistant_operation import approved_draft
+    message="请调整第二天路线；不要加入乙馆。"
+    decision=CapabilityDecision.model_validate({"intent":"modify","reason_code":"explicit_write",
+        "authorization_quote":"请调整第二天路线","planning_draft":{"primary_intent":"add_activity",
+            "operations":[{"operation":"add_activity","raw_text":"不要加入乙馆","place_mentions":["乙馆"]}],
+            "confidence":.99,"parser_version":"model-output"}})
+    with pytest.raises(ValueError):
+        approved_draft(decision,message)
+
+
+@pytest.mark.parametrize("label",["伙食预算", "单餐预算", "一顿饭预算"])
+def test_only_explicit_total_budget_scope_may_write_trip_total(label):
+    from app.assistant_context import ContextEnvelope
+    from app.assistant_operation import approved_tool_decision
+    message=f"请创建绍兴2026年11月29日至30日的安排，{label}70元。"
+    decision=CapabilityDecision.model_validate({"intent":"create","reason_code":"explicit_write",
+        "authorization_quote":message,"creation":{"destination":"绍兴","start_date":"2026-11-29",
+        "end_date":"2026-11-30","total_budget_fen":7000,"flexible":True}})
+    assert approved_tool_decision(decision,message,ContextEnvelope(),today=date(2026,10,22)).total_budget_fen is None
+
+
+def test_cropped_write_source_cannot_remove_parent_clause_polarity():
+    from app.assistant_operation import approved_draft
+    message="请调整第二天路线；别加入乙馆。"
+    decision=CapabilityDecision.model_validate({"intent":"modify","reason_code":"explicit_write",
+        "authorization_quote":"请调整第二天路线","planning_draft":{"primary_intent":"add_activity",
+        "operations":[{"operation":"add_activity","raw_text":"加入乙馆","place_mentions":["乙馆"]}],
+        "confidence":.99,"parser_version":"model-output"}})
+    with pytest.raises(ValueError):
+        approved_draft(decision,message)
+
+
+def test_selected_date_cannot_borrow_another_places_clause_date():
+    from app.flexible_creation import prepare_choices
+    from app.assistant_service import ToolDecision
+    quote="11月29日去鲁迅故里，11月30日去沈园"
+    proposal=ToolDecision(tool="create_trip",reply="预览",destination="绍兴",start_date=date(2026,11,29),
+        end_date=date(2026,11,30),flexible=True,choices=[{"kind":"selected","label":"鲁迅故里",
+        "source_quote":quote,"day_date":"2026-11-30"}])
+    with pytest.raises(ValueError):
+        asyncio.run(prepare_choices(proposal,{"name":"绍兴市"},quote))

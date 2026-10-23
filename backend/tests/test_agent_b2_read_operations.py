@@ -103,3 +103,47 @@ def test_approved_hypothetical_consultation_cannot_reopen_weather_lookup(monkeyp
         messages=[], goal=route_travel_goal(message).model_copy(update={"target_runtime": "companion"})))
     assert result.status == "completed"
     assert not result.forecast_plan
+
+
+def test_weather_reference_uses_effective_departure_date_and_never_revoked_history():
+    from app.assistant_memory import apply_memory, MemoryUpdate
+    from uuid import uuid4
+    question = getattr(capabilities, "approved_fact_question", None)
+    assert callable(question)
+    env, _, _ = apply_memory(ContextEnvelope(), [], "11月20日出发", uuid4(), [
+        MemoryUpdate(field="start_date",value="11月20日",source_quote="11月20日出发")])
+    text=question("出发那天天气怎么样", env)
+    assert "2026年11月20日" in text
+    assert question("明天天气怎么样", env)=="明天天气怎么样"
+    env,_,_=apply_memory(env,[],"出发日期待定",uuid4(),[
+        MemoryUpdate(field="start_date",operation="clear",source_quote="出发日期待定")])
+    assert "11月20日" not in question("出发那天天气怎么样",env)
+
+
+def test_approved_condition_recall_returns_all_constraints_without_answer_model():
+    from app.assistant_memory import apply_memory, MemoryUpdate
+    from uuid import uuid4
+    env,_,_=apply_memory(ContextEnvelope(),[],"爸爸连续步行最多15分钟，每顿每人70元",uuid4(),[
+        MemoryUpdate(field="requirements",value="爸爸连续步行最多15分钟",source_quote="爸爸连续步行最多15分钟"),
+        MemoryUpdate(field="budget",value="每顿每人70元",source_quote="每顿每人70元")])
+    decision=capabilities.CapabilityDecision(intent="direct",reason_code="stable_knowledge",response_purpose="conditions_recall")
+    result,status=asyncio.run(capabilities._answer_leaf(None,decision,"你还记得哪些有效条件",[],env,None,None,None,"s","t",
+        route_travel_goal("你还记得哪些有效条件")))
+    assert status=="complete" and "15分钟" in result["assistant"] and "70元" in result["assistant"]
+
+
+def test_later_read_cancellation_supersedes_earlier_query_clause():
+    text="查景德镇明天天气，先不查天气了"
+    decision=capabilities.CapabilityDecision.model_validate({"intent":"facts","reason_code":"current_information",
+        "read_tasks":[{"source_quote":"查景德镇明天天气","capabilities":["facts"],"fact_kind":"weather"}]})
+    result=capabilities.validate_decision(decision,text,[],ContextEnvelope())
+    assert not result.capabilities and not result.read_tasks
+
+
+@pytest.mark.parametrize("text",["返程那天天气怎么样", "周日那天天气怎么样"])
+def test_other_date_reference_cannot_be_replaced_with_departure(text):
+    from app.assistant_memory import apply_memory, MemoryUpdate
+    from uuid import uuid4
+    env,_,_=apply_memory(ContextEnvelope(),[],"2026-10-24出发",uuid4(),[
+        MemoryUpdate(field="start_date",value="2026-10-24",source_quote="2026-10-24出发")])
+    assert capabilities.approved_fact_question(text,env)==text
