@@ -223,6 +223,7 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
         if key in {'preferences', 'requirements'} and operation == 'remove':
             remove = update.replaces or value
             matching = [item for item in memory[key] if item['value'] == remove and
+                item.get('scope', 'personal') == ('trip' if update.subject else update.scope) and
                 (item.get('subject', '') == update.subject or update.subject and
                  not item.get('subject') and item.get('source_quote', '').startswith(update.subject))]
             if not matching:
@@ -242,7 +243,9 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
         if key in {"preferences", "requirements"}:
             items = memory[key]
             if operation == "clear":
-                items = []
+                items = [item for item in items if not (
+                    item.get('subject', '') == update.subject and
+                    item.get('scope', 'personal') == ('trip' if update.subject else update.scope))]
             else:
                 remove = update.replaces or (value if operation == "remove" else "")
                 items = [item for item in items if item["value"] not in {remove, value}
@@ -261,9 +264,6 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
     city = memory["slots"].get("city", {}).get("value")
     # Latest-turn validation metadata is data, never an effective condition.
     memory["diagnostics"] = diagnostics[-20:]
-    memory['latest_receipt'] = {'version': 1, 'message_id': str(message_id), 'updates': receipts[-32:],
-        'effective_slots': deepcopy(memory['slots']), 'effective_preferences': deepcopy(memory['preferences']),
-        'effective_requirements': deepcopy(memory['requirements'])}
     memory["withdrawn"] = dict(list(memory.get("withdrawn", {}).items())[-40:])
     changes = {"conversation_memory": memory}
     # Scalar withdrawal must reach the older typed projection as well. It never
@@ -289,6 +289,9 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
             action_target=None, route_request=None)
         if cleared_city:
             changes["browsing_city"] = None
+    memory['latest_receipt'] = {'version': 1, 'message_id': str(message_id), 'updates': receipts[-32:],
+        'effective_slots': deepcopy(memory['slots']), 'effective_preferences': deepcopy(memory['preferences']),
+        'effective_requirements': deepcopy(memory['requirements'])}
     return envelope.model_copy(update=changes), history, accepted
 
 

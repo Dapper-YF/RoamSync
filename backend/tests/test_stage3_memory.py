@@ -37,3 +37,16 @@ def test_invalid_subject_removal_does_not_delete_same_value_user_record():
         MemoryUpdate(field='preferences', operation='remove', value='少走路',
             source_quote='撤掉朋友的少走路要求', subject='朋友')])
     assert memory_prompt(env)['preferences'][0]['value'] == '少走路'
+
+
+def test_subject_clear_preserves_user_and_receipt_matches_final_city_cleanup():
+    env = ContextEnvelope(browsing_city='扬州')
+    for q, subject, scope in [('我少走路', '', 'personal'), ('姐姐少走台阶', '姐姐', 'trip'), ('扬州看园林', '', 'destination')]:
+        env, _, _ = apply_memory(env, [], q, uuid4(), [MemoryUpdate(field='requirements', value=q,
+            source_quote=q, subject=subject, scope=scope)])
+    env, _, _ = apply_memory(env, [], '取消姐姐的要求', uuid4(), [MemoryUpdate(field='requirements',
+        operation='clear', subject='姐姐', source_quote='取消姐姐的要求')])
+    assert [r['value'] for r in env.conversation_memory['requirements']] == ['我少走路', '扬州看园林']
+    env, _, _ = apply_memory(env, [], '改去南京', uuid4(), [MemoryUpdate(field='city', value='南京', source_quote='改去南京')])
+    assert env.conversation_memory['latest_receipt']['effective_requirements'] == env.conversation_memory['requirements']
+    assert len(env.conversation_memory['requirements']) == 1
