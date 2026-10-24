@@ -16,3 +16,16 @@
 - 快照dataclass的字典虽未深层冻结，对消费者主要使用deepcopy；本轮未发现具体外部写权限提升，不等于公网所有权已解决。
 
 已将以上两点发给B，等待其在自身隔离树修复并提交新SHA。**41a4f91暂不接收，不部署。** 后续须检查变更及标准统一套件兼容，再执行统一回归；不得把旧89b81e8的1792+38绑定到新产品源码。B正在进行的新公开真实before/after只能按实际结果另列，不能当新的未见保留题。
+
+
+## 对4a8dcb374cc992a8fff4f7c9d6508ab028e3724d的后续复核
+
+原P1修复：fixture复用_database_safety，兼容统一明确测试库并保留正式库拒绝。原P2一致性修复：独立连接首条SQL前设置REPEATABLE READ，然后SET TRANSACTION READ ONLY；活动/计数/事项/偏好同一MVCC快照。async连接、事务和reader均有上下文管理，异常/取消路径对应真实PG反例；理由和notes绑定捕获Trip版本，不再以当前理由拼接旧快照。版本前后复核只作过期提示，执行status不增Trip.version的限制明确保留。
+
+A核对了B `final-regression-source.json` 与XML：exit0/source_unchanged=true、252 tests/0失败错误跳过；其中164个app文件原始哈希与4a8dcb3的Git换行规范等价，无差异。A未重新跑测试，也未称其为全量统一回归。B称公开开发六轮before1/6→first5/6→final6/6，仍为作者判定与公开开发题，不替代独立保留题。
+
+**新增P2：嵌套借用同一有限连接池存在池饥饿（INFERRED调度反例，未执行并发负载）。** semantic_turn在29行SELECT AssistantSession FOR UPDATE取得外层连接，60行调用loader；saved_trip_reads.py在同一个engine上再次connect，直到回到68行才提交外层事务。生产database.py未覆写pool参数；本地实际安装SQLAlchemy AsyncAdaptedQueuePool签名为pool_size=5,max_overflow=10,timeout=30s。如果15个独立请求分别先取得15条外层连接，再都等第二条，均可能等到30秒超时。现有fixture用NullPool，连接归还测试无法证明有限池容量安全。不能仅增大pool_size掩盖。应消除持有外层连接时嵌套借用同池的循环等待，例如先释放短会话事务、借独立快照后再按session签名CAS复核；若采用独立有界读池/准入，须明确全进程连接预算及取消释放。A已发给B，未直接改其源码。
+
+另一个接口限制：capture阶段SavedTripReadStale发生在semantic_turn主try之前，经ValueError转换成AssistantToolError；新增后段needs_retry捕获不覆盖该入口。不得声称每个过期入口均返回typed needs_retry；可通过统一捕获修正或准确记录边界。
+
+当前结论：原两项阻断的修复已核对，但4a8dcb3仍未接收/部署，等待连接容量和入口错误边界处理后的固定新SHA。整个产品NO-GO，A产品BASE继续89b81e8。
