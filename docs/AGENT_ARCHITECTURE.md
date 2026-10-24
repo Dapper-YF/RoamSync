@@ -1,5 +1,16 @@
 # RoamSync Agent v1 architecture contract
 
+## B3 scoped saved-trip read candidate (2026-10-24; not released)
+
+Internal read selection may carry server-validated page day/activity IDs into a
+detached bounded Trip snapshot. Selection and Companion project the same saved
+facts, Trip version and explicit scope/coverage; truncated reads never establish
+absence. Read IDs and saved-state facts are not action authorization and are not
+persisted as travel memory. Original rationale still comes only from the existing
+accepted-revision reader. This changes read projection only, not candidate,
+Validator/Accept, operation permissions, Graph states or the public message DTO.
+Evidence and limitations:AGENT_B3_SCOPED_READ_PLAN_20261024.md.
+
 ## A2 planning transaction and execution ownership candidate (2026-10-23; not released)
 
 Planning reads immutable server facts in short sessions, then resolves semantic,
