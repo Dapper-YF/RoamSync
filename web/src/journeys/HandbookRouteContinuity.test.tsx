@@ -25,7 +25,7 @@ function mount(){
 it('shows the actual route to the next place when deliberate free time lies between stops',async()=>{
   mount();
   await screen.findByRole('heading',{name:'午饭留白'});
-  expect(screen.getByText('前往 宽窄巷子 · 步行 15分钟 · AMap Route 2.0')).toBeVisible();
+  expect(screen.getByText('前往 宽窄巷子 · 步行 15分钟 · 1121米 · AMap Route 2.0')).toBeVisible();
   expect(screen.getByText('保留这段空闲，不自动补项目。')).toBeVisible();
 });
 

@@ -1,10 +1,11 @@
 """Identity-preserving adapter to the existing formal Candidate/Validator/Accept."""
 import math
+from datetime import time
 from uuid import UUID, uuid5
 
 from sqlalchemy import select
 
-from app.database import PlaceCandidate, SourceRecord, Trip, TripPreferences
+from app.database import PlaceCandidate, SourceRecord, Trip, TripPreferences, TripArrangementItem
 from app.schemas import CandidateActivity, CandidatePlanSnapshot, CandidateRouteLeg
 from .contracts import PromotionError
 from .preparation import valid_hashes
@@ -48,7 +49,34 @@ async def add_places(session, plan, operation):
             neighborhood=place.district or "", description=f"费用性质：{activity.cost_nature}；非实时可售报价。" + activity.note,
             longitude=place.location.longitude, latitude=place.location.latitude,
             suggested_duration_minutes=activity.duration_minutes, estimated_cost_fen=activity.estimated_cost_fen,
-            rating=place.rating or 0, tags=[f"canonical_place:{activity.place_id}", f"cost_nature:{activity.cost_nature}"]))
+            rating=place.rating or 0, tags=[f"canonical_place:{activity.place_id}",
+                f"provider_place:amap:{place.ref.external_ref.provider_place_id}",
+                f"place_address:{place.address or ''}", f"cost_nature:{activity.cost_nature}"]))
+    await session.flush()
+
+
+def window_values(plan, operation):
+    values = []
+    for window in plan.windows:
+        if len(window.label) > 160:
+            raise PromotionError("window_label_too_long", "休息或留白名称过长，请缩短后重新确认。")
+        blank = window.kind == "blank_day"
+        optional = window.kind == "optional"
+        start = None if optional else time(0) if blank else window.start_time
+        end = None if optional else time(23, 59) if blank else window.end_time
+        if not optional and (start is None or end is None or start >= end):
+            raise PromotionError("window_time_required", "休息或留白缺少明确起止时间，尚未保存。")
+        values.append({"id": uuid5(operation.id, f"window:{window.ref}"), "trip_id": operation.target_trip_id,
+            "kind": "optional" if optional else "free_window", "label": window.label,
+            "identity_key": f"draft-window:{window.ref}", "source_ref": f"draft:{plan.draft_id}:{window.ref}",
+            "decision_ref": f"candidate:{plan.id}:{window.kind}:{window.ref}", "place_id": None,
+            "day_date": window.day_date, "start_time": start, "end_time": end, "activity_id": None})
+    return values
+
+
+async def add_windows(session, plan, operation):
+    for values in window_values(plan, operation):
+        session.add(TripArrangementItem(**values))
     await session.flush()
 
 
@@ -65,6 +93,10 @@ async def verify_formal_binding(session, plan, operation, revision, run, trip):
         raise PromotionError("promotion_binding_changed", "候选来源关联已变化，请重新准备并确认。")
     if snapshot_for(plan, operation).model_dump(mode="json") != revision.proposed_snapshot:
         raise PromotionError("candidate_changed", "正式候选与您看到的方案不一致，请重新准备并确认。")
+    for values in window_values(plan, operation):
+        item = await session.get(TripArrangementItem, values["id"])
+        if item is None or any(getattr(item, key) != value for key, value in values.items()):
+            raise PromotionError("candidate_window_changed", "正式留白或备选与您看到的候选不一致，尚未采用。")
     c = plan.constraints
     if (trip.version != run.base_trip_version or trip.version != 1 or trip.archived_at is not None
         or trip.start_date != c.start_date or trip.end_date != plan.end_date or trip.destination != plan.city
@@ -88,5 +120,7 @@ async def verify_formal_binding(session, plan, operation, revision, run, trip):
             or abs(float(place.latitude) - a.place.location.latitude) > 0.0000006
             or place.estimated_cost_fen != a.estimated_cost_fen or place.suggested_duration_minutes != a.duration_minutes
             or source.provider != a.place.source.provider or source.url != a.place.source.source_url
+            or f"provider_place:amap:{a.place.ref.external_ref.provider_place_id}" not in place.tags
+            or f"place_address:{a.place.address or ''}" not in place.tags
             or f"canonical_place:{a.place_id}" not in place.tags or f"cost_nature:{a.cost_nature}" not in place.tags):
             raise PromotionError("formal_evidence_changed", "正式地点或费用资料已变化，请重新准备并确认。")

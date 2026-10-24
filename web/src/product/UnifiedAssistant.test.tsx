@@ -27,7 +27,7 @@ it("adopts into the same Provider session and the drawer continues that conversa
     if (url.endsWith("/messages/stream")) return new Response(`data: ${JSON.stringify({ type: "done", session: { ...session("A"), id: "session", messages: [] } })}\n\n`, { headers: { "Content-Type": "text/event-stream" } });
     throw Error("Unexpected " + url);
   }));
-  mount(); fireEvent.click(await screen.findByRole("button", { name: "采用并保存这份安排" }));
+  mount(); fireEvent.click(await screen.findByRole("button", { name: "创建旅行并生成日程" }));
   await waitFor(() => expect(screen.getByText("已经保存")).toBeVisible()); expect(adopted).toBe(true);
   fireEvent.click(screen.getByText("A")); fireEvent.click(screen.getByText("打开当前助手"));
   await screen.findByRole("dialog"); expect(screen.getByText("已经保存")).toBeVisible();
@@ -42,7 +42,7 @@ it("refreshes the same Trip after adopting a date-change preview and uses its ne
   let accepted = false;
   let actionTarget: unknown;
   vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
-    if (url.endsWith("/assistant/sessions")) return response({ ...session("A"), pending_action: { id: "date-preview", title: "南京改期", summary: "改到下周", start_date: "2026-11-14", end_date: "2026-11-15" } });
+    if (url.endsWith("/assistant/sessions")) return response({ ...session("A"), pending_action: { id: "date-preview", tool: "reschedule_trip", title: "南京改期", summary: "改到下周", start_date: "2026-11-14", end_date: "2026-11-15" } });
     if (url.endsWith("/decision")) { accepted = true; return response(session("A")); }
     if (url.endsWith("/arrangement-items")) {
       const arrangement = trip("A", accepted ? 5 : 4);
@@ -58,7 +58,7 @@ it("refreshes the same Trip after adopting a date-change preview and uses its ne
   mount("/trips/A");
   await waitFor(() => expect(screen.getByTestId("arrangement-date")).toHaveTextContent("2026-11-07"));
   fireEvent.click(screen.getByText("打开当前助手"));
-  fireEvent.click(await screen.findByRole("button", { name: "采用并保存这份安排" }));
+  fireEvent.click(await screen.findByRole("button", { name: "确认修改旅行日期" }));
   await waitFor(() => expect(screen.getByTestId("arrangement-date")).toHaveTextContent("2026-11-14"));
   fireEvent.change(screen.getByRole("textbox", { name: "告诉助手你的旅行想法" }), { target: { value: "玄武湖还是备选，不要排进去" } });
   fireEvent.click(screen.getByRole("button", { name: "发送消息" }));
@@ -124,11 +124,11 @@ it('shows a whole blank day with its date while preserving ordinary timed free w
     ]}});
   }));
   mount();
-  const preview=await screen.findByRole('region',{name:'待采用的安排建议'});
+  const preview=await screen.findByRole('region',{name:'待确认的创建信息'});
   const blank=within(preview).getByText('第二天什么都不排').closest('li')!;
   expect(blank).toHaveTextContent('整天留白 · 2026-11-11');
   expect(blank).not.toHaveTextContent(/00:00|23:59/);
   expect(within(preview).getByText('午后歇一会儿').closest('li')).toHaveTextContent('保留空闲 · 2026-11-10 14:00—15:30');
-  expect(within(preview).getByRole('button',{name:'采用并保存这份安排'})).toBeEnabled();
+  expect(within(preview).getByRole('button',{name:'创建旅行并生成日程'})).toBeEnabled();
   expect(writes.every(url=>url.endsWith('/assistant/sessions'))).toBe(true);
 });

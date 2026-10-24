@@ -20,7 +20,7 @@ describe("natural assistant result boundary", () => {
       ]}}));
     }));
     mount('/');
-    const preview=await screen.findByRole('region',{name:'待采用的安排建议'});
+    const preview=await screen.findByRole('region',{name:'待确认的创建信息'});
     const blank=within(preview).getByText('第二天什么都不排').closest('li')!;
     expect(blank).toHaveTextContent('整天留白 · 2026-11-11');
     expect(blank).not.toHaveTextContent(/00:00|23:59/);
@@ -108,4 +108,18 @@ describe("natural assistant result boundary", () => {
     await waitFor(() => expect(urls).toContain("/api/v1/assistant/sessions"));
     expect(urls.some(url => /\/trips|planning-runs/.test(url))).toBe(false);
   });
+});
+
+it('keeps legacy saved revisions concise without losing their protected acceptance',async()=>{
+  const activities=Array.from({length:8},(_,i)=>({id:`a${i}`,place_id:`p${i}`,name:`地点${i}`,display_name:`地点${i}`,scheduled_time:'09:00',duration_minutes:60,version:1,schedule_locked:false,note:null}));
+  vi.stubGlobal('fetch',vi.fn(async(url:string)=>{
+    if(url.endsWith('/assistant/sessions'))return new Response(JSON.stringify({...session,latest_run_id:'run'}));
+    if(url.endsWith('/planning-runs/run'))return new Response(JSON.stringify({id:'run',status:'awaiting_confirmation'}));
+    if(url.endsWith('/planning-runs/run/revision'))return new Response(JSON.stringify({id:'revision',status:'pending',reason:'只调整第一站',proposed_snapshot:{activities:activities.map((a,i)=>({candidate_id:`c${i}`,replaces_activity_id:a.id,place_candidate_id:a.place_id,day_date:'2026-11-07',planned_start_time:i===0?'10:00':'09:00',duration_minutes:60}))},validation_result:{}}));
+    return new Response(JSON.stringify({...base,days:[{id:'day',date:'2026-11-07',activities,route_legs:[]}]}));
+  }));
+  mount();
+  const section=await screen.findByRole('region',{name:'局部调整建议'});
+  expect(within(section).getAllByRole('listitem')).toHaveLength(1);
+  expect(within(section).getByRole('button',{name:'采用这次调整'})).toBeEnabled();
 });

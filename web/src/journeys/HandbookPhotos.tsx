@@ -1,20 +1,22 @@
 import {useEffect, useState} from 'react';
-import type {Coordinates} from '../domain/types';
+import type {CanonicalPlaceRef, Coordinates} from '../domain/types';
 import {approvedPhotos, type ContentPlace} from '../data/placeContentRepository';
 import {PlaceCover} from '../components/PlacePhotos';
 
 type Illustration = Pick<ContentPlace, 'ref' | 'name' | 'city' | 'location' | 'images'>;
 const cache = new Map<string, Promise<Illustration[]>>();
 
-export function matchingIllustration(items: Illustration[], name?: string, coordinates?: Coordinates) {
-  if (!name) return items[0];
-  // Custom titles and other same-named parks cannot borrow a photo.
-  return items.find(p => p.name === name && coordinates &&
-    Math.abs(p.location.longitude - coordinates[0]) < .002 &&
-    Math.abs(p.location.latitude - coordinates[1]) < .002);
+export function matchingIllustration(items: Illustration[], name?: string, coordinates?: Coordinates, placeRef?: CanonicalPlaceRef | null) {
+  if (!name && !placeRef) return items[0];
+  if (!placeRef) return undefined;
+  return items.find(p => p.ref.place_id === placeRef.place_id &&
+    p.ref.external_ref.provider === placeRef.external_ref.provider &&
+    p.ref.external_ref.provider_place_id === placeRef.external_ref.provider_place_id &&
+    (!coordinates || (Math.abs(p.location.longitude - coordinates[0]) < .002 &&
+      Math.abs(p.location.latitude - coordinates[1]) < .002)));
 }
 
-export function HandbookPhoto({city, name, coordinates}: {city: string; name?: string; coordinates?: Coordinates}) {
+export function HandbookPhoto({city, name, coordinates, placeRef}: {city: string; name?: string; coordinates?: Coordinates; placeRef?: CanonicalPlaceRef | null}) {
   const [items, setItems] = useState<Illustration[]>([]);
   useEffect(() => {
     let active = true;
@@ -33,7 +35,7 @@ export function HandbookPhoto({city, name, coordinates}: {city: string; name?: s
     void cache.get(key)!.then(data => { if (active) setItems(data); }).catch(() => {});
     return () => { active = false; };
   }, [city]);
-  const place = matchingIllustration(items, name, coordinates);
+  const place = matchingIllustration(items, name, coordinates, placeRef);
   if (!place) return null;
   const photos = approvedPhotos(place.images, place.ref.place_id, place.ref.external_ref.provider_place_id);
   if (!photos.length) return null;

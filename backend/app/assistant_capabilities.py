@@ -16,6 +16,7 @@ from app.assistant_memory import MemoryUpdate, memory_prompt, local_today
 from app.saved_intentions import IntentionProposal
 from app.assistant_operation import CreationProposal
 from app.schemas import SemanticIntentDraft
+from app.conversation_candidate.commands import CandidateCommand
 
 
 Capability = Literal["poi", "web", "route", "facts", "itinerary"]
@@ -68,6 +69,7 @@ class CapabilityDecision(BaseModel):
     fact_kind: Literal["weather", "opening_hours", "other"] = "other"
     creation: CreationProposal | None = None
     planning_draft: SemanticIntentDraft | None = None
+    candidate_command: CandidateCommand | None = None
 
 
 class WebQuote(BaseModel):
@@ -108,6 +110,12 @@ SELECTION_INSTRUCTIONS += " For create/modify, names must include literal named 
 SELECTION_INSTRUCTIONS += " Extract saved_intentions ONLY for a CURRENT explicit personal decision to visit a particular place or an explicit request to remember it: 我明天下午去人民公园，几点再说 / 记下这里，日期未定. These independent intentions do NOT create a Trip, require dates, or schedule any activity. Use intent=direct, capabilities=[] for a standalone intention. place_text is literal current text or the selected place name when 这里 is explicit; source_quote is the exact full affirmative user clause, date_text copies literal relative/absolute date or empty, time_period copies an explicit period or empty. Never extract questions, hypothetical/quoted/third-party wishes, tentative comparisons, generic interests, negative statements or requests not to save. For an explicit itinerary planning request use the existing create/modify workflow and saved_intentions=[]; never duplicate it as independent items."
 
 
+SELECTION_INSTRUCTIONS += """ For a NEW timed itinerary preview before a Trip exists, emit candidate_command.action=generate together with intent=create and creation metadata. This SAME semantic decision supplies plan.schema_version=2, explicit schedule_constraints and consecutive relative day_index days. Missing departure date/day count or daily bounds: leave candidate_command null and ask only missing fields through creation. Never put invented IDs in the plan: place_id/provider_place_id=null, identity_status=unknown. Stable item_ref is a short ASCII identifier, e.g. park/lunch/street. Use the exact already selected POI name or literal requested name, never add unrequested stops. Visits have duration_minutes and duration_source=planning_allocation unless the user explicitly supplied that numeric duration; source_quote must be a literal user phrase. Preserve requested meal/rest/free_window items as windows rather than fake venues; allocate their duration/clock honestly within the requested bounds, preserve optional/blank_day kinds. No unsupported feasibility promises. Copy transport_mode from user's explicit walking/driving choice; transit stays transit and will be blocked, never replace it with walk. Never invent budget or walking maximum. New-trip dates/city come from effective_conditions/current user, not your memory. Candidate generation is not permission to save. When trip.candidate is present it is the server's current unsaved candidate, with exact plan and item_ref. A local duration request uses candidate_command.action=modify with patches=[{item_ref,source_quote,duration_minutes}], plan=null. Only target the named existing visit and quote its full current literal change clause; do not replan or replace untouched fields. Unsupported changes leave candidate_command null and clarify what can be changed; never fall through to creating another Trip. An explicit CURRENT adopt-and-save request uses action=adopt, plan=null, patches=[], source_quote=exact current affirmative save clause; future '等我采用后再保存' does NOT authorize save. An explicit discard uses action=discard. Saved Trip modifications continue through the existing planning_draft/PlanRevision and candidate_command=null. The server validates all authority and evidence; do not claim any write already happened."""
+
+
+SELECTION_INSTRUCTIONS += " For candidate duration patches operation=set means a final duration, increase/decrease means a delta from the current server plan. Copy an explicit quantity (多留半小时 => operation=increase,duration_minutes=30,quantity_source=user_explicit); 少逛一点 may propose a decrease with quantity_source=planning_allocation, and the server will label it as a proposal. Each patch.source_quote contains exactly one independent clause naming its own target; never borrow a verb/quantity/negation from a peer. Departure and end are schedule constraints, never extra visit items."
+
+
 async def select_capabilities(settings, message, history, envelope, trip_summary=None):
     selected = [c["place"] for m in history[-3:] for c in m.get("place_cards", [])][:8]
     client = build_model_client(settings)
@@ -120,7 +128,7 @@ async def select_capabilities(settings, message, history, envelope, trip_summary
                 "browsing_city": envelope.browsing_city, "effective_conditions": memory_prompt(envelope),
                 "current_local_date": local_today().isoformat(), "trip": trip_summary}, ensure_ascii=False),
             text_format={"type": "json_schema", "name": "assistant_capabilities", "schema": CapabilityDecision.model_json_schema()},
-            reasoning_effort="low", max_output_tokens=2400, temperature=.1), stage="selection", limit=18)
+            reasoning_effort="low", max_output_tokens=5000, temperature=.1), stage="selection", limit=30)
         if reply.status != "completed":
             raise ValueError("incomplete_selection")
         decision = CapabilityDecision.model_validate(json.loads(normalize_structured_json(reply.output_text), strict=False))
@@ -131,6 +139,20 @@ async def select_capabilities(settings, message, history, envelope, trip_summary
 
 
 def validate_decision(decision, message, history, envelope, selected=(), *, _task=False):
+    candidate_authorized = False
+    if decision.candidate_command is not None:
+        from app.conversation_candidate.commands import validate_command
+        try:
+            validate_command(decision.candidate_command, message)
+        except ValueError:
+            return decision.model_copy(update={"intent": "direct", "capabilities": [], "candidate_command": None,
+                "authorization_quote": "", "reason_code": "stable_knowledge"})
+        candidate_authorized = True
+        # The typed operation is the dispatch authority after source validation.
+        # A redundant broad 'execution' label must not lose an adopt command.
+        kind = "create" if decision.candidate_command.action == "generate" else "modify"
+        decision = decision.model_copy(update={"intent": kind, "authorization_quote": decision.candidate_command.source_quote,
+            "capabilities": [], "reason_code": "explicit_write"})
     from app.assistant_operation import normalize_creation_evidence
     decision=normalize_creation_evidence(decision,message)
     # Arguments carry provenance, not model-owned identities. No invented UUIDs.
@@ -187,6 +209,11 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
     city_prefix = (decision.city or envelope.browsing_city or "").removesuffix("市")
     arguments = [("city", decision.city.removesuffix("市")), *[("names", n) for n in decision.names],
                  ("origin", decision.origin), ("destination", decision.destination), ("near_name", decision.near_name)]
+    if decision.candidate_command is not None and decision.intent in {"create", "modify"}:
+        # V2 writes use their source-bound plan/patch refs, not read-search
+        # arguments. Validating an unused duplicate name here reinterprets the
+        # same intent and rejects verified name+address selections upstream.
+        arguments = [("city", decision.city.removesuffix("市"))]
     for field, value in arguments:
         short = value.removeprefix(city_prefix + "市").removeprefix(city_prefix) if city_prefix else value
         if value and value not in user_text and (not short or short not in user_text):
@@ -194,7 +221,7 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
             if turn:
                 turn.record("selection_policy", "blocked", code="untraceable_argument", field=field)
             return CapabilityDecision(intent="clarify", clarification="请明确一下要查询的城市或地点。", reason_code="missing_arguments")
-    if decision.intent in {"create", "modify", "execution"}:
+    if decision.intent in {"create", "modify", "execution"} and not candidate_authorized:
         quote = decision.authorization_quote
         # Dates/duration/preferences update the conversation by default. A bare
         # "改成11月5日，玩三天" has no itinerary target or write request.
@@ -204,12 +231,12 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
             return decision.model_copy(update={"intent": "direct", "capabilities": [], "authorization_quote": "",
                 "clarification": "", "reason_code": "stable_knowledge", "illustrate": False})
         if (not quote or quote not in message or
-            not re.search(r"规划|安排|创建|生成|制定|保存|整理|协调|加入|添加|删除|删掉|取消|撤销|改|调整|换|挪|移|重排|保留|延长|结束|再待|多待", quote) or
+            not re.search(r"规划|安排|创建|生成|制定|保存|整理|协调|加入|添加|删除|删掉|取消|撤销|改|调整|换|挪|移|重排|保留|延长|结束|再待|多待|多留|少逛", quote) or
             (re.search(r"怎么|怎样|如何|会怎样|是什么|什么意思|是否|好不好", message)
              and not re.search(r"(?:请|帮我|替我|给我|能不能帮我|能否帮我).{0,30}(?:安排|规划|调整|修改|生成|保存)", message)) or
             re.search(r"假如|假设|如果|先别|先不|暂不|不要修改|不要安排|不用修改|只(?:问|了解|讨论)", quote) or
             not affirmative_action_source(message, quote,
-                r"规划|安排|创建|生成|制定|保存|整理|协调|加入|添加|删除|删掉|取消|撤销|改|调整|换|挪|移|重排|保留|延长|结束|再待|多待")):
+                r"规划|安排|创建|生成|制定|保存|整理|协调|加入|添加|删除|删掉|取消|撤销|改|调整|换|挪|移|重排|保留|延长|结束|再待|多待|多留|少逛")):
             return decision.model_copy(update={"intent": "direct", "capabilities": [], "authorization_quote": "",
                 "reason_code": "stable_knowledge"})
         decision = decision.model_copy(update={"capabilities": []})
@@ -289,7 +316,7 @@ def affirmative_action_source(message, quote, verbs):
                for match in re.finditer(verbs, quote))
 
 
-def affirmative_entity_source(message, quote, verbs, name, *, allow_optional=False):
+def affirmative_entity_source(message, quote, verbs, name, *, allow_optional=False, permission_particles=False):
     """Bind an action to this entity, not a positive action about its peer.
 
     Ambiguous coordinated prose stays unapproved; it does not borrow a verb
@@ -308,6 +335,8 @@ def affirmative_entity_source(message, quote, verbs, name, *, allow_optional=Fal
         gap_pattern = r"(?:一下|一趟|参观|游览|确定|要|作为|是|的|也|先|再|就|暂时|暂|不|别|不要|不用|无需|不必|路线|顺序|时间|停留|时长"
         if allow_optional:
             gap_pattern += r"|有时间|看情况|不一定|可去可不去"
+        if permission_particles:
+            gap_pattern += r"|可以|可"
         if gap is None or not re.fullmatch(gap_pattern + r")*", gap):
             continue
         if not _non_authorizing_context(clause, action[0], start=action.start()):

@@ -90,9 +90,23 @@ def _place_response(
 def _activity_response(
     activity: Activity, place: PlaceCandidate, source: SourceRecord
 ) -> ActivityResponse:
+    canonical, address = None, None
+    identities = [tag.removeprefix("canonical_place:") for tag in place.tags if tag.startswith("canonical_place:")]
+    providers = [tag.removeprefix("provider_place:amap:") for tag in place.tags if tag.startswith("provider_place:amap:")]
+    addresses = [tag.removeprefix("place_address:") for tag in place.tags if tag.startswith("place_address:")]
+    if len(identities) == len(providers) == 1:
+        try:
+            canonical = {"place_id": str(uuid.UUID(identities[0])), "external_ref": {
+                "provider": "amap", "namespace": "poi", "provider_place_id": providers[0]}}
+        except ValueError:
+            pass
+    if canonical and len(addresses) == 1:
+        address = addresses[0] or None
     return ActivityResponse(
         id=activity.id,
         place_id=place.id,
+        canonical_place_ref=canonical,
+        address=address,
         name=place.name,
         custom_name=activity.custom_name,
         display_name=activity.custom_name or place.name,

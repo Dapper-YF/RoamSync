@@ -65,7 +65,9 @@ def test_destination_catalog_is_local_city_scoped_and_reuses_approved_assets(mon
     client = TestClient(app)
     response = client.get('/api/v1/media/place-images', params={'city': '成都'})
     assert response.status_code == 200
-    item, = response.json()['items']
+    by_name = {item['name']: item for item in response.json()['items']}
+    assert set(by_name) == {'人民公园', '宽窄巷子景区'}
+    item = by_name['人民公园']
     assert item['name'] == '人民公园' and item['city'] == '成都市'
     assert item['ref']['place_id'] == str(stable_place_id('B001C7X8QA'))
     assert item['images'][0]['usage_basis'] == 'reviewed_commons_license'
@@ -107,3 +109,50 @@ def test_new_hangzhou_image_bindings_and_local_asset_http_projection():
                 assert response.status_code == 200 and response.headers["content-type"] == "image/jpeg"
                 assert response.content.startswith(b"\xff\xd8")
                 assert hashlib.sha256(response.content).hexdigest() == entry["files"][0]["assets"][size]["sha256"]
+
+
+def test_kuanzhai_cc0_photo_binds_only_the_exact_whole_scenic_area():
+    entries = [row for row in CATALOG if row['provider_place_id'] == 'B001C7YCM4']
+    assert len(entries) == 1
+    entry = entries[0]
+    assert (entry['name'], entry['city'], entry['longitude'], entry['latitude']) == ('宽窄巷子景区', '成都市', 104.053307, 30.663869)
+    place = normalize_poi({'id': 'B001C7YCM4', 'name': entry['name'], 'cityname': entry['city'],
+        'location': '104.053307,30.663869', 'typecode': '110000'})
+    assert str(place.ref.place_id) == '8ca144f2-f437-5d2e-a38a-9b77c7363e0b'
+    photo, = place.images
+    assert photo.attribution == 'Daderot' and photo.license_name == 'CC0'
+    assert photo.license_url == 'https://creativecommons.org/publicdomain/zero/1.0/deed.en'
+    assert photo.place_ref == place.ref
+    assert photo.source_url.endswith('File:Street_scene_-_Kuanzhai_Alleys_-_Chengdu,_China_-_DSC05311.jpg')
+    assert entry['files'][0]['original_sha1'] == 'd85ed6d21e60ae8040959da487974b4b68bf65fa'
+    # Nearby metro, shops, individual scenic sub-sites and entrances cannot borrow this photo.
+    for provider_id, name, typecode in [('BV10536811', '宽窄巷子(地铁站)', '150500'),
+        ('B0FFIL06X6', '宽巷子3号(宽窄巷子店)', '050000'),
+        ('B0FFHQRM8G', '宽窄巷子景区-窄径', '110000'),
+        ('B0FFHXLNMY', '宽窄巷子(B口)', '050000')]:
+        assert not normalize_poi({'id': provider_id, 'name': name, 'cityname': entry['city'],
+            'location': '104.053307,30.663869', 'typecode': typecode}).images
+    app = FastAPI()
+    app.include_router(create_router(None))
+    with TestClient(app) as client:
+        for size, url in [('480', photo.thumbnail_url), ('960', photo.url)]:
+            response = client.get(url)
+            asset = entry['files'][0]['assets'][size]
+            assert response.status_code == 200 and response.headers['content-type'] == 'image/jpeg'
+            assert len(response.content) == asset['bytes']
+            assert hashlib.sha256(response.content).hexdigest() == asset['sha256']
+
+
+def test_all_reviewed_local_variants_match_the_license_manifest_digests():
+    for entry in CATALOG:
+        assert entry['identity_evidence'] and entry['provider_place_id']
+        for photo in entry['files']:
+            assert photo['author'] and photo['reviewed_at'] and photo['changes']
+            assert photo['source_url'].startswith('https://commons.wikimedia.org/wiki/File:')
+            assert photo['license_url'].startswith('https://creativecommons.org/')
+            assert len(photo['original_sha1']) == 40
+            for asset in photo['assets'].values():
+                blob = (MEDIA / asset['filename']).read_bytes()
+                assert blob.startswith(b'\xff\xd8')
+                assert len(blob) == asset['bytes']
+                assert hashlib.sha256(blob).hexdigest() == asset['sha256']

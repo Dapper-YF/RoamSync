@@ -104,7 +104,12 @@ class DraftService:
     def __init__(self, repository, generator):
         self.repository, self.generator = repository, generator
 
+    def _legacy(self, owner, draft_id):
+        if self.repository.get(owner, draft_id).schema_version != 1:
+            raise DraftError("candidate_protocol_required")
+
     async def run(self, owner, draft_id, request):
+        await asyncio.to_thread(self._legacy, owner, draft_id)
         draft, run, started = await asyncio.to_thread(self.repository.begin_run, owner, draft_id, request, self.generator.source)
         if not started:
             return draft
@@ -148,6 +153,7 @@ class DraftService:
 
     async def edit_resolved(self, owner, draft_id, request):
         """Resolve newly selected search references through the existing Place service."""
+        await asyncio.to_thread(self._legacy, owner, draft_id)
         current = await asyncio.to_thread(self.repository.get, owner, draft_id)
         if current.version != request.expected_version:
             raise DraftError("draft_version_conflict")
@@ -173,7 +179,10 @@ class DraftService:
         return await asyncio.to_thread(self.edit, owner, draft_id, request, verified)
 
     def edit(self, owner, draft_id, request, verified_references=frozenset()):
+        self._legacy(owner, draft_id)
         def apply(draft):
+            if draft.schema_version != 1:
+                raise DraftError("candidate_protocol_required")
             if draft.status != "active":
                 raise DraftError("draft_cancelled")
             if any(run.status == "running" for run in draft.runs):
@@ -210,7 +219,10 @@ class DraftService:
         return self.repository.mutate(owner, draft_id, request.expected_version, apply)
 
     def revoke_requirement(self, owner, draft_id, version, requirement_id, day_index=None):
+        self._legacy(owner, draft_id)
         def apply(draft):
+            if draft.schema_version != 1:
+                raise DraftError("candidate_protocol_required")
             if draft.status != "active" or any(r.status == "running" for r in draft.runs):
                 raise DraftError("draft_not_editable")
             if day_index is not None and not 1 <= day_index <= draft.day_count:
@@ -224,7 +236,10 @@ class DraftService:
         return self.repository.mutate(owner, draft_id, version, apply)
 
     def action(self, owner, draft_id, version, action):
+        self._legacy(owner, draft_id)
         def apply(draft):
+            if draft.schema_version != 1:
+                raise DraftError("candidate_protocol_required")
             if action == "cancel":
                 draft.status = "cancelled"
             elif action == "restore":

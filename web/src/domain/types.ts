@@ -142,6 +142,8 @@ export interface Activity {
   placeId: string;
   name: string;
   originalName: string;
+  canonicalPlaceRef?: CanonicalPlaceRef | null;
+  address?: string | null;
   customName?: string;
   category: PlaceCategory;
   neighborhood: string;
@@ -446,7 +448,23 @@ export type AssistantStreamEvent =
   | { type: "done"; session: AssistantSession }
   | { type: "error"; message: string; code?: string; correlation_id?: string | null };
 
+export type CanonicalPlaceRef = import('../data/placeContentRepository').ContentPlace['ref'];
+export interface CandidatePresentation {
+  protocol_version: 2;
+  draft_id: string; draft_version: number; prepared_id: string; prepared_hash: string; presentation_hash: string;
+  stage: 'ready' | 'needs_input' | 'saving' | 'saved' | 'needs_review' | 'stale' | 'failed';
+  title: string; city: string; start_date: string; end_date: string; summary: string;
+  stops: Array<{ref: string; name: string; address: string | null; day_date: string; start_time: string; end_time: string; duration_minutes: number; note: string; estimated_cost_fen?: number; cost_nature?: "provider_reference" | "planning_estimate"; place_ref: CanonicalPlaceRef | null; images: import('../data/placeContentRepository').ContentImage[]}>;
+  windows: Array<{ref: string; kind: string; label: string; day_date: string; start_time: string | null; end_time: string | null}>;
+  routes: Array<{from_ref: string; to_ref: string; day_date: string; mode: string; distance_meters: number; duration_minutes: number; provider: string}>;
+  constraints?: {start_date: string; daily_start_time: string; daily_end_time: string; transport_mode: string; max_walking_minutes: number | null; walking_scope: string; total_budget_fen: number | null; daily_budget_fen: number | null} | null;
+  constraint_checks?: Array<{requirement_ref: string; status: 'satisfied' | 'violated' | 'unverified'; source_quote: string; source_ref: string}>;
+  warnings: string[]; blockers: string[]; change_summary: string[];
+  trip_id: string | null; operation_id: string | null;
+}
+
 export interface AssistantSession {
+  candidate?: CandidatePresentation | null;
   id: string;
   trip_id: string | null;
   latest_run_id: string | null;

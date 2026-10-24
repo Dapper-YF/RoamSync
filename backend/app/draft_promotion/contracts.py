@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import Field, model_validator
 
-from app.drafts.contracts import DTO
+from app.drafts.contracts import DTO, DraftScheduleConstraints
 from app.place_content.contracts import Place, RouteResult
 
 
@@ -47,6 +47,39 @@ class PreparedActivity(DTO):
     estimated_cost_fen: int
     cost_nature: Literal["provider_reference", "planning_estimate"]
     note: str
+    end_time: time | None = None
+    duration_source: Literal["user_explicit", "planning_allocation"] = "planning_allocation"
+    source_quote: str = ""
+
+
+class PreparedWindow(DTO):
+    ref: str
+    kind: Literal["meal", "rest", "free_window", "optional", "blank_day"]
+    label: str
+    day_date: date
+    start_time: time | None = None
+    end_time: time | None = None
+    source_quote: str = ""
+    note: str = ""
+    place_id: UUID | None = None
+    provider_place_id: str | None = None
+    duration_minutes: int | None = None
+    duration_source: Literal["user_explicit", "planning_allocation"] = "planning_allocation"
+
+
+class PreparedConstraintCheck(DTO):
+    requirement_ref: str
+    status: Literal["satisfied", "violated", "unverified"]
+    source_quote: str
+    source_ref: str
+
+
+class PreparedDayConstraints(DTO):
+    day_index: int = Field(ge=1, le=14)
+    day_date: date
+    title: str
+    start_time: time
+    end_time: time
 
 
 class PreparedRoute(DTO):
@@ -64,6 +97,7 @@ class Coverage(DTO):
 
 
 class PreparedPlan(DTO):
+    schema_version: Literal[1, 2] = 1
     id: UUID
     draft_id: UUID
     draft_version: int
@@ -73,15 +107,31 @@ class PreparedPlan(DTO):
     requirements: str
     requirement_records: list[dict] = Field(default_factory=list)
     constraints: PreviewRequest
+    schedule_constraints: DraftScheduleConstraints | None = None
     end_date: date
     activities: list[PreparedActivity]
     routes: list[PreparedRoute]
+    windows: list[PreparedWindow] = Field(default_factory=list)
+    constraint_checks: list[PreparedConstraintCheck] = Field(default_factory=list)
+    day_constraints: list[PreparedDayConstraints] = Field(default_factory=list)
+    change_summary: list[str] = Field(default_factory=list, max_length=100)
     coverage: Coverage
     content_hash: str
     evidence_hash: str
     prepared_hash: str
     created_at: datetime
     expires_at: datetime
+
+    @model_validator(mode="after")
+    def compatible_schema(self):
+        if self.schema_version == 1:
+            if self.windows or self.schedule_constraints is not None or self.constraint_checks or self.day_constraints or self.change_summary:
+                raise ValueError("v1 prepared plan cannot contain v2 schedule")
+            if any(a.end_time is not None or a.duration_source != "planning_allocation" or a.source_quote for a in self.activities):
+                raise ValueError("v1 prepared activities cannot contain unhashed v2 schedule fields")
+        if self.schema_version == 2 and self.schedule_constraints is None:
+            raise ValueError("v2 prepared plan requires schedule_constraints")
+        return self
 
 
 class ConfirmRequest(DTO):
@@ -100,6 +150,9 @@ class ConfirmRequest(DTO):
 
 
 class Operation(DTO):
+    protocol_version: Literal[1, 2] = 1
+    execution_mode: Literal["legacy_checkpoint", "atomic_candidate_v2"] = "legacy_checkpoint"
+    publication_binding: dict | None = None
     id: UUID
     draft_id: UUID
     draft_version: int
@@ -121,6 +174,13 @@ class Operation(DTO):
     validation: dict | None = None
     equivalence_check: dict | None = None
     updated_at: datetime
+
+    @model_validator(mode="after")
+    def compatible_protocol(self):
+        expected = "legacy_checkpoint" if self.protocol_version == 1 else "atomic_candidate_v2"
+        if self.execution_mode != expected:
+            raise ValueError("operation protocol_version and execution_mode must agree")
+        return self
 
 
 class PromotionError(Exception):

@@ -99,6 +99,17 @@ def recover_creation_quotes(decision, user_message):
     return choices
 
 
+def declared_place_choice(name, user_text, source_quote=""):
+    """Shared finite selected/optional/excluded policy, never POI resolution."""
+    mentions = [part for part in re.split(r"[，,。；;\n]", user_text) if name in part]
+    latest = mentions[-1] if mentions else ""
+    if re.search(r"不去|取消|别安排|不想去", latest):
+        return "excluded"
+    if re.search(r"有时间|备选|不一定|看情况|可去可不去", _compact(source_quote) or latest):
+        return "optional"
+    return "selected"
+
+
 async def prepare_choices(decision, city, user_text):
     from app.maps_service import search_amap_places
     source = _compact(user_text)
@@ -134,13 +145,12 @@ async def prepare_choices(decision, city, user_text):
                 raise ValueError("地点日期与该事项的用户原句不一致，请核对日期")
             if not day_refs and not explicit_dates and decision.start_date != decision.end_date:
                 raise ValueError("该地点尚未指定哪一天，请保持日期未定")
-        mentions = [part for part in re.split(r"[，,。；;\n]", user_text) if core_name in part]
-        latest = mentions[-1] if mentions else ""
-        if re.search(r"不去|取消|别安排|不想去", latest):
+        polarity = declared_place_choice(core_name, user_text, choice.source_quote)
+        if polarity == "excluded":
             raise ValueError("这次已撤销的地点不能从旧讨论中恢复，请核对建议")
         data = choice.model_dump(mode="json")
         data["label"] = choice.source_quote if choice.kind == "blank_day" else label
-        if choice.kind in {"selected", "optional"} and re.search(r"有时间|备选|不一定|看情况|可去可不去", quote or latest):
+        if choice.kind in {"selected", "optional"} and polarity == "optional":
             data["kind"] = "optional"
         if choice.kind in {"selected", "optional"} and re.search(r"未定|不定|暂不排|没定", quote):
             data["day_date"] = None

@@ -14,7 +14,7 @@ from app.repository import create_trip
 from app.schemas import TripCreate
 from .contracts import Operation, PromotionError
 from .guard import _CAPABILITY, locked_draft
-from .materialize import add_places, snapshot_for
+from .materialize import add_places, add_windows, snapshot_for
 from .preparation import digest, prepare, refresh_equivalent, valid_hashes
 from .repository import get_operation, get_prepared, prepared_plans, promotions, save_operation
 
@@ -87,6 +87,8 @@ class DraftPromotionService:
                         raise PromotionError("idempotency_key_reused", "同一操作编号不能提交不同内容。")
                     return Operation.model_validate(existing["snapshot"])
                 plan = await get_prepared(session, owner, request.prepared_id)
+                if plan.schema_version != 1:
+                    raise PromotionError("candidate_protocol_required", "请使用支持当前候选版本的保存入口。")
                 self._check_plan(plan, request)
                 if plan.operation_id:
                     raise PromotionError("review_confirmation_required", "请在原转换操作中重新确认。")
@@ -135,6 +137,8 @@ class DraftPromotionService:
             if op.status not in {"needs_review", "failed"} or op.revoked_at or op.consumed_at:
                 raise PromotionError("review_unavailable", "当前转换不能重新确认。")
             plan = await get_prepared(session, owner, request.prepared_id)
+            if plan.schema_version != 1 or op.protocol_version != 1 or op.execution_mode != "legacy_checkpoint":
+                raise PromotionError("candidate_protocol_required", "新版候选需要重新展示并从当前对话保存，不能复用旧版重新确认。")
             self._check_plan(plan, request)
             if plan.operation_id != op.id or plan.draft_id != op.draft_id:
                 raise PromotionError("review_binding_mismatch", "新方案不属于当前转换。")
@@ -190,92 +194,104 @@ class DraftPromotionService:
 
     async def _t1(self, owner, operation_id):
         async with self.sessions() as session, session.begin():
-            op, row = await get_operation(session, owner, operation_id, lock=True)
-            if not self._active(op) or op.target_trip_id:
-                return
-            plan = await get_prepared(session, owner, op.prepared_id)
+            return await self._t1_unit(session, owner, operation_id)
+
+    async def _t1_unit(self, session, owner, operation_id, *, check_draft=True):
+        op, row = await get_operation(session, owner, operation_id, lock=True)
+        if not self._active(op) or op.target_trip_id:
+            return
+        plan = await get_prepared(session, owner, op.prepared_id)
+        if check_draft:
             await locked_draft(session, owner, op.draft_id, op.draft_version)
-            if not valid_hashes(plan) or plan.prepared_hash != op.prepared_hash:
-                raise PromotionError("prepared_hash_mismatch", "方案指纹变化，请重新准备并确认。")
-            trip = await create_trip(session, TripCreate(title=plan.title, destination=plan.city,
-                start_date=plan.constraints.start_date, end_date=plan.end_date,
-                total_budget_fen=plan.constraints.total_budget_fen, daily_budget_fen=plan.constraints.daily_budget_fen), commit=False)
-            # Create-only also transfers approved user requirements. It does
-            # not need a candidate or an artificial PlanningRun as memory.
-            preferences = await session.get(TripPreferences, trip.id)
-            preferences.requirement_records = promote_requirements(plan.requirement_records,
-                draft_id=plan.draft_id, trip_id=trip.id, city=trip.destination, start_date=trip.start_date)
-            preferences.free_text_requirements = plan.requirements
-            op.target_trip_id = trip.id
-            op.status, op.stage, op.error = "trip_created", "trip_committed", None
-            if op.allowed_action == "create_only":
-                op.status, op.stage, op.consumed_at = "created", "create_only_completed", datetime.now(UTC)
-            op.updated_at = datetime.now(UTC)
-            await save_operation(session, op, row)
+        if not valid_hashes(plan) or plan.prepared_hash != op.prepared_hash:
+            raise PromotionError("prepared_hash_mismatch", "方案指纹变化，请重新准备并确认。")
+        trip = await create_trip(session, TripCreate(title=plan.title, destination=plan.city,
+            start_date=plan.constraints.start_date, end_date=plan.end_date,
+            total_budget_fen=plan.constraints.total_budget_fen, daily_budget_fen=plan.constraints.daily_budget_fen), commit=False)
+        # Create-only also transfers approved user requirements. It does
+        # not need a candidate or an artificial PlanningRun as memory.
+        preferences = await session.get(TripPreferences, trip.id)
+        preferences.requirement_records = promote_requirements(plan.requirement_records,
+            draft_id=plan.draft_id, trip_id=trip.id, city=trip.destination, start_date=trip.start_date)
+        preferences.free_text_requirements = plan.requirements
+        op.target_trip_id = trip.id
+        op.status, op.stage, op.error = "trip_created", "trip_committed", None
+        if op.allowed_action == "create_only":
+            op.status, op.stage, op.consumed_at = "created", "create_only_completed", datetime.now(UTC)
+        op.updated_at = datetime.now(UTC)
+        await save_operation(session, op, row)
 
     async def _t2(self, owner, operation_id):
         async with self.sessions() as session, session.begin():
-            op, row = await get_operation(session, owner, operation_id, lock=True)
-            if not self._active(op) or op.target_revision_id:
-                return
-            plan = await get_prepared(session, owner, op.prepared_id)
+            return await self._t2_unit(session, owner, operation_id)
+
+    async def _t2_unit(self, session, owner, operation_id, *, check_draft=True):
+        op, row = await get_operation(session, owner, operation_id, lock=True)
+        if not self._active(op) or op.target_revision_id:
+            return
+        plan = await get_prepared(session, owner, op.prepared_id)
+        if check_draft:
             await locked_draft(session, owner, op.draft_id, op.draft_version)
-            trip = await session.scalar(select(Trip).where(Trip.id == op.target_trip_id).with_for_update())
-            if trip is None or trip.version != 1 or trip.archived_at:
-                raise PromotionError("trip_changed", "已创建旅行发生变化，请进入旅行页检查。")
-            c = plan.constraints
-            preferences = await session.scalar(select(TripPreferences).where(TripPreferences.trip_id == trip.id).with_for_update())
-            if preferences is None or preferences.version != 1:
-                raise PromotionError("constraints_changed", "已创建旅行的偏好已修改，请检查后重新确认。")
-            preferences.daily_start_time, preferences.daily_end_time = c.daily_start_time, c.daily_end_time
-            preferences.transport_modes, preferences.max_walking_minutes = [c.transport_mode], c.max_walking_minutes
-            preferences.free_text_requirements = plan.requirements
-            preferences.requirement_records = promote_requirements(plan.requirement_records,
-                draft_id=plan.draft_id, trip_id=trip.id, city=trip.destination, start_date=trip.start_date)
-            run = PlanningRun(id=uuid5(op.id, f"run:{plan.id}"), trip_id=trip.id, run_type="initial_plan",
-                status="validating", user_request="创建并采用当前已确认草稿方案", base_trip_version=trip.version,
-                trigger_type="draft_promotion", trigger_key=f"draft-promotion:{op.id}",
-                trigger_fingerprint=op.content_hash, trigger_snapshot={"promotion_id": str(op.id),
-                    "prepared_id": str(plan.id), "draft_id": str(plan.draft_id), "draft_version": plan.draft_version,
-                    "effective_requirements": preferences.requirement_records})
-            session.add(run)
-            await add_places(session, plan, op)
-            candidate = snapshot_for(plan, op)
-            await session.flush()
-            result = await validate_candidate_plan(session, trip.id, candidate,
-                required_dates={a.day_date for a in plan.activities})
-            revision = await save_plan_revision(session, run.id, before_snapshot={}, proposed_snapshot=candidate,
-                reason="用户明确授权的Draft确定性正式化", difference_summary={"draft_promotion_id": str(op.id),
-                    "required_day_dates": [(c.start_date.fromordinal(c.start_date.toordinal() + i)).isoformat()
-                        for i in range((plan.end_date - c.start_date).days + 1)]},
-                validation_result=result.model_dump(mode="json"), source_ids=[a.source_ids[0] for a in candidate.activities],
-                enrich_routes=False, commit=False)
-            op.target_run_id, op.target_revision_id = run.id, revision.id
-            op.validation = result.model_dump(mode="json")
-            op.status = "awaiting_apply" if result.valid else "needs_review"
-            op.stage = "candidate_committed"
-            op.error = None if result.valid else "正式校验发现阻塞，方案未采用。请检查问题并重新准备确认。"
-            op.updated_at = datetime.now(UTC)
-            await save_operation(session, op, row)
+        trip = await session.scalar(select(Trip).where(Trip.id == op.target_trip_id).with_for_update())
+        if trip is None or trip.version != 1 or trip.archived_at:
+            raise PromotionError("trip_changed", "已创建旅行发生变化，请进入旅行页检查。")
+        c = plan.constraints
+        preferences = await session.scalar(select(TripPreferences).where(TripPreferences.trip_id == trip.id).with_for_update())
+        if preferences is None or preferences.version != 1:
+            raise PromotionError("constraints_changed", "已创建旅行的偏好已修改，请检查后重新确认。")
+        preferences.daily_start_time, preferences.daily_end_time = c.daily_start_time, c.daily_end_time
+        preferences.transport_modes, preferences.max_walking_minutes = [c.transport_mode], c.max_walking_minutes
+        preferences.free_text_requirements = plan.requirements
+        preferences.requirement_records = promote_requirements(plan.requirement_records,
+            draft_id=plan.draft_id, trip_id=trip.id, city=trip.destination, start_date=trip.start_date)
+        run = PlanningRun(id=uuid5(op.id, f"run:{plan.id}"), trip_id=trip.id, run_type="initial_plan",
+            status="validating", user_request="创建并采用当前已确认草稿方案", base_trip_version=trip.version,
+            trigger_type="draft_promotion", trigger_key=f"draft-promotion:{op.id}",
+            trigger_fingerprint=op.content_hash, trigger_snapshot={"promotion_id": str(op.id),
+                "prepared_id": str(plan.id), "draft_id": str(plan.draft_id), "draft_version": plan.draft_version,
+                "effective_requirements": preferences.requirement_records})
+        session.add(run)
+        await add_places(session, plan, op)
+        await add_windows(session, plan, op)
+        candidate = snapshot_for(plan, op)
+        await session.flush()
+        result = await validate_candidate_plan(session, trip.id, candidate,
+            required_dates={a.day_date for a in plan.activities})
+        revision = await save_plan_revision(session, run.id, before_snapshot={}, proposed_snapshot=candidate,
+            reason="用户明确授权的Draft确定性正式化", difference_summary={"draft_promotion_id": str(op.id),
+                "required_day_dates": [(c.start_date.fromordinal(c.start_date.toordinal() + i)).isoformat()
+                    for i in range((plan.end_date - c.start_date).days + 1)]},
+            validation_result=result.model_dump(mode="json"), source_ids=[a.source_ids[0] for a in candidate.activities],
+            enrich_routes=False, commit=False)
+        op.target_run_id, op.target_revision_id = run.id, revision.id
+        op.validation = result.model_dump(mode="json")
+        op.status = "awaiting_apply" if result.valid else "needs_review"
+        op.stage = "candidate_committed"
+        op.error = None if result.valid else "正式校验发现阻塞，方案未采用。请检查问题并重新准备确认。"
+        op.updated_at = datetime.now(UTC)
+        await save_operation(session, op, row)
 
     async def _apply(self, owner, operation_id, equivalence):
         async with self.sessions() as session, session.begin():
-            op, row = await get_operation(session, owner, operation_id, lock=True)
-            if not self._active(op):
-                return op
-            op.equivalence_check = equivalence
-            op.status, op.updated_at = "awaiting_apply", datetime.now(UTC)
-            await save_operation(session, op, row)
-            session.info["draft_promotion_accept"] = (_CAPABILITY, owner, op.id)
-            revision = await accept_plan_revision(session, op.target_revision_id, commit=False)
-            locked, locked_row = session.info["draft_promotion_locked"]
-            if revision.status != "accepted":
-                raise PromotionError("accept_incomplete", "采用尚未完成，可重试原转换。")
-            locked.status, locked.stage = "applied", "formal_accept_committed"
-            locked.consumed_at = locked.updated_at = datetime.now(UTC)
-            locked.error = None
-            await save_operation(session, locked, locked_row)
-            return locked
+            return await self._apply_unit(session, owner, operation_id, equivalence)
+
+    async def _apply_unit(self, session, owner, operation_id, equivalence):
+        op, row = await get_operation(session, owner, operation_id, lock=True)
+        if not self._active(op):
+            return op
+        op.equivalence_check = equivalence
+        op.status, op.updated_at = "awaiting_apply", datetime.now(UTC)
+        await save_operation(session, op, row)
+        session.info["draft_promotion_accept"] = (_CAPABILITY, owner, op.id)
+        revision = await accept_plan_revision(session, op.target_revision_id, commit=False)
+        locked, locked_row = session.info["draft_promotion_locked"]
+        if revision.status != "accepted":
+            raise PromotionError("accept_incomplete", "采用尚未完成，可重试原转换。")
+        locked.status, locked.stage = "applied", "formal_accept_committed"
+        locked.consumed_at = locked.updated_at = datetime.now(UTC)
+        locked.error = None
+        await save_operation(session, locked, locked_row)
+        return locked
 
     async def _failure(self, owner, operation_id, message, *, review):
         async with self.sessions() as session, session.begin():
@@ -287,7 +303,16 @@ class DraftPromotionService:
             await save_operation(session, op, row)
             return op
 
+    async def confirm_atomic(self, owner, request, *, session_id, presentation_hash):
+        from .atomic import confirm_atomic
+        return await confirm_atomic(self, owner, request, session_id=session_id, presentation_hash=presentation_hash)
+
     async def resume(self, owner, operation_id):
+        async with self.sessions() as protocol_session:
+            operation, _ = await get_operation(protocol_session, owner, operation_id)
+        if operation.execution_mode == "atomic_candidate_v2":
+            from .atomic import resume_atomic
+            return await resume_atomic(self, owner, operation_id)
         # Reconciliation is deliberately first: an accepted revision must never
         # cause a second Trip, new candidate, or new consumption.
         async with self.sessions() as session, session.begin():

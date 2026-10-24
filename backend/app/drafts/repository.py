@@ -73,6 +73,8 @@ class DraftRepository:
                        target_day_indices=request.target_day_indices,
                        source=source, created_at=datetime.now(UTC), lease_expires_at=datetime.now(UTC) + timedelta(minutes=5))
         def start(draft):
+            if draft.schema_version != 1:
+                raise DraftError("candidate_protocol_required")
             if draft.status != "active":
                 raise DraftError("draft_cancelled")
             if any(r.status == "running" for r in draft.runs):

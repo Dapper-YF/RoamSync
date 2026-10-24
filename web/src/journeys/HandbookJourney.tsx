@@ -71,11 +71,11 @@ export function HandbookJourney({trip,days,places,runs,revisions,selection,selec
      <h3>{r.label}</h3>
      {r.duration!=null&&<p>{r.time}—{stopEnd(r.time,r.duration)} · 停留{r.duration}分钟{r.activity?.scheduleLocked?' · 固定时间':''}</p>}
      {r.state==='changed'&&r.before&&<p>原来 {r.before.scheduledTime.slice(0,5)} · {r.before.durationMinutes}分钟</p>}
-     {r.activity&&<HandbookPhoto city={trip.destination} name={r.activity.originalName || r.activity.name} coordinates={r.activity.coordinates}/>}
+     {r.activity&&<HandbookPhoto city={trip.destination} name={r.activity.originalName || r.activity.name} coordinates={r.activity.coordinates} placeRef={r.activity.canonicalPlaceRef}/>}{r.activity?.address&&<p className="handbook-muted">{r.activity.address}</p>}
      {r.state==='free'&&<p>保留这段空闲，不自动补项目。</p>}
      {r.reason&&<p className="handbook-muted">{r.reason}</p>}{r.activity?.note&&<p className="handbook-muted">{r.activity.note}</p>}
      {!pending&&r.activity&&<><div className="handbook-actions"><button onClick={()=>ask(r.activity)}>和 AI 商量</button><button onClick={()=>route(r.activity!,previous)}>查询路线</button>{!historical&&<details><summary>更多操作</summary><button disabled={busy} onClick={()=>setEditing(r.activity)}>直接修改时间</button></details>}</div>{executionActions(r.activity)}</>}
-     {!pending&&r.activity&&next?.activity&&<p className="handbook-connection">前往 {next.label} · {leg?`${leg.mode==='walk'?'步行':leg.mode==='driving'?'驾车':'公交'} ${leg.durationMinutes}分钟 · ${leg.isEstimated?'估算，待核实':leg.provider||'来源待核对'}`:'交通尚未查询'}</p>}
+     {!pending&&r.activity&&next?.activity&&<p className="handbook-connection">前往 {next.label} · {leg?`${leg.mode==='walk'?'步行':leg.mode==='driving'?'驾车':'公交'} ${leg.durationMinutes}分钟 · ${leg.distanceMeters}米 · ${leg.isEstimated?'估算，待核实':leg.provider||'来源待核对'}`:'交通尚未查询'}</p>}
     </div>
    </li>;
   })}</ol>{untimed.length>0&&<section className="handbook-unscheduled" aria-label="当天未排程事项"><h3>这天想去，时间未定</h3><p>先留在这里，不自动填入时间轴。</p><ul>{untimed.map(r=><li key={r.id}><strong>{r.label}</strong><p>{r.state==='optional'?'备选，可以不去':'已记下，尚未排程'}{r.time?` · ${r.time}`:''}</p>{!pending&&!historical&&<button onClick={()=>onAskAssistant?.({tripId:trip.id,tripTitle:trip.title,city:trip.destination,selectedDayId:sourceDayFor(r.date)?.id,selectedDayDate:r.date,prompt:`请为${r.label}建议在${r.date}的合适时间，保留已有预约和留白，先给候选。`})}>请 AI 建议时间</button>}</li>)}</ul></section>}</>;

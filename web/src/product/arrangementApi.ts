@@ -1,4 +1,4 @@
-import type { AssistantSession } from "../domain/types";
+import type { AssistantSession, CandidatePresentation } from "../domain/types";
 
 export type Choice = { time_period?: string|null; id: string; kind: "selected" | "optional" | "free_window" | "cancelled"; label: string; source_ref: string; decision_ref: string; place_id: string | null; day_date: string | null; start: string | null; end: string | null; activity_id: string | null };
 export type Activity = { id: string; place_id: string; name: string; display_name: string; scheduled_time: string; duration_minutes: number; schedule_locked: boolean; version: number; note: string | null };
@@ -30,3 +30,19 @@ export function arrangementAction(message: string, arrangement: Arrangement, mes
 }
 
 export type ReceiveSession = (session: AssistantSession) => void;
+
+export class CandidateDecisionError extends Error {
+  constructor(message: string, readonly status: number, readonly code?: string) { super(message); }
+}
+export async function decideConversationCandidate(sessionId: string, candidate: CandidatePresentation, requestId: string, accept = true): Promise<AssistantSession> {
+  const response = await fetch(`/api/v1/assistant/sessions/${encodeURIComponent(sessionId)}/candidate-decision`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({protocol_version:2, request_id:requestId, prepared_id:candidate.prepared_id, prepared_hash:candidate.prepared_hash, presentation_hash:candidate.presentation_hash, accept}),
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(()=>({}));
+    const detail=body.detail;
+    throw new CandidateDecisionError(typeof detail==='string'?detail:detail?.message??'保存未完成，请重新读取会话后重试。',response.status,detail?.code);
+  }
+  return response.json();
+}

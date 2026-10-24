@@ -2,6 +2,8 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
+from pydantic import ConfigDict
+from typing import Literal
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.assistant_service import AssistantToolError, confirm_action, get_or_create_session, reset_pre_trip_session, send_message, session_response
@@ -37,6 +39,30 @@ class MessageInput(BaseModel):
 class DecisionInput(BaseModel):
     action_id: uuid.UUID
     accept: bool
+
+
+class CandidateDecisionInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    protocol_version: Literal[2]
+    request_id: uuid.UUID
+    prepared_id: uuid.UUID
+    prepared_hash: str = Field(min_length=64, max_length=64)
+    presentation_hash: str = Field(min_length=64, max_length=64)
+    accept: bool
+
+
+@router.post("/sessions/{session_id}/candidate-decision")
+async def candidate_decision_endpoint(session_id: uuid.UUID, payload: CandidateDecisionInput, request: Request):
+    from app.conversation_candidate.service import decide_candidate
+    from app.draft_promotion.contracts import PromotionError
+    service = getattr(request.app.state, "draft_promotion_service", None)
+    owner = getattr(request.state, "authenticated_owner", None)
+    if not service or not owner:
+        raise HTTPException(503, {"code": "owner_boundary_not_configured", "message": "当前保存边界尚未配置。"})
+    try:
+        return session_response(await decide_candidate(service, owner, session_id, payload))
+    except PromotionError as exc:
+        raise HTTPException(exc.status, {"code": exc.code, "message": exc.message}) from None
 
 
 async def respond(operation):

@@ -4,6 +4,7 @@ from typing import Annotated, Literal
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from app.place_content.contracts import PlaceRef
 
 
 ExpenseCategory = Literal["food", "transport", "ticket", "lodging", "shopping", "other"]
@@ -497,6 +498,8 @@ class PlaceSearchResultResponse(BaseModel):
 class ActivityResponse(BaseModel):
     id: uuid.UUID
     place_id: uuid.UUID
+    canonical_place_ref: PlaceRef | None = None
+    address: str | None = None
     name: str
     custom_name: str | None = None
     display_name: str

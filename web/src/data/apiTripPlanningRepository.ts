@@ -72,6 +72,8 @@ interface ApiPlaceSearchResult {
 }
 
 interface ApiActivity {
+  canonical_place_ref?: Activity["canonicalPlaceRef"];
+  address?: string | null;
   id: string;
   place_id: string;
   name: string;
@@ -871,6 +873,8 @@ function mapActivity(dto: ApiActivity): Activity {
     placeId: dto.place_id,
     name: dto.display_name,
     originalName: dto.name,
+    canonicalPlaceRef: dto.canonical_place_ref,
+    address: dto.address,
     customName: dto.custom_name ?? undefined,
     category: dto.category,
     neighborhood: dto.neighborhood,

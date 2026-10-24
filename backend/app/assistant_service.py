@@ -216,6 +216,7 @@ class AssistantRouter:
 def session_response(row: AssistantSession) -> dict:
     return {"id": str(row.id), "trip_id": str(row.trip_id) if row.trip_id else None,
         "messages": row.messages, "pending_action": row.pending_action,
+        "candidate": (row.pending_action or {}).get("presentation") if (row.pending_action or {}).get("kind") == "itinerary_candidate_v2" else (row.messages[-1].get("candidate") if row.messages else None),
         "latest_run_id": str(row.latest_run_id) if row.latest_run_id else None}
 
 
@@ -871,6 +872,8 @@ async def confirm_action(db: AsyncSession, session_id: uuid.UUID, action_id: str
     if action_id in row.applied_actions:
         return row
     action = row.pending_action
+    if action and action.get("kind") == "itinerary_candidate_v2":
+        raise AssistantToolError("当前候选需要使用新版保存入口并核对完整方案，不能通过旧版操作确认。")
     if not action or action["id"] != action_id:
         raise AssistantToolError("这份操作预览已被更新，请使用最新预览。")
     if not accept:

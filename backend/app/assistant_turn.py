@@ -11,8 +11,10 @@ from app.assistant_capabilities import (CapabilityDecision, answer_with_capabili
 from app.assistant_context import ContextEnvelope, restore_context, capture_requirements, capture_effective_requirements
 from app.assistant_reliability import TurnDiagnostics, active_turn, bounded_call
 from app.assistant_research import snapshot_signature
-from app.database import AssistantSession, Trip
+from app.database import AssistantSession, Trip, Activity, DayPlan, PlaceCandidate
 from app.travel_goal_router import route_travel_goal
+from app.draft_promotion.contracts import PromotionError
+from app.conversation_candidate.binding import conditions_hash
 
 
 async def semantic_turn(db, session_id, message, message_id, incoming, port, settings, selector=None, *, city_search=None):
@@ -55,9 +57,22 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
         if trip is None:
             raise AssistantToolError("旅行不存在，请刷新后重试。")
         summary = {"destination": trip.destination, "title": trip.title, "version": trip.version}
+        activities = (await db.execute(select(Activity, DayPlan, PlaceCandidate)
+            .join(DayPlan, Activity.day_plan_id == DayPlan.id)
+            .join(PlaceCandidate, Activity.place_candidate_id == PlaceCandidate.id)
+            .where(DayPlan.trip_id == trip_id).order_by(DayPlan.date, Activity.position).limit(100))).all()
+        summary["activities"] = [{"activity_id": str(a.id), "day_id": str(day.id), "date": day.date.isoformat(),
+            "name": a.custom_name or place.name, "start_time": a.scheduled_time.isoformat(timespec="minutes"),
+            "duration_minutes": a.duration_minutes, "version": a.version} for a, day, place in activities]
     envelope = capture_effective_requirements(capture_requirements(envelope, message), message, message_id=message_id)
     baseline = route_travel_goal(message, history[-12:], pending_action=row.pending_action)
+    candidate_snapshot = None if reset_requested(message) else row.pending_action
     await db.commit()
+    from app.conversation_candidate.service import current_draft, candidate_action
+    candidate = await current_draft(port, candidate_snapshot, envelope.topic_id) if getattr(port, "draft_repository", None) else None
+    if candidate:
+        summary = {**(summary or {}), "candidate": {"draft_id": str(candidate.id), "version": candidate.version,
+            "city": candidate.city, "plan": candidate.plan.model_dump(mode="json")}}
     original_port = port
     class CachedReads:
         def __init__(self):
@@ -117,7 +132,7 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                         decision = decision.model_copy(update={"city": city})
                     decision = validate_decision(decision, message, history, envelope,
                         [*[c["place"] for m in history[-3:] for c in m.get("place_cards", [])],
-                         *([{"city": summary["destination"]}] if summary else [])])
+                         *([{"city": summary["destination"]}] if summary and summary.get("destination") else [])])
                 except Exception as exc:
                     diagnostics.failure("selection", exc)
                     # This fail-closed whitelist cannot turn a failed decision
@@ -134,6 +149,54 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                 diagnostics.selection = {"intent": decision.intent, "capabilities": decision.capabilities,
                     "reason_code": decision.reason_code, "argument_source": "current_user_scoped_history_or_selected_place"}
                 goal = decision_goal(decision, baseline)
+                command = decision.candidate_command if decision.intent in {"create", "modify"} else None
+                candidate_conditions_changed = bool(candidate and candidate_snapshot.get("conditions_hash") != conditions_hash(envelope))
+                if command and not trip_id and getattr(port, "draft_repository", None) and getattr(port, "owner", None):
+                    from app.conversation_candidate.service import build_candidate, publish_candidate, decide_candidate
+                    from app.conversation_candidate.commands import validate_command
+                    try:
+                        validate_command(command, message)
+                        if candidate_conditions_changed and command.action != "generate":
+                            raise ValueError("旅行条件已经变化，原候选尚未更新，不能保存或只应用部分修改。请按新条件重新生成候选。")
+                        if command.action in {"generate", "modify"}:
+                            revised, prepared = await build_candidate(command, decision, message, history, envelope,
+                                port, candidate, today=captured_at.date())
+                            published = await publish_candidate(db, owner=port.owner, session_id=session_id,
+                                signature=signature, topic=envelope.topic_id, message_id=message_id, message=message,
+                                envelope=envelope, draft=revised, prepared=prepared,
+                                old=candidate if command.action == "modify" else None)
+                            return published, None, {}
+                        if not candidate_action(candidate_snapshot, port.owner, envelope.topic_id):
+                            raise ValueError("当前没有可采用的候选，请先生成并核对安排。")
+                        from app.assistant_routes import CandidateDecisionInput
+                        from app.draft_promotion.service import DraftPromotionService
+                        from sqlalchemy.ext.asyncio import async_sessionmaker
+                        view = candidate_snapshot["presentation"]
+                        await db.rollback()
+                        writer = DraftPromotionService(port.draft_repository,
+                            async_sessionmaker(db.bind, expire_on_commit=False), port.service)
+                        result = await decide_candidate(writer, port.owner, session_id, CandidateDecisionInput(
+                            protocol_version=2, request_id=message_id, prepared_id=view["prepared_id"],
+                            prepared_hash=view["prepared_hash"], presentation_hash=view["presentation_hash"],
+                            accept=command.action == "adopt"))
+                        return result, None, {}
+                    except (ValueError, PromotionError) as exc:
+                        text = getattr(exc, "message", str(exc))
+                        bundle, status = failure_bundle(envelope, text), "failed"
+                        goal = baseline.model_copy(update={"target_runtime": "companion", "mutation_requested": False})
+                elif candidate and goal.target_runtime != "companion":
+                    # A missing/unsupported edit command cannot create a new Trip
+                    # from metadata or silently discard the current candidate.
+                    bundle, status = failure_bundle(envelope, "这项调整还没有形成可核对的局部操作，原候选保持不变。请说明要调整的地点和停留时长。"), "complete"
+                    goal = baseline.model_copy(update={"target_runtime": "companion", "mutation_requested": False})
+                elif decision.intent == "create" and not trip_id and getattr(port, "draft_repository", None) and getattr(port, "owner", None):
+                    from app.assistant_operation import approved_tool_decision
+                    proposed = approved_tool_decision(decision, message, envelope, today=captured_at.date())
+                    text = proposed.reply if proposed.tool == "reply" else "这次还没有生成可核对的地点、时段和路线候选，尚未创建旅行。请重试生成候选，确认保存前可以继续调整。"
+                    bundle, status = failure_bundle(envelope, text), "complete"
+                    goal = baseline.model_copy(update={"target_runtime": "companion", "mutation_requested": False})
+                else:
+                    bundle = None
                 if settings.saved_intentions_enabled:
                     from app.saved_intentions import validate_proposals
                     intentions = validate_proposals(decision.saved_intentions, message, focused_name)
@@ -167,7 +230,9 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                     return None, goal, metadata
                 from app.assistant_memory import condition_ack
                 acknowledgement = condition_ack(envelope, message, changed) if decision.intent == "direct" and decision.response_purpose == "conditions_only" else None
-                if intentions and decision.intent == "direct":
+                if bundle is not None:
+                    pass
+                elif intentions and decision.intent == "direct":
                     bundle, status = failure_bundle(envelope, "正在保存这项明确打算。"), "complete"
                 elif decision.saved_intentions and not settings.saved_intentions_enabled:
                     bundle, status = failure_bundle(envelope, "独立打算保存尚未启用。原话保留在这次对话中，但还没有保存为可独立查看的事项。"), "complete"
@@ -213,6 +278,15 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
         if snapshot_signature(fresh) != signature:
             await db.rollback()
             raise AssistantToolError("对话已有新的决定，请重新读取当前状态后再查询。")
+        pending = fresh.pending_action or {}
+        current_city = (envelope.conversation_memory.get("slots", {}).get("city") or {}).get("value")
+        if (pending.get("kind") == "itinerary_candidate_v2" and
+            (reset_requested(message) or pending.get("topic_id") != envelope.topic_id or
+             current_city and current_city.removesuffix("市") != pending.get("presentation", {}).get("city", "").removesuffix("市"))):
+            fresh.pending_action = None
+        elif pending.get("kind") == "itinerary_candidate_v2" and pending.get("conditions_hash") != conditions_hash(envelope):
+            view = {**pending["presentation"], "stage": "stale"}
+            fresh.pending_action = {**pending, "presentation": view}
         if intentions and status != "failed" and decision.intent == "direct":
             from app.saved_intentions import persist_proposals
             city = (envelope.conversation_memory.get("slots", {}).get("city") or {}).get("value") or envelope.browsing_city

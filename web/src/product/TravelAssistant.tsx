@@ -38,7 +38,7 @@ import type { ExplorePlace, ExploreRepository } from "../domain/explore";
 import type { AssistantSession, TripPlanningRepository } from "../domain/types";
 import "./TravelAssistant.css";
 import { createStreamBuffer } from "../data/streamBuffer";
-import { assistantRequest, arrangementAction, type Arrangement, type Revision, type Run } from "./arrangementApi";
+import { CandidateDecisionError, decideConversationCandidate, assistantRequest, arrangementAction, type Arrangement, type Revision, type Run } from "./arrangementApi";
 import { AssistantDecisions } from "./AssistantDecisions";
 import { rememberIntentionSession } from '../journeys/savedIntentions';
 import { AssistantAnswer, type AnswerSearch, type AnswerVisuals } from "../components/AssistantAnswer";
@@ -78,6 +78,9 @@ interface AssistantState {
   run?: Run;
   refreshArrangement: () => Promise<void>;
   decidePreview: (accept: boolean) => Promise<void>;
+  saveCandidate: () => Promise<void>;
+  candidateSaving: boolean;
+  candidateInvalidated: boolean;
   decideRevision: (accept: boolean) => Promise<void>;
   status: string;
   send: (
@@ -168,6 +171,10 @@ export function TravelAssistantProvider({
   const [run, setRun] = useState<Run>();
   const [runRefresh, setRunRefresh] = useState(0);
   const [retry, setRetry] = useState(0);
+  const [candidateSaving, setCandidateSaving] = useState(false);
+  const [invalidCandidate, setInvalidCandidate] = useState('');
+  const candidateRequest = useRef<{binding:string;id:string}|null>(null);
+  const currentSessionId = useRef<string|undefined>(undefined);
   const retryMessage = useRef<{
     scope: string;
     message: string;
@@ -183,6 +190,8 @@ export function TravelAssistantProvider({
   const arrangementRead = useRef(0);
   const routeTripSeen = useRef<string | undefined>(undefined);
   const session = sessions[scope];
+  currentSessionId.current = session?.id;
+  const candidateBinding = session?.candidate ? `${session.id}:${session.candidate.prepared_id}:${session.candidate.presentation_hash}` : "";
   const active = opened || location.pathname === "/assistant" || (unified && (location.pathname === "/" || /^\/trips\/[^/]+$/.test(location.pathname)));
   useEffect(() => {
     const trip = location.pathname.match(/^\/trips\/([^/]+)(?:\/planner)?$/)?.[1];
@@ -226,8 +235,46 @@ export function TravelAssistantProvider({
     void poll();
     return () => { cancelled = true; clearTimeout(timer); setRun(undefined); setRevision(undefined); };
   }, [unified, runId, active, runRefresh]);
+  const saveCandidate = async () => {
+    const candidate=session?.candidate;
+    if (!candidate || candidate.stage!=='ready' || candidate.blockers.length || busy || sending.current || invalidCandidate===candidateBinding) return;
+    const selectedScope=scope, selectedSession=session.id;
+    if (candidateRequest.current?.binding!==candidateBinding) candidateRequest.current={binding:candidateBinding,id:crypto.randomUUID()};
+    sending.current=true; setBusy(true); setCandidateSaving(true); setError('');
+    try {
+      const next=await decideConversationCandidate(session.id,candidate,candidateRequest.current.id);
+      if (currentScope.current===selectedScope && currentSessionId.current===selectedSession) {
+        receive(next);
+        if (next.trip_id===sessionTripId) await refreshArrangement();
+      }
+    } catch (cause) {
+      if (currentScope.current===selectedScope && currentSessionId.current===selectedSession) {
+        setError(`保存未完成：${messageOf(cause)}`);
+        if (cause instanceof CandidateDecisionError && [409,410,422].includes(cause.status)) {
+          setInvalidCandidate(candidateBinding);
+          try {
+            const next=await assistantRequest<AssistantSession>('/assistant/sessions',{method:'POST',body:JSON.stringify({session_id:selectedSession})});
+            if (currentScope.current===selectedScope && currentSessionId.current===selectedSession) receive(next);
+          } catch { /* Keep the precise save error and disable this old binding. */ }
+        }
+      }
+    } finally { sending.current=false; setBusy(false); setCandidateSaving(false); }
+  };
+  const retrySession = () => {
+    if (busy || sending.current) return;
+    if (!session) { setRetry(value=>value+1); return; }
+    const selectedScope=scope, selectedSession=session.id;
+    setLoading(true);
+    void assistantRequest<AssistantSession>('/assistant/sessions',{method:'POST',body:JSON.stringify({session_id:selectedSession,trip_id:sessionTripId??null})})
+      .then(async next=>{
+        if (currentScope.current!==selectedScope || currentSessionId.current!==selectedSession) return;
+        receive(next); setError(''); await refreshArrangement();
+      })
+      .catch(cause=>{if(currentScope.current===selectedScope&&currentSessionId.current===selectedSession)setError(messageOf(cause));})
+      .finally(()=>{if(currentScope.current===selectedScope&&currentSessionId.current===selectedSession)setLoading(false);});
+  };
   const decidePreview = async (accept: boolean) => {
-    if (!session?.pending_action || busy || sending.current) return;
+    if (!session?.pending_action || session.candidate || busy || sending.current) return;
     setBusy(true); setError("");
     try {
       const next = await assistantRequest<AssistantSession>(`/assistant/sessions/${session.id}/decision`, { method: "POST", body: JSON.stringify({ action_id: session.pending_action.id, accept }) });
@@ -450,10 +497,10 @@ export function TravelAssistantProvider({
     error,
     submission: sendingScope.current === scope ? submission : "",
     stream,
-    analysis, arrangement, revision, run, refreshArrangement, decidePreview, decideRevision,
+    analysis, arrangement, revision, run, refreshArrangement, decidePreview, decideRevision, saveCandidate, candidateSaving, candidateInvalidated: !!candidateBinding && invalidCandidate===candidateBinding,
     status,
     send,
-    retrySession: () => { setRetry(value => value + 1); void refreshArrangement().catch(e => setError(messageOf(e))); },
+    retrySession,
     exploreRepository,
   };
   return (
@@ -494,13 +541,22 @@ export function AssistantPage() {
 function AssistantConversation({ drawer = false }: { drawer?: boolean }) {
   const assistant = useTravelAssistant();
   const end = useRef<HTMLDivElement>(null);
+  const seenPresentation = useRef('');
   const composing = useRef(false);
   const { context, session, loading, busy, error, draft, closeAssistant } =
     assistant;
   const messages = topicMessages(session);
   useEffect(() => {
+    const presentation = session?.candidate?.presentation_hash;
+    if (presentation && presentation !== seenPresentation.current) {
+      seenPresentation.current = presentation;
+      const container=end.current?.parentElement;
+      const candidate=container?.querySelector<HTMLElement>('.conversation-candidate');
+      if(container&&candidate)container.scrollTop+=candidate.getBoundingClientRect().top-container.getBoundingClientRect().top;
+      return;
+    }
     end.current?.scrollIntoView?.({ block: "nearest" });
-  }, [session?.messages.length, assistant.stream, assistant.submission]);
+  }, [session?.messages.length, session?.candidate?.presentation_hash, assistant.stream, assistant.submission]);
   useEffect(() => {
     if (!drawer) return;
     const previous =
