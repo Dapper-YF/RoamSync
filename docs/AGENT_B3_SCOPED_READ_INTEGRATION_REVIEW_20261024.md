@@ -29,3 +29,12 @@ A核对了B `final-regression-source.json` 与XML：exit0/source_unchanged=true�
 另一个接口限制：capture阶段SavedTripReadStale发生在semantic_turn主try之前，经ValueError转换成AssistantToolError；新增后段needs_retry捕获不覆盖该入口。不得声称每个过期入口均返回typed needs_retry；可通过统一捕获修正或准确记录边界。
 
 当前结论：原两项阻断的修复已核对，但4a8dcb3仍未接收/部署，等待连接容量和入口错误边界处理后的固定新SHA。整个产品NO-GO，A产品BASE继续89b81e8。
+
+
+## 对3f983039b07f1b960beba5a5b5677c16f1ca81e5连接边界的只读复核
+
+独立NullPool读取通道替代从业务池嵌套取连接。准入发生在创建engine之前，每事件循环最多2条，排队5秒上限；短RR READ ONLY捕获后关闭连接、dispose引擎并在finally释放准入。应用单事件循环/进程条件下预算为业务池默认15+读取2，Worker另计，不把多进程总数说成17。静态看原循环等待已消除；新增真实PG测试以业务池size2/overflow0且两调用方都占用时并发读成功，另覆盖准入等待取消。A未额外运行这些测试，等待B最终完整记录。
+
+本次窄连接边界未发现新的接收阻断；不是吞吐、长期资源稳定性或总体发布批准。B当前完整重跑需要修正一个旧policy测试的查询观察范围：独立引擎不再被原engine实例监听，须保留全部原禁用查询断言，仅扩大事件观察范围。该测试变更应有最终提交及源码身份；不得把未提交测试变化绑定到3f全部源码。
+
+B报告3f的新公开六轮为5/6，其中一轮模型顶层trip:{candidate:null}被严格schema拒绝；保留原文，不extra-ignore、不重采样刷分。4a8的6/6是历史开发测量，不属于3f结果。A仍未合入/部署，待最终提交/完整证据后作接收审查；产品整体NO-GO。
