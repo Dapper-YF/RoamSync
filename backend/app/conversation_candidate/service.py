@@ -122,7 +122,9 @@ async def build_candidate(command, decision, message, history, envelope, port, o
         plan = command.plan
         if plan is None or plan.schema_version != 2:
             raise ValueError("尚未生成可核对的完整候选，请重试；没有创建旅行。")
-        city = decision.city or (envelope.conversation_memory.get("slots", {}).get("city") or {}).get("value", "")
+        city = (decision.city or (decision.creation.destination if decision.creation else '')
+            or (envelope.conversation_memory.get("slots", {}).get("city") or {}).get("value", "")
+            or envelope.browsing_city or '')
         # V2 is the one operation. Adapt it to the existing date/budget evidence
         # guard without asking the model to repeat the same creation metadata.
         adapter = decision.model_copy(update={"authorization_quote": command.source_quote,

@@ -204,7 +204,8 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
         if operation == "clear" and not re.search(r"取消|不限|不设|清除|忘掉|不再|不要|无需|不用|待定|(?:先|还|也)?不定|未定|没(?:有)?定|不确定", quote):
             continue
         evidence = {"value": normalized, "source_quote": quote, "message_id": str(message_id),
-            "scope": 'trip' if update.subject else update.scope, "scope_version": 2, "subject": update.subject}
+            "scope": 'trip' if update.subject else update.scope, "scope_version": 2,
+            **({'subject': update.subject} if update.subject else {})}
         if key in {'preferences', 'requirements'} and subject_withdrawal and operation == 'remove':
             remove = update.replaces or value
             matching = [item for item in memory[key] if item['value'] == remove and

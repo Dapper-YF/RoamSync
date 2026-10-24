@@ -14,6 +14,7 @@ REFERENCE = re.compile(r"第\s*([一二三四五六七八九十两\d]+)\s*(?:个
 def place_catalog(history, envelope):
     city = (envelope.browsing_city or '').removesuffix('市')
     latest = []
+    intervening = set()
     for turn in reversed(history):
         cards = turn.get('place_cards') or []
         places = []
@@ -38,12 +39,11 @@ def place_catalog(history, envelope):
             ordered = sorted(places, key=position)[:8]
             if not latest:
                 latest = ordered
+            intervening.update(str(p['place_id']) for p in ordered)
             # A read focused on one member does not renumber the comparison.
             # A genuinely new identity starts a different reference scope.
-            if len(ordered) > 1 and {str(p['place_id']) for p in latest} <= {str(p['place_id']) for p in ordered}:
-                return ordered
-            if any(str(p['place_id']) not in {str(q['place_id']) for q in ordered} for p in latest):
-                break
+            if len(ordered) > 1:
+                return ordered if intervening <= {str(p['place_id']) for p in ordered} else latest
     return latest
 
 

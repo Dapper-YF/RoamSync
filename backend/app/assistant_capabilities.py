@@ -791,7 +791,7 @@ async def _answer_leaf(settings, decision, message, history, envelope, port, db,
             reason = value.referenced_decision
             text += '\n' + ('原始保存理由：' + '；'.join(reason.reasons) if reason else
                 '没有唯一定位到对应活动的原始理由，不能用现在的推测代替。' if len(projection['activities']) != 1 else
-                '没有找到这个已保存版本对应活动的原始安排理由，不能用现在的推测代替。')
+                '没有保存可验证的原始理由：未找到这个已保存版本对应活动的原始安排理由，不能用现在的推测代替。')
         coverage = projection['coverage']
         return failure_bundle(envelope, text, read_tools={'itinerary_read': coverage}), (
             'complete' if coverage['complete'] and coverage['arrangement_items_complete'] else 'partial')

@@ -50,7 +50,7 @@ _OBJECT_BEFORE_ADD_PATTERN = re.compile(
 )
 
 _REPLACE_PATTERN = re.compile(
-    r"(?:把)?\s*([^，。；,;]+?)\s*(?:换成|替换成|改成)\s*([^，。；,;]+)"
+    r"(?:把)?\s*([^，。；,;]+?)\s*(?:换成|替换成|改成|改为|调整为)\s*([^，。；,;]+)"
 )
 _DURATION_VALUE_PATTERN = re.compile(
     r"(?:(?:\d+(?:\.\d+)?|[一二三四五六七八九十百两]+)(?:个)?半?|半)(?:分钟|小时)(?:半|左右)?"

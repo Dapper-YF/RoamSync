@@ -26,6 +26,8 @@ def test_user_order_beats_search_rank_and_aliases_are_scoped():
     assert resolve_read_text('第二个建议', cat) == '第二个建议'
     h.append({'user': '查后一个地址', 'place_cards': [{'place': ps[1]}]})
     assert resolve_read_text('第一个', place_catalog(h, ContextEnvelope(browsing_city='扬州'))) == '个园'
+    h.insert(1, {'user': '查前一个地址', 'place_cards': [{'place': ps[0]}]})
+    assert resolve_read_text('第一个', place_catalog(h, ContextEnvelope(browsing_city='扬州'))) == '个园'
 
 
 def test_compound_route_and_hours_share_verified_objects_but_not_peer_queries():

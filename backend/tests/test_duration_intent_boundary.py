@@ -8,6 +8,7 @@ from app.planning_intent_service import _build_rule_semantic_draft, classify_pla
     "把它改成45分钟，其他日期不要动",
     "把这个活动改成1小时",
     "把第2天河坊街改成一个半小时",
+    "请把测试地点0的停留时长改为20分钟，其他日期保持不变。",
 ])
 def test_complete_duration_change_does_not_create_place_query(message):
     intent = classify_planning_intent(message, has_activities=True, has_selected_activity=True)

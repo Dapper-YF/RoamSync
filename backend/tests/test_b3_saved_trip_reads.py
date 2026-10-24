@@ -243,7 +243,7 @@ def test_calendar_date_and_day_selection_are_same_saved_scope(sessions):
 
 def test_independent_compound_saved_read_survives_route_failure(sessions,monkeypatch):
     import app.assistant_capabilities as module
-    async def route(*args):
+    async def route(*args, **kwargs):
         return {'assistant':'车站名称有歧义，请选择具体车站。','place_cards':[],
             'read_tools':{'route':{'status':'unavailable'}}},'partial'
     monkeypatch.setattr(module,'route_answer',route)
