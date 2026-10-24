@@ -3,6 +3,21 @@
 Last updated: 2026-10-24
 
 
+## Official source integration (2026-10-24; source only, product NO-GO)
+
+User explicitly authorized merging all final work into E:/Study/RoamSync.
+Isolated integration combines A a1e5946 and B f036d0a (merge d37da85),
+including C e102205/ba143a2/207c9b7 already in A history. Product code has no
+merge conflicts; both architecture contracts retained. Candidate save test-only
+fixture fix f7fc455 returns Arrangement instead of Session for its own endpoint.
+This supersedes earlier read-only/no-merge status for official source only.
+Full isolated backend main1816 + dedicated38 pass, source unchanged; final Web
+checks and source preservation receipt in OFFICIAL_SOURCE_INTEGRATION_20261024.md.
+Original dirty/untracked/env preserved in the official checkout; no deployment,
+production DB operation, volume reset or Obsidian writes. Source integration
+is not product GO; known model/identity/fact failures remain. Earlier sections
+below describe their historical isolated candidate state, not current merge status.
+
 ## B3 saved-trip read quality candidate — isolated, NO-GO (2026-10-24)
 
 Unified product BASE89b81e8. B isolated treeE:/Study/RoamSync-agent-read-b3-20261024,
