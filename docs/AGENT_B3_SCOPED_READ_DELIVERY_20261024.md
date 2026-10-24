@@ -17,6 +17,8 @@
 - 修改限于Assistant/Companion读取接线、一个读取模块、相关测试与评测；无迁移、部署脚本、大规模UI或生产数据库变更。未写Obsidian。
 - 用户授权B向A协调。A冻结候选/接线文件后，B才从BASE修改；正式候选局部修改、采用、前端仍归A。A对41a4指出测试库兼容及READ COMMITTED混读两项阻断，对4a8指出业务池占满时借第二条连接的容量风险；本版有实际修复和真实PG证据。A最终复核结论单独记录，不推断为合入或发布许可。
 
+A已对B交付HEAD`a138639`完成最终只读窄审（A提交`a1e5946b48b64b1da609e7b9cb33afa5231ac6f9`）：本次读取契约/连接边界无剩余可复现接收阻断，核对164个app文件、14受测文件、254项XML及原manifest的24份证据哈希。A未重跑测试，也没有独立重评公开题或批准产品发布。原审查及收据原样收录为evidence目录的`A-readonly-integration-review.md`、`A-final-review-receipt.json`；A核对的是`reviewed-manifest-a138.json`（原manifest），后续总manifest增加审查收据不能冒称也由A核对。最终仅允许进入后续集成评审，**未合入、未部署，整体NO-GO**。
+
 旧工作保留在`E:/Study/RoamSync-agent-operation-b2-20261022`。B2完整十项审查、条件/复合任务/prepared恢复开发、真实失败、公开16轮和C保留题报告见本树[前轮交付](AGENT_QUALITY_B2_DELIVERY_20261023.md)。B3新定位的8处断点和22轮公开题面在旧树`docs/AGENT_B3_READ_HANDOFF_20261024.md`（提交779766a）；候选授权独立审查在旧树`docs/AGENT_B3_CANDIDATE_BOUNDARY_REVIEW_20261024.md`（提交43cfbb4、622f01e）。这些历史结论保持其原源码/范围，不冒充4a8新版全量结果。
 
 ## 真实运行流程和边界

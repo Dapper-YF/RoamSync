@@ -8,7 +8,7 @@ B阶段交付：基于A统一产品BASE89b81e8，独立树E:/Study/RoamSync-agen
 
 已实现：selected身份→同一服务端有界读取→日期/活动投影→保存值/原始理由目的与coverage。独立短RR READ ONLY事务形成一致提交态，max2/进程独立读连接、不占业务池第二条连接、5s准入、finally关闭；捕获后Trip/偏好标量检查仅是过期检测。原始理由/notes过期明确拒绝，不冒充无记录。入口capture错误沿AssistantToolError，回答阶段stale才带needs_retry。
 
-A只读审查发现并发混读/测试库守卫/业务池饱和风险，本版修复并有实际PG反例。A最终接收意见需单独保留，不等于合入/GO。本次无浏览器、真实场所事实或候选Accept验收，不借用A旧全量证明B新源码。
+A只读审查发现并发混读/测试库守卫/业务池饱和风险，本版修复并有实际PG反例。A提交a1e5946最终窄审确认本次读取/连接边界无剩余可复现阻断，核对app/测试身份及24份证据；未重跑、未合入/部署，不等于GO。原文/收据和被审manifest已收录B证据。本次无浏览器、真实场所事实或候选Accept验收，不借用A旧全量证明B新源码。
 
 ## Prior milestone baseline (before shadow split)
 
