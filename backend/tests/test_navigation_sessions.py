@@ -24,6 +24,20 @@ from app.main import app
 TZ = ZoneInfo("Asia/Shanghai")
 
 
+class BarrierRoutingProvider(FakeRoutingProvider):
+    """Hold the first claimed response until the test commits its competitor."""
+    def __init__(self, responses):
+        super().__init__(responses)
+        self.started, self.release = asyncio.Event(), asyncio.Event()
+
+    async def route(self, request):
+        result = await super().route(request)
+        if len(self.requests) == 1:
+            self.started.set()
+            await self.release.wait()
+        return result
+
+
 def _start_and_create_session(client: TestClient) -> dict:
     assert client.post("/api/v1/demo/reset").status_code == 200
     execution = client.post(
@@ -209,14 +223,17 @@ def test_fake_provider_results_are_fenced_by_monotonic_route_revision():
 
         async def run() -> tuple[object, object, dict]:
             base = datetime(2026, 9, 5, 9, tzinfo=TZ)
-            provider = FakeRoutingProvider([
-                FakeRouteResponse(result=RoutingResult(3000, 30, base + timedelta(minutes=30), "fake", {"call": 5}), delay_seconds=0.04),
+            provider = BarrierRoutingProvider([
+                FakeRouteResponse(result=RoutingResult(3000, 30, base + timedelta(minutes=30), "fake", {"call": 5})),
                 FakeRouteResponse(result=RoutingResult(1200, 12, base + timedelta(minutes=12), "fake", {"call": 6})),
             ])
             old = asyncio.create_task(refresh_route(session_factory, navigation_session_id, provider))
-            await asyncio.sleep(0.005)
-            newest = asyncio.create_task(refresh_route(session_factory, navigation_session_id, provider))
-            old_result, newest_result = await asyncio.gather(old, newest, return_exceptions=True)
+            await asyncio.wait_for(provider.started.wait(), 5)
+            try:
+                newest_result = await refresh_route(session_factory, navigation_session_id, provider)
+            finally:
+                provider.release.set()
+            old_result = (await asyncio.gather(old, return_exceptions=True))[0]
             async with session_factory() as session:
                 item = await session.get(NavigationSession, navigation_session_id)
                 return old_result, newest_result, {
@@ -238,16 +255,19 @@ def test_provider_response_after_itinerary_change_is_rejected_and_session_stays_
 
         async def run() -> tuple[object, str, int]:
             base = datetime(2026, 9, 5, 9, tzinfo=TZ)
-            provider = FakeRoutingProvider([
-                FakeRouteResponse(result=RoutingResult(900, 9, base + timedelta(minutes=9), "fake"), delay_seconds=0.04)
+            provider = BarrierRoutingProvider([
+                FakeRouteResponse(result=RoutingResult(900, 9, base + timedelta(minutes=9), "fake"))
             ])
             pending = asyncio.create_task(refresh_route(session_factory, navigation_session_id, provider))
-            await asyncio.sleep(0.005)
-            async with session_factory() as session:
-                trip = await session.scalar(select(Trip).where(Trip.id == DEMO_TRIP_ID).with_for_update())
-                await supersede_navigation_sessions_for_itinerary(session, trip.id, trip.version)
-                trip.version += 1
-                await session.commit()
+            await asyncio.wait_for(provider.started.wait(), 5)
+            try:
+                async with session_factory() as session:
+                    trip = await session.scalar(select(Trip).where(Trip.id == DEMO_TRIP_ID).with_for_update())
+                    await supersede_navigation_sessions_for_itinerary(session, trip.id, trip.version)
+                    trip.version += 1
+                    await session.commit()
+            finally:
+                provider.release.set()
             result = await pending
             async with session_factory() as session:
                 item = await session.get(NavigationSession, navigation_session_id)
