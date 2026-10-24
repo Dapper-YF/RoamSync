@@ -258,7 +258,10 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
             # Tool errors do not publish partial unvalidated model output.
             from app.assistant_stream import emit
             emit("reset")
-            bundle, status = failure_bundle(envelope), "failed"
+            from app.saved_trip_reads import SavedTripReadStale
+            bundle, status = (failure_bundle(envelope, str(exc), read_tools={
+                'itinerary_read': {'status': 'needs_retry', 'reason': 'saved_trip_changed'}})
+                if isinstance(exc, SavedTripReadStale) else failure_bundle(envelope)), "failed"
             goal = baseline.model_copy(update={"target_runtime": "companion", "goal_type": "travel_chat", "mutation_requested": False})
         bundle["execution_summary"] = diagnostics.summary(status)
         if status == "failed":

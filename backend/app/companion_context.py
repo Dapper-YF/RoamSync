@@ -24,10 +24,16 @@ class CompanionContextReader:
         if self._read_snapshot and self._read_snapshot.trip['id'] != str(self._trip_id):
             raise ValueError('读取快照与旅行不一致。')
         changes = {}
+        snapshot = self._read_snapshot
+        itinerary_read = (need.itinerary_required or need.decision_history_required
+            or re.search(r"已选|备选|留白|未排程|我的安排|选了什么", context.current_message))
+        if itinerary_read and snapshot is None:
+            from app.saved_trip_reads import load_saved_trip_read
+            snapshot = await load_saved_trip_read(self._session, self._trip_id, context.current_message)
         if need.trip_context_required:
-            if self._read_snapshot:
-                changes['trip_summary'] = dict(self._read_snapshot.trip)
-                changes['current_destination'] = context.current_destination or self._read_snapshot.trip['destination']
+            if snapshot:
+                changes['trip_summary'] = dict(snapshot.trip)
+                changes['current_destination'] = context.current_destination or snapshot.trip['destination']
             else:
                 row = (await self._select(select(Trip.id, Trip.version, Trip.title, Trip.destination)
                     .where(Trip.id == self._trip_id))).first()
@@ -36,14 +42,16 @@ class CompanionContextReader:
                     changes["current_destination"] = context.current_destination or row.destination
         if need.preferences_required and not (context.assistant_context and context.assistant_context.get("browsing_city")
             and context.assistant_context.get("browsing_city").rstrip("市") != changes.get("trip_summary", {}).get("destination", "").rstrip("市")):
-            row = (await self._select(select(TripPreferences.pace, TripPreferences.interest_categories,
-                TripPreferences.avoid_categories, TripPreferences.free_text_requirements)
-                .where(TripPreferences.trip_id == self._trip_id))).first()
-            if row:
-                changes["saved_trip_preferences"] = dict(row._mapping)
-        if need.itinerary_required or need.decision_history_required or re.search(r"已选|备选|留白|未排程|我的安排|选了什么", context.current_message):
-            from app.saved_trip_reads import load_saved_trip_read
-            snapshot = self._read_snapshot or await load_saved_trip_read(self._session, self._trip_id, context.current_message)
+            if snapshot:
+                from copy import deepcopy
+                changes['saved_trip_preferences'] = deepcopy(snapshot.preferences)
+            else:
+                row = (await self._select(select(TripPreferences.pace, TripPreferences.interest_categories,
+                    TripPreferences.avoid_categories, TripPreferences.free_text_requirements)
+                    .where(TripPreferences.trip_id == self._trip_id))).first()
+                if row:
+                    changes["saved_trip_preferences"] = dict(row._mapping)
+        if itinerary_read:
             projection = snapshot.project(context.current_message)
             rows = projection['activities']
             changes['formal_itinerary_summary'] = rows
@@ -52,25 +60,39 @@ class CompanionContextReader:
             if (need.decision_history_required and len(rows) == 1 and not projection['coverage']['ambiguous']
                 and (rows[0]['name'] in context.current_message or projection['coverage']['scope_kind'] == 'activity')
                 and not re.search(r"候选|待确认|新方案", context.current_message)):
-                rationale = await self._validated_rationale(SimpleNamespace(id=UUID(rows[0]['activity_id']), scheduled_time=rows[0]['time']))
+                rationale = await self._validated_rationale(SimpleNamespace(id=UUID(rows[0]['activity_id']), scheduled_time=rows[0]['time']),
+                    captured_version=snapshot.trip['version'])
                 if rationale:
                     changes["referenced_decision"] = rationale
         if need.decision_history_required and not context.resolved_entities:
             from app.saved_plan_notes import read_saved_plan_notes
+            expected = snapshot.trip['version'] if snapshot else None
+            await self._assert_captured_version(expected)
             changes["saved_plan_notes"] = await read_saved_plan_notes(self._session, self._trip_id, context.current_message)
+            await self._assert_captured_version(expected)
         return context.model_copy(update=changes)
 
-    async def _validated_rationale(self, activity):
+    async def _assert_captured_version(self, expected):
+        if expected is not None:
+            current = (await self._select(select(Trip.version).where(Trip.id == self._trip_id))).scalar_one_or_none()
+            if current != expected:
+                from app.saved_trip_reads import SavedTripReadStale
+                raise SavedTripReadStale('安排已更新，请重新读取后查询原始理由。')
+
+    async def _validated_rationale(self, activity, *, captured_version=None):
         # Only an accepted revision for the CURRENT formal version can explain
         # an exactly identified surviving Activity. Invalid/shadow/unavailable
         # prose, pending candidates and old versions do not confer authority.
+        await self._assert_captured_version(captured_version)
         row = (await self._select(select(PlanRevision.id,
             PlanRevision.difference_summary["decision_summary"].label("summary"))
             .join(PlanningRun, PlanningRun.id == PlanRevision.planning_run_id)
             .join(Trip, Trip.id == PlanRevision.trip_id)
             .where(Trip.id == self._trip_id, PlanRevision.status == "accepted", PlanningRun.status == "accepted",
                 PlanningRun.base_trip_version == Trip.version - 1)
+            .where(Trip.version == captured_version if captured_version is not None else True)
             .order_by(PlanRevision.decided_at.desc(), PlanRevision.created_at.desc()).limit(1))).first()
+        await self._assert_captured_version(captured_version)
         summary = row.summary if row else None
         if not isinstance(summary, dict) or summary.get("status") != "validated" or summary.get("error_codes"):
             return None

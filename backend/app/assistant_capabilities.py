@@ -253,6 +253,11 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
         for task in decision.read_tasks:
             if task.source_quote not in message:
                 return CapabilityDecision(intent="clarify", clarification="请确认各部分要查询的内容。", reason_code="missing_arguments")
+            if set(task.capabilities) == {'itinerary'}:
+                # Saved-state reads use the literal task question and server
+                # Trip/selection snapshot. Redundant model search arguments
+                # neither control this read nor require a second interpretation.
+                task = task.model_copy(update={'query': '', 'names': [], 'origin': '', 'destination': '', 'near_name': ''})
             tail = message[message.index(task.source_quote)+len(task.source_quote):]
             cancellations = re.finditer(r"(?:先|暂时|暂)?(?:不|别|不用|不要)(?:再)?(?:查询|搜索|查|搜|看)([^，,。；;?？!！]*)", tail)
             if any(not (obj := re.sub(r"[了吧呀呢\s]+$", "", match[1])) or obj in task.source_quote for match in cancellations):
@@ -558,6 +563,10 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
                 read_snapshot=read_snapshot)
         except Exception as exc:
             record_failure(kind, exc)
+            from app.saved_trip_reads import SavedTripReadStale
+            if isinstance(exc, SavedTripReadStale):
+                return failure_bundle(envelope, str(exc), read_tools={
+                    'itinerary_read': {'status': 'needs_retry', 'reason': 'saved_trip_changed'}}), 'failed'
             return failure_bundle(envelope, "这部分查询未能完成，已保留其他查询结果。"), "failed"
         finally:
             stream_sink.reset(token)
@@ -599,7 +608,8 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
         aggregated_sources.extend(sources)
         normalized_outputs.append((bundle, component_status))
     outputs = normalized_outputs
-    text = "\n\n".join(f"{labels[kind]}：\n{bundle['assistant']}" for (kind, _, _, _), (bundle, _) in zip(jobs, outputs))
+    text = "\n\n".join(bundle['assistant'] if bundle['assistant'].startswith(labels[kind]+'：') else
+        f"{labels[kind]}：\n{bundle['assistant']}" for (kind, _, _, _), (bundle, _) in zip(jobs, outputs))
     cards, tools = {}, {}
     for bundle, _ in outputs:
         cards.update({str(c["place"]["place_id"]): c for c in bundle.get("place_cards", [])})

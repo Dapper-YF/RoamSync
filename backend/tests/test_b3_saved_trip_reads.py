@@ -19,7 +19,8 @@ from app.saved_trip_reads import load_saved_trip_read, render_saved_read
 
 @pytest.fixture
 def sessions():
-    assert os.environ['DATABASE_URL'].rsplit('/',1)[-1].startswith('roamsync_agent_b3_')
+    from _database_safety import validate_test_databases
+    validate_test_databases(os.environ)
     engine=create_async_engine(os.environ['DATABASE_URL'],poolclass=NullPool)
     async def initialize():
         async with engine.begin() as conn:
@@ -212,6 +213,20 @@ def test_compound_fallback_preserves_saved_day_scalar_question():
     assert all(t in result for t in ['第三天','选中','多久'])
 
 
+def test_saved_state_task_does_not_require_unused_model_search_paraphrase():
+    from app.assistant_capabilities import CapabilityDecision, validate_decision
+    from app.assistant_context import ContextEnvelope
+    message='第一天同名展馆的保存时长也查一下，不调整。'
+    decision=CapabilityDecision(intent='itinerary',reason_code='saved_state',capabilities=['itinerary'],read_tasks=[
+        {'source_quote':message,'capabilities':['itinerary'],'itinerary_purpose':'saved_values',
+         'query':'第一天同名展馆保存的停留时长','names':['并非原句的规范名称']}])
+    result=validate_decision(decision,message,[],ContextEnvelope())
+    assert result.intent=='itinerary' and result.read_tasks
+    assert result.read_tasks[0].query=='' and result.read_tasks[0].names==[]
+    assert result.read_tasks[0].source_quote==message
+    assert result.read_tasks[0].itinerary_purpose=='saved_values'
+
+
 def test_calendar_date_and_day_selection_are_same_saved_scope(sessions):
     async def run():
         async with sessions() as db:
@@ -247,4 +262,157 @@ def test_independent_compound_saved_read_survives_route_failure(sessions,monkeyp
             assert '合成地点15' in bundle['assistant'] and '车站名称有歧义' in bundle['assistant']
             assert bundle['read_tools']['tasks'][0]['read_tools']['itinerary_read']['complete']
             assert '2026-11-10' not in bundle['assistant']
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize('change', ['status_without_trip_version', 'trip', 'preferences'])
+def test_real_pg_interleaved_commit_cannot_mix_snapshot_rows(sessions,monkeypatch,change):
+    from sqlalchemy import update
+    from sqlalchemy.ext.asyncio import AsyncSession
+    from app.saved_trip_reads import SavedTripReadStale
+    original = AsyncSession.execute
+    armed, fired = False, False
+    async def run():
+        nonlocal armed, fired
+        async with sessions() as db:
+            trip,days,activities = await seed(db)
+            pref = TripPreferences(trip_id=trip.id,pace='balanced')
+            db.add(pref);await db.commit()
+            initial_trip_version, initial_pref_version = trip.version, pref.version
+            async def interleave(reader, statement, *args, **kwargs):
+                nonlocal fired
+                result = await original(reader, statement, *args, **kwargs)
+                if armed and not fired and 'count(activities.id)' in str(statement):
+                    fired = True
+                    async with sessions() as writer:
+                        if change == 'preferences':
+                            await writer.execute(update(TripPreferences).where(TripPreferences.trip_id==trip.id)
+                                .values(pace='relaxed',version=TripPreferences.version+1))
+                        else:
+                            await writer.execute(update(Activity).where(Activity.id==activities[12].id)
+                                .values(status='active',duration_minutes=99))
+                            if change == 'trip':
+                                await writer.execute(update(Trip).where(Trip.id==trip.id).values(version=Trip.version+1))
+                        await writer.commit()
+                return result
+            monkeypatch.setattr(AsyncSession,'execute',interleave)
+            armed = True
+            if change != 'status_without_trip_version':
+                with pytest.raises(SavedTripReadStale,match='重新读取'):
+                    await load_saved_trip_read(db,trip.id,'第三天保存安排')
+            else:
+                snapshot = await load_saved_trip_read(db,trip.id,'第三天保存安排')
+                value = next(a for a in snapshot.activities if a['activity_id']==str(activities[12].id))
+                assert value['status']=='planned' and value['duration_minutes']==60
+                assert snapshot.preferences['pace']=='balanced'
+                # Reader does not commit, roll back or refresh caller ORM state.
+                assert trip.version==initial_trip_version and pref.version==initial_pref_version
+                async with sessions() as current:
+                    stored = (await current.execute(select(Activity.status,Activity.duration_minutes)
+                        .where(Activity.id==activities[12].id))).one()
+                    assert stored.status=='active' and stored.duration_minutes==99
+                    assert await current.scalar(select(Trip.version).where(Trip.id==trip.id))==initial_trip_version
+            assert fired
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize('message', ['为什么把选中的这个馆排这里？', '为什么这样安排行程？'])
+def test_original_reason_and_notes_reject_detached_stale_version(sessions,message):
+    from sqlalchemy import update
+    from app.saved_trip_reads import SavedTripReadStale
+    async def run():
+        async with sessions() as db:
+            trip,_,activities=await seed(db)
+            snapshot=await load_saved_trip_read(db,trip.id,message,selected_activity_id=activities[12].id)
+            async with sessions() as writer:
+                await writer.execute(update(Trip).where(Trip.id==trip.id).values(version=Trip.version+1))
+                await writer.commit()
+            # The caller still holds its old ORM identity: checks must query DB.
+            assert trip.version==snapshot.trip['version']
+            with pytest.raises(SavedTripReadStale,match='重新读取'):
+                await CompanionContextReader(db,trip.id,read_snapshot=snapshot).load(context(message),
+                    InformationNeed(itinerary_required=True,decision_history_required=True))
+    asyncio.run(run())
+
+
+def test_detached_preferences_do_not_mix_later_commits(sessions):
+    from sqlalchemy import update
+    async def run():
+        async with sessions() as db:
+            trip,_,_=await seed(db)
+            db.add(TripPreferences(trip_id=trip.id,pace='balanced'));await db.commit()
+            snapshot=await load_saved_trip_read(db,trip.id,'第三天安排')
+            async with sessions() as writer:
+                await writer.execute(update(TripPreferences).where(TripPreferences.trip_id==trip.id)
+                    .values(pace='relaxed',version=TripPreferences.version+1));await writer.commit()
+            value=await CompanionContextReader(db,trip.id,read_snapshot=snapshot).load(context('第三天安排'),
+                InformationNeed(itinerary_required=True,preferences_required=True,trip_context_required=True))
+            assert value.saved_trip_preferences['pace']=='balanced'
+            assert value.itinerary_read_coverage['preferences_version']==snapshot.trip['preferences_version']
+    asyncio.run(run())
+
+
+def test_legacy_reader_captures_before_projecting_trip_and_preferences(sessions,monkeypatch):
+    import app.saved_trip_reads as module
+    from sqlalchemy import update
+    original=module.load_saved_trip_read
+    async def run():
+        async with sessions() as db:
+            trip,_,_=await seed(db)
+            db.add(TripPreferences(trip_id=trip.id,pace='balanced'));await db.commit()
+            old_version=trip.version
+            async def interleave(*args,**kwargs):
+                async with sessions() as writer:
+                    await writer.execute(update(Trip).where(Trip.id==trip.id).values(version=Trip.version+1))
+                    await writer.execute(update(TripPreferences).where(TripPreferences.trip_id==trip.id)
+                        .values(pace='relaxed',version=TripPreferences.version+1));await writer.commit()
+                return await original(*args,**kwargs)
+            monkeypatch.setattr(module,'load_saved_trip_read',interleave)
+            value=await CompanionContextReader(db,trip.id).load(context('第三天已保存什么安排？'),
+                InformationNeed(itinerary_required=True,trip_context_required=True,preferences_required=True))
+            assert value.trip_summary['version']==value.itinerary_read_coverage['trip_version']==old_version+1
+            assert value.saved_trip_preferences['pace']=='relaxed'
+    asyncio.run(run())
+
+
+def test_fixture_safety_accepts_standard_isolated_runner_database():
+    from _database_safety import validate_test_databases
+    validate_test_databases({'APP_ENV':'test','DATABASE_URL':
+        'postgresql+psycopg://synthetic:synthetic@localhost:15435/roamsync_test_write_protection'})
+    with pytest.raises(ValueError):
+        validate_test_databases({'APP_ENV':'test','DATABASE_URL':
+            'postgresql+psycopg://synthetic:synthetic@localhost:15435/roamsync'})
+
+
+@pytest.mark.parametrize('cancel', [False, True])
+def test_read_unit_is_readonly_and_closes_on_failure_without_flushing_caller(sessions,monkeypatch,cancel):
+    import app.saved_trip_reads as module
+    from sqlalchemy import event, text
+    async def run():
+        async with sessions() as db:
+            trip,_,_=await seed(db)
+            pending=Trip(id=uuid4(),title='must remain unflushed',destination='开封',
+                start_date=date(2026,11,10),end_date=date(2026,11,12))
+            db.add(pending)
+            connections=[]
+            def checkout(*args): connections.append('out')
+            def checkin(*args): connections.append('in')
+            event.listen(db.bind.sync_engine,'checkout',checkout)
+            event.listen(db.bind.sync_engine,'checkin',checkin)
+            async def fail(reader,*args,**kwargs):
+                assert await reader.scalar(text('SHOW transaction_isolation'))=='repeatable read'
+                assert await reader.scalar(text('SHOW transaction_read_only'))=='on'
+                if cancel: raise asyncio.CancelledError()
+                raise RuntimeError('synthetic capture failure')
+            monkeypatch.setattr(module,'_capture_saved_trip_read',fail)
+            try:
+                with pytest.raises(asyncio.CancelledError if cancel else RuntimeError):
+                    await module.load_saved_trip_read(db,trip.id)
+                assert connections==['out','in']
+                assert pending in db.new and db.in_transaction()
+                assert await db.scalar(select(func.count()).select_from(Trip).where(Trip.id==pending.id),
+                    execution_options={'autoflush':False})==0
+            finally:
+                event.remove(db.bind.sync_engine,'checkout',checkout)
+                event.remove(db.bind.sync_engine,'checkin',checkin)
     asyncio.run(run())

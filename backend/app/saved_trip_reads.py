@@ -5,12 +5,17 @@ from datetime import UTC, date, datetime
 import re
 from uuid import UUID
 
-from sqlalchemy import case, func, select
+from sqlalchemy import case, func, select, text
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession
 
-from app.database import Activity, DayPlan, PlaceCandidate, Trip, TripArrangementItem, SavedIntention
+from app.database import Activity, DayPlan, PlaceCandidate, Trip, TripArrangementItem, SavedIntention, TripPreferences
 from app.travel_language import chinese_number
 
 READ_LIMIT = 100
+
+
+class SavedTripReadStale(ValueError):
+    """A known saved-state change requires a fresh explicit read."""
 
 
 def requested_dates(message, days):
@@ -53,6 +58,7 @@ class SavedTripReadSnapshot:
     counts_by_date: dict
     item_count: int
     captured_at: str
+    preferences: dict | None = None
     selected_day_id: str | None = None
     selected_activity_id: str | None = None
 
@@ -109,7 +115,8 @@ class SavedTripReadSnapshot:
             'matched_count': total, 'returned_count': len(rows), 'complete': complete,
             'arrangement_items_complete': items_complete, 'ambiguous': ambiguous,
             'scope_issue': scope_issue,
-            'trip_version': self.trip['version'], 'captured_at': self.captured_at}
+            'trip_version': self.trip['version'], 'preferences_version': self.trip.get('preferences_version'),
+            'captured_at': self.captured_at}
         return {'activities': deepcopy(rows), 'arrangement_items': deepcopy(items), 'coverage': coverage}
 
     def selection_summary(self, message):
@@ -119,13 +126,46 @@ class SavedTripReadSnapshot:
 
 
 async def load_saved_trip_read(db, trip_id, message='', *, selected_day_id=None, selected_activity_id=None, limit=READ_LIMIT):
-    """SELECT only, no ORM instances escape. Caller owns transaction lifetime."""
+    """Capture committed state in a short independent read-only MVCC unit.
+
+    The caller's transaction is untouched. In particular execution status writes
+    do not advance Trip.version, so two version checks alone cannot make a
+    sequence of READ COMMITTED queries coherent. The extra connection closes
+    here, before any selector/provider work; no ORM instances escape.
+    """
+    bind = db.bind.engine if isinstance(db.bind, AsyncConnection) else db.bind
+    async with bind.connect() as connection:
+        connection = await connection.execution_options(isolation_level='REPEATABLE READ')
+        async with connection.begin():
+            await connection.execute(text('SET TRANSACTION READ ONLY'))
+            async with AsyncSession(bind=connection, expire_on_commit=False) as reader:
+                snapshot = await _capture_saved_trip_read(reader, trip_id, message,
+                    selected_day_id=selected_day_id, selected_activity_id=selected_activity_id, limit=limit)
+    # Reject known versioned changes committed during capture. These checks use
+    # DB scalars, not the caller's identity map. They are a freshness fence, not
+    # the consistency mechanism and not a promise that nothing changes later.
+    current = (await db.execute(select(Trip.version).where(Trip.id == trip_id),
+        execution_options={'autoflush': False})).scalar_one_or_none()
+    preference = (await db.execute(select(TripPreferences.version).where(TripPreferences.trip_id == trip_id),
+        execution_options={'autoflush': False})).scalar_one_or_none()
+    if current != snapshot.trip['version'] or preference != snapshot.trip['preferences_version']:
+        raise SavedTripReadStale('读取期间安排或偏好已更新，请重新读取当前版本。')
+    return snapshot
+
+
+async def _capture_saved_trip_read(db, trip_id, message='', *, selected_day_id=None, selected_activity_id=None, limit=READ_LIMIT):
     async def rows(query):
         return (await db.execute(query, execution_options={'autoflush': False})).all()
+    captured_at = datetime.now(UTC).isoformat()
     trip_rows = await rows(select(Trip.id, Trip.title, Trip.destination, Trip.version).where(Trip.id == trip_id))
     if not trip_rows:
         raise ValueError('读取的旅行不存在。')
     t = trip_rows[0]
+    preference_rows = await rows(select(TripPreferences.version, TripPreferences.pace,
+        TripPreferences.interest_categories, TripPreferences.avoid_categories, TripPreferences.free_text_requirements)
+        .where(TripPreferences.trip_id == trip_id))
+    preference_version = preference_rows[0].version if preference_rows else None
+    preferences = {k: deepcopy(v) for k, v in preference_rows[0]._mapping.items() if k != 'version'} if preference_rows else None
     days = tuple({'day_id': str(r.id), 'date': r.date.isoformat(), 'position': r.position}
         for r in await rows(select(DayPlan.id, DayPlan.date, DayPlan.position).where(DayPlan.trip_id == trip_id).order_by(DayPlan.position)))
     if selected_day_id and str(selected_day_id) not in {d['day_id'] for d in days}:
@@ -170,9 +210,11 @@ async def load_saved_trip_read(db, trip_id, message='', *, selected_day_id=None,
             SavedIntention.linked_arrangement_item_id, SavedIntention.time_period).where(
                 SavedIntention.linked_arrangement_item_id.in_([UUID(i['id']) for i in items])))}
         items = tuple({**i, 'time_period': periods.get(i['id'])} for i in items)
-    return SavedTripReadSnapshot(trip={'id': str(t.id), 'title': t.title, 'destination': t.destination, 'version': t.version},
+    return SavedTripReadSnapshot(trip={'id': str(t.id), 'title': t.title, 'destination': t.destination,
+        'version': t.version, 'preferences_version': preference_version},
         days=days, activities=activities, items=items, counts_by_date=counts, item_count=item_count,
-        captured_at=datetime.now(UTC).isoformat(), selected_day_id=str(selected_day_id) if selected_day_id else None,
+        captured_at=captured_at, preferences=preferences,
+        selected_day_id=str(selected_day_id) if selected_day_id else None,
         selected_activity_id=str(selected_activity_id) if selected_activity_id else None)
 
 
