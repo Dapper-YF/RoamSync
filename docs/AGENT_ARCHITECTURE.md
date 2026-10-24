@@ -1,5 +1,17 @@
 # RoamSync Agent v1 architecture contract
 
+## Stage3 shared read projection (2026-10-24; isolated candidate)
+
+Read validation and execution share one parent-request reference projection.
+Same-turn literal subjects may bind elliptical read clauses but remain ID-less
+search mentions until provider resolution. A result or reverse route cannot
+renumber an existing comparison; an explicit reordered comparison may. Typed
+read_tasks survive a redundant direct root label and undergo full source and
+city validation. Split answers retain their original parent question as read-only
+context. Companion consumes this projection instead of separately interpreting
+place pronouns as Suggestion IDs. Incomplete reference resolution is not complete
+identity evidence. No new writer, public DTO, migration or approval authority.
+
 ## Stage2 conversation continuity candidate (2026-10-24; acceptance pending)
 
 Read-only ordinals bind persisted POI card identities in the current topic/city,

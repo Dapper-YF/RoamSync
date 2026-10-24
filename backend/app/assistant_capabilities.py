@@ -213,8 +213,8 @@ def _repairable_saved_read(raw, errors, trip_summary):
 
 
 def validate_decision(decision, message, history, envelope, selected=(), *, _task=False):
-    from app.read_references import place_catalog, argument_in_read_scope, resolve_read_text
-    referents = place_catalog(history, envelope)
+    from app.read_references import place_catalog, argument_in_read_scope, resolve_read_text, task_referents
+    referents = task_referents(message, decision, place_catalog(history, envelope))
     selected = [*selected, *referents]
     candidate_authorized = False
     if decision.candidate_command is not None:
@@ -281,6 +281,11 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
         decision = decision.model_copy(update={"capabilities": ["facts", *[c for c in original if c not in {"facts", "web"}], *(["web"] if "facts" in original and "web" in original else [])]})
     if decision.intent == "itinerary":
         decision = decision.model_copy(update={"capabilities": ["itinerary", *[c for c in decision.capabilities if c != "itinerary"]]})
+    # Typed read tasks are the operation contract. A redundant broad 'direct'
+    # label must not discard explicit, source-validated lookup obligations.
+    task_caps = list(dict.fromkeys(c for task in decision.read_tasks for c in task.capabilities))
+    if decision.intent == 'direct' and task_caps:
+        decision = decision.model_copy(update={'intent': 'lookup', 'capabilities': task_caps})
     if decision.intent == 'lookup' and not decision.capabilities and decision.read_tasks:
         decision = decision.model_copy(update={'capabilities': list(dict.fromkeys(
             c for task in decision.read_tasks for c in task.capabilities))})
@@ -356,8 +361,10 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
             elif task.query and not argument_in_read_scope(task.query, task.source_quote, referents):
                 return CapabilityDecision(intent="clarify", clarification=f"你想用「{task.query}」查哪个具体地点？", reason_code="missing_arguments")
             local = _task_decision(decision, task)
+            if task.city and task.city.removesuffix('市') not in user_text:
+                return CapabilityDecision(intent='clarify', clarification='请确认这部分查询的城市。', reason_code='missing_arguments')
             validated = validate_decision(local, local_source,
-                history, envelope, [*selected, {"city": decision.city}], _task=True)
+                history, envelope, [*selected, {"city": task.city or decision.city}], _task=True)
             if validated.intent == "clarify":
                 return validated
             checked.append(task.model_copy(update={key: getattr(validated, key)
@@ -622,9 +629,11 @@ def approved_fact_question(message, envelope):
 
 
 async def answer_with_capabilities(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal, *, read_snapshot=None):
+    from app.read_references import place_catalog, task_referents
+    referents = task_referents(message, decision, place_catalog(history, envelope))
     groups = read_groups(decision)
     if not decision.read_tasks and (not groups or (len(groups) == 1 and decision.intent != "clarify")):
-        return await _answer_leaf(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal, read_snapshot=read_snapshot)
+        return await _answer_leaf(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal, read_snapshot=read_snapshot, referents=referents)
     jobs = []
     if decision.read_tasks:
         for task in decision.read_tasks:
@@ -655,7 +664,7 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
         try:
             return await _answer_leaf(settings, local, question, history, local_envelope, port, db, trip_id, session_id, message_id,
                 goal.model_copy(update={"live_fact_likely_required": kind == "facts"}), read_lock=read_lock, web_fallback=not explicit_web,
-                read_snapshot=read_snapshot)
+                read_snapshot=read_snapshot, original_request=message, referents=referents)
         except Exception as exc:
             record_failure(kind, exc)
             from app.saved_trip_reads import SavedTripReadStale
@@ -714,11 +723,12 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
             tools["facts"] = {"status": "available", "result": facts}
     if aggregated_sources:
         tools["web_search"] = {**tools.get("web_search", {}), "sources": aggregated_sources}
-    tools["tasks"] = [{"source_quote": question, "capabilities": caps, "status": status,
+    tools["tasks"] = [{"task_id": f'read_{index + 1}', "depends_on": [],
+        "source_quote": question, "capabilities": caps, "status": status,
         "validated_arguments": base.model_dump(mode="json", include={"city", "query", "names", "origin", "destination", "mode", "near_name", "category", "fact_kind"}),
         "read_tools": bundle.get("read_tools", {}),
         "resolved_facts": (bundle.get("companion_result") or {}).get("resolved_facts", [])}
-        for (_, caps, base, question), (bundle, status) in zip(jobs, outputs)]
+        for index, ((_, caps, base, question), (bundle, status)) in enumerate(zip(jobs, outputs))]
     statuses = [status for _, status in outputs]
     status = "failed" if all(s == "failed" for s in statuses) else "complete" if all(s == "complete" for s in statuses) else "partial"
     if decision.clarification:
@@ -735,9 +745,9 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
     return failure_bundle(envelope, text, cards=cards.values(), read_tools=tools), status
 
 
-async def _answer_leaf(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal, *, read_lock=None, web_fallback=True, read_snapshot=None):
+async def _answer_leaf(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal, *, read_lock=None, web_fallback=True, read_snapshot=None, original_request=None, referents=None):
     from app.read_references import place_catalog, resolve_read_text
-    referents = place_catalog(history, envelope)
+    referents = place_catalog(history, envelope) if referents is None else referents
     if decision.intent not in {'create', 'modify', 'execution'} and 'itinerary' not in decision.capabilities:
         resolved = resolve_read_text(message, referents)
         if resolved != message:
@@ -755,7 +765,7 @@ async def _answer_leaf(settings, decision, message, history, envelope, port, db,
         clarification = control_model_text(decision.clarification, message).text
         return failure_bundle(envelope, clarification or "请补充要查询的地点或需要执行的操作。"), "complete"
     if "route" in decision.capabilities:
-        return await route_answer(decision, envelope, port, known_places=referents)
+        return await route_answer(decision, envelope, port, known_places=[p for p in referents if p.get('place_id')])
     if "poi" in decision.capabilities:
         from app.assistant_research import research, LookupIntent
         async def judged(*args):
@@ -818,7 +828,10 @@ async def _answer_leaf(settings, decision, message, history, envelope, port, db,
             await db.commit()
             return value
     from app.assistant_practical import previous_reads
+    from app.read_references import read_reference_context
     read_tools = {"capability_selection": decision.model_dump(mode="json"), "previous_reads": previous_reads(history),
+        "reference_resolution": read_reference_context(message, referents, decision.names),
+        "task_context": {"original_request": original_request or message, "task_question": message},
         "evidence_scope": {"route": "only the returned endpoints and mode; no internal walking, parking or access guarantee",
             "diet": "a dish or soup option does not establish the suitability of an entire meal",
             "budget": "reference spending is not a final bill",

@@ -135,7 +135,11 @@ def build_companion_graph(reader: ContextReaderPort, provider: CompanionProvider
     async def resolve_conversation(state):
         context = state["context"]
         conversation = project_conversation(state["messages"])
-        selected, gaps = resolve_suggestions(context.current_message, conversation)
+        reference = context.read_tool_context.get('reference_resolution', {})
+        if reference.get('version') == 1 and reference.get('owns_reference'):
+            selected, gaps = [], []
+        else:
+            selected, gaps = resolve_suggestions(context.current_message, conversation)
         if context.travel_goal.clarification_needed and not gaps:
             gaps = [InformationGap(code="ambiguous_suggestion", message="你指的是哪个目的地或哪条建议？请补充一下。")]
         if not re.search(r"第.+(?:个|项)|suggestion_[0-9a-f]{32}", context.current_message) and (
