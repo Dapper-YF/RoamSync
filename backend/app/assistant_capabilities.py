@@ -127,6 +127,7 @@ SELECTION_INSTRUCTIONS += " read_referents is the server-owned ordered list of c
 SELECTION_INSTRUCTIONS += " For personal condition memory use subject='' for the user; for a temporary companion use the exact subject word from the source clause (e.g. 朋友) and trip scope. On a participant departure, remove ONLY that subject's earlier exact requirement value using the current departure clause, never clear all preferences. A separate explicit 我一个人去 establishes party_size=1; friends leaving alone does not. value may copy the complete affirmative numeric phrase such as 一个人. Preserve the user's unrelated personal preferences."
 SELECTION_INSTRUCTIONS += " OUTPUT CONTRACT: the JSON Schema is exhaustive. Omit all optional fields unrelated to the current request. Never emit candidate_command_note, notes, explanations, trip, or any other undeclared key at any level. A candidate's constraints belong in the typed plan.schedule_constraints and plan items, never in a side note. If the contract cannot represent a required constraint, leave candidate_command=null and clarify the unsupported constraint explicitly; do not drop it. Only one candidate operation is permitted per current clause."
 SELECTION_INSTRUCTIONS += " source_quote MUST be one contiguous substring of the original message. For coordinated ellipsis such as 查个园和何园各自的地址, both address tasks may repeat that entire original clause. Never synthesize 查个园的地址 from separated words. A visit item is ONLY a named requested venue; unused time stays free_window, never invent a new visit such as 周边漫步. If the user supplies a street-number disambiguator, preserve it in the visit name as literal-name（literal-address）."
+SELECTION_INSTRUCTIONS += " The contiguous-source rule also applies to memory_updates: never stitch a departure clause and a later cancellation clause across intervening words. Quote the complete original sentence if both are needed. For a new plan, do not allocate all available minutes to visits/meals: real transport will be inserted after POI resolution. Leave a meaningful buffer; model times are proposals, not verified route durations. For 位置和看点 use separate POI address tasks and a capabilities=[] explanation task quoting the same whole original clause; address retrieval alone cannot complete the explanation goal."
 
 
 async def select_capabilities(settings, message, history, envelope, trip_summary=None):
@@ -280,6 +281,9 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
         decision = decision.model_copy(update={"capabilities": ["facts", *[c for c in original if c not in {"facts", "web"}], *(["web"] if "facts" in original and "web" in original else [])]})
     if decision.intent == "itinerary":
         decision = decision.model_copy(update={"capabilities": ["itinerary", *[c for c in decision.capabilities if c != "itinerary"]]})
+    if decision.intent == 'lookup' and not decision.capabilities and decision.read_tasks:
+        decision = decision.model_copy(update={'capabilities': list(dict.fromkeys(
+            c for task in decision.read_tasks for c in task.capabilities))})
     if decision.intent == "lookup" and not decision.capabilities:
         raise CapabilityContractError("lookup_requires_read_capability")
     city_prefix = (decision.city or envelope.browsing_city or "").removesuffix("市")
@@ -775,6 +779,7 @@ async def _answer_leaf(settings, decision, message, history, envelope, port, db,
         from app.saved_trip_reads import render_saved_read
         projection = read_snapshot.project(message)
         text = '' if decision.itinerary_purpose == 'original_rationale' else render_saved_read(projection, message)
+        rationale_receipt = None
         if decision.itinerary_purpose == 'original_rationale' or re.search(r'原来|当时|为什么|理由', message):
             from app.companion_contracts import CompanionContext, InformationNeed
             async def read_reason():
@@ -789,11 +794,17 @@ async def _answer_leaf(settings, decision, message, history, envelope, port, db,
             else:
                 value = await read_reason()
             reason = value.referenced_decision
+            rationale_receipt = {'status': 'available' if reason else
+                'not_found' if len(projection['activities']) == 1 else 'unresolved_scope',
+                'trip_version': projection['coverage']['trip_version'],
+                'activity_ids': [a['activity_id'] for a in projection['activities']],
+                'decision_history_required': True}
             text += '\n' + ('原始保存理由：' + '；'.join(reason.reasons) if reason else
                 '没有唯一定位到对应活动的原始理由，不能用现在的推测代替。' if len(projection['activities']) != 1 else
                 '没有保存可验证的原始理由：未找到这个已保存版本对应活动的原始安排理由，不能用现在的推测代替。')
         coverage = projection['coverage']
-        return failure_bundle(envelope, text, read_tools={'itinerary_read': coverage}), (
+        return failure_bundle(envelope, text, read_tools={'itinerary_read': coverage,
+            **({'original_rationale': rationale_receipt} if rationale_receipt else {})}), (
             'complete' if coverage['complete'] and coverage['arrangement_items_complete'] else 'partial')
     class Reader:
         async def load(self, context, need):

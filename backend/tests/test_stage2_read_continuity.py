@@ -53,6 +53,9 @@ def test_two_places_do_not_require_repeating_their_canonical_names():
         'names': ['个园', '何园'], 'reason_code': 'place_identity', 'read_tasks': [
             {'source_quote': text, 'capabilities': ['poi'], 'city': '扬州', 'names': ['个园', '何园']}]})
     assert validate_decision(d, text, history, ContextEnvelope(browsing_city='扬州')).intent == 'lookup'
+    # The root capabilities member is optional; validated tasks supply its union.
+    assert validate_decision(d.model_copy(update={'capabilities': []}), text, history,
+        ContextEnvelope(browsing_city='扬州')).intent == 'lookup'
 
 
 def test_reviewed_alias_does_not_bind_same_named_branch_or_wrong_coordinates():

@@ -201,7 +201,9 @@ def test_original_rationale_purpose_reaches_existing_reader_without_inventing_re
                 capability_selector=selector)
             answer=row.messages[-1]
             assert '没有保存可验证的原始理由' in answer['assistant']
-            assert answer['companion_result']['information_need']['decision_history_required']
+            receipt = answer['read_tools']['original_rationale']
+            assert receipt['decision_history_required'] and receipt['status'] == 'not_found'
+            assert receipt['activity_ids'] == [str(activities[12].id)]
             assert not row.latest_run_id and not row.pending_action
     asyncio.run(run())
 
