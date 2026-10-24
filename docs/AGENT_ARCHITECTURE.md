@@ -2,6 +2,18 @@
 
 ## Stage3 shared read projection (2026-10-24; isolated candidate)
 
+CandidateCommand adds optional source_refs (item_ref -> request-local literal
+user span ID). The server restores that exact span before all kind, quantity,
+identity, date and route checks; IDs never authorize operations. Named visit
+quantities must belong to the same source clause; windows need their own type
+evidence. Unknown source IDs fail closed. No persisted Draft schema change.
+Workflow controls such as a save denial are not travel requirements. Preview,
+modify and adopt have distinct revocation scope, including same-target pronouns.
+Strict selection format recovery extends only to demonstrably empty unexpected
+root metadata on generate/modify without memory/intention writes, once within
+the existing 30s/90s budgets and exact known-field equality. Substantive unknown
+fields, adoption, missing/nested errors, policy failures never qualify.
+
 Stage3 memory updates add a versioned latest_receipt in the existing session
 memory JSON. All proposals start rejected, then acquire validated application
 outcomes; repeated literal/semantic processing merges same-message receipts.

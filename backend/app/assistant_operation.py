@@ -167,7 +167,9 @@ def approved_tool_decision(decision, message, envelope, *, today):
     if start is None or proposal.start_date is not None and proposal.start_date != start:
         return ToolDecision(tool="reply", reply="请明确这次的出发日期。")
     from app.travel_language import trip_duration
-    duration = (slots.get("duration_days") or {}).get("value") or trip_duration(decision.authorization_quote)
+    from app.requirement_language import current_user_evidence_reason
+    duration = ((slots.get("duration_days") or {}).get("value") or trip_duration(decision.authorization_quote)
+        or (trip_duration(message) if current_user_evidence_reason(message, message) is None else None))
     end = quoted[-1] if len(quoted)>1 else start + timedelta(days=int(duration)-1) if duration else None
     if end is None or proposal.end_date is not None and proposal.end_date != end:
         return ToolDecision(tool="reply", reply="准备玩几天，还是已经有返程日期了？")

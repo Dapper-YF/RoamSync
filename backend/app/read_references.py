@@ -83,13 +83,20 @@ def argument_in_read_scope(value, source, places):
     if not value:
         return True
     resolved = resolve_read_text(source, places)
-    if value in resolved:
+    if literal_search_subject(value, resolved):
         return True
     # Canonical and provider/reviewed aliases refer to one exact ID. An
     # explicitly named peer cannot donate its identity to another task.
     matches = [p for p in places if value in [p['name'], *p.get('aliases', [])]]
     return len(matches) == 1 and any(n and n in resolved for n in
         [matches[0]['name'], *matches[0].get('aliases', [])])
+
+
+def literal_search_subject(value, source):
+    if value in source:
+        return True
+    decorated = re.fullmatch(r'(.+?)[（(]([^（）()]+)[）)]', value)
+    return bool(decorated and all(part in source for part in decorated.groups()))
 
 
 def task_referents(message, decision, historical):

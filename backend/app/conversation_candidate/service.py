@@ -42,11 +42,16 @@ def proposed_name_matches(name, reference, city, source):
     return requested_place_matches(SimpleNamespace(name=reference.get("name", ""), aliases=reference.get('aliases', [])), base, city)
 
 
-async def resolve_plan(plan, city, port, history, message):
+async def resolve_plan(plan, city, port, history, message, source_refs=None):
     """Never trust model UUIDs or a category result's ranking as identity."""
     from app.place_content.contracts import SearchQuery
     from app.assistant_research import requested_place_matches
     data = plan.model_dump(mode="json")
+    from .sources import source_registry
+    spans = source_registry(history, message)
+    source_refs = source_refs or {}
+    if not set(source_refs) <= {item.item_ref for day in plan.days for item in day.items}:
+        raise ValueError('候选来源引用含有未知活动。')
     known = [card["place"] for turn in history for card in turn.get("place_cards", [])]
     source = "\n".join([*(turn.get("user", "") for turn in history), message])
     for day in data["days"]:
@@ -58,11 +63,31 @@ async def resolve_plan(plan, city, port, history, message):
             day["start_time"] = day["end_time"] = None
         for item in day["items"]:
             item.update(place_id=None, provider_place_id=None, identity_status="unknown")
+            if item['item_ref'] in source_refs:
+                bound = spans.get(source_refs[item['item_ref']])
+                if bound is None:
+                    raise ValueError('候选来源片段已失效，请重新生成。')
+                base = re.split(r'[（(]', item['name'])[0]
+                if item['kind'] == 'visit' and base not in bound and base.removesuffix('景区') not in bound:
+                    raise ValueError('候选来源片段未包含对应地点。')
+                # A referenced span is the one authoritative source; never
+                # validate its entity then borrow a quantity from another span.
+                item['source_quote'] = bound
             if item["source_quote"] and item["source_quote"] not in source:
                 raise ValueError("候选条件无法绑定用户原话，请重新说明该项要求。")
             interval = explicit_interval(item["source_quote"], item["start_time"], item["end_time"])
-            if item["duration_source"] == "user_explicit" and item["duration_minutes"] not in literal_minutes(item["source_quote"]) and not interval:
-                raise ValueError("候选的指定时长无法核实，尚未应用。")
+            kind_terms = {'meal': r'餐|吃饭|用餐', 'rest': r'休息|歇|休憩',
+                'free_window': r'自由|留白|空白|不安排|空出', 'blank_day': r'留白|空白|不安排'}
+            if item['kind'] in kind_terms and not re.search(kind_terms[item['kind']], item['source_quote']):
+                raise ValueError('候选窗口缺少对应类型的用户原话。')
+            local = [q for q in re.split(r'[，,。；;!?！？\n]', item['source_quote']) if
+                (re.split(r'[（(]', item['name'])[0].removesuffix('景区') in q if item['kind'] == 'visit'
+                 else re.search(kind_terms.get(item['kind'], r'.'), q))]
+            measured = literal_minutes('，'.join(local))
+            if item['duration_source'] == 'user_explicit' and measured != [item['duration_minutes']] and not interval:
+                raise ValueError('候选的指定时长无法绑定对应活动原话，尚未应用。')
+            if item['kind'] in kind_terms and len(measured) == 1 and item['duration_minutes'] != measured[0]:
+                raise ValueError('候选窗口时长与用户要求不一致。')
             if item["kind"] not in {"visit", "optional"}:
                 continue
             refs = [p for p in known if p.get("city", "").removesuffix("市") == city.removesuffix("市") and
@@ -153,7 +178,7 @@ async def build_candidate(command, decision, message, history, envelope, port, o
         revised = Draft(id=uuid4(), **DraftCreate(city=tool.destination, title=f"{tool.destination} · 旅行候选",
             day_count=len(plan.days), requirements=tool.preferences).model_dump(), schema_version=2,
             version=1, status="active", saved=False, plan=None, runs=[], updated_at=datetime.now(UTC))
-        revised.plan = await resolve_plan(plan, revised.city, port, history, message)
+        revised.plan = await resolve_plan(plan, revised.city, port, history, message, command.source_refs)
         revised.requirement_records = capture_explicit_requirements([], revised.requirements,
             scope={"kind": "draft", "draft_id": str(revised.id), "city": revised.city},
             source_ref=f"draft:{revised.id}:create", force=True)

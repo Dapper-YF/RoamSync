@@ -2,6 +2,29 @@
 
 Status: IN PROGRESS, product remains NO-GO until all gates pass.
 
+## Batch3 — structured preview generation and local candidate edits
+
+MEASURED before: batch3/before.xml reproduces five preview/adoption scope failures;
+real-before.json retains the baseline real user failures. Root causes include
+save-denial scope cancelling preview/edit, creation metadata duplicated in source
+clauses, source paraphrases and canonical names, and workflow controls captured
+as new travel requirements invalidating the candidate hash. Implemented scoped
+action checks, server literal-span references, literal name/address query evidence,
+strict empty-only format recovery and full downstream metadata/route validation.
+Named pure lookups render actual provider fields without inventing sibling gaps.
+
+MEASURED real-after6.json: real GLM/AMap ready candidate with 120min People Park,
+1h lunch and actual 16min walk, followed by park90min and unchanged peer/window;
+formal tables unchanged, source stable. Following Astra source/authorization
+review, same-action synonym/pronoun revocation and source/quantity/kind checks
+were strengthened; real-after7.json again generates and modifies a ready candidate
+(90->90 in this sample, so this capture alone does not prove a non-noop change).
+Earlier development captures/failures retained, including root plan output errors,
+invalid source bindings, invented walking limit and condition-hash rejection.
+batch3/final3.xml passes151 relevant tests; earlier final.xml had two restaurant
+branch-name regressions, fixed by preserving exact full branch identities before
+interpreting parenthesized address decorations. No unknown constraint was erased.
+
 ## Batch2 — effective conditions and receipts
 
 MEASURED before: batch2/before.xml has three intended failures, and real-before

@@ -122,6 +122,11 @@ def same_city(a, b):
 def requested_place_matches(place, name, city):
     """Provider-name/alias match for lookup only, never webpage citation identity."""
     city = city.removesuffix("市")
+    decorated = re.fullmatch(r'(.+?)[（(]([^（）()]+)[）)]', name)
+    if decorated and name not in {place.name, *place.aliases}:
+        name, address = decorated.groups()
+        if address not in (getattr(place, 'address', '') or ''):
+            return False
     def short(value):
         return value.removeprefix(city + "市").removeprefix(city)
     target, canonical = short(name), short(place.name)
@@ -274,7 +279,8 @@ async def research(settings, message, history, envelope, port, *, judge=determin
                     near = matches[0]
             if intent.nearby and near is None:
                 return result("讨论地点暂时无法核实，不能据此搜索附近门店。", status="empty")
-            queries = [name for name in intent.names if name in user_text][:3]
+            from app.read_references import literal_search_subject
+            queries = [name for name in intent.names if literal_search_subject(name, user_text)][:3]
             if not queries:
                 keyword = intent.query if intent.query and intent.query in user_text else {"food": "餐厅", "lodging": "酒店", "attraction": "景点"}[intent.category]
                 queries = [keyword]
@@ -371,7 +377,8 @@ async def research(settings, message, history, envelope, port, *, judge=determin
         issues.append("comparison_incomplete")
     comparison = render_research_decision_support(decision_support, intent.category)
     reference_only_decision = bool(comparison) and all(s["read_level"] == "provider_reference" for s in sources)
-    location_only = not intent.read_pages and bool(re.search(r"位置|地址|在哪", message))
+    location_only = not intent.read_pages and (bool(re.search(r"位置|地址|在哪", message)) or
+        bool(intent.names) and not re.search(r'看点|适合|怎么玩|比较|区别|建议|推荐|体验|好不好|怎么样|怎么选|哪个好', message))
     if location_only:
         # Each subtask owns its supplied POIs. Rendering actual address fields
         # cannot invent a failure about a sibling queried in parallel.

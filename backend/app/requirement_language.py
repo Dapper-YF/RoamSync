@@ -73,6 +73,13 @@ def is_context_only_statement(clause: str) -> bool:
     Deliberately bounded: unrecognized statements keep existing capture behavior.
     """
     text = clause.strip(" \t。.!！")
+    workflow = (r'(?:请|仍|先|暂时|现在|还|只|仅|再|等我确认后|看过再|不要|不|别|不用|暂不)*'
+        r'(?:保存|采用|展示|生成|修改|调整)(?:(?:当前|这|那)(?:的|份|个)?)?'
+        r'(?:候选|方案|草案|安排|行程)?(?:并保存|再保存)?(?:了|吧|即可|就行)?')
+    if re.fullmatch(workflow, text):
+        # Approval/workflow controls are not travel outcome requirements. They
+        # remain in source messages and go through the action authorization gate.
+        return True
     if re.search(r"希望|要求|请|不要|不想|必须|不能|不得|禁止|避免|需要|安排|确认|标记", text):
         return False
     purpose = r"(?:这(?:次|趟)?(?:旅行|行程|记录|请求|操作)?|本次(?:旅行|行程|记录|请求|操作)?|此(?:旅行|行程|记录|请求|操作)?)?\s*(?:只是|仅|只)?(?:用于|用来|作为|供)\s*(?:(?:软件|系统|应用|功能|接口|产品)\s*)?(?:验收|测试|调试)(?:使用|之用)?"

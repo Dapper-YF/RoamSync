@@ -88,7 +88,7 @@ def test_candidate_operation_uses_its_own_bound_refs_without_read_argument_reint
     adopted=validate_decision(execution,"可以，就这样安排，帮我保存。",[],ContextEnvelope())
     assert adopted.intent=="modify" and adopted.candidate_command.action=="adopt"
     downgraded=validate_decision(execution.model_copy(update={"candidate_command":save}),question,[],ContextEnvelope())
-    assert downgraded.intent=="direct" and downgraded.candidate_command is None
+    assert downgraded.intent=="clarify" and downgraded.candidate_command is None
 
 
 def test_clock_provenance_does_not_accept_prefix_of_different_minute():

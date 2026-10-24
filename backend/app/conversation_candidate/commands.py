@@ -36,12 +36,13 @@ class CandidateCommand(BaseModel):
     source_quote: str = Field(min_length=1, max_length=1000)
     plan: CandidateDraftPlan | None = None
     patches: list[DurationPatch] = Field(default_factory=list, max_length=12)
+    source_refs: dict[str, str] = Field(default_factory=dict, max_length=36)
 
 
 def validate_command(command, message):
     from app.assistant_capabilities import affirmative_action_source
     from app.requirement_language import current_user_evidence_reason
-    verbs = {"generate": r"创建|生成|安排|规划|制定", "modify": r"改|调整|延长|多待|少待|停留|留|逛",
+    verbs = {"generate": r"创建|生成|安排|规划|制定|给我看|展示", "modify": r"改|调整|延长|多待|少待|停留|留|逛",
         "adopt": r"保存|采用", "discard": r"放弃|撤回|丢弃|取消"}
     quote = command.source_quote
     if current_user_evidence_reason(message, quote):
@@ -56,7 +57,7 @@ def validate_command(command, message):
         clauses = [part.strip() for part in re.split(r"[，,；;。!?！？\n]", message) if part.strip()]
         prefix = r"(?:(?:请|麻烦(?:你)?|现在|就|直接|确认|同意)*(?:帮我|替我|给我|请你)?)"
         action = r"(?:采用并保存|保存|采用)" if command.action == "adopt" else r"(?:放弃|撤回|丢弃|取消)"
-        target = r"(?:(?:当前的?|这份|这个|这|上述|刚才的?)(?:候选|安排|方案|行程|计划))?"
+        target = r"(?:(?:(?:当前|这|上述|刚才)(?:的|份|个)?)*(?:修改|调整后)?(?:候选|安排|方案|行程|计划))?"
         destination = (r"(?:并保存)?" if command.action == 'adopt' else '') + r"(?:到我的安排)?(?:吧|即可|就行|一下)?"
         approved = [clause for clause in clauses if (quote in clause or clause in quote)
             and re.fullmatch(prefix+action+target+destination, clause)]
@@ -70,6 +71,8 @@ def validate_command(command, message):
         raise ValueError("调整只接受当前候选的局部操作，不能替换整份草稿。")
     if command.action != "modify" and command.patches:
         raise ValueError("时长修改必须绑定当前候选。")
+    if command.source_refs and command.action != 'generate':
+        raise ValueError('来源片段仅用于新候选生成；修改需引用当前活动。')
 
 
 def literal_minutes(quote):
