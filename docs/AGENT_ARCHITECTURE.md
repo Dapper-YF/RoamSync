@@ -1,5 +1,20 @@
 # RoamSync Agent v1 architecture contract
 
+## Stage2 conversation continuity candidate (2026-10-24; acceptance pending)
+
+Read-only ordinals bind persisted POI card identities in the current topic/city,
+ordered by the user's explicit list or presentation. A one-member follow-up
+does not renumber a prior comparison. Individual task source quotes remain
+literal contiguous spans; task identities cannot borrow a peer's name. Explicit
+saved-day scope can be shared by read subgoals, using one bounded saved-state
+snapshot. Scoped/ordinal saved reads are deterministic; impact analysis remains
+with Companion. Original-reason reads share the existing session read lock.
+Memory subject provenance is current-user data, never mutation authority;
+companion withdrawal removes matching records only after all checks pass.
+Unknown candidate fields still fail closed. Natural-language duration edits
+no longer write Activity directly: they use the existing Planner/Revision and
+explicit Accept chain. No new migration, planner, validator or adoption writer.
+
 ## Saved-state selection protocol recovery (2026-10-24 closeout candidate)
 
 The selector retains a single 30-second total budget within the 90-second turn

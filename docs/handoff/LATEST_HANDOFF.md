@@ -2,6 +2,8 @@
 
 ## Snapshot
 
+2026-10-24第二阶段进行中：基于71e07c2创建独立树E:/Study/RoamSync-product-closeout-stage2-20261024。三批产品提交e4d9023/29d0544/a522a84，分别处理共同只读引用与保存范围、移除聊天时长直写、候选作用域/采用语序。外部证据E:/Study/RoamSync-stage2-evidence-20261024。当前未达到验收门槛，不合并部署；详细记录PRODUCT_CLOSEOUT_STAGE2_20261024.md。
+
 2026-10-24产品收尾首批：正式A/B/C整合ea3ba83完成后，独立树E:/Study/RoamSync-product-closeout-20261024基于此开发。统一31项审计见docs/PRODUCT_CLOSEOUT_AUDIT_20261024.md，复用既有候选/Accept/照片/读取/Worker机制，不重复合并或部署。
 
 ## Current Freeze / Rehearsal Status
