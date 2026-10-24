@@ -227,7 +227,7 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                                 metadata["_semantic_prepared_action"] = action
                     return None, goal, metadata
                 from app.assistant_memory import condition_ack
-                acknowledgement = condition_ack(envelope, message, changed) if decision.intent == "direct" and decision.response_purpose == "conditions_only" else None
+                acknowledgement = condition_ack(envelope, message, changed) if decision.intent == "direct" and decision.response_purpose != "conditions_recall" else None
                 if bundle is not None:
                     pass
                 elif intentions and decision.intent == "direct":
@@ -295,6 +295,7 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
             text = "已记下：" + "；".join(f"{i['intended_date'] or '日期未定'} {i['time_period'] or '时间未定'} · {i['place_text']}" for i in saved)
             text += "。具体地点尚待核对；没有创建旅行或调整其他活动。可在我的安排查看或撤销。"
             bundle.update({"assistant": text, "saved_intentions": saved, "intention_write_result": "saved"})
+        bundle['memory_update_receipt'] = envelope.conversation_memory.get('latest_receipt', {})
         fresh.messages = [*fresh.messages, {**bundle, "id": str(message_id), "user": message,
             "tool": "reply", "run_id": None, "goal_routing": goal.model_dump(mode="json")}]
         await db.commit()

@@ -82,6 +82,10 @@ def _quoted_scalar(key, value, quote, today, message):
         proposed = anchored_date(value, today)
         return proposed if len(dates) == 1 and proposed and dates[0] == proposed else None
     from app.travel_language import chinese_number
+    if key == 'party_size' and value in {'1', '一', '一个人', '1人'}:
+        solo = re.search(r'(?:就|只剩|只|剩下)?我(?:自己|独自|单独)(?:一个人)?(?:去|出发|旅行|玩)', quote)
+        if solo and _affirmative_scalar_token(message, quote_start + solo.start(), quote_start + solo.end()):
+            return 1
     numeral = r"[一二三四五六七八九十两\d]+"
     unit = r"天" if key == "duration_days" else r"(?:个?人|位)"
     proposed = re.fullmatch(rf"({numeral})\s*(?:{unit})?", value)
@@ -164,23 +168,33 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
     accepted = []
     from app.requirement_language import current_user_evidence_reason
     diagnostics = []
+    previous_receipt = memory.get('latest_receipt', {})
+    receipts = list(previous_receipt.get('updates', [])) if previous_receipt.get('message_id') == str(message_id) else []
     for update in updates:
         quote, value = update.source_quote, update.value.strip()
+        receipt = {'field': update.field, 'operation': update.operation, 'value': value,
+            'subject': update.subject, 'scope': 'trip' if update.subject else update.scope,
+            'source_quote': quote, 'status': 'rejected', 'reason': 'source_or_scope_not_verified'}
+        receipts = [r for r in receipts if any(r.get(k) != receipt.get(k) for k in
+            ('field', 'operation', 'value', 'subject', 'scope', 'source_quote'))]
+        receipts.append(receipt)
         reason = current_user_evidence_reason(message, quote)
         if reason:
+            receipt['reason'] = reason
             diagnostics.append({"field": update.field, "reason": reason, "source_quote": quote, "message_id": str(message_id)})
             continue
         prefix = message[:message.find(quote)]
         key, operation = update.field, update.operation
         if key == "city" and value in {"哪里", "哪儿", "哪个城市", "什么城市", "某地", "未知", "未定"}:
             continue
-        subject_withdrawal = bool(update.subject and re.fullmatch(
-            re.escape(update.subject) + r'(?:这次)?(?:不去了|不来了|不同行了?|退出了?|不参加(?:这次)?(?:旅行|行程)了?)[。！!\s]*', quote))
+        departure = re.fullmatch(r'(.+?)(?:这次)?(?:都|也)?(?:不去了|不来了|不同行了?|退出了?|不参加(?:这次)?(?:旅行|行程)了?)[。！!\s]*', quote)
+        departed_subjects = re.split(r'和|与|及|、', departure[1]) if departure else []
+        subject_withdrawal = bool(update.subject and update.subject in departed_subjects)
         if update.subject in {'我', '本人', '我们', '用户'}:
             continue
         if update.subject and not quote.startswith(update.subject) and operation not in {'remove', 'clear'}:
             continue
-        if key in {"preferences", "requirements"} and (operation == "remove" or update.replaces) and not (subject_withdrawal or re.search(r"取消|不再|不看|不要|不喜欢|不想|改|换|可以|现在|清除|撤销|忘掉", quote)):
+        if key in {"preferences", "requirements"} and (operation == "remove" or update.replaces) and not (subject_withdrawal or re.search(r"取消|不再|不看|不要|不喜欢|不想|改|换|可以|现在|清除|撤销|撤掉|忘掉", quote)):
             continue
         normalized = value
         if operation not in {"clear", "remove"}:
@@ -206,15 +220,18 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
         evidence = {"value": normalized, "source_quote": quote, "message_id": str(message_id),
             "scope": 'trip' if update.subject else update.scope, "scope_version": 2,
             **({'subject': update.subject} if update.subject else {})}
-        if key in {'preferences', 'requirements'} and subject_withdrawal and operation == 'remove':
+        if key in {'preferences', 'requirements'} and operation == 'remove':
             remove = update.replaces or value
             matching = [item for item in memory[key] if item['value'] == remove and
-                (item.get('subject') == update.subject or
+                (item.get('subject', '') == update.subject or update.subject and
                  not item.get('subject') and item.get('source_quote', '').startswith(update.subject))]
             if not matching:
+                receipt['reason'] = 'matching_condition_not_found'
                 continue
         withdrawn = memory.setdefault("withdrawn", {})
         withdrawal_key = key + (":" + (update.replaces or value) if key in {"preferences", "requirements"} and operation != "clear" else "")
+        if update.subject:
+            withdrawal_key += ':' + update.subject + ':trip'
         if operation in {"clear", "remove"}:
             withdrawn[withdrawal_key] = {"source_quote": quote, "message_id": str(message_id), "state": "unknown" if key not in {"preferences", "requirements"} else "withdrawn"}
         else:
@@ -229,7 +246,8 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
             else:
                 remove = update.replaces or (value if operation == "remove" else "")
                 items = [item for item in items if item["value"] not in {remove, value}
-                         or subject_withdrawal and operation == 'remove' and item not in matching]
+                         or (item not in matching if operation == 'remove' else
+                             item.get('subject', '') != update.subject or item.get('scope', 'personal') != evidence['scope'])]
                 if operation != "remove":
                     items.append(evidence)
             memory[key] = items[-20:]
@@ -238,9 +256,14 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
         else:
             memory["slots"][key] = evidence
         accepted.append(key)
+        receipt.update(status='applied', reason='validated', effective_value=normalized if key not in {'preferences', 'requirements'} else
+            [i['value'] for i in memory[key]])
     city = memory["slots"].get("city", {}).get("value")
     # Latest-turn validation metadata is data, never an effective condition.
     memory["diagnostics"] = diagnostics[-20:]
+    memory['latest_receipt'] = {'version': 1, 'message_id': str(message_id), 'updates': receipts[-32:],
+        'effective_slots': deepcopy(memory['slots']), 'effective_preferences': deepcopy(memory['preferences']),
+        'effective_requirements': deepcopy(memory['requirements'])}
     memory["withdrawn"] = dict(list(memory.get("withdrawn", {}).items())[-40:])
     changes = {"conversation_memory": memory}
     # Scalar withdrawal must reach the older typed projection as well. It never
@@ -299,7 +322,8 @@ def recall_conditions(envelope):
     for key, label in (("preferences", "偏好"), ("requirements", "要求")):
         literal = [item.get("source_quote") or item.get("value") for item in memory[key]]
         literal = [value for value in literal if isinstance(value, str) and value]
-        lines.append(label + "：" + ("；".join(literal) if literal else "已撤销" if key in withdrawn else "未确定"))
+        removed = any(k == key or k.startswith(key + ':') for k in withdrawn)
+        lines.append(label + "：" + ("；".join(literal) if literal else "已撤销" if removed else "未确定"))
     return "这次聊天当前的有效条件：\n" + "\n".join(lines)
 
 
@@ -341,7 +365,9 @@ def bootstrap_memory(envelope, history):
 
 
 def condition_ack(envelope, message, changed):
-    if not changed or re.search(r"[?？]|吗|什么|哪些|如何|怎样|怎么|介绍|了解|想知道|聊|推荐|区别|解释|查询|搜索|看看|说说|建议|是否|能不能|列出|罗列|景点|攻略|展开|详细|告诉|给我|帮我", message):
+    receipt = server_memory(envelope).get('latest_receipt', {})
+    rejected = [r for r in receipt.get('updates', []) if r['status'] == 'rejected']
+    if (not changed and not rejected) or re.search(r"[?？]|吗|什么|哪些|如何|怎样|怎么|介绍|了解|想知道|聊|推荐|区别|解释|查询|搜索|看看|说说|建议|是否|能不能|列出|罗列|景点|攻略|展开|详细|告诉|给我|帮我", message):
         return None
     memory = server_memory(envelope)
     names = {"city": "目的地", "start_date": "出发日期", "duration_days": "游玩天数", "party_size": "同行人数", "budget": "预算", "images": "配图偏好"}
@@ -353,4 +379,6 @@ def condition_ack(envelope, message, changed):
         else:
             value = memory["slots"].get(key, {}).get("value")
             parts.append(names[key] + ("：" + str(value) if value is not None else "已清除"))
-    return "已更新这次聊天的条件：" + "；".join(parts) + "。"
+    failed = '；'.join(dict.fromkeys(r['field'] for r in rejected))
+    return ('已更新这次聊天的条件：' + '；'.join(parts) + '。' if parts else '') + (
+        '未应用的字段：' + failed + '，原有值保留，请明确说明对应条件。' if failed else '')

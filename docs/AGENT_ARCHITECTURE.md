@@ -2,6 +2,14 @@
 
 ## Stage3 shared read projection (2026-10-24; isolated candidate)
 
+Stage3 memory updates add a versioned latest_receipt in the existing session
+memory JSON. All proposals start rejected, then acquire validated application
+outcomes; repeated literal/semantic processing merges same-message receipts.
+Effective fields and subject/scope are retained; standalone acknowledgements
+are server rendered, and replies/context persist atomically with the receipt.
+This is conversation-condition data, not formal Trip write authority. Exact
+subject-bound removals cannot erase a different participant's identical value.
+
 Read validation and execution share one parent-request reference projection.
 Same-turn literal subjects may bind elliptical read clauses but remain ID-less
 search mentions until provider resolution. A result or reverse route cannot

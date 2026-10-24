@@ -1,6 +1,22 @@
 # RoamSync stage3 implementation and acceptance
 
 Status: IN PROGRESS, product remains NO-GO until all gates pass.
+
+## Batch2 — effective conditions and receipts
+
+MEASURED before: batch2/before.xml has three intended failures, and real-before
+claims solo travel while stored party_size is absent and the sister's requirement
+remains. Shared scalar normalization did not recognize self-only quantity, removal
+lost subject boundaries and Companion could acknowledge rejected proposals.
+
+Implemented source-bound self-only quantity, exact subject identity for removing
+conditions, and versioned merged per-field application receipts. Standalone update
+acknowledgements render authoritative effective state, including rejected fields.
+Mixed answers receive receipts as context; this prompt boundary still needs final
+live/adversarial acceptance. No formal writer change. MEASURED batch2/regression.xml
+69 passed on isolated migrated PG; real-after.json confirms 1 person, sister-only
+condition removed, personal no-alcohol retained and accurately recalled. Source
+unchanged and formal-table fingerprints unchanged. Development failures retained.
 Isolated branch codex/product-closeout-stage3-20261024 starts at c2be562;
 official E:/Study/RoamSync remains ea3ba83 with its original local edits preserved.
 Raw evidence: E:/Study/RoamSync-stage3-evidence-20261024. No production DB writes,
