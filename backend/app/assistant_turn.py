@@ -11,13 +11,14 @@ from app.assistant_capabilities import (CapabilityDecision, answer_with_capabili
 from app.assistant_context import ContextEnvelope, restore_context, capture_requirements, capture_effective_requirements
 from app.assistant_reliability import TurnDiagnostics, active_turn, bounded_call
 from app.assistant_research import snapshot_signature
-from app.database import AssistantSession, Trip, Activity, DayPlan, PlaceCandidate
+from app.database import AssistantSession
 from app.travel_goal_router import route_travel_goal
 from app.draft_promotion.contracts import PromotionError
 from app.conversation_candidate.binding import conditions_hash
 
 
-async def semantic_turn(db, session_id, message, message_id, incoming, port, settings, selector=None, *, city_search=None):
+async def semantic_turn(db, session_id, message, message_id, incoming, port, settings, selector=None, *, city_search=None,
+                        selected_day_id=None, selected_activity_id=None):
     from app.assistant_service import AssistantToolError
     captured_at = datetime.now(ZoneInfo("Asia/Shanghai"))
     intentions = []
@@ -52,18 +53,15 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
     signature = snapshot_signature(row)
     trip_id = envelope.read_trip_id or (None if envelope.conversation_memory.get("detached_trip") else row.trip_id)
     summary = None
+    read_snapshot = None
     if trip_id:
-        trip = await db.get(Trip, trip_id)
-        if trip is None:
-            raise AssistantToolError("旅行不存在，请刷新后重试。")
-        summary = {"destination": trip.destination, "title": trip.title, "version": trip.version}
-        activities = (await db.execute(select(Activity, DayPlan, PlaceCandidate)
-            .join(DayPlan, Activity.day_plan_id == DayPlan.id)
-            .join(PlaceCandidate, Activity.place_candidate_id == PlaceCandidate.id)
-            .where(DayPlan.trip_id == trip_id).order_by(DayPlan.date, Activity.position).limit(100))).all()
-        summary["activities"] = [{"activity_id": str(a.id), "day_id": str(day.id), "date": day.date.isoformat(),
-            "name": a.custom_name or place.name, "start_time": a.scheduled_time.isoformat(timespec="minutes"),
-            "duration_minutes": a.duration_minutes, "version": a.version} for a, day, place in activities]
+        from app.saved_trip_reads import load_saved_trip_read
+        try:
+            read_snapshot = await load_saved_trip_read(db, trip_id, message,
+                selected_day_id=selected_day_id, selected_activity_id=selected_activity_id)
+        except ValueError as exc:
+            raise AssistantToolError(str(exc)) from exc
+        summary = read_snapshot.selection_summary(message)
     envelope = capture_effective_requirements(capture_requirements(envelope, message), message, message_id=message_id)
     baseline = route_travel_goal(message, history[-12:], pending_action=row.pending_action)
     candidate_snapshot = None if reset_requested(message) else row.pending_action
@@ -125,7 +123,7 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                     if changed:
                         diagnostics.record("context", "completed", fields=list(dict.fromkeys(changed)))
                     if envelope.conversation_memory.get("detached_trip") and not envelope.read_trip_id:
-                        trip_id, summary = None, None
+                        trip_id, summary, read_snapshot = None, None, None
                     # The corrected conversational city wins over an older UI city.
                     city = (envelope.conversation_memory.get("slots", {}).get("city") or {}).get("value")
                     if city and decision.city and decision.city not in message:
@@ -240,7 +238,7 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                     bundle, status = failure_bundle(envelope, acknowledgement), "complete"
                 else:
                     bundle, status = await answer_with_capabilities(settings, decision, message, history,
-                        envelope, port, db, trip_id, session_id, message_id, goal)
+                        envelope, port, db, trip_id, session_id, message_id, goal, read_snapshot=read_snapshot)
                 # The legacy conversation projector may return unresolved words
                 # such as "哪里"; it is not a geographical identity authority.
                 from app.companion_information import explicit_destination
@@ -260,7 +258,10 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
             # Tool errors do not publish partial unvalidated model output.
             from app.assistant_stream import emit
             emit("reset")
-            bundle, status = failure_bundle(envelope), "failed"
+            from app.saved_trip_reads import SavedTripReadStale
+            bundle, status = (failure_bundle(envelope, str(exc), read_tools={
+                'itinerary_read': {'status': 'needs_retry', 'reason': 'saved_trip_changed'}})
+                if isinstance(exc, SavedTripReadStale) else failure_bundle(envelope)), "failed"
             goal = baseline.model_copy(update={"target_runtime": "companion", "goal_type": "travel_chat", "mutation_requested": False})
         bundle["execution_summary"] = diagnostics.summary(status)
         if status == "failed":

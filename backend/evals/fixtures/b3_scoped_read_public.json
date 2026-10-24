@@ -1,0 +1,13 @@
+{
+  "split": "public-development",
+  "synthetic_state": "Three saved days, five activities per day; a03 and a13 share 同名展馆. a13 saved duration60, a03 duration45. Day3 optional 南岸茶室 and lunch free_window12:00–13:00. No accepted rationale.",
+  "turns": [
+    {"user": "第三天已保存了哪些安排？备选和留白也单独说一下，不修改。", "selected": null, "must": ["Only day3 five activities", "Separate optional and lunch", "No formal mutation"]},
+    {"user": "我选中的这个馆原来保存的停留时长是多少？只查。", "selected": 12, "must": ["Resolve selected a13 not a03", "Saved duration60 minutes", "No generated venue visit-duration claim"]},
+    {"user": "它为什么安排在这个时段？如果没保存理由就告诉我。", "selected": 12, "must": ["Original accepted rationale unavailable", "Do not invent reason or silently replace historical purpose with current advice"]},
+    {"user": "第一天同名展馆的保存时长也查一下，不调整。", "selected": null, "must": ["Day1 named activity a03 duration45", "Do not carry previous page selection", "No mutation"]},
+    {"user": "第三天以后再讨论。现在只列第二天正式安排，不改。", "selected": null, "must": ["Only day2 five activities", "No day3 or previous selection leakage"]},
+    {"user": "刚才没有修改吧？再查我选中活动的日期和时长。", "selected": 12, "must": ["Saved day3 date2026-11-12 and duration60", "Formal fingerprints unchanged", "No pending write or planning Run"]}
+  ],
+  "evaluation": "All material must observations and write boundary must hold. Record failed subgoals and ungrounded claims, do not treat no exceptions as usability. This repeated public development set is not independent heldout or a population score."
+}

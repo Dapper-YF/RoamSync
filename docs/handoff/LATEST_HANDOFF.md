@@ -2,6 +2,9 @@
 
 ## Snapshot
 
+2026-10-24 用户明确要求整合全部本轮成果到正式工作区。A a1e5946与B f036d0a在隔离集成树合并；C e102205/ba143a2及207c9b7已在A89b81e8历史中，C最新交付未提出额外新产品SHA。正在统一检查，源码合入不等于部署或产品GO。正式四个dirty文件与未跟踪内容须按外部备份保全；不操作生产数据库。B读取契约/连接预算与失败边界见AGENT_B3_SCOPED_READ_DELIVERY_20261024.md。下列为原A历史交付状态。
+
+
 2026-10-24 对话/我的安排核心改造已提交，整体NO-GO、未部署。新开发BASE_SHA=89b81e8d6cf5561f2bbab1a9ac437aa9dde88fb9；分支codex/conversation-itinerary-redesign-20261023，隔离树E:/Study/RoamSync-reliability-a2-20261022。后续交付提交仅文档/公开证据，不替代产品SHA。完整报告docs/CONVERSATION_ITINERARY_REDESIGN_20261024.md。
 
 ## Current Freeze / Rehearsal Status

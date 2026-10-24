@@ -28,6 +28,36 @@ quality fails; public ownership P0 remains. Neither engineering tests nor
 partial B/Astra review authorize release. B preparation snapshot differs from
 final code; exact final A regression is separate evidence.
 
+## B3 scoped saved-trip read candidate (2026-10-24; not released)
+
+Internal read selection may carry server-validated page day/activity IDs into a
+detached bounded Trip snapshot. Selection and Companion project the same saved
+facts, Trip version and explicit scope/coverage; truncated reads never establish
+absence. Read IDs and saved-state facts are not action authorization and are not
+persisted as travel memory. Original rationale still comes only from the existing
+accepted-revision reader. This changes read projection only, not candidate,
+Validator/Accept, operation permissions, Graph states or the public message DTO.
+Evidence and limitations:AGENT_B3_SCOPED_READ_PLAN_20261024.md.
+
+B3 capture uses a separate short REPEATABLE READ READ ONLY unit on the caller's
+database URL, closed before selector/provider I/O, without committing, rolling back or
+flushing the caller. captured_at is the UTC instant immediately before the first
+data SELECT establishes its MVCC snapshot. Versioned Trip/preferences changes
+observed after capture reject the read; this is a freshness fence, not a promise
+against later changes. Execution status can change without Trip.version advancing
+(trip_execution_service), so MVCC, not double version checks, establishes
+cross-query coherence. Original rationale and saved notes require the captured
+Trip version still to match and otherwise report needs_retry, not missing reason.
+To avoid saturated business callers deadlocking while borrowing a second pool
+connection, capture uses an independent NullPool engine with bounded admission:
+at most two read connections per application event loop/process, no idle read
+connections, five seconds maximum admission wait, and finally close/dispose and
+release on exception/cancel. Total per-process connection budget is the existing
+business-pool maximum plus two (default15+2), in addition to separately budgeted
+workers. This is not a business-pool size increase or a high-load capacity proof.
+Initial capture failure preserves the existing AssistantToolError API path;
+stale rationale during answering has read_tools.itinerary_read.status=needs_retry.
+
 ## A2 planning transaction and execution ownership candidate (2026-10-23; not released)
 
 Planning reads immutable server facts in short sessions, then resolves semantic,

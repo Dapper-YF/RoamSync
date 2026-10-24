@@ -242,6 +242,7 @@ def test_unresolved_conversation_reference_requests_information_without_model_ca
 
 
 def test_context_policy_uses_no_planning_or_execution_queries_for_history_and_preferences():
+    from sqlalchemy.engine import Engine
     with TestClient(app) as client:
         client.post("/api/v1/demo/reset")
         async def scenario():
@@ -250,7 +251,9 @@ def test_context_policy_uses_no_planning_or_execution_queries_for_history_and_pr
                 statements = []
                 def capture(conn, cursor, statement, parameters, context, executemany):
                     statements.append(statement.lower())
-                event.listen(engine.sync_engine, "before_cursor_execute", capture)
+                # Saved reads use an independent bounded read channel. Observe
+                # all engines so the policy still checks the actual queries.
+                event.listen(Engine, "before_cursor_execute", capture)
                 try:
                     await send_message(db, row.id, "西湖有什么历史？", uuid.uuid4(), companion_provider=Provider())
                     assert all("planning_runs" not in s and "trip_executions" not in s and "route_legs" not in s
@@ -265,7 +268,7 @@ def test_context_policy_uses_no_planning_or_execution_queries_for_history_and_pr
                     assert any("activities" in s for s in statements)
                     assert all("route_legs" not in s and "trip_executions" not in s for s in statements)
                 finally:
-                    event.remove(engine.sync_engine, "before_cursor_execute", capture)
+                    event.remove(Engine, "before_cursor_execute", capture)
         asyncio.run(scenario())
 
 

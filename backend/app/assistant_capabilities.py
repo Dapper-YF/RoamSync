@@ -20,6 +20,7 @@ from app.conversation_candidate.commands import CandidateCommand
 
 
 Capability = Literal["poi", "web", "route", "facts", "itinerary"]
+ItineraryPurpose = Literal['other', 'overview', 'saved_values', 'original_rationale', 'impact']
 
 
 class CapabilityContractError(ValueError):
@@ -41,6 +42,7 @@ class ReadTask(BaseModel):
     nearby: bool = False
     near_name: str = Field(default="", max_length=120)
     fact_kind: Literal["weather", "opening_hours", "other"] = "other"
+    itinerary_purpose: ItineraryPurpose = 'other'
 
 
 
@@ -67,6 +69,7 @@ class CapabilityDecision(BaseModel):
     saved_intentions: list[IntentionProposal] = Field(default_factory=list, max_length=5)
     read_tasks: list[ReadTask] = Field(default_factory=list, max_length=5)
     fact_kind: Literal["weather", "opening_hours", "other"] = "other"
+    itinerary_purpose: ItineraryPurpose = 'other'
     creation: CreationProposal | None = None
     planning_draft: SemanticIntentDraft | None = None
     candidate_command: CandidateCommand | None = None
@@ -114,6 +117,9 @@ SELECTION_INSTRUCTIONS += """ For a NEW timed itinerary preview before a Trip ex
 
 
 SELECTION_INSTRUCTIONS += " For candidate duration patches operation=set means a final duration, increase/decrease means a delta from the current server plan. Copy an explicit quantity (多留半小时 => operation=increase,duration_minutes=30,quantity_source=user_explicit); 少逛一点 may propose a decrease with quantity_source=planning_allocation, and the server will label it as a proposal. Each patch.source_quote contains exactly one independent clause naming its own target; never borrow a verb/quantity/negation from a peer. Departure and end are schedule constraints, never extra visit items."
+
+
+SELECTION_INSTRUCTIONS += " For itinerary reads set itinerary_purpose: overview for listing saved arrangements; saved_values for their saved date/start/duration/status; original_rationale for why an accepted arrangement was originally chosen; impact for hypothetical changes; other otherwise. Preserve this separately for each read_task. trip.read_coverage describes exactly which server-read activities are available, not absence outside that scope. Page-selected activity is only a read reference, never write authorization."
 
 
 async def select_capabilities(settings, message, history, envelope, trip_summary=None):
@@ -247,6 +253,11 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
         for task in decision.read_tasks:
             if task.source_quote not in message:
                 return CapabilityDecision(intent="clarify", clarification="请确认各部分要查询的内容。", reason_code="missing_arguments")
+            if set(task.capabilities) == {'itinerary'}:
+                # Saved-state reads use the literal task question and server
+                # Trip/selection snapshot. Redundant model search arguments
+                # neither control this read nor require a second interpretation.
+                task = task.model_copy(update={'query': '', 'names': [], 'origin': '', 'destination': '', 'near_name': ''})
             tail = message[message.index(task.source_quote)+len(task.source_quote):]
             cancellations = re.finditer(r"(?:先|暂时|暂)?(?:不|别|不用|不要)(?:再)?(?:查询|搜索|查|搜|看)([^，,。；;?？!！]*)", tail)
             if any(not (obj := re.sub(r"[了吧呀呢\s]+$", "", match[1])) or obj in task.source_quote for match in cancellations):
@@ -499,7 +510,10 @@ def component_question(kind, message):
         if kind == "facts" and len(dates) == 1 and not any(d in question for d in dates):
             question = next(iter(dates)) + "，" + question
         return question
-    return "解释当前已保存行程的安排依据。" if kind == "itinerary" and re.search(r"为什么|理由|解释", message) else "当前已保存的行程有哪些安排？" if kind == "itinerary" else message
+    # A generic replacement loses date, selected identity and scalar purpose.
+    # Existing approved capabilities own the task; retaining literal text does
+    # not authorize a sibling tool or write.
+    return message
 
 
 def approved_fact_question(message, envelope):
@@ -519,10 +533,10 @@ def approved_fact_question(message, envelope):
     return message
 
 
-async def answer_with_capabilities(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal):
+async def answer_with_capabilities(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal, *, read_snapshot=None):
     groups = read_groups(decision)
     if not decision.read_tasks and (not groups or (len(groups) == 1 and decision.intent != "clarify")):
-        return await _answer_leaf(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal)
+        return await _answer_leaf(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal, read_snapshot=read_snapshot)
     jobs = []
     if decision.read_tasks:
         for task in decision.read_tasks:
@@ -545,9 +559,14 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
         local_envelope = envelope.model_copy(update={"browsing_city": local.city or envelope.browsing_city})
         try:
             return await _answer_leaf(settings, local, question, history, local_envelope, port, db, trip_id, session_id, message_id,
-                goal.model_copy(update={"live_fact_likely_required": kind == "facts"}), read_lock=read_lock, web_fallback=not explicit_web)
+                goal.model_copy(update={"live_fact_likely_required": kind == "facts"}), read_lock=read_lock, web_fallback=not explicit_web,
+                read_snapshot=read_snapshot)
         except Exception as exc:
             record_failure(kind, exc)
+            from app.saved_trip_reads import SavedTripReadStale
+            if isinstance(exc, SavedTripReadStale):
+                return failure_bundle(envelope, str(exc), read_tools={
+                    'itinerary_read': {'status': 'needs_retry', 'reason': 'saved_trip_changed'}}), 'failed'
             return failure_bundle(envelope, "这部分查询未能完成，已保留其他查询结果。"), "failed"
         finally:
             stream_sink.reset(token)
@@ -589,7 +608,8 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
         aggregated_sources.extend(sources)
         normalized_outputs.append((bundle, component_status))
     outputs = normalized_outputs
-    text = "\n\n".join(f"{labels[kind]}：\n{bundle['assistant']}" for (kind, _, _, _), (bundle, _) in zip(jobs, outputs))
+    text = "\n\n".join(bundle['assistant'] if bundle['assistant'].startswith(labels[kind]+'：') else
+        f"{labels[kind]}：\n{bundle['assistant']}" for (kind, _, _, _), (bundle, _) in zip(jobs, outputs))
     cards, tools = {}, {}
     for bundle, _ in outputs:
         cards.update({str(c["place"]["place_id"]): c for c in bundle.get("place_cards", [])})
@@ -620,7 +640,7 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
     return failure_bundle(envelope, text, cards=cards.values(), read_tools=tools), status
 
 
-async def _answer_leaf(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal, *, read_lock=None, web_fallback=True):
+async def _answer_leaf(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal, *, read_lock=None, web_fallback=True, read_snapshot=None):
     """Run approved reads outside SQL transactions, using existing provider adapters."""
     turn = active_turn.get()
     if decision.intent == "direct" and decision.response_purpose == "conditions_recall":
@@ -654,6 +674,13 @@ async def _answer_leaf(settings, decision, message, history, envelope, port, db,
     from app.companion_knowledge import get_default_knowledge_tool
     if "itinerary" in decision.capabilities and not trip_id:
         return failure_bundle(envelope, "当前没有选中的已保存行程，请先打开你要查看的旅行安排。"), "complete"
+    if 'itinerary' in decision.capabilities and read_snapshot and decision.itinerary_purpose in {'overview', 'saved_values'}:
+        from app.saved_trip_reads import render_saved_read
+        projection = read_snapshot.project(message)
+        text = render_saved_read(projection)
+        coverage = projection['coverage']
+        return failure_bundle(envelope, text, read_tools={'itinerary_read': coverage}), (
+            'complete' if coverage['complete'] and coverage['arrangement_items_complete'] else 'partial')
     class Reader:
         async def load(self, context, need):
             if read_lock is not None:
@@ -661,7 +688,7 @@ async def _answer_leaf(settings, decision, message, history, envelope, port, db,
                     return await self.read(context, need)
             return await self.read(context, need)
         async def read(self, context, need):
-            value = await CompanionContextReader(db, trip_id).load(context, need)
+            value = await CompanionContextReader(db, trip_id, read_snapshot=read_snapshot).load(context, need)
             # SELECTs may open a transaction; release it before any network calls.
             await db.commit()
             return value
@@ -683,8 +710,11 @@ async def _answer_leaf(settings, decision, message, history, envelope, port, db,
         elif decision.fact_kind == "opening_hours":
             need = need.model_copy(update={"opening_hours_required": True, "live_fact_required": True})
     else:
+        from app.companion_information import is_formal_decision_question
         need = InformationNeed(general_knowledge_allowed=True, trip_context_required="itinerary" in decision.capabilities,
             itinerary_required="itinerary" in decision.capabilities, preferences_required=True,
+            decision_history_required=('itinerary' in decision.capabilities and
+                (decision.itinerary_purpose == 'original_rationale' or is_formal_decision_question(message))),
             knowledge_reasons=["approved_" + decision.intent])
     runtime = CompanionRuntime(Reader(), knowledge_tool=KnowledgeTool(), fact_tool=get_default_fact_tool(), approved_need=need)
     runtime_message = component_question("facts", message) if decision.capabilities == ["facts"] else message
@@ -703,4 +733,6 @@ async def _answer_leaf(settings, decision, message, history, envelope, port, db,
         if result.status == "needs_information":
             status = "failed"
     return {"assistant": result.response_text, "companion_result": result.model_dump(mode="json"),
-            "context": envelope.model_dump(mode="json"), "place_cards": [], "read_tools": {}}, status
+            "context": envelope.model_dump(mode="json"), "place_cards": [],
+            "read_tools": {'itinerary_read': read_snapshot.project(message)['coverage']}
+                if read_snapshot and 'itinerary' in decision.capabilities else {}}, status
