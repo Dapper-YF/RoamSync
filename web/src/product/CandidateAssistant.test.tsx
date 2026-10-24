@@ -6,7 +6,17 @@ import type {CandidatePresentation} from '../domain/types';
 const candidate:CandidatePresentation={protocol_version:2,draft_id:'d',draft_version:3,prepared_id:'p',prepared_hash:'prepared-binding',presentation_hash:'presentation-binding',stage:'ready',title:'南京一日',city:'南京',start_date:'2026-11-01',end_date:'2026-11-01',summary:'上午游湖，午间留白。',stops:[{ref:'lake',name:'玄武湖',address:'玄武巷1号',day_date:'2026-11-01',start_time:'09:00',end_time:'11:00',duration_minutes:120,note:'按你的要求停留两小时',place_ref:{place_id:'lake',external_ref:{provider:'amap',provider_place_id:'B1'}},images:[]}],windows:[],routes:[],warnings:[],blockers:[],change_summary:[],trip_id:null,operation_id:null};
 const session={id:'s',trip_id:null,latest_run_id:null,messages:[],pending_action:{id:'legacy',title:'南京',summary:'只记录日期',start_date:'2026-11-01',end_date:'2026-11-01',choices:[]}};
 const response=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status});
-const mount=()=>render(<MemoryRouter initialEntries={['/']}><TravelAssistantProvider><AssistantPage/></TravelAssistantProvider></MemoryRouter>);
+const mount=()=>{
+  // Saving switches to the persisted Trip and reads its arrangement. Session
+  // fixtures must not masquerade as that endpoint's unrelated response type.
+  const sessionFetch=globalThis.fetch;
+  vi.stubGlobal('fetch',(input:RequestInfo|URL,init?:RequestInit)=>
+    typeof input==='string' && input.endsWith('/arrangement-items')
+      ? Promise.resolve(response({version:1,trip:{id:'trip',title:'南京一日',destination:'南京',
+          start_date:'2026-11-01',end_date:'2026-11-01',version:1},days:[],items:[]}))
+      : sessionFetch(input,init));
+  return render(<MemoryRouter initialEntries={['/']}><TravelAssistantProvider><AssistantPage/></TravelAssistantProvider></MemoryRouter>);
+};
 beforeEach(()=>{sessionStorage.clear();localStorage.clear();vi.stubEnv('VITE_DISCOVERY_PRODUCT','true')});
 afterEach(()=>{vi.unstubAllEnvs();vi.unstubAllGlobals()});
 it('does not represent metadata as an adoptable itinerary',async()=>{vi.stubGlobal('fetch',vi.fn(async()=>response(session)));mount();expect(await screen.findByRole('button',{name:'创建旅行并生成日程'})).toBeVisible();expect(screen.queryByRole('button',{name:/采用|保存到我的安排/})).toBeNull();expect(screen.getByText(/目前只有创建信息/)).toBeVisible();});
