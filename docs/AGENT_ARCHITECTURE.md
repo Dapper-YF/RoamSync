@@ -2,6 +2,17 @@
 
 ## Stage3 shared read projection (2026-10-24; isolated candidate)
 
+Saved-trip modifications use the existing PlanningRun/Revision/Validator/Accept
+pipeline; ordinary chat cannot invoke the direct arrangement item form writer.
+The selector omits unavailable candidate/planning contracts by current object
+state. Saved modification schema recovery may remove only an empty redundant
+preview wrapper after one explicit model repair and exact remaining JSON equality.
+Substantive fields are never reconciled or silently removed.
+Local unsaved candidate changes preserve server-published times and effective
+window intervals; these remain planning allocations, not user appointments.
+Overlap blocks adoption. Final Accept mutates only differing Activity rows;
+Trip version and route/accept metadata retain existing atomic fences.
+
 CandidateCommand adds optional source_refs (item_ref -> request-local literal
 user span ID). The server restores that exact span before all kind, quantity,
 identity, date and route checks; IDs never authorize operations. Named visit

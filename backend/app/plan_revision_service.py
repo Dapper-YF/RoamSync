@@ -610,11 +610,26 @@ async def accept_plan_revision(
     protected_ids = {item.id for item in existing if item.schedule_locked or item.status in {"active", "completed", "skipped"} or item.id in frozen_execution or item.id in protected_execution}
     replaced_ids = {item.replaces_activity_id for item in snapshot.activities if item.replaces_activity_id}
 
+    # Only vacate positions that actually move. A full snapshot also contains
+    # unchanged peers; staging those rows would mutate their updated_at/version.
+    final_order = defaultdict(list)
+    for candidate in snapshot.activities:
+        final_order[candidate.day_date].append((candidate.planned_start_time, candidate.replaces_activity_id))
+    for item in existing:
+        if item.id in protected_ids and item.id not in replaced_ids:
+            day = next(day for day in days if day.id == item.day_plan_id)
+            final_order[day.date].append((item.scheduled_time, item.id))
+    final_positions = {identity: (day_by_date[day].id, position)
+        for day, entries in final_order.items()
+        for position, (_, identity) in enumerate(sorted(entries, key=lambda entry: entry[0])) if identity}
+    moved_ids = {item.id for item in existing if item.id in final_positions
+        and (item.day_plan_id, item.position) != final_positions[item.id]}
+
     await session.execute(delete(RouteLeg).where(RouteLeg.day_plan_id.in_([day.id for day in days])))
     for temporary_index, item in enumerate(existing):
         if item.id not in protected_ids and item.id not in replaced_ids:
             await session.delete(item)
-        else:
+        elif item.id in moved_ids:
             item.position = 10_000 + temporary_index
     await session.flush()
 
@@ -641,14 +656,22 @@ async def accept_plan_revision(
             )
             session.add(activity)
         elif activity.id not in protected_ids:
+            changed = activity.id in moved_ids or any((
+                activity.day_plan_id != day_by_date[candidate.day_date].id,
+                activity.place_candidate_id != candidate.place_candidate_id,
+                activity.scheduled_time != candidate.planned_start_time,
+                activity.duration_minutes != candidate.duration_minutes,
+                activity.estimated_cost_fen != candidate.estimated_cost_fen,
+                activity.schedule_locked != candidate.locked,
+            ))
             activity.day_plan_id = day_by_date[candidate.day_date].id
             activity.place_candidate_id = candidate.place_candidate_id
             activity.scheduled_time = candidate.planned_start_time
             activity.duration_minutes = candidate.duration_minutes
             activity.estimated_cost_fen = candidate.estimated_cost_fen
-            activity.status = "planned"
             activity.schedule_locked = candidate.locked
-            activity.version += 1
+            if changed:
+                activity.version += 1
         activities_by_day[candidate.day_date].append(activity)
         activities_by_ref[candidate.candidate_id] = activity
     await session.flush()

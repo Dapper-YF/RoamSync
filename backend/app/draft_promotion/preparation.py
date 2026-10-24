@@ -84,9 +84,9 @@ def fresh(place, now):
     return place.identity_status == "provider_identity" and place.source.freshness == "fresh" and place.source.expires_at > now
 
 
-async def prepare(draft, request, places):
+async def prepare(draft, request, places, *, preserved_starts=None):
     if draft.schema_version == 2:
-        return await _prepare_v2(draft, request, places)
+        return await _prepare_v2(draft, request, places, preserved_starts=preserved_starts)
     if draft.plan is not None and draft.plan.schema_version != 1:
         raise ValueError("draft and plan schema_version must agree")
     now = datetime.now(UTC)
@@ -178,7 +178,7 @@ def _time(value):
     return time(max(0, min(value, 1439)) // 60, max(0, min(value, 1439)) % 60)
 
 
-async def _prepare_v2(draft, request, places):
+async def _prepare_v2(draft, request, places, *, preserved_starts=None):
     """Prepare only explicit structured schedule; never invent non-place activities."""
     if draft.plan is None or draft.plan.schema_version != 2:
         raise ValueError("v2 preparation requires a v2 draft plan")
@@ -247,14 +247,23 @@ async def _prepare_v2(draft, request, places):
             if duration is None:
                 duration = _minute(item.end_time) - _minute(item.start_time)
             start = _minute(item.start_time) if item.start_time is not None else cursor
+            anchor = (preserved_starts or {}).get(item.item_ref)
+            if anchor is not None:
+                start = _minute(anchor)
             if item.kind != "visit":
                 clocks = quoted_clocks(item.source_quote)
-                fixed = any(value is not None and (value.hour, value.minute) in clocks for value in (item.start_time, item.end_time))
+                fixed = anchor is not None or item.start_time is not None and (item.start_time.hour, item.start_time.minute) in clocks
                 if not fixed:
                     start = max(start, cursor)
                 if start < cursor:
                     blockers.append(f"第{day.day_index}天「{item.name}」与前一事项重叠。")
                 finish = start + duration
+                if (item.kind == 'free_window' and item.duration_source == 'planning_allocation'
+                    and not fixed and item.end_time == end and start < day_end):
+                    finish = day_end
+                    duration = finish - start
+                elif item.end_time is not None and (item.end_time.hour, item.end_time.minute) in clocks and finish > _minute(item.end_time):
+                    blockers.append(f'第{day.day_index}天「{item.name}」超出用户指定的结束时间。')
                 windows.append(PreparedWindow(ref=item.item_ref, kind=item.kind, label=item.name, day_date=day_date,
                     start_time=_time(start), end_time=_time(finish), source_quote=item.source_quote, note=item.note,
                     duration_minutes=duration, duration_source=item.duration_source))
@@ -305,7 +314,7 @@ async def _prepare_v2(draft, request, places):
                     expiries.append(route.source.expires_at)
                 except Exception:
                     blockers.append(f"第{day.day_index}天「{previous.name}→{item.name}」缺少有效真实路线，请重试准备。")
-            if item.start_time is None:
+            if item.start_time is None and anchor is None:
                 start = cursor
             if start < cursor:
                 blockers.append(f"第{day.day_index}天「{item.name}」与前一事项或真实路线重叠。")

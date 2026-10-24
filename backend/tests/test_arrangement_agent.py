@@ -228,7 +228,7 @@ def test_planner_context_preserves_selected_optional_and_free_semantics(sample):
     asyncio.run(scenario())
 
 
-def test_chat_and_page_edits_preserve_each_other_without_planning_run(sample):
+def test_page_edit_remains_explicit_and_chat_status_edit_cannot_write_directly(sample):
     async def scenario():
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as c:
             first = await create_item(c, sample, 1, kind="selected", label="南京博物院")
@@ -245,8 +245,9 @@ def test_chat_and_page_edits_preserve_each_other_without_planning_run(sample):
             assert response.status_code == 200, response.text
             assert response.json()["latest_run_id"] is None
             state = (await c.get(f"/api/v1/trips/{sample.trip_id}/arrangement-items")).json()
-            assert state["version"] == 5
-            assert {i["label"]: i["kind"] for i in state["items"]} == {"南京博物院": "optional", "玄武湖": "optional"}
+            assert state["version"] == 4
+            assert {i["label"]: i["kind"] for i in state["items"]} == {"南京博物院": "optional", "玄武湖": "selected"}
+            assert '未改变' in response.json()['messages'][-1]['assistant']
             assert next(i for i in state["items"] if i["id"] == iid)["decision_ref"] == "page-explicit"
             again = await c.post(f"/api/v1/assistant/sessions/{session['id']}/messages", json={"message": "把玄武湖改成备选", "message_id": mid, "context": context})
             assert again.status_code == 200

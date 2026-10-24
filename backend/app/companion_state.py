@@ -22,7 +22,7 @@ def stable_identity(kind: str, session_id: str, turn_id: str, index: int = 0) ->
 def destination_from_text(text: str, *, planning_authorized: bool = False) -> str | None:
     if not planning_authorized and re.search(r"历史|文化|来历", text):
         return None  # A named knowledge subject is not a resolved destination.
-    planning_destination = re.search(r"(?:规划|安排)(?:一个)?([\u4e00-\u9fff]{2,8}?)(?=[一二三四五六七八九十两\d]+(?:天|日))", text)
+    planning_destination = re.search(r"(?:规划|安排|生成|创建|制定)(?:一个)?([\u4e00-\u9fff]{2,8}?)(?=[一二三四五六七八九十两\d]+(?:天|日))", text)
     if planning_destination:
         return planning_destination[1]
     match = re.search(r"^(?:那)?([\u4e00-\u9fff]{2,8}?)(?=有什么|有哪些|适合|和|呢[？?。]*$)|"

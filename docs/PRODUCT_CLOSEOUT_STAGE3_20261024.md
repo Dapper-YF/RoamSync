@@ -2,6 +2,29 @@
 
 Status: IN PROGRESS, product remains NO-GO until all gates pass.
 
+## Batch4 — preview, saved modification and acceptance
+
+MEASURED before: batch4/before.xml and real-before/real-after through after8
+retain source/schema/identity failures, an unsafe prose-only edit confirmation,
+and a candidate edit that moved lunch/peer clocks. No failure is erased.
+The saved duration edit now reuses the existing rule intent, Run/Worker/Revision
+and Accept chain. Chat item-status changes no longer call the direct form writer.
+Page forms remain explicit writes. Saved trip selector contracts exclude the
+unsaved-candidate command; a substantive conflicting representation fails closed.
+Only an empty redundant wrapper may request one explicit exact-value repair.
+Bound server presentations anchor local preview clocks and effective windows;
+overlaps block adoption rather than moving peers without approval. Accept updates
+Activity versions only for actual differences and leaves unchanged rows intact.
+
+MEASURED: batch4/compose-6 main and dedicated checks pass, including real PG
+concurrent edit/accept, rollback, duplicate and unchanged-peer tests. after9 uses
+real GLM/AMap: generate120 -> preview75 -> save -> read -> real Worker Revision60
+-> explicit adopt. Formal diff changes only the target Activity. after10 again
+adopts60 but exposes a saved-read dispatch regression; fixed by retaining the
+saved_values purpose in merged read projections. Its failing output is retained.
+Final-source real saved-read and final full engineering acceptance are still due.
+These development repeats are not independent evaluation results.
+
 ## Batch3 — structured preview generation and local candidate edits
 
 MEASURED before: batch3/before.xml reproduces five preview/adoption scope failures;

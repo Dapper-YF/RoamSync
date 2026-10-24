@@ -62,6 +62,10 @@ async def resolve_plan(plan, city, port, history, message, source_refs=None):
             or not explicit_interval(source, day["start_time"], day["end_time"])):
             day["start_time"] = day["end_time"] = None
         for item in day["items"]:
+            # Preserve an explicitly chosen canonical scenic name even if the
+            # model abbreviated it. The complete suffix must exist in user text.
+            if item['name'] + '景区' in source:
+                item['name'] += '景区'
             item.update(place_id=None, provider_place_id=None, identity_status="unknown")
             if item['item_ref'] in source_refs:
                 bound = spans.get(source_refs[item['item_ref']])
@@ -78,7 +82,11 @@ async def resolve_plan(plan, city, port, history, message, source_refs=None):
             interval = explicit_interval(item["source_quote"], item["start_time"], item["end_time"])
             kind_terms = {'meal': r'餐|吃饭|用餐', 'rest': r'休息|歇|休憩',
                 'free_window': r'自由|留白|空白|不安排|空出', 'blank_day': r'留白|空白|不安排'}
-            if item['kind'] in kind_terms and not re.search(kind_terms[item['kind']], item['source_quote']):
+            proposed_capacity = (item['kind'] == 'free_window' and item['duration_source'] == 'planning_allocation'
+                and explicit_interval(item['source_quote'], schedule['daily_start_time'], schedule['daily_end_time']))
+            if item['kind'] == 'free_window' and re.search(r'餐|吃饭|用餐', item['name']) and item['name'] in item['source_quote']:
+                kind_terms = {**kind_terms, 'free_window': r'餐|吃饭|用餐'}
+            if item['kind'] in kind_terms and not proposed_capacity and not re.search(kind_terms[item['kind']], item['source_quote']):
                 raise ValueError('候选窗口缺少对应类型的用户原话。')
             local = [q for q in re.split(r'[，,。；;!?！？\n]', item['source_quote']) if
                 (re.split(r'[（(]', item['name'])[0].removesuffix('景区') in q if item['kind'] == 'visit'
@@ -130,7 +138,7 @@ async def resolve_plan(plan, city, port, history, message, source_refs=None):
     return type(plan).model_validate(data)
 
 
-async def build_candidate(command, decision, message, history, envelope, port, old, *, today):
+async def build_candidate(command, decision, message, history, envelope, port, old, *, today, base_presentation=None):
     validate_command(command, message)
     if command.action == "modify":
         if old is None:
@@ -140,6 +148,19 @@ async def build_candidate(command, decision, message, history, envelope, port, o
             raise ValueError("目的地已经变化，请先为新目的地生成候选，旧地点调整未生效。")
         revised = old.model_copy(deep=True)
         revised.plan = apply_patches(old.plan, command, message)
+        # A displayed planning-allocation window may have expanded to consume
+        # spare capacity. Preserve its actual interval, not its earlier seed.
+        if base_presentation:
+            from datetime import time
+            windows = {w['ref']: w for w in base_presentation.get('windows', [])}
+            for day in revised.plan.days:
+                for item in day.items:
+                    window = windows.get(item.item_ref)
+                    if window and window.get('start_time') and window.get('end_time'):
+                        start, end = time.fromisoformat(window['start_time']), time.fromisoformat(window['end_time'])
+                        duration = (end.hour-start.hour)*60 + end.minute-start.minute
+                        item.start_time, item.end_time = start, end
+                        item.duration_minutes = duration
         revised.version += 1
     elif command.action == "generate":
         from app.assistant_operation import approved_tool_decision, CreationProposal
@@ -147,9 +168,10 @@ async def build_candidate(command, decision, message, history, envelope, port, o
         plan = command.plan
         if plan is None or plan.schema_version != 2:
             raise ValueError("尚未生成可核对的完整候选，请重试；没有创建旅行。")
+        from app.companion_state import destination_from_text
         city = (decision.city or (decision.creation.destination if decision.creation else '')
             or (envelope.conversation_memory.get("slots", {}).get("city") or {}).get("value", "")
-            or envelope.browsing_city or '')
+            or envelope.browsing_city or destination_from_text(message, planning_authorized=True) or '')
         # V2 is the one operation. Adapt it to the existing date/budget evidence
         # guard without asking the model to repeat the same creation metadata.
         adapter = decision.model_copy(update={"authorization_quote": command.source_quote,
@@ -202,8 +224,16 @@ async def build_candidate(command, decision, message, history, envelope, port, o
     else:
         raise ValueError("该命令不能生成候选。")
     revised.updated_at = datetime.now(UTC)
+    preserved = None
+    if command.action == 'modify':
+        from datetime import time
+        if (not base_presentation or base_presentation.get('draft_id') != str(old.id)
+            or base_presentation.get('draft_version') != old.version):
+            raise ValueError('候选展示版本已变化，请刷新当前候选再修改。')
+        preserved = {item['ref']: time.fromisoformat(item['start_time'])
+            for key in ('stops','windows') for item in base_presentation.get(key, []) if item.get('start_time')}
     prepared = await prepare(revised, PreviewRequest(expected_version=revised.version,
-        start_date=revised.plan.schedule_constraints.start_date), port.service)
+        start_date=revised.plan.schedule_constraints.start_date), port.service, preserved_starts=preserved)
     if old is not None and command.action == "modify":
         before = {item.item_ref: item for day in old.plan.days for item in day.items}
         prepared.change_summary = [f"{item.name}：{before[item.item_ref].duration_minutes} → {item.duration_minutes}分钟"

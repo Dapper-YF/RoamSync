@@ -319,6 +319,16 @@ def test_conversation_generate_modify_save_same_candidate_without_metadata_shell
             view = row.pending_action["presentation"]
             assert view["draft_id"] == draft_id and view["stops"][0]["duration_minutes"] == 120, row.messages
             assert view["stops"][1]["duration_minutes"] == 90 and row.trip_id is None
+            assert view['stage'] == 'needs_input' and view['stops'][1]['start_time'] == '10:40'
+        # A local extension must not silently move its peer. Resolve the
+        # conflict with a shorter edit, then adopt the newly displayed content.
+        decision = CapabilityDecision(intent='modify', reason_code='explicit_write', authorization_quote='测试地点0改成60分钟',
+            candidate_command={'action':'modify','source_quote':'测试地点0改成60分钟','patches':[
+                {'item_ref':'visit-0','source_quote':'测试地点0改成60分钟','duration_minutes':60}]})
+        async with sessions() as db:
+            row, _, _ = await semantic_turn(db, session_id, '测试地点0改成60分钟', uuid4(), {'topic_id':'chain'}, port, settings, selector)
+            view = row.pending_action['presentation']
+            assert view['stage'] == 'ready' and view['stops'][1]['start_time'] == '10:40'
         decision = CapabilityDecision(intent="create", reason_code="explicit_write", authorization_quote="采用并保存这份安排",
             candidate_command={"action": "adopt", "source_quote": "采用并保存这份安排"})
         save_id = uuid4()

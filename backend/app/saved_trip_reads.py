@@ -261,6 +261,44 @@ async def _capture_saved_trip_read(db, trip_id, message='', *, selected_day_id=N
         selected_activity_id=str(selected_activity_id) if selected_activity_id else None)
 
 
+def render_saved_request(snapshot, message):
+    """Project independent saved-value goals from one immutable read snapshot."""
+    count = bool(re.search(r'几天|多少天|总天数|一共.*天|共.*天', message))
+    first = list(re.finditer(r'第[一二三四五六七八九十两\d]+天第[一二三四五六七八九十两\d]+(?:项|站|个活动)', message))
+    last = '最后一天' in message
+    meals = [word for word in ('早餐', '午餐', '晚餐') if word in message]
+    if sum((count, len(first), last, message.count('餐'))) < 2:
+        return render_saved_read(snapshot.project(message), message)
+    parts = []
+    if count:
+        parts.append(f'这份已保存行程共{len(snapshot.days)}天。')
+    for match in first:
+        parts.append(render_saved_read(snapshot.project(match[0]), match[0]))
+    if meals:
+        matching = []
+        for meal in meals:
+            clauses = [p for p in re.split(r'[，,。；;、]|和|及', message) if meal in p]
+            for clause in clauses:
+                dates, explicit = requested_dates(clause[:clause.index(meal)+len(meal)], snapshot.days)
+                matching.extend(r for r in snapshot.items if meal in r['label'] and (not explicit or r['day_date'] in dates)
+                    and r not in matching)
+        parts.extend(f"{r['day_date'] or '日期未定'} {r['start'] or '时间未定'}—{r['end'] or '时间未定'} · {r['label']}。" for r in matching)
+        if not matching:
+            parts.append('本次读取范围没有对应餐饮窗口记录。' if snapshot.item_count <= len(snapshot.items)
+                else '餐饮窗口读取范围不完整，不能确定是否另有记录。')
+    if last:
+        parts.append(render_saved_read(snapshot.project('最后一天'), '最后一天'))
+    residual = message
+    for match in first:
+        residual = residual.replace(match[0], '')
+    for meal in meals:
+        residual = re.sub(r'第[一二三四五六七八九十两\d]+天[^，,。；;、]*' + meal, '', residual)
+    remaining_dates, _ = requested_dates(residual.replace('最后一天', ''), snapshot.days)
+    for day in sorted(remaining_dates):
+        parts.append(render_saved_read(snapshot.project(day), day))
+    return '\n\n'.join(parts)
+
+
 def render_saved_read(projection, message=''):
     """Only saved values, no live facts, recommendations, routes or writes."""
     rows, items, c = projection['activities'], projection['arrangement_items'], projection['coverage']

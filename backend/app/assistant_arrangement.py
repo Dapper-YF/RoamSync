@@ -3,7 +3,6 @@ import re
 
 from sqlalchemy import select
 
-from app.arrangement_service import ItemWrite, read_items, write_item
 from app.assistant_context import check_action_target
 from app.database import PlanRevision
 from app.formal_write import lock_trip
@@ -26,6 +25,12 @@ def choice_command(message):
 async def apply_arrangement_message(db, row, message, message_id, context):
     from app.assistant_service import AssistantToolError, confirm_action
     confirm = message.strip().rstrip("。！! ") in {"就按这份来", "就这样安排", "采用这份方案", "确认采用"}
+    from app.conversation_candidate.commands import CandidateCommand, validate_command
+    try:
+        validate_command(CandidateCommand(action='adopt', source_quote=message.strip()), message)
+        confirm = True
+    except ValueError:
+        pass
     enabled = context.prefer_flexible or context.action_target and context.action_target.operation in {"edit_arrangement", "accept_plan"}
     if not enabled:
         return None
@@ -61,19 +66,10 @@ async def apply_arrangement_message(db, row, message, message_id, context):
     target = context.action_target
     if target is None:
         raise AssistantToolError("请从这份安排发起修改并刷新内容；只读背景不能授权写入。")
+    if target.operation != 'edit_arrangement':
+        return None
     trip = await lock_trip(db, row.trip_id, expected_version=target.expected_version)
     check_action_target(context, session_trip_id=row.trip_id, message_id=message_id, trip_version=trip.version, operation="edit_arrangement")
     if context.read_trip_id != trip.id or context.browsing_city and context.browsing_city.rstrip("市") != trip.destination.rstrip("市"):
         raise AssistantToolError("当前浏览背景与修改目标不同，请回到要修改的安排。")
-    name, kind = command
-    matches = [i for i in await read_items(db, trip.id) if i.kind != "free_window" and (i.label == name or name in i.label)]
-    if len(matches) != 1:
-        return "没有唯一匹配到这个事项，请使用安排里显示的完整名称。尚未修改安排。"
-    item = matches[0]
-    try:
-        await write_item(db, trip.id, ItemWrite(expected_version=trip.version, kind=kind, label=item.label,
-            source_ref=f"message:{message_id}", place_id=item.place_id, day_date=item.day_date), item_id=item.id, commit=False)
-    except ValueError as exc:
-        raise AssistantToolError(str(exc)) from exc
-    return {"optional": f"已把{item.label}改为备选。", "selected": f"已保留{item.label}，时间可以继续未定。",
-            "cancelled": f"已取消{item.label}；保留了决定来源。"}[kind] + "其他安排没有重规划。"
+    return '这类事项状态的聊天修改尚未形成可采用候选，正式安排未改变。可以继续讨论，或在事项表单明确编辑。'

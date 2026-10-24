@@ -138,7 +138,8 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                     from app.companion_information import determine_information_need
                     from app.companion_contracts import CompanionContext
                     need = determine_information_need(CompanionContext(current_message=message, travel_goal=baseline), [])
-                    safe = baseline.target_runtime == "companion" and need.general_knowledge_allowed and not envelope.discussing_place_id
+                    safe = (baseline.target_runtime == "companion" and need.general_knowledge_allowed
+                        and not envelope.discussing_place_id and not candidate and not trip_id)
                     unsafe = bool(re.search(r"查|搜|来源|官方|实时|天气|营业|票|预约|路线|多久到|修改|创建|安排|规划|地址|位置|附近|具体门店", message))
                     if safe and not unsafe:
                         decision = CapabilityDecision(intent="direct", reason_code="stable_knowledge")
@@ -147,6 +148,21 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                 diagnostics.selection = {"intent": decision.intent, "capabilities": decision.capabilities,
                     "reason_code": decision.reason_code, "argument_source": "current_user_scoped_history_or_selected_place"}
                 goal = decision_goal(decision, baseline)
+                if candidate and decision.candidate_command is None:
+                    # An explicit current literal decision uses the same strict
+                    # command validator and displayed-version writer; a missing
+                    # redundant model wrapper cannot turn adopt into Execution.
+                    from app.conversation_candidate.commands import CandidateCommand, validate_command
+                    for action in ('adopt', 'discard'):
+                        literal = CandidateCommand(action=action, source_quote=message.strip())
+                        try:
+                            validate_command(literal, message)
+                        except ValueError:
+                            continue
+                        decision = decision.model_copy(update={'intent':'modify', 'candidate_command':literal,
+                            'authorization_quote':literal.source_quote})
+                        goal = decision_goal(decision, baseline)
+                        break
                 command = decision.candidate_command if decision.intent in {"create", "modify"} else None
                 candidate_conditions_changed = bool(candidate and candidate_snapshot.get("conditions_hash") != conditions_hash(envelope))
                 if command and not trip_id and getattr(port, "draft_repository", None) and getattr(port, "owner", None):
@@ -158,7 +174,8 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                             raise ValueError("旅行条件已经变化，原候选尚未更新，不能保存或只应用部分修改。请按新条件重新生成候选。")
                         if command.action in {"generate", "modify"}:
                             revised, prepared = await build_candidate(command, decision, message, history, envelope,
-                                port, candidate, today=captured_at.date())
+                                port, candidate, today=captured_at.date(),
+                                base_presentation=(candidate_snapshot or {}).get('presentation'))
                             published = await publish_candidate(db, owner=port.owner, session_id=session_id,
                                 signature=signature, topic=envelope.topic_id, message_id=message_id, message=message,
                                 envelope=envelope, draft=revised, prepared=prepared,
@@ -193,6 +210,8 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                     text = proposed.reply if proposed.tool == "reply" else "这次还没有生成可核对的地点、时段和路线候选，尚未创建旅行。请重试生成候选，确认保存前可以继续调整。"
                     bundle, status = failure_bundle(envelope, text), "complete"
                     goal = baseline.model_copy(update={"target_runtime": "companion", "mutation_requested": False})
+                elif baseline.mutation_requested and goal.target_runtime == 'companion' and (candidate or trip_id) and decision.intent == 'direct':
+                    bundle, status = failure_bundle(envelope, '本次修改尚未形成可执行候选；当前候选和正式安排保持原样。请明确要修改的活动与内容。'), 'failed'
                 else:
                     bundle = None
                 if settings.saved_intentions_enabled:

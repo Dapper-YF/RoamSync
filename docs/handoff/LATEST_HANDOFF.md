@@ -2,6 +2,8 @@
 
 ## Snapshot
 
+第四批开发验证：真实 GLM/AMap 候选120→75→采用→读取→真实Worker修改Revision60→采用已取得原始证据（stage3/batch4/real-after9.json）。正式活动仅目标行变化。局部候选现在锚定已展示时刻，冲突阻止采用；聊天状态表单直写关闭。compose-6主/专均通过。after10保存读取分派失败已保留并修复，最终冻结检查尚未运行。第五批证据关系、第六批独立测量与浏览器链仍待完成；结论仍NO-GO。
+
 2026-10-24第三阶段进行中：隔离分支codex/product-closeout-stage3-20261024从c2be562继续。第一批统一只读身份投影，49项隔离PG测试通过；真实GLM/AMap比较、指代地址和路线/开放复合读取已取得证据，正式状态不变。产品仍NO-GO，后续批次及新封存20题未验收。原文见PRODUCT_CLOSEOUT_STAGE3_20261024.md；外部E:/Study/RoamSync-stage3-evidence-20261024。
 
 2026-10-24第二阶段结果NO-GO：独立树E:/Study/RoamSync-product-closeout-stage2-20261024基于71e07c2，产品e4d9023/29d0544/a522a84/53de188/d5ad211。冻结d5ad211，新独立20轮唯一采样严格2/20、完整0/5，0未经授权写入但3轮无证据距离断言；无真实候选链完成。外部E:/Study/RoamSync-stage2-evidence-20261024保留全部全文/工具/状态/失败。详细记录PRODUCT_CLOSEOUT_STAGE2_20261024.md，不合并部署。

@@ -14,6 +14,22 @@ def plan(item):
         "days":[{"day_index":1,"title":"一天","items":[item]}]})
 
 
+def test_local_preview_preserves_server_displayed_window_start():
+    from datetime import time
+    from app.drafts.contracts import Draft
+    from app.draft_promotion.contracts import PreviewRequest
+    from app.draft_promotion.preparation import prepare
+    p = plan({'item_ref':'lunch','kind':'meal','name':'午餐','duration_minutes':60,
+        'duration_source':'user_explicit','source_quote':'午餐一小时'})
+    now = datetime.now(UTC)
+    draft = Draft(schema_version=2, id=uuid4(), city='成都', title='候选', day_count=1, version=1,
+        requirements='', status='active', saved=False, runs=[], updated_at=now, plan=p)
+    result = asyncio.run(prepare(draft, PreviewRequest(expected_version=1,start_date=p.schedule_constraints.start_date),
+        SimpleNamespace(), preserved_starts={'lunch':time(12)}))
+    assert result.windows[0].start_time == time(12)
+    assert result.windows[0].end_time == time(13)
+
+
 def test_explicit_interval_is_valid_duration_evidence():
     value=plan({"item_ref":"lunch","kind":"meal","name":"午餐","start_time":"12:00","end_time":"13:00",
         "duration_minutes":60,"duration_source":"user_explicit","source_quote":"12:00至13:00保留午餐"})

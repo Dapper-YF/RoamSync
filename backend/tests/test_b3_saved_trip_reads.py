@@ -62,6 +62,23 @@ def context(message):
         live_fact_likely_required=False))
 
 
+def test_composite_read_keeps_residual_day_and_scopes_meal_to_its_own_clause(sessions):
+    from app.saved_trip_reads import render_saved_request
+    async def run():
+        async with sessions() as db:
+            trip, days, activities = await seed(db)
+            message = '总天数、第一天第一项、第二天所有活动、第三天午餐留白'
+            snapshot = await load_saved_trip_read(db, trip.id, message)
+            answer = render_saved_request(snapshot, message)
+            assert '共3天' in answer and '合成地点1，' in answer
+            assert '合成地点6，' in answer and '合成地点10，' in answer
+            assert '2026-11-12 12:00—13:00 · 午餐留白' in answer
+            assert '合成地点11，' not in answer
+            ordinals = render_saved_request(snapshot, '第一天第一项和第一天第二项各停留多久')
+            assert '合成地点1，' in ordinals and '合成地点2，' in ordinals
+    asyncio.run(run())
+
+
 def test_third_day_read_is_not_truncated_to_first_ten(sessions):
     async def run():
         async with sessions() as db:
