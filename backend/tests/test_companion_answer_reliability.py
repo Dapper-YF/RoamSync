@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from app.companion_answer_reliability import control_model_text, live_gap_text, source_gap_text
+from app.companion_answer_reliability import unsupported_advice
 from app.companion_contracts import CompanionDraft, SuggestionDraft
 from app.companion_provider import CompanionProviderError
 from app.companion_runtime import CompanionRuntime
@@ -46,6 +47,28 @@ def test_unsupported_state_clauses(text, code):
 ])
 def test_culture_conditions_and_budget_survive(text):
     result = control_model_text(text, '旅行建议')
+    assert result.text == text and not result.issues
+
+
+@pytest.mark.parametrize("joiner", ["，", "；", "但", "不过", "并且", "且", "同时"])
+def test_unrelated_uncertainty_does_not_waive_route_or_accessibility_claim(joiner):
+    text = "无法确认开放时间" + joiner + "步行10分钟即可且适合老人。"
+    result = control_model_text(text, "少走路")
+    assert "output_unverified_travel_measurement" in result.issues
+    assert "output_unverified_route_or_effort" in result.issues
+    assert "10分钟" not in result.text and "适合老人" not in result.text
+
+
+def test_unrelated_question_and_merchant_caveat_cannot_exempt_other_assertions():
+    assert "output_unverified_route_or_effort" in unsupported_advice("是否营业需要核实，但路面平坦。")
+    assert "output_unverified_merchant_attribute" in unsupported_advice("无法确认价格，但这些店都提供不辣餐食。")
+    assert not unsupported_advice("不能保证适合老人，若核实后再选择。")
+
+
+@pytest.mark.parametrize("text", ["步行10分钟能到吗？", "需要核实步行10分钟能否到达。",
+    "不能保证步行10分钟可达。", "如果核实路面平坦，再决定是否前往。"])
+def test_uncertainty_bound_to_the_same_assertion_survives(text):
+    result = control_model_text(text, "少走路")
     assert result.text == text and not result.issues
 
 

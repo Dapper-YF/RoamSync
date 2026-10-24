@@ -1,5 +1,25 @@
 # RoamSync Agent v1 architecture contract
 
+## Saved-state selection protocol recovery (2026-10-24 closeout candidate)
+
+The selector retains a single 30-second total budget within the 90-second turn
+deadline. A completed JSON object with only unexpected root members may request
+one explicit model protocol repair ONLY for an already server-captured pure
+itinerary read, with no candidate, mutation, intention or memory update. All
+request/context/saved-state inputs are captured once. The repaired object must
+pass the full strict schema and retain exactly every original recognized member
+and value; changed or added scope/targets/capabilities/authority are rejected.
+Existing source and policy validation still applies after repair. No tools or
+memory updates execute from invalid output. This is not extra=ignore or JSON
+salvage. Nested/missing/invalid fields, malformed JSON, writes, provider failures,
+incomplete/refused output, timeout, cancellation and policy rejection do not retry.
+Diagnostics record attempted/completed/failed recovery without raw provider data.
+
+Uncertainty in generated prose applies only to its own proposition, not unrelated
+travel assertions joined by commas or conjunctions. This closes a measured caveat
+bypass; it does not establish general requirement-to-evidence verification.
+Implementation and new evidence: PRODUCT_CLOSEOUT_AUDIT_20261024.md.
+
 ## Conversational candidate v2 (2026-10-24; candidate only, NO-GO)
 
 Product89b81e8 extends existing Draft/PreparedPlan with strict version2, stable
@@ -236,7 +256,8 @@ Planning intent hands the original user request to the existing writers,
 Validator/Accept and version fences, never to a second planner. Explicit UI
 command handlers remain. Legacy clients retain a separate history scope.
 
-Consultation uses a 90-second work deadline, at most one selection call, and
+Consultation uses a 90-second work deadline, one selection call (plus only the
+restricted saved-read protocol repair defined in the 2026-10-24 addendum), and
 at most two answer generations shared across repair and transient retry.
 SDK retries are disabled in this scope. No JSON-prefix salvage, authority
 relaxation, filtered-output retry or unvalidated partial publication is allowed.

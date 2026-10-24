@@ -23,20 +23,43 @@ def unsupported_advice(sentence, request=""):
     into comfort, or a food style into an individual merchant's menu.
     Conditional strategies and explicit evidence gaps remain useful advice.
     """
-    if re.search(r"(?:不|不能|无法|尚未|未能)(?:保证|确认|证明|核实)|需要(?:另行)?核实|(?:若|如果|假如).{0,35}(?:确认|核实|查询|实测)|是否|吗[？?]", sentence):
-        return []
+    # Uncertainty belongs to its own proposition. An unknown opening time
+    # cannot waive an independent walking measurement or accessibility claim.
+    clauses = re.split(r"[，,；;。！？!?\n]|但是|但|不过|然而|而且|并且|同时|另外|且", sentence)
+    return list(dict.fromkeys(issue for clause in clauses
+        for issue in _unsupported_advice_clause(clause, request)))
+
+
+def _asserted(pattern, sentence):
+    """A caveat must immediately govern this detected claim, not another fact.
+
+    Do not let arbitrary words between a caveat and a claim establish scope.
+    Unknown grammar stays conservative; this is still a bounded lexical gate.
+    """
+    subject = r"(?:这段|这里|这家店|这些店|这条路|它|其|是否|能够|能|为|会|实际|现场|完全|\s){0,6}"
+    for match in re.finditer(pattern, sentence):
+        prefix, suffix = sentence[:match.start()], sentence[match.end():]
+        scoped = re.search(r"(?:(?:不|不能|无法|尚未|未能)(?:保证|确认|证明|核实)|"
+            r"需要(?:另行)?核实|(?:若|如果|假如)(?:经)?(?:确认|核实|查询|实测)|是否)" + subject + r"$", prefix)
+        question = re.fullmatch(r"(?:是否)?(?:准确|可靠|可行|属实|能到|可达|能否到达)?(?:吗|需要核实|仍需确认|尚未核实)[。！？!?\s]*", suffix)
+        if not scoped and not question:
+            return True
+    return False
+
+
+def _unsupported_advice_clause(sentence, request):
     issues = []
     # Travel times/distances must come from route results rendered by the
     # server. General knowledge cannot invent them even inside an introduction.
     quantity = r"(?:\d+(?:\.\d+)?|[一二三四五六七八九十百两半几]+)\s*(?:分钟|小时|公里|千米)"
-    if (re.search(r"(?:车程|路程|步行|驾车|开车|打车|坐车|乘车|走路).{0,12}" + quantity, sentence)
-        or re.search(quantity + r"\s*(?:左右|上下)?(?:车程|路程)", sentence)):
+    if (_asserted(r"(?:车程|路程|步行|驾车|开车|打车|坐车|乘车|走路).{0,12}?" + quantity, sentence)
+        or _asserted(quantity + r"\s*(?:左右|上下)?(?:车程|路程)", sentence)):
         issues.append("output_unverified_travel_measurement")
-    if re.search(r"顺路|(?:步行|走路).{0,12}(?:轻松|不累|方便|可达|就到)|(?:路面|地势|道路).{0,8}平坦|(?:完全|很|非常|比较|相对|十分|更)?适合.{0,8}(?:老人|老年人|轮椅|推车)|(?:很近|相邻|隔壁|挨着).{0,18}(?:一起|一天|串|步行|走)|(?:半天|一天|\d+小时)(?:就|也)?(?:足够|够了|能逛完)", sentence):
+    if _asserted(r"顺路|(?:步行|走路).{0,12}(?:轻松|不累|方便|可达|就到)|(?:路面|地势|道路).{0,8}平坦|(?:完全|很|非常|比较|相对|十分|更)?适合.{0,8}(?:老人|老年人|轮椅|推车)|(?:很近|相邻|隔壁|挨着).{0,18}(?:一起|一天|串|步行|走)|(?:半天|一天|\d+小时)(?:就|也)?(?:足够|够了|能逛完)", sentence):
         issues.append("output_unverified_route_or_effort")
-    if re.search(r"(?:口碑|评价).{0,8}(?:好|稳定|不错|可靠)|(?:出品|味道).{0,6}(?:稳定|有保障)|(?:都|均|一定|肯定)(?:能|可以|有|提供|供应).{0,16}(?:清汤|菌汤|鸳鸯|不辣|素食)|(?:清汤).{0,20}(?:辣锅|红锅).{0,8}(?:舀|兑)", sentence):
+    if _asserted(r"(?:口碑|评价).{0,8}(?:好|稳定|不错|可靠)|(?:出品|味道).{0,6}(?:稳定|有保障)|(?:都|均|一定|肯定)(?:能|可以|有|提供|供应).{0,16}(?:清汤|菌汤|鸳鸯|不辣|素食)|(?:清汤).{0,20}(?:辣锅|红锅).{0,8}(?:舀|兑)", sentence):
         issues.append("output_unverified_merchant_attribute")
-    if re.search(r"不吃辣|不能吃辣", request) and re.search(r"(?:直接点|点全|可以点|建议.{0,6})(?:鸳鸯|清油|微辣)|(?:红汤|红锅).{0,15}(?:兑淡|加汤)", sentence):
+    if re.search(r"不吃辣|不能吃辣", request) and _asserted(r"(?:直接点|点全|可以点|建议.{0,6})(?:鸳鸯|清油|微辣)|(?:红汤|红锅).{0,15}(?:兑淡|加汤)", sentence):
         issues.append("output_diet_advice_without_menu_confirmation")
     return issues
 

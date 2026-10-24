@@ -2,26 +2,26 @@
 
 ## Snapshot
 
-2026-10-24用户明确要求将全部本轮最终修改合并到正式工作区。隔离整合A a1e5946+B f036d0a为d37da85；C e102205/ba143a2/207c9b7已在A产品89b81e8祖先中。正式目录E:/Study/RoamSync从6b298ca快进接收整合版本，保留原dirty/untracked/环境；源码合入不等于部署或产品GO。报告docs/OFFICIAL_SOURCE_INTEGRATION_20261024.md。
+2026-10-24产品收尾首批：正式A/B/C整合ea3ba83完成后，独立树E:/Study/RoamSync-product-closeout-20261024基于此开发。统一31项审计见docs/PRODUCT_CLOSEOUT_AUDIT_20261024.md，复用既有候选/Accept/照片/读取/Worker机制，不重复合并或部署。
 
 ## Current Freeze / Rehearsal Status
 
-统一包含A v2同Draft图文候选/修改/原子Validator-Accept、C日程差异复核/探索地图连续性、B读取selected身份/范围/coverage/原始理由及独立有界RR只读通道。未重复叠加已被替代的旧实验。合并只有架构与交接文档冲突，产品源码无冲突。f7fc455只修前端候选保存测试的arrangement-items返回夹具，产品源码不变。
+保存态纯itinerary读取仅root额外字段允许一次显式模型协议修复，两次共30秒/总turn90秒，冻结输入，严格schema及原成员逐值相等，原来源/权限校验不变。无candidate/写入/记忆修改恢复，其他错误不重试。生成文本中未知事实不再豁免同句其他命题；否定/疑问只作用于紧邻同一断言。仍是有界词法防线，不宣称四状态证据支持已实现。
 
 正式原4个tracked修改（README/envexample/qualityruntime/nginx）保留；2015未跟踪文件逐字节保全，4个相同内容入库重叠文件也恢复原始字节。外部备份E:/Study/RoamSync-deployment-backups/20261024-source-integration。正式.env与数据卷未改，无reset/clean/stash，无Obsidian写入。
 
 ## Prior milestone baseline (before shadow split)
 
-原正式6b298ca；A产品89b81e8，A最后窄审a1e5946；B产品3f98303/测试b393bfd/交付f036d0a。旧候选、失败测量与审查继续保留其原SHA，不借用旧结果证明新集成。A树只读，本轮另建codex/official-source-integration-20261024执行整合。
+正式整合ea3ba83保留A/C产品89b81e8与B3产品3f98303。整合1816+38/Web265/type/build证据见OFFICIAL_SOURCE_INTEGRATION_20261024.md；原dirty/untracked/env保全。本批不修改正式区。
 
 ## Prior verification
 
-本次隔离tmpfs PG主套1816、专库38通过，source_unchanged=true，测试资源已清理；不用生产.env/数据库。前端默认高并行4超时、两路并行265断言但1个夹具unhandled错误均保留，修正仅测试HTTP返回类型后完整47文件265通过且无未处理错误。类型检查和正确正式标志构建通过。正式已快进8191d9e，原4 tracked/2015 untracked/env逐字节保全且受测源码匹配，后续仅文档收据提交。原证据E:/Study/RoamSync-source-integration-evidence-20261024。
+本批Windows定向116通过，外部E:/Study/RoamSync-product-closeout-evidence-20261024/focused-final.xml。首轮两测试假设错误如实保留；Astra指出疑问测量过删后补反例修正。完整隔离工程与实际模型/AMap/UI待本批下一步，不以116替代产品成功。
 
 ## Prior blockers (historical)
 
-产品整体仍NO-GO：无证据省力/忌口保证、schema/provider失败、用户/Trip公网身份隔离与新鲜连续链/独立保留题未过。B最终公开5/6、旧C严格2/20不得改成新集成质量成绩。源码合入不自动解锁正式发布。
+整体NO-GO。C历史严格2/20及取证无效、B3最终5/6、中间6/6和fresh链失败保留。复合任务/真实POI/要求证据支持/公网身份隔离仍开放。独立新5组题由Astra封存，代码冻结前主执行不读题。正式3000/API/Worker/PG停止，本批独立Web3064/API18064/新synthetic测试库15435，不部署/改正式用户数据。
 
 ## Interview framing
 
-这次完成本地多对话成果的统一源码，而非只交分散分支。合入前正式Web/API/Worker/PG均退出255、3000无监听，本次不启动/重建它们，不迁移生产库。未来部署需要另外核验运行配置、备份与源/像身份和真实链路。
+统一审计与两个窄根因修复是首批范围；后续真实完整任务和独立题结果必须单列。不将合并、无异常、HTTP200或Mock当旅行任务成功；不写Obsidian。
