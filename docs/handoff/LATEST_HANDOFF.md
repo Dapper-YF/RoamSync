@@ -16,12 +16,12 @@
 
 ## Prior verification
 
-本批Windows定向116通过，外部E:/Study/RoamSync-product-closeout-evidence-20261024/focused-final.xml。首轮两测试假设错误如实保留；Astra指出疑问测量过删后补反例修正。完整隔离工程与实际模型/AMap/UI待本批下一步，不以116替代产品成功。
+冻结代码de72864：本批Windows定向116、Linux主1852+专38通过，source_unchanged=true。外部E:/Study/RoamSync-product-closeout-evidence-20261024/full-de72864。Web未改，复用正式整合265/type/build，不声称新跑。Astra独立新5组20轮一次采样严格8/20轮、0/5组；8正式表不变；无观测critical不等于证据能力合格。完整原始输出/工具/评分外部private-eval，源码冻结前封存；此题集以后不能再叫未见。
 
 ## Prior blockers (historical)
 
-整体NO-GO。C历史严格2/20及取证无效、B3最终5/6、中间6/6和fresh链失败保留。复合任务/真实POI/要求证据支持/公网身份隔离仍开放。独立新5组题由Astra封存，代码冻结前主执行不读题。正式3000/API/Worker/PG停止，本批独立Web3064/API18064/新synthetic测试库15435，不部署/改正式用户数据。
+整体NO-GO。新浏览器B原句仍泛化澄清；C候选因selector额外candidate_command_note严格拒绝，Draft/Prepared/Trip/Activity全0，无法继续修改/采用/刷新完整时间轴。真实只读API另核两POI/1133m906s步行路线与两站CC0图片，不替代黄金路径。旧simple_duration_edit聊天直写与先候选再采用冲突仍OPEN；不在本批冻结采样中改动。C历史2/20、B最终5/6和fresh链失败保留。下一批依次处理共享对象/复合目标、旧标量写入口、要求证据投影、写协议和完整新链。公网身份隔离仍阻断。
 
 ## Interview framing
 
-统一审计与两个窄根因修复是首批范围；后续真实完整任务和独立题结果必须单列。不将合并、无异常、HTTP200或Mock当旅行任务成功；不写Obsidian。
+首批审计/窄修复/严格测量完成，产品收尾未完成。报告PRODUCT_CLOSEOUT_AUDIT_20261024.md及docs/evidence/product-closeout-20261024/verification.json。修复未合入正式ea3ba83、未部署；独立Web3064/API18064/Worker已停止，synthetic测试库保留，正式3000/API/Worker/PG仍停止且用户数据未改。不将HTTP200或Mock当任务成功，不写Obsidian。

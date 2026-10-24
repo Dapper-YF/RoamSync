@@ -1,0 +1,172 @@
+{
+  "verdict": "NO-GO",
+  "scope": "first closeout batch completed; full product closeout remains unfinished",
+  "official_source_head": "ea3ba833e6a77122c08c1c9327c18a346e3c48ef",
+  "tested_source_head": "de728640accbb6816af3a74930720f43cb10ce54",
+  "backend_tests": {
+    "backend-main": {
+      "tests": "1852",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "230.439"
+    },
+    "backend-dedicated": {
+      "tests": "38",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "35.985"
+    }
+  },
+  "test_image": "sha256:00a11c2247036717915cc6931ebb05f95d8ed1b0e9d7af9c6a3ba7cc65a3a701",
+  "source_unchanged_during_tests": true,
+  "backend_runner_passed": true,
+  "windows_focused_tests": 116,
+  "web_changed": false,
+  "web_evidence": "reused source-integration-20261024/validation.json; no new claim of rerunning 265 tests",
+  "heldout": {
+    "cases_sha256": "6cb1a7cf2186293efa7cd0fe65bfaafc35131f1cf9b7522641da92eea59fc1f4",
+    "raw_sha256": "a835b4684ee0e7706834e52e8c53d0f42af056fa4cb59744fb6cd9ef39be7b4f",
+    "strict_passed_turns": 8,
+    "total_turns": 20,
+    "strict_passed_groups": 0,
+    "total_groups": 5,
+    "observed_critical_unsupported_guarantees": 0,
+    "all_formal_tables_unchanged": true,
+    "source_unchanged": true,
+    "app_sha256": "6cdf59bb3239e2a1b9bde8e6fb1d838f31cc74d4f5c7660a0a98bfe98013fa5f",
+    "service_scope": {
+      "model": "real glm-5.3-flash; 20 selection outputs and 5 companion outputs",
+      "amap": "4 real research_search calls succeeded and returned live POI records",
+      "route": "not called: compound request rejected before execution",
+      "tavily": "not called: no availability or current-page grounding claim possible",
+      "saved_trip": "independent synthetic 3 days/6 activities/2 arrangement items; only saved-state evidence",
+      "browser": "not exercised; service send_message execution only",
+      "selector_protocol_repair": "0 eligible events in this holdout; no real-trigger success claim"
+    }
+  },
+  "browser": {
+    "scope": "real desktop IAB, model and AMap, independent synthetic DB; no route mocks",
+    "A": "consultation completed without Trip, picture shown; factual prose not comprehensively certified",
+    "B": "failed: generic compound-read clarification",
+    "C": "failed: extra_forbidden candidate_command_note before candidate creation",
+    "candidate_modify_adopt_reload": "not reached; NOT VERIFIED",
+    "formal_counts": {
+      "trips": 0,
+      "day_plans": 0,
+      "activities": 0,
+      "route_legs": 0,
+      "planning_runs": 0,
+      "plan_revisions": 0,
+      "trip_arrangement_items": 0,
+      "trip_preferences": 0,
+      "v2_travel_drafts": 0,
+      "v2_draft_prepared_plans": 0,
+      "v2_draft_promotions": 0
+    },
+    "source_sha256": "c58d026b114457d1c722147a7b88cc135d6ff0cfbd6fef1e58e484f535b20e19",
+    "saved_timeline_current": "no saved Trip; actual empty arrangements screenshot, no manufactured timeline"
+  },
+  "direct_content_probe": {
+    "scope": "diagnostic direct API, not successful planning task",
+    "identity_checks": [
+      {
+        "name": "人民公园",
+        "ref": {
+          "place_id": "5cb34364-a173-5ed7-854b-de8d28fa1526",
+          "external_ref": {
+            "provider": "amap",
+            "namespace": "poi",
+            "provider_place_id": "B001C7X8QA"
+          }
+        },
+        "location": {
+          "longitude": 104.057641,
+          "latitude": 30.65699,
+          "coordinate_system": "GCJ02"
+        },
+        "identity_status": "provider_identity",
+        "source": {
+          "provider": "amap",
+          "source_url": "https://www.amap.com/search?id=B001C7X8QA",
+          "fetched_at": "2026-10-24T09:32:26.012967Z",
+          "expires_at": "2026-10-24T10:32:26.012967Z",
+          "provider_updated_at": null,
+          "freshness": "fresh"
+        }
+      },
+      {
+        "name": "宽窄巷子景区",
+        "ref": {
+          "place_id": "8ca144f2-f437-5d2e-a38a-9b77c7363e0b",
+          "external_ref": {
+            "provider": "amap",
+            "namespace": "poi",
+            "provider_place_id": "B001C7YCM4"
+          }
+        },
+        "location": {
+          "longitude": 104.053307,
+          "latitude": 30.663869,
+          "coordinate_system": "GCJ02"
+        },
+        "identity_status": "provider_identity",
+        "source": {
+          "provider": "amap",
+          "source_url": "https://www.amap.com/search?id=B001C7YCM4",
+          "fetched_at": "2026-10-24T09:32:26.238703Z",
+          "expires_at": "2026-10-24T10:32:26.238703Z",
+          "provider_updated_at": null,
+          "freshness": "fresh"
+        }
+      }
+    ],
+    "route_verified": true,
+    "route": {
+      "mode": "walk",
+      "distance_meters": 1133,
+      "duration_seconds": 906,
+      "source": {
+        "provider": "amap",
+        "source_url": "https://lbs.amap.com/api/webservice/guide/api/newroute",
+        "fetched_at": "2026-10-24T09:32:26.446268Z",
+        "expires_at": "2026-10-24T09:37:26.446268Z",
+        "provider_updated_at": null,
+        "freshness": "fresh"
+      },
+      "is_estimated_fallback": false
+    },
+    "images": [
+      {
+        "path": "/api/v1/media/place-images/chengdu-renmin-1-960.jpg",
+        "status": 200,
+        "bytes": 209914,
+        "sha256": "0ae6a03c1e927dd480901dcad22f52ff8bcd5a890461ae43b8a439046967afba"
+      },
+      {
+        "path": "/api/v1/media/place-images/chengdu-kuanzhai-0-960.jpg",
+        "status": 200,
+        "bytes": 175050,
+        "sha256": "1d0a38b1e1b6aaf03bf69d0f7ae74d1d5a2b6c70036719452911358f5a6b6649"
+      }
+    ]
+  },
+  "history_preserved": {
+    "C_strict": "2/20, valid 2/19 with invalid evidence retained",
+    "B3_final_public": "5/6, intermediate 6/6 not final",
+    "B3_targeted": "254 tests, limited scope only"
+  },
+  "remaining_blockers": [
+    "scoped object and compound goal continuity",
+    "strict write-candidate schema failure",
+    "legacy scalar chat edit writes before preview/Accept",
+    "requirement/entity/fact evidence support",
+    "new complete golden path and adopted timeline",
+    "public user/Trip ownership isolation"
+  ],
+  "merged_to_official": false,
+  "production_deployed": false,
+  "production_database_modified": false,
+  "external_evidence_root": "E:\\Study\\RoamSync-product-closeout-evidence-20261024"
+}

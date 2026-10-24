@@ -32,7 +32,7 @@
 |保存态读取|`saved_trip_reads.py`同一短RR READ ONLY快照/coverage/selected|独立限额2连接，5秒准入；不从调用者业务池嵌套借连接；不是公网所有权认证|
 |图片/展示|`place_content/images.py`、`conversation_candidate/presentation.py`、Handbook|真实POI+provider+坐标关联审核Commons；相同PreparedPlan派生聊天与正式对象|
 
-## 2. 去重后的统一清单
+## 2. 去重后的统一清单（批前快照；本批最终状态见第6节）
 
 状态：**R**已实现且有相应真实证据；**T**只有工程证据；**U**真实模型不稳定；
 **P**部分完成且有缺陷；**N**未实现；**F**明确失败。R仅适用于列出的场景，不表示普遍通过。
@@ -134,10 +134,132 @@ AsyncSession.scalars(select(Trip))→TripResponse。缺少用户filter和分页�
 - 本批定向首轮58通过/2测试错误（冻结ContextEnvelope错误赋值、过短deadline的调度假设），
   修正测试后111通过。未修改产品断言迎合失败；完整工具输出留在本会话，后续XML/log存外部目录。
 - 外部证据根`E:/Study/RoamSync-product-closeout-evidence-20261024`；任何新输出不得覆盖旧文件。
-- 当前本批实测及最终结论待追加；没有测试或没有真实服务的项目保持未验收。
+- 此节为批前规则与阶段记录；本批实测和最终结论已经追加在第6节，没有实际证据的项目仍保持未验收。
 
-## 6. 本批交付状态
+## 6. 首批最终测量与结论
 
-审计已建立、两个针对缺陷的修复正在验证。尚未合入正式区、尚未部署；黄金路径、独立题和最终
-Astra复核未完成前不标记整体完成。最终必须列明用户目标失败、候选/保存状态、图片身份/路线原文，
-按GO/PARTIAL/NO-GO判定；真实用户目标未完成即业务失败，即使安全拒绝正确。
+**NO-GO。首批统一审计、两个窄修复和冻结测量已完成；整个产品收尾没有完成。**
+受测代码提交`de728640accbb6816af3a74930720f43cb10ce54`，后续只补报告和证据。
+本分支未合入正式ea3ba83，未部署生产，未更改正式用户数据。
+
+|本批测量|结果|证据/边界|
+|---|---|---|
+|Windows定向|116 passed|focused-final.xml；协议/来源/取消/总预算/断言反例；不是模型实际质量|
+|Linux完整主套|1852 passed、0失败/跳过、2既有警告|full-de72864/backend-main.xml；真实隔离tmpfs PG|
+|Linux专库|38 passed、0失败/跳过|full-de72864/backend-dedicated.xml；与主套不重叠|
+|源码/镜像|source_unchanged=true；干净冻结提交|full-de72864/run.json；镜像sha256:00a11c2247036717915cc6931ebb05f95d8ed1b0e9d7af9c6a3ba7cc65a3a701|
+|Web|本批无源码变更，复用整合265/type/build证据|不宣称本批又跑265；本批新增的是实际浏览器页面检查|
+|独立新保留题|严格8/20轮；完整0/5组；本次观察到critical无证据保证0|private-eval/review.json；Astra独立出题执行/评审，非人类盲评|
+|保存态安全|8正式表每轮与最终指纹不变；无pending/Run/Revision新增|private-eval/raw-once.json；合成3天6活动2事项，不是实际景区事实|
+|真实服务|20 selector、5 Companion；4真实AMap地点调用|独立题未触发selector协议修复，不能报真实恢复成功；路线/Tavily在这些题中未调用|
+|额外真实地图API诊断|两POI身份正确；步行1133m、906秒；有path、非fallback|content-route-probe.json；单次API诊断不是黄金路径成功|
+|图片|两站本地审核照片接口200，内容hash匹配；来源页在线核对|Commons People’s Park/Suicasmo、Kuanzhai/Daderot均CC0；不扩大图库覆盖结论|
+
+完整后端命令为本树`scripts/run-isolated-tests.py --output E:/Study/RoamSync-product-closeout-evidence-20261024/full-de72864`。
+runner只创建唯一项目`roamsync-test-*`和自己的tmpfs库，完成后已清理自己的测试资源；共享synthetic15435保留。
+运行清单、每阶段exit code、耗时与源码文件哈希均在run.json，未借用旧版本全套结果。
+
+### 新独立题的实际失败
+
+题面在代码冻结前由Astra封存，SHA256
+`6cb1a7cf2186293efa7cd0fe65bfaafc35131f1cf9b7522641da92eea59fc1f4`；主执行冻结前未读题。
+5组每组4轮，每轮只执行一次；第15轮已有应用内回答修复属于同一轮且保留首次失败，不是替换采样。
+逐轮原始可见模型JSON、工具参数/结果、条件、候选/正式状态与正式表指纹均保留。
+原始捕获SHA256 `a835b4684ee0e7706834e52e8c53d0f42af056fa4cb59744fb6cd9ef39be7b4f`；
+app前后相同hash `6cdf59bb3239e2a1b9bde8e6fb1d838f31cc74d4f5c7660a0a98bfe98013fa5f`。
+
+|独立组|严格完成轮数|关键未完成目标|
+|---|---|---|
+|咨询/指代|1/4|实际返回规范POI却不接纳身份；第一个/第二个被当不存在建议序号|
+|复合读取/证据范围|2/4|已知前后地点仍被字面参数策略拒绝，开放时间与路线没有执行|
+|跨城/条件撤销|2/4|撤销日期预算成功；“一个人”没存人数，最后回忆丢目标|
+|少走/忌口证据|3/4|安全模板未回答“车到门口是否证明不用走路”的具体推断|
+|保存态范围|0/4|部分值正确，但漏总天数/首项定位/理由子目标/明确未修改确认|
+
+这是服务send_message真实执行，不是浏览器端到端；路线和Tavily被上游阻断，未调用不能判断服务可用。
+这些题从此属于用过的题，后续调参后不能重称未见评测。历史C2/20与B最终5/6不被8/20替换。
+完整原文和判分：外部`private-eval/FULL_CONVERSATIONS_AND_REVIEW.md`、`raw-once.json`、`review.json`。
+
+### 本批真实浏览器黄金路径
+
+通过Codex浏览器控制实际打开Web3064，API18064，独占新库
+`roamsync_a2_public_closeout_20261024_test`，无HTTP路由mock、无预置候选，真实模型/AMap。
+
+1. 场景A原问“南京玄武湖值得去吗？”自然回答并有真实图片，没有创建Trip。
+   输出曾有suggestions.reasons schema失败，已有回答内恢复后仍完成；不隐藏该日志。
+   只证明咨询流程，未逐句认证其免费/游船等旅游事实。
+2. 场景B先问成都两地点区别，取得人民公园/宽窄巷子景区正确POI与一张审核照片。
+   追问原句“步行即可，同时说说两个地方的位置、逛法和能否同一天游览。”仍答
+   **“请确认每部分对应的地点或查询内容。”** 目标失败，截图03保留。
+3. 场景C使用原始完整要求：11月9日成都、两地点、10—18、一小时午餐、步行为主、先看后存。
+   **“这次回答没有完成，请重试。”** execution_summary为selector额外
+   `candidate_command_note`、extra_forbidden。无读模型修复适用于此写候选，不丢未知字段换成功。
+4. 创建前后：Trip/Day/Activity/Route/PlanningRun/PlanRevision/ArrangementItem/Preferences皆0；
+   v2 Draft/Prepared/Promotion也0。后续延长、明确采用和正式时间轴没有前置候选可操作，
+   因而**未验收**，不能拿合成候选或A历史局部成功接上冒称本次完整通过。
+5. 实际进入“我的安排”，所有阶段计数0；说明本次没有误保存，不说明规划成功。
+   新截图是桌面；本批没有新手机完整时间轴成功，历史A1440/390/320照片实绘单独引用。
+
+浏览器原文/截图：`browser/01-xuanwu.{txt,png}`、`02-compare.txt`、
+`03-compound-failure.{txt,png}`、`04-candidate-failure.{txt,png}`、
+`05-arrangements-empty.{txt,png}`；只读RR数据库完整合成会话在`browser/first-chain-complete.json`。
+该浏览器链保留的是用户输入/最终回答/诊断与已执行工具状态；失败selector的完整JSON当时没有
+被运行器捕获，不能虚称拥有该次原始JSON。另一次单独只读诊断样本在
+`compound-selector-diagnostic.json`，明确不是原失败采样或独立题成绩。
+
+### 地点、路线、图片核对
+
+额外只读直接API核对没有创建活动或旅行：
+- 人民公园`B001C7X8QA`、canonical`5cb34364-a173-5ed7-854b-de8d28fa1526`，GCJ02 `104.057641,30.65699`。
+- 宽窄巷子景区`B001C7YCM4`、canonical`8ca144f2-f437-5d2e-a38a-9b77c7363e0b`，GCJ02 `104.053307,30.663869`。
+- AMap步行路线1133米/906秒，fetched_at=2026-10-24 17:32:26+08:00，5分钟有效期。
+  是供应商路线估计，不包含园内游览、排队/行动限制，不证明少走路或同日所有条件都满足。
+- 两个960照片接口200/209914与175050字节；分别对应审核hash`0ae6a03c…`、`1d0a38b1…`。
+  在线核对[人民公园来源](https://commons.wikimedia.org/wiki/File:People%27s_Park_(Chengdu)_20260513-1.jpg)
+  和[宽窄巷子来源](https://commons.wikimedia.org/wiki/File:Street_scene_-_Kuanzhai_Alleys_-_Chengdu,_China_-_DSC05311.jpg)
+  描述/作者/CC0与目录一致，未新增或下载替代照片。
+
+### 后端运行响应矩阵
+
+实际请求与原JSON保存`runtime/http-contracts.json`，API只连接本批测试DB，ready执行SELECT1通过。
+
+|场景|请求/HTTP|实际响应概要|结论|
+|---|---|---|---|
+|健康存活/DB|GET /health/live、/health/ready 200|status ok/ready|已测|
+|空列表|GET /api/v1/trips 200|[]|已测，没有全局envelope/分页|
+|有对象/分页|GET /places/{id} 200；地点检索参page/page_size|Place ref/source/location；检索用SearchResponse|对象已测；本批分页边界未穷举|
+|参数错误|POST /assistant/sessions 422|loc body.session_id、uuid_parsing|已测|
+|未认证|GET /api/v1/trips无token 401|detail.code unauthorized|只证明本地token门，不是租户隔离|
+|不存在|GET /trips/全零UUID 404|detail字符串trip not found|已测，错误形态不全局统一|
+|正式创建/更新|黄金路径未到达|无实际保存响应|未验收|
+|严重500|未对运行服务注入崩溃|完整工程中有回滚测试，不冒称新运行500响应|运行未验收|
+
+### Astra最终复核及明确阻断
+
+Astra Medium已审查关键方案、源码diff和最终冻结版；发现两例疑问句过删后补修/回归，
+确认纯保存态协议恢复未见可复现扩权。独立新题直接证明目标连续性不足，**不批准产品GO**。
+协议修复的真实触发成功没有发生，本批仅工程测试证明其次数/预算/权限边界。
+不对创建schema失败做“注释字段”静默容忍，未知字段可能含遗漏约束；此范围仍失败。
+
+新增明确契约阻断：`assistant_arrangement.py:26`的`simple_duration_edit`经85行调用直接
+`update_activity(commit=False)`；`assistant_service.py`约419—430外层提交。既有
+`test_arrangement_agent.test_simple_safe_duration_chat_edit_is_atomic_without_graph`明确期待
+Trip.version立即+1、无Run。这是旧设计与用户本轮“先看候选再采用”冲突，**本批未改此入口**。
+保留原测试并登记缺口；不能把它算本次代码引入，也不能因有原子/版本保护就声称符合新产品。
+
+下一批按依赖执行（不是无实施顺序的建议）：
+
+|批次|具体改动边界|验收门/用户收益|
+|---|---|---|
+|2A|assistant_capabilities/assistant_context/places：共享服务端POI身份与任务内引用；每子任务绑定范围；沿用canonical/aliases，不借同轮另一子句或旧城市|B原句及未见城市完整位置/玩法/路线；未知/同名仍具体澄清；取消不复活|
+|2B|assistant_arrangement取消聊天标量直写，移交现有Planner/Revision；保留表单显式编辑|真实PG先前后正式表不变→实际候选→明确Accept→仅目标变更；过期/重试/固定预约保护|
+|3|复用requirement_records与decision_support补四状态支持投影、对象/事实/时效/口径|路段不能证明园内省力、菜单未知不能证明忌口、参考价不能保证账单；证据不足仍回答具体问题|
+|4|保持严格写协议，解决首轮结构化输出/操作覆盖；拓展真正需要的候选局部顺序/多天范围|真实生成→修改→采用→刷新带照片时间轴；无壳Trip/无丢复合要求；失败不删除约束|
+|5|固定新SHA，A—G全链与新独立5～15组，取消/并发/版本冲突及UI复核|所有关键用户目标完成且零关键越权/无证据保证；否则NO-GO|
+
+本轮没有大规模重构或第二套系统。正式合并/部署与产品完成仍分开；本批修复和证据可独立审查，
+不因整体任务规模和工程通过就声称已经实现一个可靠完整旅行助手。
+
+资源收尾：本批API18064、Web3064、Worker进程已按实际PID/命令行核对后停止；新合成库及证据保留，
+没有删除共享15435或正式容器/卷。正式HEAD仍ea3ba83，3000/8000没有监听。
+当前截图代表实测时页面，不能当作仍在线的新生产界面。
