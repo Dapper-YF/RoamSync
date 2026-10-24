@@ -38,3 +38,14 @@ A核对了B `final-regression-source.json` 与XML：exit0/source_unchanged=true�
 本次窄连接边界未发现新的接收阻断；不是吞吐、长期资源稳定性或总体发布批准。B当前完整重跑需要修正一个旧policy测试的查询观察范围：独立引擎不再被原engine实例监听，须保留全部原禁用查询断言，仅扩大事件观察范围。该测试变更应有最终提交及源码身份；不得把未提交测试变化绑定到3f全部源码。
 
 B报告3f的新公开六轮为5/6，其中一轮模型顶层trip:{candidate:null}被严格schema拒绝；保留原文，不extra-ignore、不重采样刷分。4a8的6/6是历史开发测量，不属于3f结果。A仍未合入/部署，待最终提交/完整证据后作接收审查；产品整体NO-GO。
+
+
+## 最终窄审结论（交付HEAD a138639ea5349fbee8ea554fda70beac5666e9de）
+
+**原测试库、MVCC一致性及嵌套池容量阻断均有针对修复；本次读取契约/连接边界未发现剩余可复现阻断。** 该结论只允许进入后续候选集成评审；依B明确边界，本次仍不合入、不部署，A产品BASE保持89b81e8。
+
+A逐项核对：最终app为3f983039b07f1b960beba5a5b5677c16f1ca81e5；仅测试观测提交b393bfdbe6e8c98fb39e6e3613695986829d34d4只将test_companion_runtime.py监听从原engine实例提升到Engine类，全部原禁用查询断言保留。14受测文件当前原始哈希与final-identity一致，Git换行规范相等；164个app文件与最终回归前后哈希及3f Git等价，无差异。identity是post-run收据，不虚构test-before快照。XML记录254通过/0失败错误跳过、app source_unchanged=true；这是B定向测量，A未重跑，不替代合入后的统一全量回归。
+
+24份manifest列出的证据原始字节哈希全部核对通过，manifest SHA256=1005b0ba26342e54aef3404aab2040f50856bcc7b6825a54a733eeaceb8ad2ae；精简核对收据见evidence/conversation-itinerary-20261024/B3_FINAL_READ_REVIEW_RECEIPT.json。失败253/254与无效0测试记录原样保留，未清洗原始XML尾空格；不因raw取证格式覆盖失败。
+
+最终真实公开六轮仍5/6，四批24轮1/6→5/6→6/6→5/6是B作者判断，非独立保留题。报告明确最终schema失败、无新浏览器/正式Accept验收、无公网身份隔离完成证明。剩余范围/指代覆盖、跨时点新鲜度、多进程连接容量及模型协议可靠性限制已披露。产品整体仍NO-GO，未来新集成源码必须另跑完整工程与新鲜产品链门槛，不能借用89b81e8旧全量结果。

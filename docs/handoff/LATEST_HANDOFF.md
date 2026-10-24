@@ -12,6 +12,8 @@
 
 新鲜连续链4次有效失败，1次runner无效：漏复合咨询、候选schema额外candidate_patches、SSL/地图503等；未取得新的未见20题16/20，不将局部成功当最终全链。整体NO-GO。正式6b298ca未改，正式容器仍exited；生产DB未连接/修改/清理，未部署。隔离Web3058只供测试，不能当正式3000。
 
+B3后续只读窄审完成：B交付a138639、app3f98303、测试b393bfd，原安全库/MVCC/嵌套池阻断修复，254定向记录及164app/14测试身份、24证据hash核对通过。公开六轮最终5/6，非holdout；无剩余同范围可复现阻断，不等于发布批准。依边界未合入，A产品BASE89b81e8不变；详见AGENT_B3_SCOPED_READ_INTEGRATION_REVIEW_20261024.md。
+
 ## Prior milestone baseline (before shadow split)
 
 历史统一BASE=f116ada6d6d46db7aeb48c29c8d5b45da379be00；6a65ece3未部署；A2产品85d0bd5/前轮2/20均为历史，不改写分数。10月21日保全见ENGINEERING_A_AUDIT_20261022.md，A2见ENGINEERING_A2_RELIABILITY_20261023.md。
