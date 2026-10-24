@@ -16,7 +16,7 @@
 
 ## Prior verification
 
-本次隔离tmpfs PG主套1816、专库38通过，source_unchanged=true，测试资源已清理；不用生产.env/数据库。前端默认高并行4超时、两路并行265断言但1个夹具unhandled错误均保留，修正仅测试HTTP返回类型后完整重跑，最终结果见整合报告/收据。前端类型检查和正确正式标志构建通过。原证据E:/Study/RoamSync-source-integration-evidence-20261024。
+本次隔离tmpfs PG主套1816、专库38通过，source_unchanged=true，测试资源已清理；不用生产.env/数据库。前端默认高并行4超时、两路并行265断言但1个夹具unhandled错误均保留，修正仅测试HTTP返回类型后完整47文件265通过且无未处理错误。类型检查和正确正式标志构建通过。正式已快进8191d9e，原4 tracked/2015 untracked/env逐字节保全且受测源码匹配，后续仅文档收据提交。原证据E:/Study/RoamSync-source-integration-evidence-20261024。
 
 ## Prior blockers (historical)
 
