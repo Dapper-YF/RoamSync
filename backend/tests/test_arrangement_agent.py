@@ -48,7 +48,12 @@ def test_adopted_trip_edit_does_not_require_selecting_a_historical_suggestion(sa
     asyncio.run(scenario())
 
 
-def test_simple_safe_duration_chat_edit_is_atomic_without_graph(sample):
+def test_duration_chat_creates_planning_run_without_formal_write(sample, monkeypatch):
+    from app.assistant_service import AssistantRouter, ToolDecision
+    async def decide(self, context):
+        return ToolDecision(tool='plan_trip', reply='准备候选', source_trip_id=sample.trip_id,
+            planning_request=context['message'])
+    monkeypatch.setattr(AssistantRouter, 'decide', decide)
     from test_formal_write_protection import current
     async def scenario():
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as c:
@@ -59,25 +64,26 @@ def test_simple_safe_duration_chat_edit_is_atomic_without_graph(sample):
             before = await current(sample)
             r = await c.post(f"/api/v1/assistant/sessions/{session['id']}/messages", json={"message": "请把测试地点0的停留时长改为20分钟，其他日期保持不变。", "message_id": mid, "context": context})
             assert r.status_code == 200, r.text
-            assert r.json()["latest_run_id"] is None
+            assert r.json()["latest_run_id"] is not None
             after = await current(sample)
-            assert after["version"] == 2
-            first = next(a for a in after["activities"] if a["id"] == str(sample.activities[0].id))
-            assert first["duration"] == 20
-            assert next(a for a in after["activities"] if a["id"] == str(sample.activities[1].id)) == next(a for a in before["activities"] if a["id"] == str(sample.activities[1].id))
+            assert after == before
             assert (await c.post(f"/api/v1/assistant/sessions/{session['id']}/messages", json={"message": "请把测试地点0的停留时长改为20分钟，其他日期保持不变。", "message_id": mid, "context": context})).status_code == 200
             assert await current(sample) == after
     asyncio.run(scenario())
 
 
-def test_chat_failure_after_simple_duration_edit_rolls_back_activity_and_trip(sample, monkeypatch):
-    import app.assistant_arrangement as commands
+def test_chat_failure_after_duration_handoff_rolls_back_activity_and_trip(sample, monkeypatch):
+    import app.assistant_service as commands
+    async def decide(self, context):
+        return commands.ToolDecision(tool='plan_trip', reply='准备候选', source_trip_id=sample.trip_id,
+            planning_request=context['message'])
+    monkeypatch.setattr(commands.AssistantRouter, 'decide', decide)
     from test_formal_write_protection import current
-    original = commands.simple_duration_edit
-    async def fail_after(*args):
-        await original(*args)
+    original = commands.create_planning_run
+    async def fail_after(*args, **kwargs):
+        await original(*args, **kwargs)
         raise RuntimeError("synthetic failure before assistant message persistence")
-    monkeypatch.setattr(commands, "simple_duration_edit", fail_after)
+    monkeypatch.setattr(commands, "create_planning_run", fail_after)
     async def scenario():
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app, raise_app_exceptions=False), base_url="http://test") as c:
             session = (await c.post("/api/v1/assistant/sessions", json={"trip_id": str(sample.trip_id)})).json()
