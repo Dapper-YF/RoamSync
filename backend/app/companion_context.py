@@ -1,16 +1,18 @@
 """Capability-limited context loader: SELECT only, never Planning context repair."""
 import re
+from types import SimpleNamespace
+from uuid import UUID
 
-from sqlalchemy import or_, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.companion_contracts import CompanionContext, CompanionExplanation, EntityReference, InformationNeed
-from app.database import Activity, DayPlan, PlaceCandidate, PlanningRun, PlanRevision, Trip, TripPreferences
+from app.database import PlanningRun, PlanRevision, Trip, TripPreferences
 
 
 class CompanionContextReader:
-    def __init__(self, session: AsyncSession, trip_id):
-        self._session, self._trip_id = session, trip_id
+    def __init__(self, session: AsyncSession, trip_id, *, read_snapshot=None):
+        self._session, self._trip_id, self._read_snapshot = session, trip_id, read_snapshot
 
     async def _select(self, query):
         # Loading must not flush unrelated pending ORM changes either.
@@ -19,13 +21,19 @@ class CompanionContextReader:
     async def load(self, context: CompanionContext, need: InformationNeed) -> CompanionContext:
         if not self._trip_id:
             return context
+        if self._read_snapshot and self._read_snapshot.trip['id'] != str(self._trip_id):
+            raise ValueError('读取快照与旅行不一致。')
         changes = {}
         if need.trip_context_required:
-            row = (await self._select(select(Trip.id, Trip.version, Trip.title, Trip.destination)
-                .where(Trip.id == self._trip_id))).first()
-            if row:
-                changes["trip_summary"] = {"id": str(row.id), "version": row.version, "title": row.title, "destination": row.destination}
-                changes["current_destination"] = context.current_destination or row.destination
+            if self._read_snapshot:
+                changes['trip_summary'] = dict(self._read_snapshot.trip)
+                changes['current_destination'] = context.current_destination or self._read_snapshot.trip['destination']
+            else:
+                row = (await self._select(select(Trip.id, Trip.version, Trip.title, Trip.destination)
+                    .where(Trip.id == self._trip_id))).first()
+                if row:
+                    changes["trip_summary"] = {"id": str(row.id), "version": row.version, "title": row.title, "destination": row.destination}
+                    changes["current_destination"] = context.current_destination or row.destination
         if need.preferences_required and not (context.assistant_context and context.assistant_context.get("browsing_city")
             and context.assistant_context.get("browsing_city").rstrip("市") != changes.get("trip_summary", {}).get("destination", "").rstrip("市")):
             row = (await self._select(select(TripPreferences.pace, TripPreferences.interest_categories,
@@ -33,29 +41,18 @@ class CompanionContextReader:
                 .where(TripPreferences.trip_id == self._trip_id))).first()
             if row:
                 changes["saved_trip_preferences"] = dict(row._mapping)
-        if need.itinerary_required or re.search(r"已选|备选|留白|未排程|我的安排|选了什么", context.current_message):
-            from app.arrangement_service import read_items, item_dict
-            changes["arrangement_items"] = [item_dict(i) for i in await read_items(self._session, self._trip_id)]
-            # Exact display mentions narrow reads; ambiguous duplicate names
-            # remain a list. We never pick a guessed formal identity.
-            mention = re.search(r"(?:把|将)(.{1,40}?)(?:安排|放|排|改)", context.current_message)
-            query = select(Activity.id, Activity.custom_name, PlaceCandidate.name, DayPlan.date,
-                Activity.scheduled_time, Activity.duration_minutes, PlaceCandidate.longitude,
-                PlaceCandidate.latitude).join(DayPlan, Activity.day_plan_id == DayPlan.id)
-            query = query.join(PlaceCandidate, Activity.place_candidate_id == PlaceCandidate.id)
-            query = query.where(DayPlan.trip_id == self._trip_id)
-            if mention:
-                name = mention[1].strip()
-                query = query.where(or_(PlaceCandidate.name == name, Activity.custom_name == name))
-            rows = (await self._select(query.order_by(DayPlan.date, Activity.scheduled_time).limit(10))).all()
-            changes["formal_itinerary_summary"] = [{"subject_ref": EntityReference(kind="formal_activity", value=str(r.id)).model_dump(),
-                "name": r.custom_name or r.name, "date": str(r.date), "time": str(r.scheduled_time),
-                "duration_minutes": r.duration_minutes, "longitude": float(r.longitude),
-                "latitude": float(r.latitude)} for r in rows]
-            if (need.decision_history_required and len(rows) == 1
-                and (rows[0].custom_name or rows[0].name) in context.current_message
+        if need.itinerary_required or need.decision_history_required or re.search(r"已选|备选|留白|未排程|我的安排|选了什么", context.current_message):
+            from app.saved_trip_reads import load_saved_trip_read
+            snapshot = self._read_snapshot or await load_saved_trip_read(self._session, self._trip_id, context.current_message)
+            projection = snapshot.project(context.current_message)
+            rows = projection['activities']
+            changes['formal_itinerary_summary'] = rows
+            changes['arrangement_items'] = projection['arrangement_items']
+            changes['itinerary_read_coverage'] = projection['coverage']
+            if (need.decision_history_required and len(rows) == 1 and not projection['coverage']['ambiguous']
+                and (rows[0]['name'] in context.current_message or projection['coverage']['scope_kind'] == 'activity')
                 and not re.search(r"候选|待确认|新方案", context.current_message)):
-                rationale = await self._validated_rationale(rows[0])
+                rationale = await self._validated_rationale(SimpleNamespace(id=UUID(rows[0]['activity_id']), scheduled_time=rows[0]['time']))
                 if rationale:
                     changes["referenced_decision"] = rationale
         if need.decision_history_required and not context.resolved_entities:

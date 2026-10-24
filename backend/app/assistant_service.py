@@ -359,7 +359,8 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
         if not explicit_command:
             from app.assistant_turn import semantic_turn
             handled, semantic_goal, semantic_metadata = await semantic_turn(db, session_id, message,
-                message_id, context, place_port, settings, capability_selector, city_search=city_search)
+                message_id, context, place_port, settings, capability_selector, city_search=city_search,
+                selected_day_id=selected_day_id, selected_activity_id=selected_activity_id)
             if handled is not None:
                 return handled
     # The bounded discovery adapter finishes ALL network work before taking the
