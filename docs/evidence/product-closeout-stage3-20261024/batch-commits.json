@@ -1,0 +1,116 @@
+[
+  {
+    "commit": "7cba426471d35d3a2792e169e01f3ab39612a46c",
+    "subject": "fix: share read identity and preserve compound task context",
+    "files": [
+      "backend/app/assistant_capabilities.py",
+      "backend/app/companion_graph.py",
+      "backend/app/companion_provider.py",
+      "backend/app/companion_state.py",
+      "backend/app/read_references.py",
+      "backend/tests/test_stage3_continuity.py",
+      "docs/AGENT_ARCHITECTURE.md",
+      "docs/PRODUCT_CLOSEOUT_STAGE3_20261024.md",
+      "docs/handoff/LATEST_HANDOFF.md"
+    ]
+  },
+  {
+    "commit": "047e0cf05d44eeca64418392f3ceb513f298af75",
+    "subject": "fix: bind condition acknowledgements to scoped application receipts",
+    "files": [
+      "backend/app/assistant_capabilities.py",
+      "backend/app/assistant_memory.py",
+      "backend/app/assistant_turn.py",
+      "backend/app/companion_provider.py",
+      "backend/tests/test_stage3_memory.py",
+      "docs/AGENT_ARCHITECTURE.md",
+      "docs/PRODUCT_CLOSEOUT_STAGE3_20261024.md"
+    ]
+  },
+  {
+    "commit": "b8c1d4c19e2548e9109fbff3fee7d6f6a7300ad0",
+    "subject": "fix: preserve subject scope and final effective receipt state",
+    "files": [
+      "backend/app/assistant_memory.py",
+      "backend/tests/test_stage3_memory.py"
+    ]
+  },
+  {
+    "commit": "b79d812e39f3f992a0ccee1e6c1d81a531958cbd",
+    "subject": "fix: preserve preview action scope and bind candidate source spans",
+    "files": [
+      "backend/app/assistant_capabilities.py",
+      "backend/app/assistant_operation.py",
+      "backend/app/assistant_research.py",
+      "backend/app/conversation_candidate/commands.py",
+      "backend/app/conversation_candidate/service.py",
+      "backend/app/conversation_candidate/sources.py",
+      "backend/app/read_references.py",
+      "backend/app/requirement_language.py",
+      "backend/tests/test_candidate_commands.py",
+      "backend/tests/test_stage3_candidate_scope.py",
+      "docs/AGENT_ARCHITECTURE.md",
+      "docs/PRODUCT_CLOSEOUT_STAGE3_20261024.md"
+    ]
+  },
+  {
+    "commit": "9d0eaf8a84bc25f86fdd2c299140728deebe0359",
+    "subject": "fix: route chat edits through published candidates and atomic acceptance",
+    "files": [
+      "backend/app/assistant_arrangement.py",
+      "backend/app/assistant_capabilities.py",
+      "backend/app/assistant_operation.py",
+      "backend/app/assistant_turn.py",
+      "backend/app/companion_state.py",
+      "backend/app/conversation_candidate/service.py",
+      "backend/app/draft_promotion/preparation.py",
+      "backend/app/plan_revision_service.py",
+      "backend/app/saved_trip_reads.py",
+      "backend/tests/test_arrangement_agent.py",
+      "backend/tests/test_b3_saved_trip_reads.py",
+      "backend/tests/test_candidate_input_authority.py",
+      "backend/tests/test_draft_promotion.py",
+      "backend/tests/test_stage3_saved_modify.py",
+      "docs/AGENT_ARCHITECTURE.md",
+      "docs/PRODUCT_CLOSEOUT_STAGE3_20261024.md",
+      "docs/handoff/LATEST_HANDOFF.md"
+    ]
+  },
+  {
+    "commit": "340ca7b9725a417f178055dc624b624d74bbc173",
+    "subject": "fix: scope evidence support and retain independent read task results",
+    "files": [
+      "backend/app/assistant_capabilities.py",
+      "backend/app/assistant_practical.py",
+      "backend/app/companion_answer_reliability.py",
+      "backend/app/companion_provider.py",
+      "backend/app/requirement_support.py",
+      "backend/tests/test_stage2_read_continuity.py",
+      "backend/tests/test_stage3_continuity.py",
+      "backend/tests/test_stage3_evidence_support.py",
+      "docs/AGENT_ARCHITECTURE.md",
+      "docs/PRODUCT_CLOSEOUT_STAGE3_20261024.md",
+      "docs/handoff/LATEST_HANDOFF.md"
+    ]
+  },
+  {
+    "commit": "ab2c527192251c18ba3ca0073853461952076e78",
+    "subject": "test: fence navigation races with deterministic provider barriers",
+    "files": [
+      "backend/tests/test_navigation_sessions.py"
+    ]
+  },
+  {
+    "commit": "758477fe674b14464cb2f0c9c031b27133a6b638",
+    "subject": "fix: bind read task source spans and preserve scoped dispatch",
+    "files": [
+      "backend/app/assistant_capabilities.py",
+      "backend/app/companion_state.py",
+      "backend/tests/test_agent_b2_read_operations.py",
+      "backend/tests/test_natural_handoff_closure.py",
+      "backend/tests/test_stage3_continuity.py",
+      "docs/AGENT_ARCHITECTURE.md",
+      "docs/PRODUCT_CLOSEOUT_STAGE3_20261024.md"
+    ]
+  }
+]

@@ -2,6 +2,35 @@
 
 Last updated: 2026-10-24
 
+## Stage3 isolated closeout — measured NO-GO (2026-10-24)
+
+Frozen product758477fe674b14464cb2f0c9c031b27133a6b638 in
+E:/Study/RoamSync-product-closeout-stage2-20261024, branch
+codex/product-closeout-stage3-20261024, continued fromc2be562. Shared typed read
+references/tasks, scoped effective-condition receipts, literal source-span
+binding, preview/edit/adopt action scope, saved modification via existing
+Run/Revision/Validator/Accept and bounded requirement-support receipts are
+implemented. Chat direct form writes are closed; explicit page forms remain.
+No new business tables or public write endpoints. These contracts describe
+implemented guards, not reliable natural-language task completion.
+
+MEASURED frozen full backend1902+38 and Web265/typecheck/build pass. Five safety
+experiments on actual generated Revision clones pass. New sealed20 submitted
+once, independently graded3/20; complete groups0/5. Sample unauthorized formal
+writes0, confirmed critical0; evidence/answer gaps remain. Browser same-session
+recovery reaches real candidate75min, explicit save and refresh/read, but saved
+edit60 fails; complete golden path fails. Request source dependencies, condition
+updates, action/object mapping and child-goal completion still block users.
+Frozen questions are now regression-only; no retest score substitution.
+
+Official HEAD remains ea3ba83 with its six original tracked edits preserved.
+This round does not authorize official merge, database changes or deployment;
+the source-integration authorization below is historical. Isolated services
+stopped, test DBs retained. Full evidence, failures and model/state transcripts:
+docs/PRODUCT_CLOSEOUT_STAGE3_20261024.md and
+docs/evidence/product-closeout-stage3-20261024; raw external evidence root
+E:/Study/RoamSync-stage3-evidence-20261024. Product closeout objective unachieved.
+
 
 ## Official source integration (2026-10-24; source only, product NO-GO)
 

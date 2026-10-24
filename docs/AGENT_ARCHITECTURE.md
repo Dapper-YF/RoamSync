@@ -1,5 +1,18 @@
 # RoamSync Agent v1 architecture contract
 
+## Stage3 frozen acceptance boundary (2026-10-24)
+
+MEASURED product758477f: engineering1902+38 backend and265 Web pass, but
+independent sealed3/20, complete groups0/5 and browser full chain fail. The
+contracts below are implemented guards, not a claim of reliable model task
+completion. Request-local source fragments can lose shared child dependencies;
+action/object classification can reject a legitimate saved-duration edit before
+Run creation. Preserve strict source/authorization validation and existing
+Revision/Accept rather than bypassing rejection. Sample unauthorized writes0
+and confirmed critical0 do not prove universal safety. Used sealed questions
+are now regression-only. Evidence and remaining defects are recorded in
+PRODUCT_CLOSEOUT_STAGE3_20261024.md; no official integration or deployment.
+
 ## Stage3 shared read projection (2026-10-24; isolated candidate)
 
 Requirement support is a server-owned read_tools receipt, never a Planner result
