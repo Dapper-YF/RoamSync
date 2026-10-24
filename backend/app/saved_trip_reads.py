@@ -84,6 +84,7 @@ class SavedTripReadSnapshot:
         kind, ambiguous = 'trip', False
         scope_issue = None
         all_days = bool(re.search(r'全程|整趟|所有天|全部天', message))
+        ordinal = re.search(r'第([一二三四五六七八九十两\d]+)(?:项|站|个(?:活动|景点))', message)
         selected = bool(re.search(r'选中|这个(?:活动|馆|展馆|景点)|这(?:个|一)项|该(?:活动|馆)|它|\bselected\b', message))
         if explicit:
             kind = 'day'
@@ -98,7 +99,18 @@ class SavedTripReadSnapshot:
             rows = [r for r in rows if r['date'] in dates]
             items = [r for r in items if r['day_date'] in dates]
             total = sum(self.counts_by_date.get(d, 0) for d in dates)
-        if selected and not all_days:
+        if ordinal and len({r['date'] for r in rows}) <= 1 and (explicit or self.selected_day_id):
+            ordered = sorted(rows, key=lambda r: (r.get('position', 0), r['time'], r['activity_id']))
+            index = chinese_number(ordinal[1]) - 1
+            day_total = total
+            rows = ordered[index:index+1] if index >= 0 else []
+            kind = 'activity'
+            ambiguous = not rows or day_total != len(ordered)
+            scope_issue = 'activity_order_incomplete' if ambiguous else None
+            total = 1 if rows else 0
+            items = []
+        elif selected and not all_days and (not explicit or self.selected_activity_id or
+                re.search(r'选中|这个(?:活动|馆|展馆|景点)|这(?:个|一)项|该(?:活动|馆)', message)):
             kind = 'activity'
             # No selection is different from an empty day. Never guess by list order.
             rows = [r for r in rows if r['activity_id'] == self.selected_activity_id] if self.selected_activity_id else []
@@ -131,12 +143,13 @@ class SavedTripReadSnapshot:
             'scope_issue': scope_issue,
             'trip_version': self.trip['version'], 'preferences_version': self.trip.get('preferences_version'),
             'captured_at': self.captured_at}
-        return {'activities': deepcopy(rows), 'arrangement_items': deepcopy(items), 'coverage': coverage}
+        return {'activities': deepcopy(rows), 'arrangement_items': deepcopy(items), 'coverage': coverage,
+                'trip_days': len(self.days)}
 
     def selection_summary(self, message):
         projected = self.project(message)
         return {**deepcopy(self.trip), 'activities': projected['activities'],
-            'arrangement_items': projected['arrangement_items'], 'read_coverage': projected['coverage']}
+            'arrangement_items': projected['arrangement_items'], 'read_coverage': projected['coverage'], 'total_days': len(self.days)}
 
 
 async def load_saved_trip_read(db, trip_id, message='', *, selected_day_id=None, selected_activity_id=None, limit=READ_LIMIT):
@@ -215,14 +228,14 @@ async def _capture_saved_trip_read(db, trip_id, message='', *, selected_day_id=N
         priority.append((DayPlan.id == selected_day_id, 1))
     if dates:
         priority.append((DayPlan.date.in_([date.fromisoformat(d) for d in dates]), 1))
-    query = select(Activity.id, Activity.day_plan_id, Activity.custom_name, PlaceCandidate.name, DayPlan.date,
+    query = select(Activity.id, Activity.day_plan_id, Activity.custom_name, PlaceCandidate.name, DayPlan.date, Activity.position,
         Activity.scheduled_time, Activity.duration_minutes, Activity.version, Activity.schedule_locked,
         Activity.status, PlaceCandidate.longitude, PlaceCandidate.latitude).join(DayPlan, Activity.day_plan_id == DayPlan.id)
     query = query.join(PlaceCandidate, Activity.place_candidate_id == PlaceCandidate.id).where(DayPlan.trip_id == trip_id)
     order = [case(*priority, else_=2)] if priority else []
     activities = tuple({'activity_id': str(r.id), 'day_id': str(r.day_plan_id), 'date': r.date.isoformat(),
         'name': r.custom_name or r.name, 'time': str(r.scheduled_time)[:5], 'start_time': str(r.scheduled_time)[:5],
-        'duration_minutes': r.duration_minutes, 'version': r.version, 'schedule_locked': r.schedule_locked,
+        'duration_minutes': r.duration_minutes, 'version': r.version, 'schedule_locked': r.schedule_locked, 'position': r.position,
         'status': r.status, 'longitude': float(r.longitude), 'latitude': float(r.latitude),
         'subject_ref': {'kind': 'formal_activity', 'value': str(r.id)}}
         for r in await rows(query.order_by(*order, DayPlan.date, Activity.scheduled_time, Activity.id).limit(limit)))
@@ -248,7 +261,7 @@ async def _capture_saved_trip_read(db, trip_id, message='', *, selected_day_id=N
         selected_activity_id=str(selected_activity_id) if selected_activity_id else None)
 
 
-def render_saved_read(projection):
+def render_saved_read(projection, message=''):
     """Only saved values, no live facts, recommendations, routes or writes."""
     rows, items, c = projection['activities'], projection['arrangement_items'], projection['coverage']
     if c['ambiguous']:
@@ -256,6 +269,10 @@ def render_saved_read(projection):
             return '没有匹配到这次旅行中的日期，请确认要读第几天或具体日期；已保存安排没有修改。'
         return '没有唯一确定本次要读的活动。请选中具体活动或说明是哪一天；已保存安排没有修改。'
     text = []
+    if re.search(r'几天|多少天|总天数|一共.*天|共.*天', message):
+        text.append(f"这份已保存行程共{projection.get('trip_days', '未知')}天。")
+        if not re.search(r'活动|安排|景点|留白|备选|第.+(?:天|项)|最后一天', message):
+            rows, items = [], []
     statuses = {'planned': '已安排', 'active': '进行中', 'completed': '已完成', 'skipped': '已跳过'}
     for r in rows:
         text.append(f"{r['date']} {r['time']} · {r['name']}，保存的停留时长{r['duration_minutes']}分钟"
@@ -271,4 +288,4 @@ def render_saved_read(projection):
         text = ['这个读取范围内没有保存的活动或事项。']
     if not c['complete'] or not c['arrangement_items_complete']:
         text.append(f"本次仅读取了{c['returned_count']}项活动，读取范围尚不完整，不能据此排除其他安排。")
-    return '已保存的安排：\n'+'\n'.join(text)
+    return '已保存的安排：\n'+'\n'.join(text) + '\n本次只读取了保存状态，没有修改安排。'

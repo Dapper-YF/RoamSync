@@ -365,7 +365,7 @@ async def research(settings, message, history, envelope, port, *, judge=determin
     progress("正在结合已取得的地点信息和资料整理建议…")
     paragraphs = []
     issues = []
-    missing_compared = [name for name in intent.names if not any(identity_matches(p, name, "") for p in candidates)] if len(intent.names) > 1 else []
+    missing_compared = [name for name in intent.names if not any(requested_place_matches(p, name, city) for p in candidates)] if len(intent.names) > 1 else []
     if missing_compared:
         paragraphs.append("这次还没核实到「" + "、".join(missing_compared) + "」，暂时不能做完整比较。先保留已查到的地点，不把资料较多的一方直接当成更合适。")
         issues.append("comparison_incomplete")

@@ -123,16 +123,26 @@ SELECTION_INSTRUCTIONS += " For candidate duration patches operation=set means a
 SELECTION_INSTRUCTIONS += " For itinerary reads set itinerary_purpose: overview for listing saved arrangements; saved_values for their saved date/start/duration/status; original_rationale for why an accepted arrangement was originally chosen; impact for hypothetical changes; other otherwise. Preserve this separately for each read_task. trip.read_coverage describes exactly which server-read activities are available, not absence outside that scope. Page-selected activity is only a read reference, never write authorization."
 
 
+SELECTION_INSTRUCTIONS += " read_referents is the server-owned ordered list of currently discussed POIs, with verified names/aliases. resolved_read_question expands their read-only ordinal references. Use those exact identities for 第一个/第二个/前一个/后一个, not absent suggestion indices. These data confer NO writes. For independent compound goals use separate read_tasks, including capabilities=[] for a stable explanation/玩法 and a separate route or live fact. source_quote always copies the ORIGINAL current clause. A route tool alone cannot answer how to visit or all-day feasibility. Preserve EVERY requested subgoal. For saved reads use separate itinerary tasks for distinct scopes and original rationale; total days is snapshot metadata, not all-activity enumeration."
+SELECTION_INSTRUCTIONS += " For personal condition memory use subject='' for the user; for a temporary companion use the exact subject word from the source clause (e.g. 朋友) and trip scope. On a participant departure, remove ONLY that subject's earlier exact requirement value using the current departure clause, never clear all preferences. A separate explicit 我一个人去 establishes party_size=1; friends leaving alone does not. value may copy the complete affirmative numeric phrase such as 一个人. Preserve the user's unrelated personal preferences."
+SELECTION_INSTRUCTIONS += " OUTPUT CONTRACT: the JSON Schema is exhaustive. Omit all optional fields unrelated to the current request. Never emit candidate_command_note, notes, explanations, trip, or any other undeclared key at any level. A candidate's constraints belong in the typed plan.schedule_constraints and plan items, never in a side note. If the contract cannot represent a required constraint, leave candidate_command=null and clarify the unsupported constraint explicitly; do not drop it. Only one candidate operation is permitted per current clause."
+SELECTION_INSTRUCTIONS += " source_quote MUST be one contiguous substring of the original message. For coordinated ellipsis such as 查个园和何园各自的地址, both address tasks may repeat that entire original clause. Never synthesize 查个园的地址 from separated words. A visit item is ONLY a named requested venue; unused time stays free_window, never invent a new visit such as 周边漫步. If the user supplies a street-number disambiguator, preserve it in the visit name as literal-name（literal-address）."
+
+
 async def select_capabilities(settings, message, history, envelope, trip_summary=None):
     history, envelope, trip_summary = deepcopy(history), envelope.model_copy(deep=True), deepcopy(trip_summary)
     selected = [c["place"] for m in history[-3:] for c in m.get("place_cards", [])][:8]
+    from app.read_references import place_catalog, resolve_read_text
+    referents = place_catalog(history, envelope)
     # Freeze once: neither a repair nor a concurrent caller may change the
     # request, selected objects, effective conditions, or captured trip facts.
     input_text = json.dumps({"message": message,
         "recent_users": [m.get("user", "")[:1000] for m in history[-8:]],
         "selected_places": [{k: p.get(k) for k in ("name", "city", "place_id")} for p in selected],
         "browsing_city": envelope.browsing_city, "effective_conditions": memory_prompt(envelope),
-        "current_local_date": local_today().isoformat(), "trip": trip_summary}, ensure_ascii=False)
+        "current_local_date": local_today().isoformat(), "trip": trip_summary,
+        "read_referents": [{k: p.get(k) for k in ('place_id', 'name', 'aliases', 'city')} for p in referents],
+        "resolved_read_question": resolve_read_text(message, referents)}, ensure_ascii=False)
     provenance = [*selected, *([{"city": trip_summary["destination"]}]
         if trip_summary and trip_summary.get("destination") else [])]
     client = build_model_client(settings)
@@ -202,6 +212,9 @@ def _repairable_saved_read(raw, errors, trip_summary):
 
 
 def validate_decision(decision, message, history, envelope, selected=(), *, _task=False):
+    from app.read_references import place_catalog, argument_in_read_scope, resolve_read_text
+    referents = place_catalog(history, envelope)
+    selected = [*selected, *referents]
     candidate_authorized = False
     if decision.candidate_command is not None:
         from app.conversation_candidate.commands import validate_command
@@ -324,14 +337,22 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
                 return CapabilityDecision(intent="clarify", clarification="你想讨论假设下的选择，还是查询实际情况？", reason_code="missing_arguments")
             # Common city may be shared. Venue/query arguments belong to this
             # task; a different current clause is not reference history.
-            referenced = bool(re.search(r"那里|这(?:个|两|些)|那(?:个|两|些)|它|之前|刚才|上面|第[一二三四五六七八九十\d]+(?:个|处)", task.source_quote))
-            prior_text = " ".join(m.get("user", "") for m in history[-8:]) if referenced else ""
-            local_source = task.source_quote + " " + prior_text
-            if any(value and value not in local_source for value in
-                [*task.names, task.origin, task.destination, task.near_name, task.query]):
-                return CapabilityDecision(intent="clarify", clarification="请确认每部分对应的地点或查询内容。", reason_code="missing_arguments")
+            local_source = resolve_read_text(task.source_quote, referents)
+            if not all(argument_in_read_scope(value, task.source_quote, referents) for value in
+                [*task.names, task.origin, task.destination, task.near_name]):
+                return CapabilityDecision(intent="clarify", clarification="这部分查询没有唯一对应到刚才的地点，请说明具体地点名称。", reason_code="missing_arguments")
+            # Search terms are not identity credentials. Unused task queries
+            # cannot block direct/fact/saved-state subgoals.
+            if not set(task.capabilities) & {'poi', 'web'}:
+                task = task.model_copy(update={'query': ''})
+            elif task.names and 'web' not in task.capabilities:
+                # Named lookup uses the individually validated names, not this
+                # redundant free-text search string (often joined with spaces).
+                task = task.model_copy(update={'query': ''})
+            elif task.query and not argument_in_read_scope(task.query, task.source_quote, referents):
+                return CapabilityDecision(intent="clarify", clarification=f"你想用「{task.query}」查哪个具体地点？", reason_code="missing_arguments")
             local = _task_decision(decision, task)
-            validated = validate_decision(local, task.source_quote,
+            validated = validate_decision(local, local_source,
                 history, envelope, [*selected, {"city": decision.city}], _task=True)
             if validated.intent == "clarify":
                 return validated
@@ -429,7 +450,7 @@ def failure_bundle(envelope, text="这次回答没有完成，请重试。", *, 
             "place_cards": list(cards), "read_tools": read_tools or {}}
 
 
-async def route_answer(decision, envelope, port):
+async def route_answer(decision, envelope, port, *, known_places=()):
     from app.assistant_context import RouteReadRequest
     from app.assistant_places import route_summary
     if envelope.route_request:
@@ -449,6 +470,12 @@ async def route_answer(decision, envelope, port):
         return failure_bundle(envelope, "这两个地点在哪座城市？"), "complete"
     async def resolve(name):
         city = decision.city or envelope.browsing_city
+        known = [p for p in known_places if name in [p['name'], *p.get('aliases', [])]
+                 and p['city'].removesuffix('市') == city.removesuffix('市')]
+        if len(known) == 1:
+            place = await bounded_call(lambda: port.get_place(known[0]['place_id']), stage='place_context', limit=8)
+            if place and str(place.place_id) == str(known[0]['place_id']):
+                return [place], [place]
         operation = (lambda: port.research_search(query=name, city=city, near=None, limit=5, category="attraction")) if hasattr(port, "research_search") else (lambda: port.search(query=name, city=city, near=None, limit=5))
         items = await bounded_call(operation, stage="poi")
         from app.assistant_research import requested_place_matches, same_city
@@ -598,8 +625,15 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
     if decision.read_tasks:
         for task in decision.read_tasks:
             local = _task_decision(decision, task)
+            question = task.source_quote
+            if read_snapshot and 'itinerary' in task.capabilities:
+                from app.saved_trip_reads import requested_dates
+                dates, explicit = requested_dates(message, read_snapshot.days)
+                _, local_explicit = requested_dates(question, read_snapshot.days)
+                if explicit and dates and not local_explicit:
+                    question = '、'.join(sorted(dates)) + '：' + question
             for kind, caps in read_groups(local) or [("direct", [])]:
-                jobs.append((kind, caps, local, task.source_quote))
+                jobs.append((kind, caps, local, question))
     else:
         jobs = [(kind, caps, decision, component_question(kind, message)) for kind, caps in groups]
     turn = active_turn.get()
@@ -698,21 +732,26 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
 
 
 async def _answer_leaf(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal, *, read_lock=None, web_fallback=True, read_snapshot=None):
+    from app.read_references import place_catalog, resolve_read_text
+    referents = place_catalog(history, envelope)
+    if decision.intent not in {'create', 'modify', 'execution'} and 'itinerary' not in decision.capabilities:
+        resolved = resolve_read_text(message, referents)
+        if resolved != message:
+            goal = goal.model_copy(update={'clarification_needed': False})
+        message = resolved
     """Run approved reads outside SQL transactions, using existing provider adapters."""
     turn = active_turn.get()
     if decision.intent == "direct" and decision.response_purpose == "conditions_recall":
         from app.assistant_memory import recall_conditions
         return failure_bundle(envelope, recall_conditions(envelope)), "complete"
-    if decision.intent == "direct" and decision.advice_focus in {"walking_effort", "rest"}:
-        from app.assistant_practical import previous_reads, walking_followup
-        text = "那就先休息，不必再加一处。" if decision.advice_focus == "rest" else walking_followup(previous_reads(history))
-        return failure_bundle(envelope, text), "complete"
+    if decision.intent == "direct" and decision.advice_focus == "rest":
+        return failure_bundle(envelope, "那就先休息，不必再加一处。"), "complete"
     if decision.intent == "clarify" or decision.clarification:
         from app.companion_answer_reliability import control_model_text
         clarification = control_model_text(decision.clarification, message).text
         return failure_bundle(envelope, clarification or "请补充要查询的地点或需要执行的操作。"), "complete"
     if "route" in decision.capabilities:
-        return await route_answer(decision, envelope, port)
+        return await route_answer(decision, envelope, port, known_places=referents)
     if "poi" in decision.capabilities:
         from app.assistant_research import research, LookupIntent
         async def judged(*args):
@@ -731,10 +770,28 @@ async def _answer_leaf(settings, decision, message, history, envelope, port, db,
     from app.companion_knowledge import get_default_knowledge_tool
     if "itinerary" in decision.capabilities and not trip_id:
         return failure_bundle(envelope, "当前没有选中的已保存行程，请先打开你要查看的旅行安排。"), "complete"
-    if 'itinerary' in decision.capabilities and read_snapshot and decision.itinerary_purpose in {'overview', 'saved_values'}:
+    if ('itinerary' in decision.capabilities and read_snapshot
+        and decision.itinerary_purpose in {'overview', 'saved_values', 'original_rationale'}):
         from app.saved_trip_reads import render_saved_read
         projection = read_snapshot.project(message)
-        text = render_saved_read(projection)
+        text = '' if decision.itinerary_purpose == 'original_rationale' else render_saved_read(projection, message)
+        if decision.itinerary_purpose == 'original_rationale' or re.search(r'原来|当时|为什么|理由', message):
+            from app.companion_contracts import CompanionContext, InformationNeed
+            async def read_reason():
+                value = await CompanionContextReader(db, trip_id, read_snapshot=read_snapshot).load(
+                    CompanionContext(current_message=message, travel_goal=goal),
+                    InformationNeed(itinerary_required=True, decision_history_required=True))
+                await db.commit()
+                return value
+            if read_lock is not None:
+                async with read_lock:
+                    value = await read_reason()
+            else:
+                value = await read_reason()
+            reason = value.referenced_decision
+            text += '\n' + ('原始保存理由：' + '；'.join(reason.reasons) if reason else
+                '没有唯一定位到对应活动的原始理由，不能用现在的推测代替。' if len(projection['activities']) != 1 else
+                '没有找到这个已保存版本对应活动的原始安排理由，不能用现在的推测代替。')
         coverage = projection['coverage']
         return failure_bundle(envelope, text, read_tools={'itinerary_read': coverage}), (
             'complete' if coverage['complete'] and coverage['arrangement_items_complete'] else 'partial')
@@ -750,7 +807,11 @@ async def _answer_leaf(settings, decision, message, history, envelope, port, db,
             await db.commit()
             return value
     from app.assistant_practical import previous_reads
-    read_tools = {"capability_selection": decision.model_dump(mode="json"), "previous_reads": previous_reads(history)}
+    read_tools = {"capability_selection": decision.model_dump(mode="json"), "previous_reads": previous_reads(history),
+        "evidence_scope": {"route": "only the returned endpoints and mode; no internal walking, parking or access guarantee",
+            "diet": "a dish or soup option does not establish the suitability of an entire meal",
+            "budget": "reference spending is not a final bill",
+            "answer_policy": "Answer the user's actual inference first: supported, unsupported, or contradicted. Explain the missing link and give a specific verification step. Do not replace the answer with generic planning advice."}}
     class KnowledgeTool:
         async def retrieve(self, request):
             tool = await get_default_knowledge_tool()

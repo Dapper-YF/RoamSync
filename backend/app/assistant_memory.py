@@ -14,6 +14,7 @@ class MemoryUpdate(BaseModel):
     replaces: str = Field(default="", max_length=240)
     source_quote: str = Field(min_length=1, max_length=300)
     scope: Literal["personal", "trip", "topic", "destination"] = "personal"
+    subject: str = Field(default='', max_length=50)
 
 
 def local_today():
@@ -84,6 +85,10 @@ def _quoted_scalar(key, value, quote, today, message):
     numeral = r"[一二三四五六七八九十两\d]+"
     unit = r"天" if key == "duration_days" else r"(?:个?人|位)"
     proposed = re.fullmatch(rf"({numeral})\s*(?:{unit})?", value)
+    if proposed is None and key == 'party_size' and value in quote:
+        proposed_tokens = re.findall(rf'{numeral}\s*{unit}', value)
+        if len(proposed_tokens) == 1:
+            proposed = re.fullmatch(rf"({numeral})\s*{unit}", proposed_tokens[0])
     tokens = [token[1] for token in re.finditer(rf"({numeral})\s*{unit}", quote)
               if _affirmative_scalar_token(message, quote_start + token.start(), quote_start + token.end())]
     # Mixed adult/child groups require a semantic sum, not a verified scalar.
@@ -169,7 +174,13 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
         key, operation = update.field, update.operation
         if key == "city" and value in {"哪里", "哪儿", "哪个城市", "什么城市", "某地", "未知", "未定"}:
             continue
-        if key in {"preferences", "requirements"} and (operation == "remove" or update.replaces) and not re.search(r"取消|不再|不看|不要|不喜欢|不想|改|换|可以|现在|清除|撤销|忘掉", quote):
+        subject_withdrawal = bool(update.subject and re.fullmatch(
+            re.escape(update.subject) + r'(?:这次)?(?:不去了|不来了|不同行了?|退出了?|不参加(?:这次)?(?:旅行|行程)了?)[。！!\s]*', quote))
+        if update.subject in {'我', '本人', '我们', '用户'}:
+            continue
+        if update.subject and not quote.startswith(update.subject) and operation not in {'remove', 'clear'}:
+            continue
+        if key in {"preferences", "requirements"} and (operation == "remove" or update.replaces) and not (subject_withdrawal or re.search(r"取消|不再|不看|不要|不喜欢|不想|改|换|可以|现在|清除|撤销|忘掉", quote)):
             continue
         normalized = value
         if operation not in {"clear", "remove"}:
@@ -192,7 +203,15 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
             continue
         if operation == "clear" and not re.search(r"取消|不限|不设|清除|忘掉|不再|不要|无需|不用|待定|(?:先|还|也)?不定|未定|没(?:有)?定|不确定", quote):
             continue
-        evidence = {"value": normalized, "source_quote": quote, "message_id": str(message_id), "scope": update.scope, "scope_version": 2}
+        evidence = {"value": normalized, "source_quote": quote, "message_id": str(message_id),
+            "scope": 'trip' if update.subject else update.scope, "scope_version": 2, "subject": update.subject}
+        if key in {'preferences', 'requirements'} and subject_withdrawal and operation == 'remove':
+            remove = update.replaces or value
+            matching = [item for item in memory[key] if item['value'] == remove and
+                (item.get('subject') == update.subject or
+                 not item.get('subject') and item.get('source_quote', '').startswith(update.subject))]
+            if not matching:
+                continue
         withdrawn = memory.setdefault("withdrawn", {})
         withdrawal_key = key + (":" + (update.replaces or value) if key in {"preferences", "requirements"} and operation != "clear" else "")
         if operation in {"clear", "remove"}:
@@ -208,7 +227,8 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
                 items = []
             else:
                 remove = update.replaces or (value if operation == "remove" else "")
-                items = [item for item in items if item["value"] not in {remove, value}]
+                items = [item for item in items if item["value"] not in {remove, value}
+                         or subject_withdrawal and operation == 'remove' and item not in matching]
                 if operation != "remove":
                     items.append(evidence)
             memory[key] = items[-20:]

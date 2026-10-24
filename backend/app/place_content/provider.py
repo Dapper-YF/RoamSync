@@ -1,6 +1,8 @@
 import asyncio
 import math
 import re
+import json
+from pathlib import Path
 from datetime import UTC, datetime, timedelta
 from typing import Any, Awaitable, Callable
 from urllib.parse import urlencode
@@ -11,6 +13,7 @@ from .contracts import ExternalRef, GeoPoint, Place, PlaceRef, Price, RouteQuery
 
 # Public, immutable namespace; never derive identity from name or coordinates.
 PLACE_NAMESPACE = UUID("0ae98ec6-5e5d-4696-9877-8656a8b74b15")
+REVIEWED_ALIASES = json.loads(Path(__file__).with_name('reviewed_aliases.json').read_text(encoding='utf-8'))
 TYPE_CODES = {"attraction": "110000", "food": "050000", "lodging": "100000"}
 
 
@@ -82,6 +85,10 @@ def normalize_poi(poi: dict, fetched_at: datetime | None = None) -> Place | None
         image_status="withheld_pending_license" if isinstance(poi.get("photos"), list) and poi["photos"] else "missing",
         source=Source(source_url=f"https://www.amap.com/search?id={provider_id}", fetched_at=now, expires_at=now + timedelta(hours=1)),
     )
+    for entry in REVIEWED_ALIASES:
+        if (provider_id == entry['provider_place_id'] and name == entry['name'] and place.city == entry['city']
+            and abs(point.longitude-entry['longitude']) < .002 and abs(point.latitude-entry['latitude']) < .002):
+            place = place.model_copy(update={'aliases': list(dict.fromkeys([*place.aliases, *entry['aliases']]))[:20]})
     from .images import project_images
     return project_images(place)
 
