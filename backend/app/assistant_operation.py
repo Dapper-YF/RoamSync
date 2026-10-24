@@ -108,6 +108,25 @@ def approved_draft(decision, message):
             draft = rules
     if draft is None:
         return None
+    # Operation types describe object changes. A complete duration value is
+    # an attribute of the existing activity, never a replacement venue. Reuse
+    # the existing typed rule recognizer, retaining all source/constraints and
+    # running normal authorization and grounding below. Mixed operations and
+    # venue names containing a duration are deliberately not reinterpreted.
+    if decision.intent == 'modify' and draft.primary_intent == 'replace_activity':
+        from app.planning_intent_service import _REPLACE_PATTERN, _is_duration_change, _build_rule_semantic_draft
+        matches = list(_REPLACE_PATTERN.finditer(message))
+        rules = _build_rule_semantic_draft(message, 'modify_day', None)
+        targets = [name for op in draft.operations for name in op.activity_mentions]
+        if (len(matches) == len(draft.operations) == len(targets) == 1 and not draft.operations[0].place_mentions
+            and _is_duration_change(matches[0]) and re.fullmatch(
+                r'(?:(?:请|帮我|替我|麻烦|把|将)|(?:第[一二三四五六七八九十两\d]+天的?))*'
+                + re.escape(targets[0]) + r'(?:的)?(?:停留|游玩|参观)?(?:时长|时间)?', matches[0][1].strip())
+            and draft.operations[0].operation == 'replace_activity'
+            and matches[0][0] in draft.operations[0].raw_text
+            and [op.operation for op in rules.operations] == ['replan_trip']):
+            draft = draft.model_copy(update={'primary_intent':'replan_trip', 'operations':[
+                op.model_copy(update={'operation':'replan_trip'}) for op in draft.operations]})
     if any(op.raw_text not in message or any(name not in op.raw_text
            for name in [*op.place_mentions, *op.activity_mentions]) for op in draft.operations):
         raise ValueError("操作及地点必须绑定本次用户原句")

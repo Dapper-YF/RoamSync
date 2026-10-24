@@ -8,6 +8,9 @@ from app.drafts.contracts import DraftPlan, DraftScheduleConstraints
 from app.drafts.timing import quoted_clocks, explicit_interval
 
 CHANGE_VERBS = r"调整|修改|改|创建|生成|添加|加入|增加|删除|删掉|取消|替换|换|延后|提前|多留|多待|少逛|少留|延长|缩短|减少|移到|挪到"
+ACTION_VERBS = {"generate": r"创建|生成|安排|规划|制定|给我看|展示|出(?:一份|一版)?(?:候选|方案)",
+    "modify": r"改|调整|延长|多待|少待|停留|留|逛", "adopt": r"保存|采用",
+    "discard": r"放弃|撤回|丢弃|取消"}
 
 
 class CandidateSchedule(DraftScheduleConstraints):
@@ -42,15 +45,21 @@ class CandidateCommand(BaseModel):
 def validate_command(command, message):
     from app.assistant_capabilities import affirmative_action_source
     from app.requirement_language import current_user_evidence_reason
-    verbs = {"generate": r"创建|生成|安排|规划|制定|给我看|展示", "modify": r"改|调整|延长|多待|少待|停留|留|逛",
-        "adopt": r"保存|采用", "discard": r"放弃|撤回|丢弃|取消"}
+    verbs = ACTION_VERBS
     quote = command.source_quote
+    if message.count(quote) != 1:
+        raise ValueError('操作原句无法唯一定位，请明确本次操作。')
+    # Restore the containing clause before classifying questions. A model may
+    # not strip "会怎样" from a hypothetical edit, while an independent later
+    # question need not cancel a genuine preview request.
+    from .sources import action_clause
+    clause = action_clause(message,quote)
     if current_user_evidence_reason(message, quote):
         raise ValueError("假设、转述和引述不是本轮实际修改或保存的授权。")
     quoted = any(quote in match[0] for match in re.finditer(r"‘[^’]*’|“[^”]*”|\"[^\"]*\"|'[^']*'|「[^」]*」", message))
-    inquiry = bool(re.search(r"会怎样|会如何|怎么|怎样|如何|是什么|什么意思|是否", message))
-    explicit_request = bool(re.search(r"(?:请|帮我|替我|给我|能不能帮我|能否帮我).{0,24}(?:保存|采用|改|调整|创建|生成|安排|规划)", message))
-    read_request = bool(re.search(r"告诉|解释|说明|介绍|想知道|了解|会怎样|会如何|怎么|如何", message))
+    inquiry = bool(re.search(r"会怎样|会如何|怎么|怎样|如何|是什么|什么意思|是否", clause))
+    explicit_request = bool(re.search(r"(?:请|帮我|替我|给我|能不能帮我|能否帮我).{0,24}(?:保存|采用|改|调整|创建|生成|安排|规划)", clause))
+    read_request = bool(re.search(r"告诉|解释|说明|介绍|想知道|了解|会怎样|会如何|怎么|如何", clause))
     if command.action in {"adopt", "discard"}:
         # Recover the complete containing user clause. A model extracting only
         # the word 保存 from a question cannot create adoption authority.

@@ -447,7 +447,12 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
                 # Consume the request-local index once. A later effective-city
                 # projection may trim history; the exact current literal quote
                 # remains independently checkable on repeated validation.
-                task = task.model_copy(update={'source_quote':bound, 'source_ref':None})
+                # A span is an index, not permission to truncate a longer
+                # exact task quote containing shared subject/address context.
+                # Never widen a nonliteral quote or borrow an unrelated span.
+                literal = task.source_quote
+                source = literal if literal in message and bound in literal else bound
+                task = task.model_copy(update={'source_quote':source, 'source_ref':None})
             if task.source_quote not in message:
                 block(task, '这部分查询无法绑定当前问题，请说明具体要查的内容。')
                 continue
@@ -467,7 +472,7 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
             # Common city may be shared. Venue/query arguments belong to this
             # task; a different current clause is not reference history.
             local_source = resolve_read_text(task.source_quote, referents)
-            if not all(argument_in_read_scope(value, task.source_quote, referents) for value in
+            if not all(argument_in_read_scope(value, task.source_quote, referents, capabilities=task.capabilities) for value in
                 [*task.names, task.origin, task.destination, task.near_name]):
                 block(task, '这部分查询没有唯一对应到刚才的地点，请说明具体地点名称。')
                 continue
@@ -479,7 +484,7 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
                 # Named lookup uses the individually validated names, not this
                 # redundant free-text search string (often joined with spaces).
                 task = task.model_copy(update={'query': ''})
-            elif task.query and not argument_in_read_scope(task.query, task.source_quote, referents):
+            elif task.query and not argument_in_read_scope(task.query, task.source_quote, referents, capabilities=task.capabilities):
                 block(task, '这部分搜索词无法绑定当前地点，请说明具体地点名称。')
                 continue
             local = _task_decision(decision, task)
@@ -536,10 +541,12 @@ def _non_authorizing_context(message, quote, *, start=None):
         return True
     # Revocation owns an action/object. 'Do not save' cannot revoke preview or
     # edits, and cancelling a different named object cannot revoke this one.
-    families = {'preview': r'创建|形成|生成|安排|排|规划|制定|给我看|展示',
+    from app.conversation_candidate.commands import ACTION_VERBS
+    families = {'preview': ACTION_VERBS['generate'] + r'|形成|排',
         'modify': r'修改|调整|改|延长|缩短|增加|减少|多留|多待|少逛|少留|少待|停留|留|逛|提前|延后|挪|移', 'adopt': r'保存|采用'}
     actions = {key for key, verbs in families.items() if re.search(verbs, quote)}
-    for revoke in re.finditer(r'(?:先别|先不|暂不|不要|不用|取消)(?:帮我)?(创建|形成|生成|保存|采用|安排|规划|制定|修改|调整|改)([^，,。；;!?！？]*)', message[start + len(quote):]):
+    action_pattern = '|'.join('(?:'+p+')' for p in families.values())
+    for revoke in re.finditer(r'(?:先别|先不|暂不|不要|不用|取消)(?:帮我)?('+action_pattern+r')([^，,。；;!?！？]*)', message[start + len(quote):]):
         if not any(key in actions and re.fullmatch(verbs, revoke[1]) for key, verbs in families.items()):
             continue
         obj = re.sub(r'(?:当前|这份|这个|整个|新的?|的|候选|行程|安排|计划|旅行|了|吧|一下|\s)', '', revoke[2])
@@ -551,6 +558,9 @@ def _non_authorizing_context(message, quote, *, start=None):
 def affirmative_action_source(message, quote, verbs):
     """An exact quote needs an affirmative occurrence of its own action."""
     if not quote or _non_authorizing_context(message, quote):
+        return False
+    from app.conversation_candidate.sources import action_clause
+    if re.search(r'会怎样|会如何|是否可行|是否合适|能不能这样',action_clause(message,quote)):
         return False
     return any(not _non_authorizing_context(quote, match[0], start=match.start())
                for match in re.finditer(verbs, quote))

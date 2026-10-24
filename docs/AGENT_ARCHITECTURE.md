@@ -1,5 +1,18 @@
 # RoamSync Agent v1 architecture contract
 
+## Stage4 request scope corrections (2026-10-25; acceptance in progress)
+
+Request-local source indices do not truncate a longer exact task quote, but
+address decoration requires a direct name/address relation; a denied lookup
+cannot borrow an earlier introduction. Ordered raw mentions retain unresolved
+slots and authorize search only. Unique provider results upgrade raw slots;
+same-name results never replace an already bound ID. Duration-to-replan
+normalization reuses existing rules only for one complete target subject and
+operation, preserves constraints and still requires normal authorization.
+Containing action clauses include dependent question suffixes; preview and
+revocation share action families. No new formal writer, table or Accept chain.
+These bounded corrections remain under development; stage3 NO-GO is unchanged.
+
 ## Stage3 frozen acceptance boundary (2026-10-24)
 
 MEASURED product758477f: engineering1902+38 backend and265 Web pass, but

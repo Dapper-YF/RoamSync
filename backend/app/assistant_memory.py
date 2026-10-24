@@ -82,10 +82,20 @@ def _quoted_scalar(key, value, quote, today, message):
         proposed = anchored_date(value, today)
         return proposed if len(dates) == 1 and proposed and dates[0] == proposed else None
     from app.travel_language import chinese_number
-    if key == 'party_size' and value in {'1', '一', '一个人', '1人'}:
-        solo = re.search(r'(?:就|只剩|只|剩下)?我(?:自己|独自|单独)(?:一个人)?(?:去|出发|旅行|玩)', quote)
+    if key == 'party_size' and (value in {'1', '一', '一个人', '1人'} or value and value in quote):
+        solo = re.search(r'(?:就|只剩|只|剩下)?我(?:(?:自己|独自|单独)(?:一个人)?|一个人)(?:去|出发|旅行|玩)', quote)
         if solo and _affirmative_scalar_token(message, quote_start + solo.start(), quote_start + solo.end()):
             return 1
+    if key == 'party_size':
+        # Enumerated individuals are count evidence even without a numeric
+        # token. Groups/plurals and mixed adult/child quantities stay unknown.
+        group = re.fullmatch(r'(.+?)(?:一起|一同)(?:去|出发|旅行)', quote.strip())
+        members = re.split(r'和|与|跟|、', group[1]) if group else []
+        if (2 <= len(members) <= 8 and '我' in members and len(set(members)) == len(members)
+            and all(re.fullmatch(r'[\u4e00-\u9fff]{1,8}', m) and not re.search(
+                r'们|家人|全家|一家|同事|同学|大家|几|[一二三四五六七八九十两]',m) for m in members)
+            and (value == quote or value in {str(len(members)), str(len(members))+'人'})):
+            return len(members)
     numeral = r"[一二三四五六七八九十两\d]+"
     unit = r"天" if key == "duration_days" else r"(?:个?人|位)"
     proposed = re.fullmatch(rf"({numeral})\s*(?:{unit})?", value)
@@ -215,7 +225,7 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
                 continue
         if key == "city" and operation not in {"clear", "remove"} and re.search(r"不去|别去|不要去|不想去|取消去", re.split(r"[，。；!?！？]", prefix)[-1] + quote):
             continue
-        if operation == "clear" and not re.search(r"取消|不限|不设|清除|忘掉|不再|不要|无需|不用|待定|(?:先|还|也)?不定|未定|没(?:有)?定|不确定", quote):
+        if operation == "clear" and not re.search(r"取消|撤销|撤掉|不限|不设|清除|忘掉|不再|不要|无需|不用|待定|(?:先|还|也)?不定|未定|没(?:有)?定|不确定", quote):
             continue
         evidence = {"value": normalized, "source_quote": quote, "message_id": str(message_id),
             "scope": 'trip' if update.subject else update.scope, "scope_version": 2,
@@ -327,6 +337,9 @@ def recall_conditions(envelope):
         literal = [value for value in literal if isinstance(value, str) and value]
         removed = any(k == key or k.startswith(key + ':') for k in withdrawn)
         lines.append(label + "：" + ("；".join(literal) if literal else "已撤销" if removed else "未确定"))
+    rejected = [r for r in memory.get('latest_receipt', {}).get('updates', []) if r['status'] == 'rejected']
+    if rejected:
+        lines.append('本次未应用：'+'；'.join(dict.fromkeys(r['field']+'（'+r['reason']+'）' for r in rejected))+'，以上为实际保留值。')
     return "这次聊天当前的有效条件：\n" + "\n".join(lines)
 
 
