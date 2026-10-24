@@ -399,7 +399,9 @@ def test_read_unit_is_readonly_and_closes_on_failure_without_flushing_caller(ses
             def checkin(*args): connections.append('in')
             event.listen(db.bind.sync_engine,'checkout',checkout)
             event.listen(db.bind.sync_engine,'checkin',checkin)
+            captured=[]
             async def fail(reader,*args,**kwargs):
+                captured.append(reader.bind)
                 assert await reader.scalar(text('SHOW transaction_isolation'))=='repeatable read'
                 assert await reader.scalar(text('SHOW transaction_read_only'))=='on'
                 if cancel: raise asyncio.CancelledError()
@@ -408,11 +410,75 @@ def test_read_unit_is_readonly_and_closes_on_failure_without_flushing_caller(ses
             try:
                 with pytest.raises(asyncio.CancelledError if cancel else RuntimeError):
                     await module.load_saved_trip_read(db,trip.id)
-                assert connections==['out','in']
+                assert connections==[]  # independent read channel, no business pool borrowing
+                assert captured[0].closed
                 assert pending in db.new and db.in_transaction()
                 assert await db.scalar(select(func.count()).select_from(Trip).where(Trip.id==pending.id),
                     execution_options={'autoflush':False})==0
             finally:
                 event.remove(db.bind.sync_engine,'checkout',checkout)
                 event.remove(db.bind.sync_engine,'checkin',checkin)
+    asyncio.run(run())
+
+
+def test_real_pg_saturated_business_pool_does_not_starve_saved_reads(sessions):
+    from sqlalchemy import text
+    async def run():
+        async with sessions() as seed_db:
+            trip,_,_=await seed(seed_db)
+        engine=create_async_engine(os.environ['DATABASE_URL'],pool_size=2,max_overflow=0,pool_timeout=.25)
+        factory=async_sessionmaker(engine,expire_on_commit=False)
+        try:
+            async with factory() as first, factory() as second:
+                await first.execute(text('SELECT 1'));await second.execute(text('SELECT 1'))
+                assert engine.pool.checkedout()==2
+                reads=await asyncio.wait_for(asyncio.gather(
+                    load_saved_trip_read(first,trip.id,'第三天已保存什么'),
+                    load_saved_trip_read(second,trip.id,'第三天已保存什么')),timeout=5)
+                assert all(len(r.project('第三天')['activities'])==5 for r in reads)
+                assert engine.pool.checkedout()==2  # callers retain their own transactions
+        finally:
+            await engine.dispose()
+    asyncio.run(run())
+
+
+def test_read_channel_admission_is_bounded_and_cancel_does_not_lose_permits(sessions,monkeypatch):
+    import app.saved_trip_reads as module
+    original=module._capture_saved_trip_read
+    async def run():
+        async with sessions() as db:
+            trip,_,_=await seed(db)
+        active,peak=0,0
+        entered=asyncio.Event();release=asyncio.Event()
+        async def hold(reader,*args,**kwargs):
+            nonlocal active,peak
+            active+=1;peak=max(peak,active)
+            if active==2:entered.set()
+            try:
+                await release.wait()
+                return await original(reader,*args,**kwargs)
+            finally:active-=1
+        monkeypatch.setattr(module,'_capture_saved_trip_read',hold)
+        async def read():
+            async with sessions() as db:
+                return await module.load_saved_trip_read(db,trip.id,'第三天')
+        tasks=[asyncio.create_task(read()) for _ in range(2)]
+        pending=None
+        try:
+            await asyncio.wait_for(entered.wait(),5)
+            pending=asyncio.create_task(read())
+            await asyncio.sleep(.05)
+            assert peak==2 and active==2
+            pending.cancel()
+            with pytest.raises(asyncio.CancelledError):await pending
+            release.set()
+            assert len(await asyncio.gather(*tasks))==2
+            # Subsequent reads still acquire permits after cancellation in queue.
+            assert (await asyncio.wait_for(read(),5)).trip['id']==str(trip.id)
+            assert peak==2
+        finally:
+            release.set()
+            for task in [*tasks,*([pending] if pending else [])]:
+                if not task.done():task.cancel()
+            await asyncio.gather(*tasks,*([pending] if pending else []),return_exceptions=True)
     asyncio.run(run())

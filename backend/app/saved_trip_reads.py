@@ -1,17 +1,31 @@
 """Bounded detached saved-state reads. Selection is context, never authority."""
 from copy import deepcopy
+import asyncio
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 import re
 from uuid import UUID
+from weakref import WeakKeyDictionary
 
 from sqlalchemy import case, func, select, text
-from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession, create_async_engine
+from sqlalchemy.pool import NullPool
 
 from app.database import Activity, DayPlan, PlaceCandidate, Trip, TripArrangementItem, SavedIntention, TripPreferences
 from app.travel_language import chinese_number
 
 READ_LIMIT = 100
+READ_CONNECTION_LIMIT = 2
+_read_gates = WeakKeyDictionary()
+
+
+def _read_gate():
+    # The application has one event loop per process. Loop-local gates also
+    # support isolated test loops; never share asyncio locks between loops.
+    loop = asyncio.get_running_loop()
+    if loop not in _read_gates:
+        _read_gates[loop] = asyncio.Semaphore(READ_CONNECTION_LIMIT)
+    return _read_gates[loop]
 
 
 class SavedTripReadStale(ValueError):
@@ -134,13 +148,29 @@ async def load_saved_trip_read(db, trip_id, message='', *, selected_day_id=None,
     here, before any selector/provider work; no ORM instances escape.
     """
     bind = db.bind.engine if isinstance(db.bind, AsyncConnection) else db.bind
-    async with bind.connect() as connection:
-        connection = await connection.execution_options(isolation_level='REPEATABLE READ')
-        async with connection.begin():
-            await connection.execute(text('SET TRANSACTION READ ONLY'))
-            async with AsyncSession(bind=connection, expire_on_commit=False) as reader:
-                snapshot = await _capture_saved_trip_read(reader, trip_id, message,
-                    selected_day_id=selected_day_id, selected_activity_id=selected_activity_id, limit=limit)
+    # A caller can already hold a business-pool connection and row locks. Never
+    # borrow its second connection from that pool: saturated callers could all
+    # wait for one another. This channel has at most two physical connections
+    # per application loop, no idle pool, and closes/disposes on failure/cancel.
+    gate = _read_gate()
+    try:
+        await asyncio.wait_for(gate.acquire(), timeout=5)
+    except TimeoutError as exc:
+        raise SavedTripReadStale('读取当前安排较忙，请稍后重新读取；没有修改安排。') from exc
+    try:
+        read_engine = create_async_engine(bind.url, poolclass=NullPool)
+        try:
+            async with read_engine.connect() as connection:
+                connection = await connection.execution_options(isolation_level='REPEATABLE READ')
+                async with connection.begin():
+                    await connection.execute(text('SET TRANSACTION READ ONLY'))
+                    async with AsyncSession(bind=connection, expire_on_commit=False) as reader:
+                        snapshot = await _capture_saved_trip_read(reader, trip_id, message,
+                            selected_day_id=selected_day_id, selected_activity_id=selected_activity_id, limit=limit)
+        finally:
+            await read_engine.dispose()
+    finally:
+        gate.release()
     # Reject known versioned changes committed during capture. These checks use
     # DB scalars, not the caller's identity map. They are a freshness fence, not
     # the consistency mechanism and not a promise that nothing changes later.
