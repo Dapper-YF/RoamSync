@@ -1,0 +1,378 @@
+{
+  "kind": "Injected-command guard/dispatch probes only; no generated model output or formal writes",
+  "captured_utc": "2026-10-24T03:39:33.485820+00:00",
+  "active_root": "E:\\Study\\RoamSync-reliability-a2-20261022",
+  "head": "3ce210e8633c3d79e908d4e38f03a6a9a364de5d",
+  "published_baseline": false,
+  "hashes_before": {
+    "conversation_candidate/commands.py": "01d31e610b5bbbfb0af34934200d8c9b7d16766cfd658cee8e4bda05a495e642",
+    "conversation_candidate/service.py": "beb01e1cc82492190bc43961d7ec9ac08c9b5f85a3bb87a56447e552f5df8c13",
+    "conversation_candidate/binding.py": "3e806fda135175b38babe986781ec0493b1333f8029d873bacfe70eee1a05b1e",
+    "conversation_candidate/presentation.py": "6e8d9057c81088ca5ac30a92fea761331511086961ac7f1116433038e0710b24",
+    "draft_promotion/atomic.py": "40bc46c194204707c3bac48014e901d1eef6c1b0f0f74d08ceaf81ef0d5d725e",
+    "assistant_capabilities.py": "461de59bfc0c2cab5b2b2b986bd5d298280c5cd1632509d05ff6c65f53beb7d6",
+    "assistant_turn.py": "2f4e3f9151fae5945b21b64e1566bf6c6cc13d4bb3cb526479e73befdbfcba6e",
+    "assistant_context.py": "f198ff3519e289f4da46d7e64b280929ce243820e5048e0c83be1cde03aab357",
+    "assistant_memory.py": "e66a7d6611d73ef1618442cc5a26731abf0a2987030a917b652543b6801898ee",
+    "requirements.py": "15c5cbf43fb84303053cae4b07f29a4c8826407d37ed6a8eabb91f615185d829",
+    "drafts/contracts.py": "c997b55fd4051f6da2aefb0c65f0772992bf9a205e7c27554fb0f865f5a01982"
+  },
+  "hashes_after": {
+    "conversation_candidate/commands.py": "01d31e610b5bbbfb0af34934200d8c9b7d16766cfd658cee8e4bda05a495e642",
+    "conversation_candidate/service.py": "beb01e1cc82492190bc43961d7ec9ac08c9b5f85a3bb87a56447e552f5df8c13",
+    "conversation_candidate/binding.py": "3e806fda135175b38babe986781ec0493b1333f8029d873bacfe70eee1a05b1e",
+    "conversation_candidate/presentation.py": "6e8d9057c81088ca5ac30a92fea761331511086961ac7f1116433038e0710b24",
+    "draft_promotion/atomic.py": "40bc46c194204707c3bac48014e901d1eef6c1b0f0f74d08ceaf81ef0d5d725e",
+    "assistant_capabilities.py": "461de59bfc0c2cab5b2b2b986bd5d298280c5cd1632509d05ff6c65f53beb7d6",
+    "assistant_turn.py": "2f4e3f9151fae5945b21b64e1566bf6c6cc13d4bb3cb526479e73befdbfcba6e",
+    "assistant_context.py": "f198ff3519e289f4da46d7e64b280929ce243820e5048e0c83be1cde03aab357",
+    "assistant_memory.py": "e66a7d6611d73ef1618442cc5a26731abf0a2987030a917b652543b6801898ee",
+    "requirements.py": "15c5cbf43fb84303053cae4b07f29a4c8826407d37ed6a8eabb91f615185d829",
+    "drafts/contracts.py": "c997b55fd4051f6da2aefb0c65f0772992bf9a205e7c27554fb0f865f5a01982"
+  },
+  "source_unchanged_during_probe": true,
+  "network_or_db_calls_attempted": 0,
+  "authority_cases": [
+    {
+      "id": "post-save-question",
+      "message": "保存后还能修改吗？",
+      "command": {
+        "action": "adopt",
+        "source_quote": "保存",
+        "plan": null,
+        "patches": []
+      },
+      "expected_authorized": false,
+      "command_accepted": false,
+      "error": "请明确说“帮我保存这份安排”后再采用；询问保存方式或结果不会执行保存。",
+      "validated_intent": "direct",
+      "validated_action": null,
+      "seconds": 0.008425100000749808
+    },
+    {
+      "id": "can-save-question",
+      "message": "这份安排可以保存了吗？",
+      "command": {
+        "action": "adopt",
+        "source_quote": "保存",
+        "plan": null,
+        "patches": []
+      },
+      "expected_authorized": false,
+      "command_accepted": false,
+      "error": "请明确说“帮我保存这份安排”后再采用；询问保存方式或结果不会执行保存。",
+      "validated_intent": "direct",
+      "validated_action": null,
+      "seconds": 0.00013700000272365287
+    },
+    {
+      "id": "saved-state-question",
+      "message": "我保存了吗？",
+      "command": {
+        "action": "adopt",
+        "source_quote": "保存",
+        "plan": null,
+        "patches": []
+      },
+      "expected_authorized": false,
+      "command_accepted": false,
+      "error": "请明确说“帮我保存这份安排”后再采用；询问保存方式或结果不会执行保存。",
+      "validated_intent": "direct",
+      "validated_action": null,
+      "seconds": 0.00010019999899668619
+    },
+    {
+      "id": "object-count-question",
+      "message": "保存会创建几个正式对象？",
+      "command": {
+        "action": "adopt",
+        "source_quote": "保存",
+        "plan": null,
+        "patches": []
+      },
+      "expected_authorized": false,
+      "command_accepted": false,
+      "error": "请明确说“帮我保存这份安排”后再采用；询问保存方式或结果不会执行保存。",
+      "validated_intent": "direct",
+      "validated_action": null,
+      "seconds": 9.529999806545675e-05
+    },
+    {
+      "id": "existing-question-control",
+      "message": "保存当前候选会怎样？",
+      "command": {
+        "action": "adopt",
+        "source_quote": "保存当前候选",
+        "plan": null,
+        "patches": []
+      },
+      "expected_authorized": false,
+      "command_accepted": false,
+      "error": "请明确说“帮我保存这份安排”后再采用；询问保存方式或结果不会执行保存。",
+      "validated_intent": "direct",
+      "validated_action": null,
+      "seconds": 0.00010010000551119447
+    },
+    {
+      "id": "hypothetical-across-clause",
+      "message": "假设我确认了，帮我保存当前候选。",
+      "command": {
+        "action": "adopt",
+        "source_quote": "帮我保存当前候选",
+        "plan": null,
+        "patches": []
+      },
+      "expected_authorized": false,
+      "command_accepted": false,
+      "error": "假设、转述和引述不是本轮实际修改或保存的授权。",
+      "validated_intent": "direct",
+      "validated_action": null,
+      "seconds": 0.00046160000056261197
+    },
+    {
+      "id": "reported-speech-across-clause",
+      "message": "朋友会说，帮我保存当前候选。",
+      "command": {
+        "action": "adopt",
+        "source_quote": "帮我保存当前候选",
+        "plan": null,
+        "patches": []
+      },
+      "expected_authorized": false,
+      "command_accepted": false,
+      "error": "请明确说“帮我保存这份安排”后再采用；询问保存方式或结果不会执行保存。",
+      "validated_intent": "direct",
+      "validated_action": null,
+      "seconds": 0.00014879999798722565
+    },
+    {
+      "id": "withdrawal-after-period",
+      "message": "帮我保存当前候选。算了，我再想想。",
+      "command": {
+        "action": "adopt",
+        "source_quote": "帮我保存当前候选",
+        "plan": null,
+        "patches": []
+      },
+      "expected_authorized": false,
+      "command_accepted": false,
+      "error": "请明确说“帮我保存这份安排”后再采用；询问保存方式或结果不会执行保存。",
+      "validated_intent": "direct",
+      "validated_action": null,
+      "seconds": 0.00011159999849041924
+    },
+    {
+      "id": "full-current-save-control",
+      "message": "采用并保存这份安排",
+      "command": {
+        "action": "adopt",
+        "source_quote": "采用并保存这份安排",
+        "plan": null,
+        "patches": []
+      },
+      "expected_authorized": true,
+      "command_accepted": true,
+      "error": null,
+      "validated_intent": "modify",
+      "validated_action": "adopt",
+      "seconds": 0.005865999999514315
+    },
+    {
+      "id": "short-current-save-control",
+      "message": "帮我保存",
+      "command": {
+        "action": "adopt",
+        "source_quote": "帮我保存",
+        "plan": null,
+        "patches": []
+      },
+      "expected_authorized": true,
+      "command_accepted": true,
+      "error": null,
+      "validated_intent": "modify",
+      "validated_action": "adopt",
+      "seconds": 0.0002758999980869703
+    }
+  ],
+  "compound_cases": [
+    {
+      "id": "missing-peer-patch",
+      "message": "人民公园改成120分钟，宽窄巷子改成30分钟",
+      "command": {
+        "action": "modify",
+        "source_quote": "人民公园改成120分钟",
+        "plan": null,
+        "patches": [
+          {
+            "item_ref": "park",
+            "source_quote": "人民公园改成120分钟",
+            "duration_minutes": 120,
+            "operation": "set",
+            "quantity_source": "user_explicit"
+          }
+        ]
+      },
+      "accepted": false,
+      "error": "本轮还有未处理的变更，整项修改尚未生效。请先核对所有变化，再单独确认保存。",
+      "durations_after": [
+        90,
+        90
+      ],
+      "conditions_hash_unchanged": true,
+      "literal_changed": [],
+      "captured_records": [],
+      "note": "adopt case inspects guard and unchanged input plan only; no adoption writer executes"
+    },
+    {
+      "id": "modify-before-adopt",
+      "message": "人民公园改成120分钟，然后保存当前候选",
+      "command": {
+        "action": "adopt",
+        "source_quote": "保存当前候选",
+        "plan": null,
+        "patches": []
+      },
+      "accepted": false,
+      "error": "请明确说“帮我保存这份安排”后再采用；询问保存方式或结果不会执行保存。",
+      "durations_after": [
+        90,
+        90
+      ],
+      "conditions_hash_unchanged": true,
+      "literal_changed": [],
+      "captured_records": [],
+      "note": "adopt case inspects guard and unchanged input plan only; no adoption writer executes"
+    },
+    {
+      "id": "modify-and-bare-adopt",
+      "message": "人民公园改成120分钟，保存当前候选",
+      "command": {
+        "action": "adopt",
+        "source_quote": "保存当前候选",
+        "plan": null,
+        "patches": []
+      },
+      "accepted": false,
+      "error": "请明确说“帮我保存这份安排”后再采用；询问保存方式或结果不会执行保存。",
+      "durations_after": [
+        90,
+        90
+      ],
+      "conditions_hash_unchanged": true,
+      "literal_changed": [],
+      "captured_records": [],
+      "note": "adopt case inspects guard and unchanged input plan only; no adoption writer executes"
+    },
+    {
+      "id": "hypothetical-modify",
+      "message": "假设我改主意了，人民公园改成120分钟",
+      "command": {
+        "action": "modify",
+        "source_quote": "人民公园改成120分钟",
+        "plan": null,
+        "patches": [
+          {
+            "item_ref": "park",
+            "source_quote": "人民公园改成120分钟",
+            "duration_minutes": 120,
+            "operation": "set",
+            "quantity_source": "user_explicit"
+          }
+        ]
+      },
+      "accepted": false,
+      "error": "假设、转述和引述不是本轮实际修改或保存的授权。",
+      "durations_after": [
+        90,
+        90
+      ],
+      "conditions_hash_unchanged": true,
+      "literal_changed": [],
+      "captured_records": [],
+      "note": "adopt case inspects guard and unchanged input plan only; no adoption writer executes"
+    }
+  ],
+  "duplicate_name_cases": [
+    {
+      "item_ref": "park",
+      "accepted": false,
+      "error": "候选操作漏掉了本轮要求调整的活动，尚未应用部分结果。",
+      "durations_after": [
+        90,
+        90
+      ]
+    },
+    {
+      "item_ref": "street",
+      "accepted": false,
+      "error": "候选操作漏掉了本轮要求调整的活动，尚未应用部分结果。",
+      "durations_after": [
+        90,
+        90
+      ]
+    }
+  ],
+  "positive_patch_controls": [
+    {
+      "id": "single-explicit-local",
+      "message": "人民公园改成75分钟",
+      "command": {
+        "action": "modify",
+        "source_quote": "人民公园改成75分钟",
+        "plan": null,
+        "patches": [
+          {
+            "item_ref": "park",
+            "source_quote": "人民公园改成75分钟",
+            "duration_minutes": 75,
+            "operation": "set",
+            "quantity_source": "user_explicit"
+          }
+        ]
+      },
+      "accepted": true,
+      "error": null,
+      "durations_after": [
+        75,
+        90
+      ]
+    },
+    {
+      "id": "both-explicit-local",
+      "message": "人民公园改成75分钟，宽窄巷子改成105分钟",
+      "command": {
+        "action": "modify",
+        "source_quote": "人民公园改成75分钟，宽窄巷子改成105分钟",
+        "plan": null,
+        "patches": [
+          {
+            "item_ref": "park",
+            "source_quote": "人民公园改成75分钟",
+            "duration_minutes": 75,
+            "operation": "set",
+            "quantity_source": "user_explicit"
+          },
+          {
+            "item_ref": "street",
+            "source_quote": "宽窄巷子改成105分钟",
+            "duration_minutes": 105,
+            "operation": "set",
+            "quantity_source": "user_explicit"
+          }
+        ]
+      },
+      "accepted": true,
+      "error": null,
+      "durations_after": [
+        75,
+        105
+      ]
+    }
+  ],
+  "limitations": [
+    "A is actively editing uncommitted source; use per-run hashes, not HEAD as product identity.",
+    "A real selector may output another command; probe establishes a server backstop defect, not its frequency.",
+    "No candidate publish, confirm_atomic, resume, SQL or formal Accept is invoked.",
+    "Duplicate names are a local command-boundary probe; full POI resolution may reject some duplicate identities."
+  ]
+}

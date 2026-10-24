@@ -1,17 +1,25 @@
 # RoamSync project state
 
-Last updated: 2026-10-23
+Last updated: 2026-10-24
 
-## Conversation / itinerary redesign — design reviewed, implementation pending
+## Conversation / itinerary redesign — implemented, product NO-GO (2026-10-24)
 
-New branch codex/conversation-itinerary-redesign-20261023 starts from8dbf685 in
-the existing isolated A worktree; official6b298ca remains read-only. User P1/P2/P3
-requirements audited. Reuse Draft/PreparedPlan/promotion, add source-bound display,
-same-draft modifications, explicit versioned atomic adoption and exact-POI media;
-full timeline belongs in saved itinerary. Astra Medium reviewed seven contract
-conditions and confirmed their inclusion. Await user design approval before product
-implementation. No new product source, deployment, DB operation or real acceptance.
-Spec/review:docs/superpowers/specs/2026-10-23-conversation-itinerary-*.md.
+Product BASE_SHA=89b81e8d6cf5561f2bbab1a9ac437aa9dde88fb9, branch
+codex/conversation-itinerary-redesign-20261023 in the isolated A worktree.
+Strict v2 Draft/PreparedPlan, stable item refs and source-bound windows, one
+candidate command, server-merged edits, hash-bound presentation and explicit
+atomic Validator/Accept reuse the existing stores and formal models. Legacy
+protocol is separate; no migration or relaxed authorization. Saved timelines
+show exact-POI reviewed photos. Old metadata is not a ready itinerary.
+Exact product regression:1792 main +38 dedicated PG, Web265/type/build pass;
+source unchanged and Git equivalence verified. Real saved Trip modification,
+Accept/F5 and responsive images pass; fresh conversational chains still fail
+compound consultation/schema/provider quality. No new unseen16/20 result.
+Overall NO-GO, no official source/DB/deployment changes. Official6b298ca remains
+read-only/offline. New BASE is for isolated B/C development, not release.
+B narrow public review received from622f01e; preparation identity difference
+retained, no blanket final review approval. See
+CONVERSATION_ITINERARY_REDESIGN_20261024.md and latest handoff.
 
 ## A2 final measurement candidate — NO-GO (2026-10-23)
 

@@ -1,0 +1,92 @@
+{
+  "kind": "Injected wrong plan with synthetic provider; real build/prepare code, no model/DB/publication/adoption",
+  "captured_utc": "2026-10-24T03:37:44.254426+00:00",
+  "message": "请生成成都2026年11月9日玩1天的安排，每天10点出发18点结束，步行，不去人民公园，宽窄巷子要去。",
+  "command": {
+    "action": "generate",
+    "source_quote": "请生成成都2026年11月9日玩1天的安排，每天10点出发18点结束，步行，不去人民公园，宽窄巷子要去。",
+    "plan": {
+      "schema_version": 2,
+      "schedule_constraints": {
+        "start_date": "2026-11-09",
+        "daily_start_time": "10:00:00",
+        "daily_end_time": "18:00:00",
+        "transport_mode": "walk",
+        "max_walking_minutes": null,
+        "walking_scope": "inter_activity",
+        "total_budget_fen": null,
+        "daily_budget_fen": null
+      },
+      "days": [
+        {
+          "day_index": 1,
+          "title": "Synthetic injected wrong selection",
+          "items": [
+            {
+              "name": "人民公园",
+              "note": "",
+              "place_id": null,
+              "identity_status": "unknown",
+              "item_ref": "excluded",
+              "kind": "visit",
+              "provider_place_id": null,
+              "duration_minutes": 60,
+              "duration_source": "planning_allocation",
+              "start_time": null,
+              "end_time": null,
+              "source_quote": "不去人民公园"
+            },
+            {
+              "name": "宽窄巷子",
+              "note": "",
+              "place_id": null,
+              "identity_status": "unknown",
+              "item_ref": "wanted",
+              "kind": "visit",
+              "provider_place_id": null,
+              "duration_minutes": 60,
+              "duration_source": "planning_allocation",
+              "start_time": null,
+              "end_time": null,
+              "source_quote": "宽窄巷子要去"
+            }
+          ],
+          "start_time": null,
+          "end_time": null
+        }
+      ]
+    },
+    "patches": []
+  },
+  "hashes_before": {
+    "conversation_candidate/commands.py": "01d31e610b5bbbfb0af34934200d8c9b7d16766cfd658cee8e4bda05a495e642",
+    "conversation_candidate/service.py": "beb01e1cc82492190bc43961d7ec9ac08c9b5f85a3bb87a56447e552f5df8c13",
+    "assistant_operation.py": "22fd8447065c9f35fe3818f31652dae47eb911198f52d5d64bd9d256f6cdb8f7",
+    "draft_promotion/preparation.py": "e97bf48dfde1dac2d956316006f9bfbb0c46f2753b832aa563bdf87155d05515",
+    "requirements.py": "15c5cbf43fb84303053cae4b07f29a4c8826407d37ed6a8eabb91f615185d829",
+    "drafts/contracts.py": "c997b55fd4051f6da2aefb0c65f0772992bf9a205e7c27554fb0f865f5a01982",
+    "assistant_capabilities.py": "461de59bfc0c2cab5b2b2b986bd5d298280c5cd1632509d05ff6c65f53beb7d6",
+    "flexible_creation.py": "12a2047503565335d9e7ecea727669cc8bce424d5a50efed98407bf0f5bb56ab",
+    "requirement_language.py": "61874ec1ac9ba8e20b8cd05d0f1151f6c9cd865095d5b797cdc098d1b11bf64f"
+  },
+  "variant": "excluded",
+  "validated_intent": "create",
+  "actual_model_output": false,
+  "built": false,
+  "error_type": "ValueError",
+  "error": "「人民公园」本轮被排除或仅作备选，不能从讨论内容提升为已安排活动。",
+  "hashes_after": {
+    "conversation_candidate/commands.py": "01d31e610b5bbbfb0af34934200d8c9b7d16766cfd658cee8e4bda05a495e642",
+    "conversation_candidate/service.py": "beb01e1cc82492190bc43961d7ec9ac08c9b5f85a3bb87a56447e552f5df8c13",
+    "assistant_operation.py": "22fd8447065c9f35fe3818f31652dae47eb911198f52d5d64bd9d256f6cdb8f7",
+    "draft_promotion/preparation.py": "e97bf48dfde1dac2d956316006f9bfbb0c46f2753b832aa563bdf87155d05515",
+    "requirements.py": "15c5cbf43fb84303053cae4b07f29a4c8826407d37ed6a8eabb91f615185d829",
+    "drafts/contracts.py": "c997b55fd4051f6da2aefb0c65f0772992bf9a205e7c27554fb0f865f5a01982",
+    "assistant_capabilities.py": "461de59bfc0c2cab5b2b2b986bd5d298280c5cd1632509d05ff6c65f53beb7d6",
+    "flexible_creation.py": "12a2047503565335d9e7ecea727669cc8bce424d5a50efed98407bf0f5bb56ab",
+    "requirement_language.py": "61874ec1ac9ba8e20b8cd05d0f1151f6c9cd865095d5b797cdc098d1b11bf64f"
+  },
+  "source_unchanged": true,
+  "network_or_db_attempts": 0,
+  "synthetic_provider_calls": []
+}

@@ -1,5 +1,33 @@
 # RoamSync Agent v1 architecture contract
 
+## Conversational candidate v2 (2026-10-24; candidate only, NO-GO)
+
+Product89b81e8 extends existing Draft/PreparedPlan with strict version2, stable
+item refs, source/duration and explicit meal/rest/free/blank windows. Version1
+hash semantics and checkpoint execution remain independent. Model-selected IDs,
+legacy broad intent and creation metadata do not authorize v2 writes. Current
+literal affirmative operation coverage and server-resolved place identity are
+required; questions/hypotheses/reported/withdrawn or partial compound commands
+fail closed. Same-Draft edits merge unchanged refs on the server.
+
+Provider preparation and refresh run outside business transactions. A one-way
+PreparedPlan→CandidatePresentation content digest binds owner/topic/conditions,
+draft/version/prepared/evidence and visible content. Durable v2 confirmation
+creates authorization only. Atomic operation→Trip→Revision→Run→Draft locks,
+then session publication lock, protect original materialize/Validator/Accept,
+window equivalence, draft consumption and receipt in one transaction. Failure
+rolls back formal objects; retries cannot create another Trip. Legacy clients
+cannot rebind or overwrite v2. Saved Trip edits retain PlanRevision/Accept.
+
+Formal Activity returns canonical PlaceRef; reviewed media additionally binds
+provider identity and coordinates. Unsupported constraints/optional identity or
+time/per-day overrides are explicit blockers, not silently dropped values.
+No migration. Exact full tests1792+38/Web265 and red-green PG/authority evidence
+are in CONVERSATION_ITINERARY_REDESIGN_20261024.md. Fresh real conversation
+quality fails; public ownership P0 remains. Neither engineering tests nor
+partial B/Astra review authorize release. B preparation snapshot differs from
+final code; exact final A regression is separate evidence.
+
 ## A2 planning transaction and execution ownership candidate (2026-10-23; not released)
 
 Planning reads immutable server facts in short sessions, then resolves semantic,

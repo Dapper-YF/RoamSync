@@ -1,0 +1,236 @@
+{
+  "kind": "Injected wrong plan with synthetic provider; real build/prepare code, no model/DB/publication/adoption",
+  "captured_utc": "2026-10-24T03:37:44.269658+00:00",
+  "message": "请生成成都2026年11月9日玩1天的安排，每天10点出发18点结束，步行，人民公园和宽窄巷子都要去。",
+  "command": {
+    "action": "generate",
+    "source_quote": "请生成成都2026年11月9日玩1天的安排，每天10点出发18点结束，步行，人民公园和宽窄巷子都要去。",
+    "plan": {
+      "schema_version": 2,
+      "schedule_constraints": {
+        "start_date": "2026-11-09",
+        "daily_start_time": "10:00:00",
+        "daily_end_time": "18:00:00",
+        "transport_mode": "walk",
+        "max_walking_minutes": null,
+        "walking_scope": "inter_activity",
+        "total_budget_fen": null,
+        "daily_budget_fen": null
+      },
+      "days": [
+        {
+          "day_index": 1,
+          "title": "Synthetic injected wrong selection",
+          "items": [
+            {
+              "name": "人民公园",
+              "note": "",
+              "place_id": null,
+              "identity_status": "unknown",
+              "item_ref": "excluded",
+              "kind": "visit",
+              "provider_place_id": null,
+              "duration_minutes": 60,
+              "duration_source": "planning_allocation",
+              "start_time": null,
+              "end_time": null,
+              "source_quote": "人民公园和宽窄巷子都要去"
+            },
+            {
+              "name": "宽窄巷子",
+              "note": "",
+              "place_id": null,
+              "identity_status": "unknown",
+              "item_ref": "wanted",
+              "kind": "visit",
+              "provider_place_id": null,
+              "duration_minutes": 60,
+              "duration_source": "planning_allocation",
+              "start_time": null,
+              "end_time": null,
+              "source_quote": "人民公园和宽窄巷子都要去"
+            }
+          ],
+          "start_time": null,
+          "end_time": null
+        }
+      ]
+    },
+    "patches": []
+  },
+  "hashes_before": {
+    "conversation_candidate/commands.py": "01d31e610b5bbbfb0af34934200d8c9b7d16766cfd658cee8e4bda05a495e642",
+    "conversation_candidate/service.py": "beb01e1cc82492190bc43961d7ec9ac08c9b5f85a3bb87a56447e552f5df8c13",
+    "assistant_operation.py": "22fd8447065c9f35fe3818f31652dae47eb911198f52d5d64bd9d256f6cdb8f7",
+    "draft_promotion/preparation.py": "e97bf48dfde1dac2d956316006f9bfbb0c46f2753b832aa563bdf87155d05515",
+    "requirements.py": "15c5cbf43fb84303053cae4b07f29a4c8826407d37ed6a8eabb91f615185d829",
+    "drafts/contracts.py": "c997b55fd4051f6da2aefb0c65f0772992bf9a205e7c27554fb0f865f5a01982",
+    "assistant_capabilities.py": "461de59bfc0c2cab5b2b2b986bd5d298280c5cd1632509d05ff6c65f53beb7d6",
+    "flexible_creation.py": "12a2047503565335d9e7ecea727669cc8bce424d5a50efed98407bf0f5bb56ab",
+    "requirement_language.py": "61874ec1ac9ba8e20b8cd05d0f1151f6c9cd865095d5b797cdc098d1b11bf64f"
+  },
+  "variant": "positive",
+  "validated_intent": "create",
+  "actual_model_output": false,
+  "built": true,
+  "prepared_stage": "ready",
+  "blockers": [],
+  "activity_names": [
+    "人民公园",
+    "宽窄巷子"
+  ],
+  "constraint_checks": [
+    {
+      "requirement_ref": "req_9ab1965933e756bf87cb2fd3e23ee1d2",
+      "status": "unverified",
+      "source_quote": "请生成成都2026年11月9日玩1天的安排",
+      "source_ref": "draft:60c4cd95-dd28-450e-a1c3-ab5c406bd53a:create"
+    },
+    {
+      "requirement_ref": "req_5dcda1427b38553786e6903692bc95a4",
+      "status": "unverified",
+      "source_quote": "每天10点出发18点结束",
+      "source_ref": "draft:60c4cd95-dd28-450e-a1c3-ab5c406bd53a:create"
+    },
+    {
+      "requirement_ref": "req_e443fb86a3f250ce8147bf4ac8a8c324",
+      "status": "unverified",
+      "source_quote": "步行",
+      "source_ref": "draft:60c4cd95-dd28-450e-a1c3-ab5c406bd53a:create"
+    },
+    {
+      "requirement_ref": "req_9824b82838c95e49988e2fac12616d07",
+      "status": "unverified",
+      "source_quote": "人民公园和宽窄巷子都要去",
+      "source_ref": "draft:60c4cd95-dd28-450e-a1c3-ab5c406bd53a:create"
+    }
+  ],
+  "requirement_records": [
+    {
+      "id": "req_9ab1965933e756bf87cb2fd3e23ee1d2",
+      "text": "请生成成都2026年11月9日玩1天的安排",
+      "key": "user_requirement",
+      "value": null,
+      "source": {
+        "kind": "user_explicit",
+        "ref": "draft:60c4cd95-dd28-450e-a1c3-ab5c406bd53a:create"
+      },
+      "scope": {
+        "kind": "draft",
+        "topic_id": null,
+        "draft_id": "60c4cd95-dd28-450e-a1c3-ab5c406bd53a",
+        "trip_id": null,
+        "city": "成都",
+        "day_index": null,
+        "date": null,
+        "activity_id": null
+      },
+      "strength": "soft",
+      "status": "active",
+      "supersedes": []
+    },
+    {
+      "id": "req_5dcda1427b38553786e6903692bc95a4",
+      "text": "每天10点出发18点结束",
+      "key": "user_requirement",
+      "value": null,
+      "source": {
+        "kind": "user_explicit",
+        "ref": "draft:60c4cd95-dd28-450e-a1c3-ab5c406bd53a:create"
+      },
+      "scope": {
+        "kind": "draft",
+        "topic_id": null,
+        "draft_id": "60c4cd95-dd28-450e-a1c3-ab5c406bd53a",
+        "trip_id": null,
+        "city": "成都",
+        "day_index": null,
+        "date": null,
+        "activity_id": null
+      },
+      "strength": "soft",
+      "status": "active",
+      "supersedes": []
+    },
+    {
+      "id": "req_e443fb86a3f250ce8147bf4ac8a8c324",
+      "text": "步行",
+      "key": "user_requirement",
+      "value": null,
+      "source": {
+        "kind": "user_explicit",
+        "ref": "draft:60c4cd95-dd28-450e-a1c3-ab5c406bd53a:create"
+      },
+      "scope": {
+        "kind": "draft",
+        "topic_id": null,
+        "draft_id": "60c4cd95-dd28-450e-a1c3-ab5c406bd53a",
+        "trip_id": null,
+        "city": "成都",
+        "day_index": null,
+        "date": null,
+        "activity_id": null
+      },
+      "strength": "soft",
+      "status": "active",
+      "supersedes": []
+    },
+    {
+      "id": "req_9824b82838c95e49988e2fac12616d07",
+      "text": "人民公园和宽窄巷子都要去",
+      "key": "user_requirement",
+      "value": null,
+      "source": {
+        "kind": "user_explicit",
+        "ref": "draft:60c4cd95-dd28-450e-a1c3-ab5c406bd53a:create"
+      },
+      "scope": {
+        "kind": "draft",
+        "topic_id": null,
+        "draft_id": "60c4cd95-dd28-450e-a1c3-ab5c406bd53a",
+        "trip_id": null,
+        "city": "成都",
+        "day_index": null,
+        "date": null,
+        "activity_id": null
+      },
+      "strength": "soft",
+      "status": "active",
+      "supersedes": []
+    }
+  ],
+  "hashes_after": {
+    "conversation_candidate/commands.py": "01d31e610b5bbbfb0af34934200d8c9b7d16766cfd658cee8e4bda05a495e642",
+    "conversation_candidate/service.py": "beb01e1cc82492190bc43961d7ec9ac08c9b5f85a3bb87a56447e552f5df8c13",
+    "assistant_operation.py": "22fd8447065c9f35fe3818f31652dae47eb911198f52d5d64bd9d256f6cdb8f7",
+    "draft_promotion/preparation.py": "e97bf48dfde1dac2d956316006f9bfbb0c46f2753b832aa563bdf87155d05515",
+    "requirements.py": "15c5cbf43fb84303053cae4b07f29a4c8826407d37ed6a8eabb91f615185d829",
+    "drafts/contracts.py": "c997b55fd4051f6da2aefb0c65f0772992bf9a205e7c27554fb0f865f5a01982",
+    "assistant_capabilities.py": "461de59bfc0c2cab5b2b2b986bd5d298280c5cd1632509d05ff6c65f53beb7d6",
+    "flexible_creation.py": "12a2047503565335d9e7ecea727669cc8bce424d5a50efed98407bf0f5bb56ab",
+    "requirement_language.py": "61874ec1ac9ba8e20b8cd05d0f1151f6c9cd865095d5b797cdc098d1b11bf64f"
+  },
+  "source_unchanged": true,
+  "network_or_db_attempts": 0,
+  "synthetic_provider_calls": [
+    {
+      "type": "synthetic_search",
+      "query": "人民公园"
+    },
+    {
+      "type": "synthetic_search",
+      "query": "宽窄巷子"
+    },
+    {
+      "type": "synthetic_place",
+      "id": "00000000-0000-0000-0000-000000000001"
+    },
+    {
+      "type": "synthetic_place",
+      "id": "00000000-0000-0000-0000-000000000002"
+    },
+    {
+      "type": "synthetic_route"
+    }
+  ]
+}
