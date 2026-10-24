@@ -2,38 +2,28 @@
 
 ## Snapshot
 
-新任务：AI对话/我的安排重设计，分支codex/conversation-itinerary-redesign-20261023，沿用本隔离树，起点8dbf685。已对照正式6b298ca和三张用户参考图完成审计/设计，产品代码未改。设计及Astra Medium七项条件复核见docs/superpowers/specs/2026-10-23-conversation-itinerary-{design,astra-review}.md。设计已补齐条件，等待用户确认后实施；不是产品GO。
-
-2026-10-23 A2工程测量已冻结，产品NO-GO，未部署。隔离树E:/Study/RoamSync-reliability-a2-20261022，codex/reliability-a2-20261022。受测产品SHA=85d0bd5915a7d7168bf606b7f520fbae0ad6f237；后续仅报告/证据，产品diff为空。完整报告docs/ENGINEERING_A2_RELIABILITY_20261023.md。
+B阶段交付：基于A统一产品BASE89b81e8，独立树E:/Study/RoamSync-agent-read-b3-20261024，分支codex/agent-read-b3-20261024。最终app提交3f98303，测试观测修正b393bfd；后续文档/证据提交不改产品。整体NO-GO、未合并部署。交付报告docs/AGENT_B3_SCOPED_READ_DELIVERY_20261024.md含十项问题/新旧区分、真实流程、能力取舍、四批同题及缺陷。
 
 ## Current Freeze / Rehearsal Status
 
-新设计：Draft→PreparedPlan→同源图文摘要→同对象修改→明确保存后原子Validator/Accept→正式逐站图文时间轴。元数据不算候选；午餐/留白用现ArrangementItem；新协议与旧checkpoint显式版本分派；展示hash单向绑定；保存事务遵守原锁序/整体回滚。成都图库只有人民公园，宽窄巷子照片须另审核或无图降级。尚未实现、未做新真实验收，不得宣称完成。下一步先取得具体设计确认，再写实施计划/红绿反例。
+已实现：selected身份→同一服务端有界读取→日期/活动投影→保存值/原始理由目的与coverage。独立短RR READ ONLY事务形成一致提交态，max2/进程独立读连接、不占业务池第二条连接、5s准入、finally关闭；捕获后Trip/偏好标量检查仅是过期检测。原始理由/notes过期明确拒绝，不冒充无记录。入口capture错误沿AssistantToolError，回答阶段stale才带needs_retry。
 
-A已实施规划快照→事务外网络→重锁Trip/偏好双CAS；Worker唯一claim、写fencing、独立checkpoint、条件心跳/清理及故障退避；澄清答案/问题收据与claim原子持久化、体验元数据合并。B523bbd7严格迁移旧澄清，A85d0对不可安全恢复返回typed409并保留原问题/答案。无迁移；授权、版本、执行保护、Validator与Accept未放宽。旧新Worker禁止混跑。
-
-B prepared/operation/来源/日期/预算/optional兼容已接收，C路线连续性和整天留白预览已接收。仍有旧路由和多份条件投影，不声称全系统只解释一次。
-
-最终公开Edge链：咨询→两处真实地址[1]/[2]→步行补充丢目标→创建提案→真实确认→Run失败planner_requested_place_unresolved。确认前五类正式表0，确认后Trip1/Day1/Run1，Revision/Activity仍0，无法执行实际Accept/修改/异常恢复全链。刷新根路径回自由聊，Trip页保留空日与失败。1440/390/320无横溢出/pageerror。API18048/Worker/Web3048本次进程树已精确关闭，测试数据保留，未停共享15435。
-
-C题集哈希8bb1a83faa83659cf6ceb95745e29934922629012c176061b986dba23bef7da2。精确85d0独立树一次测量完成：严格可用2/20（有效2/19），原基本观察3/20含1有效critical；16产品失败、1取证无效未重跑。无配料来源断言食品符合忌口，关键门失败。20会话/23完整轮，五正式表无差异、Run/Revision0，不证明候选/Accept/503/409。A/B不读题面；只导入C公开报告a4532b2/聚合与哈希。题集已用，不得再称未见。首次准备SHA门失败与6文件EOL等价记录均保留。
+A只读审查发现并发混读/测试库守卫/业务池饱和风险，本版修复并有实际PG反例。A最终接收意见需单独保留，不等于合入/GO。本次无浏览器、真实场所事实或候选Accept验收，不借用A旧全量证明B新源码。
 
 ## Prior milestone baseline (before shadow split)
 
-统一BASE=f116ada6d6d46db7aeb48c29c8d5b45da379be00；上一轮整合6a65ece3未部署。正式HEAD仍6b298caddb79125991bfc5183ddeefc09029f31c。10月21日祖先/源码哈希与基线保全见ENGINEERING_A_AUDIT_20261022.md；旧保留题5/20是历史失败，不能替代新题。
+旧B树E:/Study/RoamSync-agent-operation-b2-20261022保留B2开发、C一次密封评测和B3读/候选审查。旧报告AGENT_QUALITY_B2_DELIVERY_20261023.md；B3旧树779766a为只读审计/22轮公开提案，43cfbb4/622f01e为候选权限窄审查。正式目录E:/Study/RoamSync仍唯一正式源，隔离开发不算发布。
 
 ## Prior verification
 
-MEASURED：最终combined-full-5主1713+专25，零失败/跳过，source_unchanged=true；Web243/类型/构建同输入通过。API/Worker各230输入、Web143输入/3产物全部匹配；停止取证容器仅build-only。受测444文件再核对无差异。API LF源码汇总584d075f687036f77023f9450ee8d600efcfe9cd4262e03539698a8dbe243a68。B fc2与A85d0 backend/app Git树均588a4013f8370bf4e71e87585923180da61eaf72。
+最终14文件254通过/0失败/跳过，app前后不变，见evidence/agent-b3-scoped-read-20261024/final-regression*.json/XML。24个新读取检查含真实PG中途提交、状态不递增Trip版本、偏好/理由过期、取消释放、业务小池占满和准入上限。测试查询观测从单engine提升到Engine类，原禁用断言保留；先前253/254失败及其他红例保留。所有历史子集重叠不可相加。
 
-同输入旧锁55P03、Graph跨网络事务、旧Worker陈旧写均保留红绿反例；真实PG接管至Accept、澄清故障恢复、A67/B84定向通过，套件重叠不可相加。B Astra独立批准85d0窄修，不是系统发布批准。full-2源码漂移和full-4实际optional失败保留。最终B公开开发16为7/16（旧2/16），仍2轮关键无证据步行保证；不是保留题或全局速度基准。
+相同六轮真实glm-5.3-flash：BASE1/6、41a4 5/6、4a8 6/6、最终3f 5/6。末版第2轮模型多填trip字段被严格schema拒绝，未回答；没有重采样或忽略字段刷分。四批原文/工具/来源/耗时/八表指纹及作者审查全保留，四独占新测试库不覆盖，正式表逐轮未变、无pending/Run/Revision。不是独立保留题；C2严格2/20（有效2/19）与旧公开7/16不变。
 
 ## Prior blockers (historical)
 
-正式3133文件、ignored env、容器ID/镜像不变，但外部运行环境中断后正式四容器Exited255；A未stop/start/deploy正式或写/迁移/清理正式DB。最新保全未连接DB，不冒称新内容指纹。测试容器start曾被policy拒绝，未绕过，后用已运行synthetic PG独占新库。
-
-OPEN：公网owner/Trip/session隔离P0；实际创建无候选；条件记住不等于场所满足条件；内部reference_source_id未全同步；部分personal条件范围/跨旅行后果未验；HTTP线程取消、统一观测与状态JSON增长。备份旧32表独立恢复曾通过，本轮无新生产dump。任何未来发布须重新备份恢复核验、停旧Worker、统一全链验收，不可自动恢复旧dump覆盖新数据。
+OPEN：无证据省力/忌口保证、selector格式稳定性、同行主体/长期范围、局部修改不同入口语义与未知事实支持。本轮字面日期投影非全部自然语言覆盖；+2读连接有成本，定向小池证据非多进程负载认证。新独立5～15轮任务评测缺失，禁止把开发六轮充数。不得据此宣布发布。
 
 ## Interview framing
 
-工程根因修复有真实反例，产品仍未达标。C结果已接收，完整四门槛失败，最终NO-GO；保持冻结，不针对该题继续修补。下一轮主线是POI/已有日程操作交接、复合目标与硬条件事实门。完整四门槛后才可评审部署。本轮无正式数据库写入、无Obsidian记录。
+最不聪明的是目标、对象、条件与证据交接脱节。实际改善已保存行程咨询，从1/6到最终5/6，仍有协议失败；中间6/6不是最终稳定性证明。没有新Agent/RAG/长期画像、迁移、正式3000/生产DB操作或Obsidian记录。后续优先做按要求/实体/事实类型的支持投影及冻结后的新独立连续任务验收。

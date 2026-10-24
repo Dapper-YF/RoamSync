@@ -1,6 +1,27 @@
 # RoamSync project state
 
-Last updated: 2026-10-23
+Last updated: 2026-10-24
+
+## B3 saved-trip read quality candidate — isolated, NO-GO (2026-10-24)
+
+Unified product BASE89b81e8. B isolated treeE:/Study/RoamSync-agent-read-b3-20261024,
+branchcodex/agent-read-b3-20261024. Product3f98303, observer-only testb393bfd.
+Server-validated selected day/activity reaches a shared bounded detached saved
+read; explicit day/date/name projection and coverage, saved values rendered
+without a prose model, historical rationale purpose/version preserved. Capture
+uses a separate short RR READ ONLY transaction, independent bounded read channel
+(max2 extra connections/process, no idle pool), closed before model/network;
+caller transaction not committed/rolled back/flushed by loader. Real PG covers
+interleaved status without Trip version, Trip/preferences change, stale rationale,
+cancel/cleanup and saturated two-connection business pool. No schema/writer/UI change.
+Final14-file254 pass/0 fail/skip, app unchanged. Public same six real-model turns:
+BASE1/6 ->41a4 5/6 ->4a8 6/6 ->final3f 5/6; all raw retained. Finalturn2 strict
+schema rejection of extra trip field is a real task failure, not a pass. Formal
+8-table fingerprints unchanged, no pending/Run/Revision. These are author-reviewed
+public development inputs, not new heldout. Historical B2 7/16 and C2 strict2/20
+(valid2/19) remain; no sealed question access or rerun, overallNO-GO. A reviews
+read-only; no merge/deploy/production3000/DB/Obsidian writes. Report:
+docs/AGENT_B3_SCOPED_READ_DELIVERY_20261024.md. Prior sections retain historical context.
 
 ## Conversation / itinerary redesign — design reviewed, implementation pending
 

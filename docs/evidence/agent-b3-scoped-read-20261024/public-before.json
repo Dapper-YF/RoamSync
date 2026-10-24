@@ -1,0 +1,1176 @@
+{
+  "split": "public-development",
+  "label": "baseline-89b81e8",
+  "source_commit": "ac91fc8f3a1b7836ae8d848041e4802e8679364a",
+  "app_sha256_before": "53151a3b57f11fd9251be38b5715613ef41ffbb62f989409a1a62f437324d592",
+  "fixture_sha256": "2d440d592b2642ef80b08fef47961c6352d3ffca6157ec4487aedfe2a48ebbc1",
+  "model": "glm-5.3-flash",
+  "provider": "glm",
+  "model_and_selector_real": true,
+  "synthetic_trip_state": true,
+  "external_provider_facts_seeded": false,
+  "before": {
+    "Trip": {
+      "count": 1,
+      "sha256": "714e1f8f49ff1783f02a651611963f39a0232cf6abbff9d81b947b0ad0872d8a"
+    },
+    "DayPlan": {
+      "count": 3,
+      "sha256": "763303fe56f17cfe3579de15ded7215c5d39c0fca6ef9af1fe7f853e969b195b"
+    },
+    "Activity": {
+      "count": 15,
+      "sha256": "e125213ac0b6e5123482da11c05b885b0205249e59976211353cc0fe670caf6f"
+    },
+    "TripPreferences": {
+      "count": 1,
+      "sha256": "7e01d7ad9dab5d243987a77078b14d22cf8926b41ed3bb157e029b5aec9e277d"
+    },
+    "TripArrangementItem": {
+      "count": 2,
+      "sha256": "8bf87516a3ce5c1c56809c0e9b859bca640347016fb5ef10f6a0df7ee3f9bb63"
+    },
+    "RouteLeg": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "PlanningRun": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "PlanRevision": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  },
+  "records": [
+    {
+      "turn": 1,
+      "user": "第三天已保存了哪些安排？备选和留白也单独说一下，不修改。",
+      "must": [
+        "Only day3 five activities",
+        "Separate optional and lunch",
+        "No formal mutation"
+      ],
+      "selection_supplied": false,
+      "raw": {
+        "assistant": "请确认每部分对应的地点或查询内容。",
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "b3-public",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": "70917707-1c85-4132-97f9-75d0fbd7729e",
+          "action_target": null,
+          "prefer_flexible": false,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {},
+            "preferences": [],
+            "requirements": [],
+            "diagnostics": [],
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "9e0661c2-28ed-41a1-be32-0eb9d998588f",
+          "answer_status": "complete",
+          "answer_attempts": 0,
+          "duration_ms": 4496,
+          "selection": {
+            "intent": "clarify",
+            "capabilities": [],
+            "reason_code": "missing_arguments",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 281
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 4481,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 4166
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 4481
+            }
+          ]
+        },
+        "id": "9e0661c2-28ed-41a1-be32-0eb9d998588f",
+        "user": "第三天已保存了哪些安排？备选和留白也单独说一下，不修改。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.55,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_missing_arguments"
+          ]
+        }
+      },
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 4.739,
+      "choices": [
+        {
+          "intent": "clarify",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "请确认每部分对应的地点或查询内容。",
+          "authorization_quote": "",
+          "reason_code": "missing_arguments",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": [],
+          "read_tasks": [],
+          "fact_kind": "other",
+          "creation": null,
+          "planning_draft": null,
+          "candidate_command": null
+        }
+      ],
+      "calls": [],
+      "model_outputs": [
+        {
+          "stage": "assistant_capabilities",
+          "status": "completed",
+          "visible_output": "{\"intent\":\"itinerary\",\"capabilities\":[\"itinerary\"],\"reason_code\":\"saved_state\",\"read_tasks\":[{\"source_quote\":\"第三天已保存了哪些安排？备选和留白也单独说一下，不修改。\",\"capabilities\":[\"itinerary\"],\"city\":\"开封\",\"query\":\"第三天已保存安排\"}]}"
+        }
+      ],
+      "formal_state": {
+        "Trip": {
+          "count": 1,
+          "sha256": "714e1f8f49ff1783f02a651611963f39a0232cf6abbff9d81b947b0ad0872d8a"
+        },
+        "DayPlan": {
+          "count": 3,
+          "sha256": "763303fe56f17cfe3579de15ded7215c5d39c0fca6ef9af1fe7f853e969b195b"
+        },
+        "Activity": {
+          "count": 15,
+          "sha256": "e125213ac0b6e5123482da11c05b885b0205249e59976211353cc0fe670caf6f"
+        },
+        "TripPreferences": {
+          "count": 1,
+          "sha256": "7e01d7ad9dab5d243987a77078b14d22cf8926b41ed3bb157e029b5aec9e277d"
+        },
+        "TripArrangementItem": {
+          "count": 2,
+          "sha256": "8bf87516a3ce5c1c56809c0e9b859bca640347016fb5ef10f6a0df7ee3f9bb63"
+        },
+        "RouteLeg": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "PlanningRun": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "PlanRevision": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      }
+    },
+    {
+      "turn": 2,
+      "user": "我选中的这个馆原来保存的停留时长是多少？只查。",
+      "must": [
+        "Resolve selected a13 not a03",
+        "Saved duration60 minutes",
+        "No generated venue visit-duration claim"
+      ],
+      "selection_supplied": true,
+      "raw": {
+        "assistant": "请确认每部分对应的地点或查询内容。",
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "b3-public",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": "70917707-1c85-4132-97f9-75d0fbd7729e",
+          "action_target": null,
+          "prefer_flexible": false,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {},
+            "preferences": [],
+            "requirements": [],
+            "diagnostics": [],
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "95de65ca-f929-4239-8878-f222ba6f6c7f",
+          "answer_status": "complete",
+          "answer_attempts": 0,
+          "duration_ms": 4916,
+          "selection": {
+            "intent": "clarify",
+            "capabilities": [],
+            "reason_code": "missing_arguments",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 76
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 4915,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 4811
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 4915
+            }
+          ]
+        },
+        "id": "95de65ca-f929-4239-8878-f222ba6f6c7f",
+        "user": "我选中的这个馆原来保存的停留时长是多少？只查。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.55,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_missing_arguments"
+          ]
+        }
+      },
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 5.11,
+      "choices": [
+        {
+          "intent": "clarify",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "请确认每部分对应的地点或查询内容。",
+          "authorization_quote": "",
+          "reason_code": "missing_arguments",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": [],
+          "read_tasks": [],
+          "fact_kind": "other",
+          "creation": null,
+          "planning_draft": null,
+          "candidate_command": null
+        }
+      ],
+      "calls": [],
+      "model_outputs": [
+        {
+          "stage": "assistant_capabilities",
+          "status": "completed",
+          "visible_output": "{\"intent\":\"itinerary\",\"capabilities\":[\"itinerary\"],\"city\":\"开封\",\"query\":\"同名展馆 停留时长\",\"clarification\":\"行程中有两个同名展馆（11月10日45分钟、11月12日60分钟），请确认您指的是哪一个\",\"reason_code\":\"saved_state\",\"read_tasks\":[{\"source_quote\":\"我选中的这个馆原来保存的停留时长是多少？只查。\",\"capabilities\":[\"itinerary\"],\"city\":\"开封\",\"query\":\"同名展馆 停留时长\"}]}"
+        }
+      ],
+      "formal_state": {
+        "Trip": {
+          "count": 1,
+          "sha256": "714e1f8f49ff1783f02a651611963f39a0232cf6abbff9d81b947b0ad0872d8a"
+        },
+        "DayPlan": {
+          "count": 3,
+          "sha256": "763303fe56f17cfe3579de15ded7215c5d39c0fca6ef9af1fe7f853e969b195b"
+        },
+        "Activity": {
+          "count": 15,
+          "sha256": "e125213ac0b6e5123482da11c05b885b0205249e59976211353cc0fe670caf6f"
+        },
+        "TripPreferences": {
+          "count": 1,
+          "sha256": "7e01d7ad9dab5d243987a77078b14d22cf8926b41ed3bb157e029b5aec9e277d"
+        },
+        "TripArrangementItem": {
+          "count": 2,
+          "sha256": "8bf87516a3ce5c1c56809c0e9b859bca640347016fb5ef10f6a0df7ee3f9bb63"
+        },
+        "RouteLeg": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "PlanningRun": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "PlanRevision": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      }
+    },
+    {
+      "turn": 3,
+      "user": "它为什么安排在这个时段？如果没保存理由就告诉我。",
+      "must": [
+        "Original accepted rationale unavailable",
+        "Do not invent reason or silently replace historical purpose with current advice"
+      ],
+      "selection_supplied": true,
+      "raw": {
+        "assistant": "请确认每部分对应的地点或查询内容。",
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "b3-public",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": "70917707-1c85-4132-97f9-75d0fbd7729e",
+          "action_target": null,
+          "prefer_flexible": false,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {},
+            "preferences": [],
+            "requirements": [],
+            "diagnostics": [],
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "72dcc853-97ac-4797-878c-aff307777a30",
+          "answer_status": "complete",
+          "answer_attempts": 0,
+          "duration_ms": 4192,
+          "selection": {
+            "intent": "clarify",
+            "capabilities": [],
+            "reason_code": "missing_arguments",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 49
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 4192,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 4124
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 4192
+            }
+          ]
+        },
+        "id": "72dcc853-97ac-4797-878c-aff307777a30",
+        "user": "它为什么安排在这个时段？如果没保存理由就告诉我。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.94,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_missing_arguments"
+          ]
+        }
+      },
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 4.312,
+      "choices": [
+        {
+          "intent": "clarify",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "请确认每部分对应的地点或查询内容。",
+          "authorization_quote": "",
+          "reason_code": "missing_arguments",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": [],
+          "read_tasks": [],
+          "fact_kind": "other",
+          "creation": null,
+          "planning_draft": null,
+          "candidate_command": null
+        }
+      ],
+      "calls": [],
+      "model_outputs": [
+        {
+          "stage": "assistant_capabilities",
+          "status": "completed",
+          "visible_output": "{\"intent\":\"itinerary\",\"capabilities\":[\"itinerary\"],\"reason_code\":\"saved_state\",\"read_tasks\":[{\"source_quote\":\"它为什么安排在这个时段？如果没保存理由就告诉我。\",\"capabilities\":[\"itinerary\"],\"city\":\"开封\",\"query\":\"活动时段安排理由\"}]}"
+        }
+      ],
+      "formal_state": {
+        "Trip": {
+          "count": 1,
+          "sha256": "714e1f8f49ff1783f02a651611963f39a0232cf6abbff9d81b947b0ad0872d8a"
+        },
+        "DayPlan": {
+          "count": 3,
+          "sha256": "763303fe56f17cfe3579de15ded7215c5d39c0fca6ef9af1fe7f853e969b195b"
+        },
+        "Activity": {
+          "count": 15,
+          "sha256": "e125213ac0b6e5123482da11c05b885b0205249e59976211353cc0fe670caf6f"
+        },
+        "TripPreferences": {
+          "count": 1,
+          "sha256": "7e01d7ad9dab5d243987a77078b14d22cf8926b41ed3bb157e029b5aec9e277d"
+        },
+        "TripArrangementItem": {
+          "count": 2,
+          "sha256": "8bf87516a3ce5c1c56809c0e9b859bca640347016fb5ef10f6a0df7ee3f9bb63"
+        },
+        "RouteLeg": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "PlanningRun": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "PlanRevision": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      }
+    },
+    {
+      "turn": 4,
+      "user": "第一天同名展馆的保存时长也查一下，不调整。",
+      "must": [
+        "Day1 named activity a03 duration45",
+        "Do not carry previous page selection",
+        "No mutation"
+      ],
+      "selection_supplied": false,
+      "raw": {
+        "assistant": "请确认每部分对应的地点或查询内容。",
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "b3-public",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": "70917707-1c85-4132-97f9-75d0fbd7729e",
+          "action_target": null,
+          "prefer_flexible": false,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {},
+            "preferences": [],
+            "requirements": [],
+            "diagnostics": [],
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "3ed464dd-4b48-4563-8d5b-3dc15aaec30b",
+          "answer_status": "complete",
+          "answer_attempts": 0,
+          "duration_ms": 2502,
+          "selection": {
+            "intent": "clarify",
+            "capabilities": [],
+            "reason_code": "missing_arguments",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 47
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 2501,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 2436
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 2501
+            }
+          ]
+        },
+        "id": "3ed464dd-4b48-4563-8d5b-3dc15aaec30b",
+        "user": "第一天同名展馆的保存时长也查一下，不调整。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.55,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_missing_arguments"
+          ]
+        }
+      },
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 2.611,
+      "choices": [
+        {
+          "intent": "clarify",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "请确认每部分对应的地点或查询内容。",
+          "authorization_quote": "",
+          "reason_code": "missing_arguments",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": [],
+          "read_tasks": [],
+          "fact_kind": "other",
+          "creation": null,
+          "planning_draft": null,
+          "candidate_command": null
+        }
+      ],
+      "calls": [],
+      "model_outputs": [
+        {
+          "stage": "assistant_capabilities",
+          "status": "completed",
+          "visible_output": "{\"intent\":\"itinerary\",\"capabilities\":[\"itinerary\"],\"reason_code\":\"saved_state\",\"read_tasks\":[{\"source_quote\":\"第一天同名展馆的保存时长也查一下，不调整。\",\"capabilities\":[\"itinerary\"],\"city\":\"开封\",\"query\":\"同名展馆 保存时长\"}]}"
+        }
+      ],
+      "formal_state": {
+        "Trip": {
+          "count": 1,
+          "sha256": "714e1f8f49ff1783f02a651611963f39a0232cf6abbff9d81b947b0ad0872d8a"
+        },
+        "DayPlan": {
+          "count": 3,
+          "sha256": "763303fe56f17cfe3579de15ded7215c5d39c0fca6ef9af1fe7f853e969b195b"
+        },
+        "Activity": {
+          "count": 15,
+          "sha256": "e125213ac0b6e5123482da11c05b885b0205249e59976211353cc0fe670caf6f"
+        },
+        "TripPreferences": {
+          "count": 1,
+          "sha256": "7e01d7ad9dab5d243987a77078b14d22cf8926b41ed3bb157e029b5aec9e277d"
+        },
+        "TripArrangementItem": {
+          "count": 2,
+          "sha256": "8bf87516a3ce5c1c56809c0e9b859bca640347016fb5ef10f6a0df7ee3f9bb63"
+        },
+        "RouteLeg": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "PlanningRun": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "PlanRevision": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      }
+    },
+    {
+      "turn": 5,
+      "user": "第三天以后再讨论。现在只列第二天正式安排，不改。",
+      "must": [
+        "Only day2 five activities",
+        "No day3 or previous selection leakage"
+      ],
+      "selection_supplied": false,
+      "raw": {
+        "assistant": "已保存的安排：\n第二天（11月11日）目前保存了五项正式安排，每项停留都是45分钟：\n\n- 09:00 合成地点6\n- 10:00 合成地点7\n- 11:00 合成地点8\n- 12:00 合成地点9\n- 13:00 合成地点10\n\n都是已确认的正式安排，没有备选或留白项落在这一天。以上只是列出当前保存状态，未做任何调整。",
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "b3-public",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": "70917707-1c85-4132-97f9-75d0fbd7729e",
+          "action_target": null,
+          "prefer_flexible": false,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {},
+            "preferences": [],
+            "requirements": [],
+            "diagnostics": [],
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [],
+        "read_tools": {
+          "tasks": [
+            {
+              "source_quote": "现在只列第二天正式安排，不改。",
+              "capabilities": [
+                "itinerary"
+              ],
+              "status": "complete",
+              "validated_arguments": {
+                "city": "",
+                "query": "第二天正式安排",
+                "category": "attraction",
+                "names": [],
+                "origin": "",
+                "destination": "",
+                "mode": "unknown",
+                "near_name": "",
+                "fact_kind": "other"
+              },
+              "read_tools": {},
+              "resolved_facts": []
+            }
+          ]
+        },
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "437df1a7-5125-4132-a68f-efbf1f5da3f0",
+          "answer_status": "complete",
+          "answer_attempts": 1,
+          "duration_ms": 4960,
+          "selection": {
+            "intent": "itinerary",
+            "capabilities": [
+              "itinerary"
+            ],
+            "reason_code": "saved_state",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 73
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 1550,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 1454
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 1550
+            },
+            {
+              "stage": "companion",
+              "status": "running",
+              "elapsed_ms": 1636
+            },
+            {
+              "stage": "answer",
+              "status": "running",
+              "elapsed_ms": 1791
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 4936,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 3145
+            },
+            {
+              "stage": "answer",
+              "status": "completed",
+              "elapsed_ms": 4936
+            },
+            {
+              "stage": "companion",
+              "status": "completed",
+              "elapsed_ms": 4960
+            }
+          ]
+        },
+        "id": "437df1a7-5125-4132-a68f-efbf1f5da3f0",
+        "user": "第三天以后再讨论。现在只列第二天正式安排，不改。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.55,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_saved_state"
+          ]
+        }
+      },
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 5.057,
+      "choices": [
+        {
+          "intent": "itinerary",
+          "capabilities": [
+            "itinerary"
+          ],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "",
+          "authorization_quote": "",
+          "reason_code": "saved_state",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": [],
+          "read_tasks": [
+            {
+              "source_quote": "现在只列第二天正式安排，不改。",
+              "capabilities": [
+                "itinerary"
+              ],
+              "city": "",
+              "query": "第二天正式安排",
+              "category": "attraction",
+              "names": [],
+              "origin": "",
+              "destination": "",
+              "mode": "unknown",
+              "nearby": false,
+              "near_name": "",
+              "fact_kind": "other"
+            }
+          ],
+          "fact_kind": "other",
+          "creation": null,
+          "planning_draft": null,
+          "candidate_command": null
+        }
+      ],
+      "calls": [],
+      "model_outputs": [
+        {
+          "stage": "assistant_capabilities",
+          "status": "completed",
+          "visible_output": "{\"intent\":\"itinerary\",\"capabilities\":[\"itinerary\"],\"reason_code\":\"saved_state\",\"read_tasks\":[{\"source_quote\":\"现在只列第二天正式安排，不改。\",\"capabilities\":[\"itinerary\"],\"query\":\"第二天正式安排\"}]}"
+        },
+        {
+          "stage": "companion_provider",
+          "status": "completed",
+          "visible_output": "{\"analysis_summary\":\"读取已保存行程中第二天（11月11日）的五项正式安排，仅陈述，不修改。\",\"response_text\":\"第二天（11月11日）目前保存了五项正式安排，每项停留都是45分钟：\\n\\n- 09:00 合成地点6\\n- 10:00 合成地点7\\n- 11:00 合成地点8\\n- 12:00 合成地点9\\n- 13:00 合成地点10\\n\\n都是已确认的正式安排，没有备选或留白项落在这一天。以上只是列出当前保存状态，未做任何调整。\",\"suggestions\":[],\"visual_subjects\":[]}"
+        }
+      ],
+      "formal_state": {
+        "Trip": {
+          "count": 1,
+          "sha256": "714e1f8f49ff1783f02a651611963f39a0232cf6abbff9d81b947b0ad0872d8a"
+        },
+        "DayPlan": {
+          "count": 3,
+          "sha256": "763303fe56f17cfe3579de15ded7215c5d39c0fca6ef9af1fe7f853e969b195b"
+        },
+        "Activity": {
+          "count": 15,
+          "sha256": "e125213ac0b6e5123482da11c05b885b0205249e59976211353cc0fe670caf6f"
+        },
+        "TripPreferences": {
+          "count": 1,
+          "sha256": "7e01d7ad9dab5d243987a77078b14d22cf8926b41ed3bb157e029b5aec9e277d"
+        },
+        "TripArrangementItem": {
+          "count": 2,
+          "sha256": "8bf87516a3ce5c1c56809c0e9b859bca640347016fb5ef10f6a0df7ee3f9bb63"
+        },
+        "RouteLeg": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "PlanningRun": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "PlanRevision": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      }
+    },
+    {
+      "turn": 6,
+      "user": "刚才没有修改吧？再查我选中活动的日期和时长。",
+      "must": [
+        "Saved day3 date2026-11-12 and duration60",
+        "Formal fingerprints unchanged",
+        "No pending write or planning Run"
+      ],
+      "selection_supplied": true,
+      "raw": {
+        "assistant": "请确认每部分对应的地点或查询内容。",
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "b3-public",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": "70917707-1c85-4132-97f9-75d0fbd7729e",
+          "action_target": null,
+          "prefer_flexible": false,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {},
+            "preferences": [],
+            "requirements": [],
+            "diagnostics": [],
+            "withdrawn": {}
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "30369584-e7d8-482b-a9e3-f755b42b2687",
+          "answer_status": "complete",
+          "answer_attempts": 0,
+          "duration_ms": 3839,
+          "selection": {
+            "intent": "clarify",
+            "capabilities": [],
+            "reason_code": "missing_arguments",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 45
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 3838,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 3775
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 3838
+            }
+          ]
+        },
+        "id": "30369584-e7d8-482b-a9e3-f755b42b2687",
+        "user": "刚才没有修改吧？再查我选中活动的日期和时长。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.55,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": true,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": true,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_missing_arguments"
+          ]
+        }
+      },
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 3.966,
+      "choices": [
+        {
+          "intent": "clarify",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "请确认每部分对应的地点或查询内容。",
+          "authorization_quote": "",
+          "reason_code": "missing_arguments",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": [],
+          "read_tasks": [],
+          "fact_kind": "other",
+          "creation": null,
+          "planning_draft": null,
+          "candidate_command": null
+        }
+      ],
+      "calls": [],
+      "model_outputs": [
+        {
+          "stage": "assistant_capabilities",
+          "status": "completed",
+          "visible_output": "{\"intent\":\"itinerary\",\"capabilities\":[\"itinerary\"],\"city\":\"开封\",\"query\":\"同名展馆\",\"names\":[\"同名展馆\"],\"reason_code\":\"saved_state\",\"read_tasks\":[{\"source_quote\":\"再查我选中活动的日期和时长。\",\"capabilities\":[\"itinerary\"],\"city\":\"开封\",\"query\":\"同名展馆\",\"names\":[\"同名展馆\"]}]}"
+        }
+      ],
+      "formal_state": {
+        "Trip": {
+          "count": 1,
+          "sha256": "714e1f8f49ff1783f02a651611963f39a0232cf6abbff9d81b947b0ad0872d8a"
+        },
+        "DayPlan": {
+          "count": 3,
+          "sha256": "763303fe56f17cfe3579de15ded7215c5d39c0fca6ef9af1fe7f853e969b195b"
+        },
+        "Activity": {
+          "count": 15,
+          "sha256": "e125213ac0b6e5123482da11c05b885b0205249e59976211353cc0fe670caf6f"
+        },
+        "TripPreferences": {
+          "count": 1,
+          "sha256": "7e01d7ad9dab5d243987a77078b14d22cf8926b41ed3bb157e029b5aec9e277d"
+        },
+        "TripArrangementItem": {
+          "count": 2,
+          "sha256": "8bf87516a3ce5c1c56809c0e9b859bca640347016fb5ef10f6a0df7ee3f9bb63"
+        },
+        "RouteLeg": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "PlanningRun": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "PlanRevision": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      }
+    }
+  ],
+  "config_fingerprint": "cd617403093c9f38be0773b3e011575e71a2c6bdb6653da18055dc2d6d9b44c1",
+  "after": {
+    "Trip": {
+      "count": 1,
+      "sha256": "714e1f8f49ff1783f02a651611963f39a0232cf6abbff9d81b947b0ad0872d8a"
+    },
+    "DayPlan": {
+      "count": 3,
+      "sha256": "763303fe56f17cfe3579de15ded7215c5d39c0fca6ef9af1fe7f853e969b195b"
+    },
+    "Activity": {
+      "count": 15,
+      "sha256": "e125213ac0b6e5123482da11c05b885b0205249e59976211353cc0fe670caf6f"
+    },
+    "TripPreferences": {
+      "count": 1,
+      "sha256": "7e01d7ad9dab5d243987a77078b14d22cf8926b41ed3bb157e029b5aec9e277d"
+    },
+    "TripArrangementItem": {
+      "count": 2,
+      "sha256": "8bf87516a3ce5c1c56809c0e9b859bca640347016fb5ef10f6a0df7ee3f9bb63"
+    },
+    "RouteLeg": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "PlanningRun": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "PlanRevision": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  },
+  "app_sha256_after": "53151a3b57f11fd9251be38b5715613ef41ffbb62f989409a1a62f437324d592",
+  "source_unchanged": true,
+  "formal_state_unchanged": true
+}
