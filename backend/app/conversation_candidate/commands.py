@@ -57,7 +57,7 @@ def validate_command(command, message):
         prefix = r"(?:(?:请|麻烦(?:你)?|现在|就|直接|确认|同意)*(?:帮我|替我|给我|请你)?)"
         action = r"(?:采用并保存|保存|采用)" if command.action == "adopt" else r"(?:放弃|撤回|丢弃|取消)"
         target = r"(?:(?:当前的?|这份|这个|这|上述|刚才的?)(?:候选|安排|方案|行程|计划))?"
-        destination = r"(?:到我的安排)?(?:吧|即可|就行|一下)?"
+        destination = (r"(?:并保存)?" if command.action == 'adopt' else '') + r"(?:到我的安排)?(?:吧|即可|就行|一下)?"
         approved = [clause for clause in clauses if (quote in clause or clause in quote)
             and re.fullmatch(prefix+action+target+destination, clause)]
         neutral = {"可以", "好的", "好", "确认", "我确认", "同意", "没问题", "就这样", "就这样安排", "按这个来"}
@@ -93,7 +93,11 @@ def apply_patches(plan, command, message):
         raise ValueError("一个活动不能同时应用两项时长。")
     from app.assistant_capabilities import affirmative_action_source, affirmative_entity_source
     clauses = [part.strip() for part in re.split(r"[，,；;。!?！？\n]|但是|但现在|而现在", message) if part.strip()]
-    changes = [clause for clause in clauses if affirmative_action_source(message, clause, CHANGE_VERBS)]
+    # A directive naming only the working copy selects the mutation surface;
+    # it proposes no additional activity operation. Unknown targets/quantities
+    # remain obligations and cannot disappear from a compound request.
+    changes = [clause for clause in clauses if affirmative_action_source(message, clause, CHANGE_VERBS)
+        and not re.fullmatch(r'(?:先|这次)?(?:只|仅)(?:改|修改|调整)(?:当前)?(?:候选|草案|方案)', clause)]
     patch_clauses = {patch.source_quote.strip().rstrip("。.!！?？") for patch in command.patches}
     if any(clause not in patch_clauses for clause in changes):
         raise ValueError("本轮还有未处理的变更，整项修改尚未生效。请先核对所有变化，再单独确认保存。")

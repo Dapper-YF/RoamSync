@@ -42,7 +42,9 @@ def candidate_presentation(plan):
     narrative += [(w["day_date"], w["start_time"] or "", f"{w['start_time']}—{w['end_time']}留作{w['label']}")
         for w in windows if w["start_time"] and w["end_time"]]
     summary = "我建议" + "；".join(row[2] for row in sorted(narrative)) + "。" if narrative else "这份安排保留了指定的空闲时段。"
-    summary += "时间按这次候选分配，交通采用地图估计；实时营业和现场条件仍需核对。"
+    summary += '时间按这次候选分配，' + ('交通采用地图估计' if plan.routes else '尚未获得可用路线') + '；实时营业和现场条件仍需核对。'
+    if plan.coverage.blockers:
+        summary += '当前候选还不能采用：' + '；'.join(plan.coverage.blockers)
     result = {"protocol_version": 2, "draft_id": str(plan.draft_id), "draft_version": plan.draft_version,
         "prepared_id": str(plan.id), "prepared_hash": plan.prepared_hash,
         "stage": "needs_input" if plan.coverage.blockers else "ready",

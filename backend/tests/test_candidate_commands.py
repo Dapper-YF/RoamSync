@@ -46,6 +46,18 @@ def test_save_cannot_borrow_future_quoted_or_negated_authority(message, quote):
 
 def test_exact_current_save_is_authorized():
     validate_command(CandidateCommand(action="adopt", source_quote="采用并保存这份安排"), "采用并保存这份安排")
+    validate_command(CandidateCommand(action="adopt", source_quote="采用这份候选并保存"), "采用这份候选并保存。")
+
+
+def test_preview_surface_clause_is_not_a_second_activity_mutation():
+    text = '人民公园改成120分钟，先只改候选，其他活动和午餐保持不变'
+    command = CandidateCommand(action='modify', source_quote=text, patches=[{
+        'item_ref': 'park', 'source_quote': '人民公园改成120分钟', 'duration_minutes': 120}])
+    result = apply_patches(plan(), command, text)
+    assert result.days[0].items[0].duration_minutes == 120
+    assert result.days[0].items[1:] == plan().days[0].items[1:]
+    with pytest.raises(ValueError):
+        apply_patches(plan(), command, text + '，再改午餐为30分钟')
 
 
 def test_new_candidate_operation_cannot_request_legacy_plan_or_alias_mode():

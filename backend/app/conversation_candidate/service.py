@@ -39,8 +39,7 @@ def proposed_name_matches(name, reference, city, source):
         base, address = decorated.groups()
         if address not in source or address not in (reference.get("address") or ""):
             return False
-    return (requested_place_matches(SimpleNamespace(name=base, aliases=[]), reference.get("name", ""), city)
-        or requested_place_matches(SimpleNamespace(name=reference.get("name", ""), aliases=[]), base, city))
+    return requested_place_matches(SimpleNamespace(name=reference.get("name", ""), aliases=reference.get('aliases', [])), base, city)
 
 
 async def resolve_plan(plan, city, port, history, message):
