@@ -100,7 +100,7 @@ def resolve_suggestions(text: str, state: ConversationState) -> tuple[list[Compa
         # is not a reference to an unresolved saved suggestion. This does not
         # resolve a place or create suggestion identity from the subject.
         named_subject = bool(re.match(r"^(?!我|你|他|她|它|这|那)[\u4e00-\u9fff]{2,8}它(?:是|有|适合)", text))
-        if not refs and not named_subject and (state.current_batch or '建议' in text) and re.search(r"它(?!们)|那个地方|那条建议|这个建议", text):
+        if not refs and not named_subject and re.search(r"它(?!们)|那个地方|那条建议|这个建议", text):
             focus = state.focused_refs or (state.current_batch if len(state.current_batch) == 1 else [])
             if len(focus) != 1:
                 return [], [InformationGap(code="ambiguous_suggestion", message="你说的是哪一条建议？可以告诉我序号。")]

@@ -79,7 +79,8 @@ def test_task_source_and_argument_provenance_are_checked():
         decision = compound()
         decision.read_tasks[1] = decision.read_tasks[1].model_copy(update={field: value})
         result = capabilities.validate_decision(decision, text, [], ContextEnvelope())
-        assert result.intent == "clarify"
+        assert result.read_tasks[0].capabilities == ['poi','route']
+        assert not result.read_tasks[1].capabilities and result.read_tasks[1]._clarification
 
 
 @pytest.mark.parametrize("changes", [{"names":["何园"], "query":"何园"},
@@ -89,7 +90,8 @@ def test_task_cannot_borrow_other_current_clause_or_invent_query(changes):
     decision.read_tasks[1] = decision.read_tasks[1].model_copy(update=changes)
     text = "查扬州何园到个园的驾车路线；另外查瘦西湖的地址"
     result = capabilities.validate_decision(decision, text, [], ContextEnvelope())
-    assert result.intent == "clarify"
+    assert result.read_tasks[0].capabilities == ['poi','route']
+    assert not result.read_tasks[1].capabilities and result.read_tasks[1]._clarification
 
 
 def test_hypothetical_fact_task_cannot_upgrade_direct_consultation():

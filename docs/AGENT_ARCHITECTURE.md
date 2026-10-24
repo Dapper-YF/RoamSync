@@ -13,6 +13,11 @@ zero-walking or final-bill guarantees. The existing bounded answer repair and
 lexical guard are safeguards, not exhaustive semantic proof.
 ReadTask private clarification markers retain independent valid peers across
 validation/dispatch; the model cannot supply these private markers through JSON.
+ReadTask may reference a request-local CURRENT user_source_spans entry. The
+server restores its exact literal quote, consumes the transient source_ref once,
+then performs the same argument/identity/polarity checks. Historical span IDs
+cannot authorize current reads. A completely blocked batch becomes one targeted
+clarification; mixed batches retain valid direct/lookup siblings.
 
 Saved-trip modifications use the existing PlanningRun/Revision/Validator/Accept
 pipeline; ordinary chat cannot invoke the direct arrangement item form writer.

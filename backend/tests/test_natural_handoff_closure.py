@@ -150,7 +150,7 @@ def test_wrong_choice_authorization_returns_422_without_mutation(sample):
     asyncio.run(scenario())
 
 
-def test_reaffirmed_optional_choice_is_a_bounded_edit_not_planning(sample):
+def test_chat_optional_choice_cannot_mutate_saved_item_without_preview(sample):
     from test_flexible_arrangement import create_item
     async def scenario():
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url='http://test') as c:
@@ -164,5 +164,7 @@ def test_reaffirmed_optional_choice_is_a_bounded_edit_not_planning(sample):
             assert response.json()['messages'][-1]['tool']=='arrangement_edit'
             assert response.json()['messages'][-1]['run_id'] is None
             state=(await c.get(f'/api/v1/trips/{sample.trip_id}/arrangement-items')).json()
-            assert state['items'][0]['kind']=='optional' and state['items'][0]['activity_id'] is None
+            assert state['items'][0]['kind']=='selected' and state['items'][0]['activity_id'] is None
+            assert state['version'] == 2
+            assert '未改变' in response.json()['messages'][-1]['assistant']
     asyncio.run(scenario())

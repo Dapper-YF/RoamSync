@@ -2,6 +2,24 @@
 
 Status: IN PROGRESS, product remains NO-GO until all gates pass.
 
+## Pre-unseal engineering corrections
+
+Freeze candidate ab2c527: full backend 1892 pass/9 fail, dedicated38 pass;
+Web263 pass/2 five-second timeouts under maximal parallel load, type/build pass.
+The first browser comparison returns one verified place and a task-source gap;
+the incomplete chain is retained, not combined with another run as success.
+Sealed cases remained unopened. Full raw logs: batch6/full-1 and runtime/browser-ui.
+
+Actual dispatch defects fixed: legacy clarify+known read must execute its known
+capability; a fully blocked batch must clarify without reopening facts; bare
+planning verb 排 shares preview cancellation scope; truly unbound singular
+pronouns still clarify. Historical whole-batch assertions were updated to test
+blocked child safety plus successful independent sibling. The old optional-item
+chat test now checks unchanged formal version instead of expecting direct write.
+Read task literal span IDs reuse the same source catalog as candidate generation,
+with current-message provenance and no new authority. The next full freeze is
+distinct; all original failures remain part of the evidence package.
+
 ## Batch5 — scoped evidence support and partial task completion
 
 MEASURED before: external batch5-before-guard.json shows four unsupported

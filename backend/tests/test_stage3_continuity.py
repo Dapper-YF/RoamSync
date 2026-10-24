@@ -39,6 +39,18 @@ def test_named_identity_operation_cannot_fall_back_to_unverified_prose_when_caps
     assert valid.read_tasks[0].capabilities == ['poi']
 
 
+def test_read_span_binds_literal_current_user_data_without_history_authority():
+    text = '查扬州个园的位置，再查何园的位置'
+    task = ReadTask(source_quote='模型改写',source_ref='user_0_span_0', capabilities=['poi'],city='扬州',names=['个园'])
+    valid = validate_decision(CapabilityDecision(intent='lookup',reason_code='place_identity',read_tasks=[task]),
+        text, [], ContextEnvelope())
+    assert valid.read_tasks[0].source_quote == '查扬州个园的位置'
+    old = task.model_copy(update={'source_ref':'user_0_span_0'})
+    invalid = validate_decision(CapabilityDecision(intent='lookup',reason_code='place_identity',read_tasks=[old]),
+        text, [{'user':'查扬州个园的位置'}], ContextEnvelope())
+    assert invalid.intent == 'clarify'
+
+
 def test_route_result_order_does_not_reorder_comparison():
     ps = [{'place_id': '00000000-0000-0000-0000-00000000000'+str(i),
         'name': n, 'city': '扬州'} for i, n in enumerate(['个园', '何园'], 1)]
