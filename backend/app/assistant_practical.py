@@ -120,10 +120,13 @@ def previous_reads(history):
         route=tools.get("route") or {}
         if route.get("status")=="available" and isinstance(route.get("result"),dict):
             output.append({"kind":"route","message_id":turn.get("id"),"result":route["result"],
-                "places":[{"name":c["place"]["name"],"city":c["place"]["city"]} for c in turn.get("place_cards",[])],
+                'binding':route.get('binding'),
+                "places":[{k:c['place'].get(k) for k in ('name','city','place_id')} for c in turn.get("place_cards",[])],
                 "semantics":"previous_provider_estimate_not_live_or_on_site_walking"})
         for source in (tools.get("web_search") or {}).get("sources",[]):
-            output.append({"kind":"source",**{k:source[k] for k in ("title","excerpt","read_level","retrieved_at","place_id") if k in source}})
+            output.append({"kind":"source", 'message_id':turn.get('id'),
+                'places':[{'place_id':source.get('place_id')}] if source.get('place_id') else [],
+                **{k:source[k] for k in ("title","excerpt","read_level","retrieved_at","expires_at","place_id") if k in source}})
     return output[-8:]
 
 

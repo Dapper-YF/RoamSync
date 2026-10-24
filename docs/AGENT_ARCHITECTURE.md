@@ -2,6 +2,18 @@
 
 ## Stage3 shared read projection (2026-10-24; isolated candidate)
 
+Requirement support is a server-owned read_tools receipt, never a Planner result
+or adoption authority. State requested/related_information/supported/
+insufficient_or_stale is accompanied by source, scope, bound place identity,
+expiry, observed coverage and missing link. A route estimate is supported only
+when ordered endpoints and explicitly requested mode match the route adapter's
+own binding and freshness. No card-union or missing mode may certify support.
+Food, accessibility and spending references remain insufficient for whole-meal,
+zero-walking or final-bill guarantees. The existing bounded answer repair and
+lexical guard are safeguards, not exhaustive semantic proof.
+ReadTask private clarification markers retain independent valid peers across
+validation/dispatch; the model cannot supply these private markers through JSON.
+
 Saved-trip modifications use the existing PlanningRun/Revision/Validator/Accept
 pipeline; ordinary chat cannot invoke the direct arrangement item form writer.
 The selector omits unavailable candidate/planning contracts by current object

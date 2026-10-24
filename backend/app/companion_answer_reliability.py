@@ -39,7 +39,7 @@ def _asserted(pattern, sentence):
     subject = r"(?:这段|这里|这家店|这些店|这条路|它|其|是否|能够|能|为|会|实际|现场|完全|\s){0,6}"
     for match in re.finditer(pattern, sentence):
         prefix, suffix = sentence[:match.start()], sentence[match.end():]
-        scoped = re.search(r"(?:(?:不|不能|无法|尚未|未能)(?:保证|确认|证明|核实)|"
+        scoped = re.search(r"(?:(?:不|不能|无法|尚未|未能)(?:保证|确认|证明|核实|推出|推断|据此断定)|不代表|不意味着|不足以(?:证明|说明)|"
             r"需要(?:另行)?核实|(?:若|如果|假如)(?:经)?(?:确认|核实|查询|实测)|是否)" + subject + r"$", prefix)
         question = re.fullmatch(r"(?:是否)?(?:准确|可靠|可行|属实|能到|可达|能否到达)?(?:吗|需要核实|仍需确认|尚未核实)[。！？!?\s]*", suffix)
         if not scoped and not question:
@@ -57,6 +57,14 @@ def _unsupported_advice_clause(sentence, request):
         issues.append("output_unverified_travel_measurement")
     if _asserted(r"顺路|(?:步行|走路).{0,12}(?:轻松|不累|方便|可达|就到)|(?:路面|地势|道路).{0,8}平坦|(?:完全|很|非常|比较|相对|十分|更)?适合.{0,8}(?:老人|老年人|轮椅|推车)|(?:很近|相邻|隔壁|挨着).{0,18}(?:一起|一天|串|步行|走)|(?:半天|一天|\d+小时)(?:就|也)?(?:足够|够了|能逛完)", sentence):
         issues.append("output_unverified_route_or_effort")
+    if _asserted(r'(?:完全|全程|一点也)?(?:不(?:用|必|需要)|无需)(?:再)?(?:走路|步行)|(?:门口|入口|出口|地铁站).{0,12}(?:很近|不远|就到|方便)', sentence):
+        issues.append('output_unverified_access_or_effort')
+    if _asserted(r'(?:整餐|这一餐|整顿|全部菜|这顿饭)(?:都|均|肯定|一定|保证|会|能|可以|完全|是|绝对|很|\s){0,6}(?:不辣|无辣|没辣椒|没有辣椒)|(?:肯定|保证|一定|都|均)(?:是|会|能|可以|完全|绝对|很|\s){0,3}不辣', sentence):
+        issues.append('output_unverified_whole_meal')
+    if re.search(r'清汤|原味|白汤', sentence) and _asserted(r'不辣的?(?:汤|锅底)|不(?:含|加|放)辣椒|完全无辣', sentence):
+        issues.append('output_unverified_menu_ingredients')
+    if _asserted(r'(?:账单|结算|总价|实际花费).{0,12}(?:一定|肯定|保证|不会|不超过|只要|就是)', sentence):
+        issues.append('output_unverified_final_bill')
     if _asserted(r"(?:口碑|评价).{0,8}(?:好|稳定|不错|可靠)|(?:出品|味道).{0,6}(?:稳定|有保障)|(?:都|均|一定|肯定)(?:能|可以|有|提供|供应).{0,16}(?:清汤|菌汤|鸳鸯|不辣|素食)|(?:清汤).{0,20}(?:辣锅|红锅).{0,8}(?:舀|兑)", sentence):
         issues.append("output_unverified_merchant_attribute")
     if re.search(r"不吃辣|不能吃辣", request) and _asserted(r"(?:直接点|点全|可以点|建议.{0,6})(?:鸳鸯|清油|微辣)|(?:红汤|红锅).{0,15}(?:兑淡|加汤)", sentence):
@@ -99,7 +107,11 @@ def control_model_text(text: str, request: str) -> TextControl:
         if FORMAL_WRITE.search(clause) and re.search(r"行程|旅行|安排|计划|活动", clause + request):
             reasons.append("unexecuted_formal_write_claim")
         caveat = bool(re.search(r"不能保证|无法保证|不保证|无法确认|尚未确认|需要核实|需确认|不能确认", clause))
-        if MONEY.search(clause) and not (re.search(r"预算|预留|控制在|支出上限",clause)
+        negated_bill = re.search(r'(?:不代表|不足以(?:证明|说明)|不能(?:证明|推出|确认))\s*(?:这次|最后|实际)?(?:账单|结算|总价|实际花费)', clause)
+        negated_bill = negated_bill and all(m.start() >= negated_bill.end() and
+            re.fullmatch(r'(?:一定|肯定|会|不会|不超过|只要|就是|为|是|不到|超出|超过|[的这次最后实际\s])*',
+                clause[negated_bill.end():m.start()]) for m in MONEY.finditer(clause))
+        if MONEY.search(clause) and not negated_bill and not (re.search(r"预算|预留|控制在|支出上限",clause)
             and not re.search(r"票价|售价|收费|只需|只要|每人|茶位费",clause)):
             reasons.append("output_unverified_price")
         if QUEUE.search(clause) and not caveat: reasons.append("output_unverified_queue")

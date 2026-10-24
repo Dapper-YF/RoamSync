@@ -5,7 +5,7 @@ import json
 import re
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, ValidationError
 
 from app.assistant_reliability import active_turn, bounded_call, record_failure
 from app.assistant_stream import emit
@@ -31,6 +31,7 @@ class CapabilityContractError(ValueError):
 class ReadTask(BaseModel):
     """One source-bound read; route endpoint resolution cannot consume peers."""
     model_config = ConfigDict(extra="forbid")
+    _clarification: str = PrivateAttr(default='')
     source_quote: str = Field(min_length=1, max_length=1000)
     capabilities: list[Capability] = Field(default_factory=list, max_length=5)
     city: str = Field(default="", max_length=120)
@@ -358,6 +359,12 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
             cities = {p.get("city", "").removesuffix("市") for p in selected if p.get("city")}
             if len(cities) == 1:
                 decision = decision.model_copy(update={"city": cities.pop()})
+    if decision.intent == 'lookup' and decision.reason_code == 'place_identity':
+        # Named identity lookup already declares the read operation. An omitted
+        # redundant capability list must not turn it into free-text inference.
+        decision = decision.model_copy(update={'read_tasks':[
+            t.model_copy(update={'capabilities':['poi']}) if not t.capabilities and (t.names or t.query) else t
+            for t in decision.read_tasks], 'capabilities': decision.capabilities or (['poi'] if decision.names else [])})
     if decision.intent not in {"create", "modify"} and not set(decision.capabilities).intersection({"poi", "route"}):
         # These adapters use the original question, not optional POI arguments.
         decision = decision.model_copy(update={"names": [], "origin": "", "destination": "", "near_name": ""})
@@ -371,16 +378,18 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
     # Typed read tasks are the operation contract. A redundant broad 'direct'
     # label must not discard explicit, source-validated lookup obligations.
     task_caps = list(dict.fromkeys(c for task in decision.read_tasks for c in task.capabilities))
-    if decision.intent == 'direct' and task_caps:
+    if decision.intent == 'direct' and decision.read_tasks:
         decision = decision.model_copy(update={'intent': 'lookup', 'capabilities': task_caps})
     if decision.intent == 'lookup' and not decision.capabilities and decision.read_tasks:
         decision = decision.model_copy(update={'capabilities': list(dict.fromkeys(
             c for task in decision.read_tasks for c in task.capabilities))})
-    if decision.intent == "lookup" and not decision.capabilities:
+    if decision.intent == "lookup" and not decision.capabilities and not decision.read_tasks:
         raise CapabilityContractError("lookup_requires_read_capability")
     city_prefix = (decision.city or envelope.browsing_city or "").removesuffix("市")
     arguments = [("city", decision.city.removesuffix("市")), *[("names", n) for n in decision.names],
                  ("origin", decision.origin), ("destination", decision.destination), ("near_name", decision.near_name)]
+    if decision.read_tasks and not _task:
+        arguments = arguments[:1]  # Leaf arguments own their own provenance.
     if decision.candidate_command is not None and decision.intent in {"create", "modify"}:
         # V2 writes use their source-bound plan/patch refs, not read-search
         # arguments. Validating an unused duplicate name here reinterprets the
@@ -417,9 +426,17 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
         decision = decision.model_copy(update={"capabilities": [], "read_tasks": []})
     if decision.read_tasks and decision.intent not in {"create", "modify", "execution"}:
         checked = []
+        def block(task, reason):
+            result = task.model_copy(update={'capabilities':[]})
+            result._clarification = reason
+            checked.append(result)
         for task in decision.read_tasks:
+            if task._clarification:
+                checked.append(task)
+                continue
             if task.source_quote not in message:
-                return CapabilityDecision(intent="clarify", clarification="请确认各部分要查询的内容。", reason_code="missing_arguments")
+                block(task, '这部分查询无法绑定当前问题，请说明具体要查的内容。')
+                continue
             if set(task.capabilities) == {'itinerary'}:
                 # Saved-state reads use the literal task question and server
                 # Trip/selection snapshot. Redundant model search arguments
@@ -431,13 +448,15 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
                 continue
             if "facts" in task.capabilities and (_non_authorizing_context(message, task.source_quote) or
                     re.search(r"假设|假如|如果|不查|不用查|不要查|先不查", task.source_quote)):
-                return CapabilityDecision(intent="clarify", clarification="你想讨论假设下的选择，还是查询实际情况？", reason_code="missing_arguments")
+                block(task, '这部分是讨论假设下的选择，还是查询实际情况？')
+                continue
             # Common city may be shared. Venue/query arguments belong to this
             # task; a different current clause is not reference history.
             local_source = resolve_read_text(task.source_quote, referents)
             if not all(argument_in_read_scope(value, task.source_quote, referents) for value in
                 [*task.names, task.origin, task.destination, task.near_name]):
-                return CapabilityDecision(intent="clarify", clarification="这部分查询没有唯一对应到刚才的地点，请说明具体地点名称。", reason_code="missing_arguments")
+                block(task, '这部分查询没有唯一对应到刚才的地点，请说明具体地点名称。')
+                continue
             # Search terms are not identity credentials. Unused task queries
             # cannot block direct/fact/saved-state subgoals.
             if not set(task.capabilities) & {'poi', 'web'}:
@@ -447,14 +466,17 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
                 # redundant free-text search string (often joined with spaces).
                 task = task.model_copy(update={'query': ''})
             elif task.query and not argument_in_read_scope(task.query, task.source_quote, referents):
-                return CapabilityDecision(intent="clarify", clarification=f"你想用「{task.query}」查哪个具体地点？", reason_code="missing_arguments")
+                block(task, '这部分搜索词无法绑定当前地点，请说明具体地点名称。')
+                continue
             local = _task_decision(decision, task)
             if task.city and task.city.removesuffix('市') not in user_text:
-                return CapabilityDecision(intent='clarify', clarification='请确认这部分查询的城市。', reason_code='missing_arguments')
+                block(task, '请确认这部分查询的城市。')
+                continue
             validated = validate_decision(local, local_source,
                 history, envelope, [*selected, {"city": task.city or decision.city}], _task=True)
             if validated.intent == "clarify":
-                return validated
+                block(task, validated.clarification)
+                continue
             checked.append(task.model_copy(update={key: getattr(validated, key)
                 for key in ReadTask.model_fields if key != "source_quote"}))
         if not checked:
@@ -467,6 +489,9 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
 
 
 def _task_decision(decision, task):
+    if task._clarification:
+        return decision.model_copy(update={'intent':'clarify','capabilities':[], 'read_tasks':[],
+            'clarification':task._clarification, 'authorization_quote':''})
     kind = ("route" if "route" in task.capabilities else "lookup" if
         set(task.capabilities) & {"poi", "web"} else "facts" if "facts" in task.capabilities
         else "itinerary" if "itinerary" in task.capabilities else "direct")
@@ -611,7 +636,8 @@ async def route_answer(decision, envelope, port, *, known_places=()):
     except Exception:
         return failure_bundle(envelope, f"已确认起点为{origin.name}、终点为{destination.name}，但本次路线查询未完成，暂不能提供可靠距离和耗时。",
             cards=cards, read_tools={"route": {"status": "unavailable"}}), "partial"
-    tools = {"route": {"status": "available", "result": route}}
+    tools = {"route": {"status": "available", "result": route,
+        'binding':{'place_ids':[str(origin.place_id),str(destination.place_id)],'mode':decision.mode}}}
     return failure_bundle(envelope, f"{origin.name} → {destination.name}：" + route_summary(tools["route"]), cards=cards, read_tools=tools), "complete"
 
 
@@ -761,6 +787,8 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
         if parent_sink and event.get("type") == "status":
             parent_sink(event)
     async def run(kind, capabilities, base, question):
+        if base.intent == 'clarify':
+            return failure_bundle(envelope, base.clarification), 'partial'
         token = stream_sink.set(progress_only if parent_sink else None)
         local_intent = {"places": "lookup", "web": "lookup"}.get(kind, kind)
         local = base.model_copy(update={"intent": local_intent, "capabilities": capabilities, "clarification": ""})
@@ -846,10 +874,41 @@ async def answer_with_capabilities(settings, decision, message, history, envelop
         status = "partial"
     emit("reset")
     emit("answer_delta", delta=text)
-    return failure_bundle(envelope, text, cards=cards.values(), read_tools=tools), status
+    bundle = failure_bundle(envelope, text, cards=cards.values(), read_tools=tools)
+    tools['requirement_support'] = _support_for(message, envelope, history, referents, bundle)
+    return bundle, status
+
+
+def _support_for(message, envelope, history, referents, bundle=None):
+    from app.assistant_practical import previous_reads
+    from app.read_references import read_reference_context, place_catalog
+    from app.requirement_support import assess_support
+    observations = [*history, *([bundle] if bundle else [])]
+    scope = place_catalog(observations, envelope) if bundle else referents
+    reference = read_reference_context(message, scope)
+    refs = reference['bound_refs']
+    resolved = reference['resolved_text']
+    ordered = sorted((min(resolved.index(name) for name in [p['name'],*p.get('aliases',[])]
+        if name and name in resolved), str(p['place_id'])) for p in scope
+        if p.get('place_id') and any(name and name in resolved for name in [p['name'],*p.get('aliases',[])]))
+    modes = [mode for mode, pattern in (('walk',r'步行|走路'),('driving',r'驾车|开车|自驾|打车')) if re.search(pattern,resolved)]
+    expected_route = None
+    if len(ordered) == 2 and len(modes) == 1 and '到' in resolved[ordered[0][0]:ordered[1][0]]:
+        expected_route = {'place_ids':[identity for _,identity in ordered], 'mode':modes[0]}
+    return assess_support(message, memory_prompt(envelope), previous_reads(observations), refs, expected_route=expected_route)
 
 
 async def _answer_leaf(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal, *, read_lock=None, web_fallback=True, read_snapshot=None, original_request=None, referents=None):
+    from app.read_references import place_catalog
+    referents = place_catalog(history, envelope) if referents is None else referents
+    bundle, status = await _answer_leaf_impl(settings, decision, message, history, envelope, port, db, trip_id, session_id,
+        message_id, goal, read_lock=read_lock, web_fallback=web_fallback, read_snapshot=read_snapshot,
+        original_request=original_request, referents=referents)
+    bundle.setdefault('read_tools', {})['requirement_support'] = _support_for(message, envelope, history, referents, bundle)
+    return bundle, status
+
+
+async def _answer_leaf_impl(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal, *, read_lock=None, web_fallback=True, read_snapshot=None, original_request=None, referents=None):
     from app.read_references import place_catalog, resolve_read_text
     referents = place_catalog(history, envelope) if referents is None else referents
     if decision.intent not in {'create', 'modify', 'execution'} and 'itinerary' not in decision.capabilities:
@@ -934,6 +993,7 @@ async def _answer_leaf(settings, decision, message, history, envelope, port, db,
     from app.assistant_practical import previous_reads
     from app.read_references import read_reference_context
     read_tools = {"capability_selection": decision.model_dump(mode="json"), "previous_reads": previous_reads(history),
+        "requirement_support": _support_for(message, envelope, history, referents),
         "reference_resolution": read_reference_context(message, referents, decision.names),
         "task_context": {"original_request": original_request or message, "task_question": message},
         "memory_update_receipt": envelope.conversation_memory.get('latest_receipt', {}),

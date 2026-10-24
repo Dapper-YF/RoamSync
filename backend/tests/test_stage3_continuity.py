@@ -9,6 +9,36 @@ def test_named_plural_comparison_is_not_an_absent_suggestion():
     assert not gaps
 
 
+def test_ambiguous_child_does_not_discard_independent_valid_child():
+    text = '查扬州个园的位置，再查后一个的位置'
+    decision = CapabilityDecision(intent='lookup', reason_code='place_identity', read_tasks=[
+        ReadTask(source_quote='查扬州个园的位置', capabilities=['poi'],city='扬州',names=['个园']),
+        ReadTask(source_quote='查后一个的位置', capabilities=['poi'],city='扬州',names=['何园'])])
+    valid = validate_decision(decision, text, [], ContextEnvelope())
+    assert valid.intent == 'lookup' and len(valid.read_tasks) == 2
+    assert valid.read_tasks[0].capabilities == ['poi']
+    assert not valid.read_tasks[1].capabilities and valid.read_tasks[1]._clarification
+
+
+def test_two_pass_validation_keeps_direct_child_beside_blocked_lookup():
+    text = '介绍扬州园林，再查它的位置'
+    decision = CapabilityDecision(intent='direct', reason_code='stable_knowledge', read_tasks=[
+        ReadTask(source_quote='介绍扬州园林', capabilities=[]),
+        ReadTask(source_quote='再查它的位置',capabilities=['poi'],names=['何园'])])
+    first = validate_decision(decision,text,[],ContextEnvelope())
+    second = validate_decision(first,text,[],ContextEnvelope())
+    assert len(second.read_tasks) == 2 and not second.read_tasks[0]._clarification
+    assert second.read_tasks[1]._clarification
+
+
+def test_named_identity_operation_cannot_fall_back_to_unverified_prose_when_caps_omitted():
+    text = '查扬州个园的位置'
+    decision = CapabilityDecision(intent='lookup',reason_code='place_identity',city='扬州',
+        read_tasks=[ReadTask(source_quote=text, names=['个园'])])
+    valid = validate_decision(decision,text,[],ContextEnvelope())
+    assert valid.read_tasks[0].capabilities == ['poi']
+
+
 def test_route_result_order_does_not_reorder_comparison():
     ps = [{'place_id': '00000000-0000-0000-0000-00000000000'+str(i),
         'name': n, 'city': '扬州'} for i, n in enumerate(['个园', '何园'], 1)]

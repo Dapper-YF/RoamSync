@@ -2,6 +2,37 @@
 
 Status: IN PROGRESS, product remains NO-GO until all gates pass.
 
+## Batch5 — scoped evidence support and partial task completion
+
+MEASURED before: external batch5-before-guard.json shows four unsupported
+access/menu/bill/proximity claims pass the old local advice gate. The same six
+public real questions are captured against c2be562 in batch5/real-before.json.
+This is a regression/development set, not an unseen score.
+
+Added a read-only requirement_support receipt on existing read_tools: requested,
+related_information, supported, insufficient_or_stale, preserving source refs,
+scope, exact place bindings, expiry and missing links. Only exact ordered route
+endpoints plus explicitly requested mode and fresh bound route metadata support
+a route estimate. This does not certify comfort, internal walking, meal fit or
+final spending. No table, writer, permission or public write endpoint was added.
+Existing bounded answer repair/local claim controls now check access, full meal,
+final bill and proximity claims, and retain directly negated inferences and
+concrete verification questions. This remains a bounded guard, not a general
+truth prover. Astra reproduced direction/mode and caveat laundering defects;
+both are now covered by negative tests.
+
+ReadTask ambiguity is server-private metadata, not model-authorable authority.
+Independent valid children execute even when a peer needs clarification, including
+two-pass validation and cap-empty explanation tasks. Named identity lookup with
+omitted redundant capabilities cannot degrade into unverified general prose.
+
+MEASURED batch5/after6.xml: 68 targeted tests pass on migrated isolated PG.
+Real-after3 uses GLM+AMap, resolves both places, retrieves 1.1km/16min walk and
+directly rejects four invalid inferences; formal tables and source stay unchanged.
+After3 also exposed a soup ingredient assumption and over-filtered verification
+questions. The bounded guard was corrected with targeted regressions; the final
+real-after4 capture and frozen acceptance remain separate evidence.
+
 ## Batch4 — preview, saved modification and acceptance
 
 MEASURED before: batch4/before.xml and real-before/real-after through after8
