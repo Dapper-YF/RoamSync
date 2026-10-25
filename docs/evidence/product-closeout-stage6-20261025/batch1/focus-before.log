@@ -1,0 +1,23 @@
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.WindowsSelectorEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+F.                                                                       [100%]
+================================== FAILURES ===================================
+______ test_singular_followup_keeps_focus_without_renumbering_comparison ______
+
+    def test_singular_followup_keeps_focus_without_renumbering_comparison():
+        history=[comparison(),{'user':'第二个适合了解历史吗？'}]
+        catalog=place_catalog(history,ContextEnvelope(browsing_city='开封'))
+>       assert resolve_read_text('它需要留多久？',catalog)=='乙馆需要留多久？'
+E       AssertionError: assert '它需要留多久？' == '乙馆需要留多久？'
+E         
+E         - 乙馆需要留多久？
+E         ? ^^
+E         + 它需要留多久？
+E         ? ^
+
+tests\test_stage6_read_focus.py:14: AssertionError
+- generated xml file: E:\Study\RoamSync-stage6-evidence-20261025\focus-before.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_stage6_read_focus.py::test_singular_followup_keeps_focus_without_renumbering_comparison

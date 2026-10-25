@@ -1,0 +1,23 @@
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.WindowsSelectorEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+...F                                                                     [100%]
+================================== FAILURES ===================================
+___ test_read_task_uses_server_pronoun_binding_instead_of_wrong_model_name ____
+
+    def test_read_task_uses_server_pronoun_binding_instead_of_wrong_model_name():
+        history=[comparison(),{'user':'第二个的地址是什么？'}]
+        envelope=ContextEnvelope(browsing_city='开封')
+        message='它今天开放到几点？'
+>       choice=CapabilityDecision(intent='lookup',city='开封',read_tasks=[ReadTask(
+            source_quote=message,city='开封',names=['甲园'],query='甲园 开放时间',fact_kind='opening_hours')])
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for CapabilityDecision
+E       reason_code
+E         Field required [type=missing, input_value={'intent': 'lookup', 'cit...erary_purpose='other')]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+tests\test_stage6_read_focus.py:40: ValidationError
+- generated xml file: E:\Study\RoamSync-stage6-evidence-20261025\task-binding-before.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_stage6_read_focus.py::test_read_task_uses_server_pronoun_binding_instead_of_wrong_model_name

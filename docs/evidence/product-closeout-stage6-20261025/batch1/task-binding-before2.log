@@ -1,0 +1,23 @@
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.WindowsSelectorEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+...F                                                                     [100%]
+================================== FAILURES ===================================
+___ test_read_task_uses_server_pronoun_binding_instead_of_wrong_model_name ____
+
+    def test_read_task_uses_server_pronoun_binding_instead_of_wrong_model_name():
+        history=[comparison(),{'user':'第二个的地址是什么？'}]
+        envelope=ContextEnvelope(browsing_city='开封')
+        message='它今天开放到几点？'
+        choice=CapabilityDecision(intent='lookup',city='开封',reason_code='current_information',read_tasks=[ReadTask(
+            source_quote=message,city='开封',names=['甲园'],query='甲园 开放时间',fact_kind='opening_hours')])
+        result=validate_decision(choice,message,history,envelope,[])
+>       assert result.read_tasks[0].names==['乙馆']
+               ^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests\test_stage6_read_focus.py:43: IndexError
+- generated xml file: E:\Study\RoamSync-stage6-evidence-20261025\task-binding-before2.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_stage6_read_focus.py::test_read_task_uses_server_pronoun_binding_instead_of_wrong_model_name

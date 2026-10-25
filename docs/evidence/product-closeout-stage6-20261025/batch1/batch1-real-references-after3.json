@@ -1,0 +1,2822 @@
+{
+  "split": "stage2-development-regression",
+  "label": "stage6-public-references-after3",
+  "source_commit": "d0545e8a91b4dd789417140a44f6428b5c54623e",
+  "app_sha256_before": "9fb9885a8eb8279ca8eb475ac8b193f048eee7f6337fb0459ccdcb485fa3ae3e",
+  "fixture_sha256": "3acf5083d4a047a2491f819baa48f21386ce2379ed35afeb7c987354ec7c2bfc",
+  "model": "glm-5.3-flash",
+  "provider": "glm",
+  "model_and_selector_real": true,
+  "synthetic_trip_state": true,
+  "external_provider_facts_seeded": false,
+  "before": {
+    "Trip": {
+      "count": 1,
+      "sha256": "6d4b7bbfecc88cfb1e5629f6c6f979b2a2173a779242a8a7c4d11f2d8856d3fe",
+      "rows": [
+        {
+          "id": "e817deff-2311-477d-9649-69f298e5e636",
+          "title": "Independent synthetic sealed read fixture",
+          "destination": "合成测试城",
+          "destination_adcode": "",
+          "destination_citycode": "",
+          "center_longitude": null,
+          "center_latitude": null,
+          "accommodation": "",
+          "accommodation_poi_id": "",
+          "accommodation_address": "",
+          "accommodation_district": "",
+          "accommodation_longitude": null,
+          "accommodation_latitude": null,
+          "currency": "CNY",
+          "timezone": "Asia/Shanghai",
+          "start_date": "2026-11-10",
+          "end_date": "2026-11-12",
+          "total_budget_fen": null,
+          "daily_budget_fen": null,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00",
+          "archived_at": null,
+          "version": 1
+        }
+      ]
+    },
+    "DayPlan": {
+      "count": 3,
+      "sha256": "78b28ab516efecc5bc3f6e848a405807583452e296e804e28e3b95ed5db49960",
+      "rows": [
+        {
+          "id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+          "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+          "date": "2026-11-10",
+          "label": "Day1",
+          "theme": "Synthetic",
+          "position": 0,
+          "route_mode": "walk",
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        },
+        {
+          "id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+          "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+          "date": "2026-11-11",
+          "label": "Day2",
+          "theme": "Synthetic",
+          "position": 1,
+          "route_mode": "walk",
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        },
+        {
+          "id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+          "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+          "date": "2026-11-12",
+          "label": "Day3",
+          "theme": "Synthetic",
+          "position": 2,
+          "route_mode": "walk",
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        }
+      ]
+    },
+    "Activity": {
+      "count": 6,
+      "sha256": "0156670e2b9724bbb5b69ce93368b1c1874df231ae4687a4f6d4bec24a44e561",
+      "rows": [
+        {
+          "id": "07abd093-2ea7-4caa-8121-dacbdebfad06",
+          "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+          "place_candidate_id": "e4b3c3f6-8fc1-41d7-9054-0212974cfd88",
+          "scheduled_time": "10:00:00",
+          "duration_minutes": 55,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 0,
+          "status": "planned",
+          "position": 1,
+          "custom_name": null,
+          "schedule_locked": false,
+          "version": 1,
+          "note": null,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        },
+        {
+          "id": "18aeb34c-b50e-4e06-98e5-71897bf3831b",
+          "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+          "place_candidate_id": "fcb00d07-7b0e-43a2-ab08-6589b850aab9",
+          "scheduled_time": "09:00:00",
+          "duration_minutes": 55,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 0,
+          "status": "planned",
+          "position": 0,
+          "custom_name": null,
+          "schedule_locked": false,
+          "version": 1,
+          "note": null,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        },
+        {
+          "id": "4c1a3941-fd91-42b2-8834-6cc3aee58b5d",
+          "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+          "place_candidate_id": "e797bae5-ed1a-4de3-be16-f1a1f9796f02",
+          "scheduled_time": "10:00:00",
+          "duration_minutes": 55,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 0,
+          "status": "planned",
+          "position": 1,
+          "custom_name": null,
+          "schedule_locked": false,
+          "version": 1,
+          "note": null,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        },
+        {
+          "id": "59dd3a33-e6db-4e23-ba94-771e36a67ebf",
+          "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+          "place_candidate_id": "bb4d430e-f8c5-4527-8cc2-c1bfd3b4fd16",
+          "scheduled_time": "09:00:00",
+          "duration_minutes": 55,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 0,
+          "status": "planned",
+          "position": 0,
+          "custom_name": null,
+          "schedule_locked": false,
+          "version": 1,
+          "note": null,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        },
+        {
+          "id": "ad0f26d0-476f-4c0b-bdc8-f9ac27d01694",
+          "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+          "place_candidate_id": "1f4a02b7-4172-478b-adf3-961a1fae8a30",
+          "scheduled_time": "09:00:00",
+          "duration_minutes": 35,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 0,
+          "status": "planned",
+          "position": 0,
+          "custom_name": null,
+          "schedule_locked": false,
+          "version": 1,
+          "note": null,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        },
+        {
+          "id": "e322aeee-c999-48b3-bf43-736ba2a28aaf",
+          "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+          "place_candidate_id": "f35b92c7-5182-49ac-b442-eb5d1319036c",
+          "scheduled_time": "10:00:00",
+          "duration_minutes": 55,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 0,
+          "status": "planned",
+          "position": 1,
+          "custom_name": null,
+          "schedule_locked": true,
+          "version": 1,
+          "note": null,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        }
+      ]
+    },
+    "TripPreferences": {
+      "count": 1,
+      "sha256": "a0f7d7d3fcbafdf2f6c5ae7343adf6d31843b62f33fd971bed433216ea32a0ab",
+      "rows": [
+        {
+          "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+          "pace": "balanced",
+          "interest_categories": [],
+          "transport_modes": [
+            "walk",
+            "transit"
+          ],
+          "daily_start_time": "09:00:00",
+          "daily_end_time": "21:00:00",
+          "meal_preferences": "",
+          "avoid_categories": [],
+          "max_walking_minutes": 60,
+          "free_text_requirements": "",
+          "requirement_records": [],
+          "version": 1,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        }
+      ]
+    },
+    "TripArrangementItem": {
+      "count": 2,
+      "sha256": "a37f7900c1f0f69606b7f7ab7c9edd40ce05f84f17defa36e3dd82f078a1547e",
+      "rows": [
+        {
+          "id": "2f99794a-235b-45ba-a4a4-5c2df4a141f1",
+          "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+          "kind": "free_window",
+          "label": "合成午餐留白",
+          "identity_key": "lunch",
+          "source_ref": "message:fixture",
+          "decision_ref": "fixture",
+          "place_id": null,
+          "day_date": "2026-11-12",
+          "start_time": "12:00:00",
+          "end_time": "13:00:00",
+          "activity_id": null
+        },
+        {
+          "id": "7d39b76f-6a89-41f4-817f-c184427e8fa4",
+          "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+          "kind": "optional",
+          "label": "合成备选茶室",
+          "identity_key": "tea",
+          "source_ref": "message:fixture",
+          "decision_ref": "fixture",
+          "place_id": null,
+          "day_date": "2026-11-12",
+          "start_time": null,
+          "end_time": null,
+          "activity_id": null
+        }
+      ]
+    },
+    "RouteLeg": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rows": []
+    },
+    "PlanningRun": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rows": []
+    },
+    "PlanRevision": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rows": []
+    }
+  },
+  "records": [
+    {
+      "case_id": "public_reference_01",
+      "case_turn": 1,
+      "turn": 1,
+      "user": "我在扬州，只做咨询，不创建或保存行程。请查个园和何园的地点，按这个顺序比较它们的看点。",
+      "must": "两个地点身份及比较",
+      "selection_supplied": false,
+      "request_context": {
+        "topic_id": "public_reference_01",
+        "prefer_flexible": true
+      },
+      "before_state": {
+        "Trip": {
+          "count": 1,
+          "sha256": "6d4b7bbfecc88cfb1e5629f6c6f979b2a2173a779242a8a7c4d11f2d8856d3fe",
+          "rows": [
+            {
+              "id": "e817deff-2311-477d-9649-69f298e5e636",
+              "title": "Independent synthetic sealed read fixture",
+              "destination": "合成测试城",
+              "destination_adcode": "",
+              "destination_citycode": "",
+              "center_longitude": null,
+              "center_latitude": null,
+              "accommodation": "",
+              "accommodation_poi_id": "",
+              "accommodation_address": "",
+              "accommodation_district": "",
+              "accommodation_longitude": null,
+              "accommodation_latitude": null,
+              "currency": "CNY",
+              "timezone": "Asia/Shanghai",
+              "start_date": "2026-11-10",
+              "end_date": "2026-11-12",
+              "total_budget_fen": null,
+              "daily_budget_fen": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00",
+              "archived_at": null,
+              "version": 1
+            }
+          ]
+        },
+        "DayPlan": {
+          "count": 3,
+          "sha256": "78b28ab516efecc5bc3f6e848a405807583452e296e804e28e3b95ed5db49960",
+          "rows": [
+            {
+              "id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-10",
+              "label": "Day1",
+              "theme": "Synthetic",
+              "position": 0,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-11",
+              "label": "Day2",
+              "theme": "Synthetic",
+              "position": 1,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-12",
+              "label": "Day3",
+              "theme": "Synthetic",
+              "position": 2,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "Activity": {
+          "count": 6,
+          "sha256": "0156670e2b9724bbb5b69ce93368b1c1874df231ae4687a4f6d4bec24a44e561",
+          "rows": [
+            {
+              "id": "07abd093-2ea7-4caa-8121-dacbdebfad06",
+              "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "place_candidate_id": "e4b3c3f6-8fc1-41d7-9054-0212974cfd88",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "18aeb34c-b50e-4e06-98e5-71897bf3831b",
+              "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "place_candidate_id": "fcb00d07-7b0e-43a2-ab08-6589b850aab9",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "4c1a3941-fd91-42b2-8834-6cc3aee58b5d",
+              "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "place_candidate_id": "e797bae5-ed1a-4de3-be16-f1a1f9796f02",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "59dd3a33-e6db-4e23-ba94-771e36a67ebf",
+              "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "place_candidate_id": "bb4d430e-f8c5-4527-8cc2-c1bfd3b4fd16",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "ad0f26d0-476f-4c0b-bdc8-f9ac27d01694",
+              "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "place_candidate_id": "1f4a02b7-4172-478b-adf3-961a1fae8a30",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 35,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "e322aeee-c999-48b3-bf43-736ba2a28aaf",
+              "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "place_candidate_id": "f35b92c7-5182-49ac-b442-eb5d1319036c",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": true,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "TripPreferences": {
+          "count": 1,
+          "sha256": "a0f7d7d3fcbafdf2f6c5ae7343adf6d31843b62f33fd971bed433216ea32a0ab",
+          "rows": [
+            {
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "pace": "balanced",
+              "interest_categories": [],
+              "transport_modes": [
+                "walk",
+                "transit"
+              ],
+              "daily_start_time": "09:00:00",
+              "daily_end_time": "21:00:00",
+              "meal_preferences": "",
+              "avoid_categories": [],
+              "max_walking_minutes": 60,
+              "free_text_requirements": "",
+              "requirement_records": [],
+              "version": 1,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "TripArrangementItem": {
+          "count": 2,
+          "sha256": "a37f7900c1f0f69606b7f7ab7c9edd40ce05f84f17defa36e3dd82f078a1547e",
+          "rows": [
+            {
+              "id": "2f99794a-235b-45ba-a4a4-5c2df4a141f1",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "kind": "free_window",
+              "label": "合成午餐留白",
+              "identity_key": "lunch",
+              "source_ref": "message:fixture",
+              "decision_ref": "fixture",
+              "place_id": null,
+              "day_date": "2026-11-12",
+              "start_time": "12:00:00",
+              "end_time": "13:00:00",
+              "activity_id": null
+            },
+            {
+              "id": "7d39b76f-6a89-41f4-817f-c184427e8fa4",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "kind": "optional",
+              "label": "合成备选茶室",
+              "identity_key": "tea",
+              "source_ref": "message:fixture",
+              "decision_ref": "fixture",
+              "place_id": null,
+              "day_date": "2026-11-12",
+              "start_time": null,
+              "end_time": null,
+              "activity_id": null
+            }
+          ]
+        },
+        "RouteLeg": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        },
+        "PlanningRun": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        },
+        "PlanRevision": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        }
+      },
+      "raw": {
+        "assistant": "这次回答没有完成，请重试。",
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "public_reference_01",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {},
+            "preferences": [],
+            "requirements": [],
+            "diagnostics": [],
+            "withdrawn": {},
+            "latest_receipt": {
+              "version": 1,
+              "message_id": "1d95f84f-947a-4809-ade7-851e776a7f87",
+              "updates": [],
+              "effective_slots": {},
+              "effective_preferences": [],
+              "effective_requirements": []
+            }
+          }
+        },
+        "place_cards": [],
+        "read_tools": {},
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "1d95f84f-947a-4809-ade7-851e776a7f87",
+          "answer_status": "failed",
+          "answer_attempts": 0,
+          "duration_ms": 5017,
+          "selection": {},
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 144
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 4986,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 4842
+            },
+            {
+              "stage": "selection",
+              "status": "failed",
+              "elapsed_ms": 4990,
+              "code": "schema_failure",
+              "category": "schema_failure",
+              "exception_chain": [
+                "ValidationError"
+              ],
+              "http_status": null,
+              "finish_reason": null,
+              "validation": [
+                {
+                  "field": "read_tasks.1.reason_code",
+                  "type": "extra_forbidden"
+                }
+              ]
+            },
+            {
+              "stage": "selection",
+              "status": "failed",
+              "elapsed_ms": 4990,
+              "code": "schema_failure",
+              "category": "schema_failure",
+              "exception_chain": [
+                "ValidationError"
+              ],
+              "http_status": null,
+              "finish_reason": null,
+              "validation": [
+                {
+                  "field": "read_tasks.1.reason_code",
+                  "type": "extra_forbidden"
+                }
+              ]
+            },
+            {
+              "stage": "turn",
+              "status": "failed",
+              "elapsed_ms": 5010,
+              "code": "schema_failure",
+              "category": "schema_failure",
+              "exception_chain": [
+                "ValidationError"
+              ],
+              "http_status": null,
+              "finish_reason": null,
+              "validation": [
+                {
+                  "field": "read_tasks.1.reason_code",
+                  "type": "extra_forbidden"
+                }
+              ]
+            }
+          ]
+        },
+        "memory_update_receipt": {
+          "version": 1,
+          "message_id": "1d95f84f-947a-4809-ade7-851e776a7f87",
+          "updates": [],
+          "effective_slots": {},
+          "effective_preferences": [],
+          "effective_requirements": []
+        },
+        "id": "1d95f84f-947a-4809-ade7-851e776a7f87",
+        "user": "我在扬州，只做咨询，不创建或保存行程。请查个园和何园的地点，按这个顺序比较它们的看点。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.94,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "companion_comparison"
+          ]
+        }
+      },
+      "session_applied_actions": {
+        "message-capture:1d95f84f-947a-4809-ade7-851e776a7f87": "2026-10-25T20:24:53.864104+08:00"
+      },
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 5.201,
+      "choices": [],
+      "calls": [],
+      "external_calls": [],
+      "model_outputs": [
+        {
+          "stage": "assistant_capabilities",
+          "status": "completed",
+          "visible_output": "{\n  \"intent\": \"lookup\",\n  \"reason_code\": \"place_identity\",\n  \"city\": \"扬州\",\n  \"capabilities\": [\"poi\"],\n  \"query\": \"个园 何园\",\n  \"names\": [\"个园\", \"何园\"],\n  \"category\": \"attraction\",\n  \"read_tasks\": [\n    {\n      \"source_quote\": \"请查个园和何园的地点\",\n      \"source_ref\": \"user_0_span_3\",\n      \"capabilities\": [\"poi\"],\n      \"city\": \"扬州\",\n      \"query\": \"个园 何园\",\n      \"names\": [\"个园\", \"何园\"],\n      \"category\": \"attraction\"\n    },\n    {\n      \"source_quote\": \"按这个顺序比较它们的看点\",\n      \"source_ref\": \"user_0_span_4\",\n      \"capabilities\": [],\n      \"reason_code\": \"stable_knowledge\"\n    }\n  ],\n  \"response_purpose\": \"answer\"\n}"
+        }
+      ],
+      "formal_state": {
+        "Trip": {
+          "count": 1,
+          "sha256": "6d4b7bbfecc88cfb1e5629f6c6f979b2a2173a779242a8a7c4d11f2d8856d3fe",
+          "rows": [
+            {
+              "id": "e817deff-2311-477d-9649-69f298e5e636",
+              "title": "Independent synthetic sealed read fixture",
+              "destination": "合成测试城",
+              "destination_adcode": "",
+              "destination_citycode": "",
+              "center_longitude": null,
+              "center_latitude": null,
+              "accommodation": "",
+              "accommodation_poi_id": "",
+              "accommodation_address": "",
+              "accommodation_district": "",
+              "accommodation_longitude": null,
+              "accommodation_latitude": null,
+              "currency": "CNY",
+              "timezone": "Asia/Shanghai",
+              "start_date": "2026-11-10",
+              "end_date": "2026-11-12",
+              "total_budget_fen": null,
+              "daily_budget_fen": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00",
+              "archived_at": null,
+              "version": 1
+            }
+          ]
+        },
+        "DayPlan": {
+          "count": 3,
+          "sha256": "78b28ab516efecc5bc3f6e848a405807583452e296e804e28e3b95ed5db49960",
+          "rows": [
+            {
+              "id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-10",
+              "label": "Day1",
+              "theme": "Synthetic",
+              "position": 0,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-11",
+              "label": "Day2",
+              "theme": "Synthetic",
+              "position": 1,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-12",
+              "label": "Day3",
+              "theme": "Synthetic",
+              "position": 2,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "Activity": {
+          "count": 6,
+          "sha256": "0156670e2b9724bbb5b69ce93368b1c1874df231ae4687a4f6d4bec24a44e561",
+          "rows": [
+            {
+              "id": "07abd093-2ea7-4caa-8121-dacbdebfad06",
+              "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "place_candidate_id": "e4b3c3f6-8fc1-41d7-9054-0212974cfd88",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "18aeb34c-b50e-4e06-98e5-71897bf3831b",
+              "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "place_candidate_id": "fcb00d07-7b0e-43a2-ab08-6589b850aab9",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "4c1a3941-fd91-42b2-8834-6cc3aee58b5d",
+              "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "place_candidate_id": "e797bae5-ed1a-4de3-be16-f1a1f9796f02",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "59dd3a33-e6db-4e23-ba94-771e36a67ebf",
+              "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "place_candidate_id": "bb4d430e-f8c5-4527-8cc2-c1bfd3b4fd16",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "ad0f26d0-476f-4c0b-bdc8-f9ac27d01694",
+              "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "place_candidate_id": "1f4a02b7-4172-478b-adf3-961a1fae8a30",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 35,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "e322aeee-c999-48b3-bf43-736ba2a28aaf",
+              "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "place_candidate_id": "f35b92c7-5182-49ac-b442-eb5d1319036c",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": true,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "TripPreferences": {
+          "count": 1,
+          "sha256": "a0f7d7d3fcbafdf2f6c5ae7343adf6d31843b62f33fd971bed433216ea32a0ab",
+          "rows": [
+            {
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "pace": "balanced",
+              "interest_categories": [],
+              "transport_modes": [
+                "walk",
+                "transit"
+              ],
+              "daily_start_time": "09:00:00",
+              "daily_end_time": "21:00:00",
+              "meal_preferences": "",
+              "avoid_categories": [],
+              "max_walking_minutes": 60,
+              "free_text_requirements": "",
+              "requirement_records": [],
+              "version": 1,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "TripArrangementItem": {
+          "count": 2,
+          "sha256": "a37f7900c1f0f69606b7f7ab7c9edd40ce05f84f17defa36e3dd82f078a1547e",
+          "rows": [
+            {
+              "id": "2f99794a-235b-45ba-a4a4-5c2df4a141f1",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "kind": "free_window",
+              "label": "合成午餐留白",
+              "identity_key": "lunch",
+              "source_ref": "message:fixture",
+              "decision_ref": "fixture",
+              "place_id": null,
+              "day_date": "2026-11-12",
+              "start_time": "12:00:00",
+              "end_time": "13:00:00",
+              "activity_id": null
+            },
+            {
+              "id": "7d39b76f-6a89-41f4-817f-c184427e8fa4",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "kind": "optional",
+              "label": "合成备选茶室",
+              "identity_key": "tea",
+              "source_ref": "message:fixture",
+              "decision_ref": "fixture",
+              "place_id": null,
+              "day_date": "2026-11-12",
+              "start_time": null,
+              "end_time": null,
+              "activity_id": null
+            }
+          ]
+        },
+        "RouteLeg": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        },
+        "PlanningRun": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        },
+        "PlanRevision": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        }
+      }
+    },
+    {
+      "case_id": "public_reference_01",
+      "case_turn": 2,
+      "turn": 2,
+      "user": "第二个的地址是什么？",
+      "must": "何园地址，比较顺序保持",
+      "selection_supplied": false,
+      "request_context": {
+        "topic_id": "public_reference_01",
+        "prefer_flexible": true
+      },
+      "before_state": {
+        "Trip": {
+          "count": 1,
+          "sha256": "6d4b7bbfecc88cfb1e5629f6c6f979b2a2173a779242a8a7c4d11f2d8856d3fe",
+          "rows": [
+            {
+              "id": "e817deff-2311-477d-9649-69f298e5e636",
+              "title": "Independent synthetic sealed read fixture",
+              "destination": "合成测试城",
+              "destination_adcode": "",
+              "destination_citycode": "",
+              "center_longitude": null,
+              "center_latitude": null,
+              "accommodation": "",
+              "accommodation_poi_id": "",
+              "accommodation_address": "",
+              "accommodation_district": "",
+              "accommodation_longitude": null,
+              "accommodation_latitude": null,
+              "currency": "CNY",
+              "timezone": "Asia/Shanghai",
+              "start_date": "2026-11-10",
+              "end_date": "2026-11-12",
+              "total_budget_fen": null,
+              "daily_budget_fen": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00",
+              "archived_at": null,
+              "version": 1
+            }
+          ]
+        },
+        "DayPlan": {
+          "count": 3,
+          "sha256": "78b28ab516efecc5bc3f6e848a405807583452e296e804e28e3b95ed5db49960",
+          "rows": [
+            {
+              "id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-10",
+              "label": "Day1",
+              "theme": "Synthetic",
+              "position": 0,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-11",
+              "label": "Day2",
+              "theme": "Synthetic",
+              "position": 1,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-12",
+              "label": "Day3",
+              "theme": "Synthetic",
+              "position": 2,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "Activity": {
+          "count": 6,
+          "sha256": "0156670e2b9724bbb5b69ce93368b1c1874df231ae4687a4f6d4bec24a44e561",
+          "rows": [
+            {
+              "id": "07abd093-2ea7-4caa-8121-dacbdebfad06",
+              "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "place_candidate_id": "e4b3c3f6-8fc1-41d7-9054-0212974cfd88",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "18aeb34c-b50e-4e06-98e5-71897bf3831b",
+              "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "place_candidate_id": "fcb00d07-7b0e-43a2-ab08-6589b850aab9",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "4c1a3941-fd91-42b2-8834-6cc3aee58b5d",
+              "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "place_candidate_id": "e797bae5-ed1a-4de3-be16-f1a1f9796f02",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "59dd3a33-e6db-4e23-ba94-771e36a67ebf",
+              "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "place_candidate_id": "bb4d430e-f8c5-4527-8cc2-c1bfd3b4fd16",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "ad0f26d0-476f-4c0b-bdc8-f9ac27d01694",
+              "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "place_candidate_id": "1f4a02b7-4172-478b-adf3-961a1fae8a30",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 35,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "e322aeee-c999-48b3-bf43-736ba2a28aaf",
+              "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "place_candidate_id": "f35b92c7-5182-49ac-b442-eb5d1319036c",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": true,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "TripPreferences": {
+          "count": 1,
+          "sha256": "a0f7d7d3fcbafdf2f6c5ae7343adf6d31843b62f33fd971bed433216ea32a0ab",
+          "rows": [
+            {
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "pace": "balanced",
+              "interest_categories": [],
+              "transport_modes": [
+                "walk",
+                "transit"
+              ],
+              "daily_start_time": "09:00:00",
+              "daily_end_time": "21:00:00",
+              "meal_preferences": "",
+              "avoid_categories": [],
+              "max_walking_minutes": 60,
+              "free_text_requirements": "",
+              "requirement_records": [],
+              "version": 1,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "TripArrangementItem": {
+          "count": 2,
+          "sha256": "a37f7900c1f0f69606b7f7ab7c9edd40ce05f84f17defa36e3dd82f078a1547e",
+          "rows": [
+            {
+              "id": "2f99794a-235b-45ba-a4a4-5c2df4a141f1",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "kind": "free_window",
+              "label": "合成午餐留白",
+              "identity_key": "lunch",
+              "source_ref": "message:fixture",
+              "decision_ref": "fixture",
+              "place_id": null,
+              "day_date": "2026-11-12",
+              "start_time": "12:00:00",
+              "end_time": "13:00:00",
+              "activity_id": null
+            },
+            {
+              "id": "7d39b76f-6a89-41f4-817f-c184427e8fa4",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "kind": "optional",
+              "label": "合成备选茶室",
+              "identity_key": "tea",
+              "source_ref": "message:fixture",
+              "decision_ref": "fixture",
+              "place_id": null,
+              "day_date": "2026-11-12",
+              "start_time": null,
+              "end_time": null,
+              "activity_id": null
+            }
+          ]
+        },
+        "RouteLeg": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        },
+        "PlanningRun": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        },
+        "PlanRevision": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        }
+      },
+      "raw": {
+        "assistant": "这部分查询没有唯一对应到刚才的地点，请说明具体地点名称。",
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "public_reference_01",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {},
+            "preferences": [],
+            "requirements": [],
+            "diagnostics": [],
+            "withdrawn": {},
+            "latest_receipt": {
+              "version": 1,
+              "message_id": "013eb84a-08fc-4c26-929b-fe7d268a26ae",
+              "updates": [],
+              "effective_slots": {},
+              "effective_preferences": [],
+              "effective_requirements": []
+            }
+          }
+        },
+        "place_cards": [],
+        "read_tools": {
+          "requirement_support": {
+            "version": 1,
+            "assessments": [],
+            "semantics": "read_only_scoped_support_not_satisfaction_or_write_authority"
+          }
+        },
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "013eb84a-08fc-4c26-929b-fe7d268a26ae",
+          "answer_status": "complete",
+          "answer_attempts": 0,
+          "duration_ms": 2827,
+          "selection": {
+            "intent": "clarify",
+            "capabilities": [],
+            "reason_code": "missing_arguments",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 71
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 2812,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 2741
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 2812
+            }
+          ]
+        },
+        "memory_update_receipt": {
+          "version": 1,
+          "message_id": "013eb84a-08fc-4c26-929b-fe7d268a26ae",
+          "updates": [],
+          "effective_slots": {},
+          "effective_preferences": [],
+          "effective_requirements": []
+        },
+        "id": "013eb84a-08fc-4c26-929b-fe7d268a26ae",
+        "user": "第二个的地址是什么？",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.92,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_missing_arguments"
+          ]
+        }
+      },
+      "session_applied_actions": {
+        "message-capture:1d95f84f-947a-4809-ade7-851e776a7f87": "2026-10-25T20:24:53.864104+08:00",
+        "message-capture:013eb84a-08fc-4c26-929b-fe7d268a26ae": "2026-10-25T20:24:59.096624+08:00"
+      },
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 2.946,
+      "choices": [
+        {
+          "intent": "clarify",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "这部分查询没有唯一对应到刚才的地点，请说明具体地点名称。",
+          "authorization_quote": "",
+          "reason_code": "missing_arguments",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": [],
+          "read_tasks": [],
+          "fact_kind": "other",
+          "itinerary_purpose": "other",
+          "creation": null,
+          "planning_draft": null,
+          "candidate_command": null
+        }
+      ],
+      "calls": [],
+      "external_calls": [],
+      "model_outputs": [
+        {
+          "stage": "assistant_capabilities",
+          "status": "completed",
+          "visible_output": "{\"intent\":\"lookup\",\"capabilities\":[\"poi\"],\"city\":\"扬州\",\"query\":\"何园\",\"category\":\"attraction\",\"names\":[\"何园\"],\"reason_code\":\"place_identity\",\"read_tasks\":[{\"source_quote\":\"第二个的地址是什么\",\"source_ref\":\"user_1_span_0\",\"capabilities\":[\"poi\"],\"city\":\"扬州\",\"query\":\"何园\",\"category\":\"attraction\",\"names\":[\"何园\"]}]}"
+        }
+      ],
+      "formal_state": {
+        "Trip": {
+          "count": 1,
+          "sha256": "6d4b7bbfecc88cfb1e5629f6c6f979b2a2173a779242a8a7c4d11f2d8856d3fe",
+          "rows": [
+            {
+              "id": "e817deff-2311-477d-9649-69f298e5e636",
+              "title": "Independent synthetic sealed read fixture",
+              "destination": "合成测试城",
+              "destination_adcode": "",
+              "destination_citycode": "",
+              "center_longitude": null,
+              "center_latitude": null,
+              "accommodation": "",
+              "accommodation_poi_id": "",
+              "accommodation_address": "",
+              "accommodation_district": "",
+              "accommodation_longitude": null,
+              "accommodation_latitude": null,
+              "currency": "CNY",
+              "timezone": "Asia/Shanghai",
+              "start_date": "2026-11-10",
+              "end_date": "2026-11-12",
+              "total_budget_fen": null,
+              "daily_budget_fen": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00",
+              "archived_at": null,
+              "version": 1
+            }
+          ]
+        },
+        "DayPlan": {
+          "count": 3,
+          "sha256": "78b28ab516efecc5bc3f6e848a405807583452e296e804e28e3b95ed5db49960",
+          "rows": [
+            {
+              "id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-10",
+              "label": "Day1",
+              "theme": "Synthetic",
+              "position": 0,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-11",
+              "label": "Day2",
+              "theme": "Synthetic",
+              "position": 1,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-12",
+              "label": "Day3",
+              "theme": "Synthetic",
+              "position": 2,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "Activity": {
+          "count": 6,
+          "sha256": "0156670e2b9724bbb5b69ce93368b1c1874df231ae4687a4f6d4bec24a44e561",
+          "rows": [
+            {
+              "id": "07abd093-2ea7-4caa-8121-dacbdebfad06",
+              "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "place_candidate_id": "e4b3c3f6-8fc1-41d7-9054-0212974cfd88",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "18aeb34c-b50e-4e06-98e5-71897bf3831b",
+              "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "place_candidate_id": "fcb00d07-7b0e-43a2-ab08-6589b850aab9",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "4c1a3941-fd91-42b2-8834-6cc3aee58b5d",
+              "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "place_candidate_id": "e797bae5-ed1a-4de3-be16-f1a1f9796f02",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "59dd3a33-e6db-4e23-ba94-771e36a67ebf",
+              "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "place_candidate_id": "bb4d430e-f8c5-4527-8cc2-c1bfd3b4fd16",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "ad0f26d0-476f-4c0b-bdc8-f9ac27d01694",
+              "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "place_candidate_id": "1f4a02b7-4172-478b-adf3-961a1fae8a30",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 35,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "e322aeee-c999-48b3-bf43-736ba2a28aaf",
+              "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "place_candidate_id": "f35b92c7-5182-49ac-b442-eb5d1319036c",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": true,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "TripPreferences": {
+          "count": 1,
+          "sha256": "a0f7d7d3fcbafdf2f6c5ae7343adf6d31843b62f33fd971bed433216ea32a0ab",
+          "rows": [
+            {
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "pace": "balanced",
+              "interest_categories": [],
+              "transport_modes": [
+                "walk",
+                "transit"
+              ],
+              "daily_start_time": "09:00:00",
+              "daily_end_time": "21:00:00",
+              "meal_preferences": "",
+              "avoid_categories": [],
+              "max_walking_minutes": 60,
+              "free_text_requirements": "",
+              "requirement_records": [],
+              "version": 1,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "TripArrangementItem": {
+          "count": 2,
+          "sha256": "a37f7900c1f0f69606b7f7ab7c9edd40ce05f84f17defa36e3dd82f078a1547e",
+          "rows": [
+            {
+              "id": "2f99794a-235b-45ba-a4a4-5c2df4a141f1",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "kind": "free_window",
+              "label": "合成午餐留白",
+              "identity_key": "lunch",
+              "source_ref": "message:fixture",
+              "decision_ref": "fixture",
+              "place_id": null,
+              "day_date": "2026-11-12",
+              "start_time": "12:00:00",
+              "end_time": "13:00:00",
+              "activity_id": null
+            },
+            {
+              "id": "7d39b76f-6a89-41f4-817f-c184427e8fa4",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "kind": "optional",
+              "label": "合成备选茶室",
+              "identity_key": "tea",
+              "source_ref": "message:fixture",
+              "decision_ref": "fixture",
+              "place_id": null,
+              "day_date": "2026-11-12",
+              "start_time": null,
+              "end_time": null,
+              "activity_id": null
+            }
+          ]
+        },
+        "RouteLeg": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        },
+        "PlanningRun": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        },
+        "PlanRevision": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        }
+      }
+    },
+    {
+      "case_id": "public_reference_01",
+      "case_turn": 3,
+      "turn": 3,
+      "user": "它今天的开放时间有依据吗？再从第一个到第二个查步行路线，分别给出结果；查不到当天信息就明确说缺什么。",
+      "must": "它=何园，个园至何园walk，保留成功结果并说明事实缺口",
+      "selection_supplied": false,
+      "request_context": {
+        "topic_id": "public_reference_01",
+        "prefer_flexible": true
+      },
+      "before_state": {
+        "Trip": {
+          "count": 1,
+          "sha256": "6d4b7bbfecc88cfb1e5629f6c6f979b2a2173a779242a8a7c4d11f2d8856d3fe",
+          "rows": [
+            {
+              "id": "e817deff-2311-477d-9649-69f298e5e636",
+              "title": "Independent synthetic sealed read fixture",
+              "destination": "合成测试城",
+              "destination_adcode": "",
+              "destination_citycode": "",
+              "center_longitude": null,
+              "center_latitude": null,
+              "accommodation": "",
+              "accommodation_poi_id": "",
+              "accommodation_address": "",
+              "accommodation_district": "",
+              "accommodation_longitude": null,
+              "accommodation_latitude": null,
+              "currency": "CNY",
+              "timezone": "Asia/Shanghai",
+              "start_date": "2026-11-10",
+              "end_date": "2026-11-12",
+              "total_budget_fen": null,
+              "daily_budget_fen": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00",
+              "archived_at": null,
+              "version": 1
+            }
+          ]
+        },
+        "DayPlan": {
+          "count": 3,
+          "sha256": "78b28ab516efecc5bc3f6e848a405807583452e296e804e28e3b95ed5db49960",
+          "rows": [
+            {
+              "id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-10",
+              "label": "Day1",
+              "theme": "Synthetic",
+              "position": 0,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-11",
+              "label": "Day2",
+              "theme": "Synthetic",
+              "position": 1,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-12",
+              "label": "Day3",
+              "theme": "Synthetic",
+              "position": 2,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "Activity": {
+          "count": 6,
+          "sha256": "0156670e2b9724bbb5b69ce93368b1c1874df231ae4687a4f6d4bec24a44e561",
+          "rows": [
+            {
+              "id": "07abd093-2ea7-4caa-8121-dacbdebfad06",
+              "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "place_candidate_id": "e4b3c3f6-8fc1-41d7-9054-0212974cfd88",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "18aeb34c-b50e-4e06-98e5-71897bf3831b",
+              "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "place_candidate_id": "fcb00d07-7b0e-43a2-ab08-6589b850aab9",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "4c1a3941-fd91-42b2-8834-6cc3aee58b5d",
+              "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "place_candidate_id": "e797bae5-ed1a-4de3-be16-f1a1f9796f02",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "59dd3a33-e6db-4e23-ba94-771e36a67ebf",
+              "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "place_candidate_id": "bb4d430e-f8c5-4527-8cc2-c1bfd3b4fd16",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "ad0f26d0-476f-4c0b-bdc8-f9ac27d01694",
+              "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "place_candidate_id": "1f4a02b7-4172-478b-adf3-961a1fae8a30",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 35,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "e322aeee-c999-48b3-bf43-736ba2a28aaf",
+              "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "place_candidate_id": "f35b92c7-5182-49ac-b442-eb5d1319036c",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": true,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "TripPreferences": {
+          "count": 1,
+          "sha256": "a0f7d7d3fcbafdf2f6c5ae7343adf6d31843b62f33fd971bed433216ea32a0ab",
+          "rows": [
+            {
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "pace": "balanced",
+              "interest_categories": [],
+              "transport_modes": [
+                "walk",
+                "transit"
+              ],
+              "daily_start_time": "09:00:00",
+              "daily_end_time": "21:00:00",
+              "meal_preferences": "",
+              "avoid_categories": [],
+              "max_walking_minutes": 60,
+              "free_text_requirements": "",
+              "requirement_records": [],
+              "version": 1,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "TripArrangementItem": {
+          "count": 2,
+          "sha256": "a37f7900c1f0f69606b7f7ab7c9edd40ce05f84f17defa36e3dd82f078a1547e",
+          "rows": [
+            {
+              "id": "2f99794a-235b-45ba-a4a4-5c2df4a141f1",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "kind": "free_window",
+              "label": "合成午餐留白",
+              "identity_key": "lunch",
+              "source_ref": "message:fixture",
+              "decision_ref": "fixture",
+              "place_id": null,
+              "day_date": "2026-11-12",
+              "start_time": "12:00:00",
+              "end_time": "13:00:00",
+              "activity_id": null
+            },
+            {
+              "id": "7d39b76f-6a89-41f4-817f-c184427e8fa4",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "kind": "optional",
+              "label": "合成备选茶室",
+              "identity_key": "tea",
+              "source_ref": "message:fixture",
+              "decision_ref": "fixture",
+              "place_id": null,
+              "day_date": "2026-11-12",
+              "start_time": null,
+              "end_time": null,
+              "activity_id": null
+            }
+          ]
+        },
+        "RouteLeg": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        },
+        "PlanningRun": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        },
+        "PlanRevision": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        }
+      },
+      "raw": {
+        "assistant": "这部分查询没有唯一对应到刚才的地点，请说明具体地点名称。",
+        "context": {
+          "version": "assistant-context-v1",
+          "topic_id": "public_reference_01",
+          "surface": "assistant",
+          "physical_location": null,
+          "browsing_city": null,
+          "discussing_place_id": null,
+          "discussing_place_ids": [],
+          "discovery_context": null,
+          "read_draft_id": null,
+          "read_draft_version": null,
+          "requirements": null,
+          "requirement_records": [],
+          "read_trip_id": null,
+          "action_target": null,
+          "prefer_flexible": true,
+          "preview_action_id": null,
+          "route_request": null,
+          "conversation_memory": {
+            "version": 1,
+            "epoch": "",
+            "slots": {},
+            "preferences": [],
+            "requirements": [],
+            "diagnostics": [],
+            "withdrawn": {},
+            "latest_receipt": {
+              "version": 1,
+              "message_id": "3edbfbb5-ec23-4fa8-85b9-0a7cb2a6169b",
+              "updates": [],
+              "effective_slots": {},
+              "effective_preferences": [],
+              "effective_requirements": []
+            }
+          }
+        },
+        "place_cards": [],
+        "read_tools": {
+          "requirement_support": {
+            "version": 1,
+            "assessments": [
+              {
+                "requirement_id": "48754dea4323318a7dc7",
+                "text": "它今天的开放时间有依据吗？再从第一个到第二个查步行路线，分别给出结果；查不到当天信息就明确说缺什么。",
+                "source_ref": "current_question",
+                "scope": null,
+                "domain": "walking_effort",
+                "requested": true,
+                "status": "insufficient_or_stale",
+                "observations": [],
+                "reason": "尚无绑定当前地点的相关资料",
+                "missing_link": "园内动线、台阶、上下车点到入口及休息设施",
+                "checked_at": "2026-10-25T12:25:07.467672+00:00"
+              },
+              {
+                "requirement_id": "8b1cffe0083b9f89bfc2",
+                "text": "它今天的开放时间有依据吗？再从第一个到第二个查步行路线，分别给出结果；查不到当天信息就明确说缺什么。",
+                "source_ref": "current_question",
+                "scope": null,
+                "domain": "route",
+                "requested": true,
+                "status": "insufficient_or_stale",
+                "observations": [],
+                "reason": "尚无绑定当前地点的相关资料",
+                "missing_link": "对应地点、交通方式及仍有效的路线结果",
+                "checked_at": "2026-10-25T12:25:07.467672+00:00"
+              }
+            ],
+            "semantics": "read_only_scoped_support_not_satisfaction_or_write_authority"
+          }
+        },
+        "execution_summary": {
+          "version": 1,
+          "correlation_id": "3edbfbb5-ec23-4fa8-85b9-0a7cb2a6169b",
+          "answer_status": "complete",
+          "answer_attempts": 0,
+          "duration_ms": 5356,
+          "selection": {
+            "intent": "clarify",
+            "capabilities": [],
+            "reason_code": "missing_arguments",
+            "argument_source": "current_user_scoped_history_or_selected_place"
+          },
+          "events": [
+            {
+              "stage": "selection",
+              "status": "running",
+              "elapsed_ms": 56
+            },
+            {
+              "stage": "model",
+              "status": "completed",
+              "elapsed_ms": 5350,
+              "provider": "glm",
+              "model": "glm-5.3-flash",
+              "finish_reason": "stop",
+              "duration_ms": 5294
+            },
+            {
+              "stage": "selection",
+              "status": "completed",
+              "elapsed_ms": 5350
+            }
+          ]
+        },
+        "memory_update_receipt": {
+          "version": 1,
+          "message_id": "3edbfbb5-ec23-4fa8-85b9-0a7cb2a6169b",
+          "updates": [],
+          "effective_slots": {},
+          "effective_preferences": [],
+          "effective_requirements": []
+        },
+        "id": "3edbfbb5-ec23-4fa8-85b9-0a7cb2a6169b",
+        "user": "它今天的开放时间有依据吗？再从第一个到第二个查步行路线，分别给出结果；查不到当天信息就明确说缺什么。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.93,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "semantic_missing_arguments"
+          ]
+        }
+      },
+      "session_applied_actions": {
+        "message-capture:1d95f84f-947a-4809-ade7-851e776a7f87": "2026-10-25T20:24:53.864104+08:00",
+        "message-capture:013eb84a-08fc-4c26-929b-fe7d268a26ae": "2026-10-25T20:24:59.096624+08:00",
+        "message-capture:3edbfbb5-ec23-4fa8-85b9-0a7cb2a6169b": "2026-10-25T20:25:02.082620+08:00"
+      },
+      "pending_action": null,
+      "latest_run_id": null,
+      "seconds": 5.48,
+      "choices": [
+        {
+          "intent": "clarify",
+          "capabilities": [],
+          "city": "",
+          "query": "",
+          "category": "attraction",
+          "names": [],
+          "origin": "",
+          "destination": "",
+          "mode": "unknown",
+          "nearby": false,
+          "near_name": "",
+          "clarification": "这部分查询没有唯一对应到刚才的地点，请说明具体地点名称。",
+          "authorization_quote": "",
+          "reason_code": "missing_arguments",
+          "memory_updates": [],
+          "illustrate": false,
+          "advice_focus": "none",
+          "response_purpose": "answer",
+          "saved_intentions": [],
+          "read_tasks": [],
+          "fact_kind": "other",
+          "itinerary_purpose": "other",
+          "creation": null,
+          "planning_draft": null,
+          "candidate_command": null
+        }
+      ],
+      "calls": [],
+      "external_calls": [],
+      "model_outputs": [
+        {
+          "stage": "assistant_capabilities",
+          "status": "completed",
+          "visible_output": "{\"intent\":\"facts\",\"capabilities\":[\"facts\",\"route\"],\"city\":\"扬州\",\"read_tasks\":[{\"source_quote\":\"它今天的开放时间有依据吗\",\"source_ref\":\"user_2_span_0\",\"capabilities\":[\"facts\"],\"city\":\"扬州\",\"query\":\"何园 开放时间\",\"category\":\"attraction\",\"names\":[\"何园\"],\"fact_kind\":\"opening_hours\"},{\"source_quote\":\"再从第一个到第二个查步行路线\",\"source_ref\":\"user_2_span_1\",\"capabilities\":[\"route\"],\"city\":\"扬州\",\"query\":\"个园 何园 步行路线\",\"category\":\"attraction\",\"names\":[\"个园\",\"何园\"],\"origin\":\"个园\",\"destination\":\"何园\",\"mode\":\"walk\"}],\"fact_kind\":\"opening_hours\",\"reason_code\":\"current_information\"}"
+        }
+      ],
+      "formal_state": {
+        "Trip": {
+          "count": 1,
+          "sha256": "6d4b7bbfecc88cfb1e5629f6c6f979b2a2173a779242a8a7c4d11f2d8856d3fe",
+          "rows": [
+            {
+              "id": "e817deff-2311-477d-9649-69f298e5e636",
+              "title": "Independent synthetic sealed read fixture",
+              "destination": "合成测试城",
+              "destination_adcode": "",
+              "destination_citycode": "",
+              "center_longitude": null,
+              "center_latitude": null,
+              "accommodation": "",
+              "accommodation_poi_id": "",
+              "accommodation_address": "",
+              "accommodation_district": "",
+              "accommodation_longitude": null,
+              "accommodation_latitude": null,
+              "currency": "CNY",
+              "timezone": "Asia/Shanghai",
+              "start_date": "2026-11-10",
+              "end_date": "2026-11-12",
+              "total_budget_fen": null,
+              "daily_budget_fen": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00",
+              "archived_at": null,
+              "version": 1
+            }
+          ]
+        },
+        "DayPlan": {
+          "count": 3,
+          "sha256": "78b28ab516efecc5bc3f6e848a405807583452e296e804e28e3b95ed5db49960",
+          "rows": [
+            {
+              "id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-10",
+              "label": "Day1",
+              "theme": "Synthetic",
+              "position": 0,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-11",
+              "label": "Day2",
+              "theme": "Synthetic",
+              "position": 1,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "date": "2026-11-12",
+              "label": "Day3",
+              "theme": "Synthetic",
+              "position": 2,
+              "route_mode": "walk",
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "Activity": {
+          "count": 6,
+          "sha256": "0156670e2b9724bbb5b69ce93368b1c1874df231ae4687a4f6d4bec24a44e561",
+          "rows": [
+            {
+              "id": "07abd093-2ea7-4caa-8121-dacbdebfad06",
+              "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "place_candidate_id": "e4b3c3f6-8fc1-41d7-9054-0212974cfd88",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "18aeb34c-b50e-4e06-98e5-71897bf3831b",
+              "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "place_candidate_id": "fcb00d07-7b0e-43a2-ab08-6589b850aab9",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "4c1a3941-fd91-42b2-8834-6cc3aee58b5d",
+              "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "place_candidate_id": "e797bae5-ed1a-4de3-be16-f1a1f9796f02",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "59dd3a33-e6db-4e23-ba94-771e36a67ebf",
+              "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+              "place_candidate_id": "bb4d430e-f8c5-4527-8cc2-c1bfd3b4fd16",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "ad0f26d0-476f-4c0b-bdc8-f9ac27d01694",
+              "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+              "place_candidate_id": "1f4a02b7-4172-478b-adf3-961a1fae8a30",
+              "scheduled_time": "09:00:00",
+              "duration_minutes": 35,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 0,
+              "custom_name": null,
+              "schedule_locked": false,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            },
+            {
+              "id": "e322aeee-c999-48b3-bf43-736ba2a28aaf",
+              "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+              "place_candidate_id": "f35b92c7-5182-49ac-b442-eb5d1319036c",
+              "scheduled_time": "10:00:00",
+              "duration_minutes": 55,
+              "importance": "normal",
+              "can_skip": true,
+              "minimum_duration_minutes": null,
+              "importance_source": "system_default",
+              "can_skip_source": "system_default",
+              "minimum_duration_source": "unknown",
+              "estimated_cost_fen": 0,
+              "status": "planned",
+              "position": 1,
+              "custom_name": null,
+              "schedule_locked": true,
+              "version": 1,
+              "note": null,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "TripPreferences": {
+          "count": 1,
+          "sha256": "a0f7d7d3fcbafdf2f6c5ae7343adf6d31843b62f33fd971bed433216ea32a0ab",
+          "rows": [
+            {
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "pace": "balanced",
+              "interest_categories": [],
+              "transport_modes": [
+                "walk",
+                "transit"
+              ],
+              "daily_start_time": "09:00:00",
+              "daily_end_time": "21:00:00",
+              "meal_preferences": "",
+              "avoid_categories": [],
+              "max_walking_minutes": 60,
+              "free_text_requirements": "",
+              "requirement_records": [],
+              "version": 1,
+              "created_at": "2026-10-25 12:24:53.487409+00:00",
+              "updated_at": "2026-10-25 12:24:53.487409+00:00"
+            }
+          ]
+        },
+        "TripArrangementItem": {
+          "count": 2,
+          "sha256": "a37f7900c1f0f69606b7f7ab7c9edd40ce05f84f17defa36e3dd82f078a1547e",
+          "rows": [
+            {
+              "id": "2f99794a-235b-45ba-a4a4-5c2df4a141f1",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "kind": "free_window",
+              "label": "合成午餐留白",
+              "identity_key": "lunch",
+              "source_ref": "message:fixture",
+              "decision_ref": "fixture",
+              "place_id": null,
+              "day_date": "2026-11-12",
+              "start_time": "12:00:00",
+              "end_time": "13:00:00",
+              "activity_id": null
+            },
+            {
+              "id": "7d39b76f-6a89-41f4-817f-c184427e8fa4",
+              "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+              "kind": "optional",
+              "label": "合成备选茶室",
+              "identity_key": "tea",
+              "source_ref": "message:fixture",
+              "decision_ref": "fixture",
+              "place_id": null,
+              "day_date": "2026-11-12",
+              "start_time": null,
+              "end_time": null,
+              "activity_id": null
+            }
+          ]
+        },
+        "RouteLeg": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        },
+        "PlanningRun": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        },
+        "PlanRevision": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "rows": []
+        }
+      }
+    }
+  ],
+  "config_fingerprint": "cd617403093c9f38be0773b3e011575e71a2c6bdb6653da18055dc2d6d9b44c1",
+  "after": {
+    "Trip": {
+      "count": 1,
+      "sha256": "6d4b7bbfecc88cfb1e5629f6c6f979b2a2173a779242a8a7c4d11f2d8856d3fe",
+      "rows": [
+        {
+          "id": "e817deff-2311-477d-9649-69f298e5e636",
+          "title": "Independent synthetic sealed read fixture",
+          "destination": "合成测试城",
+          "destination_adcode": "",
+          "destination_citycode": "",
+          "center_longitude": null,
+          "center_latitude": null,
+          "accommodation": "",
+          "accommodation_poi_id": "",
+          "accommodation_address": "",
+          "accommodation_district": "",
+          "accommodation_longitude": null,
+          "accommodation_latitude": null,
+          "currency": "CNY",
+          "timezone": "Asia/Shanghai",
+          "start_date": "2026-11-10",
+          "end_date": "2026-11-12",
+          "total_budget_fen": null,
+          "daily_budget_fen": null,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00",
+          "archived_at": null,
+          "version": 1
+        }
+      ]
+    },
+    "DayPlan": {
+      "count": 3,
+      "sha256": "78b28ab516efecc5bc3f6e848a405807583452e296e804e28e3b95ed5db49960",
+      "rows": [
+        {
+          "id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+          "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+          "date": "2026-11-10",
+          "label": "Day1",
+          "theme": "Synthetic",
+          "position": 0,
+          "route_mode": "walk",
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        },
+        {
+          "id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+          "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+          "date": "2026-11-11",
+          "label": "Day2",
+          "theme": "Synthetic",
+          "position": 1,
+          "route_mode": "walk",
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        },
+        {
+          "id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+          "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+          "date": "2026-11-12",
+          "label": "Day3",
+          "theme": "Synthetic",
+          "position": 2,
+          "route_mode": "walk",
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        }
+      ]
+    },
+    "Activity": {
+      "count": 6,
+      "sha256": "0156670e2b9724bbb5b69ce93368b1c1874df231ae4687a4f6d4bec24a44e561",
+      "rows": [
+        {
+          "id": "07abd093-2ea7-4caa-8121-dacbdebfad06",
+          "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+          "place_candidate_id": "e4b3c3f6-8fc1-41d7-9054-0212974cfd88",
+          "scheduled_time": "10:00:00",
+          "duration_minutes": 55,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 0,
+          "status": "planned",
+          "position": 1,
+          "custom_name": null,
+          "schedule_locked": false,
+          "version": 1,
+          "note": null,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        },
+        {
+          "id": "18aeb34c-b50e-4e06-98e5-71897bf3831b",
+          "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+          "place_candidate_id": "fcb00d07-7b0e-43a2-ab08-6589b850aab9",
+          "scheduled_time": "09:00:00",
+          "duration_minutes": 55,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 0,
+          "status": "planned",
+          "position": 0,
+          "custom_name": null,
+          "schedule_locked": false,
+          "version": 1,
+          "note": null,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        },
+        {
+          "id": "4c1a3941-fd91-42b2-8834-6cc3aee58b5d",
+          "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+          "place_candidate_id": "e797bae5-ed1a-4de3-be16-f1a1f9796f02",
+          "scheduled_time": "10:00:00",
+          "duration_minutes": 55,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 0,
+          "status": "planned",
+          "position": 1,
+          "custom_name": null,
+          "schedule_locked": false,
+          "version": 1,
+          "note": null,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        },
+        {
+          "id": "59dd3a33-e6db-4e23-ba94-771e36a67ebf",
+          "day_plan_id": "6fe6f466-13ef-4589-b81a-8d3d932f1b05",
+          "place_candidate_id": "bb4d430e-f8c5-4527-8cc2-c1bfd3b4fd16",
+          "scheduled_time": "09:00:00",
+          "duration_minutes": 55,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 0,
+          "status": "planned",
+          "position": 0,
+          "custom_name": null,
+          "schedule_locked": false,
+          "version": 1,
+          "note": null,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        },
+        {
+          "id": "ad0f26d0-476f-4c0b-bdc8-f9ac27d01694",
+          "day_plan_id": "061b118e-c68b-4d7d-a8b9-e81e3e60a2e2",
+          "place_candidate_id": "1f4a02b7-4172-478b-adf3-961a1fae8a30",
+          "scheduled_time": "09:00:00",
+          "duration_minutes": 35,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 0,
+          "status": "planned",
+          "position": 0,
+          "custom_name": null,
+          "schedule_locked": false,
+          "version": 1,
+          "note": null,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        },
+        {
+          "id": "e322aeee-c999-48b3-bf43-736ba2a28aaf",
+          "day_plan_id": "877b73d5-16b5-4a25-a12b-7fbdb75d4de3",
+          "place_candidate_id": "f35b92c7-5182-49ac-b442-eb5d1319036c",
+          "scheduled_time": "10:00:00",
+          "duration_minutes": 55,
+          "importance": "normal",
+          "can_skip": true,
+          "minimum_duration_minutes": null,
+          "importance_source": "system_default",
+          "can_skip_source": "system_default",
+          "minimum_duration_source": "unknown",
+          "estimated_cost_fen": 0,
+          "status": "planned",
+          "position": 1,
+          "custom_name": null,
+          "schedule_locked": true,
+          "version": 1,
+          "note": null,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        }
+      ]
+    },
+    "TripPreferences": {
+      "count": 1,
+      "sha256": "a0f7d7d3fcbafdf2f6c5ae7343adf6d31843b62f33fd971bed433216ea32a0ab",
+      "rows": [
+        {
+          "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+          "pace": "balanced",
+          "interest_categories": [],
+          "transport_modes": [
+            "walk",
+            "transit"
+          ],
+          "daily_start_time": "09:00:00",
+          "daily_end_time": "21:00:00",
+          "meal_preferences": "",
+          "avoid_categories": [],
+          "max_walking_minutes": 60,
+          "free_text_requirements": "",
+          "requirement_records": [],
+          "version": 1,
+          "created_at": "2026-10-25 12:24:53.487409+00:00",
+          "updated_at": "2026-10-25 12:24:53.487409+00:00"
+        }
+      ]
+    },
+    "TripArrangementItem": {
+      "count": 2,
+      "sha256": "a37f7900c1f0f69606b7f7ab7c9edd40ce05f84f17defa36e3dd82f078a1547e",
+      "rows": [
+        {
+          "id": "2f99794a-235b-45ba-a4a4-5c2df4a141f1",
+          "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+          "kind": "free_window",
+          "label": "合成午餐留白",
+          "identity_key": "lunch",
+          "source_ref": "message:fixture",
+          "decision_ref": "fixture",
+          "place_id": null,
+          "day_date": "2026-11-12",
+          "start_time": "12:00:00",
+          "end_time": "13:00:00",
+          "activity_id": null
+        },
+        {
+          "id": "7d39b76f-6a89-41f4-817f-c184427e8fa4",
+          "trip_id": "e817deff-2311-477d-9649-69f298e5e636",
+          "kind": "optional",
+          "label": "合成备选茶室",
+          "identity_key": "tea",
+          "source_ref": "message:fixture",
+          "decision_ref": "fixture",
+          "place_id": null,
+          "day_date": "2026-11-12",
+          "start_time": null,
+          "end_time": null,
+          "activity_id": null
+        }
+      ]
+    },
+    "RouteLeg": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rows": []
+    },
+    "PlanningRun": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rows": []
+    },
+    "PlanRevision": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rows": []
+    }
+  },
+  "app_sha256_after": "9fb9885a8eb8279ca8eb475ac8b193f048eee7f6337fb0459ccdcb485fa3ae3e",
+  "source_unchanged": true,
+  "formal_state_unchanged": true
+}

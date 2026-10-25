@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="3" time="2.396" timestamp="2026-10-25T20:08:36.992866+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage6_saved_references" name="test_saved_ordinal_matches_chronological_handbook_even_after_position_changes" time="0.430"><failure message="AssertionError: assert 'ef5fcb40-f55...-b99464cac0ab' == '97181f67-712...-dbb3d65afbdf'&#10;  &#10;  - 97181f67-7127-4fe9-aa67-dbb3d65afbdf&#10;  + ef5fcb40-f558-48d5-ba83-b99464cac0ab">sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000020EA0FE1E90&gt;, autoflush=True, expire_on_commit=False)
+
+    def test_saved_ordinal_matches_chronological_handbook_even_after_position_changes(sessions):
+        async def run():
+            async with sessions() as db:
+                trip, days, activities = await seed(db)
+                activities[1].scheduled_time = time(8)
+                await db.commit()
+                snapshot = await load_saved_trip_read(db, trip.id)
+                projection = snapshot.project('第一天第一项活动')
+                assert projection['activities'][0]['activity_id'] == str(activities[1].id)
+&gt;       asyncio.run(run())
+
+tests\test_stage6_saved_references.py:18: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        async with sessions() as db:
+            trip, days, activities = await seed(db)
+            activities[1].scheduled_time = time(8)
+            await db.commit()
+            snapshot = await load_saved_trip_read(db, trip.id)
+            projection = snapshot.project('第一天第一项活动')
+&gt;           assert projection['activities'][0]['activity_id'] == str(activities[1].id)
+E           AssertionError: assert 'ef5fcb40-f55...-b99464cac0ab' == '97181f67-712...-dbb3d65afbdf'
+E             
+E             - 97181f67-7127-4fe9-aa67-dbb3d65afbdf
+E             + ef5fcb40-f558-48d5-ba83-b99464cac0ab
+
+tests\test_stage6_saved_references.py:17: AssertionError</failure></testcase><testcase classname="tests.test_stage6_saved_references" name="test_saved_first_item_does_not_hide_same_day_other_activities" time="0.299"><failure message="AssertionError: assert '合成地点11，' not in '这份已保存行程共3天。...保存状态，没有修改安排。'&#10;  &#10;  '合成地点11，' is contained here:&#10;    2 09:00 · 合成地点11，保存的停留时长45分钟。&#10;  ?           +++++++&#10;    2026-11-12 10:00 · 合成地点12，保存的停留时长45分钟。&#10;    2026-11-12 11:00 · 同名展馆，保存的停留时长60分钟。&#10;    2026-11-12 12:00 · 合成地点14，保存的停留时长45分钟。...&#10;  &#10;  ...Full output truncated (12 lines hidden), use '-vv' to show">sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000020EA1543850&gt;, autoflush=True, expire_on_commit=False)
+
+    def test_saved_first_item_does_not_hide_same_day_other_activities(sessions):
+        async def run():
+            async with sessions() as db:
+                trip, days, activities = await seed(db)
+                snapshot = await load_saved_trip_read(db, trip.id)
+                text = render_saved_request(snapshot, '总天数、第一天第一项活动、第一天其他活动和最后一天留白')
+                assert '共3天' in text and '合成地点1，' in text
+                assert '合成地点2，' in text and '合成地点5，' in text
+                assert '午餐留白' in text
+                assert '合成地点6，' not in text
+                assert '合成地点11，' not in text  # requested only last-day free intervals
+&gt;       asyncio.run(run())
+
+tests\test_stage6_saved_references.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        async with sessions() as db:
+            trip, days, activities = await seed(db)
+            snapshot = await load_saved_trip_read(db, trip.id)
+            text = render_saved_request(snapshot, '总天数、第一天第一项活动、第一天其他活动和最后一天留白')
+            assert '共3天' in text and '合成地点1，' in text
+            assert '合成地点2，' in text and '合成地点5，' in text
+            assert '午餐留白' in text
+            assert '合成地点6，' not in text
+&gt;           assert '合成地点11，' not in text  # requested only last-day free intervals
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: assert '合成地点11，' not in '这份已保存行程共3天。...保存状态，没有修改安排。'
+E             
+E             '合成地点11，' is contained here:
+E               2 09:00 · 合成地点11，保存的停留时长45分钟。
+E             ?           +++++++
+E               2026-11-12 10:00 · 合成地点12，保存的停留时长45分钟。
+E               2026-11-12 11:00 · 同名展馆，保存的停留时长60分钟。
+E               2026-11-12 12:00 · 合成地点14，保存的停留时长45分钟。...
+E             
+E             ...Full output truncated (12 lines hidden), use '-vv' to show
+
+tests\test_stage6_saved_references.py:31: AssertionError</failure></testcase><testcase classname="tests.test_stage6_saved_references" name="test_bare_item_does_not_silently_count_past_a_free_window" time="0.295"><failure message="assert False">sessions = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000020EA17F2490&gt;, autoflush=True, expire_on_commit=False)
+
+    def test_bare_item_does_not_silently_count_past_a_free_window(sessions):
+        async def run():
+            async with sessions() as db:
+                trip, days, activities = await seed(db)
+                snapshot = await load_saved_trip_read(db, trip.id)
+                assert snapshot.project('第三天第四项')['coverage']['ambiguous']
+                explicit = snapshot.project('第三天第四项活动')
+                assert not explicit['coverage']['ambiguous']
+                assert explicit['activities'][0]['activity_id'] == str(activities[13].id)
+&gt;       asyncio.run(run())
+
+tests\test_stage6_saved_references.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        async with sessions() as db:
+            trip, days, activities = await seed(db)
+            snapshot = await load_saved_trip_read(db, trip.id)
+&gt;           assert snapshot.project('第三天第四项')['coverage']['ambiguous']
+E           assert False
+
+tests\test_stage6_saved_references.py:40: AssertionError</failure></testcase></testsuite></testsuites>

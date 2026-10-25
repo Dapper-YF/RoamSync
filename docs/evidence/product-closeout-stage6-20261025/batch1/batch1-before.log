@@ -1,0 +1,386 @@
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.WindowsSelectorEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+FFF                                                                      [100%]
+================================== FAILURES ===================================
+_ test_saved_ordinal_matches_chronological_handbook_even_after_position_changes _
+
+self = <sqlalchemy.engine.base.Connection object at 0x000001AA337B0FC0>
+dialect = <sqlalchemy.dialects.postgresql.psycopg.PGDialectAsync_psycopg object at 0x000001AA325D1950>
+context = <sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x000001AA34BA9750>
+statement = <sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x000001AA333F7C50>
+parameters = [{'activities_id': UUID('36c3d757-9f16-4bca-945d-4424d37ff6a7'), 'position': 0}, {'activities_id': UUID('3be91010-363e-4ae0-b8f2-49469c102bb3'), 'position': 1}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1938: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\psycopg.py:654: in executemany
+    return self.await_(self._cursor.executemany(query, params_seq))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:132: in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:196: in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <psycopg.AsyncCursor [closed] [BAD] at 0x1aa33313410>
+query = 'UPDATE activities SET position=%(position)s::INTEGER, updated_at=now() WHERE activities.id = %(activities_id)s::UUID'
+params_seq = [{'activities_id': UUID('36c3d757-9f16-4bca-945d-4424d37ff6a7'), 'position': 0}, {'activities_id': UUID('3be91010-363e-4ae0-b8f2-49469c102bb3'), 'position': 1}]
+
+    async def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            async with self._conn.lock:
+                if AsyncPipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        await self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    # Otherwise, make a new one
+                    else:
+                        async with self._conn._pipeline_nolock():
+                            await self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    await self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.UniqueViolation: duplicate key value violates unique constraint "uq_activities_day_position"
+E           DETAIL:  Key (day_plan_id, "position")=(43c0bb55-1ffa-4adb-95c9-c92304f3d32c, 0) already exists.
+
+..\..\RoamSync\backend\.venv\Lib\site-packages\psycopg\cursor_async.py:148: UniqueViolation
+
+The above exception was the direct cause of the following exception:
+
+sessions = async_sessionmaker(class_='AsyncSession', bind=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x000001AA337975D0>, autoflush=True, expire_on_commit=False)
+
+    def test_saved_ordinal_matches_chronological_handbook_even_after_position_changes(sessions):
+        async def run():
+            async with sessions() as db:
+                trip, days, activities = await seed(db)
+                activities[0].position, activities[1].position = 1, 0
+                await db.commit()
+                snapshot = await load_saved_trip_read(db, trip.id)
+                projection = snapshot.project('第一天第一项活动')
+                assert projection['activities'][0]['activity_id'] == str(activities[0].id)
+>       asyncio.run(run())
+
+tests\test_stage6_saved_references.py:17: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_stage6_saved_references.py:13: in run
+    await db.commit()
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\ext\asyncio\session.py:999: in commit
+    await greenlet_spawn(self.sync_session.commit)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:203: in greenlet_spawn
+    result = context.switch(value)
+             ^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:2035: in commit
+    trans.commit(_to_root=True)
+<string>:2: in commit
+    ???
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\state_changes.py:137: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:1316: in commit
+    self._prepare_impl()
+<string>:2: in _prepare_impl
+    ???
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\state_changes.py:137: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:1290: in _prepare_impl
+    self.session.flush()
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:4353: in flush
+    self._flush(objects)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:4488: in _flush
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:122: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:4449: in _flush
+    flush_context.execute()
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py:465: in execute
+    rec.execute(self)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py:641: in execute
+    util.preloaded.orm_persistence.save_obj(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py:86: in save_obj
+    _emit_update_statements(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py:913: in _emit_update_statements
+    c = connection.execute(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1421: in execute
+    return meth(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\sql\elements.py:526: in _execute_on_connection
+    return connection._execute_clauseelement(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1643: in _execute_clauseelement
+    ret = self._execute_context(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1848: in _execute_context
+    return self._exec_single_context(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:2365: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:1938: in _exec_single_context
+    self.dialect.do_executemany(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\psycopg.py:654: in executemany
+    return self.await_(self._cursor.executemany(query, params_seq))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:132: in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:196: in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <psycopg.AsyncCursor [closed] [BAD] at 0x1aa33313410>
+query = 'UPDATE activities SET position=%(position)s::INTEGER, updated_at=now() WHERE activities.id = %(activities_id)s::UUID'
+params_seq = [{'activities_id': UUID('36c3d757-9f16-4bca-945d-4424d37ff6a7'), 'position': 0}, {'activities_id': UUID('3be91010-363e-4ae0-b8f2-49469c102bb3'), 'position': 1}]
+
+    async def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            async with self._conn.lock:
+                if AsyncPipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        await self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    # Otherwise, make a new one
+                    else:
+                        async with self._conn._pipeline_nolock():
+                            await self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    await self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           sqlalchemy.exc.IntegrityError: (psycopg.errors.UniqueViolation) duplicate key value violates unique constraint "uq_activities_day_position"
+E           DETAIL:  Key (day_plan_id, "position")=(43c0bb55-1ffa-4adb-95c9-c92304f3d32c, 0) already exists.
+E           [SQL: UPDATE activities SET position=%(position)s::INTEGER, updated_at=now() WHERE activities.id = %(activities_id)s::UUID]
+E           [parameters: [{'position': 0, 'activities_id': UUID('36c3d757-9f16-4bca-945d-4424d37ff6a7')}, {'position': 1, 'activities_id': UUID('3be91010-363e-4ae0-b8f2-49469c102bb3')}]]
+E           (Background on this error at: https://sqlalche.me/e/20/gkpj)
+
+..\..\RoamSync\backend\.venv\Lib\site-packages\psycopg\cursor_async.py:148: IntegrityError
+________ test_saved_first_item_does_not_hide_same_day_other_activities ________
+
+sessions = async_sessionmaker(class_='AsyncSession', bind=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x000001AA3664C990>, autoflush=True, expire_on_commit=False)
+
+    def test_saved_first_item_does_not_hide_same_day_other_activities(sessions):
+        async def run():
+            async with sessions() as db:
+                trip, days, activities = await seed(db)
+                snapshot = await load_saved_trip_read(db, trip.id)
+                text = render_saved_request(snapshot, '总天数、第一天第一项活动、第一天其他活动和最后一天留白')
+                assert '共3天' in text and '合成地点1，' in text
+                assert '合成地点2，' in text and '合成地点5，' in text
+                assert '午餐留白' in text
+                assert '合成地点6，' not in text
+                assert '合成地点11，' not in text  # requested only last-day free intervals
+>       asyncio.run(run())
+
+tests\test_stage6_saved_references.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        async with sessions() as db:
+            trip, days, activities = await seed(db)
+            snapshot = await load_saved_trip_read(db, trip.id)
+            text = render_saved_request(snapshot, '总天数、第一天第一项活动、第一天其他活动和最后一天留白')
+            assert '共3天' in text and '合成地点1，' in text
+            assert '合成地点2，' in text and '合成地点5，' in text
+            assert '午餐留白' in text
+            assert '合成地点6，' not in text
+>           assert '合成地点11，' not in text  # requested only last-day free intervals
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: assert '合成地点11，' not in '这份已保存行程共3天。...保存状态，没有修改安排。'
+E             
+E             '合成地点11，' is contained here:
+E               2 09:00 · 合成地点11，保存的停留时长45分钟。
+E             ?           +++++++
+E               2026-11-12 10:00 · 合成地点12，保存的停留时长45分钟。
+E               2026-11-12 11:00 · 同名展馆，保存的停留时长60分钟。
+E               2026-11-12 12:00 · 合成地点14，保存的停留时长45分钟。...
+E             
+E             ...Full output truncated (12 lines hidden), use '-vv' to show
+
+tests\test_stage6_saved_references.py:30: AssertionError
+__________ test_bare_item_does_not_silently_count_past_a_free_window __________
+
+sessions = async_sessionmaker(class_='AsyncSession', bind=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x000001AA35DA9DD0>, autoflush=True, expire_on_commit=False)
+
+    def test_bare_item_does_not_silently_count_past_a_free_window(sessions):
+        async def run():
+            async with sessions() as db:
+                trip, days, activities = await seed(db)
+                snapshot = await load_saved_trip_read(db, trip.id)
+                assert snapshot.project('第三天第四项')['coverage']['ambiguous']
+                explicit = snapshot.project('第三天第四项活动')
+                assert not explicit['coverage']['ambiguous']
+                assert explicit['activities'][0]['activity_id'] == str(activities[13].id)
+>       asyncio.run(run())
+
+tests\test_stage6_saved_references.py:43: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        async with sessions() as db:
+            trip, days, activities = await seed(db)
+            snapshot = await load_saved_trip_read(db, trip.id)
+>           assert snapshot.project('第三天第四项')['coverage']['ambiguous']
+E           assert False
+
+tests\test_stage6_saved_references.py:39: AssertionError
+- generated xml file: E:\Study\RoamSync-stage6-evidence-20261025\batch1-before.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_stage6_saved_references.py::test_saved_ordinal_matches_chronological_handbook_even_after_position_changes
+FAILED tests/test_stage6_saved_references.py::test_saved_first_item_does_not_hide_same_day_other_activities
+FAILED tests/test_stage6_saved_references.py::test_bare_item_does_not_silently_count_past_a_free_window

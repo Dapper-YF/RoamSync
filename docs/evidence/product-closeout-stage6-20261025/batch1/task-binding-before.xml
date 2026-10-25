@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="4" time="4.450" timestamp="2026-10-25T20:22:04.843162+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage6_read_focus" name="test_singular_followup_keeps_focus_without_renumbering_comparison" time="0.006" /><testcase classname="tests.test_stage6_read_focus" name="test_two_different_references_do_not_guess_a_singular_focus" time="0.003" /><testcase classname="tests.test_stage6_read_focus" name="test_explicit_peer_and_denied_reference_cannot_donate_wrong_focus" time="0.001" /><testcase classname="tests.test_stage6_read_focus" name="test_read_task_uses_server_pronoun_binding_instead_of_wrong_model_name" time="0.001"><failure message="pydantic_core._pydantic_core.ValidationError: 1 validation error for CapabilityDecision&#10;reason_code&#10;  Field required [type=missing, input_value={'intent': 'lookup', 'cit...erary_purpose='other')]}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing">def test_read_task_uses_server_pronoun_binding_instead_of_wrong_model_name():
+        history=[comparison(),{'user':'第二个的地址是什么？'}]
+        envelope=ContextEnvelope(browsing_city='开封')
+        message='它今天开放到几点？'
+&gt;       choice=CapabilityDecision(intent='lookup',city='开封',read_tasks=[ReadTask(
+            source_quote=message,city='开封',names=['甲园'],query='甲园 开放时间',fact_kind='opening_hours')])
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for CapabilityDecision
+E       reason_code
+E         Field required [type=missing, input_value={'intent': 'lookup', 'cit...erary_purpose='other')]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+tests\test_stage6_read_focus.py:40: ValidationError</failure></testcase></testsuite></testsuites>

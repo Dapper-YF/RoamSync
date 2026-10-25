@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="2" time="0.536" timestamp="2026-10-25T20:12:22.739639+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage6_read_focus" name="test_singular_followup_keeps_focus_without_renumbering_comparison" time="0.002"><failure message="AssertionError: assert '它需要留多久？' == '乙馆需要留多久？'&#10;  &#10;  - 乙馆需要留多久？&#10;  ? ^^&#10;  + 它需要留多久？&#10;  ? ^">def test_singular_followup_keeps_focus_without_renumbering_comparison():
+        history=[comparison(),{'user':'第二个适合了解历史吗？'}]
+        catalog=place_catalog(history,ContextEnvelope(browsing_city='开封'))
+&gt;       assert resolve_read_text('它需要留多久？',catalog)=='乙馆需要留多久？'
+E       AssertionError: assert '它需要留多久？' == '乙馆需要留多久？'
+E         
+E         - 乙馆需要留多久？
+E         ? ^^
+E         + 它需要留多久？
+E         ? ^
+
+tests\test_stage6_read_focus.py:14: AssertionError</failure></testcase><testcase classname="tests.test_stage6_read_focus" name="test_two_different_references_do_not_guess_a_singular_focus" time="0.001" /></testsuite></testsuites>
