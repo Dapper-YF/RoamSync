@@ -1,0 +1,35 @@
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.WindowsSelectorEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+........................................................................ [ 44%]
+............F........................................................... [ 88%]
+..................                                                       [100%]
+================================== FAILURES ===================================
+_____ test_compound_request_produces_grounded_envelope_and_risk_decision ______
+
+    def test_compound_request_produces_grounded_envelope_and_risk_decision() -> None:
+        with TestClient(app) as client:
+            client.post("/api/v1/demo/reset")
+            days = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}/days").json()
+            target = days[1]["activities"][1]
+            candidates = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}/candidates").json()
+            replacement = next(item for item in candidates if item["name"] == "小河公园")
+            response = client.post(
+                f"/api/v1/trips/{DEMO_TRIP_ID}/planning-intent/resolve",
+                json={
+                    "message": (
+                        f"把第二天下午的{target['display_name']}换成小河公园，"
+                        "预算不要增加"
+                    )
+                },
+            )
+            assert response.status_code == 200
+            payload = response.json()
+>           assert payload["requires_clarification"] is False
+E           assert True is False
+
+tests\test_planning_intents.py:258: AssertionError
+- generated xml file: E:\Study\RoamSync-stage6-evidence-20261025\batch2-regression2.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_planning_intents.py::test_compound_request_produces_grounded_envelope_and_risk_decision

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="7" time="6.085" timestamp="2026-10-25T20:58:22.436478+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage6_operation_bindings" name="test_explicit_named_target_does_not_union_unrelated_ui_selection" time="0.023" /><testcase classname="tests.test_stage6_operation_bindings" name="test_saved_ordinal_and_increment_keep_server_target_and_delta" time="0.002" /><testcase classname="tests.test_stage6_operation_bindings" name="test_two_operations_do_not_cross_product_targets_and_amounts" time="0.001" /><testcase classname="tests.test_stage6_operation_bindings" name="test_named_target_is_scoped_to_requested_day" time="0.001" /><testcase classname="tests.test_stage6_operation_bindings" name="test_wrong_subject_or_missing_sibling_cannot_form_partial_preview" time="0.005" /><testcase classname="tests.test_stage6_operation_bindings" name="test_duration_and_other_operation_are_not_silently_partially_applied" time="0.001" /><testcase classname="tests.test_stage6_operation_bindings" name="test_saved_baseline_is_not_an_adoption_action_and_denial_scopes_stay_separate" time="0.069"><failure message="AssertionError: assert 'direct' == 'modify'&#10;  &#10;  - modify&#10;  + direct">def test_saved_baseline_is_not_an_adoption_action_and_denial_scopes_stay_separate():
+        quote='请以当前保存版本为基线，把第一天第一项活动的停留时长增加15分钟'
+        choice=CapabilityDecision(intent='modify',reason_code='explicit_write',authorization_quote=quote)
+        envelope=ContextEnvelope(browsing_city='南京')
+&gt;       assert validate_decision(choice,quote+'。先只预览修改，暂不采用。',[],envelope).intent=='modify'
+E       AssertionError: assert 'direct' == 'modify'
+E         
+E         - modify
+E         + direct
+
+tests\test_stage6_operation_bindings.py:93: AssertionError</failure></testcase></testsuite></testsuites>

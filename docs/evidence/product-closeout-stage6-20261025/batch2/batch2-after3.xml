@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="8" time="9.519" timestamp="2026-10-25T20:43:18.431275+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage6_operation_bindings" name="test_explicit_named_target_does_not_union_unrelated_ui_selection" time="0.119" /><testcase classname="tests.test_stage6_operation_bindings" name="test_saved_ordinal_and_increment_keep_server_target_and_delta" time="0.002" /><testcase classname="tests.test_stage6_operation_bindings" name="test_two_operations_do_not_cross_product_targets_and_amounts" time="0.002" /><testcase classname="tests.test_stage6_operation_bindings" name="test_named_target_is_scoped_to_requested_day" time="0.002" /><testcase classname="tests.test_stage6_operation_bindings" name="test_wrong_subject_or_missing_sibling_cannot_form_partial_preview" time="0.005" /><testcase classname="tests.test_stage6_operation_bindings" name="test_duration_and_other_operation_are_not_silently_partially_applied" time="0.002" /><testcase classname="tests.test_stage6_duration_goal_db" name="test_existing_goal_checker_rejects_wrong_delta_peer_change_and_stale_baseline" time="0.682" /><testcase classname="tests.test_stage6_duration_goal_db" name="test_original_accept_chain_refuses_wrong_delta_without_formal_mutation" time="0.887"><failure message="AttributeError: 'InvalidPlanRevisionError' object has no attribute 'validation_result'">async def run():
+        rid=await pending_revision(sample)
+        async with sample.sessions() as db:
+            resolution,context=await prepared(sample,db)
+            revision=await db.get(PlanRevision,rid)
+            run=await db.get(PlanningRun,revision.planning_run_id)
+            run.intent_resolution=resolution.model_dump(mode='json');run.user_request=resolution.request.user_request
+            revision.before_snapshot=context
+            data=deepcopy(revision.proposed_snapshot);data['activities'][0]['duration_minutes']=15
+            revision.proposed_snapshot=data
+            await db.commit()
+        before=await current(sample)
+        async with sample.sessions() as db:
+            try:
+&gt;               await accept_plan_revision(db,rid)
+
+tests\test_stage6_duration_goal_db.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+session = &lt;sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000001FCEA640230&gt;
+revision_id = UUID('6b999e04-240e-44bf-b71c-10116ba0c0c9')
+
+    async def accept_plan_revision(
+        session: AsyncSession, revision_id: uuid.UUID, *, commit: bool = True,
+        expected_presentation_hash: str | None = None,
+    ) -&gt; PlanRevision:
+        from app.draft_promotion.guard import authorize_accept
+        await authorize_accept(session, revision_id, commit=commit)
+        # Trip before Revision/Run/Activity. Activity deletion can implicitly update
+        # Run.selected_activity_id through its FK; the reverse order can deadlock.
+        trip_id = await session.scalar(select(PlanRevision.trip_id).where(PlanRevision.id == revision_id))
+        if trip_id is None:
+            raise PlanRevisionNotFoundError
+        trip = await session.scalar(select(Trip).where(Trip.id == trip_id).with_for_update().execution_options(populate_existing=True))
+        if trip is None:
+            raise PlanRevisionNotFoundError
+        revision = await session.scalar(
+            select(PlanRevision).where(PlanRevision.id == revision_id).with_for_update().execution_options(populate_existing=True)
+        )
+        if revision is None:
+            raise PlanRevisionNotFoundError
+        if expected_presentation_hash is not None:
+            from app.revision_presentation import revision_presentation_hash
+            if revision_presentation_hash(revision) != expected_presentation_hash:
+                raise ValueError('这份修改候选的内容已经变化，请重新查看后再明确采用。')
+        if revision.status == "accepted":
+            return revision
+        if revision.status != "pending":
+            raise InvalidPlanningRunStateError
+        run = await session.scalar(
+            select(PlanningRun).where(PlanningRun.id == revision.planning_run_id).with_for_update().execution_options(populate_existing=True)
+        )
+        if run is None or trip is None:
+            raise PlanRevisionNotFoundError
+        if trip.version != run.base_trip_version:
+            raise StalePlanningRunError
+        # Serialize requirement edits with final validation/application. Changes to
+        # requirements have their own version and do not bump the itinerary.
+        preferences = await session.scalar(select(TripPreferences).where(
+            TripPreferences.trip_id == trip.id,
+        ).with_for_update())
+        if preferences is None:
+            # Legacy/imported Trips may lack this row. The read-side compatibility
+            # helper commits when repairing it, which would release the parent
+            # fence midway through Accept. Repair inside THIS transaction instead.
+            preferences = TripPreferences(trip_id=trip.id)
+            session.add(preferences)
+            await session.flush()
+        if run.trigger_type == "experience_impact":
+            from app.experience_replanning_service import _snapshot
+            from app.activity_experience_impact import evaluate_activity_experience_time_impact
+            trigger = run.trigger_snapshot or {}
+            try:
+                activity_execution_id = uuid.UUID(str(trigger["activity_execution_id"]))
+            except (KeyError, ValueError):
+                raise StalePlanningRunError
+            activity_execution = await session.get(ActivityExecution, activity_execution_id)
+            execution = await session.get(TripExecution, activity_execution.trip_execution_id) if activity_execution else None
+            impact = (
+                await evaluate_activity_experience_time_impact(session, execution.id, activity_execution.id)
+                if activity_execution is not None and execution is not None else None
+            )
+            if activity_execution is None or execution is None or impact is None or (
+                await _snapshot(session, execution, activity_execution, impact.model_dump(mode="json"))
+            ).get("fingerprint") != trigger.get("fingerprint"):
+                raise StalePlanningRunError
+        snapshot = CandidatePlanSnapshot.model_validate(revision.proposed_snapshot)
+        from app.candidate_edit import load_initial_candidate, CandidateEditUnavailable
+        try:
+            candidate_edit_base = await load_initial_candidate(session, run)
+        except CandidateEditUnavailable as exc:
+            raise StalePlanningRunError from exc
+        result = await validate_candidate_plan(
+            session,
+            trip.id,
+            snapshot,
+            required_dates={date.fromisoformat(value) for value in revision.difference_summary.get("required_day_dates", [])},
+            intent_resolution=(
+                PlanningIntentResolution.model_validate(run.intent_resolution)
+                if run.intent_resolution is not None
+                else None
+            ),
+            enforce_execution_invariants=run.disruption_event_id is not None or run.trigger_type == "experience_impact",
+            candidate_edit_base=candidate_edit_base,
+        )
+        revision.validation_result = result.model_dump(mode="json")
+        if expected_presentation_hash is not None and revision_presentation_hash(revision)!=expected_presentation_hash:
+            raise ValueError('重新核验后的风险已变化，正式安排未改。请重新生成修改候选，核对最新风险后再采用。')
+        if not result.valid:
+            if commit:
+                await session.rollback()
+&gt;           raise InvalidPlanRevisionError(result)
+E           app.plan_revision_service.InvalidPlanRevisionError: candidate plan failed deterministic validation
+
+app\plan_revision_service.py:611: InvalidPlanRevisionError
+
+During handling of the above exception, another exception occurred:
+
+sample = namespace(trip_id=UUID('7a7df535-a3ee-4703-b14f-8a1a0cc05c32'), days=[&lt;app.database.DayPlan object at 0x000001FCEA1428...bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x000001FCEA17DC90&gt;, autoflush=True, expire_on_commit=False))
+
+    def test_original_accept_chain_refuses_wrong_delta_without_formal_mutation(sample):
+        async def run():
+            rid=await pending_revision(sample)
+            async with sample.sessions() as db:
+                resolution,context=await prepared(sample,db)
+                revision=await db.get(PlanRevision,rid)
+                run=await db.get(PlanningRun,revision.planning_run_id)
+                run.intent_resolution=resolution.model_dump(mode='json');run.user_request=resolution.request.user_request
+                revision.before_snapshot=context
+                data=deepcopy(revision.proposed_snapshot);data['activities'][0]['duration_minutes']=15
+                revision.proposed_snapshot=data
+                await db.commit()
+            before=await current(sample)
+            async with sample.sessions() as db:
+                try:
+                    await accept_plan_revision(db,rid)
+                except InvalidPlanRevisionError as error:
+                    assert 'saved_duration_change_mismatch' in str(error.validation_result)
+                else:
+                    raise AssertionError('Wrong delta was adopted')
+                await db.rollback()
+            assert await current(sample)==before
+&gt;       asyncio.run(run())
+
+tests\test_stage6_duration_goal_db.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        rid=await pending_revision(sample)
+        async with sample.sessions() as db:
+            resolution,context=await prepared(sample,db)
+            revision=await db.get(PlanRevision,rid)
+            run=await db.get(PlanningRun,revision.planning_run_id)
+            run.intent_resolution=resolution.model_dump(mode='json');run.user_request=resolution.request.user_request
+            revision.before_snapshot=context
+            data=deepcopy(revision.proposed_snapshot);data['activities'][0]['duration_minutes']=15
+            revision.proposed_snapshot=data
+            await db.commit()
+        before=await current(sample)
+        async with sample.sessions() as db:
+            try:
+                await accept_plan_revision(db,rid)
+            except InvalidPlanRevisionError as error:
+&gt;               assert 'saved_duration_change_mismatch' in str(error.validation_result)
+                                                               ^^^^^^^^^^^^^^^^^^^^^^^
+E               AttributeError: 'InvalidPlanRevisionError' object has no attribute 'validation_result'
+
+tests\test_stage6_duration_goal_db.py:61: AttributeError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,34 @@
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.WindowsSelectorEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+......F........F........................................................ [ 41%]
+........................................................................ [ 83%]
+.............................                                            [100%]
+================================== FAILURES ===================================
+_ test_saved_baseline_is_not_an_adoption_action_and_denial_scopes_stay_separate _
+
+    def test_saved_baseline_is_not_an_adoption_action_and_denial_scopes_stay_separate():
+        quote='请以当前保存版本为基线，把第一天第一项活动的停留时长增加15分钟'
+        choice=CapabilityDecision(intent='modify',reason_code='explicit_write',authorization_quote=quote)
+        envelope=ContextEnvelope(browsing_city='南京')
+        assert validate_decision(choice,quote+'。先只预览修改，暂不采用。',[],envelope).intent=='modify'
+>       assert validate_decision(choice,quote+'。暂不修改。',[],envelope).intent=='direct'
+E       AssertionError: assert 'modify' == 'direct'
+E         
+E         - direct
+E         + modify
+
+tests\test_stage6_operation_bindings.py:94: AssertionError
+______________ test_explicit_revocation_still_blocks_same_action ______________
+
+    def test_explicit_revocation_still_blocks_same_action():
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests\test_stage3_candidate_scope.py:20: Failed
+- generated xml file: E:\Study\RoamSync-stage6-evidence-20261025\batch2-regression4.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_stage6_operation_bindings.py::test_saved_baseline_is_not_an_adoption_action_and_denial_scopes_stay_separate
+FAILED tests/test_stage3_candidate_scope.py::test_explicit_revocation_still_blocks_same_action

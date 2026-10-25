@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="4" time="1.644" timestamp="2026-10-25T20:33:41.539602+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage6_operation_bindings" name="test_explicit_named_target_does_not_union_unrelated_ui_selection" time="0.007"><failure message="AssertionError: assert [UUID('c3d6d4...c38cd8951f1')] == [UUID('e769a8...c38cd8951f1')]&#10;  &#10;  At index 0 diff: UUID('c3d6d434-dac0-403a-be0f-531b8cf039ae') != UUID('e769a8df-6d6d-40a5-9590-ac38cd8951f1')&#10;  Left contains one more item: UUID('e769a8df-6d6d-40a5-9590-ac38cd8951f1')&#10;  Use -v to get more diff">def test_explicit_named_target_does_not_union_unrelated_ui_selection():
+        day,rows=entities()
+        result=ground(day,rows,[('把乙馆停留时长改为80分钟','乙馆')],selected=rows[0].id)
+&gt;       assert result.target_activity_ids==[rows[1].id]
+E       AssertionError: assert [UUID('c3d6d4...c38cd8951f1')] == [UUID('e769a8...c38cd8951f1')]
+E         
+E         At index 0 diff: UUID('c3d6d434-dac0-403a-be0f-531b8cf039ae') != UUID('e769a8df-6d6d-40a5-9590-ac38cd8951f1')
+E         Left contains one more item: UUID('e769a8df-6d6d-40a5-9590-ac38cd8951f1')
+E         Use -v to get more diff
+
+tests\test_stage6_operation_bindings.py:28: AssertionError</failure></testcase><testcase classname="tests.test_stage6_operation_bindings" name="test_saved_ordinal_and_increment_keep_server_target_and_delta" time="0.001"><failure message="AssertionError: assert [] == [UUID('34f24c...d3d47274bc2')]&#10;  &#10;  Right contains one more item: UUID('34f24cc2-6f35-4415-86f9-1d3d47274bc2')&#10;  Use -v to get more diff">def test_saved_ordinal_and_increment_keep_server_target_and_delta():
+        day,rows=entities()
+        result=ground(day,rows,[('第一天第一项活动增加15分钟','第一天第一项活动')])
+&gt;       assert result.target_activity_ids==[rows[0].id]
+E       AssertionError: assert [] == [UUID('34f24c...d3d47274bc2')]
+E         
+E         Right contains one more item: UUID('34f24cc2-6f35-4415-86f9-1d3d47274bc2')
+E         Use -v to get more diff
+
+tests\test_stage6_operation_bindings.py:34: AssertionError</failure></testcase><testcase classname="tests.test_stage6_operation_bindings" name="test_two_operations_do_not_cross_product_targets_and_amounts" time="0.001"><failure message="AttributeError: 'GroundedIntent' object has no attribute 'duration_changes'">def test_two_operations_do_not_cross_product_targets_and_amounts():
+        day,rows=entities()
+        result=ground(day,rows,[('甲园增加15分钟','甲园'),('乙馆减少10分钟','乙馆')])
+&gt;       assert [(v.activity_id,v.after_minutes) for v in result.duration_changes]==[(rows[0].id,75),(rows[1].id,80)]
+                                                         ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_stage6_operation_bindings.py:43: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = GroundedIntent(trip_id=UUID('5174bbba-3006-4d2a-b334-2cc6a679e082'), primary_intent='replan_trip', operation_types=['r...inutes=None, requested_pace=None, weather_sensitive=False, preserve_completed=True), missing_fields=[], ambiguities=[])
+item = 'duration_changes'
+
+    def __getattr__(self, item: str) -&gt; Any:
+        private_attributes = object.__getattribute__(self, '__private_attributes__')
+        if item in private_attributes:
+            attribute = private_attributes[item]
+            if hasattr(attribute, '__get__'):
+                return attribute.__get__(self, type(self))  # type: ignore
+    
+            try:
+                # Note: self.__pydantic_private__ cannot be None if self.__private_attributes__ has items
+                return self.__pydantic_private__[item]  # type: ignore
+            except KeyError as exc:
+                raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+        else:
+            # `__pydantic_extra__` can fail to be set if the model is not yet fully initialized.
+            # See `BaseModel.__repr_args__` for more details
+            try:
+                pydantic_extra = object.__getattribute__(self, '__pydantic_extra__')
+            except AttributeError:
+                pydantic_extra = None
+    
+            if pydantic_extra and item in pydantic_extra:
+                return pydantic_extra[item]
+            else:
+                if hasattr(self.__class__, item):
+                    return super().__getattribute__(item)  # Raises AttributeError if appropriate
+                else:
+                    # this is the current error
+&gt;                   raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E                   AttributeError: 'GroundedIntent' object has no attribute 'duration_changes'
+
+..\..\RoamSync\backend\.venv\Lib\site-packages\pydantic\main.py:1042: AttributeError</failure></testcase><testcase classname="tests.test_stage6_operation_bindings" name="test_named_target_is_scoped_to_requested_day" time="0.001"><failure message="AssertionError: assert [] == [UUID('ca65fb...1a6cfbaf26b')]&#10;  &#10;  Right contains one more item: UUID('ca65fbfb-1031-4b7b-96d4-31a6cfbaf26b')&#10;  Use -v to get more diff">def test_named_target_is_scoped_to_requested_day():
+        day,rows=entities()
+        other=SimpleNamespace(**{**vars(rows[1]),'id':uuid4(),'day_id':uuid4()})
+        result=ground(day,[*rows,other],[('乙馆增加15分钟','乙馆')])
+&gt;       assert result.target_activity_ids==[rows[1].id]
+E       AssertionError: assert [] == [UUID('ca65fb...1a6cfbaf26b')]
+E         
+E         Right contains one more item: UUID('ca65fbfb-1031-4b7b-96d4-31a6cfbaf26b')
+E         Use -v to get more diff
+
+tests\test_stage6_operation_bindings.py:50: AssertionError</failure></testcase></testsuite></testsuites>

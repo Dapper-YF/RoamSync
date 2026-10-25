@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="4" time="10.063" timestamp="2026-10-25T21:45:24.230442+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage6_duration_goal_db" name="test_existing_goal_checker_rejects_wrong_delta_peer_change_and_stale_baseline" time="0.816"><failure message="AssertionError: assert 'satisfied' == 'unsatisfied'&#10;  &#10;  - unsatisfied&#10;  ? --&#10;  + satisfied">sample = namespace(trip_id=UUID('786d0aab-ea5e-457e-a7d1-47f7cea07fde'), days=[&lt;app.database.DayPlan object at 0x00000187DABEEE...bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x00000187D500DE10&gt;, autoflush=True, expire_on_commit=False))
+
+    def test_existing_goal_checker_rejects_wrong_delta_peer_change_and_stale_baseline(sample):
+        async def run():
+            rid=await pending_revision(sample)
+            async with sample.sessions() as db:
+                resolution,context=await prepared(sample,db)
+                revision=await db.get(PlanRevision,rid)
+                data=deepcopy(revision.proposed_snapshot);data['activities'][0]['duration_minutes']=45
+                goals=extract_planning_goals(user_request=resolution.request.user_request,intent_resolution=resolution.model_dump(mode='json'),context=context)
+                def result(data,ctx=context):
+                    checks=check_goal_satisfaction(goals=goals,before_context=ctx,snapshot=CandidatePlanSnapshot.model_validate(data))
+                    return next(item for item in checks.results if item.goal=='saved_duration_changes')
+                assert result(data).status=='satisfied'
+                wrong=deepcopy(data);wrong['activities'][0]['duration_minutes']=15
+                assert result(wrong).status=='unsatisfied'
+                peer=deepcopy(data);peer['activities'][1]['duration_minutes']=45
+                assert result(peer).status=='unsatisfied'
+                route=deepcopy(data);route['route_legs'][0]['mode']='driving'
+                assert result(route).status=='unsatisfied'
+                # A duration edit on day one cannot alter another day's transport.
+                cross_context=deepcopy(context)
+                day_two=deepcopy(context['days'][0]);day_two['date']=sample.days[1].date.isoformat()
+                ids={str(item['id']):str(uuid4()) for item in day_two['activities']}
+                for item in day_two['activities']:
+                    item['id']=ids[str(item['id'])]
+                day_two['route_mode']='walk';day_two['route_legs']=[]
+                cross_context['days'].append(day_two)
+                cross=deepcopy(data)
+                for item in data['activities']:
+                    copied=deepcopy(item);copied['day_date']=day_two['date']
+                    copied['replaces_activity_id']=ids[str(item['replaces_activity_id'])]
+                    copied['candidate_id']='activity:'+copied['replaces_activity_id']
+                    copied['duration_minutes']=30;copied['transport_mode_to_here']='driving'
+                    cross['activities'].append(copied)
+                leg=deepcopy(data['route_legs'][0]);leg['day_date']=day_two['date']
+                leg['from_activity_ref']='activity:'+ids[leg['from_activity_ref'].removeprefix('activity:')]
+                leg['to_activity_ref']='activity:'+ids[leg['to_activity_ref'].removeprefix('activity:')]
+                leg['mode']='driving';cross['route_legs'].append(leg)
+                assert result(cross,cross_context).status=='unsatisfied'
+                stale=deepcopy(context);stale['days'][0]['activities'][0]['version']+=1
+                assert result(data,stale).status=='unsatisfied'
+&gt;       asyncio.run(run())
+
+tests\test_stage6_duration_goal_db.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        rid=await pending_revision(sample)
+        async with sample.sessions() as db:
+            resolution,context=await prepared(sample,db)
+            revision=await db.get(PlanRevision,rid)
+            data=deepcopy(revision.proposed_snapshot);data['activities'][0]['duration_minutes']=45
+            goals=extract_planning_goals(user_request=resolution.request.user_request,intent_resolution=resolution.model_dump(mode='json'),context=context)
+            def result(data,ctx=context):
+                checks=check_goal_satisfaction(goals=goals,before_context=ctx,snapshot=CandidatePlanSnapshot.model_validate(data))
+                return next(item for item in checks.results if item.goal=='saved_duration_changes')
+            assert result(data).status=='satisfied'
+            wrong=deepcopy(data);wrong['activities'][0]['duration_minutes']=15
+            assert result(wrong).status=='unsatisfied'
+            peer=deepcopy(data);peer['activities'][1]['duration_minutes']=45
+            assert result(peer).status=='unsatisfied'
+            route=deepcopy(data);route['route_legs'][0]['mode']='driving'
+            assert result(route).status=='unsatisfied'
+            # A duration edit on day one cannot alter another day's transport.
+            cross_context=deepcopy(context)
+            day_two=deepcopy(context['days'][0]);day_two['date']=sample.days[1].date.isoformat()
+            ids={str(item['id']):str(uuid4()) for item in day_two['activities']}
+            for item in day_two['activities']:
+                item['id']=ids[str(item['id'])]
+            day_two['route_mode']='walk';day_two['route_legs']=[]
+            cross_context['days'].append(day_two)
+            cross=deepcopy(data)
+            for item in data['activities']:
+                copied=deepcopy(item);copied['day_date']=day_two['date']
+                copied['replaces_activity_id']=ids[str(item['replaces_activity_id'])]
+                copied['candidate_id']='activity:'+copied['replaces_activity_id']
+                copied['duration_minutes']=30;copied['transport_mode_to_here']='driving'
+                cross['activities'].append(copied)
+            leg=deepcopy(data['route_legs'][0]);leg['day_date']=day_two['date']
+            leg['from_activity_ref']='activity:'+ids[leg['from_activity_ref'].removeprefix('activity:')]
+            leg['to_activity_ref']='activity:'+ids[leg['to_activity_ref'].removeprefix('activity:')]
+            leg['mode']='driving';cross['route_legs'].append(leg)
+&gt;           assert result(cross,cross_context).status=='unsatisfied'
+E           AssertionError: assert 'satisfied' == 'unsatisfied'
+E             
+E             - unsatisfied
+E             ? --
+E             + satisfied
+
+tests\test_stage6_duration_goal_db.py:63: AssertionError</failure></testcase><testcase classname="tests.test_stage6_duration_goal_db" name="test_original_accept_chain_refuses_wrong_delta_without_formal_mutation" time="0.902" /><testcase classname="tests.test_stage6_duration_goal_db" name="test_original_accept_applies_only_the_approved_duration_and_duplicate_is_idempotent" time="0.989" /><testcase classname="tests.test_stage6_duration_goal_db" name="test_read_only_chat_does_not_clean_up_historical_requirement_records" time="0.518" /></testsuite></testsuites>

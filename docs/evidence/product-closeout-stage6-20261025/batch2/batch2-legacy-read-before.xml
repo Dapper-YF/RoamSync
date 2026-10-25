@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="5.903" timestamp="2026-10-25T21:14:28.427443+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage6_duration_goal_db" name="test_read_only_chat_does_not_clean_up_historical_requirement_records" time="0.237"><failure message="ImportError: cannot import name 'RequirementRecord' from 'app.requirements' (E:\Study\RoamSync-product-closeout-stage2-20261024\backend\app\requirements.py)">sample = namespace(trip_id=UUID('0c87d865-127b-4c87-ae22-4faa490e0cdb'), days=[&lt;app.database.DayPlan object at 0x00000206E44BEE...bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x00000206E2292810&gt;, autoflush=True, expire_on_commit=False))
+
+    def test_read_only_chat_does_not_clean_up_historical_requirement_records(sample):
+        from app.assistant_service import send_message
+        from app.assistant_capabilities import CapabilityDecision
+&gt;       from app.requirements import RequirementRecord
+E       ImportError: cannot import name 'RequirementRecord' from 'app.requirements' (E:\Study\RoamSync-product-closeout-stage2-20261024\backend\app\requirements.py)
+
+tests\test_stage6_duration_goal_db.py:100: ImportError</failure></testcase></testsuite></testsuites>

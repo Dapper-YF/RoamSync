@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="29" time="8.371" timestamp="2026-10-25T21:50:25.793772+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_selection_protocol_recovery" name="test_extra_root_field_recovers_only_after_explicit_second_strict_output" time="0.080" /><testcase classname="tests.test_selection_protocol_recovery" name="test_read_task_only_misplaced_parser_metadata_gets_one_visible_format_repair" time="0.042"><failure message="pydantic_core._pydantic_core.ValidationError: 3 validation errors for CapabilityDecisionWire&#10;confidence&#10;  Extra inputs are not permitted [type=extra_forbidden, input_value=0.98, input_type=float]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden&#10;parser&#10;  Extra inputs are not permitted [type=extra_forbidden, input_value='model', input_type=str]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden&#10;parser_version&#10;  Extra inputs are not permitted [type=extra_forbidden, input_value='v1', input_type=str]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000016EB00162C0&gt;
+
+    def test_read_task_only_misplaced_parser_metadata_gets_one_visible_format_repair(monkeypatch):
+        known={k:v for k,v in BASE.items() if k!='capabilities'}
+        known['read_tasks']=[{'source_quote':'选中的馆原来保存了多久？',
+            'capabilities':['itinerary'],'itinerary_purpose':'saved_values'}]
+        raw={**known,'confidence':.98,'parser':'model','parser_version':'v1'}
+        run,calls,closed,_=exercise(monkeypatch,[raw,known])
+&gt;       assert asyncio.run(run()).itinerary_purpose=='saved_values'
+               ^^^^^^^^^^^^^^^^^^
+
+tests\test_selection_protocol_recovery.py:67: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_selection_protocol_recovery.py:42: in run
+    return await selector.select_capabilities(SimpleNamespace(planner_model="test"),
+app\assistant_capabilities.py:204: in select_capabilities
+    decision = await bounded_call(select, stage="selection", limit=30)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\assistant_reliability.py:119: in bounded_call
+    result = await operation()
+             ^^^^^^^^^^^^^^^^^
+app\assistant_capabilities.py:155: in select
+    validate_wire_selection(raw,schema)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+raw = {'confidence': 0.98, 'intent': 'itinerary', 'itinerary_purpose': 'saved_values', 'parser': 'model', ...}
+schema = {'$defs': {'CreationItemProposal': {'additionalProperties': False, 'description': 'Extraction may be incomplete; the e...d', 'attraction', 'lodging'], 'title': 'Category', 'type': 'string'}, ...}, 'required': ['intent', 'reason_code'], ...}
+
+    def validate_wire_selection(raw, schema):
+        """Enforce the same state/action field surface on the returned raw JSON.
+    
+        Pydantic owns all normal types and business policy remains downstream.
+        This check neither deletes fields nor coerces an unavailable action.
+        """
+        if not isinstance(raw,dict):
+            return
+        errors=[{'type':'extra_forbidden','loc':(key,),'input':raw[key]}
+            for key in raw if key not in schema['properties']]
+        command=raw.get('candidate_command')
+        if isinstance(command,dict) and 'candidate_command' in schema['properties']:
+            branches=schema['$defs']['CandidateCommand']['oneOf']
+            branch=next((b for b in branches if b['properties']['action']['const']==command.get('action')),None)
+            if branch is None:
+                errors.append({'type':'value_error','loc':('candidate_command','action'),
+                    'input':command.get('action'),'ctx':{'error':ValueError('action unavailable for current object state')}})
+            else:
+                errors.extend({'type':'extra_forbidden','loc':('candidate_command',key),'input':command[key]}
+                    for key in command if key not in branch['properties'])
+                errors.extend({'type':'missing','loc':('candidate_command',key),'input':command}
+                    for key in branch['required'] if key not in command)
+                if command.get('action')=='generate' and command.get('plan') is None:
+                    errors.append({'type':'value_error','loc':('candidate_command','plan'),'input':None,
+                        'ctx':{'error':ValueError('generate requires a complete plan')}})
+        if errors:
+&gt;           raise ValidationError.from_exception_data('CapabilityDecisionWire',errors)
+E           pydantic_core._pydantic_core.ValidationError: 3 validation errors for CapabilityDecisionWire
+E           confidence
+E             Extra inputs are not permitted [type=extra_forbidden, input_value=0.98, input_type=float]
+E               For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+E           parser
+E             Extra inputs are not permitted [type=extra_forbidden, input_value='model', input_type=str]
+E               For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+E           parser_version
+E             Extra inputs are not permitted [type=extra_forbidden, input_value='v1', input_type=str]
+E               For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+app\assistant_selection_contract.py:140: ValidationError</failure></testcase><testcase classname="tests.test_selection_protocol_recovery" name="test_read_task_only_unknown_or_authority_metadata_is_not_repairable[extra0]" time="0.031" /><testcase classname="tests.test_selection_protocol_recovery" name="test_read_task_only_unknown_or_authority_metadata_is_not_repairable[extra1]" time="0.031" /><testcase classname="tests.test_selection_protocol_recovery" name="test_read_task_only_unknown_or_authority_metadata_is_not_repairable[extra2]" time="0.082" /><testcase classname="tests.test_selection_protocol_recovery" name="test_read_task_only_unknown_or_authority_metadata_is_not_repairable[extra3]" time="0.029" /><testcase classname="tests.test_selection_protocol_recovery" name="test_schema_valid_repair_cannot_change_or_add_scope_conditions_or_authority[change0]" time="0.035" /><testcase classname="tests.test_selection_protocol_recovery" name="test_schema_valid_repair_cannot_change_or_add_scope_conditions_or_authority[change1]" time="0.031" /><testcase classname="tests.test_selection_protocol_recovery" name="test_schema_valid_repair_cannot_change_or_add_scope_conditions_or_authority[change2]" time="0.029" /><testcase classname="tests.test_selection_protocol_recovery" name="test_schema_valid_repair_cannot_change_or_add_scope_conditions_or_authority[change3]" time="0.041" /><testcase classname="tests.test_selection_protocol_recovery" name="test_schema_valid_repair_cannot_change_or_add_scope_conditions_or_authority[change4]" time="0.040" /><testcase classname="tests.test_selection_protocol_recovery" name="test_schema_valid_repair_cannot_change_or_add_scope_conditions_or_authority[change5]" time="0.029" /><testcase classname="tests.test_selection_protocol_recovery" name="test_ineligible_failures_never_retry_and_always_close[output0-None]" time="0.031" /><testcase classname="tests.test_selection_protocol_recovery" name="test_ineligible_failures_never_retry_and_always_close[output1-summary1]" time="0.044" /><testcase classname="tests.test_selection_protocol_recovery" name="test_ineligible_failures_never_retry_and_always_close[output2-summary2]" time="0.031" /><testcase classname="tests.test_selection_protocol_recovery" name="test_ineligible_failures_never_retry_and_always_close[output3-summary3]" time="0.030" /><testcase classname="tests.test_selection_protocol_recovery" name="test_ineligible_failures_never_retry_and_always_close[output4-summary4]" time="0.030" /><testcase classname="tests.test_selection_protocol_recovery" name="test_ineligible_failures_never_retry_and_always_close[output5-summary5]" time="0.027" /><testcase classname="tests.test_selection_protocol_recovery" name="test_ineligible_failures_never_retry_and_always_close[output6-summary6]" time="0.029" /><testcase classname="tests.test_selection_protocol_recovery" name="test_ineligible_failures_never_retry_and_always_close[{invalid JSON-summary7]" time="0.029" /><testcase classname="tests.test_selection_protocol_recovery" name="test_ineligible_failures_never_retry_and_always_close[output8-summary8]" time="0.029" /><testcase classname="tests.test_selection_protocol_recovery" name="test_ineligible_failures_never_retry_and_always_close[output9-summary9]" time="0.033" /><testcase classname="tests.test_selection_protocol_recovery" name="test_ineligible_failures_never_retry_and_always_close[output10-summary10]" time="0.029" /><testcase classname="tests.test_selection_protocol_recovery" name="test_ineligible_failures_never_retry_and_always_close[output11-summary11]" time="0.033" /><testcase classname="tests.test_selection_protocol_recovery" name="test_failed_second_output_is_not_ignored_or_retried_a_third_time" time="0.029" /><testcase classname="tests.test_selection_protocol_recovery" name="test_policy_rejection_does_not_trigger_protocol_repair" time="0.031" /><testcase classname="tests.test_selection_protocol_recovery" name="test_context_is_frozen_before_first_call" time="0.033" /><testcase classname="tests.test_selection_protocol_recovery" name="test_second_attempt_shares_the_remaining_turn_deadline" time="0.515" /><testcase classname="tests.test_selection_protocol_recovery" name="test_selection_timeout_encloses_both_attempts_once_even_with_large_turn_budget" time="0.538" /></testsuite></testsuites>

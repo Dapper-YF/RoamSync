@@ -1,0 +1,17 @@
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.WindowsSelectorEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+F                                                                        [100%]
+================================== FAILURES ===================================
+____ test_explicit_adoption_wording_reuses_bound_adoption_not_new_planning ____
+
+    def test_explicit_adoption_wording_reuses_bound_adoption_not_new_planning():
+>       assert explicit_revision_adoption('明确采用当前这份修改候选并保存。')
+E       AssertionError: assert False
+E        +  where False = explicit_revision_adoption('明确采用当前这份修改候选并保存。')
+
+tests\test_stage6_operation_bindings.py:103: AssertionError
+- generated xml file: E:\Study\RoamSync-stage6-evidence-20261025\batch2-adoption-before.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_stage6_operation_bindings.py::test_explicit_adoption_wording_reuses_bound_adoption_not_new_planning

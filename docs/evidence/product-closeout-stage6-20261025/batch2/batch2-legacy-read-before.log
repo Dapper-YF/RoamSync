@@ -1,0 +1,20 @@
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.WindowsSelectorEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+F                                                                        [100%]
+================================== FAILURES ===================================
+____ test_read_only_chat_does_not_clean_up_historical_requirement_records _____
+
+sample = namespace(trip_id=UUID('0c87d865-127b-4c87-ae22-4faa490e0cdb'), days=[<app.database.DayPlan object at 0x00000206E44BEE...bind=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x00000206E2292810>, autoflush=True, expire_on_commit=False))
+
+    def test_read_only_chat_does_not_clean_up_historical_requirement_records(sample):
+        from app.assistant_service import send_message
+        from app.assistant_capabilities import CapabilityDecision
+>       from app.requirements import RequirementRecord
+E       ImportError: cannot import name 'RequirementRecord' from 'app.requirements' (E:\Study\RoamSync-product-closeout-stage2-20261024\backend\app\requirements.py)
+
+tests\test_stage6_duration_goal_db.py:100: ImportError
+- generated xml file: E:\Study\RoamSync-stage6-evidence-20261025\batch2-legacy-read-before.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_stage6_duration_goal_db.py::test_read_only_chat_does_not_clean_up_historical_requirement_records

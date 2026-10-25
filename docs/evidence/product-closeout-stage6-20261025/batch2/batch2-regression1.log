@@ -1,0 +1,1401 @@
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.WindowsSelectorEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+........................................................................ [ 44%]
+.......FFFFFFFF...F..........F....FF.................................... [ 88%]
+..................                                                       [100%]
+================================== FAILURES ===================================
+__ test_unknown_language_uses_structured_semantic_provider_without_authority __
+
+    def test_unknown_language_uses_structured_semantic_provider_without_authority() -> None:
+        class FakeSemanticProvider:
+            async def extract(self, message: str, context: dict) -> SemanticIntentDraft:
+                assert context["trip"]["destination"]
+                return SemanticIntentDraft(
+                    primary_intent="general_chat",
+                    operations=[
+                        SemanticIntentOperation(
+                            operation="general_chat",
+                            raw_text=message,
+                        )
+                    ],
+                    confidence=0.94,
+                    parser="model",
+                    parser_version="fake-model-v1",
+                )
+    
+        with TestClient(app) as client:
+>           client.post("/api/v1/demo/reset")
+
+tests\test_planning_intents.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:556: in post
+    return super().post(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1204: in post
+    return self.request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:455: in request
+    return super().request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:797: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:980: in send
+    response = self._send_handling_auth(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1008: in _send_handling_auth
+    response = self._send_handling_redirects(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1043: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1076: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:354: in handle_request
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:450: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:395: in __get_result
+    raise self._exception
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:2734: in app
+    await route.handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:1281: in handle
+    await super().handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:280: in handle
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:706: in app
+    raw_response = await run_endpoint_function(
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:352: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\main.py:1146: in reset_demo_endpoint
+    await seed_demo_data(session, reset=True)
+app\demo_seed.py:252: in seed_demo_data
+    await recalculate_day_route(session, day_one.id)
+app\maps_service.py:229: in recalculate_day_route
+    result = route_results[position] if route_results is not None else await resolve_route_result(session, origin, destination, mode)
+                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\maps_service.py:292: in resolve_route_result
+    evidence = await fetch_route_evidence(origin, destination, mode,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+origin = <app.database.PlaceCandidate object at 0x000001A82F51C390>
+destination = <app.database.PlaceCandidate object at 0x000001A82F51C530>
+mode = 'walk', city = '0571'
+
+    async def fetch_route_evidence(origin, destination, mode: str, city: str) -> RouteEvidence:
+        """Network-only boundary. Inputs contain coordinates; no ORM/session access."""
+        settings = get_settings()
+    
+        result = None
+        if settings.amap_rest_key:
+            try:
+                result = await _fetch_amap_route(
+                    origin, destination, mode, city,
+                )
+            except MapProviderError:
+                if not settings.allow_map_estimates:
+                    raise
+        elif not settings.allow_map_estimates:
+>           raise _missing_key_error()
+E           app.map_transport.MapProviderError: 未配置高德 Web 服务 Key
+
+app\maps_service.py:359: MapProviderError
+________________ test_resolve_day_pace_and_protected_activity _________________
+
+    def test_resolve_day_pace_and_protected_activity() -> None:
+        with TestClient(app) as client:
+>           assert client.post("/api/v1/demo/reset").status_code == 200
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_planning_intents.py:145: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:556: in post
+    return super().post(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1204: in post
+    return self.request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:455: in request
+    return super().request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:797: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:980: in send
+    response = self._send_handling_auth(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1008: in _send_handling_auth
+    response = self._send_handling_redirects(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1043: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1076: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:354: in handle_request
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:450: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:395: in __get_result
+    raise self._exception
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:2734: in app
+    await route.handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:1281: in handle
+    await super().handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:280: in handle
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:706: in app
+    raw_response = await run_endpoint_function(
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:352: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\main.py:1146: in reset_demo_endpoint
+    await seed_demo_data(session, reset=True)
+app\demo_seed.py:252: in seed_demo_data
+    await recalculate_day_route(session, day_one.id)
+app\maps_service.py:229: in recalculate_day_route
+    result = route_results[position] if route_results is not None else await resolve_route_result(session, origin, destination, mode)
+                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\maps_service.py:292: in resolve_route_result
+    evidence = await fetch_route_evidence(origin, destination, mode,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+origin = <app.database.PlaceCandidate object at 0x000001A8300BB1E0>
+destination = <app.database.PlaceCandidate object at 0x000001A8300BBEE0>
+mode = 'walk', city = '0571'
+
+    async def fetch_route_evidence(origin, destination, mode: str, city: str) -> RouteEvidence:
+        """Network-only boundary. Inputs contain coordinates; no ORM/session access."""
+        settings = get_settings()
+    
+        result = None
+        if settings.amap_rest_key:
+            try:
+                result = await _fetch_amap_route(
+                    origin, destination, mode, city,
+                )
+            except MapProviderError:
+                if not settings.allow_map_estimates:
+                    raise
+        elif not settings.allow_map_estimates:
+>           raise _missing_key_error()
+E           app.map_transport.MapProviderError: 未配置高德 Web 服务 Key
+
+app\maps_service.py:359: MapProviderError
+___________ test_selected_activity_resolves_pronoun_and_target_day ____________
+
+    def test_selected_activity_resolves_pronoun_and_target_day() -> None:
+        with TestClient(app) as client:
+>           client.post("/api/v1/demo/reset")
+
+tests\test_planning_intents.py:172: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:556: in post
+    return super().post(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1204: in post
+    return self.request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:455: in request
+    return super().request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:797: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:980: in send
+    response = self._send_handling_auth(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1008: in _send_handling_auth
+    response = self._send_handling_redirects(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1043: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1076: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:354: in handle_request
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:450: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:395: in __get_result
+    raise self._exception
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:2734: in app
+    await route.handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:1281: in handle
+    await super().handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:280: in handle
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:706: in app
+    raw_response = await run_endpoint_function(
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:352: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\main.py:1146: in reset_demo_endpoint
+    await seed_demo_data(session, reset=True)
+app\demo_seed.py:252: in seed_demo_data
+    await recalculate_day_route(session, day_one.id)
+app\maps_service.py:229: in recalculate_day_route
+    result = route_results[position] if route_results is not None else await resolve_route_result(session, origin, destination, mode)
+                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\maps_service.py:292: in resolve_route_result
+    evidence = await fetch_route_evidence(origin, destination, mode,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+origin = <app.database.PlaceCandidate object at 0x000001A82F47CA10>
+destination = <app.database.PlaceCandidate object at 0x000001A82F32A410>
+mode = 'walk', city = '0571'
+
+    async def fetch_route_evidence(origin, destination, mode: str, city: str) -> RouteEvidence:
+        """Network-only boundary. Inputs contain coordinates; no ORM/session access."""
+        settings = get_settings()
+    
+        result = None
+        if settings.amap_rest_key:
+            try:
+                result = await _fetch_amap_route(
+                    origin, destination, mode, city,
+                )
+            except MapProviderError:
+                if not settings.allow_map_estimates:
+                    raise
+        elif not settings.allow_map_estimates:
+>           raise _missing_key_error()
+E           app.map_transport.MapProviderError: 未配置高德 Web 服务 Key
+
+app\maps_service.py:359: MapProviderError
+________ test_unknown_and_out_of_range_requests_require_clarification _________
+
+    def test_unknown_and_out_of_range_requests_require_clarification() -> None:
+        with TestClient(app) as client:
+>           client.post("/api/v1/demo/reset")
+
+tests\test_planning_intents.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:556: in post
+    return super().post(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1204: in post
+    return self.request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:455: in request
+    return super().request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:797: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:980: in send
+    response = self._send_handling_auth(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1008: in _send_handling_auth
+    response = self._send_handling_redirects(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1043: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1076: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:354: in handle_request
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:450: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:395: in __get_result
+    raise self._exception
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:2734: in app
+    await route.handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:1281: in handle
+    await super().handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:280: in handle
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:706: in app
+    raw_response = await run_endpoint_function(
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:352: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\main.py:1146: in reset_demo_endpoint
+    await seed_demo_data(session, reset=True)
+app\demo_seed.py:252: in seed_demo_data
+    await recalculate_day_route(session, day_one.id)
+app\maps_service.py:229: in recalculate_day_route
+    result = route_results[position] if route_results is not None else await resolve_route_result(session, origin, destination, mode)
+                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\maps_service.py:292: in resolve_route_result
+    evidence = await fetch_route_evidence(origin, destination, mode,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+origin = <app.database.PlaceCandidate object at 0x000001A82F271CC0>
+destination = <app.database.PlaceCandidate object at 0x000001A82F271B20>
+mode = 'walk', city = '0571'
+
+    async def fetch_route_evidence(origin, destination, mode: str, city: str) -> RouteEvidence:
+        """Network-only boundary. Inputs contain coordinates; no ORM/session access."""
+        settings = get_settings()
+    
+        result = None
+        if settings.amap_rest_key:
+            try:
+                result = await _fetch_amap_route(
+                    origin, destination, mode, city,
+                )
+            except MapProviderError:
+                if not settings.allow_map_estimates:
+                    raise
+        elif not settings.allow_map_estimates:
+>           raise _missing_key_error()
+E           app.map_transport.MapProviderError: 未配置高德 Web 服务 Key
+
+app\maps_service.py:359: MapProviderError
+______________ test_place_query_is_a_hint_not_a_persisted_place _______________
+
+    def test_place_query_is_a_hint_not_a_persisted_place() -> None:
+        with TestClient(app) as client:
+>           client.post("/api/v1/demo/reset")
+
+tests\test_planning_intents.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:556: in post
+    return super().post(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1204: in post
+    return self.request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:455: in request
+    return super().request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:797: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:980: in send
+    response = self._send_handling_auth(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1008: in _send_handling_auth
+    response = self._send_handling_redirects(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1043: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1076: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:354: in handle_request
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:450: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:395: in __get_result
+    raise self._exception
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:2734: in app
+    await route.handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:1281: in handle
+    await super().handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:280: in handle
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:706: in app
+    raw_response = await run_endpoint_function(
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:352: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\main.py:1146: in reset_demo_endpoint
+    await seed_demo_data(session, reset=True)
+app\demo_seed.py:252: in seed_demo_data
+    await recalculate_day_route(session, day_one.id)
+app\maps_service.py:229: in recalculate_day_route
+    result = route_results[position] if route_results is not None else await resolve_route_result(session, origin, destination, mode)
+                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\maps_service.py:292: in resolve_route_result
+    evidence = await fetch_route_evidence(origin, destination, mode,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+origin = <app.database.PlaceCandidate object at 0x000001A82EADA750>
+destination = <app.database.PlaceCandidate object at 0x000001A82EADB5F0>
+mode = 'walk', city = '0571'
+
+    async def fetch_route_evidence(origin, destination, mode: str, city: str) -> RouteEvidence:
+        """Network-only boundary. Inputs contain coordinates; no ORM/session access."""
+        settings = get_settings()
+    
+        result = None
+        if settings.amap_rest_key:
+            try:
+                result = await _fetch_amap_route(
+                    origin, destination, mode, city,
+                )
+            except MapProviderError:
+                if not settings.allow_map_estimates:
+                    raise
+        elif not settings.allow_map_estimates:
+>           raise _missing_key_error()
+E           app.map_transport.MapProviderError: 未配置高德 Web 服务 Key
+
+app\maps_service.py:359: MapProviderError
+_____ test_compound_request_produces_grounded_envelope_and_risk_decision ______
+
+    def test_compound_request_produces_grounded_envelope_and_risk_decision() -> None:
+        with TestClient(app) as client:
+>           client.post("/api/v1/demo/reset")
+
+tests\test_planning_intents.py:242: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:556: in post
+    return super().post(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1204: in post
+    return self.request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:455: in request
+    return super().request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:797: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:980: in send
+    response = self._send_handling_auth(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1008: in _send_handling_auth
+    response = self._send_handling_redirects(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1043: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1076: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:354: in handle_request
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:450: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:395: in __get_result
+    raise self._exception
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:2734: in app
+    await route.handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:1281: in handle
+    await super().handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:280: in handle
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:706: in app
+    raw_response = await run_endpoint_function(
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:352: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\main.py:1146: in reset_demo_endpoint
+    await seed_demo_data(session, reset=True)
+app\demo_seed.py:252: in seed_demo_data
+    await recalculate_day_route(session, day_one.id)
+app\maps_service.py:229: in recalculate_day_route
+    result = route_results[position] if route_results is not None else await resolve_route_result(session, origin, destination, mode)
+                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\maps_service.py:292: in resolve_route_result
+    evidence = await fetch_route_evidence(origin, destination, mode,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+origin = <app.database.PlaceCandidate object at 0x000001A82EEA87A0>
+destination = <app.database.PlaceCandidate object at 0x000001A82EEABA00>
+mode = 'walk', city = '0571'
+
+    async def fetch_route_evidence(origin, destination, mode: str, city: str) -> RouteEvidence:
+        """Network-only boundary. Inputs contain coordinates; no ORM/session access."""
+        settings = get_settings()
+    
+        result = None
+        if settings.amap_rest_key:
+            try:
+                result = await _fetch_amap_route(
+                    origin, destination, mode, city,
+                )
+            except MapProviderError:
+                if not settings.allow_map_estimates:
+                    raise
+        elif not settings.allow_map_estimates:
+>           raise _missing_key_error()
+E           app.map_transport.MapProviderError: 未配置高德 Web 服务 Key
+
+app\maps_service.py:359: MapProviderError
+____ test_multiple_places_and_protected_activities_are_resolved_separately ____
+
+    def test_multiple_places_and_protected_activities_are_resolved_separately() -> None:
+        with TestClient(app) as client:
+>           client.post("/api/v1/demo/reset")
+
+tests\test_planning_intents.py:279: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:556: in post
+    return super().post(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1204: in post
+    return self.request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:455: in request
+    return super().request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:797: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:980: in send
+    response = self._send_handling_auth(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1008: in _send_handling_auth
+    response = self._send_handling_redirects(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1043: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1076: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:354: in handle_request
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:450: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:395: in __get_result
+    raise self._exception
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:2734: in app
+    await route.handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:1281: in handle
+    await super().handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:280: in handle
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:706: in app
+    raw_response = await run_endpoint_function(
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:352: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\main.py:1146: in reset_demo_endpoint
+    await seed_demo_data(session, reset=True)
+app\demo_seed.py:252: in seed_demo_data
+    await recalculate_day_route(session, day_one.id)
+app\maps_service.py:229: in recalculate_day_route
+    result = route_results[position] if route_results is not None else await resolve_route_result(session, origin, destination, mode)
+                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\maps_service.py:292: in resolve_route_result
+    evidence = await fetch_route_evidence(origin, destination, mode,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+origin = <app.database.PlaceCandidate object at 0x000001A82EEAB2B0>
+destination = <app.database.PlaceCandidate object at 0x000001A82EEA9710>
+mode = 'walk', city = '0571'
+
+    async def fetch_route_evidence(origin, destination, mode: str, city: str) -> RouteEvidence:
+        """Network-only boundary. Inputs contain coordinates; no ORM/session access."""
+        settings = get_settings()
+    
+        result = None
+        if settings.amap_rest_key:
+            try:
+                result = await _fetch_amap_route(
+                    origin, destination, mode, city,
+                )
+            except MapProviderError:
+                if not settings.allow_map_estimates:
+                    raise
+        elif not settings.allow_map_estimates:
+>           raise _missing_key_error()
+E           app.map_transport.MapProviderError: 未配置高德 Web 服务 Key
+
+app\maps_service.py:359: MapProviderError
+____________ test_invalid_ui_context_is_rejected_without_guessing _____________
+
+    def test_invalid_ui_context_is_rejected_without_guessing() -> None:
+        with TestClient(app) as client:
+>           client.post("/api/v1/demo/reset")
+
+tests\test_planning_intents.py:293: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:556: in post
+    return super().post(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1204: in post
+    return self.request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:455: in request
+    return super().request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:797: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:980: in send
+    response = self._send_handling_auth(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1008: in _send_handling_auth
+    response = self._send_handling_redirects(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1043: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1076: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:354: in handle_request
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:450: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:395: in __get_result
+    raise self._exception
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:2734: in app
+    await route.handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:1281: in handle
+    await super().handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:280: in handle
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:706: in app
+    raw_response = await run_endpoint_function(
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:352: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\main.py:1146: in reset_demo_endpoint
+    await seed_demo_data(session, reset=True)
+app\demo_seed.py:252: in seed_demo_data
+    await recalculate_day_route(session, day_one.id)
+app\maps_service.py:229: in recalculate_day_route
+    result = route_results[position] if route_results is not None else await resolve_route_result(session, origin, destination, mode)
+                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\maps_service.py:292: in resolve_route_result
+    evidence = await fetch_route_evidence(origin, destination, mode,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+origin = <app.database.PlaceCandidate object at 0x000001A82EEAB040>
+destination = <app.database.PlaceCandidate object at 0x000001A82D6ABC70>
+mode = 'walk', city = '0571'
+
+    async def fetch_route_evidence(origin, destination, mode: str, city: str) -> RouteEvidence:
+        """Network-only boundary. Inputs contain coordinates; no ORM/session access."""
+        settings = get_settings()
+    
+        result = None
+        if settings.amap_rest_key:
+            try:
+                result = await _fetch_amap_route(
+                    origin, destination, mode, city,
+                )
+            except MapProviderError:
+                if not settings.allow_map_estimates:
+                    raise
+        elif not settings.allow_map_estimates:
+>           raise _missing_key_error()
+E           app.map_transport.MapProviderError: 未配置高德 Web 服务 Key
+
+app\maps_service.py:359: MapProviderError
+______ test_generic_route_preferences_are_not_resolved_as_activity_names ______
+
+    def test_generic_route_preferences_are_not_resolved_as_activity_names() -> None:
+        with TestClient(app) as client:
+>           client.post("/api/v1/demo/reset")
+
+tests\test_planning_intents.py:384: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:556: in post
+    return super().post(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1204: in post
+    return self.request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:455: in request
+    return super().request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:797: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:980: in send
+    response = self._send_handling_auth(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1008: in _send_handling_auth
+    response = self._send_handling_redirects(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1043: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1076: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:354: in handle_request
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:450: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:395: in __get_result
+    raise self._exception
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:2734: in app
+    await route.handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:1281: in handle
+    await super().handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:280: in handle
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:706: in app
+    raw_response = await run_endpoint_function(
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:352: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\main.py:1146: in reset_demo_endpoint
+    await seed_demo_data(session, reset=True)
+app\demo_seed.py:252: in seed_demo_data
+    await recalculate_day_route(session, day_one.id)
+app\maps_service.py:229: in recalculate_day_route
+    result = route_results[position] if route_results is not None else await resolve_route_result(session, origin, destination, mode)
+                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\maps_service.py:292: in resolve_route_result
+    evidence = await fetch_route_evidence(origin, destination, mode,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+origin = <app.database.PlaceCandidate object at 0x000001A82EEABEE0>
+destination = <app.database.PlaceCandidate object at 0x000001A8300BB380>
+mode = 'walk', city = '0571'
+
+    async def fetch_route_evidence(origin, destination, mode: str, city: str) -> RouteEvidence:
+        """Network-only boundary. Inputs contain coordinates; no ORM/session access."""
+        settings = get_settings()
+    
+        result = None
+        if settings.amap_rest_key:
+            try:
+                result = await _fetch_amap_route(
+                    origin, destination, mode, city,
+                )
+            except MapProviderError:
+                if not settings.allow_map_estimates:
+                    raise
+        elif not settings.allow_map_estimates:
+>           raise _missing_key_error()
+E           app.map_transport.MapProviderError: 未配置高德 Web 服务 Key
+
+app\maps_service.py:359: MapProviderError
+_ test_enriching_the_trip_does_not_inherit_the_current_day_or_activity_scope __
+
+    def test_enriching_the_trip_does_not_inherit_the_current_day_or_activity_scope() -> None:
+        with TestClient(app) as client:
+>           client.post("/api/v1/demo/reset")
+
+tests\test_planning_intents.py:509: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:556: in post
+    return super().post(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1204: in post
+    return self.request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:455: in request
+    return super().request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:797: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:980: in send
+    response = self._send_handling_auth(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1008: in _send_handling_auth
+    response = self._send_handling_redirects(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1043: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1076: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:354: in handle_request
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:450: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:395: in __get_result
+    raise self._exception
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:2734: in app
+    await route.handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:1281: in handle
+    await super().handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:280: in handle
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:706: in app
+    raw_response = await run_endpoint_function(
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:352: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\main.py:1146: in reset_demo_endpoint
+    await seed_demo_data(session, reset=True)
+app\demo_seed.py:252: in seed_demo_data
+    await recalculate_day_route(session, day_one.id)
+app\maps_service.py:229: in recalculate_day_route
+    result = route_results[position] if route_results is not None else await resolve_route_result(session, origin, destination, mode)
+                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\maps_service.py:292: in resolve_route_result
+    evidence = await fetch_route_evidence(origin, destination, mode,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+origin = <app.database.PlaceCandidate object at 0x000001A82EEAB110>
+destination = <app.database.PlaceCandidate object at 0x000001A8300BB860>
+mode = 'walk', city = '0571'
+
+    async def fetch_route_evidence(origin, destination, mode: str, city: str) -> RouteEvidence:
+        """Network-only boundary. Inputs contain coordinates; no ORM/session access."""
+        settings = get_settings()
+    
+        result = None
+        if settings.amap_rest_key:
+            try:
+                result = await _fetch_amap_route(
+                    origin, destination, mode, city,
+                )
+            except MapProviderError:
+                if not settings.allow_map_estimates:
+                    raise
+        elif not settings.allow_map_estimates:
+>           raise _missing_key_error()
+E           app.map_transport.MapProviderError: 未配置高德 Web 服务 Key
+
+app\maps_service.py:359: MapProviderError
+_ test_unchanged_day_references_do_not_conflict_with_the_target_date[\u8bf7\u8c03\u65742026\u5e749\u67086\u65e5\u7684\u884c\u7a0b\uff0c\u7b2c\u4e00\u5929\u4fdd\u6301\u4e0d\u53d8\u3002] _
+
+message = '请调整2026年9月6日的行程，第一天保持不变。'
+
+    @pytest.mark.parametrize("message", ["请调整2026年9月6日的行程，第一天保持不变。", "保持2026年9月5日的行程不变，请调整第二天。"])
+    def test_unchanged_day_references_do_not_conflict_with_the_target_date(message):
+        with TestClient(app) as client:
+>           client.post("/api/v1/demo/reset")
+
+tests\test_planning_intents.py:541: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:556: in post
+    return super().post(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1204: in post
+    return self.request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:455: in request
+    return super().request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:797: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:980: in send
+    response = self._send_handling_auth(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1008: in _send_handling_auth
+    response = self._send_handling_redirects(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1043: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1076: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:354: in handle_request
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:450: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:395: in __get_result
+    raise self._exception
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:2734: in app
+    await route.handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:1281: in handle
+    await super().handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:280: in handle
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:706: in app
+    raw_response = await run_endpoint_function(
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:352: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\main.py:1146: in reset_demo_endpoint
+    await seed_demo_data(session, reset=True)
+app\demo_seed.py:252: in seed_demo_data
+    await recalculate_day_route(session, day_one.id)
+app\maps_service.py:229: in recalculate_day_route
+    result = route_results[position] if route_results is not None else await resolve_route_result(session, origin, destination, mode)
+                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\maps_service.py:292: in resolve_route_result
+    evidence = await fetch_route_evidence(origin, destination, mode,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+origin = <app.database.PlaceCandidate object at 0x000001A8300B86D0>
+destination = <app.database.PlaceCandidate object at 0x000001A83180F6C0>
+mode = 'walk', city = '0571'
+
+    async def fetch_route_evidence(origin, destination, mode: str, city: str) -> RouteEvidence:
+        """Network-only boundary. Inputs contain coordinates; no ORM/session access."""
+        settings = get_settings()
+    
+        result = None
+        if settings.amap_rest_key:
+            try:
+                result = await _fetch_amap_route(
+                    origin, destination, mode, city,
+                )
+            except MapProviderError:
+                if not settings.allow_map_estimates:
+                    raise
+        elif not settings.allow_map_estimates:
+>           raise _missing_key_error()
+E           app.map_transport.MapProviderError: 未配置高德 Web 服务 Key
+
+app\maps_service.py:359: MapProviderError
+_ test_unchanged_day_references_do_not_conflict_with_the_target_date[\u4fdd\u63012026\u5e749\u67085\u65e5\u7684\u884c\u7a0b\u4e0d\u53d8\uff0c\u8bf7\u8c03\u6574\u7b2c\u4e8c\u5929\u3002] _
+
+message = '保持2026年9月5日的行程不变，请调整第二天。'
+
+    @pytest.mark.parametrize("message", ["请调整2026年9月6日的行程，第一天保持不变。", "保持2026年9月5日的行程不变，请调整第二天。"])
+    def test_unchanged_day_references_do_not_conflict_with_the_target_date(message):
+        with TestClient(app) as client:
+>           client.post("/api/v1/demo/reset")
+
+tests\test_planning_intents.py:541: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:556: in post
+    return super().post(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1204: in post
+    return self.request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:455: in request
+    return super().request(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:797: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:980: in send
+    response = self._send_handling_auth(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1008: in _send_handling_auth
+    response = self._send_handling_redirects(
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1043: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\httpx2\_client.py:1076: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:354: in handle_request
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:450: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\concurrent\futures\_base.py:395: in __get_result
+    raise self._exception
+..\..\RoamSync\backend\.venv\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:2734: in app
+    await route.handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:1281: in handle
+    await super().handle(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\routing.py:280: in handle
+    await self.app(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\RoamSync\backend\.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:706: in app
+    raw_response = await run_endpoint_function(
+..\..\RoamSync\backend\.venv\Lib\site-packages\fastapi\routing.py:352: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\main.py:1146: in reset_demo_endpoint
+    await seed_demo_data(session, reset=True)
+app\demo_seed.py:252: in seed_demo_data
+    await recalculate_day_route(session, day_one.id)
+app\maps_service.py:229: in recalculate_day_route
+    result = route_results[position] if route_results is not None else await resolve_route_result(session, origin, destination, mode)
+                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\maps_service.py:292: in resolve_route_result
+    evidence = await fetch_route_evidence(origin, destination, mode,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+origin = <app.database.PlaceCandidate object at 0x000001A8300B8120>
+destination = <app.database.PlaceCandidate object at 0x000001A8300BB1E0>
+mode = 'walk', city = '0571'
+
+    async def fetch_route_evidence(origin, destination, mode: str, city: str) -> RouteEvidence:
+        """Network-only boundary. Inputs contain coordinates; no ORM/session access."""
+        settings = get_settings()
+    
+        result = None
+        if settings.amap_rest_key:
+            try:
+                result = await _fetch_amap_route(
+                    origin, destination, mode, city,
+                )
+            except MapProviderError:
+                if not settings.allow_map_estimates:
+                    raise
+        elif not settings.allow_map_estimates:
+>           raise _missing_key_error()
+E           app.map_transport.MapProviderError: 未配置高德 Web 服务 Key
+
+app\maps_service.py:359: MapProviderError
+- generated xml file: E:\Study\RoamSync-stage6-evidence-20261025\batch2-regression1.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_planning_intents.py::test_unknown_language_uses_structured_semantic_provider_without_authority
+FAILED tests/test_planning_intents.py::test_resolve_day_pace_and_protected_activity
+FAILED tests/test_planning_intents.py::test_selected_activity_resolves_pronoun_and_target_day
+FAILED tests/test_planning_intents.py::test_unknown_and_out_of_range_requests_require_clarification
+FAILED tests/test_planning_intents.py::test_place_query_is_a_hint_not_a_persisted_place
+FAILED tests/test_planning_intents.py::test_compound_request_produces_grounded_envelope_and_risk_decision
+FAILED tests/test_planning_intents.py::test_multiple_places_and_protected_activities_are_resolved_separately
+FAILED tests/test_planning_intents.py::test_invalid_ui_context_is_rejected_without_guessing
+FAILED tests/test_planning_intents.py::test_generic_route_preferences_are_not_resolved_as_activity_names
+FAILED tests/test_planning_intents.py::test_enriching_the_trip_does_not_inherit_the_current_day_or_activity_scope
+FAILED tests/test_planning_intents.py::test_unchanged_day_references_do_not_conflict_with_the_target_date[\u8bf7\u8c03\u65742026\u5e749\u67086\u65e5\u7684\u884c\u7a0b\uff0c\u7b2c\u4e00\u5929\u4fdd\u6301\u4e0d\u53d8\u3002]
+FAILED tests/test_planning_intents.py::test_unchanged_day_references_do_not_conflict_with_the_target_date[\u4fdd\u63012026\u5e749\u67085\u65e5\u7684\u884c\u7a0b\u4e0d\u53d8\uff0c\u8bf7\u8c03\u6574\u7b2c\u4e8c\u5929\u3002]

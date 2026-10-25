@@ -1,0 +1,150 @@
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.WindowsSelectorEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+E:\Study\RoamSync-stage6-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+F                                                                        [100%]
+================================== FAILURES ===================================
+____ test_read_only_chat_does_not_clean_up_historical_requirement_records _____
+
+sample = namespace(trip_id=UUID('c8cfd777-b538-4c2f-9b41-f25b289d1a3e'), days=[<app.database.DayPlan object at 0x0000021D1116EE...bind=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000021D10F88790>, autoflush=True, expire_on_commit=False))
+
+    def test_read_only_chat_does_not_clean_up_historical_requirement_records(sample):
+        from app.assistant_service import send_message
+        from app.assistant_capabilities import CapabilityDecision
+        from app.requirements import EffectiveRequirement
+        async def run():
+            async with sample.sessions() as db:
+                record=EffectiveRequirement(id='historical-preservation',text='其他活动、个人偏好保持原样',scope={'kind':'trip','trip_id':str(sample.trip_id)},
+                    source={'kind':'user_explicit','ref':'historical-record'},strength='soft').model_dump(mode='json')
+                pref=await db.scalar(select(TripPreferences).where(TripPreferences.trip_id==sample.trip_id))
+                pref.requirement_records=[record]
+                conversation=AssistantSession(trip_id=sample.trip_id,messages=[],applied_actions={})
+                db.add(conversation);await db.commit()
+                sid=conversation.id
+                before=pref.version,deepcopy(pref.requirement_records),pref.updated_at
+            async def selector(*args):
+                return CapabilityDecision(intent='itinerary',capabilities=['itinerary'],itinerary_purpose='saved_values',reason_code='current_information')
+            async with sample.sessions() as db:
+                await send_message(db,sid,'第一天保存的活动是什么？',uuid4(),context={'surface':'trip','read_trip_id':str(sample.trip_id)},capability_selector=selector)
+            async with sample.sessions() as db:
+                pref=await db.scalar(select(TripPreferences).where(TripPreferences.trip_id==sample.trip_id))
+                assert (pref.version,pref.requirement_records,pref.updated_at)==before
+>       asyncio.run(run())
+
+tests\test_stage6_duration_goal_db.py:118: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_stage6_duration_goal_db.py:110: in run
+    before=pref.version,deepcopy(pref.requirement_records),pref.updated_at
+                                                           ^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:569: in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1096: in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\attributes.py:1126: in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\state.py:828: in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\loading.py:1674: in load_scalar_attributes
+    result = load_on_ident(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\loading.py:510: in load_on_ident
+    return load_on_pk_identity(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\loading.py:695: in load_on_pk_identity
+    session.execute(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:2373: in execute
+    return self._execute_internal(
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:2261: in _execute_internal
+    conn = self._connection_for_bind(bind)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:2113: in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:2: in _connection_for_bind
+    ???
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\state_changes.py:137: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py:1191: in _connection_for_bind
+    conn = bind.connect()
+           ^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:3295: in connect
+    return self._connection_cls(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:144: in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py:3319: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:448: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:1272: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:712: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\impl.py:307: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:389: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:674: in __init__
+    self.__connect()
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:900: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py:122: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\pool\base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\create.py:667: in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\engine\default.py:630: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\psycopg.py:796: in connect
+    await_only(creator_fn(*arg, **kw))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+awaitable = <coroutine object AsyncConnection.connect at 0x0000021D0AB26F80>
+
+    def await_only(awaitable: Awaitable[_T]) -> _T:
+        """Awaits an async function in a sync method.
+    
+        The sync method must be inside a :func:`greenlet_spawn` context.
+        :func:`await_only` calls cannot be nested.
+    
+        :param awaitable: The coroutine to call.
+    
+        """
+        # this is called in the context greenlet while running fn
+        current = getcurrent()
+        if not getattr(current, "__sqlalchemy_greenlet_provider__", False):
+            _safe_cancel_awaitable(awaitable)
+    
+>           raise exc.MissingGreenlet(
+                "greenlet_spawn has not been called; can't call await_only() "
+                "here. Was IO attempted in an unexpected place?"
+            )
+E           sqlalchemy.exc.MissingGreenlet: greenlet_spawn has not been called; can't call await_only() here. Was IO attempted in an unexpected place? (Background on this error at: https://sqlalche.me/e/20/xd2s)
+
+..\..\RoamSync\backend\.venv\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py:123: MissingGreenlet
+- generated xml file: E:\Study\RoamSync-stage6-evidence-20261025\batch2-legacy-read-before2.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_stage6_duration_goal_db.py::test_read_only_chat_does_not_clean_up_historical_requirement_records
