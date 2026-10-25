@@ -1,5 +1,28 @@
 # RoamSync Agent v1 architecture contract
 
+## Stage5 displayed-review context transport (2026-10-25; isolated regression)
+
+A server-captured SavedTripReadSnapshot may carry only the supplied displayed
+Revision whose trip/run/hash/base version/pending status and review completeness
+already passed the existing read gate. Companion receives this detached field
+independently of selector intent. Its absence never triggers a latest-pending
+lookup. Unbound incoming copies are cleared, snapshots for a different Trip are
+rejected, and each consumer receives a deep copy. Formal itinerary values and
+unaccepted before/after proposal values remain separate; no read authorizes
+Planning or Accept. No new query, public write endpoint, table or adoption path.
+
+The direct answer receipt distinguishes captured context from actual delivery
+through Reader; availability is not answer completion. Both deterministic and
+Companion projections retain hash/version identity. Provider instructions use
+review.changes[].before/after and prohibit claims that proposal values are saved.
+Evidence: stage5 baseline Reader replay fails, targeted51 pass, Astra boundary
+review. A real generated Suzhou pending object is cloned exactly into fresh test
+DBs. Live selection reads75->60; replaying the original failed direct selection
+with a live answer provider also reads75->60 and preserves all formal rows.
+Two earlier network attempts used an incomplete test proxy mapping and failed
+before selection; retained as harness configuration failures. This is public
+regression evidence, not a new independent score or full golden-chain acceptance.
+
 ## Stage4 request scope corrections (2026-10-25; acceptance in progress)
 
 Request-local source indices do not truncate a longer exact task quote, but

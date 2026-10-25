@@ -265,7 +265,7 @@ async def _capture_saved_trip_read(db, trip_id, message='', *, selected_day_id=N
             and revision_presentation_hash(revision)==revision_ref['hash']):
             review=revision_review(revision)
             if review['complete']:
-                displayed={'id':str(revision.id),'presentation_hash':revision_ref['hash'],
+                displayed={'id':str(revision.id),'trip_id':str(trip_id),'run_id':str(run.id),'presentation_hash':revision_ref['hash'],
                     'trip_version':t.version,'review':review,'captured_at':captured_at}
     return SavedTripReadSnapshot(trip={'id': str(t.id), 'title': t.title, 'destination': t.destination,
         'version': t.version, 'preferences_version': preference_version},

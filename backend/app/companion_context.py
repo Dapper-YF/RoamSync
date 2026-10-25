@@ -20,11 +20,17 @@ class CompanionContextReader:
 
     async def load(self, context: CompanionContext, need: InformationNeed) -> CompanionContext:
         if not self._trip_id:
-            return context
+            return context.model_copy(update={'displayed_revision':None})
         if self._read_snapshot and self._read_snapshot.trip['id'] != str(self._trip_id):
             raise ValueError('读取快照与旅行不一致。')
-        changes = {}
+        changes = {'displayed_revision':None}
         snapshot = self._read_snapshot
+        if snapshot and snapshot.displayed_revision:
+            # A validated, displayed working copy remains read context even
+            # when the semantic selector labels its follow-up as consultation.
+            # Never look up a latest pending revision or manufacture authority.
+            from copy import deepcopy
+            changes['displayed_revision'] = deepcopy(snapshot.displayed_revision)
         itinerary_read = (need.itinerary_required or need.decision_history_required
             or re.search(r"已选|备选|留白|未排程|我的安排|选了什么", context.current_message))
         if itinerary_read and snapshot is None:

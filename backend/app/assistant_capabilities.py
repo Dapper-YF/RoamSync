@@ -1048,7 +1048,9 @@ async def _answer_leaf_impl(settings, decision, message, history, envelope, port
         value=read_snapshot.displayed_revision
         return failure_bundle(envelope,render_displayed_revision(read_snapshot),read_tools={
             'revision_read':{'status':'available' if value else 'unavailable',
-                'revision_id':value['id'] if value else None,'trip_version':read_snapshot.trip['version']}}), 'complete' if value else 'partial'
+                'revision_id':value['id'] if value else None,
+                'presentation_hash':value['presentation_hash'] if value else None,
+                'trip_version':read_snapshot.trip['version']}}), 'complete' if value else 'partial'
     if ('itinerary' in decision.capabilities and read_snapshot
         and decision.itinerary_purpose in {'overview', 'saved_values', 'original_rationale'}):
         from app.saved_trip_reads import render_saved_request
@@ -1081,6 +1083,7 @@ async def _answer_leaf_impl(settings, decision, message, history, envelope, port
         return failure_bundle(envelope, text, read_tools={'itinerary_read': coverage,
             **({'original_rationale': rationale_receipt} if rationale_receipt else {})}), (
             'complete' if coverage['complete'] and coverage['arrangement_items_complete'] else 'partial')
+    revision_context_delivered = False
     class Reader:
         async def load(self, context, need):
             if read_lock is not None:
@@ -1088,7 +1091,9 @@ async def _answer_leaf_impl(settings, decision, message, history, envelope, port
                     return await self.read(context, need)
             return await self.read(context, need)
         async def read(self, context, need):
+            nonlocal revision_context_delivered
             value = await CompanionContextReader(db, trip_id, read_snapshot=read_snapshot).load(context, need)
+            revision_context_delivered = bool(value.displayed_revision)
             # SELECTs may open a transaction; release it before any network calls.
             await db.commit()
             return value
@@ -1141,7 +1146,14 @@ async def _answer_leaf_impl(settings, decision, message, history, envelope, port
     if turn and turn.events and any(e["status"] == "failed" and e["stage"] == "answer" for e in turn.events) and not result.suggestions:
         if result.status == "needs_information":
             status = "failed"
+    completed_reads = ({'itinerary_read': read_snapshot.project(message)['coverage']}
+        if read_snapshot and 'itinerary' in decision.capabilities else {})
+    if read_snapshot and read_snapshot.displayed_revision:
+        value=read_snapshot.displayed_revision
+        completed_reads['revision_read']={'status':'context_available','revision_id':value['id'],
+            'presentation_hash':value['presentation_hash'],'trip_version':value['trip_version'],
+            'delivered_to_answer_context':revision_context_delivered,
+            'semantics':'captured_context_not_answer_completion_or_adoption'}
     return {"assistant": result.response_text, "companion_result": result.model_dump(mode="json"),
             "context": envelope.model_dump(mode="json"), "place_cards": [],
-            "read_tools": {'itinerary_read': read_snapshot.project(message)['coverage']}
-                if read_snapshot and 'itinerary' in decision.capabilities else {}}, status
+            "read_tools": completed_reads}, status

@@ -267,6 +267,7 @@ class CompanionContext(Contract):
     resolved_entities: list[EntityReference] = Field(default_factory=list, max_length=10)
     current_destination: str | None = None
     trip_summary: dict | None = None
+    displayed_revision: dict | None = None
     formal_itinerary_summary: list[dict] = Field(default_factory=list, max_length=100)
     itinerary_read_coverage: dict = Field(default_factory=dict)
     arrangement_items: list[dict] = Field(default_factory=list)
