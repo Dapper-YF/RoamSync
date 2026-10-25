@@ -1,0 +1,21 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+__ test_creation_scalar_source_ignores_nonscalar_preview_but_keeps_conflicts __
+
+    def test_creation_scalar_source_ignores_nonscalar_preview_but_keeps_conflicts():
+        from datetime import date
+        from app.assistant_capabilities import CapabilityDecision
+        from app.assistant_memory import candidate_scalar_updates
+        from test_candidate_commands import plan
+        def projected(text):
+            decision=CapabilityDecision(intent='create',reason_code='explicit_write',candidate_command={
+                'action':'generate','source_quote':text,'plan':plan().model_dump(mode='json')})
+            return {update.field:update.value for update in candidate_scalar_updates(decision,text,today=date(2026,10,25))}
+>       assert projected('请先生成成都11月9日的一日候选，人民公园和宽窄巷子。先给我看方案，不要保存。')['start_date']=='2026-11-09'
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'start_date'
+
+backend\tests\test_stage4_condition_projection.py:85: KeyError
+- generated xml file: E:\Study\RoamSync-stage4-evidence-20261025\scalar-source-baseline.xml -
+=========================== short test summary info ===========================
+FAILED backend\tests\test_stage4_condition_projection.py::test_creation_scalar_source_ignores_nonscalar_preview_but_keeps_conflicts

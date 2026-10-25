@@ -1,0 +1,183 @@
+E:\Study\RoamSync-stage3-evidence-20261024\run_unit.py:24: DeprecationWarning: 'asyncio.WindowsSelectorEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+E:\Study\RoamSync-stage3-evidence-20261024\run_unit.py:24: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 20260831_0001, Create trips and expenses.
+INFO  [alembic.runtime.migration] Running upgrade 20260831_0001 -> 20260901_0002, Add persisted trip planning models.
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0002 -> 20260901_0003, Add persisted route legs and route cache.
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0003 -> 20260901_0004, add multi-city trip metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0004 -> 20260901_0005, add trip management and accommodation metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0005 -> 20260901_0006, add editable activity metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0006 -> 20260902_0007, add structured trip preferences
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0007 -> 20260902_0008, add planning run and candidate revision boundaries
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0008 -> 20260902_0009, add candidate route evidence
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0009 -> 20260902_0010, add planning clarification status
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0010 -> 20260902_0011, persist route geometry and alternatives
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0011 -> 20260902_0012, persist candidate route geometry
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0012 -> 20260902_0013, persist pending planning interrupt for web clients
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0013 -> 20260903_0014, add persistent trip execution state
+INFO  [alembic.runtime.migration] Running upgrade 20260903_0014 -> 20260903_0015, persist grounded intent context on planning runs
+INFO  [alembic.runtime.migration] Running upgrade 20260903_0015 -> 20260907_0016, Add worker lease fields to planning runs.
+INFO  [alembic.runtime.migration] Running upgrade 20260907_0016 -> 20260908_0017, Keep actionable validation failures on persisted planning runs.
+INFO  [alembic.runtime.migration] Running upgrade 20260908_0017 -> 20260909_0018, Persist read-only assistant answers separately from plan revisions.
+INFO  [alembic.runtime.migration] Running upgrade 20260909_0018 -> 20260909_0019, Persistent cross-page assistant conversations and tool confirmations.
+INFO  [alembic.runtime.migration] Running upgrade 20260909_0019 -> 20260910_0020, Expose actual planning stages and worker heartbeat.
+INFO  [alembic.runtime.migration] Running upgrade 20260910_0020 -> 20260914_0021, Make trip budget limits optional.
+INFO  [alembic.runtime.migration] Running upgrade 20260914_0021 -> 20260915_0022, Persist runtime navigation sessions separately from replaceable RouteLeg rows.
+INFO  [alembic.runtime.migration] Running upgrade 20260915_0022 -> 20260915_0023, Persist de-duplicated deterministic trip disruptions.
+INFO  [alembic.runtime.migration] Running upgrade 20260915_0023 -> 20260915_0024, Link recovery planning runs to deterministic disruption facts.
+INFO  [alembic.runtime.migration] Running upgrade 20260915_0024 -> 20260916_0025, Persist navigation observations and deterministic detector state.
+INFO  [alembic.runtime.migration] Running upgrade 20260916_0025 -> 20260921_0026, add idempotent activity experience event facts
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0026 -> 20260921_0027, index activity experience fact aggregation
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0027 -> 20260921_0028, fence execution projections to their formal itinerary
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0028 -> 20260921_0029, persist minimal general replanning trigger metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0029 -> 20260921_0030, serialize active automatic recovery per formal trip version
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0030 -> 20260921_0031, make experience rejection dedup queryable
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0031 -> 20260922_0032, add activity importance decision semantics
+INFO  [alembic.runtime.migration] Running upgrade 20260922_0032 -> 20260924_0033, persist plan revision rejection feedback
+INFO  [alembic.runtime.migration] Running upgrade 20260924_0033 -> 20260924_0034, Persist activity decision semantics and their provenance.
+INFO  [alembic.runtime.migration] Running upgrade 20260924_0034 -> 20261016_0035, Keep explicit scoped requirements on the existing trip preference owner.
+INFO  [alembic.runtime.migration] Running upgrade 20261016_0035 -> 20261018_0036, Add persisted product tables without importing preview data or touching trips.
+INFO  [alembic.runtime.migration] Running upgrade 20261018_0036 -> 20261019_0037, Finite Trip-owned choices and reserved free intervals, no second timetable.
+INFO  [alembic.runtime.migration] Running upgrade 20261019_0037 -> 20261022_0038, Independent source-bound intentions, never a second activity timetable.
+......................F...F...............F............................. [ 52%]
+..................................................................       [100%]
+================================== FAILURES ===================================
+___ test_actual_location_obligation_survives_a_combined_direct_explanation ____
+
+    def test_actual_location_obligation_survives_a_combined_direct_explanation():
+        text='比较扬州个园和何园，它们各自的位置和看点是什么？'
+        decision=CapabilityDecision(intent='lookup',reason_code='stable_knowledge',city='扬州',read_tasks=[
+            ReadTask(source_quote=text,capabilities=[],city='扬州',names=['个园','何园'])])
+        valid=validate_decision(decision,text,[],ContextEnvelope(browsing_city='扬州'))
+        assert len(valid.read_tasks)==2
+        assert valid.read_tasks[0].capabilities==[]
+        assert valid.read_tasks[1].capabilities==['poi']
+        assert valid.read_tasks[1].names==['个园','何园']
+>       assert validate_decision(valid,text,[],ContextEnvelope(browsing_city='扬州')).read_tasks==valid.read_tasks
+E       AssertionError: assert [ReadTask(sou...pose='other')] == [ReadTask(sou...pose='other')]
+E         
+E         At index 1 diff: ReadTask(source_quote='它们各自的位置和看点是什么', source_ref=None, capabilities=['poi'], city='扬州', query='', category='attraction', names=['个园', '何园'], origin='', destination='', mode='unknown', nearby=False, near_name='', fact_kind='other', itinerary_purpose='other') != ReadTask(source_quote='它们各自的位置和看点是什么', source_ref=None, capabilities=['poi'], city='扬州', query='', category='attraction', names=['个园', '何园'], origin='', destination='', mode='unknown', nearby=False, near_name='', fact_kind='other', itinerary_purpose='other')
+E         Use -v to get more diff
+
+tests\test_stage4_task_contract.py:167: AssertionError
+______ test_place_lookup_cannot_consume_the_explicit_explanation_subgoal ______
+
+    def test_place_lookup_cannot_consume_the_explicit_explanation_subgoal():
+        text='比较个园和何园，它们各自的位置和看点是什么'
+        decision=CapabilityDecision(intent='lookup',reason_code='place_identity',city='扬州',read_tasks=[
+            ReadTask(source_quote=text,capabilities=['poi'],city='扬州',names=[n]) for n in ['个园','何园']])
+        env=ContextEnvelope(browsing_city='扬州')
+        valid=validate_decision(decision,text,[],env)
+        assert len(valid.read_tasks)==3
+        assert valid.read_tasks[-1].capabilities==[] and valid.read_tasks[-1].names==['个园','何园']
+        assert all(t._identity_only for t in valid.read_tasks[:2])
+>       assert len(validate_decision(valid,text,[],env).read_tasks)==3
+E       AssertionError: assert 4 == 3
+E        +  where 4 = len([ReadTask(source_quote='比较个园和何园，它们各自的位置和看点是什么', source_ref=None, capabilities=['poi'], city='扬州', query='', category='..., origin='', destination='', mode='unknown', nearby=False, near_name='', fact_kind='other', itinerary_purpose='other')])
+E        +    where [ReadTask(source_quote='比较个园和何园，它们各自的位置和看点是什么', source_ref=None, capabilities=['poi'], city='扬州', query='', category='..., origin='', destination='', mode='unknown', nearby=False, near_name='', fact_kind='other', itinerary_purpose='other')] = CapabilityDecision(intent='lookup', capabilities=['poi'], city='扬州', query='', category='attraction', names=[], origin...se='other')], fact_kind='other', itinerary_purpose='other', creation=None, planning_draft=None, candidate_command=None).read_tasks
+E        +      where CapabilityDecision(intent='lookup', capabilities=['poi'], city='扬州', query='', category='attraction', names=[], origin...se='other')], fact_kind='other', itinerary_purpose='other', creation=None, planning_draft=None, candidate_command=None) = validate_decision(CapabilityDecision(intent='lookup', capabilities=['poi'], city='扬州', query='', category='attraction', names=[], origin...se='other')], fact_kind='other', itinerary_purpose='other', creation=None, planning_draft=None, candidate_command=None), '比较个园和何园，它们各自的位置和看点是什么', [], ContextEnvelope(version='assistant-context-v1', topic_id='main', surface='assistant', physical_location=None, browsing...id=None, action_target=None, prefer_flexible=False, preview_action_id=None, route_request=None, conversation_memory={}))
+
+tests\test_stage4_task_contract.py:198: AssertionError
+______ test_virtual_lunch_window_label_preserves_requested_meal_duration ______
+
+    def test_virtual_lunch_window_label_preserves_requested_meal_duration():
+        from app.conversation_candidate.service import resolve_plan
+        proposal=plan().model_copy(deep=True)
+        item=proposal.days[0].items[1]
+        item.kind='free_window';item.name='午餐窗口';item.source_quote='中午留一小时午餐'
+        proposal.days[0].items=[item]
+>       result=asyncio.run(resolve_plan(proposal,'成都',None,[],'中午留一小时午餐'))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_stage4_selection_repair.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+plan = DraftPlan(schema_version=2, schedule_constraints=DraftScheduleConstraints(start_date=datetime.date(2026, 11, 9), daily..._time=datetime.time(12, 0), end_time=datetime.time(13, 0), source_quote='中午留一小时午餐')], start_time=None, end_time=None)])
+city = '成都', port = None, history = [], message = '中午留一小时午餐', source_refs = {}
+
+    async def resolve_plan(plan, city, port, history, message, source_refs=None):
+        """Never trust model UUIDs or a category result's ranking as identity."""
+        from app.place_content.contracts import SearchQuery
+        from app.assistant_research import requested_place_matches
+        data = plan.model_dump(mode="json")
+        from .sources import source_registry
+        spans = source_registry(history, message)
+        source_refs = source_refs or {}
+        if not set(source_refs) <= {item.item_ref for day in plan.days for item in day.items}:
+            raise ValueError('候选来源引用含有未知活动。')
+        known = [card["place"] for turn in history for card in turn.get("place_cards", [])]
+        source = "\n".join([*(turn.get("user", "") for turn in history), message])
+        for day in data["days"]:
+            # Repeating the global bounds is semantically identical, not a separate
+            # daily override unsupported by the formal preferences owner.
+            schedule = data["schedule_constraints"]
+            if ((day["start_time"] == schedule["daily_start_time"] and day["end_time"] == schedule["daily_end_time"])
+                or not explicit_interval(source, day["start_time"], day["end_time"])):
+                day["start_time"] = day["end_time"] = None
+            for item in day["items"]:
+                # Preserve an explicitly chosen canonical scenic name even if the
+                # model abbreviated it. The complete suffix must exist in user text.
+                if item['name'] + '景区' in source:
+                    item['name'] += '景区'
+                item.update(place_id=None, provider_place_id=None, identity_status="unknown")
+                if item['item_ref'] in source_refs:
+                    bound = spans.get(source_refs[item['item_ref']])
+                    if bound is None:
+                        raise ValueError('候选来源片段已失效，请重新生成。')
+                    base = re.split(r'[（(]', item['name'])[0]
+                    if item['kind'] == 'visit' and base not in bound and base.removesuffix('景区') not in bound:
+                        raise ValueError('候选来源片段未包含对应地点。')
+                    # A referenced span is the one authoritative source; never
+                    # validate its entity then borrow a quantity from another span.
+                    item['source_quote'] = bound
+                if item["source_quote"] and item["source_quote"] not in source:
+                    raise ValueError("候选条件无法绑定用户原话，请重新说明该项要求。")
+                interval = explicit_interval(item["source_quote"], item["start_time"], item["end_time"])
+                kind_terms = {'meal': r'餐|吃饭|用餐', 'rest': r'休息|歇|休憩',
+                    'free_window': r'自由|留白|空白|不安排|空出', 'blank_day': r'留白|空白|不安排'}
+                proposed_capacity = (item['kind'] == 'free_window' and item['duration_source'] == 'planning_allocation'
+                    and explicit_interval(item['source_quote'], schedule['daily_start_time'], schedule['daily_end_time']))
+                if item['kind'] == 'free_window' and re.search(r'餐|吃饭|用餐', item['name']) and re.search(r'餐|吃饭|用餐', item['source_quote']):
+                    kind_terms = {**kind_terms, 'free_window': r'餐|吃饭|用餐'}
+                if item['kind'] in kind_terms and not proposed_capacity and not re.search(kind_terms[item['kind']], item['source_quote']):
+                    raise ValueError('候选窗口缺少对应类型的用户原话。')
+                local = [q for q in re.split(r'[，,。；;!?！？\n]', item['source_quote']) if
+                    (re.split(r'[（(]', item['name'])[0].removesuffix('景区') in q if item['kind'] == 'visit'
+                     else re.search(kind_terms.get(item['kind'], r'.'), q))]
+                measured = literal_minutes('，'.join(local))
+                if item['kind']=='visit':
+                    # A model-owned allocation label cannot erase an explicit
+                    # target duration elsewhere in the user's actual request.
+                    from .sources import named_user_clauses
+                    from app.requirement_language import current_user_evidence_reason
+                    current_clauses=[q for q in named_user_clauses(item['name'],[],message)
+                        if current_user_evidence_reason(message,q) is None and not re.search(r'是否|吗|会怎样|合适|够不够',q)
+                        and (not re.search(r'路线|步行|驾车|交通|车程|排队',q) or re.search(r'停留|游玩|参观|游览|逛',q))]
+                    required=literal_minutes('，'.join(current_clauses))
+                    if required and required != [item['duration_minutes']]:
+                        raise ValueError('候选停留时长与该地点本次明确要求不一致，尚未应用。')
+                if item['duration_source'] == 'user_explicit' and measured != [item['duration_minutes']] and not interval:
+                    raise ValueError('候选的指定时长无法绑定对应活动原话，尚未应用。')
+                if item['kind'] in kind_terms and len(measured) == 1 and item['duration_minutes'] != measured[0]:
+>                   raise ValueError('候选窗口时长与用户要求不一致。')
+E                   ValueError: 候选窗口时长与用户要求不一致。
+
+app\conversation_candidate\service.py:109: ValueError
+- generated xml file: E:\Study\RoamSync-stage4-evidence-20261025\contract6.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_stage4_task_contract.py::test_actual_location_obligation_survives_a_combined_direct_explanation
+FAILED tests/test_stage4_task_contract.py::test_place_lookup_cannot_consume_the_explicit_explanation_subgoal
+FAILED tests/test_stage4_selection_repair.py::test_virtual_lunch_window_label_preserves_requested_meal_duration

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="3" time="1.477" timestamp="2026-10-25T01:21:03.497653+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage4_condition_projection" name="test_departed_companion_withdraws_only_its_linked_requirement_and_syncs_count" time="0.041"><failure message="AssertionError: assert 2 == 1&#10; +  where 2 = TaskRequirements(budget_fen=None, party_size=2, preferences=[]).party_size&#10; +    where TaskRequirements(budget_fen=None, party_size=2, preferences=[]) = ContextEnvelope(version='assistant-context-v1', topic_id='solo', surface='assistant', physical_location=None, browsing... '我这次连续步行不能超过30分钟', 'source_quote': '我这次连续步行不能超过30分钟', 'message_id': 'origin', 'scope': 'trip', 'scope_version': 2}]}}).requirements">def test_departed_companion_withdraws_only_its_linked_requirement_and_syncs_count():
+        env = ContextEnvelope(topic_id='solo', browsing_city='成都', requirements=TaskRequirements(party_size=2))
+        text = '我不喝酒，朋友这次连续步行不能超过15分钟，我这次连续步行不能超过30分钟'
+        env = capture_effective_requirements(env, text, message_id='origin')
+        env, _, _ = apply_memory(env, [], text, 'origin', [
+            MemoryUpdate(field='preferences', operation='add', value='不喝酒', source_quote='我不喝酒'),
+            MemoryUpdate(field='requirements', operation='add', value='连续步行不能超过15分钟',
+                         source_quote='朋友这次连续步行不能超过15分钟', subject='朋友'),
+            MemoryUpdate(field='requirements', operation='add', value='连续步行不能超过30分钟',
+                         source_quote='我这次连续步行不能超过30分钟', scope='trip'),
+        ])
+        departure = '朋友不去了，我一个人去'
+        env, _, _ = apply_memory(env, [], departure, 'solo', [
+            MemoryUpdate(field='party_size', value='1', source_quote='我一个人去', scope='trip'),
+            MemoryUpdate(field='requirements', operation='remove', value='朋友这次连续步行不能超过15分钟',
+                         source_quote='朋友不去了', subject='朋友'),
+        ])
+&gt;       assert env.requirements.party_size == 1
+E       AssertionError: assert 2 == 1
+E        +  where 2 = TaskRequirements(budget_fen=None, party_size=2, preferences=[]).party_size
+E        +    where TaskRequirements(budget_fen=None, party_size=2, preferences=[]) = ContextEnvelope(version='assistant-context-v1', topic_id='solo', surface='assistant', physical_location=None, browsing... '我这次连续步行不能超过30分钟', 'source_quote': '我这次连续步行不能超过30分钟', 'message_id': 'origin', 'scope': 'trip', 'scope_version': 2}]}}).requirements
+
+tests\test_stage4_condition_projection.py:28: AssertionError</failure></testcase><testcase classname="tests.test_stage4_condition_projection" name="test_unverified_removal_cannot_revoke_a_requirement_record" time="0.002" /><testcase classname="tests.test_stage4_condition_projection" name="test_same_text_from_other_source_or_global_scope_is_not_revoked" time="0.005"><failure message="AssertionError: assert ['origin', 'unrelated'] == ['unrelated']&#10;  &#10;  At index 0 diff: 'origin' != 'unrelated'&#10;  Left contains one more item: 'unrelated'&#10;  Use -v to get more diff">def test_same_text_from_other_source_or_global_scope_is_not_revoked():
+        from app.requirements import add_requirement
+        env = ContextEnvelope(topic_id='solo', browsing_city='成都')
+        text = '朋友这次连续步行不能超过15分钟'
+        env = capture_effective_requirements(env, text, message_id='origin')
+        records = add_requirement(env.requirement_records, text=text, scope={'kind':'global_preference'}, source_ref='unrelated')
+        env = env.model_copy(update={'requirement_records':records})
+        env, _, _ = apply_memory(env, [], text, 'origin', [
+            MemoryUpdate(field='requirements', operation='add', value=text, source_quote=text, subject='朋友')])
+        env, _, _ = apply_memory(env, [], '朋友不去了', 'later', [
+            MemoryUpdate(field='requirements', operation='remove', value=text, source_quote='朋友不去了', subject='朋友')])
+&gt;       assert [r['source']['ref'] for r in _active(env)] == ['unrelated']
+E       AssertionError: assert ['origin', 'unrelated'] == ['unrelated']
+E         
+E         At index 0 diff: 'origin' != 'unrelated'
+E         Left contains one more item: 'unrelated'
+E         Use -v to get more diff
+
+tests\test_stage4_condition_projection.py:55: AssertionError</failure></testcase></testsuite></testsuites>

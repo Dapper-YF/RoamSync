@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="5.974" timestamp="2026-10-25T13:55:21.318060+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage4_task_contract" name="test_decorated_route_argument_uses_its_existing_verified_identity" time="0.006"><failure message="AssertionError: assert False&#10; +  where False = &lt;function argument_in_read_scope at 0x000001A3E1840CA0&gt;('拙政园（东北街178号）', '从前一个到后一个查步行路线', [{'address': '东北街178号', 'aliases': [], 'name': '拙政园', 'place_id': '00000000-0000-0000-0000-000000000001'}, {'address': '园林路23号', 'aliases': [], 'name': '狮子林', 'place_id': '00000000-0000-0000-0000-000000000002'}], capabilities=['poi', 'route'])">def test_decorated_route_argument_uses_its_existing_verified_identity():
+        from app.read_references import argument_in_read_scope
+        places = [{'name':'拙政园','address':'东北街178号','aliases':[],
+            'place_id':'00000000-0000-0000-0000-000000000001'},
+            {'name':'狮子林','address':'园林路23号','aliases':[],
+            'place_id':'00000000-0000-0000-0000-000000000002'}]
+        source = '从前一个到后一个查步行路线'
+&gt;       assert argument_in_read_scope('拙政园（东北街178号）',source,places,capabilities=['poi','route'])
+E       AssertionError: assert False
+E        +  where False = &lt;function argument_in_read_scope at 0x000001A3E1840CA0&gt;('拙政园（东北街178号）', '从前一个到后一个查步行路线', [{'address': '东北街178号', 'aliases': [], 'name': '拙政园', 'place_id': '00000000-0000-0000-0000-000000000001'}, {'address': '园林路23号', 'aliases': [], 'name': '狮子林', 'place_id': '00000000-0000-0000-0000-000000000002'}], capabilities=['poi', 'route'])
+
+backend\tests\test_stage4_task_contract.py:76: AssertionError</failure></testcase><testcase classname="tests.test_stage4_condition_projection" name="test_failed_place_preparation_does_not_lose_verified_creation_dates" time="0.001"><failure message="ImportError: cannot import name 'candidate_scalar_updates' from 'app.assistant_memory' (E:\Study\RoamSync-product-closeout-stage2-20261024\backend\app\assistant_memory.py)">def test_failed_place_preparation_does_not_lose_verified_creation_dates():
+        from datetime import date
+        from app.assistant_capabilities import CapabilityDecision
+&gt;       from app.assistant_memory import candidate_scalar_updates
+E       ImportError: cannot import name 'candidate_scalar_updates' from 'app.assistant_memory' (E:\Study\RoamSync-product-closeout-stage2-20261024\backend\app\assistant_memory.py)
+
+backend\tests\test_stage4_condition_projection.py:10: ImportError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="6.390" timestamp="2026-10-25T14:33:48.611355+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage4_condition_projection" name="test_creation_scalar_source_ignores_nonscalar_preview_but_keeps_conflicts" time="4.393"><failure message="KeyError: 'start_date'">def test_creation_scalar_source_ignores_nonscalar_preview_but_keeps_conflicts():
+        from datetime import date
+        from app.assistant_capabilities import CapabilityDecision
+        from app.assistant_memory import candidate_scalar_updates
+        from test_candidate_commands import plan
+        def projected(text):
+            decision=CapabilityDecision(intent='create',reason_code='explicit_write',candidate_command={
+                'action':'generate','source_quote':text,'plan':plan().model_dump(mode='json')})
+            return {update.field:update.value for update in candidate_scalar_updates(decision,text,today=date(2026,10,25))}
+&gt;       assert projected('请先生成成都11月9日的一日候选，人民公园和宽窄巷子。先给我看方案，不要保存。')['start_date']=='2026-11-09'
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'start_date'
+
+backend\tests\test_stage4_condition_projection.py:85: KeyError</failure></testcase></testsuite></testsuites>

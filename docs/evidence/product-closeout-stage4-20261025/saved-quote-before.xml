@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="5" time="6.766" timestamp="2026-10-25T13:31:27.716425+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage4_saved_source_contract" name="test_operation_literal_source_can_supply_omitted_duplicate_preview_quote" time="0.009"><failure message="AssertionError: assert ('direct' == 'modify'&#10;  &#10;  - modify&#10;  + direct)">def test_operation_literal_source_can_supply_omitted_duplicate_preview_quote():
+        text='请把第一天人民公园的停留改为60分钟，午餐与其他活动保持不变。先给修改候选，等我明确采用再保存。'
+        result=validate_decision(decision(text),text,[],ContextEnvelope())
+&gt;       assert result.intent=='modify' and result.authorization_quote==text
+E       AssertionError: assert ('direct' == 'modify'
+E         
+E         - modify
+E         + direct)
+
+tests\test_stage4_saved_source_contract.py:17: AssertionError</failure></testcase><testcase classname="tests.test_stage4_saved_source_contract" name="test_missing_duplicate_quote_never_restores_unauthorized_operation[\u5982\u679c\u628a\u4eba\u6c11\u516c\u56ed\u6539\u4e3a60\u5206\u949f\u4f1a\u600e\u6837]" time="0.001" /><testcase classname="tests.test_stage4_saved_source_contract" name="test_missing_duplicate_quote_never_restores_unauthorized_operation[\u670b\u53cb\u8bf4\u201c\u628a\u4eba\u6c11\u516c\u56ed\u6539\u4e3a60\u5206\u949f\u201d]" time="0.001" /><testcase classname="tests.test_stage4_saved_source_contract" name="test_missing_duplicate_quote_never_restores_unauthorized_operation[\u4e0d\u8981\u628a\u4eba\u6c11\u516c\u56ed\u6539\u4e3a60\u5206\u949f]" time="0.003" /><testcase classname="tests.test_stage4_saved_source_contract" name="test_missing_duplicate_quote_never_restores_unauthorized_operation[\u628a\u4eba\u6c11\u516c\u56ed\u6539\u4e3a60\u5206\u949f\u4f1a\u600e\u6837\uff1f]" time="0.001" /></testsuite></testsuites>

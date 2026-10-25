@@ -2,19 +2,27 @@
 
 Last updated: 2026-10-25
 
-## Stage4 continuation — implementation in progress (2026-10-25)
+## Stage4 frozen acceptance — measured NO-GO (2026-10-25)
 
 User requested continuing the unfinished closeout. Reused the isolated tree on
 codex/product-closeout-stage4-20261025, foundation ed3797e after historical ef3aeb0.
-Current uncommitted work unifies the state/action wire contract, exact bounded
-representation repair, condition projections, retained independent read goals,
-and existing Revision display/hash/review plus its original locked Accept path.
+Frozen product736e3b7 unifies the state/action wire contract, exact bounded
+representation repair, scoped condition projections, retained independent read
+goals, cross-city optional photos, and Revision display/hash/review plus its
+original locked Accept path. Shared scalar-source grammar and source-bound
+decorated identity checks repair observed handoff failures.
 Natural chat does not gain a direct formal writer; no new table or write endpoint.
-Current real development captures remain failures, including schema item-ref
-omissions and companion withdrawal before the latest fixes. Stage3's3/20 and0/5
-remain historical independent scores; current new sealed questions are unopened.
-Still NO-GO. Final full tests, actual continuous browser golden chain, real-object
-safety and one frozen holdout measurement have not been completed for this code.
+MEASURED frozen backend2019+38, Web268/typecheck/build and five actual-generated
+Revision clone safety checks pass with source stable. One new sealed20 execution,
+independently graded4/20, complete0/5; observed critical guarantees0 and unauthorized
+formal writes0. Chengdu public service chain succeeds; Suzhou browser photos,
+identity, route, candidates, initial adoption and real saved modification succeed,
+but after-refresh chat denies the visible candidate and the complete natural
+golden chain fails. Explicit UI button recovery preserves peers/lunch/preferences,
+Trip2->2->3, target75->60 only. Public recovery does not replace the failed gate.
+Still NO-GO; missing target references, source handoff, DD/MM/YYYY conditions,
+saved position edits and complete multi-goal answers block reliable travel tasks.
+Stage3's3/20 and0/5 remain historical; all used questions are regression-only.
 Evidence: docs/PRODUCT_CLOSEOUT_STAGE4_20261025.md and external
 E:/Study/RoamSync-stage4-evidence-20261025. No official source/DB/deployment work.
 

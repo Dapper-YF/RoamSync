@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "E:\Study\RoamSync-stage3-evidence-20261024\run_unit.py", line 17, in <module>
+    with psycopg.connect('postgresql://agent_b_test:agent_b_test_only@127.0.0.1:15435/postgres', autocommit=True) as conn:
+         ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Study\RoamSync\backend\.venv\Lib\site-packages\psycopg\connection.py", line 122, in connect
+    raise last_ex.with_traceback(None)
+psycopg.OperationalError: connection failed: connection to server at "127.0.0.1", port 15435 failed: FATAL:  the database system is starting up

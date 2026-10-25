@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="38" time="39.488" timestamp="2026-10-25T00:44:29.083780+00:00" hostname="b6e96f70fb24"><testcase classname="tests.test_draft_promotion" name="test_atomic_candidate_accepts_exact_published_plan_without_shell_trip" time="2.042" /><testcase classname="tests.test_draft_promotion" name="test_atomic_candidate_validation_failure_rolls_back_all_formal_writes" time="0.611" /><testcase classname="tests.test_draft_promotion" name="test_atomic_candidate_cancelled_publication_cannot_be_saved" time="0.761" /><testcase classname="tests.test_draft_promotion" name="test_atomic_concurrent_authorization_and_resume_create_one_trip" time="0.849" /><testcase classname="tests.test_draft_promotion" name="test_atomic_cancel_during_provider_refresh_commits_no_trip" time="0.516" /><testcase classname="tests.test_draft_promotion" name="test_atomic_candidate_lunch_is_formal_window_and_keeps_real_route" time="0.856" /><testcase classname="tests.test_draft_promotion" name="test_legacy_review_cannot_rebind_v2_preparation" time="0.445" /><testcase classname="tests.test_draft_promotion" name="test_atomic_candidate_window_tamper_is_rejected_and_rolled_back" time="0.688" /><testcase classname="tests.test_draft_promotion" name="test_conversation_generate_modify_save_same_candidate_without_metadata_shell" time="2.604"><failure message="AssertionError: [{'assistant': '请明确每天可安排的开始和结束时间；景点预约或闭馆时刻不能代替你的游玩窗口。', 'context': {'action_target': None, 'browsing_city': '杭州', 'con...larification_needed': False, 'confidence': 0.96, 'goal_type': 'trip_planning', 'knowledge_required': False, ...}, ...}]&#10;assert (None)&#10; +  where None = &lt;app.database.AssistantSession object at 0x7ed7b924ea50&gt;.pending_action">stack = (&lt;app.draft_promotion.service.DraftPromotionService object at 0x7ed7b9c1e310&gt;, &lt;app.drafts.repository.DraftRepository ...ind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ed7b9ddf7c0&gt;, autoflush=True, expire_on_commit=False), ...)
+
+    def test_conversation_generate_modify_save_same_candidate_without_metadata_shell(stack):
+        async def scenario():
+            from types import SimpleNamespace
+            from app.assistant_capabilities import CapabilityDecision
+            from app.assistant_turn import semantic_turn
+            from app.database import AssistantSession
+            from app.drafts.contracts import DraftPlan
+            service, repo, places, owner, _, sessions, _ = stack
+            session_id = uuid4()
+            async with sessions() as db, db.begin():
+                db.add(AssistantSession(id=session_id, messages=[], applied_actions={}))
+            plan = DraftPlan.model_validate({"schema_version": 2, "schedule_constraints": {
+                "start_date": "2026-11-01", "daily_start_time": "09:00", "daily_end_time": "18:00", "transport_mode": "walk"},
+                "days": [{"day_index": 1, "title": "测试一天", "items": [
+                    {"item_ref": f"visit-{i}", "name": place.name, "duration_minutes": 90,
+                     "duration_source": "planning_allocation"} for i, place in enumerate(places.items)]}]})
+            async def search(query):
+                from app.place_content.contracts import SearchResponse
+                assert query.category is None
+                return SearchResponse(items=[p for p in places.items if p.name == query.query], page=1, page_size=12, status="ok")
+            places.search = search
+            port = SimpleNamespace(owner=owner, draft_repository=repo, service=places)
+            command = {"action": "generate", "source_quote": "创建杭州2026-11-01的一日安排", "plan": plan.model_dump(mode="json")}
+            decision = CapabilityDecision(intent="create", city="杭州", authorization_quote=command["source_quote"],
+                reason_code="explicit_write", creation={"destination": "杭州", "start_date": "2026-11-01", "end_date": "2026-11-01"},
+                candidate_command=command)
+            async def selector(*args):
+                return decision
+            settings = SimpleNamespace(saved_intentions_enabled=False)
+            message = "创建杭州2026-11-01的一日安排，09:00出发18:00前结束，步行，只去测试地点0和测试地点1，先看候选。"
+            async with sessions() as db:
+                before = await db.scalar(select(func.count()).select_from(Trip))
+                await db.rollback()
+                row, _, _ = await semantic_turn(db, session_id, message, uuid4(), {"topic_id": "chain"}, port, settings, selector)
+                assert row.pending_action and row.pending_action.get("kind") == "itinerary_candidate_v2", row.messages
+                view = row.pending_action["presentation"]
+                assert view["stage"] == "ready" and row.trip_id is None, view
+                assert await db.scalar(select(func.count()).select_from(Trip)) == before
+                draft_id = view["draft_id"]
+            decision = CapabilityDecision(intent="modify", reason_code="explicit_write", authorization_quote="测试地点0改成120分钟",
+                candidate_command={"action": "modify", "source_quote": "测试地点0改成120分钟", "patches": [
+                    {"item_ref": "visit-0", "source_quote": "测试地点0改成120分钟", "duration_minutes": 120}]})
+            async with sessions() as db:
+                row, _, _ = await semantic_turn(db, session_id, "测试地点0改成120分钟", uuid4(), {"topic_id": "chain"}, port, settings, selector)
+                view = row.pending_action["presentation"]
+                assert view["draft_id"] == draft_id and view["stops"][0]["duration_minutes"] == 120, row.messages
+                assert view["stops"][1]["duration_minutes"] == 90 and row.trip_id is None
+                assert view['stage'] == 'needs_input' and view['stops'][1]['start_time'] == '10:40'
+            # A local extension must not silently move its peer. Resolve the
+            # conflict with a shorter edit, then adopt the newly displayed content.
+            decision = CapabilityDecision(intent='modify', reason_code='explicit_write', authorization_quote='测试地点0改成60分钟',
+                candidate_command={'action':'modify','source_quote':'测试地点0改成60分钟','patches':[
+                    {'item_ref':'visit-0','source_quote':'测试地点0改成60分钟','duration_minutes':60}]})
+            async with sessions() as db:
+                row, _, _ = await semantic_turn(db, session_id, '测试地点0改成60分钟', uuid4(), {'topic_id':'chain'}, port, settings, selector)
+                view = row.pending_action['presentation']
+                assert view['stage'] == 'ready' and view['stops'][1]['start_time'] == '10:40'
+            decision = CapabilityDecision(intent="create", reason_code="explicit_write", authorization_quote="采用并保存这份安排",
+                candidate_command={"action": "adopt", "source_quote": "采用并保存这份安排"})
+            save_id = uuid4()
+            async with sessions() as db:
+                row, _, _ = await semantic_turn(db, session_id, "采用并保存这份安排", save_id, {"topic_id": "chain"}, port, settings, selector)
+                assert row.trip_id is not None and row.pending_action is None, row.messages
+                trip_id = row.trip_id
+            async with sessions() as db:
+                row, _, _ = await semantic_turn(db, session_id, "采用并保存这份安排", save_id, {"topic_id": "chain"}, port, settings, selector)
+                assert row.trip_id == trip_id
+                assert await db.scalar(select(func.count()).select_from(Trip)) == before + 1
+&gt;       asyncio.run(scenario())
+
+tests/test_draft_promotion.py:343: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def scenario():
+        from types import SimpleNamespace
+        from app.assistant_capabilities import CapabilityDecision
+        from app.assistant_turn import semantic_turn
+        from app.database import AssistantSession
+        from app.drafts.contracts import DraftPlan
+        service, repo, places, owner, _, sessions, _ = stack
+        session_id = uuid4()
+        async with sessions() as db, db.begin():
+            db.add(AssistantSession(id=session_id, messages=[], applied_actions={}))
+        plan = DraftPlan.model_validate({"schema_version": 2, "schedule_constraints": {
+            "start_date": "2026-11-01", "daily_start_time": "09:00", "daily_end_time": "18:00", "transport_mode": "walk"},
+            "days": [{"day_index": 1, "title": "测试一天", "items": [
+                {"item_ref": f"visit-{i}", "name": place.name, "duration_minutes": 90,
+                 "duration_source": "planning_allocation"} for i, place in enumerate(places.items)]}]})
+        async def search(query):
+            from app.place_content.contracts import SearchResponse
+            assert query.category is None
+            return SearchResponse(items=[p for p in places.items if p.name == query.query], page=1, page_size=12, status="ok")
+        places.search = search
+        port = SimpleNamespace(owner=owner, draft_repository=repo, service=places)
+        command = {"action": "generate", "source_quote": "创建杭州2026-11-01的一日安排", "plan": plan.model_dump(mode="json")}
+        decision = CapabilityDecision(intent="create", city="杭州", authorization_quote=command["source_quote"],
+            reason_code="explicit_write", creation={"destination": "杭州", "start_date": "2026-11-01", "end_date": "2026-11-01"},
+            candidate_command=command)
+        async def selector(*args):
+            return decision
+        settings = SimpleNamespace(saved_intentions_enabled=False)
+        message = "创建杭州2026-11-01的一日安排，09:00出发18:00前结束，步行，只去测试地点0和测试地点1，先看候选。"
+        async with sessions() as db:
+            before = await db.scalar(select(func.count()).select_from(Trip))
+            await db.rollback()
+            row, _, _ = await semantic_turn(db, session_id, message, uuid4(), {"topic_id": "chain"}, port, settings, selector)
+&gt;           assert row.pending_action and row.pending_action.get("kind") == "itinerary_candidate_v2", row.messages
+E           AssertionError: [{'assistant': '请明确每天可安排的开始和结束时间；景点预约或闭馆时刻不能代替你的游玩窗口。', 'context': {'action_target': None, 'browsing_city': '杭州', 'con...larification_needed': False, 'confidence': 0.96, 'goal_type': 'trip_planning', 'knowledge_required': False, ...}, ...}]
+E           assert (None)
+E            +  where None = &lt;app.database.AssistantSession object at 0x7ed7b924ea50&gt;.pending_action
+
+tests/test_draft_promotion.py:309: AssertionError</failure></testcase><testcase classname="tests.test_draft_promotion" name="test_conversation_rejects_inquiry_and_changed_conditions_without_partial_write[\u4fdd\u5b58\u5f53\u524d\u5019\u9009\u4f1a\u600e\u6837\uff1f-question]" time="0.413" /><testcase classname="tests.test_draft_promotion" name="test_conversation_rejects_inquiry_and_changed_conditions_without_partial_write[\u51fa\u53d1\u65e5\u671f\u6539\u62102026-11-02-date]" time="0.470" /><testcase classname="tests.test_draft_promotion" name="test_conversation_rejects_inquiry_and_changed_conditions_without_partial_write[\u6d4b\u8bd5\u5730\u70b90\u6539\u6210120\u5206\u949f\uff0c\u8fd9\u6b21\u603b\u9884\u7b97\u4e0d\u5f97\u8d85\u8fc7100\u5143-compound]" time="0.833" /><testcase classname="tests.test_draft_promotion" name="test_conversation_rejects_inquiry_and_changed_conditions_without_partial_write[\u6539\u53bb\u5357\u4eac\uff0c\u4fdd\u5b58\u5f53\u524d\u5019\u9009-city_save]" time="0.592" /><testcase classname="tests.test_draft_promotion" name="test_preview_no_trip_exact_plan_adopt_idempotency_and_guards" time="1.192" /><testcase classname="tests.test_draft_promotion" name="test_cancel_retains_created_trip_and_never_applies[before_t1]" time="0.341" /><testcase classname="tests.test_draft_promotion" name="test_cancel_retains_created_trip_and_never_applies[after_t1]" time="0.451" /><testcase classname="tests.test_draft_promotion" name="test_cancel_retains_created_trip_and_never_applies[after_t2]" time="0.844" /><testcase classname="tests.test_draft_promotion" name="test_material_change_requires_review_and_reuses_trip[create_and_adopt]" time="1.598" /><testcase classname="tests.test_draft_promotion" name="test_material_change_requires_review_and_reuses_trip[create_only]" time="1.104" /><testcase classname="tests.test_draft_promotion" name="test_fail_closed_on_changed_binding[draft]" time="0.896" /><testcase classname="tests.test_draft_promotion" name="test_fail_closed_on_changed_binding[trip]" time="0.839" /><testcase classname="tests.test_draft_promotion" name="test_fail_closed_on_changed_binding[candidate]" time="0.772" /><testcase classname="tests.test_draft_promotion" name="test_fail_closed_on_changed_binding[formal_place]" time="1.058" /><testcase classname="tests.test_draft_promotion" name="test_fail_closed_on_changed_binding[expiry]" time="1.089" /><testcase classname="tests.test_draft_promotion" name="test_fail_closed_on_changed_binding[provider_failure]" time="0.744" /><testcase classname="tests.test_draft_promotion" name="test_fail_closed_on_changed_binding[preferences]" time="0.830" /><testcase classname="tests.test_draft_promotion" name="test_fail_closed_on_changed_binding[run_cancelled]" time="0.936" /><testcase classname="tests.test_draft_promotion" name="test_unknown_place_blocks_adopt_but_explicit_create_only_available" time="0.541" /><testcase classname="tests.test_draft_promotion" name="test_crashes_rollback_t1_t2_mapping_and_retry_same_operation" time="1.536" /><testcase classname="tests.test_draft_promotion" name="test_cancel_wins_during_external_refresh" time="0.816" /><testcase classname="tests.test_draft_promotion" name="test_owner_isolation_explicit_phrase_and_preferences_before_t2" time="0.599" /><testcase classname="tests.test_draft_promotion" name="test_t3_fault_rolls_back_accept_and_consumption_and_response_loss_reconciles" time="1.508" /><testcase classname="tests.test_draft_promotion" name="test_concurrent_key_and_resume_only_one_trip_revision" time="1.625" /><testcase classname="tests.test_draft_promotion" name="test_long_requirements_and_prepared_tamper_never_accepted" time="0.762" /><testcase classname="tests.test_draft_promotion" name="test_successful_modification_requirements_preserved_and_expired_run_recovered" time="0.643" /><testcase classname="tests.test_draft_promotion" name="test_golden_normalization_semantics_and_evidence" time="0.314" /><testcase classname="tests.test_draft_promotion" name="test_same_prepared_plan_cannot_create_duplicate_operation_with_different_request_id" time="0.734" /><testcase classname="tests.test_place_content_postgres" name="test_postgres_concurrent_favorite_identity_and_owner_isolation" time="0.208" /></testsuite></testsuites>

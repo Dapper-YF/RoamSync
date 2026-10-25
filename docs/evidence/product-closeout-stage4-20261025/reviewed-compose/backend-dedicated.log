@@ -1,0 +1,59 @@
+ Container roamsync-test-3e6f72361731-postgres-test-1 Running 
+ Container roamsync-test-3e6f72361731-postgres-test-1 Waiting 
+ Container roamsync-test-3e6f72361731-postgres-test-1 Healthy 
+ Container roamsync-test-3e6f72361731-api-test-run-31eb75be9a1a Creating 
+ Container roamsync-test-3e6f72361731-api-test-run-31eb75be9a1a Created 
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 20260831_0001, Create trips and expenses.
+INFO  [alembic.runtime.migration] Running upgrade 20260831_0001 -> 20260901_0002, Add persisted trip planning models.
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0002 -> 20260901_0003, Add persisted route legs and route cache.
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0003 -> 20260901_0004, add multi-city trip metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0004 -> 20260901_0005, add trip management and accommodation metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0005 -> 20260901_0006, add editable activity metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0006 -> 20260902_0007, add structured trip preferences
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0007 -> 20260902_0008, add planning run and candidate revision boundaries
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0008 -> 20260902_0009, add candidate route evidence
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0009 -> 20260902_0010, add planning clarification status
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0010 -> 20260902_0011, persist route geometry and alternatives
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0011 -> 20260902_0012, persist candidate route geometry
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0012 -> 20260902_0013, persist pending planning interrupt for web clients
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0013 -> 20260903_0014, add persistent trip execution state
+INFO  [alembic.runtime.migration] Running upgrade 20260903_0014 -> 20260903_0015, persist grounded intent context on planning runs
+INFO  [alembic.runtime.migration] Running upgrade 20260903_0015 -> 20260907_0016, Add worker lease fields to planning runs.
+INFO  [alembic.runtime.migration] Running upgrade 20260907_0016 -> 20260908_0017, Keep actionable validation failures on persisted planning runs.
+INFO  [alembic.runtime.migration] Running upgrade 20260908_0017 -> 20260909_0018, Persist read-only assistant answers separately from plan revisions.
+INFO  [alembic.runtime.migration] Running upgrade 20260909_0018 -> 20260909_0019, Persistent cross-page assistant conversations and tool confirmations.
+INFO  [alembic.runtime.migration] Running upgrade 20260909_0019 -> 20260910_0020, Expose actual planning stages and worker heartbeat.
+INFO  [alembic.runtime.migration] Running upgrade 20260910_0020 -> 20260914_0021, Make trip budget limits optional.
+INFO  [alembic.runtime.migration] Running upgrade 20260914_0021 -> 20260915_0022, Persist runtime navigation sessions separately from replaceable RouteLeg rows.
+INFO  [alembic.runtime.migration] Running upgrade 20260915_0022 -> 20260915_0023, Persist de-duplicated deterministic trip disruptions.
+INFO  [alembic.runtime.migration] Running upgrade 20260915_0023 -> 20260915_0024, Link recovery planning runs to deterministic disruption facts.
+INFO  [alembic.runtime.migration] Running upgrade 20260915_0024 -> 20260916_0025, Persist navigation observations and deterministic detector state.
+INFO  [alembic.runtime.migration] Running upgrade 20260916_0025 -> 20260921_0026, add idempotent activity experience event facts
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0026 -> 20260921_0027, index activity experience fact aggregation
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0027 -> 20260921_0028, fence execution projections to their formal itinerary
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0028 -> 20260921_0029, persist minimal general replanning trigger metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0029 -> 20260921_0030, serialize active automatic recovery per formal trip version
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0030 -> 20260921_0031, make experience rejection dedup queryable
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0031 -> 20260922_0032, add activity importance decision semantics
+INFO  [alembic.runtime.migration] Running upgrade 20260922_0032 -> 20260924_0033, persist plan revision rejection feedback
+INFO  [alembic.runtime.migration] Running upgrade 20260924_0033 -> 20260924_0034, Persist activity decision semantics and their provenance.
+INFO  [alembic.runtime.migration] Running upgrade 20260924_0034 -> 20261016_0035, Keep explicit scoped requirements on the existing trip preference owner.
+INFO  [alembic.runtime.migration] Running upgrade 20261016_0035 -> 20261018_0036, Add persisted product tables without importing preview data or touching trips.
+INFO  [alembic.runtime.migration] Running upgrade 20261018_0036 -> 20261019_0037, Finite Trip-owned choices and reserved free intervals, no second timetable.
+INFO  [alembic.runtime.migration] Running upgrade 20261019_0037 -> 20261022_0038, Independent source-bound intentions, never a second activity timetable.
+......................................                                   [100%]
+------------- generated xml file: /evidence/backend-dedicated.xml --------------
+============================= slowest 10 durations =============================
+3.15s call     tests/test_draft_promotion.py::test_conversation_generate_modify_save_same_candidate_without_metadata_shell
+1.37s call     tests/test_draft_promotion.py::test_preview_no_trip_exact_plan_adopt_idempotency_and_guards
+1.30s call     tests/test_draft_promotion.py::test_fail_closed_on_changed_binding[provider_failure]
+1.21s call     tests/test_draft_promotion.py::test_t3_fault_rolls_back_accept_and_consumption_and_response_loss_reconciles
+1.14s call     tests/test_draft_promotion.py::test_fail_closed_on_changed_binding[preferences]
+1.06s call     tests/test_draft_promotion.py::test_material_change_requires_review_and_reuses_trip[create_and_adopt]
+0.96s call     tests/test_draft_promotion.py::test_atomic_candidate_accepts_exact_published_plan_without_shell_trip
+0.93s call     tests/test_draft_promotion.py::test_concurrent_key_and_resume_only_one_trip_revision
+0.90s call     tests/test_draft_promotion.py::test_crashes_rollback_t1_t2_mapping_and_retry_same_operation
+0.73s call     tests/test_draft_promotion.py::test_fail_closed_on_changed_binding[run_cancelled]
+38 passed in 32.83s

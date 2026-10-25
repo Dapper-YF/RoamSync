@@ -1,0 +1,75 @@
+ Image roamsync-test-4f6f99c67c0d-api-test Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 645B 0.1s done
+#1 DONE 0.1s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 938B 0.0s done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for ghcr.io/astral-sh/uv:0.11.15
+#3 DONE 0.1s
+
+#4 [internal] load metadata for docker.io/library/python:3.11-slim
+#4 DONE 0.1s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 99B done
+#5 DONE 0.0s
+
+#6 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.11.15@sha256:e590846f4776907b254ac0f44b5b380347af5d90d668138ca7938d1b0c2f98d3
+#6 resolve ghcr.io/astral-sh/uv:0.11.15@sha256:e590846f4776907b254ac0f44b5b380347af5d90d668138ca7938d1b0c2f98d3 0.1s done
+#6 DONE 0.1s
+
+#7 [internal] load build context
+#7 transferring context: 218.63kB 0.1s done
+#7 DONE 0.1s
+
+#8 [base 1/4] FROM docker.io/library/python:3.11-slim@sha256:1042b61448fef4ba92d16a8c7eb4996d027568ce64792a7877fd88511e0af7c6
+#8 resolve docker.io/library/python:3.11-slim@sha256:1042b61448fef4ba92d16a8c7eb4996d027568ce64792a7877fd88511e0af7c6 0.1s done
+#8 DONE 0.1s
+
+#9 [base 4/4] COPY pyproject.toml uv.lock ./
+#9 CACHED
+
+#10 [test 1/6] RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen
+#10 CACHED
+
+#11 [test 2/6] COPY alembic.ini ./
+#11 CACHED
+
+#12 [base 2/4] COPY --from=uv /uv /uvx /bin/
+#12 CACHED
+
+#13 [base 3/4] WORKDIR /app
+#13 CACHED
+
+#14 [test 3/6] COPY migrations ./migrations
+#14 CACHED
+
+#15 [test 4/6] COPY app ./app
+#15 DONE 0.4s
+
+#16 [test 5/6] COPY evals ./evals
+#16 DONE 0.2s
+
+#17 [test 6/6] COPY tests ./tests
+#17 DONE 0.3s
+
+#18 exporting to image
+#18 exporting layers
+#18 exporting layers 0.9s done
+#18 exporting manifest sha256:a8666cdccdc7adfa72a34423d7fe5ea41a8fb7c7e038aba608e5f43b68fbe06a
+#18 exporting manifest sha256:a8666cdccdc7adfa72a34423d7fe5ea41a8fb7c7e038aba608e5f43b68fbe06a 0.0s done
+#18 exporting config sha256:a99603616c0828ba13f403156385c33a51565b27bf0e49b5c9b03c5247435f9d 0.0s done
+#18 exporting attestation manifest sha256:cac48c45d2e21b3627797eef52bf1c891f222e9cba29ed550aefbe72402576ef 0.0s done
+#18 exporting manifest list sha256:cb080029c74c3487dbf6bec9394dca714faddf0c6b613fd2e0214b49545c673d
+#18 exporting manifest list sha256:cb080029c74c3487dbf6bec9394dca714faddf0c6b613fd2e0214b49545c673d 0.0s done
+#18 naming to docker.io/library/roamsync-test-4f6f99c67c0d-api-test:latest done
+#18 unpacking to docker.io/library/roamsync-test-4f6f99c67c0d-api-test:latest
+#18 unpacking to docker.io/library/roamsync-test-4f6f99c67c0d-api-test:latest 0.5s done
+#18 DONE 2.4s
+
+#19 resolving provenance for metadata file
+#19 DONE 0.1s
+ Image roamsync-test-4f6f99c67c0d-api-test Built 

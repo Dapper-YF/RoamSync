@@ -1,0 +1,97 @@
+[
+  {
+    "body": {
+      "id": "fd8f4a28-566d-4feb-b0f2-b74a4164b865",
+      "title": "苏州 · 旅行候选",
+      "destination": "苏州",
+      "destination_adcode": "",
+      "destination_citycode": "",
+      "center_longitude": null,
+      "center_latitude": null,
+      "accommodation": "",
+      "accommodation_poi_id": "",
+      "accommodation_address": "",
+      "accommodation_district": "",
+      "accommodation_longitude": null,
+      "accommodation_latitude": null,
+      "start_date": "2026-11-09",
+      "end_date": "2026-11-09",
+      "total_budget_fen": null,
+      "daily_budget_fen": null,
+      "currency": "CNY",
+      "timezone": "Asia/Shanghai",
+      "created_at": "2026-10-25T06:45:58.974619Z",
+      "updated_at": "2026-10-25T08:45:05.680385Z",
+      "archived_at": null,
+      "version": 3,
+      "status": "upcoming"
+    },
+    "path": "/api/v1/trips/fd8f4a28-566d-4feb-b0f2-b74a4164b865",
+    "at": "2026-10-25T16:52:23.5112345+08:00",
+    "status": 200,
+    "name": "detail"
+  },
+  {
+    "body": {
+      "detail": [
+        {
+          "type": "uuid_parsing",
+          "loc": [
+            "path",
+            "trip_id"
+          ],
+          "msg": "Input should be a valid UUID, invalid character: found `n` at 1",
+          "input": "not-a-uuid",
+          "ctx": {
+            "error": "invalid character: found `n` at 1"
+          }
+        }
+      ]
+    },
+    "path": "/api/v1/trips/not-a-uuid",
+    "at": "2026-10-25T16:52:23.5283579+08:00",
+    "status": 422,
+    "name": "invalid_uuid"
+  },
+  {
+    "body": {
+      "detail": "trip not found"
+    },
+    "path": "/api/v1/trips/00000000-0000-0000-0000-000000000000",
+    "at": "2026-10-25T16:52:23.5466625+08:00",
+    "status": 404,
+    "name": "missing_trip"
+  },
+  {
+    "body": {
+      "id": "fd8f4a28-566d-4feb-b0f2-b74a4164b865",
+      "title": "苏州 · 旅行候选",
+      "destination": "苏州",
+      "destination_adcode": "",
+      "destination_citycode": "",
+      "center_longitude": null,
+      "center_latitude": null,
+      "accommodation": "",
+      "accommodation_poi_id": "",
+      "accommodation_address": "",
+      "accommodation_district": "",
+      "accommodation_longitude": null,
+      "accommodation_latitude": null,
+      "start_date": "2026-11-09",
+      "end_date": "2026-11-09",
+      "total_budget_fen": null,
+      "daily_budget_fen": null,
+      "currency": "CNY",
+      "timezone": "Asia/Shanghai",
+      "created_at": "2026-10-25T06:45:58.974619Z",
+      "updated_at": "2026-10-25T08:45:05.680385Z",
+      "archived_at": null,
+      "version": 3,
+      "status": "upcoming"
+    },
+    "path": "/api/v1/trips",
+    "at": "2026-10-25T16:52:23.5661858+08:00",
+    "status": 200,
+    "name": "list"
+  }
+]

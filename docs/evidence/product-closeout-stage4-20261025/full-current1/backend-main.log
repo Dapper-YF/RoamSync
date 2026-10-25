@@ -1,0 +1,276 @@
+ Container roamsync-test-eb08f25d486a-postgres-test-1 Running 
+ Container roamsync-test-eb08f25d486a-postgres-test-1 Waiting 
+ Container roamsync-test-eb08f25d486a-postgres-test-1 Healthy 
+ Container roamsync-test-eb08f25d486a-api-test-run-0241fdf22aa9 Creating 
+ Container roamsync-test-eb08f25d486a-api-test-run-0241fdf22aa9 Created 
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 20260831_0001, Create trips and expenses.
+INFO  [alembic.runtime.migration] Running upgrade 20260831_0001 -> 20260901_0002, Add persisted trip planning models.
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0002 -> 20260901_0003, Add persisted route legs and route cache.
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0003 -> 20260901_0004, add multi-city trip metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0004 -> 20260901_0005, add trip management and accommodation metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0005 -> 20260901_0006, add editable activity metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0006 -> 20260902_0007, add structured trip preferences
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0007 -> 20260902_0008, add planning run and candidate revision boundaries
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0008 -> 20260902_0009, add candidate route evidence
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0009 -> 20260902_0010, add planning clarification status
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0010 -> 20260902_0011, persist route geometry and alternatives
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0011 -> 20260902_0012, persist candidate route geometry
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0012 -> 20260902_0013, persist pending planning interrupt for web clients
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0013 -> 20260903_0014, add persistent trip execution state
+INFO  [alembic.runtime.migration] Running upgrade 20260903_0014 -> 20260903_0015, persist grounded intent context on planning runs
+INFO  [alembic.runtime.migration] Running upgrade 20260903_0015 -> 20260907_0016, Add worker lease fields to planning runs.
+INFO  [alembic.runtime.migration] Running upgrade 20260907_0016 -> 20260908_0017, Keep actionable validation failures on persisted planning runs.
+INFO  [alembic.runtime.migration] Running upgrade 20260908_0017 -> 20260909_0018, Persist read-only assistant answers separately from plan revisions.
+INFO  [alembic.runtime.migration] Running upgrade 20260909_0018 -> 20260909_0019, Persistent cross-page assistant conversations and tool confirmations.
+INFO  [alembic.runtime.migration] Running upgrade 20260909_0019 -> 20260910_0020, Expose actual planning stages and worker heartbeat.
+INFO  [alembic.runtime.migration] Running upgrade 20260910_0020 -> 20260914_0021, Make trip budget limits optional.
+INFO  [alembic.runtime.migration] Running upgrade 20260914_0021 -> 20260915_0022, Persist runtime navigation sessions separately from replaceable RouteLeg rows.
+INFO  [alembic.runtime.migration] Running upgrade 20260915_0022 -> 20260915_0023, Persist de-duplicated deterministic trip disruptions.
+INFO  [alembic.runtime.migration] Running upgrade 20260915_0023 -> 20260915_0024, Link recovery planning runs to deterministic disruption facts.
+INFO  [alembic.runtime.migration] Running upgrade 20260915_0024 -> 20260916_0025, Persist navigation observations and deterministic detector state.
+INFO  [alembic.runtime.migration] Running upgrade 20260916_0025 -> 20260921_0026, add idempotent activity experience event facts
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0026 -> 20260921_0027, index activity experience fact aggregation
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0027 -> 20260921_0028, fence execution projections to their formal itinerary
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0028 -> 20260921_0029, persist minimal general replanning trigger metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0029 -> 20260921_0030, serialize active automatic recovery per formal trip version
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0030 -> 20260921_0031, make experience rejection dedup queryable
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0031 -> 20260922_0032, add activity importance decision semantics
+INFO  [alembic.runtime.migration] Running upgrade 20260922_0032 -> 20260924_0033, persist plan revision rejection feedback
+INFO  [alembic.runtime.migration] Running upgrade 20260924_0033 -> 20260924_0034, Persist activity decision semantics and their provenance.
+INFO  [alembic.runtime.migration] Running upgrade 20260924_0034 -> 20261016_0035, Keep explicit scoped requirements on the existing trip preference owner.
+INFO  [alembic.runtime.migration] Running upgrade 20261016_0035 -> 20261018_0036, Add persisted product tables without importing preview data or touching trips.
+INFO  [alembic.runtime.migration] Running upgrade 20261018_0036 -> 20261019_0037, Finite Trip-owned choices and reserved free intervals, no second timetable.
+INFO  [alembic.runtime.migration] Running upgrade 20261019_0037 -> 20261022_0038, Independent source-bound intentions, never a second activity timetable.
+........................................................................ [  3%]
+........................................................................ [  7%]
+........................................................................ [ 10%]
+........................................................................ [ 14%]
+........................................................................ [ 18%]
+........................................................................ [ 21%]
+........................................................................ [ 25%]
+........................................................................ [ 29%]
+........................................................................ [ 32%]
+........................................................................ [ 36%]
+........................................................................ [ 39%]
+.F...................................................................... [ 43%]
+........................................................................ [ 47%]
+........................................................................ [ 50%]
+........................................................................ [ 54%]
+........................................................................ [ 58%]
+........................................................................ [ 61%]
+........................................................................ [ 65%]
+........................................................................ [ 69%]
+........................................................................ [ 72%]
+........................................................................ [ 76%]
+........................................................................ [ 79%]
+........................................................................ [ 83%]
+........................................................................ [ 87%]
+........................................................................ [ 90%]
+........................................................................ [ 94%]
+........................................................................ [ 98%]
+.....................................                                    [100%]
+=================================== FAILURES ===================================
+__ test_reject_feedback_persists_and_memory_is_scoped_to_trip_day_and_version __
+
+    def test_reject_feedback_persists_and_memory_is_scoped_to_trip_day_and_version():
+        from app.demo_seed import DEMO_TRIP_ID
+    
+        with TestClient(app) as client:
+            assert client.post("/api/v1/demo/reset").status_code == 200
+            trip = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}").json()
+            target_day = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}/days").json()[0]["date"]
+            other_day = client.get(f"/api/v1/trips/{DEMO_TRIP_ID}/days").json()[1]["date"]
+    
+            _, revision_id = asyncio.run(_insert_revision(
+                trip_id=uuid.UUID(str(DEMO_TRIP_ID)), target_day=target_day, version=trip["version"], status="pending",
+            ))
+            other_trip = client.post("/api/v1/trips", json={
+                "title": "memory isolation", "destination": "杭州", "start_date": target_day,
+                "end_date": target_day, "total_budget_fen": 100000, "daily_budget_fen": 100000,
+            }).json()
+            asyncio.run(_insert_revision(
+                trip_id=uuid.UUID(other_trip["id"]), target_day=target_day, version=other_trip["version"],
+                status="rejected", reason="too_much_walking", text="另一趟旅行的反馈",
+            ))
+>           response = client.post(f"/api/v1/plan-revisions/{revision_id}/reject", json={
+                "reason_code": "too_rushed", "reason_text": "两个文化场馆停留时间太短",
+            })
+
+tests/test_decision_memory.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.11/site-packages/starlette/testclient.py:556: in post
+    return super().post(
+.venv/lib/python3.11/site-packages/httpx2/_client.py:1204: in post
+    return self.request(
+.venv/lib/python3.11/site-packages/starlette/testclient.py:455: in request
+    return super().request(
+.venv/lib/python3.11/site-packages/httpx2/_client.py:797: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/httpx2/_client.py:980: in send
+    response = self._send_handling_auth(
+.venv/lib/python3.11/site-packages/httpx2/_client.py:1008: in _send_handling_auth
+    response = self._send_handling_redirects(
+.venv/lib/python3.11/site-packages/httpx2/_client.py:1043: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/httpx2/_client.py:1076: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/starlette/testclient.py:354: in handle_request
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+.venv/lib/python3.11/site-packages/anyio/from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+.venv/lib/python3.11/site-packages/anyio/from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/fastapi/applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/middleware/errors.py:186: in __call__
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/middleware/errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+.venv/lib/python3.11/site-packages/starlette/middleware/exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv/lib/python3.11/site-packages/fastapi/routing.py:2734: in app
+    await route.handle(scope, receive, send)
+.venv/lib/python3.11/site-packages/fastapi/routing.py:1281: in handle
+    await super().handle(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/routing.py:280: in handle
+    await self.app(scope, receive, send)
+.venv/lib/python3.11/site-packages/fastapi/routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv/lib/python3.11/site-packages/fastapi/routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/fastapi/routing.py:727: in app
+    content = await serialize_response(
+.venv/lib/python3.11/site-packages/fastapi/routing.py:330: in serialize_response
+    return serializer(
+.venv/lib/python3.11/site-packages/fastapi/_compat/v2.py:231: in serialize_json
+    return self._type_adapter.dump_json(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = TypeAdapter(Annotated[PlanRevisionResponse, FieldInfo(annotation=NoneType, required=True)])
+instance = <[KeyError('place_id') raised in repr()] PlanRevisionResponse object at 0x783786d56c10>
+
+    def dump_json(
+        self,
+        instance: T,
+        /,
+        *,
+        indent: int | None = None,
+        ensure_ascii: bool = False,
+        include: IncEx | None = None,
+        exclude: IncEx | None = None,
+        by_alias: bool | None = None,
+        exclude_unset: bool = False,
+        exclude_defaults: bool = False,
+        exclude_none: bool = False,
+        exclude_computed_fields: bool = False,
+        round_trip: bool = False,
+        warnings: bool | Literal['none', 'warn', 'error'] = True,
+        fallback: Callable[[Any], Any] | None = None,
+        serialize_as_any: bool = False,
+        polymorphic_serialization: bool | None = None,
+        context: Any | None = None,
+    ) -> bytes:
+        """!!! abstract "Usage Documentation"
+            [JSON Serialization](../concepts/json.md#json-serialization)
+    
+        Serialize an instance of the adapted type to JSON.
+    
+        Args:
+            instance: The instance to be serialized.
+            indent: Number of spaces for JSON indentation.
+            ensure_ascii: If `True`, the output is guaranteed to have all incoming non-ASCII characters escaped.
+                If `False` (the default), these characters will be output as-is.
+            include: Fields to include.
+            exclude: Fields to exclude.
+            by_alias: Whether to use alias names for field names.
+            exclude_unset: Whether to exclude unset fields.
+            exclude_defaults: Whether to exclude fields with default values.
+            exclude_none: Whether to exclude fields with a value of `None`.
+            exclude_computed_fields: Whether to exclude computed fields.
+                While this can be useful for round-tripping, it is usually recommended to use the dedicated
+                `round_trip` parameter instead.
+            round_trip: Whether to serialize and deserialize the instance to ensure round-tripping.
+            warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
+                "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
+            fallback: A function to call when an unknown value is encountered. If not provided,
+                a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError] error is raised.
+            serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
+            polymorphic_serialization: Whether to use model and dataclass polymorphic serialization for this call.
+            context: Additional context to pass to the serializer.
+    
+        Returns:
+            The JSON representation of the given instance as bytes.
+        """
+>       return self.serializer.to_json(
+            instance,
+            indent=indent,
+            ensure_ascii=ensure_ascii,
+            include=include,
+            exclude=exclude,
+            by_alias=by_alias,
+            exclude_unset=exclude_unset,
+            exclude_defaults=exclude_defaults,
+            exclude_none=exclude_none,
+            exclude_computed_fields=exclude_computed_fields,
+            round_trip=round_trip,
+            warnings=warnings,
+            fallback=fallback,
+            serialize_as_any=serialize_as_any,
+            polymorphic_serialization=polymorphic_serialization,
+            context=context,
+        )
+E       pydantic_core._pydantic_core.PydanticSerializationError: Error serializing to JSON: KeyError: 'place_id'
+
+.venv/lib/python3.11/site-packages/pydantic/type_adapter.py:677: PydanticSerializationError
+=============================== warnings summary ===============================
+tests/test_planner.py::test_planner_validation_and_not_found_responses
+tests/test_planner.py::test_activity_move_rejects_cross_trip_and_invalid_position
+  /app/.venv/lib/python3.11/site-packages/fastapi/routing.py:352: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await dependant.call(**values)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+---------------- generated xml file: /evidence/backend-main.xml ----------------
+============================= slowest 10 durations =============================
+6.83s call     tests/test_database_safety.py::test_local_dotenv_cannot_redirect_checkpoint_database
+6.10s call     tests/test_database_safety.py::test_application_is_not_imported_before_safety_failure
+4.93s call     tests/test_planning_graph.py::test_shadow_separates_candidate_and_provenance_validation
+3.59s call     tests/test_worker_ownership.py::test_reclaimed_attempt_has_separate_real_checkpoints_and_remains_acceptable
+3.40s call     tests/test_planning_graph.py::test_graph_stops_after_the_single_correction_budget
+3.33s call     tests/test_travel_goal_routing.py::test_companion_turns_and_execution_requests_create_no_planning_or_formal_changes
+2.95s call     tests/test_planning_graph.py::test_rejection_preserves_the_formal_plan
+2.28s call     tests/test_agent_b2_legacy_clarification.py::test_legacy_migration_replays_after_commit_before_checkpoint
+2.08s call     tests/test_decision_followup_graph.py::test_graph_rejects_unsupported_promise_before_revision_without_formal_mutation
+1.79s call     tests/test_assistant_p1_postgres.py::test_conditions_survive_long_history_reload_replacement_and_new_topic
+=========================== short test summary info ============================
+FAILED tests/test_decision_memory.py::test_reject_feedback_persists_and_memory_is_scoped_to_trip_day_and_version
+1 failed, 1980 passed, 2 warnings in 280.25s (0:04:40)
+

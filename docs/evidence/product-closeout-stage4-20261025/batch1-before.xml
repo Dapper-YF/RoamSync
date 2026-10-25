@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="9" time="5.634" timestamp="2026-10-25T00:25:19.451783+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage4_task_contract" name="test_literal_task_quote_retains_shared_address_in_containing_source" time="0.007"><failure message="AssertionError: assert 'clarify' == 'lookup'&#10;  &#10;  - lookup&#10;  + clarify">def test_literal_task_quote_retains_shared_address_in_containing_source():
+        text = '比较成都人民公园和宽窄巷子，人民公园按少城路12号核对位置'
+        task = ReadTask(source_quote=text, source_ref='user_0_span_0', capabilities=['poi'],
+            city='成都', names=['人民公园（少城路12号）'])
+        result = validate_decision(CapabilityDecision(intent='lookup', reason_code='place_identity',
+            read_tasks=[task]), text, [], ContextEnvelope())
+&gt;       assert result.intent == 'lookup'
+E       AssertionError: assert 'clarify' == 'lookup'
+E         
+E         - lookup
+E         + clarify
+
+tests\test_stage4_task_contract.py:16: AssertionError</failure></testcase><testcase classname="tests.test_stage4_task_contract" name="test_shared_source_cannot_lend_address_to_a_different_named_place" time="0.002" /><testcase classname="tests.test_stage4_task_contract" name="test_complete_duration_value_is_attribute_change_even_if_model_says_replace" time="0.005"><failure message="ValueError: 每个操作都需要本次肯定请求，否定或假设子句不授予操作权限">def test_complete_duration_value_is_attribute_change_even_if_model_says_replace():
+        text = '把人民公园的停留改为60分钟，其他活动保持不变'
+&gt;       draft = approved_draft(_replacement(text), text)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_stage4_task_contract.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+decision = CapabilityDecision(intent='modify', capabilities=[], city='', query='', category='attraction', names=[], origin='', de...ue))], confidence=0.9, missing_fields=[], ambiguities=[], parser='model', parser_version='v1'), candidate_command=None)
+message = '把人民公园的停留改为60分钟，其他活动保持不变'
+
+    def approved_draft(decision, message):
+        draft = decision.planning_draft
+        if decision.intent == 'modify' and (draft is None or draft.primary_intent == 'unsupported'):
+            from app.planning_intent_service import classify_planning_intent, _build_rule_semantic_draft
+            intent = classify_planning_intent(message, has_activities=True)
+            rules = _build_rule_semantic_draft(message, intent, None)
+            if rules.primary_intent not in {'unsupported', 'general_chat', 'query_trip'}:
+                draft = rules
+        if draft is None:
+            return None
+        if any(op.raw_text not in message or any(name not in op.raw_text
+               for name in [*op.place_mentions, *op.activity_mentions]) for op in draft.operations):
+            raise ValueError("操作及地点必须绑定本次用户原句")
+        if decision.intent not in {"create", "modify"}:
+            raise ValueError("读取决策不能授予规划操作")
+        from app.assistant_capabilities import affirmative_action_source, affirmative_entity_source
+        verbs = {"add_activity":r"加入|添加|增加|纳入|放进", "remove_activity":r"撤掉|撤销|取消|删除|删掉|不去",
+            "replace_activity":r"换成|换掉|替换", "reorder_activities":r"移到|挪|晚|提前|延后|调整|顺序|改",
+            "optimize_route":r"优化|协调|调整", "adjust_budget":r"控制|调整|预算", "weather_replan":r"调整|改|换",
+            "create_plan":r"创建|生成|安排|规划", "replan_trip":r"重排|重做|重新|调整|安排|规划|改|停留|延长|缩短"}
+        for op in draft.operations:
+            if op.operation not in verbs:
+                continue
+            # Copy the containing clause from its beginning. A model cannot strip
+            # a date/negator and borrow authority from another positive operation.
+            if message.count(op.raw_text) != 1:
+                raise ValueError("操作原句存在多个对应位置，请明确各项操作")
+            prefix = re.split(r"[，,。；;!?！？\n]", message[:message.index(op.raw_text)])[-1].strip()
+            if prefix and not re.fullmatch(r"(?:请|麻烦|帮我|替我|请你|给我|现在|实际)*", prefix):
+                raise ValueError("操作必须保留完整原句限定条件")
+            if (not affirmative_action_source(message, op.raw_text, verbs[op.operation]) or
+                    re.match(r"\s*(?:假设|假如|如果|先别|不要|不用)", op.raw_text)):
+&gt;               raise ValueError("每个操作都需要本次肯定请求，否定或假设子句不授予操作权限")
+E               ValueError: 每个操作都需要本次肯定请求，否定或假设子句不授予操作权限
+
+app\assistant_operation.py:133: ValueError</failure></testcase><testcase classname="tests.test_stage4_task_contract" name="test_duration_type_normalization_never_supplies_authority[\u5982\u679c\u628a\u4eba\u6c11\u516c\u56ed\u6539\u4e3a60\u5206\u949f\u4f1a\u600e\u6837]" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_duration_type_normalization_never_supplies_authority[\u4ed6\u8bf4\u201c\u628a\u4eba\u6c11\u516c\u56ed\u6539\u4e3a60\u5206\u949f\u201d]" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_duration_type_normalization_never_supplies_authority[\u4e0d\u8981\u628a\u4eba\u6c11\u516c\u56ed\u6539\u4e3a60\u5206\u949f]" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_duration_name_is_not_a_numeric_attribute" time="0.002" /><testcase classname="tests.test_stage4_task_contract" name="test_date_revocation_and_solo_value_are_normalized_from_full_user_evidence" time="0.019"><failure message="AssertionError: assert 'start_date' not in {'start_date': {'message_id': 'm1', 'scope': 'personal', 'scope_version': 2, 'source_quote': '2026年12月19日出发', ...}}">def test_date_revocation_and_solo_value_are_normalized_from_full_user_evidence():
+        env, _, _ = apply_memory(ContextEnvelope(), [], '2026年12月19日出发', 'm1', [
+            MemoryUpdate(field='start_date',value='2026年12月19日',source_quote='2026年12月19日出发')])
+        text = '出发日期先撤销，这趟就我独自出发'
+        env, _, _ = apply_memory(env, [], text, 'm2', [
+            MemoryUpdate(field='start_date',operation='clear',source_quote='出发日期先撤销'),
+            MemoryUpdate(field='party_size',value='独自出发',source_quote='这趟就我独自出发',scope='trip')])
+&gt;       assert 'start_date' not in env.conversation_memory['slots']
+E       AssertionError: assert 'start_date' not in {'start_date': {'message_id': 'm1', 'scope': 'personal', 'scope_version': 2, 'source_quote': '2026年12月19日出发', ...}}
+
+tests\test_stage4_task_contract.py:68: AssertionError</failure></testcase><testcase classname="tests.test_stage4_task_contract" name="test_unresolved_first_subject_does_not_renumber_resolved_second" time="0.002"><failure message="AssertionError: assert '古文化街和第二个' == '意式风情区和古文化街'&#10;  &#10;  - 意式风情区和古文化街&#10;  + 古文化街和第二个">def test_unresolved_first_subject_does_not_renumber_resolved_second():
+        from app.read_references import place_catalog, resolve_read_text
+        history = [{'user':'比较天津的意式风情区和古文化街',
+            'read_tools':{'tasks':[
+                {'validated_arguments':{'names':['意式风情区'],'city':'天津'}},
+                {'validated_arguments':{'names':['古文化街'],'city':'天津'}}]},
+            'place_cards':[{'place':{'place_id':'00000000-0000-0000-0000-000000000002',
+                'name':'古文化街','city':'天津'}}]}]
+        refs = place_catalog(history,ContextEnvelope(browsing_city='天津'))
+&gt;       assert resolve_read_text('第一个和第二个',refs) == '意式风情区和古文化街'
+E       AssertionError: assert '古文化街和第二个' == '意式风情区和古文化街'
+E         
+E         - 意式风情区和古文化街
+E         + 古文化街和第二个
+
+tests\test_stage4_task_contract.py:82: AssertionError</failure></testcase></testsuite></testsuites>

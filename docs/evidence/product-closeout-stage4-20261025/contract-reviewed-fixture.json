@@ -1,0 +1,68 @@
+[
+  {
+    "id": "stage4_identity_01",
+    "messages": [
+      "比较扬州个园和何园，它们各自的位置和看点是什么？",
+      "第二个的位置再说一下，第一个适合看什么？",
+      "从前一个到后一个查步行路线，再查后一个今天的开放时间。"
+    ],
+    "criteria": [
+      "two identities and introduction",
+      "order persists plus direct goal",
+      "real route and hours partial retention"
+    ]
+  },
+  {
+    "id": "stage4_memory_02",
+    "messages": [
+      "2026年12月19日出发去昆明，玩四天。表哥和我一起去，我一直不吃香菜。先记下条件，不排日程。",
+      "出发日期先撤销，目的地换成泉州。",
+      "这趟就我独自出发，请读出目前有效条件。"
+    ],
+    "criteria": [
+      "count2 and personal diet",
+      "date withdrawn city retained",
+      "count1 dateunknown diet retained"
+    ]
+  },
+  {
+    "id": "stage4_candidate_03",
+    "messages": [
+      "请先生成成都11月9日的一日候选，人民公园和宽窄巷子，10:00到18:00游玩，中午完整留一小时午餐，步行为主。先给我看方案，不要保存。",
+      "请用人民公园（小南街8号）和宽窄巷子景区，按刚才全部日期、时间、午餐和步行要求重新生成候选，先看方案不要保存。",
+      "把当前候选的人民公园停留改为75分钟，午餐与宽窄巷子的时间保持不变，仍不要保存。",
+      "先不采用。车能开到门口，是否就意味着长辈完全不用走路？请直接判断。",
+      "请采用并保存当前这份候选。",
+      "读出已保存安排的总天数、第一天第一项停留时长，以及午餐时段。",
+      "请把第一天人民公园的停留改为60分钟，午餐与其他活动保持不变。先给修改候选，等我明确采用再保存。",
+      "当前修改候选具体改了哪项、原来多久、建议多久？先不采用。",
+      "请采用并保存当前这份修改候选。",
+      "读出第一天第一项的当前停留时长和午餐时段，其他活动不要展开。"
+    ],
+    "criteria": [
+      "real ready candidate, formal unchanged",
+      "explicit address clarification, real ready candidate",
+      "75 target only preview",
+      "direct inference, candidate retained",
+      "explicit adoption only",
+      "actual saved values",
+      "genuine Worker Revision60 formal unchanged",
+      "read actual displayed Revision diff, no write",
+      "display-bound existing Revision Accept only",
+      "actual saved60 and meal"
+    ]
+  },
+  {
+    "id": "stage4_companion_04",
+    "messages": [
+      "我和朋友两个人去成都，我不喝酒；朋友这次连续步行不能超过15分钟。先记条件不排日程。",
+      "朋友不去了，我一个人去。",
+      "请回读目前有效条件，特别说明人数、个人忌口和同行步行要求。"
+    ],
+    "criteria": [
+      "scoped companion requirement and personal preference",
+      "count1 and revoke companion only",
+      "consistent server receipt and requirements"
+    ]
+  }
+]

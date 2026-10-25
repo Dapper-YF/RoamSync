@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="1.640" timestamp="2026-10-25T13:15:12.808331+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage4_cross_city_visuals" name="test_explicit_photos_are_independent_of_negated_planning_and_aggregation" time="0.004"><failure message="AssertionError: assert [] == ['拙政园', '狮子林']&#10;  &#10;  Right contains 2 more items, first extra item: '拙政园'&#10;  Use -v to get more diff">def test_explicit_photos_are_independent_of_negated_planning_and_aggregation():
+        bundle = {'assistant': '拙政园看水，狮子林看假山。', 'place_cards': [
+            {'place': {'name': '拙政园'}}, {'place': {'name': '狮子林'}}]}
+&gt;       assert [s['subject'] for s in subjects_for_answer(bundle,
+            '比较拙政园和狮子林，给我看看对应地点的实景照片。先聊聊，不安排也不保存。', ContextEnvelope())] == ['拙政园', '狮子林']
+E       AssertionError: assert [] == ['拙政园', '狮子林']
+E         
+E         Right contains 2 more items, first extra item: '拙政园'
+E         Use -v to get more diff
+
+tests\test_stage4_cross_city_visuals.py:9: AssertionError</failure></testcase><testcase classname="tests.test_stage4_cross_city_visuals" name="test_workflow_adverbs_do_not_create_travel_constraints" time="0.004"><failure message="AssertionError: assert False&#10; +  where False = is_context_only_statement('仍然先不要保存')">def test_workflow_adverbs_do_not_create_travel_constraints():
+        for text in ['仍然先不要保存', '暂且不采用', '依然只展示候选', '暂时不要保存']:
+&gt;           assert is_context_only_statement(text)
+E           AssertionError: assert False
+E            +  where False = is_context_only_statement('仍然先不要保存')
+
+tests\test_stage4_cross_city_visuals.py:15: AssertionError</failure></testcase></testsuite></testsuites>

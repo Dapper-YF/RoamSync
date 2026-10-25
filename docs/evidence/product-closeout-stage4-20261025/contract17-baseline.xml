@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="6" skipped="0" tests="54" time="6.486" timestamp="2026-10-25T13:01:48.997527+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage4_task_contract" name="test_verified_decorated_subject_does_not_add_a_comparison_slot" time="0.028"><failure message="AssertionError: assert 3 == 2&#10; +  where 3 = len([{'aliases': [], 'city': '成都', 'kind': 'raw_mention', 'name': '人民公园（小南街8号）', ...}, {'address': '成都市小南街8号', 'city': '成都...000000000001'}, {'address': '金河路', 'city': '成都', 'name': '宽窄巷子景区', 'place_id': '00000000-0000-0000-0000-000000000002'}])">def test_verified_decorated_subject_does_not_add_a_comparison_slot():
+        from app.read_references import place_catalog, resolve_read_text
+        names = ['人民公园（小南街8号）', '宽窄巷子景区']
+        text = '比较' + '和'.join(names) + '的位置与看点'
+        cards = [{'place': {'place_id': f'00000000-0000-0000-0000-00000000000{i}',
+            'name': name, 'city': '成都', 'address': address}} for i, name, address in [
+            (1, '人民公园', '成都市小南街8号'), (2, '宽窄巷子景区', '金河路')]]
+        history = [{'user': text, 'place_cards': cards, 'read_tools': {'tasks': [
+            {'validated_arguments': {'names': names}},
+            {'validated_arguments': {'names': ['人民公园', '宽窄巷子景区']}}]}}]
+        catalog = place_catalog(history, ContextEnvelope(browsing_city='成都'))
+&gt;       assert len(catalog) == 2
+E       AssertionError: assert 3 == 2
+E        +  where 3 = len([{'aliases': [], 'city': '成都', 'kind': 'raw_mention', 'name': '人民公园（小南街8号）', ...}, {'address': '成都市小南街8号', 'city': '成都...000000000001'}, {'address': '金河路', 'city': '成都', 'name': '宽窄巷子景区', 'place_id': '00000000-0000-0000-0000-000000000002'}])
+
+tests\test_stage4_task_contract.py:21: AssertionError</failure></testcase><testcase classname="tests.test_stage4_task_contract" name="test_decorated_subject_tasks_do_not_duplicate_on_revalidation" time="0.011"><failure message="AssertionError: assert 4 == 2&#10; +  where 4 = len([ReadTask(source_quote='比较人民公园（小南街8号）和宽窄巷子景区的位置与看点', source_ref=None, capabilities=['poi'], city='成都', query='', categ..., origin='', destination='', mode='unknown', nearby=False, near_name='', fact_kind='other', itinerary_purpose='other')])&#10; +    where [ReadTask(source_quote='比较人民公园（小南街8号）和宽窄巷子景区的位置与看点', source_ref=None, capabilities=['poi'], city='成都', query='', categ..., origin='', destination='', mode='unknown', nearby=False, near_name='', fact_kind='other', itinerary_purpose='other')] = CapabilityDecision(intent='lookup', capabilities=['poi'], city='', query='', category='attraction', names=[], origin='...se='other')], fact_kind='other', itinerary_purpose='other', creation=None, planning_draft=None, candidate_command=None).read_tasks">def test_decorated_subject_tasks_do_not_duplicate_on_revalidation():
+        text = '比较人民公园（小南街8号）和宽窄巷子景区的位置与看点'
+        decision = CapabilityDecision(intent='lookup', reason_code='place_identity', read_tasks=[
+            ReadTask(source_quote=text, capabilities=['poi'], city='成都',
+                names=['人民公园（小南街8号）', '宽窄巷子景区']),
+            ReadTask(source_quote=text, city='成都', names=['人民公园', '宽窄巷子景区'])])
+        for _ in range(2):
+            decision = validate_decision(decision, text, [], ContextEnvelope(browsing_city='成都'))
+&gt;           assert len(decision.read_tasks) == 2
+E           AssertionError: assert 4 == 2
+E            +  where 4 = len([ReadTask(source_quote='比较人民公园（小南街8号）和宽窄巷子景区的位置与看点', source_ref=None, capabilities=['poi'], city='成都', query='', categ..., origin='', destination='', mode='unknown', nearby=False, near_name='', fact_kind='other', itinerary_purpose='other')])
+E            +    where [ReadTask(source_quote='比较人民公园（小南街8号）和宽窄巷子景区的位置与看点', source_ref=None, capabilities=['poi'], city='成都', query='', categ..., origin='', destination='', mode='unknown', nearby=False, near_name='', fact_kind='other', itinerary_purpose='other')] = CapabilityDecision(intent='lookup', capabilities=['poi'], city='', query='', category='attraction', names=[], origin='...se='other')], fact_kind='other', itinerary_purpose='other', creation=None, planning_draft=None, candidate_command=None).read_tasks
+
+tests\test_stage4_task_contract.py:33: AssertionError</failure></testcase><testcase classname="tests.test_stage4_task_contract" name="test_distinct_address_mentions_do_not_collapse" time="0.002"><failure message="assert None != None">def test_distinct_address_mentions_do_not_collapse():
+        from app.read_references import place_catalog
+        names = ['人民公园（甲路8号）', '人民公园（乙路9号）']
+        history = [{'user': '比较' + '和'.join(names), 'place_cards': [
+            {'place': {'place_id': f'00000000-0000-0000-0000-00000000000{i}',
+                'name': '人民公园', 'city': '成都', 'address': address}}
+            for i, address in [(1, '甲路8号'), (2, '乙路9号')]],
+            'read_tools': {'tasks': [{'validated_arguments': {'names': names}}]}}]
+        catalog = place_catalog(history, ContextEnvelope(browsing_city='成都'))
+        assert len(catalog) == 2
+&gt;       assert catalog[0]['place_id'] != catalog[1]['place_id']
+E       assert None != None
+
+tests\test_stage4_task_contract.py:47: AssertionError</failure></testcase><testcase classname="tests.test_stage4_task_contract" name="test_literal_task_quote_retains_shared_address_in_containing_source" time="0.006" /><testcase classname="tests.test_stage4_task_contract" name="test_shared_source_cannot_lend_address_to_a_different_named_place" time="0.002" /><testcase classname="tests.test_stage4_task_contract" name="test_long_literal_quote_cannot_authorize_its_negated_peer_or_unbound_address" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_complete_duration_value_is_attribute_change_even_if_model_says_replace" time="0.013" /><testcase classname="tests.test_stage4_task_contract" name="test_duration_type_normalization_never_supplies_authority[\u5982\u679c\u628a\u4eba\u6c11\u516c\u56ed\u6539\u4e3a60\u5206\u949f\u4f1a\u600e\u6837]" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_duration_type_normalization_never_supplies_authority[\u4ed6\u8bf4\u201c\u628a\u4eba\u6c11\u516c\u56ed\u6539\u4e3a60\u5206\u949f\u201d]" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_duration_type_normalization_never_supplies_authority[\u4e0d\u8981\u628a\u4eba\u6c11\u516c\u56ed\u6539\u4e3a60\u5206\u949f]" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_duration_name_is_not_a_numeric_attribute" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_mixed_duration_and_venue_change_cannot_drop_unhandled_peer" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_duration_normalization_requires_own_target_and_complete_operation[\u628a\u4eba\u6c11\u516c\u56ed\u6539\u621060\u5206\u949f\uff0c\u5bbd\u7a84\u5df7\u5b50\u4e0d\u8981\u52a8-\u5bbd\u7a84\u5df7\u5b50]" time="0.002" /><testcase classname="tests.test_stage4_task_contract" name="test_duration_normalization_requires_own_target_and_complete_operation[\u628a\u4eba\u6c11\u516c\u56ed\u6539\u621060\u5206\u949f\uff0c\u5220\u9664\u5bbd\u7a84\u5df7\u5b50-\u4eba\u6c11\u516c\u56ed]" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_coordinated_subject_is_not_a_single_activity_duration" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_decorated_address_requires_a_relation_not_same_sentence_presence" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_preview_authority_is_local_and_does_not_cancel_independent_inquiry" time="0.003" /><testcase classname="tests.test_stage4_task_contract" name="test_truncated_questions_and_same_action_revocation_never_authorize[modify-\u628a\u4eba\u6c11\u516c\u56ed\u6539\u621060\u5206\u949f-\u628a\u4eba\u6c11\u516c\u56ed\u6539\u621060\u5206\u949f\u4f1a\u600e\u6837\uff1f]" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_truncated_questions_and_same_action_revocation_never_authorize[generate-\u751f\u6210\u5019\u9009-\u751f\u6210\u5019\u9009\u4f1a\u600e\u6837\uff1f]" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_truncated_questions_and_same_action_revocation_never_authorize[generate-\u5148\u51fa\u4e00\u4efd\u5019\u9009-\u5148\u51fa\u4e00\u4efd\u5019\u9009\uff0c\u5148\u4e0d\u8981\u51fa\u4e00\u4efd\u5019\u9009]" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_truncated_questions_and_same_action_revocation_never_authorize[modify-\u628a\u4eba\u6c11\u516c\u56ed\u6539\u621060\u5206\u949f-\u628a\u4eba\u6c11\u516c\u56ed\u6539\u621060\u5206\u949f\uff0c\u4f1a\u600e\u6837\uff1f]" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_enumerated_party_count_and_unqualified_groups_stay_distinct" time="0.019" /><testcase classname="tests.test_stage4_task_contract" name="test_lookup_denial_does_not_cancel_an_independent_explanation" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_query_only_lookup_cannot_borrow_an_introduction_to_avoid_denial" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_stable_named_explanation_keeps_read_only_order_without_forcing_address_lookup" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_actual_location_obligation_survives_a_combined_direct_explanation" time="0.002" /><testcase classname="tests.test_stage4_task_contract" name="test_introduction_does_not_query_an_explicitly_denied_address" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_location_statement_or_hypothesis_does_not_create_a_lookup[\u4e2a\u56ed\u5730\u5740\u662f\u76d0\u961c\u4e1c\u8def10\u53f7\uff0c\u4ecb\u7ecd\u5b83\u7684\u770b\u70b9]" time="0.002" /><testcase classname="tests.test_stage4_task_contract" name="test_location_statement_or_hypothesis_does_not_create_a_lookup[\u5047\u8bbe\u4e2a\u56ed\u4f4d\u7f6e\u5728\u5e02\u4e2d\u5fc3\uff0c\u8ba8\u8bba\u6e38\u89c8\u65b9\u5f0f]" time="0.002" /><testcase classname="tests.test_stage4_task_contract" name="test_place_lookup_cannot_consume_the_explicit_explanation_subgoal" time="0.002" /><testcase classname="tests.test_stage4_task_contract" name="test_date_revocation_and_solo_value_are_normalized_from_full_user_evidence" time="0.004" /><testcase classname="tests.test_stage4_task_contract" name="test_unresolved_first_subject_does_not_renumber_resolved_second" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_ambiguous_provider_results_cannot_upgrade_raw_comparison_member" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_verified_identity_is_never_replaced_by_a_same_name_search_result" time="0.001" /><testcase classname="tests.test_stage4_task_contract" name="test_rejected_candidate_operation_does_not_erase_independent_inference" time="0.003" /><testcase classname="tests.test_stage4_task_contract" name="test_task_capacity_cannot_remove_explanation_before_its_leaf_is_added" time="0.003" /><testcase classname="tests.test_stage4_task_contract" name="test_authorized_preview_preserves_its_independent_lookup_task" time="0.002" /><testcase classname="tests.test_stage4_revision_binding" name="test_legacy_snapshot_can_be_read_but_cannot_present_a_complete_review[None]" time="0.004" /><testcase classname="tests.test_stage4_revision_binding" name="test_legacy_snapshot_can_be_read_but_cannot_present_a_complete_review[before1]" time="0.001"><failure message="KeyError: 'place_id'">before = {'days': [{'activities': [{'id': 'legacy'}], 'date': '2026-11-09'}]}
+
+    @pytest.mark.parametrize('before', [None, {'days': [{'date': '2026-11-09', 'activities': [{'id': 'legacy'}]}]},
+        {'days': None}, {'days': [{'activities': [None]}]}])
+    def test_legacy_snapshot_can_be_read_but_cannot_present_a_complete_review(before):
+        from app.revision_presentation import revision_review
+        item = revision()
+        item.before_snapshot = before
+&gt;       review = revision_review(item)
+                 ^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_stage4_revision_binding.py:23: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+revision = namespace(id=UUID('6351b48d-bd95-479e-8958-a29181c79735'), planning_run_id=UUID('34366ff6-558f-4d52-b544-99cd5dd67e35'...'activities': []}, difference_summary={'changed': []}, validation_result={'valid': True, 'errors': [], 'warnings': []})
+
+    def revision_review(revision):
+        """All activity additions/removals/changes from the bound before snapshot."""
+        from app.schemas import CandidatePlanSnapshot
+        before=revision.before_snapshot or {}
+        proposed=CandidatePlanSnapshot.model_validate(revision.proposed_snapshot).model_dump(mode='json')
+        from app.revision_delta import protected_activity_ids
+        execution=before.get('execution_recovery') or {}
+        source_items=[item for day in before.get('days',[]) for item in day.get('activities',[])]
+        protected=protected_activity_ids(source_items,execution.get('frozen_activity_ids',[]),execution.get('protected_activity_ids',[]))
+        old={}
+        for day in before.get('days',[]):
+            for item in day.get('activities',[]):
+&gt;               old[str(item['id'])]={'activity_id':str(item['id']), 'place_id':str(item['place_id']),
+                                                                                    ^^^^^^^^^^^^^^^^
+                    'name':item.get('display_name') or item.get('name'),'date':day['date'],
+                    'time':str(item['scheduled_time'])[:5], 'duration_minutes':item['duration_minutes'],
+                    'estimated_cost_fen':item.get('estimated_cost_fen'),'locked':item.get('schedule_locked',False)}
+E               KeyError: 'place_id'
+
+app\revision_presentation.py:52: KeyError</failure></testcase><testcase classname="tests.test_stage4_revision_binding" name="test_legacy_snapshot_can_be_read_but_cannot_present_a_complete_review[before2]" time="0.002"><failure message="TypeError: 'NoneType' object is not iterable">before = {'days': None}
+
+    @pytest.mark.parametrize('before', [None, {'days': [{'date': '2026-11-09', 'activities': [{'id': 'legacy'}]}]},
+        {'days': None}, {'days': [{'activities': [None]}]}])
+    def test_legacy_snapshot_can_be_read_but_cannot_present_a_complete_review(before):
+        from app.revision_presentation import revision_review
+        item = revision()
+        item.before_snapshot = before
+&gt;       review = revision_review(item)
+                 ^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_stage4_revision_binding.py:23: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+revision = namespace(id=UUID('eadcfdfb-7d5a-4b4a-b2c5-ff0384b064c1'), planning_run_id=UUID('71f55424-b743-4455-9b61-8179203fd218'...'activities': []}, difference_summary={'changed': []}, validation_result={'valid': True, 'errors': [], 'warnings': []})
+
+    def revision_review(revision):
+        """All activity additions/removals/changes from the bound before snapshot."""
+        from app.schemas import CandidatePlanSnapshot
+        before=revision.before_snapshot or {}
+        proposed=CandidatePlanSnapshot.model_validate(revision.proposed_snapshot).model_dump(mode='json')
+        from app.revision_delta import protected_activity_ids
+        execution=before.get('execution_recovery') or {}
+&gt;       source_items=[item for day in before.get('days',[]) for item in day.get('activities',[])]
+                                      ^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: 'NoneType' object is not iterable
+
+app\revision_presentation.py:47: TypeError</failure></testcase><testcase classname="tests.test_stage4_revision_binding" name="test_legacy_snapshot_can_be_read_but_cannot_present_a_complete_review[before3]" time="0.001"><failure message="TypeError: 'NoneType' object is not subscriptable">before = {'days': [{'activities': [None]}]}
+
+    @pytest.mark.parametrize('before', [None, {'days': [{'date': '2026-11-09', 'activities': [{'id': 'legacy'}]}]},
+        {'days': None}, {'days': [{'activities': [None]}]}])
+    def test_legacy_snapshot_can_be_read_but_cannot_present_a_complete_review(before):
+        from app.revision_presentation import revision_review
+        item = revision()
+        item.before_snapshot = before
+&gt;       review = revision_review(item)
+                 ^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_stage4_revision_binding.py:23: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+revision = namespace(id=UUID('523d0008-61bb-4689-b8c8-eb0de09d240a'), planning_run_id=UUID('3302c10c-a84c-412c-8f2c-16e693dc775f'...'activities': []}, difference_summary={'changed': []}, validation_result={'valid': True, 'errors': [], 'warnings': []})
+
+    def revision_review(revision):
+        """All activity additions/removals/changes from the bound before snapshot."""
+        from app.schemas import CandidatePlanSnapshot
+        before=revision.before_snapshot or {}
+        proposed=CandidatePlanSnapshot.model_validate(revision.proposed_snapshot).model_dump(mode='json')
+        from app.revision_delta import protected_activity_ids
+        execution=before.get('execution_recovery') or {}
+        source_items=[item for day in before.get('days',[]) for item in day.get('activities',[])]
+        protected=protected_activity_ids(source_items,execution.get('frozen_activity_ids',[]),execution.get('protected_activity_ids',[]))
+        old={}
+        for day in before.get('days',[]):
+            for item in day.get('activities',[]):
+&gt;               old[str(item['id'])]={'activity_id':str(item['id']), 'place_id':str(item['place_id']),
+                                                        ^^^^^^^^^^
+                    'name':item.get('display_name') or item.get('name'),'date':day['date'],
+                    'time':str(item['scheduled_time'])[:5], 'duration_minutes':item['duration_minutes'],
+                    'estimated_cost_fen':item.get('estimated_cost_fen'),'locked':item.get('schedule_locked',False)}
+E               TypeError: 'NoneType' object is not subscriptable
+
+app\revision_presentation.py:52: TypeError</failure></testcase><testcase classname="tests.test_stage4_revision_binding" name="test_hash_normalizes_snapshot_defaults_but_binds_changes_and_risks" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_displayed_reference_cannot_authorize_other_turns[\u5148\u4e0d\u91c7\u7528]" time="0.002" /><testcase classname="tests.test_stage4_revision_binding" name="test_displayed_reference_cannot_authorize_other_turns[\u91c7\u7528\u4f1a\u600e\u6837\uff1f]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_displayed_reference_cannot_authorize_other_turns[\u7b49\u6211\u786e\u8ba4\u540e\u518d\u91c7\u7528]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_displayed_reference_cannot_authorize_other_turns[\u8bf7\u628a\u7532\u9986\u6539\u621060\u5206\u949f]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_displayed_reference_cannot_authorize_other_turns[\u670b\u53cb\u8bf4\u201c\u91c7\u7528\u8fd9\u4efd\u65b9\u6848\u201d]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_displayed_reference_cannot_authorize_other_turns[\u91c7\u7528\u8fd9\u4efd\u65b9\u6848\u5e76\u628a\u7532\u9986\u6539\u4e3a60\u5206\u949f]" time="0.002" /><testcase classname="tests.test_stage4_revision_binding" name="test_explicit_adoption_uses_only_current_passive_binding" time="0.002" /><testcase classname="tests.test_stage4_revision_binding" name="test_explicit_approval_may_complete_its_same_reviewed_change_but_not_other_changes" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_legacy_exact_approval_remains_server_bound[\u5c31\u6309\u8fd9\u4efd\u6765]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_legacy_exact_approval_remains_server_bound[\u5c31\u8fd9\u6837\u5b89\u6392]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_review_includes_deleted_activity_and_uses_the_bound_before_values" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_review_uses_accept_retention_rule_for_omitted_fixed_and_execution_items" time="0.001" /></testsuite></testsuites>

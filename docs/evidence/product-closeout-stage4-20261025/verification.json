@@ -1,0 +1,140 @@
+{
+  "verdict": "NO-GO",
+  "product_goal_complete": false,
+  "frozen_product_commit": "736e3b7bd906bd11c1d7cb9384ba8d9582bb596d",
+  "app_sha256": "f5f37b0c0f5bc8133d36ec76188517f9429ae8281d35e7eb60960bb592a173ff",
+  "source_worktree": "E:\\Study\\RoamSync-product-closeout-stage2-20261024",
+  "external_evidence_root": "E:\\Study\\RoamSync-stage4-evidence-20261025",
+  "official_head_at_end": "ea3ba833e6a77122c08c1c9327c18a346e3c48ef",
+  "official_tracked_changes_preserved": [
+    " M .env.example",
+    " M README.md",
+    " M backend/evals/assistant_capability_cases.py",
+    " M backend/scripts/quality_runtime.py",
+    " M docs/QUALITY_INTEGRATION_20261021.md",
+    " M web/nginx.conf"
+  ],
+  "official_source_modified_by_this_round": false,
+  "official_database_modified": false,
+  "deployed": false,
+  "obsidian_written": false,
+  "independent_evaluation": {
+    "strict_usable": 4,
+    "total": 20,
+    "complete_groups": 0,
+    "groups": [
+      {
+        "case_id": "stage4_consult_01",
+        "passed_turns": 1,
+        "total_turns": 4,
+        "continuous_completion": 0
+      },
+      {
+        "case_id": "stage4_state_02",
+        "passed_turns": 2,
+        "total_turns": 4,
+        "continuous_completion": 0
+      },
+      {
+        "case_id": "stage4_inference_03",
+        "passed_turns": 1,
+        "total_turns": 4,
+        "continuous_completion": 0
+      },
+      {
+        "case_id": "stage4_plan_04",
+        "passed_turns": 0,
+        "total_turns": 4,
+        "continuous_completion": 0
+      },
+      {
+        "case_id": "stage4_revision_05",
+        "passed_turns": 0,
+        "total_turns": 4,
+        "continuous_completion": 0
+      }
+    ],
+    "critical_unsupported_guarantees": 0,
+    "unauthorized_formal_writes": 0,
+    "evaluator_reruns": 0,
+    "raw": "sealed-final.json",
+    "grade": "sealed-final-grade.json",
+    "old_used_questions": "regression only",
+    "requested_review_model": "gpt-6-astra",
+    "requested_review_effort": "medium",
+    "identity_attestation": "dispatch tool metadata, not a provider identity certificate"
+  },
+  "engineering": {
+    "backend_main": 2019,
+    "backend_dedicated": 38,
+    "web_tests": 268,
+    "web_files": 48,
+    "typecheck": true,
+    "build": true,
+    "source_and_tests_stable": true,
+    "evidence": [
+      "full-final-v6/run.json",
+      "full-final-v6/backend-main.xml",
+      "full-final-v6/backend-dedicated.xml",
+      "web-final-v6-result.json"
+    ],
+    "invalidated_earlier_freeze": "full-final-v5/run.json source_unchanged=false; execution passed but tests changed"
+  },
+  "actual_revision_safety": {
+    "all_five_passed": true,
+    "cases": [
+      "rollback",
+      "duplicate",
+      "stale",
+      "fixed",
+      "concurrent"
+    ],
+    "evidence": "real-object-safety-final.json",
+    "source": "runtime-final-v6/browser-states/pending60.json",
+    "clone_identity_verified": "pending-restore-receipt.json",
+    "scope": "Actual generated Revision, exclusive DB per experiment; no constructed candidate"
+  },
+  "browser": {
+    "full_natural_golden_passed": false,
+    "actual_cross_city": "Suzhou",
+    "preseeded_candidate": false,
+    "manual_database_rescue": false,
+    "initial_formal_trip_count": 0,
+    "reference_photos_visibly_displayed": true,
+    "photo_claim_limit": "Search reference photos, not independently verified current scene identity/license",
+    "route_meters": 588,
+    "route_minutes": 8,
+    "first_saved_duration": 75,
+    "pending_duration": 60,
+    "final_saved_duration": 60,
+    "trip_versions": [
+      2,
+      2,
+      3
+    ],
+    "explicit_final_adoption_surface": "Trip page button after environment interruption",
+    "blockers": [
+      "Opening query returns conflicting excerpts without sufficient specific verification method",
+      "After-refresh chat denies candidate contents while the actual review card is present",
+      "UI button recovery is not substituted for a full natural-language chain"
+    ],
+    "evidence": [
+      "BROWSER_FULL_CHAIN.md",
+      "browser-final-state-comparisons.json",
+      "runtime-final-v6/browser-states",
+      "runtime-final-v6/screenshots"
+    ],
+    "owned_runtimes_stopped": "runtime-final-v6/owned-runtime-stop-final.json"
+  },
+  "product_commits": "batch-commits.json",
+  "test_index": "test-results-index.json",
+  "visible_development_outputs": "DEVELOPMENT_FULL_OUTPUTS.md",
+  "architecture_audit": "ARCHITECTURE_EVIDENCE_AUDIT.md",
+  "architecture_acceptance": "incomplete; no passing SSOT",
+  "credential_scan": {
+    "official_secret_values_scanned": 3,
+    "hits": 0,
+    "secret_values_disclosed": false
+  },
+  "recorded_at": "2026-10-25T08:54:49.540310+00:00"
+}

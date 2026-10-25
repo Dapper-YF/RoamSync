@@ -1,0 +1,508 @@
+{
+  "at": "2026-10-25T05:42:57.492610+00:00",
+  "label": "comparison-failed",
+  "git_commit": "a4687119c478ee497d1d6ddf1d63b1234d651bc0",
+  "app_sha256": "d03b1a9605d1625cfb1cf1c8879c1b7af9579f2d638ae1b1daac1b26d1fcc1f4",
+  "tables": {
+    "trips": [],
+    "source_records": [],
+    "place_candidates": [],
+    "day_plans": [],
+    "trip_preferences": [],
+    "activities": [],
+    "route_legs": [],
+    "trip_arrangement_items": [],
+    "planning_runs": [],
+    "plan_revisions": [],
+    "assistant_sessions": [
+      {
+        "id": "00cd8337-bd59-4f1e-aad3-d0b687199ca0",
+        "trip_id": null,
+        "messages": [
+          {
+            "id": "b1a4cb4c-c14c-442d-a7aa-6c644fd154b5",
+            "tool": "reply",
+            "user": "我想去苏州看园林，先比较拙政园（东北街178号）和狮子林（园林路23号），各有什么值得看？请展示两个地方的实景参考图片，先不要生成或保存行程。",
+            "run_id": null,
+            "context": {
+              "surface": "assistant",
+              "version": "assistant-context-v1",
+              "topic_id": "discovery-ecb095da-7c2d-4071-8e5a-bbebe565855e",
+              "read_trip_id": null,
+              "requirements": null,
+              "action_target": null,
+              "browsing_city": "苏州",
+              "read_draft_id": null,
+              "route_request": null,
+              "prefer_flexible": true,
+              "discovery_context": null,
+              "physical_location": null,
+              "preview_action_id": null,
+              "read_draft_version": null,
+              "conversation_memory": {
+                "epoch": "",
+                "slots": {
+                  "city": {
+                    "scope": "personal",
+                    "value": "苏州",
+                    "message_id": "b1a4cb4c-c14c-442d-a7aa-6c644fd154b5",
+                    "source_quote": "我想去苏州看园林",
+                    "scope_version": 2
+                  }
+                },
+                "version": 1,
+                "withdrawn": {},
+                "diagnostics": [],
+                "preferences": [],
+                "requirements": [],
+                "latest_receipt": {
+                  "updates": [
+                    {
+                      "field": "city",
+                      "scope": "personal",
+                      "value": "苏州",
+                      "reason": "validated",
+                      "status": "applied",
+                      "subject": "",
+                      "operation": "set",
+                      "source_quote": "我想去苏州看园林",
+                      "effective_value": "苏州"
+                    }
+                  ],
+                  "version": 1,
+                  "message_id": "b1a4cb4c-c14c-442d-a7aa-6c644fd154b5",
+                  "effective_slots": {
+                    "city": {
+                      "scope": "personal",
+                      "value": "苏州",
+                      "message_id": "b1a4cb4c-c14c-442d-a7aa-6c644fd154b5",
+                      "source_quote": "我想去苏州看园林",
+                      "scope_version": 2
+                    }
+                  },
+                  "effective_preferences": [],
+                  "effective_requirements": []
+                }
+              },
+              "discussing_place_id": null,
+              "requirement_records": [
+                {
+                  "id": "req_5b351f19da70502cac70f9c204432179",
+                  "key": "user_requirement",
+                  "text": "先不要生成或保存行程",
+                  "scope": {
+                    "city": null,
+                    "date": null,
+                    "kind": "topic",
+                    "trip_id": null,
+                    "draft_id": null,
+                    "topic_id": "discovery-ecb095da-7c2d-4071-8e5a-bbebe565855e",
+                    "day_index": null,
+                    "activity_id": null
+                  },
+                  "value": null,
+                  "source": {
+                    "ref": "b1a4cb4c-c14c-442d-a7aa-6c644fd154b5",
+                    "kind": "user_explicit"
+                  },
+                  "status": "active",
+                  "strength": "soft",
+                  "supersedes": []
+                }
+              ],
+              "discussing_place_ids": []
+            },
+            "assistant": "参考资料：\n查到的资料中有以下相关内容：\n\n拙政园位于苏州市东北街178号，占地面积78亩（52000平方米），全园分东、中、西三部份。 [2]\n\n中部为拙政园精华所在，池水面积占1/3，以水为主，池广树茂，景色自然，临水布置了形体不一、高低错落的建筑，主次分明。 [2]\n\n花园分为东、中、西三部分，东花园开阔疏朗，中花园是全园精华所在，西花园建筑精美，各具特色。 [3]\n\n部分页面只取得搜索摘要，尚未核实完整正文；旧资料不代表当前规则。\n\n参考资料：\n查到的资料中有以下相关内容：\n\n阿布扎比谢赫扎耶德大清真寺的街景图像 [6]\n\n通过街景功能游览巴黎的埃菲尔铁塔 [6]\n\n通过街景功能探索秘鲁马丘比丘的古老神庙 [6]\n\n部分页面只取得搜索摘要，尚未核实完整正文；旧资料不代表当前规则。",
+            "read_tools": {
+              "tasks": [
+                {
+                  "status": "partial",
+                  "task_id": "read_1",
+                  "depends_on": [],
+                  "read_tools": {
+                    "web_search": {
+                      "images": [],
+                      "status": "available",
+                      "sources": [
+                        {
+                          "url": "https://kemingbaike.com/baike/2024111300221.html",
+                          "title": "苏州古典园林-可名百科",
+                          "excerpt": "获得荣誉\n 2022年12月，入选2022年11月AAAAA级景区品牌影响力100强榜单\n\n 旅游信息\n 地理位置苏州古典园林拙政园位于苏州娄门内东北街178号；狮子林位于苏州市姑苏区城东北的园林路23号；留园位于留园路338号；沧浪亭位于苏州市城南三元坊附近\n 门票拙政园：80元；狮子林：40元；留园：55元，耦园：25元；网师园：40元\n\n苏州古典园林\n\n苏州古典园林\n\n世界文化遗产\n\n苏州古典园林，亦称“苏州园林”，是位于江苏省苏州市境内的中国古典园林的总称。苏州古典园林溯源于春秋，发展于晋唐，繁荣于两宋，全盛于明清。苏州素有“园林之城”的美誉，境内私家园林始建于前6世纪，清末时城内外有园林170多处，现存50多处。\n\n 中文名\n\n  苏州古典园林\n 保护级别\n\n  世界文化遗产\n 地理位置\n\n  江苏省苏州市\n 批准单位\n\n  联合国教科文组织世界遗产委员会\n 遗产编号\n\n  813\n\n## 基本信息 [...] 主要景点\n 综述苏州古典园林包括拙政园、留园、网师园、环秀山庄、沧浪亭、狮子林、耦园、艺圃和退思园\n 沧浪亭沧浪亭，位于苏州城南三元坊内，是苏州最古老的一所园林，为北宋庆历年间（1041～1048年）诗人苏舜钦（字子美）所筑，南宋初年曾为军事将领韩世忠宅\n 沧浪亭园门外一泓绿水绕于园外，经桥入园\n 园内以山石为主景，山顶上为沧浪石亭\n 山下凿有水池，山水之间以一条曲折的复廊相连，廊中砌有花窗漏阁\n 假山东南部的明道堂是园林的主建筑，与明道堂东西相对的是五百名贤祠\n 园中最南部的是建在假山洞屋之上的看山楼，看山楼北面是“翠玲珑馆”，再折而向北到“仰止亭”，出“仰止亭”可到“御碑亭”\n 沧浪亭清幽古朴，适意自然，如清水芙蓉，洗尽铅华，无一丝脂粉气息\n 狮子林狮子林，位于苏州潘儒巷内，东靠园林路，元至正二年（1342年）天如禅师为纪念其师中峰和尚而建\n 因中峰原住在浙江天目山狮子岩，而园内石峰林立，多状似狮子，故名“狮子林”\n 狮子林平面成长方形，面积约15亩，东南多山，西北多水，四周高墙峻宇\n 狮子林的湖石假山多且精美\n 园内建筑，以燕誉堂为主，堂后为小方厅，有立雪堂 [...] 沧浪亭\n\n沧浪亭，位于苏州城南三元坊内，是苏州最古老的一所园林，为北宋庆历年间（1041～1048年）诗人苏舜钦（字子美）所筑，南宋初年曾为军事将领韩世忠宅。沧浪亭园门外一泓",
+                          "source_id": "task_1_web_1",
+                          "read_level": "page_text"
+                        },
+                        {
+                          "url": "https://ylj.suzhou.gov.cn/szsylj/sjyc/201905/c1df393edc8745abb20e8a9bd5525782.shtml",
+                          "title": "拙政园 -\r\n        苏州市园林局",
+                          "excerpt": "中部为拙政园精华所在，池水面积占1/3，以水为主，池广树茂，景色自然，临水布置了形体不一、高低错落的建筑，主次分明。",
+                          "source_id": "task_1_web_2",
+                          "read_level": "page_text"
+                        },
+                        {
+                          "url": "https://m.hxtrip.com/bj/spotTicket?productId=16289",
+                          "title": "拙政园-好行网",
+                          "excerpt": "花园分为东、中、西三部分，东花园开阔疏朗，中花园是全园精华所在，西花园建筑精美，各具特色。",
+                          "source_id": "task_1_web_3",
+                          "read_level": "search_excerpt"
+                        },
+                        {
+                          "url": "https://zh.wikipedia.org/wiki/%E6%8B%99%E6%94%BF%E5%9B%AD",
+                          "title": "拙政园 - 维基百科，自由的百科全书",
+                          "excerpt": "苏州园林拙政园中的船屋\n\n拙政园，是中国江南一座园林，位于江苏省苏州市姑蘇區平江街道东北街178号，始建于明朝正德年间，初為御史王獻臣改佛寺以建。它是中国园林的杰出代表，中国四大名园之一，亦是江南私家花园典范。拙政园1961年被国务院列为首批全国重点文物保护单位，1991年被国家计委、旅游局、建设部列为国家级特殊游览参观点，1997年被联合国教科文组织与其它数座园林一同列为世界文化遗产。 [...] | 由上至下从左到右依次为： 位于拙政园中部的见山楼、远香堂和香洲 |\n| 基本資料 |\n| 類型 | 中國園林 |\n| 位置 | 江苏省苏州市姑苏区平江街道东北街178号 |\n| 坐标 | 31°19′34″N 120°37′26″E﻿ / ﻿31.32611°N 120.62389°E﻿ / 31.32611; 120.62389 |\n| 面積 | 45790平方米 |\n| 建造 | 始建于明 |\n| 管理者 | 苏州市园林和绿化管理局 |\n| 开放时间 | 全年 7:30 - 17:30 （11月16日—次年2月29日为17:00闭园） |\n| 地圖 |\n|  |\n| 联合国教科文组织世界遗产 |\n| 官方名稱 | 拙政园 |\n| 隸屬 | 苏州古典园林 |\n| 標準 | 文化：(i)(ii)(iii)(iv)(v) |\n| 参考编码 | 813 |\n| 登录年份 | 1997年（第21次會議） |\n| 扩展年份 | 2000年 |\n| 全国重点文物保护单位 中华人民共和国国务院公布 |\n| 拙政园 |\n| 分类 | 古建筑及历史纪念建筑物 |\n| 时代 | 明、清 | [...] ### 變遷\n\n[编辑]\n\n明崇祯四年（1631年），园东部荒地十余亩为侍郎王心一购得。王善画山水，悉心经营，布置丘壑，于崇祯八年（1635年）落成，名“归田园居”。中有秋香楼、芙蓉榭、泛红轩、兰雪堂、漱石亭、桃花渡、竹香廊、啸月台、紫藤坞、放眼亭诸胜，荷池广四、五亩，墙外别有家田数亩。园中多奇峰，山石仿峨眉栈道。据清雍正六年（1728年）沈德潜作的《兰雪堂图记》，当时园中崇楼幽洞、名葩奇木、山禽怪兽，与已荡为丘墟的拙政园中部适成对照。直至道光年间，王氏子孙尚居其地，但已渐荒圮，大部变为菜畦草地。\n\n园之中部与西部则归属变化较繁。清初顺治四、五年（1647—1648年）间，钱谦益（牧斋",
+                          "source_id": "task_1_web_4",
+                          "read_level": "search_excerpt"
+                        }
+                      ],
+                      "provider": "tavily",
+                      "semantics": "search_reference_not_verified_fact",
+                      "queried_at": "2026-10-25T05:39:16.913928+00:00"
+                    },
+                    "requirement_support": {
+                      "version": 1,
+                      "semantics": "read_only_scoped_support_not_satisfaction_or_write_authority",
+                      "assessments": []
+                    }
+                  },
+                  "capabilities": [
+                    "web"
+                  ],
+                  "source_quote": "先比较拙政园（东北街178号）和狮子林（园林路23号），各有什么值得看",
+                  "resolved_facts": [],
+                  "validated_arguments": {
+                    "city": "苏州",
+                    "mode": "unknown",
+                    "names": [],
+                    "query": "",
+                    "origin": "",
+                    "category": "attraction",
+                    "fact_kind": "other",
+                    "near_name": "",
+                    "destination": ""
+                  }
+                },
+                {
+                  "status": "partial",
+                  "task_id": "read_2",
+                  "depends_on": [],
+                  "read_tools": {
+                    "web_search": {
+                      "images": [],
+                      "status": "available",
+                      "sources": [
+                        {
+                          "url": "https://maps.google.com/intl/zh-CN/streetview/explore",
+                          "title": "街景照片有两个来源：Google 和我们的贡献者。",
+                          "excerpt": "Le Domaine-du-Roy, Maria-Chapdelaine, Lac-Saint-Jean-Est, Le Fjord-du-Saguenay, La Haute-Côte-Nord, Manicouagan, Minganie – Basse-Côte-Nord | 04/2026 - 10/2026 | [...] Temiskaming, Thunder Bay, Muskoka, Kenora, Mississauga, Brampton, Etobicoke, Downtown, Kitchener, Waterloo, Cambridge, Hamilton, Georgetown, MIlton, Barrie, Collingwood | 04/2026 - 10/2026 | [...] Vermillion River, Mackenzie County | 04/2026 - 10/2026 |",
+                          "source_id": "task_2_web_1",
+                          "read_level": "page_text"
+                        },
+                        {
+                          "url": "https://www.google.com/intl/zh-CN/streetview",
+                          "title": "探索街景，并将您拍摄的 360 度全景图像添加到 Google 地图中。",
+                          "excerpt": "通过街景功能探索秘鲁马丘比丘的古老神庙",
+                          "source_id": "task_2_web_2",
+                          "read_level": "page_text"
+                        },
+                        {
+                          "url": "https://developers.google.com/maps/documentation/javascript/streetview?hl=zh-cn",
+                          "title": "街景服务  |  Maps JavaScript API  |  Google for Developers",
+                          "excerpt": "目前，街景全景图片支持的叠加层类型仅限于 Marker、InfoWindow 和自定义 OverlayView。您在地图上显示的叠加层可显示在街景全景图片上，方法是将全景图片视为 Map 对象的替代项，调用 setMap()，并以参数形式传递 StreetViewPanorama（而非地图）。同样，通过调用 open() 并传递 StreetViewPanorama() 而不是地图，也可以在街景全景图片中打开信息窗口。\n\n此外，在创建使用默认 StreetViewPanorama 的地图时，只要与地图关联的街景全景图片可见，则在地图上创建的任何标记都会自动与该全景图片共享。如要检索默认街景全景图片，请对 Map 对象调用 getStreetView()。请注意，如果您将地图的 streetView 属性显式设置为您自己构造的 StreetViewPanorama，则会覆盖默认全景图片。\n\n以下示例将显示一些标记，用于表示纽约市阿斯特广场周围的不同位置。将显示画面切换到街景可显示 StreetViewPanorama 内显示的共享标记。\n\n### TypeScript [...] 您也可以创建自己的 `StreetViewPanorama` 对象，然后将地图的 `streetView` 属性显式设置为该构造对象，从而将地图设置为使用该对象而非默认的街景全景图片。如果您想修改默认行为，例如在地图和全景图片之间自动共享叠加层，则可能希望覆盖默认全景图片。（请参阅下文的街景内的叠加层。）\n\n## 街景容器\n\n您也可能希望在单独的 DOM 元素（通常为 `元素）内显示 StreetViewPanorama。只需在 StreetViewPanorama 的构造函数内传递相应 DOM 元素即可实现此目的。要想获得最佳图像显示效果，我们建议的最小图像尺寸为 200x200 像素。\n\n注意：尽管街景功能设计为与地图结合使用，但这并非强制性要求。您也可以在不使用地图的情况下单独使用街景对象。\n\n## 街景位置和视角 (POV)\n\nStreetViewPanorama 构造函数还支持使用 StreetViewOptions 参数设置街景位置和视角。您可以在构造完成后对该对象调用  setPosition() 和 setPov() 来更改其位置和 POV。 [...] 借助街景小人控件，您",
+                          "source_id": "task_2_web_3",
+                          "read_level": "search_excerpt"
+                        },
+                        {
+                          "url": "https://mapsplatform.google.com/intl/zh-CN_cn/maps-products/map-tiles",
+                          "title": "2D、3D 和街景地图图块 - Google 地图平台",
+                          "excerpt": "## 更轻松地设计 3D 体验\n\n利用世界上最全面的 3D 地理数据集之一；使用您选择的渲染器并叠加您自己的数据。\n\n## 如何使用逼真的 3D 图块\n\n## 展示并描述一个地点\n\n通过逼真的图像，帮助用户远程体验真实场景。或者，展示未来项目在现实世界中的样子。\n\n## 帮助用户以更真实的方式进行导航\n\n利用 3D 建筑物、地标和自然环境提供更多地理背景，帮助用户确定方位、查找位置并导航至特定地点。\n\n## 打造引人入胜的关于实物资产的叙事。\n\n利用更直观的地图视图来传达空间模式，以用于土地开发、资产管理和环境政策制定。\n\n## 规划并设想未来的可能性\n\n创建现实世界的增强现实体验或参与城市规划项目。或者，利用真实世界的图像，打造主题化或品牌化的视觉体验。\n\n## 探索逼真的 3D 瓷砖\n\n高分辨率照片级逼真 3D 图块\n\n### 助力打造下一代 3D 视觉体验\n\n访问谷歌的真实世界 3D 网格模型，该模型采用高分辨率图像进行纹理处理。\n\n开始探索（在新标签页中打开）\n\nCARTO 和照片级写实 3D 图块\n\n### 使用逼真的 3D 图块创建引人入胜的数据展示 [...] 地图瓦片为所有应用程序提供了使用场景，包括与 JavaScript API 以及 Android 和 iOS SDK 不兼容的平台。\n\n## 创建高度定制化的可视化效果\n\n地图图块让您可以灵活地设计独特的界面和交互方式。您还可以叠加自定义数据和图形。\n\n## 构建沉浸式街景体验\n\n利用街景图像和图块元数据，从街景层面拍摄图像，打造强大而沉浸式的体验。\n\n### 使用逼真的 3D 瓷砖开始构建\n\nAPI\n\n### 开始使用 2D 地图图块进行构建\n\nAPI\n\n## 需要预渲染的 3D 视频吗？\n\n试试航拍视角。通过简单的 API 调用，即可访问预渲染的电影级视频，而无需构建基础设施或担心规模问题。\n\n了解详情\n\n## 探索相关产品\n\n查看所有产品\n\n仿真 3D 图块\n\n访问真实世界的 3D 网格模型，自由选用渲染程序来打造影院级体验。\n\n了解详情\n\nAPI\n\n地图图块\n\nenterprise\n\n了解详情\n\nAPI\n\nessentials\n\n了解详情\n\nAPI\n\n通过预渲染的 3D 影院级视频展示地图注点及周边环境，为用户带来沉浸式体验。\n\n了解详情\n\nAPI [...] 使用地图演示密钥，无需信用",
+                          "source_id": "task_2_web_4",
+                          "read_level": "search_excerpt"
+                        }
+                      ],
+                      "provider": "tavily",
+                      "semantics": "search_reference_not_verified_fact",
+                      "queried_at": "2026-10-25T05:39:17.466744+00:00"
+                    },
+                    "requirement_support": {
+                      "version": 1,
+                      "semantics": "read_only_scoped_support_not_satisfaction_or_write_authority",
+                      "assessments": []
+                    }
+                  },
+                  "capabilities": [
+                    "web"
+                  ],
+                  "source_quote": "请展示两个地方的实景参考图片",
+                  "resolved_facts": [],
+                  "validated_arguments": {
+                    "city": "苏州",
+                    "mode": "unknown",
+                    "names": [],
+                    "query": "",
+                    "origin": "",
+                    "category": "attraction",
+                    "fact_kind": "other",
+                    "near_name": "",
+                    "destination": ""
+                  }
+                }
+              ],
+              "web_search": {
+                "images": [],
+                "status": "available",
+                "sources": [
+                  {
+                    "url": "https://kemingbaike.com/baike/2024111300221.html",
+                    "title": "苏州古典园林-可名百科",
+                    "excerpt": "获得荣誉\n 2022年12月，入选2022年11月AAAAA级景区品牌影响力100强榜单\n\n 旅游信息\n 地理位置苏州古典园林拙政园位于苏州娄门内东北街178号；狮子林位于苏州市姑苏区城东北的园林路23号；留园位于留园路338号；沧浪亭位于苏州市城南三元坊附近\n 门票拙政园：80元；狮子林：40元；留园：55元，耦园：25元；网师园：40元\n\n苏州古典园林\n\n苏州古典园林\n\n世界文化遗产\n\n苏州古典园林，亦称“苏州园林”，是位于江苏省苏州市境内的中国古典园林的总称。苏州古典园林溯源于春秋，发展于晋唐，繁荣于两宋，全盛于明清。苏州素有“园林之城”的美誉，境内私家园林始建于前6世纪，清末时城内外有园林170多处，现存50多处。\n\n 中文名\n\n  苏州古典园林\n 保护级别\n\n  世界文化遗产\n 地理位置\n\n  江苏省苏州市\n 批准单位\n\n  联合国教科文组织世界遗产委员会\n 遗产编号\n\n  813\n\n## 基本信息 [...] 主要景点\n 综述苏州古典园林包括拙政园、留园、网师园、环秀山庄、沧浪亭、狮子林、耦园、艺圃和退思园\n 沧浪亭沧浪亭，位于苏州城南三元坊内，是苏州最古老的一所园林，为北宋庆历年间（1041～1048年）诗人苏舜钦（字子美）所筑，南宋初年曾为军事将领韩世忠宅\n 沧浪亭园门外一泓绿水绕于园外，经桥入园\n 园内以山石为主景，山顶上为沧浪石亭\n 山下凿有水池，山水之间以一条曲折的复廊相连，廊中砌有花窗漏阁\n 假山东南部的明道堂是园林的主建筑，与明道堂东西相对的是五百名贤祠\n 园中最南部的是建在假山洞屋之上的看山楼，看山楼北面是“翠玲珑馆”，再折而向北到“仰止亭”，出“仰止亭”可到“御碑亭”\n 沧浪亭清幽古朴，适意自然，如清水芙蓉，洗尽铅华，无一丝脂粉气息\n 狮子林狮子林，位于苏州潘儒巷内，东靠园林路，元至正二年（1342年）天如禅师为纪念其师中峰和尚而建\n 因中峰原住在浙江天目山狮子岩，而园内石峰林立，多状似狮子，故名“狮子林”\n 狮子林平面成长方形，面积约15亩，东南多山，西北多水，四周高墙峻宇\n 狮子林的湖石假山多且精美\n 园内建筑，以燕誉堂为主，堂后为小方厅，有立雪堂 [...] 沧浪亭\n\n沧浪亭，位于苏州城南三元坊内，是苏州最古老的一所园林，为北宋庆历年间（1041～1048年）诗人苏舜钦（字子美）所筑，南宋初年曾为军事将领韩世忠宅。沧浪亭园门外一泓",
+                    "source_id": "task_1_web_1",
+                    "read_level": "page_text"
+                  },
+                  {
+                    "url": "https://ylj.suzhou.gov.cn/szsylj/sjyc/201905/c1df393edc8745abb20e8a9bd5525782.shtml",
+                    "title": "拙政园 -\r\n        苏州市园林局",
+                    "excerpt": "中部为拙政园精华所在，池水面积占1/3，以水为主，池广树茂，景色自然，临水布置了形体不一、高低错落的建筑，主次分明。",
+                    "source_id": "task_1_web_2",
+                    "read_level": "page_text"
+                  },
+                  {
+                    "url": "https://m.hxtrip.com/bj/spotTicket?productId=16289",
+                    "title": "拙政园-好行网",
+                    "excerpt": "花园分为东、中、西三部分，东花园开阔疏朗，中花园是全园精华所在，西花园建筑精美，各具特色。",
+                    "source_id": "task_1_web_3",
+                    "read_level": "search_excerpt"
+                  },
+                  {
+                    "url": "https://zh.wikipedia.org/wiki/%E6%8B%99%E6%94%BF%E5%9B%AD",
+                    "title": "拙政园 - 维基百科，自由的百科全书",
+                    "excerpt": "苏州园林拙政园中的船屋\n\n拙政园，是中国江南一座园林，位于江苏省苏州市姑蘇區平江街道东北街178号，始建于明朝正德年间，初為御史王獻臣改佛寺以建。它是中国园林的杰出代表，中国四大名园之一，亦是江南私家花园典范。拙政园1961年被国务院列为首批全国重点文物保护单位，1991年被国家计委、旅游局、建设部列为国家级特殊游览参观点，1997年被联合国教科文组织与其它数座园林一同列为世界文化遗产。 [...] | 由上至下从左到右依次为： 位于拙政园中部的见山楼、远香堂和香洲 |\n| 基本資料 |\n| 類型 | 中國園林 |\n| 位置 | 江苏省苏州市姑苏区平江街道东北街178号 |\n| 坐标 | 31°19′34″N 120°37′26″E﻿ / ﻿31.32611°N 120.62389°E﻿ / 31.32611; 120.62389 |\n| 面積 | 45790平方米 |\n| 建造 | 始建于明 |\n| 管理者 | 苏州市园林和绿化管理局 |\n| 开放时间 | 全年 7:30 - 17:30 （11月16日—次年2月29日为17:00闭园） |\n| 地圖 |\n|  |\n| 联合国教科文组织世界遗产 |\n| 官方名稱 | 拙政园 |\n| 隸屬 | 苏州古典园林 |\n| 標準 | 文化：(i)(ii)(iii)(iv)(v) |\n| 参考编码 | 813 |\n| 登录年份 | 1997年（第21次會議） |\n| 扩展年份 | 2000年 |\n| 全国重点文物保护单位 中华人民共和国国务院公布 |\n| 拙政园 |\n| 分类 | 古建筑及历史纪念建筑物 |\n| 时代 | 明、清 | [...] ### 變遷\n\n[编辑]\n\n明崇祯四年（1631年），园东部荒地十余亩为侍郎王心一购得。王善画山水，悉心经营，布置丘壑，于崇祯八年（1635年）落成，名“归田园居”。中有秋香楼、芙蓉榭、泛红轩、兰雪堂、漱石亭、桃花渡、竹香廊、啸月台、紫藤坞、放眼亭诸胜，荷池广四、五亩，墙外别有家田数亩。园中多奇峰，山石仿峨眉栈道。据清雍正六年（1728年）沈德潜作的《兰雪堂图记》，当时园中崇楼幽洞、名葩奇木、山禽怪兽，与已荡为丘墟的拙政园中部适成对照。直至道光年间，王氏子孙尚居其地，但已渐荒圮，大部变为菜畦草地。\n\n园之中部与西部则归属变化较繁。清初顺治四、五年（1647—1648年）间，钱谦益（牧斋",
+                    "source_id": "task_1_web_4",
+                    "read_level": "search_excerpt"
+                  },
+                  {
+                    "url": "https://maps.google.com/intl/zh-CN/streetview/explore",
+                    "title": "街景照片有两个来源：Google 和我们的贡献者。",
+                    "excerpt": "Le Domaine-du-Roy, Maria-Chapdelaine, Lac-Saint-Jean-Est, Le Fjord-du-Saguenay, La Haute-Côte-Nord, Manicouagan, Minganie – Basse-Côte-Nord | 04/2026 - 10/2026 | [...] Temiskaming, Thunder Bay, Muskoka, Kenora, Mississauga, Brampton, Etobicoke, Downtown, Kitchener, Waterloo, Cambridge, Hamilton, Georgetown, MIlton, Barrie, Collingwood | 04/2026 - 10/2026 | [...] Vermillion River, Mackenzie County | 04/2026 - 10/2026 |",
+                    "source_id": "task_2_web_1",
+                    "read_level": "page_text"
+                  },
+                  {
+                    "url": "https://www.google.com/intl/zh-CN/streetview",
+                    "title": "探索街景，并将您拍摄的 360 度全景图像添加到 Google 地图中。",
+                    "excerpt": "通过街景功能探索秘鲁马丘比丘的古老神庙",
+                    "source_id": "task_2_web_2",
+                    "read_level": "page_text"
+                  },
+                  {
+                    "url": "https://developers.google.com/maps/documentation/javascript/streetview?hl=zh-cn",
+                    "title": "街景服务  |  Maps JavaScript API  |  Google for Developers",
+                    "excerpt": "目前，街景全景图片支持的叠加层类型仅限于 Marker、InfoWindow 和自定义 OverlayView。您在地图上显示的叠加层可显示在街景全景图片上，方法是将全景图片视为 Map 对象的替代项，调用 setMap()，并以参数形式传递 StreetViewPanorama（而非地图）。同样，通过调用 open() 并传递 StreetViewPanorama() 而不是地图，也可以在街景全景图片中打开信息窗口。\n\n此外，在创建使用默认 StreetViewPanorama 的地图时，只要与地图关联的街景全景图片可见，则在地图上创建的任何标记都会自动与该全景图片共享。如要检索默认街景全景图片，请对 Map 对象调用 getStreetView()。请注意，如果您将地图的 streetView 属性显式设置为您自己构造的 StreetViewPanorama，则会覆盖默认全景图片。\n\n以下示例将显示一些标记，用于表示纽约市阿斯特广场周围的不同位置。将显示画面切换到街景可显示 StreetViewPanorama 内显示的共享标记。\n\n### TypeScript [...] 您也可以创建自己的 `StreetViewPanorama` 对象，然后将地图的 `streetView` 属性显式设置为该构造对象，从而将地图设置为使用该对象而非默认的街景全景图片。如果您想修改默认行为，例如在地图和全景图片之间自动共享叠加层，则可能希望覆盖默认全景图片。（请参阅下文的街景内的叠加层。）\n\n## 街景容器\n\n您也可能希望在单独的 DOM 元素（通常为 `元素）内显示 StreetViewPanorama。只需在 StreetViewPanorama 的构造函数内传递相应 DOM 元素即可实现此目的。要想获得最佳图像显示效果，我们建议的最小图像尺寸为 200x200 像素。\n\n注意：尽管街景功能设计为与地图结合使用，但这并非强制性要求。您也可以在不使用地图的情况下单独使用街景对象。\n\n## 街景位置和视角 (POV)\n\nStreetViewPanorama 构造函数还支持使用 StreetViewOptions 参数设置街景位置和视角。您可以在构造完成后对该对象调用  setPosition() 和 setPov() 来更改其位置和 POV。 [...] 借助街景小人控件，您",
+                    "source_id": "task_2_web_3",
+                    "read_level": "search_excerpt"
+                  },
+                  {
+                    "url": "https://mapsplatform.google.com/intl/zh-CN_cn/maps-products/map-tiles",
+                    "title": "2D、3D 和街景地图图块 - Google 地图平台",
+                    "excerpt": "## 更轻松地设计 3D 体验\n\n利用世界上最全面的 3D 地理数据集之一；使用您选择的渲染器并叠加您自己的数据。\n\n## 如何使用逼真的 3D 图块\n\n## 展示并描述一个地点\n\n通过逼真的图像，帮助用户远程体验真实场景。或者，展示未来项目在现实世界中的样子。\n\n## 帮助用户以更真实的方式进行导航\n\n利用 3D 建筑物、地标和自然环境提供更多地理背景，帮助用户确定方位、查找位置并导航至特定地点。\n\n## 打造引人入胜的关于实物资产的叙事。\n\n利用更直观的地图视图来传达空间模式，以用于土地开发、资产管理和环境政策制定。\n\n## 规划并设想未来的可能性\n\n创建现实世界的增强现实体验或参与城市规划项目。或者，利用真实世界的图像，打造主题化或品牌化的视觉体验。\n\n## 探索逼真的 3D 瓷砖\n\n高分辨率照片级逼真 3D 图块\n\n### 助力打造下一代 3D 视觉体验\n\n访问谷歌的真实世界 3D 网格模型，该模型采用高分辨率图像进行纹理处理。\n\n开始探索（在新标签页中打开）\n\nCARTO 和照片级写实 3D 图块\n\n### 使用逼真的 3D 图块创建引人入胜的数据展示 [...] 地图瓦片为所有应用程序提供了使用场景，包括与 JavaScript API 以及 Android 和 iOS SDK 不兼容的平台。\n\n## 创建高度定制化的可视化效果\n\n地图图块让您可以灵活地设计独特的界面和交互方式。您还可以叠加自定义数据和图形。\n\n## 构建沉浸式街景体验\n\n利用街景图像和图块元数据，从街景层面拍摄图像，打造强大而沉浸式的体验。\n\n### 使用逼真的 3D 瓷砖开始构建\n\nAPI\n\n### 开始使用 2D 地图图块进行构建\n\nAPI\n\n## 需要预渲染的 3D 视频吗？\n\n试试航拍视角。通过简单的 API 调用，即可访问预渲染的电影级视频，而无需构建基础设施或担心规模问题。\n\n了解详情\n\n## 探索相关产品\n\n查看所有产品\n\n仿真 3D 图块\n\n访问真实世界的 3D 网格模型，自由选用渲染程序来打造影院级体验。\n\n了解详情\n\nAPI\n\n地图图块\n\nenterprise\n\n了解详情\n\nAPI\n\nessentials\n\n了解详情\n\nAPI\n\n通过预渲染的 3D 影院级视频展示地图注点及周边环境，为用户带来沉浸式体验。\n\n了解详情\n\nAPI [...] 使用地图演示密钥，无需信用",
+                    "source_id": "task_2_web_4",
+                    "read_level": "search_excerpt"
+                  }
+                ],
+                "provider": "tavily",
+                "semantics": "search_reference_not_verified_fact",
+                "queried_at": "2026-10-25T05:39:17.466744+00:00"
+              },
+              "requirement_support": {
+                "version": 1,
+                "semantics": "read_only_scoped_support_not_satisfaction_or_write_authority",
+                "assessments": []
+              }
+            },
+            "place_cards": [],
+            "goal_routing": {
+              "signals": [
+                "semantic_stable_knowledge"
+              ],
+              "goal_type": "travel_chat",
+              "confidence": 0.93,
+              "target_runtime": "companion",
+              "knowledge_required": true,
+              "mutation_requested": false,
+              "referenced_entities": [],
+              "clarification_needed": false,
+              "trip_context_required": false,
+              "live_fact_likely_required": false,
+              "referenced_previous_decision": false
+            },
+            "execution_summary": {
+              "events": [
+                {
+                  "stage": "selection",
+                  "status": "running",
+                  "elapsed_ms": 300
+                },
+                {
+                  "model": "glm-5.3-flash",
+                  "stage": "model",
+                  "status": "completed",
+                  "provider": "glm",
+                  "elapsed_ms": 4787,
+                  "duration_ms": 4487,
+                  "finish_reason": "stop"
+                },
+                {
+                  "stage": "selection",
+                  "status": "completed",
+                  "elapsed_ms": 4790
+                },
+                {
+                  "stage": "context",
+                  "fields": [
+                    "city"
+                  ],
+                  "status": "completed",
+                  "elapsed_ms": 4794
+                },
+                {
+                  "stage": "web",
+                  "status": "running",
+                  "elapsed_ms": 4796
+                },
+                {
+                  "stage": "web",
+                  "status": "running",
+                  "elapsed_ms": 4796
+                },
+                {
+                  "stage": "web",
+                  "status": "completed",
+                  "elapsed_ms": 13724
+                },
+                {
+                  "stage": "web_extract",
+                  "status": "running",
+                  "elapsed_ms": 13724
+                },
+                {
+                  "stage": "web",
+                  "status": "completed",
+                  "elapsed_ms": 14276
+                },
+                {
+                  "stage": "web_extract",
+                  "status": "running",
+                  "elapsed_ms": 14276
+                },
+                {
+                  "stage": "web_extract",
+                  "status": "completed",
+                  "elapsed_ms": 16258
+                },
+                {
+                  "stage": "answer",
+                  "status": "running",
+                  "elapsed_ms": 16336
+                },
+                {
+                  "stage": "web_extract",
+                  "status": "completed",
+                  "elapsed_ms": 16856
+                },
+                {
+                  "stage": "answer",
+                  "status": "running",
+                  "elapsed_ms": 16914
+                },
+                {
+                  "model": "glm-5.3-flash",
+                  "stage": "model",
+                  "status": "completed",
+                  "provider": "glm",
+                  "elapsed_ms": 18709,
+                  "duration_ms": 1794,
+                  "finish_reason": "stop"
+                },
+                {
+                  "stage": "answer",
+                  "status": "completed",
+                  "elapsed_ms": 18710
+                },
+                {
+                  "model": "glm-5.3-flash",
+                  "stage": "model",
+                  "status": "completed",
+                  "provider": "glm",
+                  "elapsed_ms": 19025,
+                  "duration_ms": 2687,
+                  "finish_reason": "stop"
+                },
+                {
+                  "stage": "answer",
+                  "status": "completed",
+                  "elapsed_ms": 19026
+                }
+              ],
+              "version": 1,
+              "selection": {
+                "intent": "lookup",
+                "reason_code": "stable_knowledge",
+                "capabilities": [
+                  "web"
+                ],
+                "argument_source": "current_user_scoped_history_or_selected_place"
+              },
+              "duration_ms": 19030,
+              "answer_status": "partial",
+              "correlation_id": "b1a4cb4c-c14c-442d-a7aa-6c644fd154b5",
+              "answer_attempts": 2
+            },
+            "memory_update_receipt": {
+              "updates": [
+                {
+                  "field": "city",
+                  "scope": "personal",
+                  "value": "苏州",
+                  "reason": "validated",
+                  "status": "applied",
+                  "subject": "",
+                  "operation": "set",
+                  "source_quote": "我想去苏州看园林",
+                  "effective_value": "苏州"
+                }
+              ],
+              "version": 1,
+              "message_id": "b1a4cb4c-c14c-442d-a7aa-6c644fd154b5",
+              "effective_slots": {
+                "city": {
+                  "scope": "personal",
+                  "value": "苏州",
+                  "message_id": "b1a4cb4c-c14c-442d-a7aa-6c644fd154b5",
+                  "source_quote": "我想去苏州看园林",
+                  "scope_version": 2
+                }
+              },
+              "effective_preferences": [],
+              "effective_requirements": []
+            }
+          }
+        ],
+        "created_at": "2026-10-25T05:38:55.790552+00:00",
+        "updated_at": "2026-10-25T05:39:22.22642+00:00",
+        "latest_run_id": null,
+        "pending_action": null,
+        "applied_actions": {
+          "message-capture:b1a4cb4c-c14c-442d-a7aa-6c644fd154b5": "2026-10-25T13:39:03.137256+08:00"
+        }
+      },
+      {
+        "id": "0c71469e-b539-44d3-a0c6-77dfe7f4b946",
+        "trip_id": null,
+        "messages": [],
+        "created_at": "2026-10-25T05:38:55.78909+00:00",
+        "updated_at": "2026-10-25T05:38:55.78909+00:00",
+        "latest_run_id": null,
+        "pending_action": null,
+        "applied_actions": {}
+      }
+    ]
+  }
+}

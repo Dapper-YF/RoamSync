@@ -1,0 +1,23 @@
+....F................................................................... [ 86%]
+...........                                                              [100%]
+================================== FAILURES ===================================
+_____ test_retrieval_does_not_consume_comparison_or_visual_identity_goals _____
+
+    def test_retrieval_does_not_consume_comparison_or_visual_identity_goals():
+        from app.assistant_capabilities import CapabilityDecision, ReadTask, validate_decision
+        text = '我想去苏州看园林，先比较拙政园（东北街178号）和狮子林（园林路23号），各有什么值得看？请展示两个地方的实景参考图片，先不要生成或保存行程。'
+        comparison = '先比较拙政园（东北街178号）和狮子林（园林路23号），各有什么值得看'
+        decision = CapabilityDecision(intent='direct', capabilities=['web'], city='苏州',
+            reason_code='stable_knowledge', illustrate=True, read_tasks=[
+                ReadTask(source_quote=comparison, capabilities=['web'], city='苏州', names=['拙政园','狮子林']),
+                ReadTask(source_quote='请展示两个地方的实景参考图片', capabilities=['web'], city='苏州', names=['拙政园','狮子林'])])
+        for _ in range(2):
+            decision = validate_decision(decision, text, [], ContextEnvelope(browsing_city='苏州'))
+>           assert any(not t.capabilities and t.names == ['拙政园','狮子林'] for t in decision.read_tasks)
+E           assert False
+E            +  where False = any(<generator object test_retrieval_does_not_consume_comparison_or_visual_identity_goals.<locals>.<genexpr> at 0x000002556DB56180>)
+
+backend\tests\test_stage4_cross_city_visuals.py:47: AssertionError
+- generated xml file: E:\Study\RoamSync-stage4-evidence-20261025\visual-goals-after.xml -
+=========================== short test summary info ===========================
+FAILED backend\tests\test_stage4_cross_city_visuals.py::test_retrieval_does_not_consume_comparison_or_visual_identity_goals

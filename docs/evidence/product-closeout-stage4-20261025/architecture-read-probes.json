@@ -1,0 +1,56 @@
+[
+  {
+    "name": "live",
+    "status": 200,
+    "body": {
+      "status": "ok"
+    },
+    "path": "/health/live",
+    "at": "2026-10-25T16:52:07.5912865+08:00"
+  },
+  {
+    "name": "ready",
+    "status": 200,
+    "body": {
+      "status": "ready"
+    },
+    "path": "/health/ready",
+    "at": "2026-10-25T16:52:07.6135900+08:00"
+  },
+  {
+    "name": "trip_detail",
+    "status": 401,
+    "body": {
+      "detail": {
+        "code": "unauthorized",
+        "message": "请通过本地 RoamSync 页面访问"
+      }
+    },
+    "path": "/api/v1/trips/fd8f4a28-566d-4feb-b0f2-b74a4164b865",
+    "at": "2026-10-25T16:52:07.6188042+08:00"
+  },
+  {
+    "name": "invalid_uuid",
+    "status": 401,
+    "body": {
+      "detail": {
+        "code": "unauthorized",
+        "message": "请通过本地 RoamSync 页面访问"
+      }
+    },
+    "path": "/api/v1/trips/not-a-uuid",
+    "at": "2026-10-25T16:52:07.6228160+08:00"
+  },
+  {
+    "name": "missing_trip",
+    "status": 401,
+    "body": {
+      "detail": {
+        "code": "unauthorized",
+        "message": "请通过本地 RoamSync 页面访问"
+      }
+    },
+    "path": "/api/v1/trips/00000000-0000-0000-0000-000000000000",
+    "at": "2026-10-25T16:52:07.6256195+08:00"
+  }
+]

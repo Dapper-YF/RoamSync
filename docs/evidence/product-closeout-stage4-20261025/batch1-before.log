@@ -1,0 +1,147 @@
+E:\Study\RoamSync-stage3-evidence-20261024\run_unit.py:24: DeprecationWarning: 'asyncio.WindowsSelectorEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+E:\Study\RoamSync-stage3-evidence-20261024\run_unit.py:24: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 20260831_0001, Create trips and expenses.
+INFO  [alembic.runtime.migration] Running upgrade 20260831_0001 -> 20260901_0002, Add persisted trip planning models.
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0002 -> 20260901_0003, Add persisted route legs and route cache.
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0003 -> 20260901_0004, add multi-city trip metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0004 -> 20260901_0005, add trip management and accommodation metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0005 -> 20260901_0006, add editable activity metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260901_0006 -> 20260902_0007, add structured trip preferences
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0007 -> 20260902_0008, add planning run and candidate revision boundaries
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0008 -> 20260902_0009, add candidate route evidence
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0009 -> 20260902_0010, add planning clarification status
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0010 -> 20260902_0011, persist route geometry and alternatives
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0011 -> 20260902_0012, persist candidate route geometry
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0012 -> 20260902_0013, persist pending planning interrupt for web clients
+INFO  [alembic.runtime.migration] Running upgrade 20260902_0013 -> 20260903_0014, add persistent trip execution state
+INFO  [alembic.runtime.migration] Running upgrade 20260903_0014 -> 20260903_0015, persist grounded intent context on planning runs
+INFO  [alembic.runtime.migration] Running upgrade 20260903_0015 -> 20260907_0016, Add worker lease fields to planning runs.
+INFO  [alembic.runtime.migration] Running upgrade 20260907_0016 -> 20260908_0017, Keep actionable validation failures on persisted planning runs.
+INFO  [alembic.runtime.migration] Running upgrade 20260908_0017 -> 20260909_0018, Persist read-only assistant answers separately from plan revisions.
+INFO  [alembic.runtime.migration] Running upgrade 20260909_0018 -> 20260909_0019, Persistent cross-page assistant conversations and tool confirmations.
+INFO  [alembic.runtime.migration] Running upgrade 20260909_0019 -> 20260910_0020, Expose actual planning stages and worker heartbeat.
+INFO  [alembic.runtime.migration] Running upgrade 20260910_0020 -> 20260914_0021, Make trip budget limits optional.
+INFO  [alembic.runtime.migration] Running upgrade 20260914_0021 -> 20260915_0022, Persist runtime navigation sessions separately from replaceable RouteLeg rows.
+INFO  [alembic.runtime.migration] Running upgrade 20260915_0022 -> 20260915_0023, Persist de-duplicated deterministic trip disruptions.
+INFO  [alembic.runtime.migration] Running upgrade 20260915_0023 -> 20260915_0024, Link recovery planning runs to deterministic disruption facts.
+INFO  [alembic.runtime.migration] Running upgrade 20260915_0024 -> 20260916_0025, Persist navigation observations and deterministic detector state.
+INFO  [alembic.runtime.migration] Running upgrade 20260916_0025 -> 20260921_0026, add idempotent activity experience event facts
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0026 -> 20260921_0027, index activity experience fact aggregation
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0027 -> 20260921_0028, fence execution projections to their formal itinerary
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0028 -> 20260921_0029, persist minimal general replanning trigger metadata
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0029 -> 20260921_0030, serialize active automatic recovery per formal trip version
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0030 -> 20260921_0031, make experience rejection dedup queryable
+INFO  [alembic.runtime.migration] Running upgrade 20260921_0031 -> 20260922_0032, add activity importance decision semantics
+INFO  [alembic.runtime.migration] Running upgrade 20260922_0032 -> 20260924_0033, persist plan revision rejection feedback
+INFO  [alembic.runtime.migration] Running upgrade 20260924_0033 -> 20260924_0034, Persist activity decision semantics and their provenance.
+INFO  [alembic.runtime.migration] Running upgrade 20260924_0034 -> 20261016_0035, Keep explicit scoped requirements on the existing trip preference owner.
+INFO  [alembic.runtime.migration] Running upgrade 20261016_0035 -> 20261018_0036, Add persisted product tables without importing preview data or touching trips.
+INFO  [alembic.runtime.migration] Running upgrade 20261018_0036 -> 20261019_0037, Finite Trip-owned choices and reserved free intervals, no second timetable.
+INFO  [alembic.runtime.migration] Running upgrade 20261019_0037 -> 20261022_0038, Independent source-bound intentions, never a second activity timetable.
+F.F....FF                                                                [100%]
+================================== FAILURES ===================================
+_____ test_literal_task_quote_retains_shared_address_in_containing_source _____
+
+    def test_literal_task_quote_retains_shared_address_in_containing_source():
+        text = '比较成都人民公园和宽窄巷子，人民公园按少城路12号核对位置'
+        task = ReadTask(source_quote=text, source_ref='user_0_span_0', capabilities=['poi'],
+            city='成都', names=['人民公园（少城路12号）'])
+        result = validate_decision(CapabilityDecision(intent='lookup', reason_code='place_identity',
+            read_tasks=[task]), text, [], ContextEnvelope())
+>       assert result.intent == 'lookup'
+E       AssertionError: assert 'clarify' == 'lookup'
+E         
+E         - lookup
+E         + clarify
+
+tests\test_stage4_task_contract.py:16: AssertionError
+_ test_complete_duration_value_is_attribute_change_even_if_model_says_replace _
+
+    def test_complete_duration_value_is_attribute_change_even_if_model_says_replace():
+        text = '把人民公园的停留改为60分钟，其他活动保持不变'
+>       draft = approved_draft(_replacement(text), text)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_stage4_task_contract.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+decision = CapabilityDecision(intent='modify', capabilities=[], city='', query='', category='attraction', names=[], origin='', de...ue))], confidence=0.9, missing_fields=[], ambiguities=[], parser='model', parser_version='v1'), candidate_command=None)
+message = '把人民公园的停留改为60分钟，其他活动保持不变'
+
+    def approved_draft(decision, message):
+        draft = decision.planning_draft
+        if decision.intent == 'modify' and (draft is None or draft.primary_intent == 'unsupported'):
+            from app.planning_intent_service import classify_planning_intent, _build_rule_semantic_draft
+            intent = classify_planning_intent(message, has_activities=True)
+            rules = _build_rule_semantic_draft(message, intent, None)
+            if rules.primary_intent not in {'unsupported', 'general_chat', 'query_trip'}:
+                draft = rules
+        if draft is None:
+            return None
+        if any(op.raw_text not in message or any(name not in op.raw_text
+               for name in [*op.place_mentions, *op.activity_mentions]) for op in draft.operations):
+            raise ValueError("操作及地点必须绑定本次用户原句")
+        if decision.intent not in {"create", "modify"}:
+            raise ValueError("读取决策不能授予规划操作")
+        from app.assistant_capabilities import affirmative_action_source, affirmative_entity_source
+        verbs = {"add_activity":r"加入|添加|增加|纳入|放进", "remove_activity":r"撤掉|撤销|取消|删除|删掉|不去",
+            "replace_activity":r"换成|换掉|替换", "reorder_activities":r"移到|挪|晚|提前|延后|调整|顺序|改",
+            "optimize_route":r"优化|协调|调整", "adjust_budget":r"控制|调整|预算", "weather_replan":r"调整|改|换",
+            "create_plan":r"创建|生成|安排|规划", "replan_trip":r"重排|重做|重新|调整|安排|规划|改|停留|延长|缩短"}
+        for op in draft.operations:
+            if op.operation not in verbs:
+                continue
+            # Copy the containing clause from its beginning. A model cannot strip
+            # a date/negator and borrow authority from another positive operation.
+            if message.count(op.raw_text) != 1:
+                raise ValueError("操作原句存在多个对应位置，请明确各项操作")
+            prefix = re.split(r"[，,。；;!?！？\n]", message[:message.index(op.raw_text)])[-1].strip()
+            if prefix and not re.fullmatch(r"(?:请|麻烦|帮我|替我|请你|给我|现在|实际)*", prefix):
+                raise ValueError("操作必须保留完整原句限定条件")
+            if (not affirmative_action_source(message, op.raw_text, verbs[op.operation]) or
+                    re.match(r"\s*(?:假设|假如|如果|先别|不要|不用)", op.raw_text)):
+>               raise ValueError("每个操作都需要本次肯定请求，否定或假设子句不授予操作权限")
+E               ValueError: 每个操作都需要本次肯定请求，否定或假设子句不授予操作权限
+
+app\assistant_operation.py:133: ValueError
+_ test_date_revocation_and_solo_value_are_normalized_from_full_user_evidence __
+
+    def test_date_revocation_and_solo_value_are_normalized_from_full_user_evidence():
+        env, _, _ = apply_memory(ContextEnvelope(), [], '2026年12月19日出发', 'm1', [
+            MemoryUpdate(field='start_date',value='2026年12月19日',source_quote='2026年12月19日出发')])
+        text = '出发日期先撤销，这趟就我独自出发'
+        env, _, _ = apply_memory(env, [], text, 'm2', [
+            MemoryUpdate(field='start_date',operation='clear',source_quote='出发日期先撤销'),
+            MemoryUpdate(field='party_size',value='独自出发',source_quote='这趟就我独自出发',scope='trip')])
+>       assert 'start_date' not in env.conversation_memory['slots']
+E       AssertionError: assert 'start_date' not in {'start_date': {'message_id': 'm1', 'scope': 'personal', 'scope_version': 2, 'source_quote': '2026年12月19日出发', ...}}
+
+tests\test_stage4_task_contract.py:68: AssertionError
+_______ test_unresolved_first_subject_does_not_renumber_resolved_second _______
+
+    def test_unresolved_first_subject_does_not_renumber_resolved_second():
+        from app.read_references import place_catalog, resolve_read_text
+        history = [{'user':'比较天津的意式风情区和古文化街',
+            'read_tools':{'tasks':[
+                {'validated_arguments':{'names':['意式风情区'],'city':'天津'}},
+                {'validated_arguments':{'names':['古文化街'],'city':'天津'}}]},
+            'place_cards':[{'place':{'place_id':'00000000-0000-0000-0000-000000000002',
+                'name':'古文化街','city':'天津'}}]}]
+        refs = place_catalog(history,ContextEnvelope(browsing_city='天津'))
+>       assert resolve_read_text('第一个和第二个',refs) == '意式风情区和古文化街'
+E       AssertionError: assert '古文化街和第二个' == '意式风情区和古文化街'
+E         
+E         - 意式风情区和古文化街
+E         + 古文化街和第二个
+
+tests\test_stage4_task_contract.py:82: AssertionError
+- generated xml file: E:\Study\RoamSync-stage4-evidence-20261025\batch1-before.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_stage4_task_contract.py::test_literal_task_quote_retains_shared_address_in_containing_source
+FAILED tests/test_stage4_task_contract.py::test_complete_duration_value_is_attribute_change_even_if_model_says_replace
+FAILED tests/test_stage4_task_contract.py::test_date_revocation_and_solo_value_are_normalized_from_full_user_evidence
+FAILED tests/test_stage4_task_contract.py::test_unresolved_first_subject_does_not_renumber_resolved_second
