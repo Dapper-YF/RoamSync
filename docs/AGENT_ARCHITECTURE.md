@@ -1453,3 +1453,26 @@ different source. Real after11 retained the broad-quote failure; new regression
 baseline1 failure and targeted126 pass. Frozen acceptance is still pending.
 Source counting and scalar normalization share scalar_tokens, including relative
 weekday dates; they cannot silently disagree on which literals exist.
+
+### Stage5 saved itinerary photographs (2026-10-25)
+
+Optional media reads are independent of reasoning, requirement support and
+adoption. Handbook retains reviewed-image priority and exact canonical/provider
+identity plus coordinate guards. For confirmed activities outside that catalog,
+the authenticated integration exposes GET /places/{canonical_id}/reference-images
+with an explicit provider_place_id. The immutable UUID/provider relationship and
+returned AMap detail are checked before using only its canonical name and city
+in Tavily. Original image titles/descriptions must contain both, with shared
+safe-URL projection; a generic dish match cannot bind a restaurant branch.
+Search relevance is not photographic scene verification or permission to reuse.
+The separate search_reference response, visible caption/source and uncertainty
+remain distinct from reviewed_commons_license images and never enter Planner
+evidence, factual support, Revision contents or authorization.
+
+There is no model call, database/cache-table write, download proxy or public
+write endpoint in this path. Process-only bounded TTL cache/single-flight and
+timeouts make missing pictures optional. Unbound/custom activities and free
+intervals are not resolved by name. Response key and current identity/city/
+coordinates prevent stale photo responses from replacing the current activity.
+The real historical-trip browser regression and retained failures are described
+in PRODUCT_CLOSEOUT_STAGE5_20261025.md; this is not whole-product acceptance.

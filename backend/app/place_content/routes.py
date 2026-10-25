@@ -20,7 +20,7 @@ def unavailable_owner() -> str:
     raise HTTPException(503, detail={"code": "owner_boundary_not_configured", "message": "收藏身份边界尚未配置"})
 
 
-def create_router(service: PlaceContentService, owner_dependency: Callable = unavailable_owner) -> APIRouter:
+def create_router(service: PlaceContentService, owner_dependency: Callable = unavailable_owner, *, reference_images=None) -> APIRouter:
     router = APIRouter(prefix="/api/v1", tags=["travel-content"])
 
     @router.get('/media/place-images')
@@ -67,6 +67,12 @@ def create_router(service: PlaceContentService, owner_dependency: Callable = una
     @router.get("/places/{place_id}", response_model=Place)
     async def detail(place_id: UUID):
         return await call(service.get_place(place_id))
+
+    @router.get("/places/{place_id}/reference-images")
+    async def reference_photos(place_id: UUID, provider_place_id: str = Query(min_length=1, max_length=100, pattern=r'^[A-Za-z0-9_-]+$')):
+        if reference_images is None:
+            return {"status": "unavailable", "images": []}
+        return await reference_images.lookup(place_id, provider_place_id)
 
     @router.get("/me/favorites", response_model=list[Favorite])
     def favorites(owner: str = Depends(verified_owner), limit: int = Query(default=50, ge=1, le=100), offset: int = Query(default=0, ge=0)):

@@ -49,7 +49,9 @@ def install_content(app, settings):
     app.state.trusted_owner_dependency = trusted_owner
     app.state.device_sessions = device_sessions
     app.include_router(create_device_router(device_sessions, server_authorized))
-    app.include_router(create_router(service, trusted_owner))
+    from app.place_content.reference_images import PlaceReferenceImages
+    app.include_router(create_router(service, trusted_owner,
+        reference_images=PlaceReferenceImages(service.provider, settings)))
 
     from app.drafts.repository import DraftRepository
     from app.drafts.service import DraftService, ModelDraftGenerator

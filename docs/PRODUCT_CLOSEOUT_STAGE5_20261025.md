@@ -35,6 +35,46 @@ information_need，保留为测试错误。最终context-after5共51项通过，
 两项成功回放的app hash在执行前后一致。各文件source_commit表示当时HEAD，实际未提交源码
 由app_sha256绑定；产品提交后的相同hash记录另行保存，不把基线HEAD误称为修后代码。
 
+## 第二批：已保存日程的通用地点照片补查
+
+用户指出第四阶段adopted60-after-refresh截图无图。根因不是AI无法提供照片：
+HandbookPhoto已有组件，但仅取11地点/4城市的审核图库，苏州不在库中，直接返回空白。
+修改前新增组件回归photos-before为1失败/2通过，缺少已确认苏州地点的照片补查。
+
+最小实现保留审核图库优先和原exact canonical/provider/坐标检查；新增只读
+GET /api/v1/places/{canonical_id}/reference-images?provider_place_id=...。
+服务端先核对稳定UUID与高德ID，再实时读取高德详情，只以provider确认的名称和城市查Tavily；
+原始图片title+description必须同时包含完整地点名和城市，随后复用安全URL/图片投影。
+不接受客户端地点名、任意图片URL或模型编造URL，不接入Planner/Accept，不写任何数据库。
+没有扩建每个城市的专用景点名单。无图/失败保留原日程；未绑定地点、午餐留白不猜图。
+
+搜索照片和已审核媒体分开：usage_basis=search_reference，卡片显示“地点参考照片”、
+来源链接与未逐图现场核验说明；不声称逐图核验、当前景象或已取得转载许可。
+图库请求6秒、参考图请求22秒有界；服务端总20秒、单次搜索不重试、并发4、
+相同目标合并请求，成功缓存10分钟、失败30秒、上限128项。切换目标时旧结果不覆盖新卡片。
+
+Astra Medium发现并修复三项问题：聊天菜品fallback可能误配门店、无效详情绕过负缓存、
+图库请求卡住会阻塞补查。最终静态复核无剩余阻断契约发现，不是产品GO。
+对应门店拒绝、空详情缓存、英文description配中文title和前端旧请求隔离均有回归。
+review指出的前端provider mismatch测试已改为相同城市，避免城市检查遮蔽目标检查。
+
+真实验证：E:/Study/RoamSync-stage5-evidence-20261025/runtime-photos。
+从第四阶段真实浏览器保存态adopted60-after-refresh.json逐行复制11表到全新
+roamsync_a2_public_stage5_photos_20261025_test（15435），API18105/Web3105。
+这是照片显示回归；没有预置新候选，也不冒称新模型生成或完整黄金路径通过。
+浏览器实际显示拙政园（苏州市政府图片URL）及狮子林（Tripadvisor图片URL），
+刷新后仍显示，来源链接可见；正式10表及包含会话的11表都不变。
+照片请求不调用大模型，真实工具为AMap+Tavily；API返回和原始图检索记录已保存。
+
+保留失败：真实provider1两地无可用图（过滤只查中文description漏掉中文title）；
+修复后provider2拙政园有图、狮子林该次仍unavailable。之后真实浏览器两地有图，
+不删除或把前两次改记成功，也不把外部图片可用性宣传为保证。测试脚本首次误用未安装的
+pytest-asyncio标记，after1八项测试调度失败；改用项目现有asyncio.run方式后通过。
+最终后端照片/地点/保存候选定向107项通过，Web构建（含类型检查）通过。
+Web默认并行全量272通过/1导航测试5000ms超时；单独复核该导航与照片7项通过，
+默认并行失败原样保留。限制maxWorkers=2的全量273项/49文件通过；不修改导航断言或
+扩大5000ms超时，不将工程复跑当成独立产品评分。本批不宣称完整冻结后端重验或新独立成绩。
+
 ## 继续目标
 
 下一批为保存安排的统一位置引用与逐操作目标绑定，处理“第一天第一项增加15分钟”，

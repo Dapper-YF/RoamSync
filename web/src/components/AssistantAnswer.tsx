@@ -18,13 +18,13 @@ function Text({ text, sources = [] }: { text: string; sources?: AnswerSearch["so
     return part.startsWith("**") && part.endsWith("**") ? <strong key={n}>{part.slice(2, -2)}</strong> : part;
   })}</>;
 }
-function SearchImage({ image }: { image: AnswerSearch["images"][number] }) {
+export function SearchImage({ image, placeName }: { image: AnswerSearch["images"][number]; placeName?: string }) {
   const [failed, setFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const reviewedLocal = image.usage_basis === "reviewed_commons_license" && /^\/api\/v1\/media\/place-images\/[a-z0-9-]+\.jpg$/.test(image.url) && !!image.license_url && safeUrl(image.license_url);
   if (failed || (!safeUrl(image.url) && !reviewedLocal) || !safeUrl(image.source_url)) return null;
   const description = image.description.replace(/参考图\s*[·：:]?\s*/g, "");
-  return <figure className="assistant-inline-photo" style={loaded ? undefined : {display:"none"}}><a href={image.source_url} target="_blank" rel="noopener noreferrer"><img src={image.url} alt={description} loading="eager" referrerPolicy="no-referrer" onLoad={() => setLoaded(true)} onError={() => setFailed(true)} /></a><details className="assistant-photo-credit"><summary aria-label="图片来源与许可">ⓘ</summary><small>{reviewedLocal ? image.attribution : description} · <a href={image.source_url} target="_blank" rel="noopener noreferrer">图片来源</a>{reviewedLocal && <> · <a href={image.license_url} target="_blank" rel="noopener noreferrer">{image.license_name || "授权说明"}</a>{image.changes ? ` · ${image.changes}` : ""}</>}</small></details></figure>;
+  return <figure className={placeName ? "place-reference-photo" : "assistant-inline-photo"} style={loaded ? undefined : {display:"none"}}><a href={image.source_url} target="_blank" rel="noopener noreferrer"><img src={image.url} alt={description} loading="eager" referrerPolicy="no-referrer" onLoad={() => setLoaded(true)} onError={() => setFailed(true)} /></a>{placeName && <figcaption>{placeName} · 地点参考照片</figcaption>}<details className="assistant-photo-credit"><summary aria-label="图片来源与许可">ⓘ</summary><small>{reviewedLocal ? image.attribution : description} · <a href={image.source_url} target="_blank" rel="noopener noreferrer">图片来源</a>{reviewedLocal && <> · <a href={image.license_url} target="_blank" rel="noopener noreferrer">{image.license_name || "授权说明"}</a>{image.changes ? ` · ${image.changes}` : ""}</>}{placeName && <p>搜索参考照片，未经逐图现场核验，不代表当前现场状态。</p>}</small></details></figure>;
 }
 export type AnswerVisuals = { status: string; images: AnswerSearch["images"]; requested?: boolean };
 export function AssistantAnswer({ text, search, visuals }: { text: string; search?: AnswerSearch; visuals?: AnswerVisuals }) {
