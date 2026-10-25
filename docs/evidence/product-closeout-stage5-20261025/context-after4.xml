@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="51" time="28.862" timestamp="2026-10-25T17:07:36.375394+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage5_saved_context" name="test_general_consultation_sees_only_the_exact_valid_displayed_revision" time="1.296" /><testcase classname="tests.test_stage5_saved_context" name="test_revision_receipt_distinguishes_capture_from_delivery[False]" time="0.172"><failure message="pydantic_core._pydantic_core.ValidationError: 1 validation error for CompanionResult&#10;information_need&#10;  Field required [type=missing, input_value={'response_text': '本轮...al_type': 'travel_chat'}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000002489F88C9D0&gt;
+delivered = False
+
+    @pytest.mark.parametrize('delivered',[False,True])
+    def test_revision_receipt_distinguishes_capture_from_delivery(monkeypatch,delivered):
+        from app.assistant_capabilities import CapabilityDecision, _answer_leaf
+        from app.assistant_context import ContextEnvelope
+        from app.companion_contracts import CompanionResult
+        from app.config import Settings
+        snapshot=SimpleNamespace(displayed_revision={'id':str(uuid4()),'presentation_hash':'a'*64,'trip_version':2})
+        async def load(_reader,context,need):
+            return context.model_copy(update={'displayed_revision':snapshot.displayed_revision})
+        monkeypatch.setattr(CompanionContextReader,'load',load)
+        class Runtime:
+            def __init__(self,reader,**kwargs):self.reader=reader
+            async def run(self,**kwargs):
+                if delivered:
+                    await self.reader.load(CompanionContext(current_message=kwargs['message'],travel_goal=kwargs['goal']),InformationNeed())
+                return CompanionResult(response_text='本轮仅讨论，不采用。',goal_type='travel_chat')
+        monkeypatch.setattr('app.companion_runtime.CompanionRuntime',Runtime)
+        class DB:
+            async def commit(self):pass
+        goal=TravelGoalRouting(goal_type='travel_chat',target_runtime='companion',mutation_requested=False,
+            knowledge_required=False,trip_context_required=False,live_fact_likely_required=False,confidence=.9)
+&gt;       bundle,_=asyncio.run(_answer_leaf(Settings(_env_file=None),CapabilityDecision(intent='direct',reason_code='stable_knowledge'),
+            '先讨论，不采用',[],ContextEnvelope(),None,DB(),uuid4(),uuid4(),uuid4(),goal,read_snapshot=snapshot,referents=[]))
+
+tests\test_stage5_saved_context.py:73: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+app\assistant_capabilities.py:999: in _answer_leaf
+    bundle, status = await _answer_leaf_impl(settings, decision, message, history, envelope, port, db, trip_id, session_id,
+app\assistant_capabilities.py:1137: in _answer_leaf_impl
+    result = await bounded_call(lambda: runtime.run(session_id=str(session_id), turn_id=str(message_id), message=runtime_message,
+app\assistant_reliability.py:119: in bounded_call
+    result = await operation()
+             ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;test_stage5_saved_context.test_revision_receipt_distinguishes_capture_from_delivery.&lt;locals&gt;.Runtime object at 0x00000248A4AD1A90&gt;
+kwargs = {'assistant_context': {'action_target': None, 'browsing_city': None, 'conversation_memory': {}, 'discovery_context': N...referenced_previous_decision=False, clarification_needed=False, signals=[]), 'message': '先讨论，不采用', 'messages': [], ...}
+
+    async def run(self,**kwargs):
+        if delivered:
+            await self.reader.load(CompanionContext(current_message=kwargs['message'],travel_goal=kwargs['goal']),InformationNeed())
+&gt;       return CompanionResult(response_text='本轮仅讨论，不采用。',goal_type='travel_chat')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for CompanionResult
+E       information_need
+E         Field required [type=missing, input_value={'response_text': '本轮...al_type': 'travel_chat'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+tests\test_stage5_saved_context.py:67: ValidationError</failure></testcase><testcase classname="tests.test_stage5_saved_context" name="test_revision_receipt_distinguishes_capture_from_delivery[True]" time="0.008"><failure message="pydantic_core._pydantic_core.ValidationError: 1 validation error for CompanionResult&#10;information_need&#10;  Field required [type=missing, input_value={'response_text': '本轮...al_type': 'travel_chat'}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000248A4A69130&gt;
+delivered = True
+
+    @pytest.mark.parametrize('delivered',[False,True])
+    def test_revision_receipt_distinguishes_capture_from_delivery(monkeypatch,delivered):
+        from app.assistant_capabilities import CapabilityDecision, _answer_leaf
+        from app.assistant_context import ContextEnvelope
+        from app.companion_contracts import CompanionResult
+        from app.config import Settings
+        snapshot=SimpleNamespace(displayed_revision={'id':str(uuid4()),'presentation_hash':'a'*64,'trip_version':2})
+        async def load(_reader,context,need):
+            return context.model_copy(update={'displayed_revision':snapshot.displayed_revision})
+        monkeypatch.setattr(CompanionContextReader,'load',load)
+        class Runtime:
+            def __init__(self,reader,**kwargs):self.reader=reader
+            async def run(self,**kwargs):
+                if delivered:
+                    await self.reader.load(CompanionContext(current_message=kwargs['message'],travel_goal=kwargs['goal']),InformationNeed())
+                return CompanionResult(response_text='本轮仅讨论，不采用。',goal_type='travel_chat')
+        monkeypatch.setattr('app.companion_runtime.CompanionRuntime',Runtime)
+        class DB:
+            async def commit(self):pass
+        goal=TravelGoalRouting(goal_type='travel_chat',target_runtime='companion',mutation_requested=False,
+            knowledge_required=False,trip_context_required=False,live_fact_likely_required=False,confidence=.9)
+&gt;       bundle,_=asyncio.run(_answer_leaf(Settings(_env_file=None),CapabilityDecision(intent='direct',reason_code='stable_knowledge'),
+            '先讨论，不采用',[],ContextEnvelope(),None,DB(),uuid4(),uuid4(),uuid4(),goal,read_snapshot=snapshot,referents=[]))
+
+tests\test_stage5_saved_context.py:73: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+app\assistant_capabilities.py:999: in _answer_leaf
+    bundle, status = await _answer_leaf_impl(settings, decision, message, history, envelope, port, db, trip_id, session_id,
+app\assistant_capabilities.py:1137: in _answer_leaf_impl
+    result = await bounded_call(lambda: runtime.run(session_id=str(session_id), turn_id=str(message_id), message=runtime_message,
+app\assistant_reliability.py:119: in bounded_call
+    result = await operation()
+             ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;test_stage5_saved_context.test_revision_receipt_distinguishes_capture_from_delivery.&lt;locals&gt;.Runtime object at 0x00000248A4AD2CF0&gt;
+kwargs = {'assistant_context': {'action_target': None, 'browsing_city': None, 'conversation_memory': {}, 'discovery_context': N...referenced_previous_decision=False, clarification_needed=False, signals=[]), 'message': '先讨论，不采用', 'messages': [], ...}
+
+    async def run(self,**kwargs):
+        if delivered:
+            await self.reader.load(CompanionContext(current_message=kwargs['message'],travel_goal=kwargs['goal']),InformationNeed())
+&gt;       return CompanionResult(response_text='本轮仅讨论，不采用。',goal_type='travel_chat')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for CompanionResult
+E       information_need
+E         Field required [type=missing, input_value={'response_text': '本轮...al_type': 'travel_chat'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+tests\test_stage5_saved_context.py:67: ValidationError</failure></testcase><testcase classname="tests.test_stage4_revision_binding_db" name="test_locked_accept_rejects_changed_content_and_does_not_write" time="0.567" /><testcase classname="tests.test_stage4_revision_binding_db" name="test_api_and_locked_revision_hash_are_identical" time="0.552" /><testcase classname="tests.test_stage4_revision_binding_db" name="test_displayed_revision_read_uses_same_snapshot_and_refuses_a_wrong_hash" time="0.810" /><testcase classname="tests.test_stage4_revision_binding_db" name="test_content_changed_while_accept_waits_for_revision_lock_is_rejected" time="0.513" /><testcase classname="tests.test_stage4_revision_binding" name="test_legacy_snapshot_can_be_read_but_cannot_present_a_complete_review[None]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_legacy_snapshot_can_be_read_but_cannot_present_a_complete_review[before1]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_legacy_snapshot_can_be_read_but_cannot_present_a_complete_review[before2]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_legacy_snapshot_can_be_read_but_cannot_present_a_complete_review[before3]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_legacy_snapshot_can_be_read_but_cannot_present_a_complete_review[before4]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_legacy_snapshot_can_be_read_but_cannot_present_a_complete_review[before5]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_hash_normalizes_snapshot_defaults_but_binds_changes_and_risks" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_displayed_reference_cannot_authorize_other_turns[\u5148\u4e0d\u91c7\u7528]" time="0.009" /><testcase classname="tests.test_stage4_revision_binding" name="test_displayed_reference_cannot_authorize_other_turns[\u91c7\u7528\u4f1a\u600e\u6837\uff1f]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_displayed_reference_cannot_authorize_other_turns[\u7b49\u6211\u786e\u8ba4\u540e\u518d\u91c7\u7528]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_displayed_reference_cannot_authorize_other_turns[\u8bf7\u628a\u7532\u9986\u6539\u621060\u5206\u949f]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_displayed_reference_cannot_authorize_other_turns[\u670b\u53cb\u8bf4\u201c\u91c7\u7528\u8fd9\u4efd\u65b9\u6848\u201d]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_displayed_reference_cannot_authorize_other_turns[\u91c7\u7528\u8fd9\u4efd\u65b9\u6848\u5e76\u628a\u7532\u9986\u6539\u4e3a60\u5206\u949f]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_explicit_adoption_uses_only_current_passive_binding" time="0.010" /><testcase classname="tests.test_stage4_revision_binding" name="test_explicit_approval_may_complete_its_same_reviewed_change_but_not_other_changes" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_legacy_exact_approval_remains_server_bound[\u5c31\u6309\u8fd9\u4efd\u6765]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_legacy_exact_approval_remains_server_bound[\u5c31\u8fd9\u6837\u5b89\u6392]" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_review_includes_deleted_activity_and_uses_the_bound_before_values" time="0.001" /><testcase classname="tests.test_stage4_revision_binding" name="test_review_uses_accept_retention_rule_for_omitted_fixed_and_execution_items" time="0.001" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_composite_read_keeps_residual_day_and_scopes_meal_to_its_own_clause" time="0.524" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_third_day_read_is_not_truncated_to_first_ten" time="0.531" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_selected_same_name_identity_survives_detached_snapshot" time="0.549" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_duplicate_name_without_selection_requires_disambiguation" time="0.560" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_requested_day_prioritized_before_limit_and_coverage_honest" time="1.294" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_outside_day_and_selected_conflict_do_not_fall_back_to_whole_trip" time="1.013" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_selected_context_cannot_cross_trip" time="1.178" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_semantic_saved_scalar_uses_same_snapshot_and_never_calls_answer_model" time="3.120" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_original_rationale_purpose_reaches_existing_reader_without_inventing_reason" time="0.879" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_compound_fallback_preserves_saved_day_scalar_question" time="0.002" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_saved_state_task_does_not_require_unused_model_search_paraphrase" time="0.003" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_calendar_date_and_day_selection_are_same_saved_scope" time="0.600" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_independent_compound_saved_read_survives_route_failure" time="0.528" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_real_pg_interleaved_commit_cannot_mix_snapshot_rows[status_without_trip_version]" time="0.637" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_real_pg_interleaved_commit_cannot_mix_snapshot_rows[trip]" time="0.603" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_real_pg_interleaved_commit_cannot_mix_snapshot_rows[preferences]" time="0.563" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_original_reason_and_notes_reject_detached_stale_version[\u4e3a\u4ec0\u4e48\u628a\u9009\u4e2d\u7684\u8fd9\u4e2a\u9986\u6392\u8fd9\u91cc\uff1f]" time="0.518" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_original_reason_and_notes_reject_detached_stale_version[\u4e3a\u4ec0\u4e48\u8fd9\u6837\u5b89\u6392\u884c\u7a0b\uff1f]" time="0.689" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_detached_preferences_do_not_mix_later_commits" time="0.996" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_legacy_reader_captures_before_projecting_trip_and_preferences" time="0.567" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_fixture_safety_accepts_standard_isolated_runner_database" time="0.002" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_read_unit_is_readonly_and_closes_on_failure_without_flushing_caller[False]" time="0.386" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_read_unit_is_readonly_and_closes_on_failure_without_flushing_caller[True]" time="0.437" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_real_pg_saturated_business_pool_does_not_starve_saved_reads" time="0.600" /><testcase classname="tests.test_b3_saved_trip_reads" name="test_read_channel_admission_is_bounded_and_cancel_does_not_lose_permits" time="0.883" /></testsuite></testsuites>

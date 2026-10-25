@@ -1,0 +1,140 @@
+E:\Study\RoamSync-stage5-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.WindowsSelectorEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+E:\Study\RoamSync-stage5-evidence-20261025\run_tests.py:8: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+.FF................................................                      [100%]
+================================== FAILURES ===================================
+______ test_revision_receipt_distinguishes_capture_from_delivery[False] _______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002489F88C9D0>
+delivered = False
+
+    @pytest.mark.parametrize('delivered',[False,True])
+    def test_revision_receipt_distinguishes_capture_from_delivery(monkeypatch,delivered):
+        from app.assistant_capabilities import CapabilityDecision, _answer_leaf
+        from app.assistant_context import ContextEnvelope
+        from app.companion_contracts import CompanionResult
+        from app.config import Settings
+        snapshot=SimpleNamespace(displayed_revision={'id':str(uuid4()),'presentation_hash':'a'*64,'trip_version':2})
+        async def load(_reader,context,need):
+            return context.model_copy(update={'displayed_revision':snapshot.displayed_revision})
+        monkeypatch.setattr(CompanionContextReader,'load',load)
+        class Runtime:
+            def __init__(self,reader,**kwargs):self.reader=reader
+            async def run(self,**kwargs):
+                if delivered:
+                    await self.reader.load(CompanionContext(current_message=kwargs['message'],travel_goal=kwargs['goal']),InformationNeed())
+                return CompanionResult(response_text='本轮仅讨论，不采用。',goal_type='travel_chat')
+        monkeypatch.setattr('app.companion_runtime.CompanionRuntime',Runtime)
+        class DB:
+            async def commit(self):pass
+        goal=TravelGoalRouting(goal_type='travel_chat',target_runtime='companion',mutation_requested=False,
+            knowledge_required=False,trip_context_required=False,live_fact_likely_required=False,confidence=.9)
+>       bundle,_=asyncio.run(_answer_leaf(Settings(_env_file=None),CapabilityDecision(intent='direct',reason_code='stable_knowledge'),
+            '先讨论，不采用',[],ContextEnvelope(),None,DB(),uuid4(),uuid4(),uuid4(),goal,read_snapshot=snapshot,referents=[]))
+
+tests\test_stage5_saved_context.py:73: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+app\assistant_capabilities.py:999: in _answer_leaf
+    bundle, status = await _answer_leaf_impl(settings, decision, message, history, envelope, port, db, trip_id, session_id,
+app\assistant_capabilities.py:1137: in _answer_leaf_impl
+    result = await bounded_call(lambda: runtime.run(session_id=str(session_id), turn_id=str(message_id), message=runtime_message,
+app\assistant_reliability.py:119: in bounded_call
+    result = await operation()
+             ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_stage5_saved_context.test_revision_receipt_distinguishes_capture_from_delivery.<locals>.Runtime object at 0x00000248A4AD1A90>
+kwargs = {'assistant_context': {'action_target': None, 'browsing_city': None, 'conversation_memory': {}, 'discovery_context': N...referenced_previous_decision=False, clarification_needed=False, signals=[]), 'message': '先讨论，不采用', 'messages': [], ...}
+
+    async def run(self,**kwargs):
+        if delivered:
+            await self.reader.load(CompanionContext(current_message=kwargs['message'],travel_goal=kwargs['goal']),InformationNeed())
+>       return CompanionResult(response_text='本轮仅讨论，不采用。',goal_type='travel_chat')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for CompanionResult
+E       information_need
+E         Field required [type=missing, input_value={'response_text': '本轮...al_type': 'travel_chat'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+tests\test_stage5_saved_context.py:67: ValidationError
+------------------------------ Captured log call ------------------------------
+WARNING  app.assistant_reliability:assistant_reliability.py:107 assistant_failure {"correlation_id": null, "stage": "companion", "code": "schema_failure", "category": "schema_failure", "exception_chain": ["ValidationError"], "http_status": null, "finish_reason": null, "validation": [{"field": "information_need", "type": "missing"}]}
+_______ test_revision_receipt_distinguishes_capture_from_delivery[True] _______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000248A4A69130>
+delivered = True
+
+    @pytest.mark.parametrize('delivered',[False,True])
+    def test_revision_receipt_distinguishes_capture_from_delivery(monkeypatch,delivered):
+        from app.assistant_capabilities import CapabilityDecision, _answer_leaf
+        from app.assistant_context import ContextEnvelope
+        from app.companion_contracts import CompanionResult
+        from app.config import Settings
+        snapshot=SimpleNamespace(displayed_revision={'id':str(uuid4()),'presentation_hash':'a'*64,'trip_version':2})
+        async def load(_reader,context,need):
+            return context.model_copy(update={'displayed_revision':snapshot.displayed_revision})
+        monkeypatch.setattr(CompanionContextReader,'load',load)
+        class Runtime:
+            def __init__(self,reader,**kwargs):self.reader=reader
+            async def run(self,**kwargs):
+                if delivered:
+                    await self.reader.load(CompanionContext(current_message=kwargs['message'],travel_goal=kwargs['goal']),InformationNeed())
+                return CompanionResult(response_text='本轮仅讨论，不采用。',goal_type='travel_chat')
+        monkeypatch.setattr('app.companion_runtime.CompanionRuntime',Runtime)
+        class DB:
+            async def commit(self):pass
+        goal=TravelGoalRouting(goal_type='travel_chat',target_runtime='companion',mutation_requested=False,
+            knowledge_required=False,trip_context_required=False,live_fact_likely_required=False,confidence=.9)
+>       bundle,_=asyncio.run(_answer_leaf(Settings(_env_file=None),CapabilityDecision(intent='direct',reason_code='stable_knowledge'),
+            '先讨论，不采用',[],ContextEnvelope(),None,DB(),uuid4(),uuid4(),uuid4(),goal,read_snapshot=snapshot,referents=[]))
+
+tests\test_stage5_saved_context.py:73: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+app\assistant_capabilities.py:999: in _answer_leaf
+    bundle, status = await _answer_leaf_impl(settings, decision, message, history, envelope, port, db, trip_id, session_id,
+app\assistant_capabilities.py:1137: in _answer_leaf_impl
+    result = await bounded_call(lambda: runtime.run(session_id=str(session_id), turn_id=str(message_id), message=runtime_message,
+app\assistant_reliability.py:119: in bounded_call
+    result = await operation()
+             ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_stage5_saved_context.test_revision_receipt_distinguishes_capture_from_delivery.<locals>.Runtime object at 0x00000248A4AD2CF0>
+kwargs = {'assistant_context': {'action_target': None, 'browsing_city': None, 'conversation_memory': {}, 'discovery_context': N...referenced_previous_decision=False, clarification_needed=False, signals=[]), 'message': '先讨论，不采用', 'messages': [], ...}
+
+    async def run(self,**kwargs):
+        if delivered:
+            await self.reader.load(CompanionContext(current_message=kwargs['message'],travel_goal=kwargs['goal']),InformationNeed())
+>       return CompanionResult(response_text='本轮仅讨论，不采用。',goal_type='travel_chat')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for CompanionResult
+E       information_need
+E         Field required [type=missing, input_value={'response_text': '本轮...al_type': 'travel_chat'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+tests\test_stage5_saved_context.py:67: ValidationError
+------------------------------ Captured log call ------------------------------
+WARNING  app.assistant_reliability:assistant_reliability.py:107 assistant_failure {"correlation_id": null, "stage": "companion", "code": "schema_failure", "category": "schema_failure", "exception_chain": ["ValidationError"], "http_status": null, "finish_reason": null, "validation": [{"field": "information_need", "type": "missing"}]}
+- generated xml file: E:\Study\RoamSync-stage5-evidence-20261025\context-after4.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_stage5_saved_context.py::test_revision_receipt_distinguishes_capture_from_delivery[False]
+FAILED tests/test_stage5_saved_context.py::test_revision_receipt_distinguishes_capture_from_delivery[True]

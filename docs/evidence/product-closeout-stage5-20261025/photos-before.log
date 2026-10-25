@@ -1,0 +1,55 @@
+
+> roamsync-web@0.1.0 test
+> vitest run --run src/journeys/HandbookPhotoLoading.test.tsx
+
+
+ RUN  v3.2.7 E:/Study/RoamSync-product-closeout-stage2-20261024/web
+
+ ❯ src/journeys/HandbookPhotoLoading.test.tsx (3 tests | 1 failed) 1104ms
+   × loads a sourced reference photo for a confirmed saved place outside the reviewed catalog 1072ms
+     → Unable to find role="img"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+[36m</body>[39m
+   ✓ does not show photos returned for a different provider identity 12ms
+   ✓ never resolves a photo by an unbound activity title 15ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/journeys/HandbookPhotoLoading.test.tsx > loads a sourced reference photo for a confirmed saved place outside the reviewed catalog
+TestingLibraryElementError: Unable to find role="img"
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+ ❯ waitForWrapper ../../RoamSync/web/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../RoamSync/web/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/journeys/HandbookPhotoLoading.test.tsx:15:26
+     13|   vi.stubGlobal('fetch',fetcher);
+     14|   render(<HandbookPhoto city="苏州" name="自定义的园林漫步" placeRef={ref} coord…
+     15|   const img=await screen.findByRole('img',{hidden:true});
+       |                          ^
+     16|   fireEvent.load(img);
+     17|   expect(img).toBeVisible();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  17:23:43
+   Duration  6.29s (transform 260ms, setup 1.48s, collect 648ms, tests 1.10s, environment 1.79s, prepare 345ms)
+

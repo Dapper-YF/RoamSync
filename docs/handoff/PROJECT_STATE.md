@@ -2,6 +2,33 @@
 
 Last updated: 2026-10-25
 
+## Stage5 ongoing repairs and saved-place photographs (2026-10-25)
+
+VERIFIED isolated branch codex/product-closeout-stage5-20261025 continues from
+6318c2d. Product eeff461 transports only the exact validated displayed Revision
+to ordinary consultation independently of itinerary labels, distinguishing
+snapshot capture from actual answer-context delivery. Targeted PG51 pass and
+real historical-object answer regressions succeed; one uses the original direct
+selector recording plus a live answer provider and is explicitly not all-live.
+
+User's no-photo saved itinerary screenshot exposed catalog-only rendering.
+Handbook now keeps reviewed photos first and optionally retrieves reference
+photos for exact canonical/AMap identity via live detail + Tavily; source and
+reference semantics are visible, never upgraded to verified scene/licence/facts.
+No model call, formal write, new table or media download proxy. Real isolated
+browser Suzhou two-place images and refresh verified on an exact historical
+11-table clone, all11 tables unchanged. Scoped backend107 pass, Web273 pass with
+maxWorkers2, type/build pass; default parallel run had one retained navigation
+timeout, not erased by its isolated/reduced-concurrency pass. Astra reviewed the
+photo contract and its three fixes; not an independent product score.
+
+Overall NO-GO and stage4 unique4/20, complete0/5 remain. No fresh gold generation
+or new sealed measurement in stage5. Saved ordinal/delta edits, multi-goal reads,
+date/source handoff and full natural chain remain to finish. Official HEADea3ba83
+and six tracked local edits remain; no official DB/deployment/Obsidian change.
+Details: docs/PRODUCT_CLOSEOUT_STAGE5_20261025.md, evidence external
+E:/Study/RoamSync-stage5-evidence-20261025 and its checked-in evidence copy.
+
 ## Stage4 frozen acceptance — measured NO-GO (2026-10-25)
 
 User requested continuing the unfinished closeout. Reused the isolated tree on

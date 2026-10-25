@@ -2,30 +2,32 @@
 
 ## Snapshot
 
-FROZEN NO-GO 2026-10-25。产品收尾目标未完成。隔离树E:/Study/RoamSync-product-closeout-stage2-20261024，分支codex/product-closeout-stage4-20261025；受测产品736e3b7bd906bd11c1d7cb9384ba8d9582bb596d，app SHA256=f5f37b0c0f5bc8133d36ec76188517f9429ae8281d35e7eb60960bb592a173ff。证据提交只含报告/证据，不改变冻结产品。
+NO-GO，2026-10-25。隔离树E:/Study/RoamSync-product-closeout-stage2-20261024，当前分支codex/product-closeout-stage5-20261025。受测产品42b3398（已保存日程通用照片），此前eeff461（普通聊天读取已校验展示候选）。正式HEAD仍ea3ba83，原六项tracked修改保留；未改正式库、未部署、未写Obsidian。
 
 ## Current Freeze / Rehearsal Status
 
-MEASURED 新封存5组20轮唯一执行completed_once、reruns0；Astra Medium按原rubric严格4/20，完整0/5，各组1/4、2/4、1/4、0/4、0/4。本20轮关键无证据保证0、未经授权正式写入0，全部正式态不变；不等于产品可用。题目、rubric、fixture和source前后hash核实一致。使用后题目全部转回归，不能再次声称未见题或补采样刷新成绩。
+第五阶段进行中，无新冻结独立评分。第四阶段唯一封存20轮仍4/20、完整0/5；题目均为回归，不能重新采样刷新独立成绩。
 
-MEASURED 冻结full-final-v6后端2019+专库38、Web268/typecheck/build通过，source/tests稳定。full-final-v5虽测试执行通过但中途新增测试，source_unchanged=false，不能作冻结通过，失败记录保留。真实生成Revision精确克隆五实验rollback/duplicate/stale/fixed/concurrent全通过；真实SQL锁屏障、flush后注入回滚、全映射状态核对，见real-object-safety-final.json。
+VERIFIED eeff461：Reader把快照中exact trip/run/hash/version/status已校验的displayed_revision交给普通聊天，清理来路伪造上下文，不猜latest pending；区分捕获与实际交付，读取不构成采用。针对性PG51通过。历史真实pending60精确11表克隆后，真实选择器pending_changes回答75→60正确；原失败direct选择器记录+实时回答也正确，但不能称全部选择器全新实时。初两次回放代理配置错误保留。
 
-成都公开after12实际走通生成→75预览→采用→回读→60 Revision→差异→采用→回读，非独立成绩。用户指出成都化后新增苏州浏览器：真实两园身份、比较、照片、指代、588米/8分钟路线；候选120/90分钟及午餐12–13，局部75预览后明确采用。再次修改60生成pending，正式版2仍75；刷新恢复相同Revision/差异卡，但聊天询问却说无候选，故全自然黄金FAIL。环境中断恢复原库后从Trip页明确按钮采用60并刷新，Trip2→2→3，仅目标duration及version/time改变、午餐/其他活动/偏好保留；不能拼装为整链通过。
+用户最新指出已保存行程截图没照片。根因为HandbookPhoto只读11地点/4城市审核图库，苏州缺图。42b3398保持图库优先，新增exact canonical+高德ID只读照片查询，实时高德详情确定名称/城市后查Tavily。原图title+description完整地点名及城市同时命中，再做安全URL投影，禁用门店通用菜品误配。搜索照片单独标search_reference，有来源，不升级为逐图现场/许可核验或Planner证据。不调用模型，不写数据库，不做代理下载。
 
-苏州搜索参考照片实际显示，非生成图片或预置候选；图库仅11地点/4城市，搜索图片未逐图核实现场身份/许可/时效。今日开放仅返回冲突资料，仍不完整。早期TLS失败、无关街景、日期交接与序号失败全部保留。
+MEASURED 空白审核图库的前置组件回归1失败/2通过；后端定向107通过，Web maxWorkers2全量273/49文件通过，build含类型检查通过。默认并行全量272通过/1导航5000ms超时，原失败保留；该导航与照片单独7通过。没有改断言或扩展超时，不宣称新完整冻结后端验收。
+
+真实浏览器：全新独立库roamsync_a2_public_stage5_photos_20261025_test、15435，API18105/Web3105。精确复制第四阶段实际保存苏州60分钟对象11表，仅做照片回归；两园照片实际显示、来源展开、刷新恢复。正式10表和会话在内11表均不变。这不是新候选生成或完整黄金路径。早期provider1两地无图、provider2狮子林unavailable、测试标记配置错误均保留。
 
 ## Prior milestone baseline (before shadow split)
 
-VERIFIED 正式HEAD仍ea3ba833e6a77122c08c1c9327c18a346e3c48ef，原六项tracked修改保留。本轮未改正式源、正式库、部署或Obsidian。de72864、71e07c2、d5ad211、c2be562、758477f、ef3aeb0、ed3797e均为冻结产品祖先，git-relationships-final.json已核实；历史授权不等于正式合入/部署授权。
+第四阶段冻结产品736e3b7，证据6318c2d，独立Astra4/20、完整0/5；工程2019+38/Web268通过。真实生成Revision的rollback/duplicate/stale/fixed/concurrent五检查通过。成都公开链成功；苏州浏览器刷新后问差异时回答看不到候选，整链失败，后用明确UI按钮采用恢复不能替代自然链通过。
 
 ## Prior verification
 
-历史8/20、2/20与第三阶段3/20各自保留；第三阶段完整0/5。第四阶段产品提交依次cd56320、3b29d50、8c13963、a468711、99a35d0、85851dd、736e3b7，全部变更文件见batch-commits.json。复用Planner/Revision/Validator/Accept，无新增正式写入口或业务表。各批基线失败、定向测试、真实全文与Astra反例报告保留。
+阶段5报告docs/PRODUCT_CLOSEOUT_STAGE5_20261025.md；原始输出、失败、工具与状态见docs/evidence/product-closeout-stage5-20261025及外部E:/Study/RoamSync-stage5-evidence-20261025。Astra对两批均作限定契约复核，未作新的独立GO测量。照片预览http://127.0.0.1:3105/为独立服务，PID记录在runtime-photos/pids.json；不是正式部署。若进程中断，检查监听及命令再恢复，不重置测试库或覆盖证据。
 
 ## Prior blockers (historical)
 
-仍需修复：比较后的任务内指代被局部来源范围拒绝；DD/MM/YYYY条件语法不支持；实际候选source_ref/非连续原句不一致导致新城市生成入口失败；保存首项读取漏同日其他项目；按保存位置“首项+15分钟”尚不能安全形成Revision；刷新后聊天未稳定读取已展示候选；预算105/15等多子目标算术与余量推理错误。不要恢复聊天直写或再靠专用景点话术。公开成都/苏州成功不足以证明泛化。
+仍需保存位置引用与逐操作delta安全绑定（第一天第一项增加15分钟）、完整多目标保存态回答、比较后的任务引用、DD/MM/YYYY及跨城市来源交接、预算多子目标算术与余量推理。位置解析不得冒充UI selected_activity_id；多操作不能扁平化后套同一增量。继续复用Planner/Revision/Validator/Accept。照片可能缺失/超时/来源图失效，搜索相关性不保证逐图场景身份。
 
 ## Interview framing
 
-用户现在仍不能可靠完成完整自然旅行任务，最终NO-GO。报告docs/PRODUCT_CLOSEOUT_STAGE4_20261025.md；证据包docs/evidence/product-closeout-stage4-20261025，外部原件E:/Study/RoamSync-stage4-evidence-20261025。sealed-final.json/grade、DEVELOPMENT_FULL_OUTPUTS.md、BROWSER_FULL_CHAIN.md、test-results-index.json、verification.json和manifest提供全文/状态/来源。下一轮应按共同引用、标量日期、子目标完成与保存引用交接修复；另行封存新题，不复刷本成绩。
+用户目前可在隔离版保存日程看到真实来源的地点参考照片；整体自然咨询、选择、安排、修改和采用仍未达到可靠收尾门槛，继续NO-GO。不得凭本批照片或工程通过声称完整产品完成。下一批继续共同引用及保存增量修改，再冻结新版本做完整浏览器链和新独立题一次测量。

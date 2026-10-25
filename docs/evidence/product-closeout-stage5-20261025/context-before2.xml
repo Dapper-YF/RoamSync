@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="6.050" timestamp="2026-10-25T17:03:19.371264+08:00" hostname="LAPTOP-STSGT0SJ"><testcase classname="tests.test_stage5_saved_context" name="test_general_consultation_sees_only_the_exact_valid_displayed_revision" time="0.954"><failure message="TypeError: 'NoneType' object is not subscriptable">sample = namespace(trip_id=UUID('2db8a94f-8e58-4bd5-8fba-744dffac250d'), days=[&lt;app.database.DayPlan object at 0x000001B8FEBE6E...bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x000001B8FE9EFA10&gt;, autoflush=True, expire_on_commit=False))
+
+    def test_general_consultation_sees_only_the_exact_valid_displayed_revision(sample):
+        async def run():
+            from app.planning_context import build_planning_context
+            rid=await pending_revision(sample)
+            async with sample.sessions() as db:
+                revision=await db.get(PlanRevision,rid)
+                revision.before_snapshot=(await build_planning_context(db,sample.trip_id)).model_dump(mode='json')
+                proposal=dict(revision.proposed_snapshot)
+                proposal['activities']=[dict(item) for item in proposal['activities']]
+                proposal['activities'][0]['duration_minutes']=20
+                revision.proposed_snapshot=proposal
+                await db.commit()
+                ref={'id':rid,'run_id':revision.planning_run_id,'hash':revision_presentation_hash(revision)}
+                before=await current(sample)
+                question='当前修改候选具体改了哪项、原来多久、建议多久？先不采用。'
+                context=CompanionContext(current_message=question,travel_goal=TravelGoalRouting(
+                    goal_type='travel_chat',target_runtime='companion',mutation_requested=False,
+                    knowledge_required=False,trip_context_required=False,live_fact_likely_required=False,confidence=.9))
+                need=InformationNeed(general_knowledge_allowed=True)
+                snapshot=await load_saved_trip_read(db,sample.trip_id,question,revision_ref=ref)
+                value=await CompanionContextReader(db,sample.trip_id,read_snapshot=snapshot).load(context,need)
+                assert value.displayed_revision['id']==str(rid)
+                assert value.displayed_revision['presentation_hash']==ref['hash']
+                changes=value.displayed_revision['review']['changes']
+                assert changes[0]['before']['duration_minutes']==30 and changes[0]['after']['duration_minutes']==20
+                assert not value.formal_itinerary_summary  # no unrelated whole itinerary
+                value.displayed_revision['review']['changes'].clear()
+                assert snapshot.displayed_revision['review']['changes']  # detached projection
+                for invalid in [None,{**ref,'hash':'0'*64}]:
+                    snapshot=await load_saved_trip_read(db,sample.trip_id,question,revision_ref=invalid)
+                    result=await CompanionContextReader(db,sample.trip_id,read_snapshot=snapshot).load(context,need)
+                    assert result.displayed_revision is None
+                assert await current(sample)==before
+&gt;       asyncio.run(run())
+
+tests\test_stage5_saved_context.py:46: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        from app.planning_context import build_planning_context
+        rid=await pending_revision(sample)
+        async with sample.sessions() as db:
+            revision=await db.get(PlanRevision,rid)
+            revision.before_snapshot=(await build_planning_context(db,sample.trip_id)).model_dump(mode='json')
+            proposal=dict(revision.proposed_snapshot)
+            proposal['activities']=[dict(item) for item in proposal['activities']]
+            proposal['activities'][0]['duration_minutes']=20
+            revision.proposed_snapshot=proposal
+            await db.commit()
+            ref={'id':rid,'run_id':revision.planning_run_id,'hash':revision_presentation_hash(revision)}
+            before=await current(sample)
+            question='当前修改候选具体改了哪项、原来多久、建议多久？先不采用。'
+            context=CompanionContext(current_message=question,travel_goal=TravelGoalRouting(
+                goal_type='travel_chat',target_runtime='companion',mutation_requested=False,
+                knowledge_required=False,trip_context_required=False,live_fact_likely_required=False,confidence=.9))
+            need=InformationNeed(general_knowledge_allowed=True)
+            snapshot=await load_saved_trip_read(db,sample.trip_id,question,revision_ref=ref)
+            value=await CompanionContextReader(db,sample.trip_id,read_snapshot=snapshot).load(context,need)
+&gt;           assert value.displayed_revision['id']==str(rid)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           TypeError: 'NoneType' object is not subscriptable
+
+tests\test_stage5_saved_context.py:34: TypeError</failure></testcase></testsuite></testsuites>
