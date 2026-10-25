@@ -290,8 +290,8 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                     envelope, _, _ = apply_memory(envelope, history, message, message_id,
                         [MemoryUpdate(field="city", value=destination, source_quote=destination)])
                     bundle["context"] = envelope.model_dump(mode="json")
-                if status != "failed" and decision.illustrate:
-                    from app.assistant_images import enrich_images
+                from app.assistant_images import enrich_images, image_requested
+                if status != "failed" and (decision.illustrate or image_requested(message)):
                     await enrich_images(settings, bundle, message, envelope)
         except Exception as exc:
             diagnostics.failure("turn", exc)

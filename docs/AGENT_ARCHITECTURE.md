@@ -1376,3 +1376,13 @@ Legacy responses remain readable with complete=false; the original writer and
 validator retain their locks/version checks. No schema migration or new endpoint.
 Evidence: stage4 contract17 baseline54/6 failures, contract19 76 passing;
 Astra Medium boundary review. These are development checks, not product GO.
+
+Explicit photo requests are independent optional reads, including in compound
+queries and messages forbidding planning/save. Their subjects remain bounded
+by the displayed answer and server cards; specific image denials and selected
+subjects narrow scope. Generation/storage limits do not cancel viewing.
+Reviewed local photographs retain exact provider identity/license checks;
+live search images remain topic reference illustrations, not verified scene
+identity, current conditions or evidence of any travel requirement. Missing
+images cannot change text success or formal state. Workflow-only clauses use
+the shared complete-clause guard rather than becoming travel requirements.
