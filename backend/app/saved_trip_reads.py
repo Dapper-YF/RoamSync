@@ -13,6 +13,7 @@ from sqlalchemy.pool import NullPool
 
 from app.database import Activity, DayPlan, PlaceCandidate, Trip, TripArrangementItem, SavedIntention, TripPreferences, PlanRevision, PlanningRun
 from app.travel_language import chinese_number
+from app.saved_references import ACTIVITY_ORDINAL, activity_reference, resolve_activity_position
 
 READ_LIMIT = 100
 READ_CONNECTION_LIMIT = 2
@@ -85,7 +86,8 @@ class SavedTripReadSnapshot:
         kind, ambiguous = 'trip', False
         scope_issue = None
         all_days = bool(re.search(r'全程|整趟|所有天|全部天', message))
-        ordinal = re.search(r'第([一二三四五六七八九十两\d]+)(?:项|站|个(?:活动|景点))', message)
+        ordinal = activity_reference(message)
+        ordinal_ambiguous = len(list(ACTIVITY_ORDINAL.finditer(message))) > 1
         selected = bool(re.search(r'选中|这个(?:活动|馆|展馆|景点)|这(?:个|一)项|该(?:活动|馆)|它|\bselected\b', message))
         if explicit:
             kind = 'day'
@@ -100,14 +102,15 @@ class SavedTripReadSnapshot:
             rows = [r for r in rows if r['date'] in dates]
             items = [r for r in items if r['day_date'] in dates]
             total = sum(self.counts_by_date.get(d, 0) for d in dates)
-        if ordinal and len({r['date'] for r in rows}) <= 1 and (explicit or self.selected_day_id):
-            ordered = sorted(rows, key=lambda r: (r.get('position', 0), r['time'], r['activity_id']))
-            index = chinese_number(ordinal[1]) - 1
-            day_total = total
-            rows = ordered[index:index+1] if index >= 0 else []
+        if ordinal_ambiguous:
+            rows, items, ambiguous, scope_issue = [], [], True, 'multiple_activity_ordinals'
+            total = 0
+        elif ordinal and len({r['date'] for r in rows}) <= 1 and (explicit or self.selected_day_id):
+            rows, scope_issue = resolve_activity_position(rows, items, ordinal, total)
+            if not ordinal.explicit_activity and self.item_count > len(self.items):
+                rows, scope_issue = [], 'mixed_agenda_coverage_incomplete'
             kind = 'activity'
-            ambiguous = not rows or day_total != len(ordered)
-            scope_issue = 'activity_order_incomplete' if ambiguous else None
+            ambiguous = scope_issue is not None
             total = 1 if rows else 0
             items = []
         elif selected and not all_days and (not explicit or self.selected_activity_id or
@@ -294,41 +297,56 @@ def render_displayed_revision(snapshot):
 
 
 def render_saved_request(snapshot, message):
-    """Project independent saved-value goals from one immutable read snapshot."""
-    count = bool(re.search(r'几天|多少天|总天数|一共.*天|共.*天', message))
-    first = list(re.finditer(r'第[一二三四五六七八九十两\d]+天第[一二三四五六七八九十两\d]+(?:项|站|个活动)', message))
-    last = '最后一天' in message
-    meals = [word for word in ('早餐', '午餐', '晚餐') if word in message]
-    if sum((count, len(first), last, message.count('餐'))) < 2:
-        return render_saved_read(snapshot.project(message), message)
-    parts = []
+    """Independent saved-value goals, all against the same immutable snapshot."""
+    clauses = [part.strip() for part in re.split(r'[，,。；;、]|以及|和|及', message) if part.strip()]
+    parts, seen_activities, seen_items = [], set(), set()
+    from app.read_references import read_clause_denied
+    count = any(not read_clause_denied(clause) and re.search(r'几天|多少天|总天数|一共.*天|共.*天', clause) for clause in clauses)
     if count:
         parts.append(f'这份已保存行程共{len(snapshot.days)}天。')
-    for match in first:
-        parts.append(render_saved_read(snapshot.project(match[0]), match[0]))
-    if meals:
-        matching = []
-        for meal in meals:
-            clauses = [p for p in re.split(r'[，,。；;、]|和|及', message) if meal in p]
-            for clause in clauses:
-                dates, explicit = requested_dates(clause[:clause.index(meal)+len(meal)], snapshot.days)
-                matching.extend(r for r in snapshot.items if meal in r['label'] and (not explicit or r['day_date'] in dates)
-                    and r not in matching)
-        parts.extend(f"{r['day_date'] or '日期未定'} {r['start'] or '时间未定'}—{r['end'] or '时间未定'} · {r['label']}。" for r in matching)
-        if not matching:
-            parts.append('本次读取范围没有对应餐饮窗口记录。' if snapshot.item_count <= len(snapshot.items)
-                else '餐饮窗口读取范围不完整，不能确定是否另有记录。')
-    if last:
-        parts.append(render_saved_read(snapshot.project('最后一天'), '最后一天'))
-    residual = message
-    for match in first:
-        residual = residual.replace(match[0], '')
-    for meal in meals:
-        residual = re.sub(r'第[一二三四五六七八九十两\d]+天[^，,。；;、]*' + meal, '', residual)
-    remaining_dates, _ = requested_dates(residual.replace('最后一天', ''), snapshot.days)
-    for day in sorted(remaining_dates):
-        parts.append(render_saved_read(snapshot.project(day), day))
-    return '\n\n'.join(parts)
+    day_scope, denied_read = '', False
+    for clause in clauses:
+        if read_clause_denied(clause):
+            denied_read = True
+            continue
+        dates, explicit = requested_dates(clause, snapshot.days)
+        if explicit:
+            day_scope = ' '.join(sorted(dates)) if dates else clause
+        ordinal = activity_reference(clause)
+        intervals = bool(re.search(r'留白|空闲|空档|空白', clause))
+        meals = [word for word in ('早餐', '午餐', '晚餐') if word in clause]
+        activities = bool(ordinal or re.search(r'活动|景点|第.+(?:项|站)|安排|其他', clause)
+            or ('最后一天' in clause and not intervals and not meals))
+        if not (explicit or ordinal or intervals or meals or activities):
+            continue
+        whole_trip = bool(re.search(r'全程|整趟|所有天|全部天', clause))
+        if whole_trip:
+            day_scope = ''
+        query = clause if explicit or whole_trip else (day_scope + ' ' + clause).strip()
+        projection = snapshot.project(query)
+        if projection['coverage']['ambiguous']:
+            parts.append(render_saved_read(projection, query))
+            continue
+        rows = projection['activities'] if activities or (explicit and not intervals and not meals) else []
+        items = projection['arrangement_items']
+        if intervals or meals:
+            items = [item for item in items if
+                (intervals and item['kind'] == 'free_window') or
+                any(meal in item['label'] for meal in meals)]
+        elif ordinal or (activities and '安排' not in clause):
+            items = []
+        had_items = bool(items)
+        rows = [row for row in rows if row['activity_id'] not in seen_activities]
+        items = [item for item in items if item['id'] not in seen_items]
+        seen_activities.update(row['activity_id'] for row in rows)
+        seen_items.update(item['id'] for item in items)
+        if rows or items or not projection['coverage']['complete'] or not projection['coverage']['arrangement_items_complete']:
+            parts.append(render_saved_read({**projection, 'activities': rows, 'arrangement_items': items}))
+        elif (intervals or meals) and not items and not had_items:
+            parts.append('该读取范围内没有保存的对应餐饮或留白记录。')
+    if not parts and denied_read:
+        return '本次没有执行被否定的安排读取，已保存安排没有修改。'
+    return '\n\n'.join(parts) if parts else render_saved_read(snapshot.project(message), message)
 
 
 def render_saved_read(projection, message=''):

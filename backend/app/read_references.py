@@ -67,6 +67,7 @@ def explanation_requested(text):
 def place_catalog(history, envelope):
     city = (envelope.browsing_city or '').removesuffix('市')
     active = []
+    focus = None
     for turn in history:
         source = turn.get('user', '')
         cards = turn.get('place_cards') or []
@@ -132,7 +133,64 @@ def place_catalog(history, envelope):
                 active = [upgrades.get(i,p) for i,p in enumerate(active)]
             elif not active or new_order or not ids <= {key(p) for p in active}:
                 active = ordered
-    return active
+                focus = None
+        # Conversational attention is separate from the comparison's order.
+        # Retain it only when this user turn identifies one member, never by
+        # the order of independent tools or by mutating persisted cards.
+        scoped = [{**p, '_reference_focus': _reference_key(p) == focus} for p in active]
+        for clause in re.split(r'[，,。；;!?！？\n]', source):
+            if read_clause_denied(clause):
+                continue
+            scoped = [{**p, '_reference_focus': _reference_key(p) == focus} for p in active]
+            resolved = resolve_read_text(clause, scoped)
+            targets = [p for p in active if any(n and n in resolved for n in [p['name'], *p.get('aliases', [])])
+                and argument_in_read_scope(p['name'], clause, scoped, capabilities=['poi'])]
+            unresolved = any(resolve_read_text(m[0], scoped) == m[0] for m in REFERENCE.finditer(clause))
+            if len(targets) == 1 and not unresolved:
+                focus = _reference_key(targets[0])
+            elif len(targets) > 1 or unresolved:
+                focus = None
+    return [{**p, '_reference_focus': _reference_key(p) == focus} for p in active]
+
+
+def _reference_key(place):
+    return str(place['place_id']) if place.get('place_id') else 'raw:' + place['name']
+
+
+def read_clause_denied(clause):
+    return bool(re.match(r'\s*(?:请)?(?:先)?(?:不看|不读|不要(?:查看|读取|列出|看|读)|不用(?:查看|读取|看|读)|别(?:看|读))', clause))
+
+
+def bind_read_task_reference(task, places):
+    """Interpret only a source-bound read, never a planning/adoption operation.
+
+    A model's paraphrased name cannot override the server's unique deictic
+    binding. Literal names retain precedence; unresolved references stay gaps.
+    """
+    source = task.source_quote
+    changes = {}
+    matches = list(REFERENCE.finditer(source))
+    # This recovery is limited to the existing opening-hours property. Require
+    # a complete single-subject read expression: unknown words may be another
+    # place or relation and must not disappear behind a known pronoun.
+    remainder = REFERENCE.sub('', source)
+    atoms = ('什么时候', '开放时间', '营业时间', '有依据', '有没有', '是否', '能否',
+        '今天', '明天', '当天', '现在', '开放', '营业', '闭馆', '开门', '关门',
+        '时间', '几点', '查询', '帮我', '看看', '请', '再', '查', '看', '的', '到', '吗', '呢')
+    for atom in sorted(atoms, key=len, reverse=True):
+        remainder = remainder.replace(atom, '')
+    single_property = task.fact_kind == 'opening_hours' and len(matches) == 1 and not remainder.strip(' ?？!！。\t\n')
+    if single_property and not task.origin and not task.destination and not any(name in source for name in task.names):
+        if all(resolve_read_text(match[0], places) != match[0] for match in matches):
+            resolved = resolve_read_text(source, places)
+            targets = [p for p in places if any(name and name in resolved for name in [p['name'], *p.get('aliases', [])])]
+            if len(targets) == 1 and argument_in_read_scope(targets[0]['name'], source, places):
+                changes.update(names=[targets[0]['name']], query='')
+    if (changes.get('names') and not task.capabilities
+        and re.search(r'开放|开门|营业|闭馆|关门', source)
+        and not read_clause_denied(source)):
+        changes['capabilities'] = ['facts']
+    return task.model_copy(update=changes) if changes else task
 
 
 def resolve_read_text(text, places):
@@ -151,7 +209,8 @@ def resolve_read_text(text, places):
         elif word.startswith(('这两个', '两个')):
             return '和'.join(p['name'] for p in places) if len(places) == 2 else word
         else:
-            index = 0 if len(places) == 1 else -1
+            focused = [i for i,p in enumerate(places) if p.get('_reference_focus')]
+            index = 0 if len(places) == 1 else focused[0] if len(focused) == 1 else -1
         return places[index]['name'] if 0 <= index < len(places) else word
     return REFERENCE.sub(replace, text)
 

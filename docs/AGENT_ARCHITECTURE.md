@@ -1,5 +1,23 @@
 # RoamSync Agent v1 architecture contract
 
+## Stage6 shared read references (2026-10-25, development)
+
+Saved activity ordinals share one server-owned parser and chronological order
+with Handbook. Bare mixed-agenda references require complete item coverage;
+ambiguous ranges/order stay gaps, never silently widen to a whole-day read.
+Independent saved-value goals project the same detached MVCC snapshot. A denied
+goal does not execute through fallback; whole-trip goals clear inherited day
+scope; deduplication cannot turn a known record into an absence claim.
+
+Comparison order and conversational focus are distinct. Focus is reconstructed
+from effective user clauses and exact known referents, updates per clause, and
+does not mutate historical cards or grant write authority. Named and deictic
+subjects participate together; ambiguity clears focus. A narrow opening-hours
+read recovery may bind one complete source expression to its unique server
+referent and restore an omitted facts capability. Unknown subjects/relations,
+route arguments and unresolved references are not rewritten. All existing
+source, negation and identity checks then run. No new writer/table/Accept path.
+
 ## Stage5 displayed-review context transport (2026-10-25; isolated regression)
 
 A server-captured SavedTripReadSnapshot may carry only the supplied displayed

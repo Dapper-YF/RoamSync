@@ -439,6 +439,8 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
             if task.source_quote not in message:
                 block(task, '这部分查询无法绑定当前问题，请说明具体要查的内容。')
                 continue
+            from app.read_references import bind_read_task_reference
+            task = bind_read_task_reference(task, referents)
             if set(task.capabilities) == {'itinerary'}:
                 # Saved-state reads use the literal task question and server
                 # Trip/selection snapshot. Redundant model search arguments
