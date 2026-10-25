@@ -4,6 +4,75 @@ from app.assistant_memory import MemoryUpdate, apply_memory
 from app.requirements import project_requirements
 
 
+def test_failed_place_preparation_does_not_lose_verified_creation_dates():
+    from datetime import date
+    from app.assistant_capabilities import CapabilityDecision
+    from app.assistant_memory import candidate_scalar_updates, literal_conditions
+    from app.assistant_operation import CreationProposal, approved_tool_decision
+    from test_candidate_commands import plan
+    text='请先生成成都11月9日的一日候选，人民公园和宽窄巷子，先看方案不要保存。'
+    quote='请先生成成都11月9日的一日候选'
+    decision=CapabilityDecision(intent='create', reason_code='explicit_write', city='成都',
+        candidate_command={'action':'generate','source_quote':quote,'plan':plan().model_dump(mode='json')})
+    env,history,_=apply_memory(ContextEnvelope(browsing_city='成都'),[],text,'original',
+        [*literal_conditions(text),MemoryUpdate(field='city',value='成都',source_quote='成都'),
+         *candidate_scalar_updates(decision,text,today=date(2026,10,25))],today=date(2026,10,25))
+    # No candidate or formal Trip exists after an ambiguous place lookup. The
+    # next request still consumes the same server-owned effective conditions.
+    follow='请按刚才全部日期、时间、午餐和步行要求重新生成候选'
+    adapter=CapabilityDecision(intent='create',reason_code='explicit_write',authorization_quote=follow,
+        creation=CreationProposal(destination='成都',start_date=date(2026,11,9),end_date=date(2026,11,9)))
+    approved=approved_tool_decision(adapter,follow,env,today=date(2026,10,25))
+    assert approved.tool=='create_trip' and approved.start_date==date(2026,11,9)
+
+
+def test_candidate_conditions_require_current_matching_affirmative_literals():
+    from datetime import date
+    from app.assistant_capabilities import CapabilityDecision
+    from app.assistant_memory import candidate_scalar_updates
+    from test_candidate_commands import plan
+    for text in ['如果生成成都11月9日一日候选会怎样', '朋友说“请生成成都11月9日一日候选”',
+        '请按刚才全部日期要求生成成都候选', '请生成成都11月10日一日候选',
+        '请生成成都候选，朋友11月9日出发']:
+        decision=CapabilityDecision(intent='create',reason_code='explicit_write',candidate_command={
+            'action':'generate','source_quote':text,'plan':plan().model_dump(mode='json')})
+        updates=candidate_scalar_updates(decision,text,today=date(2026,10,25))
+        assert not any(update.field=='start_date' for update in updates)
+    text='请生成成都11月9日一日候选'
+    decision=CapabilityDecision(intent='create',reason_code='explicit_write',candidate_command={
+        'action':'generate','source_quote':text,'plan':plan().model_dump(mode='json')},
+        memory_updates=[MemoryUpdate(field='start_date',operation='clear',source_quote='日期待定')])
+    assert not any(update.field=='start_date' for update in candidate_scalar_updates(decision,text,today=date(2026,10,25)))
+
+
+def test_candidate_projection_preserves_same_turn_literal_withdrawal():
+    from datetime import date
+    from app.assistant_capabilities import CapabilityDecision
+    from app.assistant_memory import candidate_scalar_updates, literal_conditions
+    from test_candidate_commands import plan
+    for field,withdrawal in [('start_date','日期先待定'),('duration_days','天数先待定'),
+        ('start_date','和朋友一起，日期先待定'),('duration_days','和朋友一起，天数先待定')]:
+        quote='请生成成都11月9日一日候选'
+        text=quote+'，'+withdrawal
+        decision=CapabilityDecision(intent='create',reason_code='explicit_write',candidate_command={
+            'action':'generate','source_quote':quote,'plan':plan().model_dump(mode='json')})
+        env,history,_=apply_memory(ContextEnvelope(),[],text,'current',literal_conditions(text),today=date(2026,10,25))
+        env,_,_=apply_memory(env,history,text,'current',candidate_scalar_updates(decision,text,today=date(2026,10,25)),today=date(2026,10,25))
+        assert field not in env.conversation_memory['slots'] and field in env.conversation_memory['withdrawn']
+
+
+def test_literal_withdrawal_queries_and_explanations_do_not_change_conditions():
+    from datetime import date
+    from app.assistant_memory import literal_conditions
+    original=ContextEnvelope()
+    original,_,_=apply_memory(original,[],'11月9日出发','original',[
+        MemoryUpdate(field='start_date',value='11月9日',source_quote='11月9日出发')],today=date(2026,10,25))
+    for message in ['是否取消日期？','请解释取消日期是什么意思','取消日期会怎样？','不要取消日期',
+        '和朋友一起，是否取消日期？']:
+        updated,_,_=apply_memory(original,[],message,'question',literal_conditions(message),today=date(2026,10,25))
+        assert updated.conversation_memory['slots']['start_date']['value']=='2026-11-09'
+
+
 def _active(env):
     return project_requirements(env.requirement_records, topic_id=env.topic_id, city=env.browsing_city)
 

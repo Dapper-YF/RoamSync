@@ -9,6 +9,7 @@ from uuid import UUID
 from app.travel_language import chinese_number
 
 REFERENCE = re.compile(r"第\s*([一二三四五六七八九十两\d]+)\s*(?:个|处)(?:地方|地点|景点)?|前一个|后一个|前者|后者|这两个(?:地方|地点|景点)?|两个(?:地方|地点|景点)|它们|它|那里")
+ADDRESS_LINK = r'\s*(?:[（(]|(?:的)?(?:地址|位置)?(?:在|是|位于|按|选|：|:)\s*|(?:的)?地址\s*)'
 
 
 def subject_matches_place(name, place):
@@ -184,6 +185,22 @@ def argument_in_read_scope(value, source, places, *, capabilities=()):
             return True
         return False
     base = re.split(r'[（(]',value)[0]
+    addresses = set(re.findall(re.escape(base)+r'[（(]([^（）()]+)[）)]',resolved))
+    decorated = re.fullmatch(r'(.+?)[（(]([^（）()]+)[）)]',value)
+    if decorated and addresses and addresses!={decorated[2]}:
+        return False
+    if 'route' in capabilities and not decorated and addresses:
+        # A bare route endpoint cannot drop the user's current qualifier and
+        # borrow a historical identity at another address.
+        qualified = [p for p in places if value in [p['name'],*p.get('aliases',[])]
+            and all(subject_matches_place(value+'（'+address+'）',p) for address in addresses)]
+        if len(qualified)!=1:
+            return False
+    elif 'route' in capabilities and not decorated and re.search(re.escape(value)+ADDRESS_LINK,resolved):
+        qualified = [p for p in places if value in [p['name'],*p.get('aliases',[])] and p.get('address')
+            and literal_search_subject(value+'（'+p['address']+'）',resolved)]
+        if len(qualified)!=1:
+            return False
     if set(capabilities) and set(capabilities) <= {'poi','web'}:
         # A later denial of this object's address lookup is not revoked by
         # an earlier positive introduction. Direct explanatory tasks retain it.
@@ -197,7 +214,18 @@ def argument_in_read_scope(value, source, places, *, capabilities=()):
         return True
     # Canonical and provider/reviewed aliases refer to one exact ID. An
     # explicitly named peer cannot donate its identity to another task.
-    matches = [p for p in places if value in [p['name'], *p.get('aliases', [])]]
+    matches=[]
+    for place in places:
+        if not subject_matches_place(value,place):
+            continue
+        names=[place['name'],*place.get('aliases',[])]
+        if decorated and any(name and name in source for name in names):
+            continue
+        if 'route' in capabilities and any(re.search(re.escape(name)+ADDRESS_LINK,resolved)
+            and not (place.get('address') and literal_search_subject(name+'（'+place['address']+'）',resolved))
+            for name in names if name):
+            continue
+        matches.append(place)
     return len(matches) == 1 and any(n and n in resolved and affirmative_name(n) for n in
         [matches[0]['name'], *matches[0].get('aliases', [])])
 
@@ -209,9 +237,7 @@ def literal_search_subject(value, source):
     # A name and an address appearing in different clauses are not a binding.
     # Literal decorated names remain allowed; real provider resolution still
     # must confirm the actual address before an identity is used.
-    return bool(decorated and re.search(re.escape(decorated[1])
-        + r'\s*(?:[（(]|(?:的)?(?:地址|位置)?(?:在|是|位于|按|选|：|:)\s*|(?:的)?地址\s*)'
-        + re.escape(decorated[2]), source))
+    return bool(decorated and re.search(re.escape(decorated[1])+ADDRESS_LINK+re.escape(decorated[2]),source))
 
 
 def task_referents(message, decision, historical):

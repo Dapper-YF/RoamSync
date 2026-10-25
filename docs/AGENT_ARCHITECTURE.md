@@ -1405,3 +1405,19 @@ writes. Revalidation deduplicates these obligations. Live Suzhou baseline
 returned unrelated streetview excerpts and no comparison/images; regression
 baseline5/1 failure, targeted86 pass after the correction and Astra negative-scope,
 city and repeated-validation review. Real validation pending.
+
+Candidate generation retains a missing scalar-memory duplicate only from its
+unique current affirmative generation clause, with exact date/day equality via
+the existing scalar validator and memory receipt. Literal condition statements
+own their fields first, including independent withdrawals beside companion
+discussion. The literal withdrawal fallback accepts complete declarations only;
+questions, explanations, negations and reported/hypothetical text cannot clear
+conditions. A failed POI preparation does not revoke the user's verified date.
+No candidate or formal Trip is created by this projection.
+
+Decorated route references use the same verified name/alias/address predicate
+as the reference catalog. Current explicit qualifiers take precedence over
+historical identities; only genuine elliptical references may recover a missing
+decoration. The route adapter rechecks returned ID, city and address before use;
+unresolved names still require real provider resolution. Stage4 handoff baseline
+two failures, targeted125 pass; real same-version acceptance remains required.

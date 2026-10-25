@@ -21,6 +21,40 @@ def local_today():
     return datetime.now(ZoneInfo("Asia/Shanghai")).date()
 
 
+def candidate_scalar_updates(decision, message, *, today):
+    """Retain verified user conditions even when place preparation fails.
+
+    The plan is a proposal, never scalar evidence. Only its current affirmative
+    generation quote can supply exact matching literals through the existing
+    memory validator; historical values and model allocations cannot do so.
+    """
+    command = decision.candidate_command
+    if decision.intent != 'create' or command is None or command.action != 'generate' or command.plan is None:
+        return []
+    from app.conversation_candidate.commands import validate_command, ACTION_VERBS
+    try:
+        validate_command(command, message)
+    except ValueError:
+        return []
+    from app.assistant_capabilities import affirmative_action_source
+    clauses = [part.strip() for part in re.split(r'[，,。；;!?！？\n]',command.source_quote) if part.strip()]
+    sources = [part for part in clauses if affirmative_action_source(message,part,ACTION_VERBS['generate'])]
+    if len(sources)!=1:
+        return []
+    quote = sources[0]
+    if len(quote)>300:
+        return []
+    values = {'start_date':command.plan.schedule_constraints.start_date.isoformat(),
+        'duration_days':str(len(command.plan.days))}
+    # Literal condition withdrawals run before semantic selection. Do not
+    # overwrite their receipt merely because the model omitted its duplicate.
+    literal_fields = {update.field for update in literal_conditions(message)}
+    return [MemoryUpdate(field=key, value=value, source_quote=quote, scope='trip')
+        for key,value in values.items() if key not in literal_fields
+        and not any(update.field==key for update in decision.memory_updates)
+        and _quoted_scalar(key,value,quote,today,message) is not None]
+
+
 def reset_requested(message):
     return bool(re.search(r"^(?:请|我们|那就|现在|先)?(?:换个话题|换一个话题|重新开始|开始新对话|另一次旅行|另一趟旅行|新的旅行|新的一次旅行|新的一趟旅行)", message.strip()))
 
@@ -115,12 +149,33 @@ def _quoted_scalar(key, value, quote, today, message):
     return number if 1 <= number <= (31 if key == "duration_days" else 100) and number == chinese_number(tokens[0]) else None
 
 
+def literal_withdrawals(message):
+    """Independent literal withdrawals retain their own evidence scope."""
+    from app.requirement_language import current_user_evidence_reason
+    fields = {"目的地": "city", "出发日期": "start_date", "日期": "start_date", "预算": "budget", "同行人数": "party_size",
+        "游玩天数":"duration_days", "天数":"duration_days"}
+    labels = "|".join(fields)
+    def declared(match):
+        if current_user_evidence_reason(message,match[0]):
+            return False
+        clause=next((part[0].strip() for part in re.finditer(r'[^，,。；;!！\n]+',message)
+            if part.start()<=match.start()<part.end()),'')
+        # This fallback owns complete literal declarations only. Questions,
+        # explanations and negated commands retain their surrounding scope.
+        return bool(re.fullmatch(r'(?:请(?:帮我)?|我(?:先|想|要)?|现在|这次|先|但|不过)?\s*'
+            +re.escape(match[0])+r'(?:吧|即可|一下|了)?',clause))
+    return [MemoryUpdate(field=fields[match[1] or match[2]],operation='clear',source_quote=match[0],scope='trip')
+        for match in re.finditer(rf"(?:取消|清除|忘掉)(?:这次的?|原来的?)?({labels})|({labels})(?:也|都)?(?:先|暂时|还)?(?:不定|未定|待定|没定|不确定)",message)
+        if declared(match)]
+
+
 def literal_conditions(message):
     """Exact date/duration slot answers also work in the existing planning handoff."""
     # A verified single-person declaration does not depend on the selector's
     # optional memory patch or on another clause mentioning a companion.
     from app.requirement_language import current_user_evidence_reason
     solo_updates=[]
+    withdrawals=literal_withdrawals(message)
     for clause in re.split(r'[，,。；;!?！？]',message):
         if (re.fullmatch(r'(?:这次|这趟)?(?:就|只剩|只|剩下)?我(?:(?:自己|独自|单独)(?:一个人)?|一个人)(?:去|出发|旅行|玩)',clause.strip())
             and not current_user_evidence_reason(message,clause.strip())):
@@ -133,7 +188,7 @@ def literal_conditions(message):
             and not re.search(r'是否|吗|合适|够不够|[?？]',message)):
             solo_updates.append(MemoryUpdate(field='duration_days',value=str(count),source_quote=clause.strip(),scope='trip'))
     if re.search(r"如果|假如|假设|要是|[“”「」\"?？]|是否|吗|几天|合适|介绍|解释|朋友|听说|他|她|取消出发|不出发", message):
-        return solo_updates
+        return sorted([*solo_updates,*withdrawals],key=lambda update:message.find(update.source_quote))
     updates = list(solo_updates)
     if re.search(r"我(?:们)?.{0,8}(?:去|到)|改去|目的地(?:改为|改成|为|是)", message):
         from app.companion_information import explicit_destination
@@ -147,13 +202,6 @@ def literal_conditions(message):
     duration = re.search(r"(?:游玩|玩|待|改为|改成|那就)([一二三四五六七八九十两\d]+天)", message)
     if duration:
         updates.append(MemoryUpdate(field="duration_days", value=duration[1], source_quote=duration[0], scope="trip"))
-    # Exact scalar withdrawal must survive a selector omitting a patch, just as
-    # literal departure/duration answers do. The noun alone ("目的地") is not
-    # an affirmative city declaration. These statements confer no write rights.
-    fields = {"目的地": "city", "出发日期": "start_date", "日期": "start_date", "预算": "budget", "同行人数": "party_size"}
-    labels = "|".join(fields)
-    for match in re.finditer(rf"(?:取消|清除|忘掉)(?:这次的?|原来的?)?({labels})|({labels})(?:也|都)?(?:先|暂时|还)?(?:不定|未定|待定|没定|不确定)", message):
-        updates.append(MemoryUpdate(field=fields[match[1] or match[2]], operation="clear", source_quote=match[0], scope="trip"))
     # High-precision personal declarations must not disappear when the single
     # semantic selector omits a memory patch beside dates/duration. These are
     # literal user data only; apply_memory still checks provenance and scope.
@@ -165,7 +213,7 @@ def literal_conditions(message):
         if match:
             updates.append(MemoryUpdate(field="preferences", operation="add", value=match[1], source_quote=clause,
                                         scope="trip" if re.match(r"这次|全程", clause) else "personal"))
-    return updates
+    return sorted([*updates,*withdrawals],key=lambda update:message.find(update.source_quote))
 
 
 def apply_memory(envelope, history, message, message_id, updates=(), *, today=None):

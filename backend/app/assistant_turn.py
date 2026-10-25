@@ -113,6 +113,8 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                     else:
                         decision = await (selector or select_capabilities)(settings, message, history, envelope, summary)
                     updates = list(decision.memory_updates)
+                    from app.assistant_memory import candidate_scalar_updates
+                    updates.extend(candidate_scalar_updates(decision, message, today=captured_at.date()))
                     literal_city = decision.city.removesuffix("市")
                     # A validated, explicitly mentioned conversational city must
                     # not disappear just because the selector omitted its duplicate

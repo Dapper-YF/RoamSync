@@ -66,6 +66,60 @@ def test_partial_street_name_cannot_bind_another_street_identity():
     assert subject_matches_place('甲馆（东路1号）', {'name': '甲馆', 'address': '杭州市西湖区东路1号'})
 
 
+def test_decorated_route_argument_uses_its_existing_verified_identity():
+    from app.read_references import argument_in_read_scope
+    places = [{'name':'拙政园','address':'东北街178号','aliases':[],
+        'place_id':'00000000-0000-0000-0000-000000000001'},
+        {'name':'狮子林','address':'园林路23号','aliases':[],
+        'place_id':'00000000-0000-0000-0000-000000000002'}]
+    source = '从前一个到后一个查步行路线'
+    assert argument_in_read_scope('拙政园（东北街178号）',source,places,capabilities=['poi','route'])
+    assert not argument_in_read_scope('拙政园（东北街179号）',source,places,capabilities=['poi','route'])
+    assert not argument_in_read_scope('甲馆（东北街178号）',source,places,capabilities=['poi','route'])
+    changed='从拙政园（东北街179号）到狮子林查步行路线'
+    assert not argument_in_read_scope('拙政园（东北街178号）',changed,places,capabilities=['poi','route'])
+    assert not argument_in_read_scope('拙政园',changed,places,capabilities=['poi','route'])
+    assert argument_in_read_scope('拙政园（东北街179号）',changed,places,capabilities=['poi','route'])
+    places[0]['aliases']=['甲园']
+    for changed in ['从甲园（东北街179号）到狮子林查步行路线',
+        '从拙政园地址东北街179号到狮子林查步行路线']:
+        assert not argument_in_read_scope('拙政园（东北街178号）',changed,places,capabilities=['poi','route'])
+    assert not argument_in_read_scope('拙政园','从拙政园地址东北街179号到狮子林查步行路线',places,capabilities=['poi','route'])
+    assert argument_in_read_scope('拙政园','从甲园到狮子林查步行路线',places,capabilities=['poi','route'])
+    assert not argument_in_read_scope('拙政园','从甲园（东北街179号）到狮子林查步行路线',places,capabilities=['poi','route'])
+
+
+@pytest.mark.parametrize('address_changed',[False,True])
+def test_route_adapter_rechecks_decorated_identity_at_the_actual_port(address_changed):
+    import asyncio
+    from datetime import UTC,datetime
+    from uuid import uuid4
+    from app.assistant_capabilities import route_answer
+    from app.assistant_places import PlaceView
+    origin=PlaceView(place_id=uuid4(),name='拙政园',address='东北街178号',city='苏州',
+        longitude=120,latitude=31,source='https://www.amap.com',retrieved_at=datetime.now(UTC).isoformat())
+    destination=origin.model_copy(update={'place_id':uuid4(),'name':'狮子林','address':'园林路23号'})
+    fresh=origin.model_copy(update={'address':'东北街179号'}) if address_changed else origin
+    calls=[]
+    class Port:
+        async def get_place(self,identity):
+            return fresh if str(identity)==str(origin.place_id) else destination
+        async def search(self,**kwargs):
+            assert address_changed and kwargs['query']=='拙政园'
+            return [fresh]
+        async def query_route(self,request):
+            calls.append(request)
+            return {'mode':'walk','distance_meters':588,'duration_seconds':480}
+    decision=CapabilityDecision(intent='route',reason_code='route_requested',city='苏州',mode='walk',
+        origin='拙政园（东北街178号）',destination='狮子林（园林路23号）')
+    bundle,status=asyncio.run(route_answer(decision,ContextEnvelope(),Port(),
+        known_places=[origin.model_dump(mode='json'),destination.model_dump(mode='json')]))
+    assert status==('partial' if address_changed else 'complete')
+    assert len(calls)==(0 if address_changed else 1)
+    if calls:
+        assert calls[0].origin_place_id==origin.place_id and calls[0].destination_place_id==destination.place_id
+
+
 def test_literal_task_quote_retains_shared_address_in_containing_source():
     text = '比较成都人民公园和宽窄巷子，人民公园按少城路12号核对位置'
     task = ReadTask(source_quote=text, source_ref='user_0_span_0', capabilities=['poi'],

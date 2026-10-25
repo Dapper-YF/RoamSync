@@ -693,17 +693,22 @@ async def route_answer(decision, envelope, port, *, known_places=()):
     if not (decision.city or envelope.browsing_city):
         return failure_bundle(envelope, "这两个地点在哪座城市？"), "complete"
     async def resolve(name):
+        from app.read_references import subject_matches_place
         city = decision.city or envelope.browsing_city
-        known = [p for p in known_places if name in [p['name'], *p.get('aliases', [])]
+        known = [p for p in known_places if subject_matches_place(name,p)
                  and p['city'].removesuffix('市') == city.removesuffix('市')]
         if len(known) == 1:
             place = await bounded_call(lambda: port.get_place(known[0]['place_id']), stage='place_context', limit=8)
-            if place and str(place.place_id) == str(known[0]['place_id']):
+            if (place and str(place.place_id) == str(known[0]['place_id'])
+                and place.city.removesuffix('市')==city.removesuffix('市')
+                and subject_matches_place(name,place.model_dump(mode='json'))):
                 return [place], [place]
-        operation = (lambda: port.research_search(query=name, city=city, near=None, limit=5, category="attraction")) if hasattr(port, "research_search") else (lambda: port.search(query=name, city=city, near=None, limit=5))
+        query = re.split(r'[（(]',name)[0]
+        operation = (lambda: port.research_search(query=query, city=city, near=None, limit=5, category="attraction")) if hasattr(port, "research_search") else (lambda: port.search(query=query, city=city, near=None, limit=5))
         items = await bounded_call(operation, stage="poi")
         from app.assistant_research import requested_place_matches, same_city
-        matches = [p for p in items if same_city(p.city, city) and requested_place_matches(p, name, city)]
+        matches = [p for p in items if same_city(p.city, city) and (
+            subject_matches_place(name,p.model_dump(mode='json')) if query!=name else requested_place_matches(p,name,city))]
         return matches, items
     emit("status", message="正在确认路线起终点…")
     (origins, origin_items), (destinations, destination_items) = await asyncio.gather(resolve(decision.origin), resolve(decision.destination))
