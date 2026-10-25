@@ -14,6 +14,21 @@ def revision():
         difference_summary={'changed':[]},validation_result={'valid':True,'errors':[],'warnings':[]})
 
 
+@pytest.mark.parametrize('before', [None, {'days': [{'date': '2026-11-09', 'activities': [{'id': 'legacy'}]}]},
+    {'days': None}, {'days': [{'activities': [None]}]},
+    {'trip': {}, 'days': [{'date': '2026-11-09'}],
+        'execution_recovery': {'frozen_activity_ids': [], 'protected_activity_ids': []}},
+    {'trip': {'version': 2}, 'days': [{'date': '2026-11-09'}],
+        'execution_recovery': {'frozen_activity_ids': [], 'protected_activity_ids': []}}])
+def test_legacy_snapshot_can_be_read_but_cannot_present_a_complete_review(before):
+    from app.revision_presentation import revision_review
+    item = revision()
+    item.before_snapshot = before
+    review = revision_review(item)
+    assert review['complete'] is False
+    assert review['changes'] == []
+
+
 def test_hash_normalizes_snapshot_defaults_but_binds_changes_and_risks():
     item=revision();bound=revision_presentation_hash(item)
     from app.schemas import CandidatePlanSnapshot

@@ -267,7 +267,7 @@ def _repairable_candidate_format(raw, errors):
 
 
 def validate_decision(decision, message, history, envelope, selected=(), *, _task=False):
-    from app.read_references import place_catalog, argument_in_read_scope, resolve_read_text, task_referents, explanation_requested
+    from app.read_references import place_catalog, argument_in_read_scope, resolve_read_text, task_referents, explanation_requested, literal_subjects_cover
     referents = task_referents(message, decision, place_catalog(history, envelope))
     selected = [*selected, *referents]
     if decision.response_purpose=='conditions_recall' and not re.search(
@@ -498,7 +498,7 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
                     if not existing._clarification and 'poi' in existing.capabilities
                     and (existing._identity_only or re.search(r'地址|位置|在哪',existing.source_quote))
                     for name in existing.names}
-                if not names or set(names)<=covered:
+                if not names or literal_subjects_cover(names, covered, task.source_quote):
                     continue
                 lookup=ReadTask(source_quote=clause,capabilities=['poi'],city=task.city or decision.city,names=names)
                 lookup._identity_only=True
@@ -509,7 +509,7 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
             if task._clarification or 'poi' not in task.capabilities or 'web' in task.capabilities or not task.names or not explanation_requested(task.source_quote):
                 continue
             if any(not existing.capabilities and not existing._clarification and task.source_quote in existing.source_quote
-                and set(task.names)<=set(existing.names)
+                and literal_subjects_cover(task.names, existing.names, existing.source_quote)
                 for existing in checked):
                 task._identity_only=True
                 continue

@@ -1359,3 +1359,20 @@ disclosures are separate from public analysis. No migration or new mutation
 permission. VERIFIED isolated backend956, Web132/build and Chrome socket5;
 MEASURED one final synthetic real-provider turn. Not deployed; factual/provider
 quality remains OPEN. See docs/agent/COMPANION_STREAMING_20261012.md.
+
+## Stage4 comparison and legacy review boundary (2026-10-25)
+
+Read obligations may coalesce a bare subject and its sole literal address
+decoration in the same user source. This does not supply a place ID. Only
+server cards with matching canonical/alias names and a bounded provider address
+may upgrade an unresolved slot. Comparison positions survive one-member lookup;
+duplicate references to one verified ID do not introduce new ordinal positions.
+Ambiguous names, distinct explicit addresses and existing bound IDs remain fenced.
+
+Revision review remains a projection of its bound before/proposed snapshots.
+Missing legacy version, day activities, activity identity/display/value or
+protection metadata cannot produce a complete review or natural chat adoption.
+Legacy responses remain readable with complete=false; the original writer and
+validator retain their locks/version checks. No schema migration or new endpoint.
+Evidence: stage4 contract17 baseline54/6 failures, contract19 76 passing;
+Astra Medium boundary review. These are development checks, not product GO.

@@ -11,10 +11,50 @@ from app.travel_language import chinese_number
 REFERENCE = re.compile(r"第\s*([一二三四五六七八九十两\d]+)\s*(?:个|处)(?:地方|地点|景点)?|前一个|后一个|前者|后者|这两个(?:地方|地点|景点)?|两个(?:地方|地点|景点)|它们|它|那里")
 
 
+def subject_matches_place(name, place):
+    """Only server names/aliases and a provider-confirmed literal address bind IDs."""
+    known = [place['name'], *place.get('aliases', [])]
+    if name in known:
+        return True
+    decorated = re.fullmatch(r'(.+?)[（(]([^（）()]+)[）)]', name)
+    if not decorated or decorated[1] not in known:
+        return False
+    address = place.get('address') or ''
+    for match in re.finditer(re.escape(decorated[2]), address):
+        # An administrative prefix may be omitted; a different street prefix
+        # (东路 versus 新东路) cannot donate its identity by substring.
+        before, after = address[:match.start()], address[match.end():]
+        if (not before or before[-1] in '省市区县镇乡 ，,（(') and (
+            not after or after[0] in '附楼栋室院 ，,（）()'):
+            return True
+    return False
+
+
+def literal_subjects_cover(required, existing, source):
+    """Deduplicate read obligations, without supplying a place identity.
+
+    A bare name and its sole literal address decoration in this same source
+    describe one search subject. Two explicit addresses stay separate.
+    """
+    def equivalent(left, right):
+        if left == right:
+            return True
+        a = re.fullmatch(r'(.+?)[（(]([^（）()]+)[）)]', left)
+        b = re.fullmatch(r'(.+?)[（(]([^（）()]+)[）)]', right)
+        if bool(a) == bool(b):
+            return False
+        decorated, bare = (a, right) if a else (b, left)
+        if decorated[1] != bare or decorated[0] not in source:
+            return False
+        addresses = set(re.findall(re.escape(bare) + r'[（(]([^（）()]+)[）)]', source))
+        return addresses == {decorated[2]}
+    return all(any(equivalent(name, other) for other in existing) for name in required)
+
+
 def explanation_requested(text):
     """Explicit stable subgoals; naming a place alone is not an explanation."""
     for clause in re.split(r'[，,。；;!?！？\n]',text):
-        for match in re.finditer(r'看点|值得看(?:什么|的东西|哪)|适合看什么|怎么玩|玩法|各自特色',clause):
+        for match in re.finditer(r'看点|看什么|值得看(?:什么|的东西|哪)|怎么玩|玩法|各自特色',clause):
             if re.search(r'(?:不(?:用|要|必|想)?|别)(?:再)?(?:介绍|说|讲|查|看)[^，,。；;]*$',clause[:match.start()]):
                 continue
             if re.match(r'(?:先|暂时)?(?:不用|不要|不必|别)(?:再)?(?:介绍|说|讲|查|看)',clause[match.end():]):
@@ -50,16 +90,19 @@ def place_catalog(history, envelope):
                 continue
             requested.extend(n for n in args.get('names', []) if n and n in source)
         for name in dict.fromkeys(requested):
-            if not any(name in [p['name'], *p.get('aliases', [])] for p in places):
+            if not any(subject_matches_place(name, p) for p in places):
                 places.append({'name':name, 'aliases':[], 'city':city, 'place_id':None,
                     'kind':'raw_mention'})
         subjects = list(dict.fromkeys(requested))
         if len(subjects) > 1:
             slots = []
             for name in sorted(subjects,key=source.index):
-                candidates = [p for p in places if p.get('place_id') and name in [p['name'],*p.get('aliases',[])]]
-                slots.append(candidates[0] if len(candidates) == 1 else
-                    {'name':name,'aliases':[],'city':city,'place_id':None,'kind':'raw_mention'})
+                candidates = [p for p in places if p.get('place_id') and subject_matches_place(name, p)]
+                slot = candidates[0] if len(candidates) == 1 else {
+                    'name':name,'aliases':[],'city':city,'place_id':None,'kind':'raw_mention'}
+                if slot.get('place_id') and any(p.get('place_id') == slot['place_id'] for p in slots):
+                    continue
+                slots.append(slot)
             places = slots
         if places:
             # A comparison's requested order takes precedence over retrieval
@@ -78,13 +121,13 @@ def place_catalog(history, envelope):
             # Resolution of one member upgrades its binding in place, without
             # collapsing or renumbering the original requested comparison.
             matches = {i:[p for p in ordered if p.get('place_id') and
-                old['name'] in [p['name'],*p.get('aliases',[])]] for i,old in enumerate(active)}
+                subject_matches_place(old['name'],p)] for i,old in enumerate(active)}
             upgrades = {i:ps[0] for i,ps in matches.items() if not active[i].get('place_id') and len(ps) == 1 and
                 sum(any(p['place_id'] == ps[0]['place_id'] for p in candidates)
                     for candidates in matches.values()) == 1}
             if active and any(matches.values()) and not new_order and all(
-                any(p['name'] in [old['name'],*old.get('aliases',[])] or
-                    old['name'] in [p['name'],*p.get('aliases',[])] for old in active) for p in ordered):
+                any(subject_matches_place(old['name'], p) or
+                    subject_matches_place(p['name'], old) for old in active) for p in ordered):
                 active = [upgrades.get(i,p) for i,p in enumerate(active)]
             elif not active or new_order or not ids <= {key(p) for p in active}:
                 active = ordered

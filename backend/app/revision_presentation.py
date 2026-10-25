@@ -38,9 +38,39 @@ def explicit_revision_adoption(message):
 
 
 def revision_review(revision):
+    """Legacy or incomplete snapshots remain readable, never adoptable previews."""
+    try:
+        return _revision_review(revision)
+    except (KeyError, TypeError, ValueError, AttributeError):
+        before = revision.before_snapshot
+        trip = before.get('trip') if isinstance(before, dict) else None
+        validation = revision.validation_result
+        return {'complete': False,
+            'base_trip_version': trip.get('version') if isinstance(trip, dict) else None,
+            'changes': [], 'routes': [], 'preserved': [],
+            'warnings': validation.get('warnings', []) if isinstance(validation, dict) else []}
+
+
+def _revision_review(revision):
     """All activity additions/removals/changes from the bound before snapshot."""
     from app.schemas import CandidatePlanSnapshot
     before=revision.before_snapshot or {}
+    trip = before.get('trip')
+    days = before.get('days')
+    if (not isinstance(trip, dict) or type(trip.get('version')) is not int or trip['version'] < 1
+        or not isinstance(days, list) or any(not isinstance(day, dict) or not day.get('date')
+            or not isinstance(day.get('activities'), list) for day in days)):
+        raise ValueError('Incomplete before snapshot')
+    required = {'id', 'place_id', 'scheduled_time', 'duration_minutes', 'schedule_locked', 'status'}
+    for day in days:
+        for item in day['activities']:
+            if (not isinstance(item, dict) or not required <= item.keys()
+                or not item['id'] or not item['place_id'] or not item['scheduled_time']
+                or type(item['duration_minutes']) is not int or item['duration_minutes'] <= 0
+                or type(item['schedule_locked']) is not bool
+                or item['status'] not in {'planned','active','completed','skipped'}
+                or not (item.get('display_name') or item.get('name'))):
+                raise ValueError('Incomplete before activity')
     proposed=CandidatePlanSnapshot.model_validate(revision.proposed_snapshot).model_dump(mode='json')
     from app.revision_delta import protected_activity_ids
     execution=before.get('execution_recovery') or {}

@@ -7,6 +7,65 @@ from app.assistant_operation import approved_draft
 from app.assistant_memory import MemoryUpdate, apply_memory, recall_conditions
 
 
+def test_verified_decorated_subject_does_not_add_a_comparison_slot():
+    from app.read_references import place_catalog, resolve_read_text
+    names = ['人民公园（小南街8号）', '宽窄巷子景区']
+    text = '比较' + '和'.join(names) + '的位置与看点'
+    cards = [{'place': {'place_id': f'00000000-0000-0000-0000-00000000000{i}',
+        'name': name, 'city': '成都', 'address': address}} for i, name, address in [
+        (1, '人民公园', '成都市小南街8号'), (2, '宽窄巷子景区', '金河路')]]
+    history = [{'user': text, 'place_cards': cards, 'read_tools': {'tasks': [
+        {'validated_arguments': {'names': names}},
+        {'validated_arguments': {'names': ['人民公园', '宽窄巷子景区']}}]}}]
+    catalog = place_catalog(history, ContextEnvelope(browsing_city='成都'))
+    assert len(catalog) == 2
+    assert resolve_read_text('从前一个到后一个', catalog) == '从人民公园到宽窄巷子景区'
+
+
+def test_decorated_subject_tasks_do_not_duplicate_on_revalidation():
+    text = '比较人民公园（小南街8号）和宽窄巷子景区的位置与看点'
+    decision = CapabilityDecision(intent='lookup', reason_code='place_identity', read_tasks=[
+        ReadTask(source_quote=text, capabilities=['poi'], city='成都',
+            names=['人民公园（小南街8号）', '宽窄巷子景区']),
+        ReadTask(source_quote=text, city='成都', names=['人民公园', '宽窄巷子景区'])])
+    for _ in range(2):
+        decision = validate_decision(decision, text, [], ContextEnvelope(browsing_city='成都'))
+        assert len(decision.read_tasks) == 2
+        assert sum(t._identity_only for t in decision.read_tasks) == 1
+
+
+def test_distinct_address_mentions_do_not_collapse():
+    from app.read_references import place_catalog
+    names = ['人民公园（甲路8号）', '人民公园（乙路9号）']
+    history = [{'user': '比较' + '和'.join(names), 'place_cards': [
+        {'place': {'place_id': f'00000000-0000-0000-0000-00000000000{i}',
+            'name': '人民公园', 'city': '成都', 'address': address}}
+        for i, address in [(1, '甲路8号'), (2, '乙路9号')]],
+        'read_tools': {'tasks': [{'validated_arguments': {'names': names}}]}}]
+    catalog = place_catalog(history, ContextEnvelope(browsing_city='成都'))
+    assert len(catalog) == 2
+    assert catalog[0]['place_id'] != catalog[1]['place_id']
+
+
+def test_later_verified_decorated_member_upgrades_in_place_without_losing_peer():
+    from app.read_references import place_catalog, resolve_read_text
+    history = [{'user': '比较甲馆（东路1号）和乙馆', 'read_tools': {'tasks': [
+        {'validated_arguments': {'names': ['甲馆（东路1号）', '乙馆']}}]}},
+        {'user': '先查第一个', 'place_cards': [{'place': {
+            'place_id': '00000000-0000-0000-0000-000000000001',
+            'name': '甲馆', 'city': '杭州', 'address': '东路1号'}}]}]
+    catalog = place_catalog(history, ContextEnvelope(browsing_city='杭州'))
+    assert len(catalog) == 2 and catalog[0]['place_id']
+    assert resolve_read_text('第二个', catalog) == '乙馆'
+
+
+def test_partial_street_name_cannot_bind_another_street_identity():
+    from app.read_references import subject_matches_place
+    assert not subject_matches_place('甲馆（东路1号）', {'name': '甲馆', 'address': '新东路1号'})
+    assert not subject_matches_place('甲馆（山路8号）', {'name': '甲馆', 'address': '中山路8号'})
+    assert subject_matches_place('甲馆（东路1号）', {'name': '甲馆', 'address': '杭州市西湖区东路1号'})
+
+
 def test_literal_task_quote_retains_shared_address_in_containing_source():
     text = '比较成都人民公园和宽窄巷子，人民公园按少城路12号核对位置'
     task = ReadTask(source_quote=text, source_ref='user_0_span_0', capabilities=['poi'],
