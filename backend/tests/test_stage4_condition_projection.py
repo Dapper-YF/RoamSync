@@ -73,6 +73,28 @@ def test_literal_withdrawal_queries_and_explanations_do_not_change_conditions():
         assert updated.conversation_memory['slots']['start_date']['value']=='2026-11-09'
 
 
+def test_creation_scalar_source_ignores_nonscalar_preview_but_keeps_conflicts():
+    from datetime import date
+    from app.assistant_capabilities import CapabilityDecision
+    from app.assistant_memory import candidate_scalar_updates
+    from test_candidate_commands import plan
+    def projected(text,start_date=None):
+        proposed=plan().model_dump(mode='json')
+        if start_date:
+            proposed['schedule_constraints']['start_date']=start_date
+        decision=CapabilityDecision(intent='create',reason_code='explicit_write',candidate_command={
+            'action':'generate','source_quote':text,'plan':proposed})
+        return {update.field:update.value for update in candidate_scalar_updates(decision,text,today=date(2026,10,25))}
+    assert projected('请先生成成都11月9日的一日候选，人民公园和宽窄巷子。先给我看方案，不要保存。')['start_date']=='2026-11-09'
+    for text in ['请生成成都11月9日一日候选；再生成成都11月10日一日候选',
+        '请生成成都11月9日一日候选；再生成成都11月9日一日候选',
+        '请生成成都11月9日到11月10日的一日候选',
+        '请生成成都一日候选，同行朋友11月9日生日',
+        '请生成11月9日的候选，展示下周二的方案']:
+        assert 'start_date' not in projected(text)
+    assert projected('请生成下周一的候选，展示方案','2026-10-26')['start_date']=='2026-10-26'
+
+
 def _active(env):
     return project_requirements(env.requirement_records, topic_id=env.topic_id, city=env.browsing_city)
 

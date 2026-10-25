@@ -5,6 +5,17 @@ from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 from pydantic import BaseModel, ConfigDict, Field
 
+DATE_TOKEN = re.compile(r"今天|明天|后天|20\d{2}-\d{1,2}-\d{1,2}|(?:20\d{2}年)?\d{1,2}月\d{1,2}[日号]?|(?:下下|下|本|这)?(?:周|星期)[一二三四五六日天]")
+NUMERAL = r"[一二三四五六七八九十两\d]+"
+
+
+def scalar_tokens(key, quote):
+    if key=='start_date':
+        return list(DATE_TOKEN.finditer(quote))
+    unit = r'(?:天|日)' if key=='duration_days' else r'(?:个?人|位)'
+    return [token for token in re.finditer(rf'({NUMERAL})\s*{unit}',quote)
+        if not (key=='duration_days' and re.search(r'[年月./-]\s*$',quote[:token.start()]))]
+
 
 class MemoryUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -38,21 +49,25 @@ def candidate_scalar_updates(decision, message, *, today):
         return []
     from app.assistant_capabilities import affirmative_action_source
     clauses = [part.strip() for part in re.split(r'[，,。；;!?！？\n]',command.source_quote) if part.strip()]
-    sources = [part for part in clauses if affirmative_action_source(message,part,ACTION_VERBS['generate'])]
-    if len(sources)!=1:
-        return []
-    quote = sources[0]
-    if len(quote)>300:
-        return []
+    generation = [part for part in clauses if affirmative_action_source(message,part,ACTION_VERBS['generate'])]
     values = {'start_date':command.plan.schedule_constraints.start_date.isoformat(),
         'duration_days':str(len(command.plan.days))}
     # Literal condition withdrawals run before semantic selection. Do not
     # overwrite their receipt merely because the model omitted its duplicate.
     literal_fields = {update.field for update in literal_conditions(message)}
-    return [MemoryUpdate(field=key, value=value, source_quote=quote, scope='trip')
-        for key,value in values.items() if key not in literal_fields
-        and not any(update.field==key for update in decision.memory_updates)
-        and _quoted_scalar(key,value,quote,today,message) is not None]
+    updates=[]
+    for key,value in values.items():
+        if key in literal_fields or any(update.field==key for update in decision.memory_updates):
+            continue
+        # Count every scalar-bearing source before equality testing. A second
+        # conflicting date cannot disappear merely because it differs from plan.
+        sources=[part for part in generation if scalar_tokens(key,part)]
+        if len(sources)!=1 or len(sources[0])>300:
+            continue
+        quote=sources[0]
+        if _quoted_scalar(key,value,quote,today,message) is not None:
+            updates.append(MemoryUpdate(field=key,value=value,source_quote=quote,scope='trip'))
+    return updates
 
 
 def reset_requested(message):
@@ -110,7 +125,7 @@ def _quoted_scalar(key, value, quote, today, message):
     """Normalize a single affirmative quoted quantity/date equal to proposal."""
     quote_start = message.find(quote)
     if key == "start_date":
-        tokens = re.finditer(r"今天|明天|后天|20\d{2}-\d{1,2}-\d{1,2}|(?:20\d{2}年)?\d{1,2}月\d{1,2}[日号]?|(?:下下|下|本|这)?(?:周|星期)[一二三四五六日天]", quote)
+        tokens = scalar_tokens(key,quote)
         dates = [anchored_date(token[0], today) for token in tokens
                  if _affirmative_scalar_token(message, quote_start + token.start(), quote_start + token.end())]
         proposed = anchored_date(value, today)
@@ -130,15 +145,14 @@ def _quoted_scalar(key, value, quote, today, message):
                 r'们|家人|全家|一家|同事|同学|大家|几|[一二三四五六七八九十两]',m) for m in members)
             and (value == quote or value in {str(len(members)), str(len(members))+'人'})):
             return len(members)
-    numeral = r"[一二三四五六七八九十两\d]+"
+    numeral = NUMERAL
     unit = r"(?:天|日)" if key == "duration_days" else r"(?:个?人|位)"
     proposed = re.fullmatch(rf"({numeral})\s*(?:{unit})?", value)
     if proposed is None and key == 'party_size' and value in quote:
         proposed_tokens = re.findall(rf'{numeral}\s*{unit}', value)
         if len(proposed_tokens) == 1:
             proposed = re.fullmatch(rf"({numeral})\s*{unit}", proposed_tokens[0])
-    tokens = [token[1] for token in re.finditer(rf"({numeral})\s*{unit}", quote)
-              if not (key=='duration_days' and re.search(r'[年月./-]\s*$',quote[:token.start()]))
+    tokens = [token[1] for token in scalar_tokens(key,quote)
               if _affirmative_scalar_token(message, quote_start + token.start(), quote_start + token.end())]
     # Mixed adult/child groups require a semantic sum, not a verified scalar.
     if key == "party_size" and re.search(r"成人|儿童|孩子|小孩", quote):

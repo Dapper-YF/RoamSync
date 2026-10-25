@@ -1421,3 +1421,12 @@ historical identities; only genuine elliptical references may recover a missing
 decoration. The route adapter rechecks returned ID, city and address before use;
 unresolved names still require real provider resolution. Stage4 handoff baseline
 two failures, targeted125 pass; real same-version acceptance remains required.
+
+The scalar source count is per field across scalar-bearing affirmative
+generation clauses, before comparing to the proposal. A separate "show me the
+plan" clause has no date and cannot cancel a unique date declaration. Conflicting
+or repeated date-bearing clauses remain unapproved; equality cannot hide a
+different source. Real after11 retained the broad-quote failure; new regression
+baseline1 failure and targeted126 pass. Frozen acceptance is still pending.
+Source counting and scalar normalization share scalar_tokens, including relative
+weekday dates; they cannot silently disagree on which literals exist.
