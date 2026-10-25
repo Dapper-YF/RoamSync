@@ -54,10 +54,10 @@ def literal_subjects_cover(required, existing, source):
 def explanation_requested(text):
     """Explicit stable subgoals; naming a place alone is not an explanation."""
     for clause in re.split(r'[，,。；;!?！？\n]',text):
-        for match in re.finditer(r'看点|看什么|值得看(?:什么|的东西|哪)|怎么玩|玩法|各自特色',clause):
-            if re.search(r'(?:不(?:用|要|必|想)?|别)(?:再)?(?:介绍|说|讲|查|看)[^，,。；;]*$',clause[:match.start()]):
+        for match in re.finditer(r'看点|看什么|值得看(?:什么|的东西|哪)?|怎么玩|玩法|各自特色',clause):
+            if re.search(r'(?:不(?:用|要|必|想)?|别)(?:再)?(?:介绍|解释|了解|知道|说|讲|查|看)[^，,。；;]*$',clause[:match.start()]):
                 continue
-            if re.match(r'(?:先|暂时)?(?:不用|不要|不必|别)(?:再)?(?:介绍|说|讲|查|看)',clause[match.end():]):
+            if re.match(r'(?:先|暂时)?(?:不用|不要|不必|别)(?:再)?(?:介绍|解释|了解|知道|说|讲|查|看)',clause[match.end():]):
                 continue
             return True
     return False

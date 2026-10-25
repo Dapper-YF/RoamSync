@@ -32,3 +32,49 @@ def test_photo_target_scope_does_not_expand_to_every_compared_place():
     for text in ['比较拙政园和狮子林，只给狮子林配图', '给我看狮子林照片，不要拙政园照片',
         '给我看狮子林的照片，不要拙政园的照片']:
         assert [s['subject'] for s in subjects_for_answer(bundle, text, ContextEnvelope())] == ['狮子林']
+
+
+def test_retrieval_does_not_consume_comparison_or_visual_identity_goals():
+    from app.assistant_capabilities import CapabilityDecision, ReadTask, validate_decision
+    text = '我想去苏州看园林，先比较拙政园（东北街178号）和狮子林（园林路23号），各有什么值得看？请展示两个地方的实景参考图片，先不要生成或保存行程。'
+    comparison = '先比较拙政园（东北街178号）和狮子林（园林路23号），各有什么值得看'
+    decision = CapabilityDecision(intent='direct', capabilities=['web'], city='苏州',
+        reason_code='stable_knowledge', illustrate=True, read_tasks=[
+            ReadTask(source_quote=comparison, capabilities=['web'], city='苏州', names=['拙政园','狮子林']),
+            ReadTask(source_quote='请展示两个地方的实景参考图片', capabilities=['web'], city='苏州', names=['拙政园','狮子林'])])
+    for _ in range(2):
+        decision = validate_decision(decision, text, [], ContextEnvelope(browsing_city='苏州'))
+        assert any(not t.capabilities and t.names == ['拙政园','狮子林'] for t in decision.read_tasks)
+        assert any('poi' in t.capabilities and t.names == ['拙政园','狮子林'] for t in decision.read_tasks)
+        assert len(decision.read_tasks) <= 5
+
+
+def test_visual_goal_cannot_restore_denied_lookup_or_a_nonrequested_peer():
+    from app.assistant_capabilities import CapabilityDecision, ReadTask, validate_decision
+    text = '介绍苏州拙政园，拙政园地址不要查，只给狮子林照片'
+    decision = CapabilityDecision(intent='lookup', reason_code='stable_knowledge', read_tasks=[
+        ReadTask(source_quote='介绍苏州拙政园，拙政园地址不要查', names=['拙政园'], city='苏州'),
+        ReadTask(source_quote='只给狮子林照片', names=['狮子林'], city='苏州', capabilities=['web'])])
+    for _ in range(2):
+        decision = validate_decision(decision, text, [], ContextEnvelope(browsing_city='苏州'))
+        assert not any('poi' in t.capabilities and '拙政园' in t.names and not t._clarification for t in decision.read_tasks)
+        assert sum('poi' in t.capabilities and '狮子林' in t.names and not t._clarification for t in decision.read_tasks) == 1
+
+
+def test_visual_identity_deduplication_respects_each_task_city():
+    from app.assistant_capabilities import CapabilityDecision, ReadTask, validate_decision
+    text = '查上海中山公园地址，再看北京中山公园照片'
+    decision = CapabilityDecision(intent='lookup', reason_code='place_identity', read_tasks=[
+        ReadTask(source_quote='查上海中山公园地址', city='上海', names=['中山公园'], capabilities=['poi']),
+        ReadTask(source_quote='再看北京中山公园照片', city='北京', names=['中山公园'], capabilities=['web'])])
+    for _ in range(2):
+        decision = validate_decision(decision, text, [], ContextEnvelope())
+        assert {t.city for t in decision.read_tasks if 'poi' in t.capabilities and not t._clarification} == {'上海','北京'}
+
+
+def test_negated_explanations_do_not_become_new_completion_goals():
+    from app.read_references import explanation_requested
+    for text in ['不用解释拙政园有什么值得看', '不想知道拙政园有什么值得看',
+        '拙政园有什么值得看先不要讲']:
+        assert not explanation_requested(text)
+    assert explanation_requested('拙政园各有什么值得看')

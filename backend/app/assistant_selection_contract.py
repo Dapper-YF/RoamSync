@@ -47,7 +47,7 @@ effective_conditions是实际生效值；旧历史、withdrawn与rejected不是�
 create/modify必须有当前肯定操作原句authorization_quote。询问“会怎样”、转述、假设、否定和未来确认不是操作授权。先看候选但不要保存允许生成；只修改候选但仍不保存允许预览修改；先不采用是暂停采用，不是丢弃，也不能妨碍独立咨询。
 用户已保存安排读取必须用itinerary：itinerary_purpose=saved_values读取天数/首项/末日/留白等真实保存值；original_rationale读原始保存理由；impact为假设影响。不能输出无关完整日程替代多个局部答案。保存快照覆盖范围外不能编造。
 直接推断先判断是否成立，然后说明证据支持范围和缺口，给具体核实办法。地图路段不能证明园内步行/入口省力；单道菜不能证明整餐忌口；参考价格不能保证账单。给定明确数值要完成对应算术，再区别参考结果与保证，不要遗漏算术只给泛化提醒。
-illustrate仅在用户要求图片或视觉外观是实际问题时为true；普通条件、路线、推断、采用不用图片。
+illustrate仅在用户要求图片或视觉外观是实际问题时为true；普通条件、路线、推断、采用不用图片。照片由回答后的独立图片查询提供，不能把展示照片改成web网页摘录任务。常识比较仍保留capabilities=[]的解释任务；所需地点身份可用独立poi任务查询，names保留对应用户名称及同句地址，不以图片任务取代比较。
 事实任务fact_kind=weather/opening_hours/other；餐饮category=food、酒店lodging、景点attraction。省力推断advice_focus=walking_effort，明确休息不出门为rest。
 条件回读必须intent=direct,response_purpose=conditions_recall；itinerary_purpose只能用于真实Trip读取，不能填conditions_recall。clarification只用于真正缺少信息的任务，不能用它代替回答或写暂停采用的确认语。
 若用户只要松散选择而非定时方案，用creation.flexible=true与有原文来源的selected/optional/blank_day；局部窗口须有明确起止，整天留白用blank_day，不猜钟点。

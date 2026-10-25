@@ -1394,3 +1394,14 @@ change check. Primary and operation types must agree. No operation, target,
 multi-span quote or adoption permission is synthesized; unsupported/read/global
 targetless proposals remain unapproved. Grounding/Planner/Revision/Accept remain
 the execution chain. Stage4 saved-quote baseline5/1 failure; final targeted74 pass.
+
+Read adapters may omit unused search arguments internally, but must preserve
+task-local source-validated named subjects in the stored task contract. Web
+retrieval does not complete an explicit comparison/explanation goal. The same
+bounded explanation completion used for POI reads also applies to web reads.
+Explicit visual requests add missing identity-only POI reads for those validated
+subjects; they cannot create identity, expand the five-task bound or authorize
+writes. Revalidation deduplicates these obligations. Live Suzhou baseline
+returned unrelated streetview excerpts and no comparison/images; regression
+baseline5/1 failure, targeted86 pass after the correction and Astra negative-scope,
+city and repeated-validation review. Real validation pending.

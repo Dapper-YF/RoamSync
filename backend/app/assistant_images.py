@@ -28,6 +28,18 @@ def image_requested(message):
         for clause in _visual_clauses(message))
 
 
+def requested_visual_subjects(names, message):
+    """Narrow existing subjects; never introduce a name or a place identity."""
+    clauses = [part for part in _visual_clauses(message) if not _operation_limit(part)]
+    display = {name: re.split(r'[（(]', name)[0] for name in names}
+    named = {name for name, label in display.items() for part in clauses
+        if label in part and not _display_denied(part, label)}
+    broad = any(not any(label in part for label in display.values())
+        and not _display_denied(part) for part in clauses)
+    return [name for name, label in display.items() if (broad or name in named)
+        and not any(label in part and _display_denied(part, label) for part in clauses)]
+
+
 def subjects_for_answer(bundle, message, envelope):
     preference = envelope.conversation_memory.get("slots", {}).get("images", {}).get("value", "")
     if any(_display_denied(clause) for clause in _visual_clauses(message)) or _display_denied(str(preference)):
@@ -44,12 +56,8 @@ def subjects_for_answer(bundle, message, envelope):
             subjects = [{"subject": card["place"]["name"], "kind": "attraction"}
                 for card in cards if card.get("place", {}).get("name") and card['place']['name'] in answer]
     if requested:
-        clauses = [part for part in _visual_clauses(message) if not _operation_limit(part)]
-        named = {item['subject'] for item in subjects for part in clauses
-            if item['subject'] in part and not _display_denied(part, item['subject'])}
-        broad = any(not any(item['subject'] in part for item in subjects) and not _display_denied(part) for part in clauses)
-        subjects = [item for item in subjects if (broad or item['subject'] in named)
-            and not any(item['subject'] in part and _display_denied(part, item['subject']) for part in clauses)]
+        allowed = requested_visual_subjects([item['subject'] for item in subjects], message)
+        subjects = [item for item in subjects if item['subject'] in allowed]
     result = []
     for item in subjects:
         subject = item.get("subject", "")

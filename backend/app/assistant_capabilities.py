@@ -479,8 +479,13 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
             if validated.intent == "clarify":
                 block(task, validated.clarification)
                 continue
-            checked.append(task.model_copy(update={key: getattr(validated, key)
-                for key in ReadTask.model_fields if key not in {"source_quote","source_ref"}}))
+            fields = {key: getattr(validated, key)
+                for key in ReadTask.model_fields if key not in {"source_quote","source_ref"}}
+            # Named subjects already passed task-local provenance checks. A web
+            # adapter's unused POI arguments must not erase the semantic targets
+            # needed by comparison, visual goals and subsequent references.
+            fields['names'] = task.names
+            checked.append(task.model_copy(update=fields))
         # A direct explanation cannot consume an explicitly requested actual
         # location. Recover only literal lookup obligations with already
         # source-validated subjects, never an inferred name or identity.
@@ -504,10 +509,31 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
                 lookup=ReadTask(source_quote=clause,capabilities=['poi'],city=task.city or decision.city,names=names)
                 lookup._identity_only=True
                 additions.append(lookup)
+        from app.assistant_images import image_requested, requested_visual_subjects
+        if image_requested(message):
+            visual_names = requested_visual_subjects([name for task in checked
+                if not task._clarification for name in task.names], message)
+            for task in checked:
+                if task._clarification or not task.names or 'poi' in task.capabilities:
+                    continue
+                names = [name for name in task.names if name in visual_names and
+                    argument_in_read_scope(name, task.source_quote, referents, capabilities=['poi'])]
+                if not names:
+                    continue
+                city = task.city or decision.city
+                if any('poi' in existing.capabilities and not existing._clarification
+                    and (existing.city or decision.city).removesuffix('市') == city.removesuffix('市')
+                    and literal_subjects_cover(names, existing.names, task.source_quote)
+                    for existing in [*checked,*additions]):
+                    continue
+                lookup=ReadTask(source_quote=task.source_quote, capabilities=['poi'],
+                    city=city, names=names)
+                lookup._identity_only=True
+                additions.append(lookup)
         explanations={}
         identity_tasks=[]
         for task in checked:
-            if task._clarification or 'poi' not in task.capabilities or 'web' in task.capabilities or not task.names or not explanation_requested(task.source_quote):
+            if task._clarification or not set(task.capabilities) & {'poi','web'} or not task.names or not explanation_requested(task.source_quote):
                 continue
             if any(not existing.capabilities and not existing._clarification and task.source_quote in existing.source_quote
                 and literal_subjects_cover(task.names, existing.names, existing.source_quote)
