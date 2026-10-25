@@ -80,6 +80,13 @@ def is_context_only_statement(clause: str) -> bool:
         # Approval/workflow controls are not travel outcome requirements. They
         # remain in source messages and go through the action authorization gate.
         return True
+    # A complete instruction to retain named saved fields constrains this
+    # edit; it does not create a new durable preference or requirement. Values
+    # and unknown subjects cannot match this closed field grammar.
+    field = r'(?:活动|安排|午餐留白|午餐|留白|日期|交通方式|个人偏好|行程要求|偏好|要求|预算|人数)'
+    preserved = rf'(?:其他|其余|剩余|原有|现有)?{field}(?:[、和及与\s]+(?:其他|其余|剩余|原有|现有)?{field})*(?:都|全部|均)?(?:保持原样|保持不变|维持原样|维持不变|不变)'
+    if re.fullmatch(preserved,text):
+        return True
     if re.search(r"希望|要求|请|不要|不想|必须|不能|不得|禁止|避免|需要|安排|确认|标记", text):
         return False
     purpose = r"(?:这(?:次|趟)?(?:旅行|行程|记录|请求|操作)?|本次(?:旅行|行程|记录|请求|操作)?|此(?:旅行|行程|记录|请求|操作)?)?\s*(?:只是|仅|只)?(?:用于|用来|作为|供)\s*(?:(?:软件|系统|应用|功能|接口|产品)\s*)?(?:验收|测试|调试)(?:使用|之用)?"

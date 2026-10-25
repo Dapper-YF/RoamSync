@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import Activity, DayPlan, PlaceCandidate, Trip, TripExecution
+from app.database import Activity, DayPlan, PlaceCandidate, Trip, TripExecution, TripArrangementItem
 from app.repository import TripNotFoundError
 from app.planning_errors import PlannerProviderError
 from app.travel_language import is_generic_place_quantity
@@ -253,6 +253,10 @@ class _ActivityEntity:
     category: str = ""
     scheduled_time: time | None = None
     schedule_locked: bool = False
+    position: int = 0
+    duration_minutes: int | None = None
+    version: int | None = None
+    status: str = 'planned'
 
 
 def is_advice_request(message: str) -> bool:
@@ -350,6 +354,7 @@ class PlanningIntentSnapshot:
     activities: tuple[_ActivityEntity, ...]
     candidates: tuple[PlanningCandidateFacts, ...]
     execution_current_date: date | None = None
+    arrangement_items: tuple[dict, ...] = ()
 
 
 async def load_planning_intent_snapshot(
@@ -385,6 +390,10 @@ async def load_planning_intent_snapshot(
             category=place.category,
             scheduled_time=activity.scheduled_time,
             schedule_locked=activity.schedule_locked,
+            position=activity.position,
+            duration_minutes=activity.duration_minutes,
+            version=activity.version,
+            status=activity.status,
             aliases=tuple(
                 value
                 for value in (activity.custom_name, place.name)
@@ -412,6 +421,10 @@ async def load_planning_intent_snapshot(
         activities=tuple(entities),
         candidates=tuple(PlanningCandidateFacts(place.id, place.name) for place in candidate_rows),
         execution_current_date=execution.current_date if execution is not None else None,
+        arrangement_items=tuple({'id':str(item.id),'kind':item.kind,
+            'activity_id':str(item.activity_id) if item.activity_id else None,
+            'day_date':item.day_date.isoformat() if item.day_date else None}
+            for item in await session.scalars(select(TripArrangementItem).where(TripArrangementItem.trip_id==trip_id))),
     )
 
 
@@ -669,8 +682,21 @@ async def resolve_planning_intent_snapshot(
         candidates=candidate_rows,
         inherited_missing_fields=intent.missing_fields,
         inherited_ambiguities=intent.ambiguities,
+        arrangement_items=snapshot.arrangement_items,
+        trip_version=trip.version,
     )
     grounded_intent = _reconcile_grounded_ambiguities(grounded_intent)
+    if (grounded_intent.duration_changes and len(grounded_intent.duration_changes) == len(semantic_draft.operations)
+        and not any(operation.place_mentions for operation in semantic_draft.operations)):
+        # The legacy "增加X" place-query extractor also sees quantities. Remove
+        # only exact, independently bound duration values from these internal
+        # hints; preserve every other query and the full user source unchanged.
+        from app.saved_operation_bindings import _DURATION
+        quantities = {operation.raw_text[match.start(2):match.end()].strip()
+            for operation in semantic_draft.operations for match in _DURATION.finditer(operation.raw_text)}
+        queries = [value for value in intent.requested_place_queries if value not in quantities]
+        intent = intent.model_copy(update={'requested_place_queries':queries})
+        request = request.model_copy(update={'intent':intent})
     policy_decision = _decide_intent_policy(grounded_intent)
     if policy_decision.route == "clarify":
         questions.extend(_grounding_questions(grounded_intent))
@@ -1198,45 +1224,41 @@ def _ground_semantic_intent(
     candidates: list[PlaceCandidate],
     inherited_missing_fields: list[str],
     inherited_ambiguities: list[str],
+    arrangement_items: tuple | None = None,
+    trip_version: int | None = None,
 ) -> GroundedIntent:
     # Protection is a prohibition, never an authorization to edit that activity
     # or the other activities on its date. The request keeps protection separately.
-    target_activity_ids = [selected_activity_id] if (selected_activity_id is not None
-        and target_day is not None and selected_activity_id not in protected_activity_ids) else []
+    target_activity_ids = []
     unresolved_activities: list[str] = []
     candidate_place_ids: list[uuid.UUID] = []
     unresolved_places: list[str] = []
     entity_by_id = {entity.id: entity for entity in entities}
 
-    activity_mentions = _deduplicate(
-        [mention for operation in draft.operations for mention in operation.activity_mentions]
-    )
-    for mention in activity_mentions:
-        if is_generic_place_quantity(mention) or _trip_setting_kind(mention) or _is_plan_meta_activity_reference(_normalize_entity(mention)):
-            continue
-        normalized = _normalize_entity(mention)
-        if normalized in {"这个", "这个活动", "这个地方", "它", "该活动", "那个景点"}:
-            if selected_activity_id is not None:
-                if selected_activity_id not in protected_activity_ids:
-                    target_activity_ids.append(selected_activity_id)
+    from app.saved_operation_bindings import resolve_operation_targets, bind_duration_change
+    duration_changes = []
+    for index, operation in enumerate(draft.operations):
+        filtered = operation.model_copy(update={'activity_mentions': [mention for mention in operation.activity_mentions
+            if not (is_generic_place_quantity(mention) or _trip_setting_kind(mention)
+                    or _is_plan_meta_activity_reference(_normalize_entity(mention)))]})
+        targets, unresolved = resolve_operation_targets(filtered, entities, target_day, selected_activity_id, arrangement_items)
+        unresolved_activities.extend(unresolved)
+        target_activity_ids.extend(entity.id for entity in targets if entity.id not in protected_activity_ids)
+        if operation.operation == 'replan_trip':
+            if any(entity.id in protected_activity_ids for entity in targets):
+                change, issue = None, 'duration_target_protected'
             else:
-                unresolved_activities.append(mention)
-            continue
-        matches = [
-            entity.id
-            for entity in entities
-            if any(
-                normalized == _normalize_entity(alias)
-                or normalized in _normalize_entity(alias)
-                or _normalize_entity(alias) in normalized
-                for alias in entity.aliases
-            )
-        ]
-        if len(matches) == 1:
-            if matches[0] not in protected_activity_ids:
-                target_activity_ids.append(matches[0])
-        else:
-            unresolved_activities.append(mention)
+                change, issue = bind_duration_change(operation, index, targets, trip_version)
+            if issue:
+                inherited_ambiguities.append(issue)
+            if change:
+                if change.activity_id in {existing.activity_id for existing in duration_changes}:
+                    inherited_ambiguities.append('duration_conflicting_operations')
+                duration_changes.append(change)
+    if duration_changes and any(operation.operation != 'replan_trip' for operation in draft.operations):
+        inherited_ambiguities.append('duration_mixed_operations')
+    if duration_changes and len(duration_changes) != len(draft.operations):
+        inherited_ambiguities.append('duration_incomplete_operation_binding')
 
     place_mentions = _deduplicate(
         [mention for operation in draft.operations for mention in operation.place_mentions]
@@ -1348,6 +1370,7 @@ def _ground_semantic_intent(
         operation_types=[operation.operation for operation in draft.operations],
         target_day_ids=_deduplicate(target_days),
         target_activity_ids=_deduplicate(target_activity_ids),
+        duration_changes=duration_changes,
         candidate_place_ids=_deduplicate(candidate_place_ids),
         unresolved_activity_mentions=_deduplicate(unresolved_activities),
         unresolved_place_mentions=_deduplicate(unresolved_places),
@@ -1381,7 +1404,7 @@ def _decide_intent_policy(intent: GroundedIntent) -> IntentPolicyDecision:
         )
     unresolved_mutation = bool(
         intent.unresolved_activity_mentions
-        and operations & {"remove_activity", "replace_activity", "reorder_activities"}
+        and operations & {"remove_activity", "replace_activity", "reorder_activities", "replan_trip"}
     ) or bool(
         intent.unresolved_place_mentions
         and operations & {"add_activity", "replace_activity"}
@@ -1414,6 +1437,8 @@ def _decide_intent_policy(intent: GroundedIntent) -> IntentPolicyDecision:
 
 def _grounding_questions(intent: GroundedIntent) -> list[str]:
     questions: list[str] = []
+    if any(item.startswith('duration_') for item in intent.ambiguities):
+        questions.append('请分别说明每项活动要设为、增加或减少多少分钟；目标须有完整保存状态且可以修改。')
     if intent.unresolved_activity_mentions:
         questions.append(
             "请从当前行程中明确选择要操作的活动："

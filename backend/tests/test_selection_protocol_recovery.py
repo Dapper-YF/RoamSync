@@ -58,6 +58,30 @@ def test_extra_root_field_recovers_only_after_explicit_second_strict_output(monk
     assert json.loads(calls[1]["input_text"])["original_request"] == frozen
 
 
+def test_read_task_only_misplaced_parser_metadata_gets_one_visible_format_repair(monkeypatch):
+    known={k:v for k,v in BASE.items() if k!='capabilities'}
+    known['read_tasks']=[{'source_quote':'选中的馆原来保存了多久？',
+        'capabilities':['itinerary'],'itinerary_purpose':'saved_values'}]
+    raw={**known,'confidence':.98,'parser':'model','parser_version':'v1'}
+    run,calls,closed,_=exercise(monkeypatch,[raw,known])
+    assert asyncio.run(run()).itinerary_purpose=='saved_values'
+    assert len(calls)==2 and closed==[True]
+    assert json.loads(calls[1]['input_text'])['invalid_selection']==raw
+
+
+@pytest.mark.parametrize('extra',[
+    {'budget_limit':105}, {'confidence':'high'}, {'parser':'save_now'},
+    {'parser_version':'v1','memory_updates':[{'field':'city','value':'成都','source_quote':'成都'}]},
+])
+def test_read_task_only_unknown_or_authority_metadata_is_not_repairable(monkeypatch,extra):
+    raw={k:v for k,v in BASE.items() if k!='capabilities'}
+    raw['read_tasks']=[{'source_quote':'选中的馆原来保存了多久？','capabilities':['itinerary']}]
+    run,calls,_,_=exercise(monkeypatch,[{**raw,**extra}])
+    with pytest.raises(ValidationError):
+        asyncio.run(run())
+    assert len(calls)==1
+
+
 @pytest.mark.parametrize("change", [
     {"intent": "modify", "authorization_quote": "请修改"},
     {"capabilities": ["itinerary", "web"]},

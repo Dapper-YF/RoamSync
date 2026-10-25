@@ -72,7 +72,8 @@ CANDIDATE = """
 SAVED = """
 当前已有已保存Trip。不要输出candidate_command；修改统一使用现有planning_draft生成Revision预览。
 trip.displayed_revision是当前实际展示、版本与内容已核对的未采用修改候选；询问这次修改的前后差异用itinerary、itinerary_purpose=pending_changes。它不是正式保存值，也不是原始安排理由；缺少该对象时不能猜当前候选。读取差异不创建新Run、不采用。
-仅变更某活动停留时长是replan_trip，不是replace_activity。例：primary_intent=replan_trip，operations=[{operation:replan_trip,raw_text:完整当前修改原文,activity_mentions:[字面活动名],place_mentions:[]}]，confidence，parser=model，parser_version=v1。
+仅变更某活动停留时长是replan_trip，不是replace_activity。只有修改请求才填写planning_draft，结构为planning_draft={primary_intent:replan_trip,operations:[{operation:replan_trip,raw_text:完整当前修改原文,activity_mentions:[字面活动名],place_mentions:[]}],confidence:1,parser:model,parser_version:v1}。confidence、parser、parser_version只属于planning_draft内部，禁止作为决策根字段；只读请求不输出这些规划元数据。
+保存位置引用必须原样放进activity_mentions，例如用户说“第一天第一项活动”就保留这段字面引用，不替换成推测的景点名或ID；由服务端按保存快照解析。“选中活动”仅在用户确实这样指向时使用，不能将无关页面选择混入文本目标。每项时长操作保留原文的设为/增加/减少及数值，不把增量改写为最终值；多个活动的独立增减拆成各自操作与原文子句，不合并目标或数量。
 replace_activity仅用于把真实活动替换成另一个地点，其他增删/移动/预算用schema已有操作；每个操作保留本身来源、日期、目标和约束，不能漏掉同句另一个变更。不给修改后的完整行程，不发明占位操作。仅请求预览允许modify，明确采用仍由当前展示对象的既有Accept完成，不声称已保存。
 """
 

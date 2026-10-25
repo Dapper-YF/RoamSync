@@ -123,6 +123,21 @@ class SemanticIntentDraft(BaseModel):
     parser_version: str = Field(min_length=1, max_length=40)
 
 
+class SavedDurationChange(BaseModel):
+    """Server-resolved per-operation facts, never model input or authority."""
+    model_config = ConfigDict(extra="forbid")
+    operation_index: int = Field(ge=0)
+    source_quote: str
+    activity_id: uuid.UUID
+    day_id: uuid.UUID
+    activity_version: int = Field(ge=1)
+    trip_version: int | None = None
+    operator: Literal['set', 'add', 'subtract']
+    minutes: int = Field(ge=1, le=1440)
+    before_minutes: int = Field(ge=1, le=1440)
+    after_minutes: int = Field(ge=1, le=1440)
+
+
 class GroundedIntent(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -131,6 +146,7 @@ class GroundedIntent(BaseModel):
     operation_types: list[IntentOperationType] = Field(min_length=1, max_length=10)
     target_day_ids: list[uuid.UUID] = Field(default_factory=list, max_length=20)
     target_activity_ids: list[uuid.UUID] = Field(default_factory=list, max_length=100)
+    duration_changes: list[SavedDurationChange] = Field(default_factory=list, max_length=20)
     candidate_place_ids: list[uuid.UUID] = Field(default_factory=list, max_length=100)
     unresolved_activity_mentions: list[str] = Field(default_factory=list, max_length=20)
     unresolved_place_mentions: list[str] = Field(default_factory=list, max_length=20)
@@ -667,6 +683,7 @@ class PlanningSoftGoals(BaseModel):
 class PlanningGoals(BaseModel):
     """Request-scoped decision state, not a change to the formal itinerary."""
     target_days: list[str] = Field(default_factory=list)
+    duration_changes: list[SavedDurationChange] = Field(default_factory=list, max_length=20)
     hard_goals: PlanningHardGoals = Field(default_factory=PlanningHardGoals)
     soft_goals: PlanningSoftGoals = Field(default_factory=PlanningSoftGoals)
 

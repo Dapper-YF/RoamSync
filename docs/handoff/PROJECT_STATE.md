@@ -2,6 +2,30 @@
 
 Last updated: 2026-10-25
 
+## Stage6 shared references and bound saved modifications (2026-10-25)
+
+VERIFIED isolated branch codex/product-closeout-stage6-20261025 continues from
+d0545e8. Batch1 product50a4ac5/evidence80f3b8d unifies saved chronological
+ordinals, independent snapshot reads, comparison order/focus and a bounded
+opening-hours reference recovery. Targeted79/expanded146 pass; live Yangzhou
+references and historical Suzhou saved reads pass within documented limits.
+
+Batch2 server-owned per-operation duration bindings retain literal action,
+stable activity/day/version and exact set/add/subtract result. Unrelated UI
+selection cannot expand a text target. Existing Planner/Revision/Validator/
+Accept remains the only writer; exact Revision differences and all-day route
+modes are guarded. Final targeted238 pass, Astra limited contract review passes.
+Live GLM/AMap after9+followup5 on a historical actual-object clone completes
+75→90 preview/read/defer/adopt/saved read at one stable app hash. Eight business
+tables unchanged before adoption; only target Activity content changes after,
+with Trip version advance and existing route metadata refresh. Earlier real
+failed runs, including an unwanted preservation preference write, remain saved.
+
+Overall NO-GO. No new independent score or fresh blank/browser golden chain.
+Date/condition/candidate/answer completeness and frozen final acceptance remain.
+New sealed5x4 authored independently, not read by developer before freeze.
+No official source/DB/deployment/Obsidian change.
+
 ## Stage5 ongoing repairs and saved-place photographs (2026-10-25)
 
 VERIFIED isolated branch codex/product-closeout-stage5-20261025 continues from

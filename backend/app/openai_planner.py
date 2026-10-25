@@ -709,7 +709,7 @@ def preserve_out_of_scope_activities(snapshot, state: PlanningGraphState):
     target_activity_ids = set(grounded.get("target_activity_ids") or [])
     explicit_activity_scope = bool(
         target_activity_ids
-        and operations & {"remove_activity", "replace_activity", "reorder_activities"}
+        and (operations & {"remove_activity", "replace_activity", "reorder_activities"} or grounded.get('duration_changes'))
     )
     if not target_day_ids and not explicit_activity_scope:
         return snapshot

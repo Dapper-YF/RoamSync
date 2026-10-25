@@ -208,9 +208,18 @@ async def select_capabilities(settings, message, history, envelope, trip_summary
 
 
 def _repairable_saved_read(raw, errors, trip_summary):
+    # A read-task-only selection may misplace the known SemanticIntentDraft
+    # parser metadata at the root. Its exact finite representation is format,
+    # not a user constraint. Unknown metadata or substantive values still fail.
+    metadata_only = (isinstance(raw, dict) and bool(errors)
+        and all(e['type']=='extra_forbidden' and len(e['loc'])==1
+            and e['loc'][0] in {'confidence','parser','parser_version'} for e in errors)
+        and ('confidence' not in raw or type(raw['confidence']) in {int,float} and 0<=raw['confidence']<=1)
+        and raw.get('parser','model')=='model' and raw.get('parser_version','v1')=='v1'
+        and bool(raw.get('read_tasks')) and not raw.get('capabilities'))
     return (isinstance(raw, dict) and isinstance(trip_summary, dict)
         and bool(trip_summary.get("read_coverage")) and not trip_summary.get("candidate")
-        and raw.get("intent") == "itinerary" and raw.get("capabilities") == ["itinerary"]
+        and raw.get("intent") == "itinerary" and (raw.get("capabilities") == ["itinerary"] or metadata_only)
         and not any(raw.get(k) for k in ("creation", "planning_draft", "candidate_command",
             "saved_intentions", "memory_updates", "authorization_quote"))
         and all(not task.get("capabilities") or task["capabilities"] == ["itinerary"]
@@ -397,13 +406,16 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
             and not re.search(r"行程|安排|计划|旅行|保存|规划|创建|生成|制定|活动|景点|出游", message)):
             return decision.model_copy(update={"intent": "direct", "capabilities": [], "authorization_quote": "",
                 "clarification": "", "reason_code": "stable_knowledge", "illustrate": False})
+        write_verbs = (r'规划|安排|整理|协调|加入|添加|删除|删掉|取消|撤销|改|调整|换|挪|移|重排|保留|延长|增加|减少|缩短|结束|再待|多待|多留|少逛'
+            if decision.intent == 'modify' else r'规划|安排|创建|生成|制定|保存|整理|协调|加入|添加|删除|删掉|取消|撤销|改|调整|换|挪|移|重排|保留|延长|增加|减少|缩短|结束|再待|多待|多留|少逛')
+        blocked_scope = (r'假如|假设|如果|不要修改|不要安排|不用修改|只(?:问|了解|讨论)'
+            if decision.intent == 'modify' else r'假如|假设|如果|先别|先不|暂不|不要修改|不要安排|不用修改|只(?:问|了解|讨论)')
         if (not quote or quote not in message or
-            not re.search(r"规划|安排|创建|生成|制定|保存|整理|协调|加入|添加|删除|删掉|取消|撤销|改|调整|换|挪|移|重排|保留|延长|结束|再待|多待|多留|少逛", quote) or
+            not re.search(write_verbs, quote) or
             (re.search(r"怎么|怎样|如何|会怎样|是什么|什么意思|是否|好不好", message)
              and not re.search(r"(?:请|帮我|替我|给我|能不能帮我|能否帮我).{0,30}(?:安排|规划|调整|修改|生成|保存)", message)) or
-            re.search(r"假如|假设|如果|先别|先不|暂不|不要修改|不要安排|不用修改|只(?:问|了解|讨论)", quote) or
-            not affirmative_action_source(message, quote,
-                r"规划|安排|创建|生成|制定|保存|整理|协调|加入|添加|删除|删掉|取消|撤销|改|调整|换|挪|移|重排|保留|延长|结束|再待|多待|多留|少逛")):
+            re.search(blocked_scope, quote) or
+            not affirmative_action_source(message, quote, write_verbs)):
             return decision.model_copy(update={"intent": "direct", "capabilities": [], "authorization_quote": "",
                 "reason_code": "stable_knowledge"})
         decision = decision.model_copy(update={"capabilities": []})
@@ -586,7 +598,7 @@ def _task_decision(decision, task):
     return result
 
 
-def _non_authorizing_context(message, quote, *, start=None):
+def _non_authorizing_context(message, quote, *, start=None, check_revocations=True, action_context=None):
     """A literal affirmative quote cannot escape its negated/quoted clause.
 
     Other clauses may constrain time/place without cancelling this action.
@@ -604,6 +616,8 @@ def _non_authorizing_context(message, quote, *, start=None):
     prefix = re.split(r"[，,。；;!?！？]", before)[-1]
     if re.search(r"假如|假设|如果|先别|先不|暂不|不要|不用|不必|无需|不许|不准|不需要|只(?:问|了解|讨论)", prefix) or re.search(r"(?:不|别)(?:再|想|要)?\s*$", prefix):
         return True
+    if not check_revocations:
+        return False
     # Revocation owns an action/object. 'Do not save' cannot revoke preview or
     # edits, and cancelling a different named object cannot revoke this one.
     from app.conversation_candidate.commands import ACTION_VERBS
@@ -615,23 +629,23 @@ def _non_authorizing_context(message, quote, *, start=None):
         if not any(key in actions and re.fullmatch(verbs, revoke[1]) for key, verbs in families.items()):
             continue
         obj = re.sub(r'(?:当前|这份|这个|整个|新的?|的|候选|行程|安排|计划|旅行|了|吧|一下|\s)', '', revoke[2])
-        if not obj or obj in quote or re.search(r'它|这|那|刚才|上面|前面', obj):
+        if not obj or obj in (action_context or quote) or re.search(r'它|这|那|刚才|上面|前面', obj):
             return True
     return False
 
 
 def affirmative_action_source(message, quote, verbs):
     """An exact quote needs an affirmative occurrence of its own action."""
-    if not quote or _non_authorizing_context(message, quote):
+    if not quote or _non_authorizing_context(message, quote, check_revocations=False):
         return False
     from app.conversation_candidate.sources import action_clause
     if re.search(r'会怎样|会如何|是否可行|是否合适|能不能这样',action_clause(message,quote)):
         return False
-    return any(not _non_authorizing_context(quote, match[0], start=match.start())
+    return any(not _non_authorizing_context(message, match[0], start=message.index(quote) + match.start(), action_context=quote)
                for match in re.finditer(verbs, quote))
 
 
-def affirmative_entity_source(message, quote, verbs, name, *, allow_optional=False, permission_particles=False):
+def affirmative_entity_source(message, quote, verbs, name, *, allow_optional=False, permission_particles=False, action_offset=None):
     """Bind an action to this entity, not a positive action about its peer.
 
     Ambiguous coordinated prose stays unapproved; it does not borrow a verb
@@ -646,6 +660,8 @@ def affirmative_entity_source(message, quote, verbs, name, *, allow_optional=Fal
     start = clause.index(name)
     end = start + len(name)
     for action in re.finditer(verbs, clause):
+        if action_offset is not None and action.start() != action_offset:
+            continue
         gap = clause[action.end():start] if action.end() <= start else clause[end:action.start()] if action.start() >= end else None
         gap_pattern = r"(?:一下|一趟|参观|游览|确定|要|作为|是|的|也|先|再|就|暂时|暂|不|别|不要|不用|无需|不必|路线|顺序|时间|停留|时长"
         if allow_optional:

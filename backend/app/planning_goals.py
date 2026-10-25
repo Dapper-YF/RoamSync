@@ -57,6 +57,7 @@ def extract_planning_goals(*, user_request: str, intent_resolution: dict, contex
 
     return PlanningGoals.model_validate({
         "target_days": sorted(set(target_days)),
+        "duration_changes": grounded.get('duration_changes', []),
         "hard_goals": {"end_before": end_before, "max_walking_minutes": explicit_max_walking},
         "soft_goals": {
             "pace": "relaxed" if relaxed else None,
@@ -184,8 +185,69 @@ def check_goal_satisfaction(*, goals: PlanningGoals, before_context: dict, snaps
             "activity_count_before": len(before_ids), "activity_count_after": len(after_ids),
             "walking_minutes_before": before_walking, "walking_minutes_after": after_walking,
         }})
+    if goals.duration_changes:
+        results.append(_duration_change_result(goals, before_context, snapshot))
     results.extend(_effective_requirement_results(before_context, snapshot))
     return GoalSatisfactionResult.model_validate({"results": results})
+
+
+def _duration_change_result(goals, context, snapshot):
+    """Check the approved delta using the existing shared Revision diff."""
+    from types import SimpleNamespace
+    from app.revision_presentation import revision_review
+    selected = set(goals.target_days)
+    scoped = {**context, 'days':[day for day in context.get('days', []) if not selected or day['date'] in selected]}
+    proposal = snapshot.model_copy(update={'activities':[item for item in snapshot.activities
+        if not selected or item.day_date.isoformat() in selected]})
+    review = revision_review(SimpleNamespace(before_snapshot=scoped,
+        proposed_snapshot=proposal.model_dump(mode='json'), validation_result={}))
+    old = {str(item['id']):item for day in scoped['days'] for item in day['activities']}
+    expected = {str(change.activity_id):change for change in goals.duration_changes}
+    failures = []
+    for identity, change in expected.items():
+        item = old.get(identity)
+        if (not item or item.get('version') != change.activity_version
+            or item.get('duration_minutes') != change.before_minutes
+            or (change.trip_version is not None and context.get('trip',{}).get('version') != change.trip_version)):
+            failures.append({'activity_id':identity,'reason':'stale_duration_baseline'})
+    changed = set()
+    for delta in review['changes']:
+        before, after = delta['before'], delta['after']
+        identity = before['activity_id'] if before else None
+        change = expected.get(identity)
+        if (delta['kind'] != 'change' or change is None or after is None
+            or after['duration_minutes'] != change.after_minutes
+            or any(before[key] != after[key] for key in ('place_id','date','time','estimated_cost_fen','locked'))):
+            failures.append({'activity_id':identity,'reason':'unapproved_activity_difference'})
+        else:
+            changed.add(identity)
+    for identity, change in expected.items():
+        if change.before_minutes != change.after_minutes and identity not in changed:
+            failures.append({'activity_id':identity,'reason':'requested_duration_not_applied'})
+    # Route identity/freshness can be refreshed by the existing route adapter;
+    # a duration-only edit cannot silently change transport modes.
+    refs = {item.candidate_id:str(item.replaces_activity_id) for item in snapshot.activities if item.replaces_activity_id}
+    days = {day['date']:day for day in context.get('days', [])}
+    route_activity_ids = {str(item['id']) for day in days.values() for item in day['activities']}
+    for leg in snapshot.route_legs:
+        day = days.get(leg.day_date.isoformat())
+        if day is None:
+            continue
+        def bound_ref(ref):
+            value = refs.get(ref, ref.removeprefix('activity:'))
+            return value if value in route_activity_ids else None
+        origin, destination = bound_ref(leg.from_activity_ref), bound_ref(leg.to_activity_ref)
+        prior = next((route for route in day.get('route_legs', [])
+            if str(route['from_activity_id']) == origin and str(route['to_activity_id']) == destination),None)
+        mode = prior['mode'] if prior else day.get('route_mode')
+        if origin is None or destination is None or mode is None or leg.mode != mode:
+            failures.append({'reason':'unapproved_transport_change','day':day['date']})
+    if not review['complete']:
+        failures.append({'reason':'duration_review_incomplete'})
+    return {'goal':'saved_duration_changes','type':'hard',
+        'status':'unsatisfied' if failures else 'satisfied',
+        'evidence':{'expected_changes':[change.model_dump(mode='json') for change in goals.duration_changes],
+            'failures':failures,'semantics':'exact_approved_activity_delta_existing_revision_diff'}}
 
 
 def _effective_requirement_results(context: dict, snapshot: CandidatePlanSnapshot) -> list[dict]:

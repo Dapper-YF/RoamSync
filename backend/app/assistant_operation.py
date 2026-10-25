@@ -170,7 +170,7 @@ def approved_draft(decision, message):
     verbs = {"add_activity":r"加入|添加|增加|纳入|放进", "remove_activity":r"撤掉|撤销|取消|删除|删掉|不去",
         "replace_activity":r"换成|换掉|替换", "reorder_activities":r"移到|挪|晚|提前|延后|调整|顺序|改",
         "optimize_route":r"优化|协调|调整", "adjust_budget":r"控制|调整|预算", "weather_replan":r"调整|改|换",
-        "create_plan":r"创建|生成|安排|规划", "replan_trip":r"重排|重做|重新|调整|安排|规划|改|停留|延长|缩短"}
+        "create_plan":r"创建|生成|安排|规划", "replan_trip":r"重排|重做|重新|调整|安排|规划|改|停留|延长|缩短|增加|减少|多留|多待|少留|少待"}
     for op in draft.operations:
         if op.operation not in verbs:
             continue

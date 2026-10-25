@@ -217,7 +217,7 @@ async def validate_candidate_plan(
     )
     explicit_activity_scope = bool(
         target_activity_ids
-        and operation_types & {"remove_activity", "replace_activity", "reorder_activities"}
+        and (operation_types & {"remove_activity", "replace_activity", "reorder_activities"} or grounded_intent.duration_changes)
     )
     scoped_day_dates = {
         day_by_id[day_id].date for day_id in target_day_ids if day_id in day_by_id
@@ -508,6 +508,9 @@ async def validate_candidate_plan(
             intent_resolution=intent_resolution.model_dump(mode="json"), context=current_context)
         checked = check_goal_satisfaction(goals=goals, before_context=current_context, snapshot=snapshot)
         for result in checked.results:
+            if result.goal == 'saved_duration_changes' and result.status != 'satisfied':
+                errors.append(PlanValidationIssue(code='saved_duration_change_mismatch',
+                    message='修改与已确认目标、增减值或保存版本不一致，需要重新预览。', details=result.evidence))
             if result.goal == "max_walking_minutes" and result.type == "hard" and result.status != "satisfied":
                 errors.append(PlanValidationIssue(code="walking_limit_exceeded" if result.status == "unsatisfied" else "walking_limit_unverifiable",
                     message="活动间步行超过上限。" if result.status == "unsatisfied" else "现有路线不足以核实活动间步行上限。", details=result.evidence))

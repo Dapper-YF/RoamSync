@@ -264,6 +264,7 @@ def build_planning_graph(
             await report_progress("intent", "正在核对你的需求与调整范围…")
             from app.planning_intent_service import restore_current_turn_modification, restore_approved_planning_draft
             stored_run = await session.get(PlanningRun, run_id)
+            expected_duration_changes = ((stored_run.intent_resolution or {}).get('grounded_intent') or {}).get('duration_changes', [])
             approved_draft = restore_approved_planning_draft(stored_run, trip_id,
                 state["user_request"], context_data["trip"]["version"],
                 preferences_version=context_data["preferences"]["version"])
@@ -287,6 +288,9 @@ def build_planning_graph(
             prepared_draft=approved_draft,
             clarification_answers=clarification_answers,
             default_planning_intent="create_plan" if state["run_type"] == "initial_plan" else "replan_trip")
+        if expected_duration_changes and (resolution.grounded_intent is None or
+            [item.model_dump(mode='json') for item in resolution.grounded_intent.duration_changes] != expected_duration_changes):
+            raise PlannerConstraintsUnsatisfiedError(['saved_duration_binding_stale'])
         trace("resolve_intent", "decision", refs=("user_request", "itinerary"), data={
             "route": resolution.policy_decision.route if resolution.policy_decision else None,
             "requires_clarification": resolution.requires_clarification,

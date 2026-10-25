@@ -64,7 +64,7 @@ def validate_command(command, message):
         # Recover the complete containing user clause. A model extracting only
         # the word 保存 from a question cannot create adoption authority.
         clauses = [part.strip() for part in re.split(r"[，,；;。!?！？\n]", message) if part.strip()]
-        prefix = r"(?:(?:请|麻烦(?:你)?|现在|就|直接|确认|同意)*(?:帮我|替我|给我|请你)?)"
+        prefix = r"(?:(?:请|麻烦(?:你)?|现在|就|直接|确认|明确|同意)*(?:帮我|替我|给我|请你)?)"
         action = r"(?:采用并保存|保存|采用)" if command.action == "adopt" else r"(?:放弃|撤回|丢弃|取消)"
         target = r"(?:(?:(?:当前|这|上述|刚才)(?:的|份|个)?)*(?:修改|调整后)?(?:候选|安排|方案|行程|计划))?"
         destination = (r"(?:并保存)?" if command.action == 'adopt' else '') + r"(?:到我的安排)?(?:吧|即可|就行|一下)?"

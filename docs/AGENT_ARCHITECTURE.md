@@ -1,5 +1,33 @@
 # RoamSync Agent v1 architecture contract
 
+## Stage6 saved duration operations (2026-10-25, development)
+
+SavedDurationChange is server-owned internal metadata on GroundedIntent and
+PlanningGoals, never a model-authored SemanticIntentDraft field. Each operation
+binds its literal action position, target ID/day/version, trip version, set/add/
+subtract semantics, baseline minutes and exact allowed result. Explicit text
+does not union an unrelated UI selection. Incomplete, conflicting, mixed or
+unresolved operations clarify atomically; one valid operation cannot discard an
+unknown sibling. Duration quantities are not new place queries. A closed list
+of existing conditions followed by preservation language is workflow context,
+not a newly persisted personal/trip requirement.
+
+The original Planner/Revision/Validator/Accept chain remains the only writer.
+Existing scoped preservation fills omitted peers; supplied changes still pass
+the shared Revision diff. The hard saved-duration goal rejects wrong deltas,
+other activity differences and route mode changes across all retained days.
+Route IDs/freshness/provider labels may refresh through the existing route
+adapter; preserving transport facts does not promise byte-identical route rows.
+Worker re-grounding rejects changed operation bindings rather than retargeting
+a new ordinal after a version/order change. No new table or public endpoint.
+
+Authorization checks use exact action positions and their own object context.
+"保存版本" is a baseline noun; "暂不采用" denies adoption without denying a
+separate affirmative preview modification. Later named revocations still apply
+to their corresponding action/object. The explicit adoption prefix "明确" is
+accepted only within the existing complete affirmative adoption clause; displayed
+ID/hash/version and all original quoted/future/negative guards still apply.
+
 ## Stage6 shared read references (2026-10-25, development)
 
 Saved activity ordinals share one server-owned parser and chronological order
