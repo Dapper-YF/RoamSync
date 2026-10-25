@@ -11,7 +11,7 @@ from sqlalchemy import case, func, select, text
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession, create_async_engine
 from sqlalchemy.pool import NullPool
 
-from app.database import Activity, DayPlan, PlaceCandidate, Trip, TripArrangementItem, SavedIntention, TripPreferences
+from app.database import Activity, DayPlan, PlaceCandidate, Trip, TripArrangementItem, SavedIntention, TripPreferences, PlanRevision, PlanningRun
 from app.travel_language import chinese_number
 
 READ_LIMIT = 100
@@ -75,6 +75,7 @@ class SavedTripReadSnapshot:
     preferences: dict | None = None
     selected_day_id: str | None = None
     selected_activity_id: str | None = None
+    displayed_revision: dict | None = None
 
     def project(self, message):
         dates, explicit = requested_dates(message, self.days)
@@ -149,10 +150,11 @@ class SavedTripReadSnapshot:
     def selection_summary(self, message):
         projected = self.project(message)
         return {**deepcopy(self.trip), 'activities': projected['activities'],
-            'arrangement_items': projected['arrangement_items'], 'read_coverage': projected['coverage'], 'total_days': len(self.days)}
+            'arrangement_items': projected['arrangement_items'], 'read_coverage': projected['coverage'], 'total_days': len(self.days),
+            'displayed_revision':deepcopy(self.displayed_revision)}
 
 
-async def load_saved_trip_read(db, trip_id, message='', *, selected_day_id=None, selected_activity_id=None, limit=READ_LIMIT):
+async def load_saved_trip_read(db, trip_id, message='', *, selected_day_id=None, selected_activity_id=None, limit=READ_LIMIT, revision_ref=None):
     """Capture committed state in a short independent read-only MVCC unit.
 
     The caller's transaction is untouched. In particular execution status writes
@@ -179,7 +181,7 @@ async def load_saved_trip_read(db, trip_id, message='', *, selected_day_id=None,
                     await connection.execute(text('SET TRANSACTION READ ONLY'))
                     async with AsyncSession(bind=connection, expire_on_commit=False) as reader:
                         snapshot = await _capture_saved_trip_read(reader, trip_id, message,
-                            selected_day_id=selected_day_id, selected_activity_id=selected_activity_id, limit=limit)
+                            selected_day_id=selected_day_id, selected_activity_id=selected_activity_id, limit=limit,revision_ref=revision_ref)
         finally:
             await read_engine.dispose()
     finally:
@@ -196,7 +198,7 @@ async def load_saved_trip_read(db, trip_id, message='', *, selected_day_id=None,
     return snapshot
 
 
-async def _capture_saved_trip_read(db, trip_id, message='', *, selected_day_id=None, selected_activity_id=None, limit=READ_LIMIT):
+async def _capture_saved_trip_read(db, trip_id, message='', *, selected_day_id=None, selected_activity_id=None, limit=READ_LIMIT,revision_ref=None):
     async def rows(query):
         return (await db.execute(query, execution_options={'autoflush': False})).all()
     captured_at = datetime.now(UTC).isoformat()
@@ -253,12 +255,42 @@ async def _capture_saved_trip_read(db, trip_id, message='', *, selected_day_id=N
             SavedIntention.linked_arrangement_item_id, SavedIntention.time_period).where(
                 SavedIntention.linked_arrangement_item_id.in_([UUID(i['id']) for i in items])))}
         items = tuple({**i, 'time_period': periods.get(i['id'])} for i in items)
+    displayed=None
+    if revision_ref:
+        revision=await db.scalar(select(PlanRevision).where(PlanRevision.id==revision_ref['id'],
+            PlanRevision.trip_id==trip_id,PlanRevision.planning_run_id==revision_ref['run_id']),execution_options={'autoflush':False})
+        run=await db.get(PlanningRun,revision_ref['run_id'])
+        from app.revision_presentation import revision_presentation_hash,revision_review
+        if (revision and run and revision.status=='pending' and run.base_trip_version==t.version
+            and revision_presentation_hash(revision)==revision_ref['hash']):
+            review=revision_review(revision)
+            if review['complete']:
+                displayed={'id':str(revision.id),'presentation_hash':revision_ref['hash'],
+                    'trip_version':t.version,'review':review,'captured_at':captured_at}
     return SavedTripReadSnapshot(trip={'id': str(t.id), 'title': t.title, 'destination': t.destination,
         'version': t.version, 'preferences_version': preference_version},
         days=days, activities=activities, items=items, counts_by_date=counts, item_count=item_count,
         captured_at=captured_at, preferences=preferences,
         selected_day_id=str(selected_day_id) if selected_day_id else None,
-        selected_activity_id=str(selected_activity_id) if selected_activity_id else None)
+        selected_activity_id=str(selected_activity_id) if selected_activity_id else None,displayed_revision=displayed)
+
+
+def render_displayed_revision(snapshot):
+    value=snapshot.displayed_revision
+    if not value:
+        return '没有匹配到当前已展示、仍有效的修改候选。请重新打开候选后再查看差异；正式安排没有修改。'
+    lines=['这份修改候选尚未采用，正式安排仍是修改前的保存状态：']
+    def describe(item):
+        return f"{item['name']} {item['date']} {item['time']} / {item['duration_minutes']}分钟"
+    for change in value['review']['changes']:
+        prior,after=change['before'],change['after']
+        lines.append(('删除：'+describe(prior)) if not after else ('新增：'+describe(after)) if not prior else
+            '修改：'+describe(prior)+' → '+describe(after))
+    if not value['review']['changes']:
+        lines.append('没有活动内容变化。')
+    lines.extend('需留意：'+warning['message'] for warning in value['review']['warnings'])
+    lines.append('只有明确采用当前这份候选，才会按已展示变化保存。')
+    return '\n'.join(lines)
 
 
 def render_saved_request(snapshot, message):

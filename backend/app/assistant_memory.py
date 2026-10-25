@@ -97,13 +97,14 @@ def _quoted_scalar(key, value, quote, today, message):
             and (value == quote or value in {str(len(members)), str(len(members))+'人'})):
             return len(members)
     numeral = r"[一二三四五六七八九十两\d]+"
-    unit = r"天" if key == "duration_days" else r"(?:个?人|位)"
+    unit = r"(?:天|日)" if key == "duration_days" else r"(?:个?人|位)"
     proposed = re.fullmatch(rf"({numeral})\s*(?:{unit})?", value)
     if proposed is None and key == 'party_size' and value in quote:
         proposed_tokens = re.findall(rf'{numeral}\s*{unit}', value)
         if len(proposed_tokens) == 1:
             proposed = re.fullmatch(rf"({numeral})\s*{unit}", proposed_tokens[0])
     tokens = [token[1] for token in re.finditer(rf"({numeral})\s*{unit}", quote)
+              if not (key=='duration_days' and re.search(r'[年月./-]\s*$',quote[:token.start()]))
               if _affirmative_scalar_token(message, quote_start + token.start(), quote_start + token.end())]
     # Mixed adult/child groups require a semantic sum, not a verified scalar.
     if key == "party_size" and re.search(r"成人|儿童|孩子|小孩", quote):
@@ -116,9 +117,24 @@ def _quoted_scalar(key, value, quote, today, message):
 
 def literal_conditions(message):
     """Exact date/duration slot answers also work in the existing planning handoff."""
+    # A verified single-person declaration does not depend on the selector's
+    # optional memory patch or on another clause mentioning a companion.
+    from app.requirement_language import current_user_evidence_reason
+    solo_updates=[]
+    for clause in re.split(r'[，,。；;!?！？]',message):
+        if (re.fullmatch(r'(?:这次|这趟)?(?:就|只剩|只|剩下)?我(?:(?:自己|独自|单独)(?:一个人)?|一个人)(?:去|出发|旅行|玩)',clause.strip())
+            and not current_user_evidence_reason(message,clause.strip())):
+            solo_updates.append(MemoryUpdate(field='party_size',value='1',source_quote=clause.strip(),scope='trip'))
+        from app.travel_language import trip_duration
+        count=trip_duration(clause)
+        if (count and re.search(r'候选|行程|安排|游玩|玩|旅行',clause)
+            and _quoted_scalar('duration_days',str(count),clause,local_today(),message)==count
+            and not current_user_evidence_reason(message,clause)
+            and not re.search(r'是否|吗|合适|够不够|[?？]',message)):
+            solo_updates.append(MemoryUpdate(field='duration_days',value=str(count),source_quote=clause.strip(),scope='trip'))
     if re.search(r"如果|假如|假设|要是|[“”「」\"?？]|是否|吗|几天|合适|介绍|解释|朋友|听说|他|她|取消出发|不出发", message):
-        return []
-    updates = []
+        return solo_updates
+    updates = list(solo_updates)
     if re.search(r"我(?:们)?.{0,8}(?:去|到)|改去|目的地(?:改为|改成|为|是)", message):
         from app.companion_information import explicit_destination
         city = explicit_destination(message)
@@ -176,7 +192,22 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
             "read_draft_id": None, "read_draft_version": None, "action_target": None, "route_request": None})
     original_city = memory["slots"].get("city", {}).get("value") or envelope.browsing_city
     accepted = []
+    records = envelope.requirement_records
     from app.requirement_language import current_user_evidence_reason
+    # Reuse the same literal departure predicate as removal validation. The
+    # event acts only on already-owned trip conditions for that exact subject;
+    # it cannot revoke another person's, personal or global preference.
+    linked=[]
+    for clause in re.split(r'[，,。；;!?！？]',message):
+        departed=_departed_subjects(clause.strip())
+        if not departed or current_user_evidence_reason(message,clause.strip()):
+            continue
+        for field in ('preferences','requirements'):
+            for item in memory[field]:
+                if item.get('subject') in departed and item.get('scope')=='trip':
+                    linked.append(MemoryUpdate(field=field,operation='remove',value=item['value'],
+                        source_quote=clause.strip(),subject=item['subject'],scope='trip'))
+    updates=[*linked,*updates]
     diagnostics = []
     previous_receipt = memory.get('latest_receipt', {})
     receipts = list(previous_receipt.get('updates', [])) if previous_receipt.get('message_id') == str(message_id) else []
@@ -195,10 +226,13 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
             continue
         prefix = message[:message.find(quote)]
         key, operation = update.field, update.operation
+        from app.requirement_language import is_context_only_statement
+        if key in {'preferences','requirements'} and operation not in {'remove','clear'} and is_context_only_statement(quote):
+            receipt['reason']='workflow_not_travel_condition'
+            continue
         if key == "city" and value in {"哪里", "哪儿", "哪个城市", "什么城市", "某地", "未知", "未定"}:
             continue
-        departure = re.fullmatch(r'(.+?)(?:这次)?(?:都|也)?(?:不去了|不来了|不同行了?|退出了?|不参加(?:这次)?(?:旅行|行程)了?)[。！!\s]*', quote)
-        departed_subjects = re.split(r'和|与|及|、', departure[1]) if departure else []
+        departed_subjects = _departed_subjects(quote)
         subject_withdrawal = bool(update.subject and update.subject in departed_subjects)
         if update.subject in {'我', '本人', '我们', '用户'}:
             continue
@@ -237,6 +271,10 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
                 (item.get('subject', '') == update.subject or update.subject and
                  not item.get('subject') and item.get('source_quote', '').startswith(update.subject))]
             if not matching:
+                prior_key=key+':'+remove+(':'+update.subject+':trip' if update.subject else '')
+                if memory.get('withdrawn',{}).get(prior_key,{}).get('state')=='withdrawn':
+                    receipt.update(status='applied',reason='already_withdrawn',effective_value=[i['value'] for i in memory[key]])
+                    continue
                 receipt['reason'] = 'matching_condition_not_found'
                 continue
         withdrawn = memory.setdefault("withdrawn", {})
@@ -252,6 +290,23 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
                 withdrawn[key + ":" + update.replaces] = {"source_quote": quote, "message_id": str(message_id), "state": "superseded"}
         if key in {"preferences", "requirements"}:
             items = memory[key]
+            removed_items = [item for item in items if (
+                item.get('subject', '') == update.subject
+                and item.get('scope', 'personal') == evidence['scope'])] if operation == 'clear' else (
+                matching if operation == 'remove' else [item for item in items if update.replaces
+                    and item['value'] == update.replaces and item.get('subject', '') == update.subject
+                    and item.get('scope', 'personal') == evidence['scope']])
+            # Both stores already contain provenance. Revoke only atoms from
+            # the same source message and exact condition clause, never other
+            # clauses sharing that message or a durable/global requirement.
+            from app.requirements import valid_records, revoke_requirement
+            for prior in removed_items:
+                for record in valid_records(records):
+                    if (record['status'] == 'active' and record['source']['ref'] == prior.get('message_id')
+                        and record['scope']['kind'] != 'global_preference'
+                        and record['text'].strip() == prior.get('source_quote', '').strip()
+                        and (not update.subject or record['text'].startswith(update.subject))):
+                        records = revoke_requirement(records, record['id'], source_ref=str(message_id))
             if operation == "clear":
                 items = [item for item in items if not (
                     item.get('subject', '') == update.subject and
@@ -275,13 +330,13 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
     # Latest-turn validation metadata is data, never an effective condition.
     memory["diagnostics"] = diagnostics[-20:]
     memory["withdrawn"] = dict(list(memory.get("withdrawn", {}).items())[-40:])
-    changes = {"conversation_memory": memory}
+    changes = {"conversation_memory": memory, "requirement_records": records}
     # Scalar withdrawal must reach the older typed projection as well. It never
     # edits a saved Trip; these are only the current conversation's conditions.
-    if envelope.requirements and any(k in accepted and k not in memory["slots"] for k in ("budget", "party_size")):
+    if envelope.requirements and any(k in accepted for k in ("budget", "party_size")):
         changes["requirements"] = envelope.requirements.model_copy(update={
             **({"budget_fen": None} if "budget" in accepted and "budget" not in memory["slots"] else {}),
-            **({"party_size": None} if "party_size" in accepted and "party_size" not in memory["slots"] else {})})
+            **({"party_size": memory['slots'].get('party_size', {}).get('value')} if 'party_size' in accepted else {})})
     if city:
         changes["browsing_city"] = city
     cleared_city = "city" in accepted and not city
@@ -303,6 +358,11 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
         'effective_slots': deepcopy(memory['slots']), 'effective_preferences': deepcopy(memory['preferences']),
         'effective_requirements': deepcopy(memory['requirements'])}
     return envelope.model_copy(update=changes), history, accepted
+
+
+def _departed_subjects(quote):
+    departure=re.fullmatch(r'(.+?)(?:这次)?(?:都|也)?(?:不去了|不来了|不同行了?|退出了?|不参加(?:这次)?(?:旅行|行程)了?)[。！!\s]*',quote)
+    return re.split(r'和|与|及|、',departure[1]) if departure else []
 
 
 def memory_prompt(envelope):

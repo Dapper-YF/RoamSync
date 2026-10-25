@@ -3,7 +3,7 @@ from datetime import date, datetime, time
 from typing import Annotated, Literal
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator, computed_field
 from app.place_content.contracts import PlaceRef
 
 
@@ -1241,6 +1241,18 @@ class PlanRevisionResponse(BaseModel):
     rejection_reason_text: str | None = None
     created_at: datetime
     decided_at: datetime | None
+
+    @computed_field
+    @property
+    def presentation_hash(self) -> str:
+        from app.revision_presentation import revision_presentation_hash
+        return revision_presentation_hash(self)
+
+    @computed_field
+    @property
+    def review(self) -> dict:
+        from app.revision_presentation import revision_review
+        return revision_review(self)
 
 
 class PlanValidationIssue(BaseModel):

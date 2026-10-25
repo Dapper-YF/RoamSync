@@ -517,7 +517,8 @@ async def validate_candidate_plan(
 
 
 async def accept_plan_revision(
-    session: AsyncSession, revision_id: uuid.UUID, *, commit: bool = True
+    session: AsyncSession, revision_id: uuid.UUID, *, commit: bool = True,
+    expected_presentation_hash: str | None = None,
 ) -> PlanRevision:
     from app.draft_promotion.guard import authorize_accept
     await authorize_accept(session, revision_id, commit=commit)
@@ -534,6 +535,10 @@ async def accept_plan_revision(
     )
     if revision is None:
         raise PlanRevisionNotFoundError
+    if expected_presentation_hash is not None:
+        from app.revision_presentation import revision_presentation_hash
+        if revision_presentation_hash(revision) != expected_presentation_hash:
+            raise ValueError('这份修改候选的内容已经变化，请重新查看后再明确采用。')
     if revision.status == "accepted":
         return revision
     if revision.status != "pending":
@@ -595,6 +600,8 @@ async def accept_plan_revision(
         candidate_edit_base=candidate_edit_base,
     )
     revision.validation_result = result.model_dump(mode="json")
+    if expected_presentation_hash is not None and revision_presentation_hash(revision)!=expected_presentation_hash:
+        raise ValueError('重新核验后的风险已变化，正式安排未改。请重新生成修改候选，核对最新风险后再采用。')
     if not result.valid:
         if commit:
             await session.rollback()
@@ -607,7 +614,15 @@ async def accept_plan_revision(
     from app.navigation.execution_context import execution_invariants_required
     enforce_execution = await execution_invariants_required(session, trip.id, run.disruption_event_id is not None or run.trigger_type == "experience_impact")
     frozen_execution, protected_execution = (await _execution_immutable_activity_ids(session, trip.id)) if enforce_execution else (set(), set())
-    protected_ids = {item.id for item in existing if item.schedule_locked or item.status in {"active", "completed", "skipped"} or item.id in frozen_execution or item.id in protected_execution}
+    from app.revision_delta import protected_activity_ids
+    protected_ids=protected_activity_ids(existing,frozen_execution,protected_execution)
+    if expected_presentation_hash is not None:
+        before=revision.before_snapshot or {}
+        execution=before.get('execution_recovery') or {}
+        shown_protected=protected_activity_ids([item for day in before.get('days',[]) for item in day.get('activities',[])],
+            execution.get('frozen_activity_ids',[]),execution.get('protected_activity_ids',[]))
+        if {str(value) for value in protected_ids}!={str(value) for value in shown_protected}:
+            raise ValueError('活动执行或固定保护状态已变化，正式安排未改。请重新生成候选并核对差异后再采用。')
     replaced_ids = {item.replaces_activity_id for item in snapshot.activities if item.replaces_activity_id}
 
     # Only vacate positions that actually move. A full snapshot also contains

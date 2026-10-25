@@ -84,7 +84,7 @@ async def resolve_plan(plan, city, port, history, message, source_refs=None):
                 'free_window': r'自由|留白|空白|不安排|空出', 'blank_day': r'留白|空白|不安排'}
             proposed_capacity = (item['kind'] == 'free_window' and item['duration_source'] == 'planning_allocation'
                 and explicit_interval(item['source_quote'], schedule['daily_start_time'], schedule['daily_end_time']))
-            if item['kind'] == 'free_window' and re.search(r'餐|吃饭|用餐', item['name']) and item['name'] in item['source_quote']:
+            if item['kind'] == 'free_window' and re.search(r'餐|吃饭|用餐', item['name']) and re.search(r'餐|吃饭|用餐', item['source_quote']):
                 kind_terms = {**kind_terms, 'free_window': r'餐|吃饭|用餐'}
             if item['kind'] in kind_terms and not proposed_capacity and not re.search(kind_terms[item['kind']], item['source_quote']):
                 raise ValueError('候选窗口缺少对应类型的用户原话。')
@@ -92,6 +92,17 @@ async def resolve_plan(plan, city, port, history, message, source_refs=None):
                 (re.split(r'[（(]', item['name'])[0].removesuffix('景区') in q if item['kind'] == 'visit'
                  else re.search(kind_terms.get(item['kind'], r'.'), q))]
             measured = literal_minutes('，'.join(local))
+            if item['kind']=='visit':
+                # A model-owned allocation label cannot erase an explicit
+                # target duration elsewhere in the user's actual request.
+                from .sources import named_user_clauses
+                from app.requirement_language import current_user_evidence_reason
+                current_clauses=[q for q in named_user_clauses(item['name'],[],message)
+                    if current_user_evidence_reason(message,q) is None and not re.search(r'是否|吗|会怎样|合适|够不够',q)
+                    and (not re.search(r'路线|步行|驾车|交通|车程|排队',q) or re.search(r'停留|游玩|参观|游览|逛',q))]
+                required=literal_minutes('，'.join(current_clauses))
+                if required and required != [item['duration_minutes']]:
+                    raise ValueError('候选停留时长与该地点本次明确要求不一致，尚未应用。')
             if item['duration_source'] == 'user_explicit' and measured != [item['duration_minutes']] and not interval:
                 raise ValueError('候选的指定时长无法绑定对应活动原话，尚未应用。')
             if item['kind'] in kind_terms and len(measured) == 1 and item['duration_minutes'] != measured[0]:
@@ -130,6 +141,10 @@ async def resolve_plan(plan, city, port, history, message, source_refs=None):
                 addressed = [p for p in exact if p.address and p.address in source]
                 for place in addressed or exact:
                     candidates[place.ref.place_id] = place
+            if len(candidates)>1:
+                options='；'.join(f'{p.name}（{p.district or p.city}，{p.address or "地址未提供"}）'
+                    for p in candidates.values())
+                raise ValueError(f'高德找到多个「{query}」：{options}。请确认具体名称和地址，再生成候选；尚未保存。')
             if len(candidates) == 1:
                 place = next(iter(candidates.values()))
                 if place.identity_status == "provider_identity" and place.source.freshness == "fresh" and place.source.expires_at > datetime.now(UTC):
@@ -185,10 +200,9 @@ async def build_candidate(command, decision, message, history, envelope, port, o
             raise ValueError("候选日期与已确认条件不一致，尚未应用。")
         source = "\n".join([*(turn.get("user", "") for turn in history), message])
         bounds = plan.schedule_constraints
-        for clock in (bounds.daily_start_time, bounds.daily_end_time):
-            clock_source = message if quoted_clocks(message) else source
-            if (clock.hour, clock.minute) not in quoted_clocks(clock_source):
-                raise ValueError("请明确每天可安排的开始和结束时间，避免把猜测的时间当成你的要求。")
+        from .schedule_evidence import daily_window_source
+        if not daily_window_source(message,bounds.daily_start_time,bounds.daily_end_time,history):
+            raise ValueError("请明确每天可安排的开始和结束时间；景点预约或闭馆时刻不能代替你的游玩窗口。")
         if bounds.max_walking_minutes is not None:
             raise ValueError("步行限制需要保留完整作用范围并核实，请先确认该限制后再准备可采用安排。")
         modes = {"walk": r"步行|走路", "driving": r"自驾|开车|驾车", "transit": r"公交|地铁|公共交通"}
@@ -247,7 +261,7 @@ async def build_candidate(command, decision, message, history, envelope, port, o
     return revised, prepared
 
 
-async def publish_candidate(db, *, owner, session_id, signature, topic, message_id, message, envelope, draft, prepared, old=None):
+async def publish_candidate(db, *, owner, session_id, signature, topic, message_id, message, envelope, draft, prepared, old=None,read_bundle=None):
     from app.assistant_research import snapshot_signature
     await db.rollback()
     # Existing draft is locked before the conversation, consistent with Accept.
@@ -271,7 +285,9 @@ async def publish_candidate(db, *, owner, session_id, signature, topic, message_
     view = candidate_presentation(prepared)
     row.pending_action = {"id": str(uuid4()), "kind": "itinerary_candidate_v2", "owner_id": owner,
         "topic_id": topic, "conditions_hash": conditions_hash(envelope), "presentation": view}
-    row.messages = [*row.messages, {"id": str(message_id), "user": message, "assistant": view["summary"],
+    row.messages = [*row.messages, {"id": str(message_id), "user": message, "assistant": view["summary"]+
+        ('\n\n同时查询：\n'+read_bundle['assistant'] if read_bundle else ''),
+        **({key:read_bundle[key] for key in ('read_tools','place_cards') if key in read_bundle} if read_bundle else {}),
         "context": envelope.model_dump(mode="json"), "tool": "reply", "run_id": None}]
     await db.commit()
     return row

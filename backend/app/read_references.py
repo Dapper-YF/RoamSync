@@ -11,6 +11,18 @@ from app.travel_language import chinese_number
 REFERENCE = re.compile(r"第\s*([一二三四五六七八九十两\d]+)\s*(?:个|处)(?:地方|地点|景点)?|前一个|后一个|前者|后者|这两个(?:地方|地点|景点)?|两个(?:地方|地点|景点)|它们|它|那里")
 
 
+def explanation_requested(text):
+    """Explicit stable subgoals; naming a place alone is not an explanation."""
+    for clause in re.split(r'[，,。；;!?！？\n]',text):
+        for match in re.finditer(r'看点|值得看(?:什么|的东西|哪)|适合看什么|怎么玩|玩法|各自特色',clause):
+            if re.search(r'(?:不(?:用|要|必|想)?|别)(?:再)?(?:介绍|说|讲|查|看)[^，,。；;]*$',clause[:match.start()]):
+                continue
+            if re.match(r'(?:先|暂时)?(?:不用|不要|不必|别)(?:再)?(?:介绍|说|讲|查|看)',clause[match.end():]):
+                continue
+            return True
+    return False
+
+
 def place_catalog(history, envelope):
     city = (envelope.browsing_city or '').removesuffix('市')
     active = []

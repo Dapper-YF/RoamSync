@@ -121,5 +121,5 @@ it('keeps legacy saved revisions concise without losing their protected acceptan
   mount();
   const section=await screen.findByRole('region',{name:'局部调整建议'});
   expect(within(section).getAllByRole('listitem')).toHaveLength(1);
-  expect(within(section).getByRole('button',{name:'采用这次调整'})).toBeEnabled();
+  expect(within(section).getByRole('button',{name:'采用这次调整'})).toBeDisabled();
 });

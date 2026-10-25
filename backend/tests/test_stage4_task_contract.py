@@ -142,6 +142,62 @@ def test_query_only_lookup_cannot_borrow_an_introduction_to_avoid_denial():
     assert result.intent=='clarify'
 
 
+def test_stable_named_explanation_keeps_read_only_order_without_forcing_address_lookup():
+    from app.read_references import place_catalog,resolve_read_text
+    text='比较个园和何园各自看点'
+    decision=CapabilityDecision(intent='direct',reason_code='stable_knowledge',read_tasks=[
+        ReadTask(source_quote=text,capabilities=[],city='扬州',names=['个园','何园'])])
+    valid=validate_decision(decision,text,[],ContextEnvelope(browsing_city='扬州'))
+    assert valid.read_tasks and not valid.capabilities
+    assert not valid.read_tasks[0]._clarification
+    turn={'user':text,'read_tools':{'tasks':[{'validated_arguments':valid.read_tasks[0].model_dump()}]}}
+    refs=place_catalog([turn],ContextEnvelope(browsing_city='扬州'))
+    assert resolve_read_text('第二个',refs)=='何园' and all(p['place_id'] is None for p in refs)
+
+
+def test_actual_location_obligation_survives_a_combined_direct_explanation():
+    text='比较扬州个园和何园，它们各自的位置和看点是什么？'
+    decision=CapabilityDecision(intent='lookup',reason_code='stable_knowledge',city='扬州',read_tasks=[
+        ReadTask(source_quote=text,capabilities=[],city='扬州',names=['个园','何园'])])
+    valid=validate_decision(decision,text,[],ContextEnvelope(browsing_city='扬州'))
+    assert len(valid.read_tasks)==2
+    assert valid.read_tasks[0].capabilities==[]
+    assert valid.read_tasks[1].capabilities==['poi']
+    assert valid.read_tasks[1].names==['个园','何园']
+    assert validate_decision(valid,text,[],ContextEnvelope(browsing_city='扬州')).read_tasks==valid.read_tasks
+
+
+def test_introduction_does_not_query_an_explicitly_denied_address():
+    text='介绍扬州个园和何园，不用查它们的位置'
+    decision=CapabilityDecision(intent='lookup',reason_code='stable_knowledge',city='扬州',read_tasks=[
+        ReadTask(source_quote=text,capabilities=[],city='扬州',names=['个园','何园'])])
+    valid=validate_decision(decision,text,[],ContextEnvelope(browsing_city='扬州'))
+    assert all(not t.capabilities for t in valid.read_tasks)
+
+
+@pytest.mark.parametrize('text',[
+    '个园地址是盐阜东路10号，介绍它的看点',
+    '假设个园位置在市中心，讨论游览方式',
+])
+def test_location_statement_or_hypothesis_does_not_create_a_lookup(text):
+    decision=CapabilityDecision(intent='lookup',reason_code='stable_knowledge',city='扬州',read_tasks=[
+        ReadTask(source_quote=text,capabilities=[],city='扬州',names=['个园'])])
+    valid=validate_decision(decision,text,[],ContextEnvelope(browsing_city='扬州'))
+    assert all(not t.capabilities for t in valid.read_tasks)
+
+
+def test_place_lookup_cannot_consume_the_explicit_explanation_subgoal():
+    text='比较个园和何园，它们各自的位置和看点是什么'
+    decision=CapabilityDecision(intent='lookup',reason_code='place_identity',city='扬州',read_tasks=[
+        ReadTask(source_quote=text,capabilities=['poi'],city='扬州',names=[n]) for n in ['个园','何园']])
+    env=ContextEnvelope(browsing_city='扬州')
+    valid=validate_decision(decision,text,[],env)
+    assert len(valid.read_tasks)==3
+    assert valid.read_tasks[-1].capabilities==[] and valid.read_tasks[-1].names==['个园','何园']
+    assert all(t._identity_only for t in valid.read_tasks[:2])
+    assert len(validate_decision(valid,text,[],env).read_tasks)==3
+
+
 def test_date_revocation_and_solo_value_are_normalized_from_full_user_evidence():
     env, _, _ = apply_memory(ContextEnvelope(), [], '2026年12月19日出发', 'm1', [
         MemoryUpdate(field='start_date',value='2026年12月19日',source_quote='2026年12月19日出发')])
@@ -188,3 +244,34 @@ def test_verified_identity_is_never_replaced_by_a_same_name_search_result():
         'place_id':'00000000-0000-0000-0000-000000000002'}}]}
     refs=place_catalog([first,again],ContextEnvelope(browsing_city='扬州'))
     assert refs[0]['place_id'].endswith('1') and len(refs)==2
+
+
+def test_rejected_candidate_operation_does_not_erase_independent_inference():
+    from app.conversation_candidate.commands import CandidateCommand
+    text='先不采用。车能开到门口，是否就意味着长辈完全不用走路？请直接判断。'
+    raw=CapabilityDecision(intent='direct',reason_code='stable_knowledge',advice_focus='walking_effort',
+        candidate_command=CandidateCommand(action='discard',source_quote='先不采用'))
+    result=validate_decision(raw,text,[],ContextEnvelope())
+    assert result.intent=='direct' and result.candidate_command is None
+    assert result.clarification and result.advice_focus=='walking_effort'
+
+
+def test_task_capacity_cannot_remove_explanation_before_its_leaf_is_added():
+    text='；'.join(f'查{n}位置和看点' for n in ['甲馆','乙馆','丙馆','丁馆','戊馆'])
+    tasks=[ReadTask(source_quote=c,capabilities=['poi'],names=[c[1:3]]) for c in text.split('；')]
+    result=validate_decision(CapabilityDecision(intent='lookup',reason_code='place_identity',read_tasks=tasks),
+        text,[],ContextEnvelope(browsing_city='扬州'))
+    assert len(result.read_tasks)==5
+    assert all(not t._identity_only for t in result.read_tasks)
+    assert '看点' in result.clarification
+
+
+def test_authorized_preview_preserves_its_independent_lookup_task():
+    from app.conversation_candidate.commands import CandidateCommand
+    text='请生成成都一日候选；查个园的位置'
+    raw=CapabilityDecision(intent='create',reason_code='explicit_write',city='成都',
+        candidate_command=CandidateCommand(action='generate',source_quote='请生成成都一日候选'),
+        read_tasks=[ReadTask(source_quote='查个园的位置',capabilities=['poi'],city='扬州',names=['个园'])])
+    result=validate_decision(raw,text,[{'user':'此前在扬州聊个园'}],ContextEnvelope(browsing_city='成都'))
+    assert result.intent=='create' and len(result.read_tasks)==1
+    assert result.read_tasks[0].names==['个园'] and not result.read_tasks[0]._clarification

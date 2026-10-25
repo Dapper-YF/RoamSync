@@ -71,7 +71,11 @@ def validate_command(command, message):
         approved = [clause for clause in clauses if (quote in clause or clause in quote)
             and re.fullmatch(prefix+action+target+destination, clause)]
         neutral = {"可以", "好的", "好", "确认", "我确认", "同意", "没问题", "就这样", "就这样安排", "按这个来"}
-        if not approved or any(clause not in approved and clause not in neutral for clause in clauses):
+        # A second deictic clause can complete the same explicit approval;
+        # named targets, new changes and future approvals remain obligations.
+        completions = [clause for clause in clauses if command.action=='adopt' and approved
+            and re.fullmatch(r'(?:把|将)(?:刚才|刚刚|已经|已)?(?:审阅|核对|查看|展示|确认)(?:过|的)?(?:变化|改动)(?:都|全部)?(?:保存|应用|落实)',clause)]
+        if not approved or any(clause not in approved and clause not in neutral and clause not in completions for clause in clauses):
             raise ValueError("请明确说“帮我保存这份安排”后再采用；询问保存方式或结果不会执行保存。")
     if (quote not in message or quoted or inquiry and (not explicit_request or read_request) or not affirmative_action_source(message, quote, verbs[command.action])
         or command.action == "adopt" and re.search(r"(?:等|待|确认后|之后|以后|再保存|先看|先展示|先给我看)", message)):

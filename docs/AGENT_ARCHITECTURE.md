@@ -13,6 +13,39 @@ Containing action clauses include dependent question suffixes; preview and
 revocation share action families. No new formal writer, table or Accept chain.
 These bounded corrections remain under development; stage3 NO-GO is unchanged.
 
+The selector now has one state-specific NEW/CANDIDATE/SAVED wire contract.
+Returned raw fields must match the same action surface; even empty unavailable
+fields are rejected. The v2 item schema exposes runtime-required stable refs.
+One representation repair requires an explicit provider response exactly equal
+to the predeclared permitted JSON difference, followed by full source/identity/
+business validation. It cannot supply adoption, remove unknown constraints or
+erase user timing. Read-only field/enum namespace and scalar text representation
+repairs preserve every other field. Failures never become a prose itinerary.
+
+Validated direct subjects retain their read references. Explicit position and
+stable explanation leaves use independent results; private identity-only flags
+commit only if the explanation leaf fits. A write preview retains separately
+validated read goals and their results. Rejected candidate operations do not
+cancel independent reads. Exact subject departure only withdraws already owned
+trip conditions; personal/global conditions remain, and the legacy party-count
+projection agrees with the server memory. Broad or unlinked legacy conditions
+are not silently revoked. Receipts remain the only update acknowledgement basis.
+
+Existing PlanRevision reads add computed presentation_hash and review, without
+a DB owner/migration. The hash covers revision/run/trip, normalized before and
+proposed snapshots, difference, reason and stable validation risks. The review
+includes additions, removals and changes from the bound before snapshot; missing
+names/history disables natural-UI adoption. Passive displayed id/hash never
+authorizes a turn. Only a current explicit approval uses the existing accept_plan
+handler with session/latest-Run/Trip/message/version checks. Accept rechecks the
+hash under Trip then Revision locks, and again after current validation; changed
+content or risks require another review. Natural-UI buttons use the same message
+chain. Explicit legacy form/HTTP edits remain distinct supported operations.
+Pending-change queries capture only the explicitly displayed matching Revision
+in the saved reader's same read-only repeatable-read unit, never guess the newest
+pending object. Formal values and proposed changes stay separate. Final real
+model/browser/holdout acceptance is still pending; this is not a GO declaration.
+
 ## Stage3 frozen acceptance boundary (2026-10-24)
 
 MEASURED product758477f: engineering1902+38 backend and265 Web pass, but

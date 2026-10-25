@@ -38,7 +38,7 @@ import type { ExplorePlace, ExploreRepository } from "../domain/explore";
 import type { AssistantSession, TripPlanningRepository } from "../domain/types";
 import "./TravelAssistant.css";
 import { createStreamBuffer } from "../data/streamBuffer";
-import { CandidateDecisionError, decideConversationCandidate, assistantRequest, arrangementAction, type Arrangement, type Revision, type Run } from "./arrangementApi";
+import { CandidateDecisionError, decideConversationCandidate, assistantRequest, arrangementAction,adoptReviewedRevision, type Arrangement, type Revision, type Run } from "./arrangementApi";
 import { AssistantDecisions } from "./AssistantDecisions";
 import { rememberIntentionSession } from '../journeys/savedIntentions';
 import { AssistantAnswer, type AnswerSearch, type AnswerVisuals } from "../components/AssistantAnswer";
@@ -290,7 +290,12 @@ export function TravelAssistantProvider({
     if (!revision || busy || sending.current) return;
     setBusy(true); setError("");
     try {
-      await assistantRequest(`/plan-revisions/${revision.id}/${accept ? "accept" : "reject"}`, { method: "POST" });
+      if (accept) {
+        if (!session || !arrangement) return;
+        const requestContext=productAssistantContext(context,import.meta.env.VITE_ASSISTANT_CONTEXT_CONTRACT);
+        const next=await adoptReviewedRevision(session.id,arrangement,revision,{...requestContext.context,prefer_flexible:true});
+        if (currentScope.current===scope) receive(next);
+      } else await assistantRequest(`/plan-revisions/${revision.id}/reject`,{method:'POST'});
       if (currentScope.current === scope) { setRevision(undefined); setRun(undefined); await refreshArrangement(); }
     } catch (e) { setError(messageOf(e)); }
     finally { setBusy(false); }

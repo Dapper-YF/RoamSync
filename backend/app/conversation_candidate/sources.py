@@ -2,6 +2,13 @@
 import re
 
 
+def named_user_clauses(name, history, message):
+    """Literal target clauses, without promoting them to action authority."""
+    base=re.split(r'[（(]',name)[0].removesuffix('景区')
+    return [clause for text in [*(t.get('user','') for t in history),message]
+        for clause in re.split(r'[，,。；;!?！？\n]',text) if base and base in clause]
+
+
 def action_clause(message, quote):
     """Literal scope including an elliptical question about this operation."""
     if not quote or message.count(quote) != 1:

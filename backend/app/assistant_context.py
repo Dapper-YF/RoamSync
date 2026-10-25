@@ -32,6 +32,7 @@ class ActionTarget(ContextModel):
     operation: Literal["plan_trip", "reschedule_trip", "edit_arrangement", "accept_plan"]
     authorization_message_id: uuid.UUID
     revision_id: uuid.UUID | None = None
+    revision_hash: str | None = Field(default=None, pattern=r'^[0-9a-f]{64}$')
 
 
 class RouteReadRequest(ContextModel):

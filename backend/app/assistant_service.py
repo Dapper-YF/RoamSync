@@ -346,6 +346,10 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
             raise AssistantToolError("选中的日期或活动不属于当前旅行，请重新选择。")
     from app.assistant_places import ContentServicePlaces
     settings = get_settings()
+    if context is not None:
+        from app.assistant_context import ContextEnvelope
+        from app.revision_presentation import bound_adoption_context
+        context=bound_adoption_context(ContextEnvelope.model_validate(context),message).model_dump(mode='json',exclude_unset=True)
     semantic_goal, semantic_metadata = None, {}
     if settings.assistant_semantic_tools and (
         capability_selector is not None or (isinstance(place_port, ContentServicePlaces)
@@ -828,6 +832,12 @@ async def send_message(db: AsyncSession, session_id: uuid.UUID, message: str, me
         summary["events"] = [*summary.get("events", []), *router.diagnostics]
         summary["tool_decision_attempts"] = router._attempts
         turn_metadata["execution_summary"] = summary
+    independent_read=semantic_metadata.get('_semantic_read_bundle')
+    if independent_read:
+        reply+='\n\n同时查询：\n'+independent_read['assistant']
+        for key in ('read_tools','place_cards'):
+            if key in independent_read:
+                turn_metadata[key]=independent_read[key]
     turn_metadata = {key: value for key, value in turn_metadata.items() if not key.startswith("_semantic_")}
     row.messages = [*row.messages, {**turn_metadata, "id": str(message_id), "user": message, "assistant": reply, "tool": decision.tool,
         "run_id": str(row.latest_run_id) if row.latest_run_id else None,

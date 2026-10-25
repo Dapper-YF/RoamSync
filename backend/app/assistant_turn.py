@@ -58,7 +58,10 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
         from app.saved_trip_reads import load_saved_trip_read
         try:
             read_snapshot = await load_saved_trip_read(db, trip_id, message,
-                selected_day_id=selected_day_id, selected_activity_id=selected_activity_id)
+                selected_day_id=selected_day_id, selected_activity_id=selected_activity_id,
+                revision_ref={'id':envelope.action_target.revision_id,'hash':envelope.action_target.revision_hash,
+                    'run_id':row.latest_run_id} if envelope.action_target and envelope.action_target.revision_id
+                    and envelope.action_target.revision_hash and row.latest_run_id else None)
         except ValueError as exc:
             raise AssistantToolError(str(exc)) from exc
         summary = read_snapshot.selection_summary(message)
@@ -85,6 +88,8 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
     port = CachedReads()
     diagnostics = TurnDiagnostics(str(message_id))
     token = active_turn.set(diagnostics)
+    independent_read=None
+    read_status=None
     try:
         try:
             async with asyncio.timeout(diagnostics.remaining()):
@@ -140,7 +145,7 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                     need = determine_information_need(CompanionContext(current_message=message, travel_goal=baseline), [])
                     safe = (baseline.target_runtime == "companion" and need.general_knowledge_allowed
                         and not envelope.discussing_place_id and not candidate and not trip_id)
-                    unsafe = bool(re.search(r"查|搜|来源|官方|实时|天气|营业|票|预约|路线|多久到|修改|创建|安排|规划|地址|位置|附近|具体门店", message))
+                    unsafe = bool(re.search(r"查|搜|来源|官方|实时|天气|营业|票|预约|路线|多久到|修改|创建|生成|候选|保存|采用|安排|规划|地址|位置|附近|具体门店", message))
                     if safe and not unsafe:
                         decision = CapabilityDecision(intent="direct", reason_code="stable_knowledge")
                     else:
@@ -164,6 +169,14 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                         goal = decision_goal(decision, baseline)
                         break
                 command = decision.candidate_command if decision.intent in {"create", "modify"} else None
+                independent_read=None
+                if decision.intent in {'create','modify','execution'} and decision.read_tasks:
+                    reader=decision.model_copy(update={'intent':'lookup','candidate_command':None,
+                        'planning_draft':None,'creation':None,'authorization_quote':'','memory_updates':[],
+                        'saved_intentions':[],'capabilities':list(dict.fromkeys(c for t in decision.read_tasks for c in t.capabilities))})
+                    independent_read,read_status=await answer_with_capabilities(settings,reader,message,history,
+                        envelope,port,db,trip_id,session_id,message_id,decision_goal(reader,baseline),read_snapshot=read_snapshot)
+                    diagnostics.record('independent_read',read_status)
                 candidate_conditions_changed = bool(candidate and candidate_snapshot.get("conditions_hash") != conditions_hash(envelope))
                 if command and not trip_id and getattr(port, "draft_repository", None) and getattr(port, "owner", None):
                     from app.conversation_candidate.service import build_candidate, publish_candidate, decide_candidate
@@ -179,7 +192,7 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                             published = await publish_candidate(db, owner=port.owner, session_id=session_id,
                                 signature=signature, topic=envelope.topic_id, message_id=message_id, message=message,
                                 envelope=envelope, draft=revised, prepared=prepared,
-                                old=candidate if command.action == "modify" else None)
+                                old=candidate if command.action == "modify" else None,read_bundle=independent_read)
                             return published, None, {}
                         if not candidate_action(candidate_snapshot, port.owner, envelope.topic_id):
                             raise ValueError("当前没有可采用的候选，请先生成并核对安排。")
@@ -222,10 +235,11 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                 if goal.target_runtime != "companion":
                     from app.assistant_operation import approved_draft, approved_tool_decision
                     draft = approved_draft(decision, message)
-                    metadata = {"execution_summary": diagnostics.summary("complete"),
+                    metadata = {"execution_summary": diagnostics.summary("complete" if read_status in {None,'complete'} else 'partial'),
                         "_semantic_context": envelope.model_dump(mode="json"),
                         "_semantic_history_ids": [str(m.get("id")) for m in history],
                         "_semantic_requested_places": [name for name in decision.names if name in message],
+                        "_semantic_read_bundle":independent_read,
                         "_semantic_session_signature": signature}
                     if decision.intent in {"create", "modify"}:
                         tool = approved_tool_decision(decision, message, envelope, today=captured_at.date())
@@ -258,6 +272,13 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
                 else:
                     bundle, status = await answer_with_capabilities(settings, decision, message, history,
                         envelope, port, db, trip_id, session_id, message_id, goal, read_snapshot=read_snapshot)
+                if independent_read:
+                    bundle['assistant']+='\n\n同时查询：\n'+independent_read['assistant']
+                    if status=='failed' and read_status!='failed':
+                        status='partial'
+                    for key in ('read_tools','place_cards'):
+                        if key in independent_read:
+                            bundle[key]=independent_read[key]
                 # The legacy conversation projector may return unresolved words
                 # such as "哪里"; it is not a geographical identity authority.
                 from app.companion_information import explicit_destination
@@ -281,6 +302,11 @@ async def semantic_turn(db, session_id, message, message_id, incoming, port, set
             bundle, status = (failure_bundle(envelope, str(exc), read_tools={
                 'itinerary_read': {'status': 'needs_retry', 'reason': 'saved_trip_changed'}})
                 if isinstance(exc, SavedTripReadStale) else failure_bundle(envelope)), "failed"
+            if independent_read:
+                bundle['assistant']='本次操作未形成有效修改候选，正式安排未改变。\n\n已执行的独立查询：\n'+independent_read['assistant']
+                bundle['read_tools']={**independent_read.get('read_tools',{}),'write_result':{'status':'not_applied'}}
+                bundle['place_cards']=independent_read.get('place_cards',[])
+                status='partial' if read_status!='failed' else 'failed'
             goal = baseline.model_copy(update={"target_runtime": "companion", "goal_type": "travel_chat", "mutation_requested": False})
         bundle["execution_summary"] = diagnostics.summary(status)
         if status == "failed":

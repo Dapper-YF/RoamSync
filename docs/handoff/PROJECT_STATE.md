@@ -1,6 +1,22 @@
 # RoamSync project state
 
-Last updated: 2026-10-24
+Last updated: 2026-10-25
+
+## Stage4 continuation — implementation in progress (2026-10-25)
+
+User requested continuing the unfinished closeout. Reused the isolated tree on
+codex/product-closeout-stage4-20261025, foundation ed3797e after historical ef3aeb0.
+Current uncommitted work unifies the state/action wire contract, exact bounded
+representation repair, condition projections, retained independent read goals,
+and existing Revision display/hash/review plus its original locked Accept path.
+Natural chat does not gain a direct formal writer; no new table or write endpoint.
+Current real development captures remain failures, including schema item-ref
+omissions and companion withdrawal before the latest fixes. Stage3's3/20 and0/5
+remain historical independent scores; current new sealed questions are unopened.
+Still NO-GO. Final full tests, actual continuous browser golden chain, real-object
+safety and one frozen holdout measurement have not been completed for this code.
+Evidence: docs/PRODUCT_CLOSEOUT_STAGE4_20261025.md and external
+E:/Study/RoamSync-stage4-evidence-20261025. No official source/DB/deployment work.
 
 ## Stage3 isolated closeout — measured NO-GO (2026-10-24)
 

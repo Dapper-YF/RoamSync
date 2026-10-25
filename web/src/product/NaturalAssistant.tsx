@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "./NaturalAssistant.css";
 import {ConversationCandidate} from "./ConversationCandidate";
-import {decideConversationCandidate, CandidateDecisionError} from "./arrangementApi";
+import {decideConversationCandidate, CandidateDecisionError,adoptReviewedRevision} from "./arrangementApi";
+import {RevisionReview,type RevisionReviewData} from './RevisionReview';
 import type {CandidatePresentation} from "../domain/types";
 
 type Choice = { id: string; kind: "selected" | "optional" | "free_window" | "cancelled"; label: string; source_ref: string; decision_ref: string; place_id: string | null; day_date: string | null; start: string | null; end: string | null; activity_id: string | null };
@@ -16,7 +17,7 @@ type Turn = { id: string; user: string; assistant: string; context?: { topic_id?
 type Session = { candidate?: CandidatePresentation | null; id: string; trip_id: string | null; messages: Turn[]; pending_action: Preview | null; latest_run_id: string | null };
 type Run = { id: string; status: string; error_message: string | null; response_text: string | null; pending_interrupt?: { kind: string; revision_id?: string; questions?: string[] } | null };
 type PlaceResult = { name: string; provider_place_id: string; address?: string; [key: string]: unknown };
-type Revision = { id: string; status: string; reason: string; proposed_snapshot: { activities: { candidate_id: string; replaces_activity_id: string | null; place_candidate_id: string; day_date: string; planned_start_time: string; duration_minutes: number; reason?: string }[]; route_legs?: { duration_minutes: number; provider: string; is_estimated: boolean }[] }; validation_result: { warnings?: { message: string }[] } };
+type Revision = { review?: RevisionReviewData; id: string; presentation_hash: string; status: string; reason: string; proposed_snapshot: { activities: { candidate_id: string; replaces_activity_id: string | null; place_candidate_id: string; day_date: string; planned_start_time: string; duration_minutes: number; reason?: string }[]; route_legs?: { duration_minutes: number; provider: string; is_estimated: boolean }[] }; validation_result: { warnings?: { message: string }[] } };
 
 export async function naturalRequest<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api/v1${url}`, { ...init, headers: { "Content-Type": "application/json", ...init?.headers } });
@@ -87,6 +88,7 @@ export function NaturalAssistant({ contextTripId }: { contextTripId?: string } =
   }, [tripId, reload]);
   const runId = session?.latest_run_id;
   useEffect(() => {
+    setRevision(undefined);
     if (!runId) return;
     let active = true;
     let interval: ReturnType<typeof setInterval> | undefined;
@@ -128,8 +130,8 @@ export function NaturalAssistant({ contextTripId }: { contextTripId?: string } =
       const adopt = /^(?:就按这份来|就这样安排|采用这份方案|确认采用)[。！! ]*$/.test(message);
       const context = { version: "assistant-context-v1", topic_id: topic, surface: tripId ? "trip" : "assistant", prefer_flexible: true,
         ...(tripId ? { read_trip_id: tripId, browsing_city: arrangement?.trip.destination,
-          action_target: { trip_id: tripId, expected_version: arrangement?.version, operation: adopt && revision ? "accept_plan" : simple ? "edit_arrangement" : "plan_trip", authorization_message_id: mid,
-            ...(adopt && revision ? { revision_id: revision.id } : {}) } } : {}),
+          action_target: { trip_id: tripId, expected_version: arrangement?.version, operation: simple ? "edit_arrangement" : "plan_trip", authorization_message_id: mid,
+            ...(revision?.status === "pending" && revision.presentation_hash && revision.review?.complete ? { revision_id: revision.id, revision_hash: revision.presentation_hash } : {}) } } : {}),
         ...(adopt && session.pending_action && !session.candidate ? { preview_action_id: session.pending_action.id } : {}) };
       const value = await naturalRequest<Session>(`/assistant/sessions/${session.id}/messages`, { method: "POST", body: JSON.stringify({ message, message_id: mid, context }) });
       setDraft(""); await receive(value);
@@ -182,7 +184,13 @@ export function NaturalAssistant({ contextTripId }: { contextTripId?: string } =
   }
   async function decideRevision(accept: boolean) {
     if (!revision) return;
-    await task(async () => { await naturalRequest(`/plan-revisions/${revision.id}/${accept ? "accept" : "reject"}`, { method: "POST" }); setRevision(undefined); await reload(); setNotice(accept ? "已采用调整，保存后的安排已更新。" : "未采用，原安排保持不变。"); });
+    await task(async () => {
+      if (accept) {
+        if (!session || !arrangement) return;
+        await receive(await adoptReviewedRevision<Session>(session.id,arrangement,revision,{topic_id:topic,prefer_flexible:true}));
+      } else await naturalRequest(`/plan-revisions/${revision.id}/reject`,{method:'POST'});
+      setRevision(undefined);await reload();setNotice(accept?'已采用调整，保存后的安排已更新。':'未采用，原安排保持不变。');
+    });
   }
   async function scheduleChoice(event: FormEvent) {
     event.preventDefault();
@@ -210,7 +218,7 @@ export function NaturalAssistant({ contextTripId }: { contextTripId?: string } =
       {session?.candidate&&<ConversationCandidate candidate={session.candidate} busy={busy} saving={candidateSaving} invalidated={invalidCandidate===`${session.id}:${session.candidate.prepared_id}:${session.candidate.presentation_hash}`} onSave={()=>void saveCandidate()} onContinue={()=>document.querySelector<HTMLTextAreaElement>('.natural-conversation textarea')?.focus()}/>}
       {session?.pending_action && !session.candidate && <section className="natural-preview" aria-label="待确认的创建信息"><h2>确认创建信息</h2><p>目前只有创建信息，尚未生成可核对的日程；确认后将创建旅行并请求生成日程。</p><p>{session.pending_action.start_date} — {session.pending_action.end_date}</p><p>{session.pending_action.summary}</p><ul>{session.pending_action.choices?.map((i, n) => <li key={n}><strong>{i.label}</strong> · {labels[i.kind]}{i.kind === "blank_day" && i.day_date && ` · ${i.day_date}`}{i.start && ` · ${i.day_date} ${clock(i.start)}—${clock(i.end)}`}<small>{i.origin === "ai_suggestion" ? "助手建议，采用前可以修改" : "来自你的表达"}</small></li>)}</ul><button disabled={busy} onClick={() => void adoptPreview()}>创建旅行并生成日程</button></section>}
       {run && <section className="natural-run" aria-label="调整进展">{["queued", "researching", "planning", "validating"].includes(run.status) && <p>正在核对本次需要协调的安排……</p>}{run.status === "failed" && <p role="alert">这次没能形成可采用的调整。{run.error_message} 原安排保持不变。</p>}{run.status === "awaiting_clarification" && <p>{run.pending_interrupt?.questions?.join(" ")}</p>}</section>}
-      {revision?.status === "pending" && <section className="natural-preview" aria-label="局部调整建议"><h2>核对这次调整</h2><p>{revision.reason}</p><ul>{changes.slice(0,3).map(i => { const old = activities.find(a => a.id === i.replaces_activity_id || a.place_id === i.place_candidate_id); return <li key={i.candidate_id}>{old && old.place_id === i.place_candidate_id ? old.display_name : "新地点（请核对方案说明）"} · {i.day_date}<br />{old ? `原来 ${clock(old.scheduled_time)} / ${old.duration_minutes}分钟 → ` : "建议 "}{clock(i.planned_start_time)} / {i.duration_minutes}分钟{i.reason && <p>{i.reason}</p>}</li>; })}</ul>{changes.length>3&&<p>另有{changes.length-3}项变化。</p>}{tripId&&<Link to={`/trips/${tripId}`} state={{reviewRevisionId:revision.id}}>回到日程，查看完整改动与保留内容 →</Link>}<p>上面的具体时间采用后才会保存；固定活动、留白和其他要求仍会在采用时检查。</p><button disabled={busy} onClick={() => void decideRevision(true)}>采用这次调整</button><button disabled={busy} onClick={() => void decideRevision(false)}>保留原安排</button></section>}
+      {revision?.status === "pending" && <section className="natural-preview" aria-label="局部调整建议"><h2>核对这次调整</h2><p>{revision.review?'以下差异来自候选快照，采用后才保存。':revision.reason}</p>{revision.review?<RevisionReview review={revision.review}/>:<ul>{changes.map(i => { const old = activities.find(a => a.id === i.replaces_activity_id || a.place_id === i.place_candidate_id); return <li key={i.candidate_id}>{old && old.place_id === i.place_candidate_id ? old.display_name : "新地点（请核对方案说明）"} · {i.day_date}<br />{old ? `原来 ${clock(old.scheduled_time)} / ${old.duration_minutes}分钟 → ` : "建议 "}{clock(i.planned_start_time)} / {i.duration_minutes}分钟{i.reason && <p>{i.reason}</p>}</li>; })}</ul>}{tripId&&<Link to={`/trips/${tripId}`} state={{reviewRevisionId:revision.id}}>回到日程，查看完整改动与保留内容 →</Link>}<p>上面的具体时间采用后才会保存；固定活动、留白和其他要求仍会在采用时检查。</p><button disabled={busy || !revision.presentation_hash || !revision.review?.complete || revision.review.base_trip_version!==arrangement?.version} onClick={() => void decideRevision(true)}>采用这次调整</button><button disabled={busy} onClick={() => void decideRevision(false)}>保留原安排</button></section>}
       {error && <p className="natural-error" role="alert">{error}</p>}{notice && <p role="status">{notice}</p>}
       <form onSubmit={send} className="natural-composer"><label htmlFor="travel-message">告诉助手你的问题或变化</label><textarea id="travel-message" value={draft} onChange={e => setDraft(e.target.value)} placeholder={arrangement ? "例如：把玄武湖改成备选；或告诉我哪个时间需要协调" : "想了解哪里？已经决定了什么？"} /><button type="submit" disabled={busy || !session || !draft.trim()}>{busy ? "正在处理……" : "发送"}</button></form>
       <p className="natural-limit">实时开放、票价和预约需有来源才能确认；已保存不等于已完成预订。</p>

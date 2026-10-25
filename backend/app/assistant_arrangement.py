@@ -24,13 +24,8 @@ def choice_command(message):
 
 async def apply_arrangement_message(db, row, message, message_id, context):
     from app.assistant_service import AssistantToolError, confirm_action
-    confirm = message.strip().rstrip("。！! ") in {"就按这份来", "就这样安排", "采用这份方案", "确认采用"}
-    from app.conversation_candidate.commands import CandidateCommand, validate_command
-    try:
-        validate_command(CandidateCommand(action='adopt', source_quote=message.strip()), message)
-        confirm = True
-    except ValueError:
-        pass
+    from app.revision_presentation import explicit_revision_adoption
+    confirm = explicit_revision_adoption(message)
     enabled = context.prefer_flexible or context.action_target and context.action_target.operation in {"edit_arrangement", "accept_plan"}
     if not enabled:
         return None
@@ -51,13 +46,19 @@ async def apply_arrangement_message(db, row, message, message_id, context):
             return "已采用并保存这份安排；未定的部分保持未定。"
         target = context.action_target
         if target and target.operation == "accept_plan" and target.revision_id and row.trip_id:
+            if not target.revision_hash:
+                raise AssistantToolError('缺少当前展示候选的内容绑定，请重新查看候选后再采用。')
             trip = await lock_trip(db, row.trip_id, expected_version=target.expected_version)
             check_action_target(context, session_trip_id=row.trip_id, message_id=message_id, trip_version=trip.version, operation="accept_plan")
             revision = await db.scalar(select(PlanRevision).where(PlanRevision.id == target.revision_id, PlanRevision.trip_id == trip.id))
-            if revision is None:
+            if revision is None or revision.planning_run_id != row.latest_run_id:
                 raise AssistantToolError("没有匹配到当前显示的候选，请重新打开方案。")
+            from app.revision_presentation import revision_review
+            if not revision_review(revision)['complete']:
+                raise AssistantToolError('这份候选缺少完整的修改前状态或地点身份，请重新生成并查看完整差异。')
             from app.plan_revision_service import accept_plan_revision
-            await accept_plan_revision(db, revision.id, commit=False)
+            await accept_plan_revision(db, revision.id, commit=False,
+                expected_presentation_hash=target.revision_hash)
             return "已采用当前明确选择的方案，其他决定以保存后的安排为准。"
         return "请先打开要采用的那份建议，或点击它的采用按钮；我不会把一段聊天文字当作已确认的安排。"
     command = choice_command(message)

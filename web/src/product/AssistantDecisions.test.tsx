@@ -13,6 +13,6 @@ it('keeps saved revision acceptance while showing only concise changed stops',()
   expect(within(section).getAllByRole('listitem')).toHaveLength(1);
   expect(within(section).getByText(/地点0/)).toHaveTextContent('原来 09:00 / 60分钟 → 10:00 / 60分钟');
   expect(within(section).queryByText(/地点1/)).toBeNull();
-  expect(within(section).getByRole('button',{name:'采用这次调整'})).toBeEnabled();
+  expect(within(section).getByRole('button',{name:'采用这次调整'})).toBeDisabled();
   expect(within(section).getByRole('link',{name:/查看完整改动/})).toHaveAttribute('href','/trips/t');
 });

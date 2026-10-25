@@ -30,6 +30,7 @@ class LookupIntent(BaseModel):
     near_name: str = Field(default="", max_length=120)
     read_pages: bool = True
     names: list[str] = Field(default_factory=list, max_length=3)
+    identity_only: bool = False
 
 
 class Support(BaseModel):
@@ -377,7 +378,7 @@ async def research(settings, message, history, envelope, port, *, judge=determin
         issues.append("comparison_incomplete")
     comparison = render_research_decision_support(decision_support, intent.category)
     reference_only_decision = bool(comparison) and all(s["read_level"] == "provider_reference" for s in sources)
-    location_only = not intent.read_pages and (bool(re.search(r"位置|地址|在哪", message)) or
+    location_only = intent.identity_only or not intent.read_pages and (bool(re.search(r"位置|地址|在哪", message)) or
         bool(intent.names) and not re.search(r'看点|适合|怎么玩|比较|区别|建议|推荐|体验|好不好|怎么样|怎么选|哪个好', message))
     if location_only:
         # Each subtask owns its supplied POIs. Rendering actual address fields

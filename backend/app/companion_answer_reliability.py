@@ -55,7 +55,7 @@ def _unsupported_advice_clause(sentence, request):
     if (_asserted(r"(?:车程|路程|步行|驾车|开车|打车|坐车|乘车|走路).{0,12}?" + quantity, sentence)
         or _asserted(quantity + r"\s*(?:左右|上下)?(?:车程|路程)", sentence)):
         issues.append("output_unverified_travel_measurement")
-    if _asserted(r"顺路|(?:步行|走路).{0,12}(?:轻松|不累|方便|可达|就到)|(?:路面|地势|道路).{0,8}平坦|(?:完全|很|非常|比较|相对|十分|更)?适合.{0,8}(?:老人|老年人|轮椅|推车)|(?:很近|相邻|隔壁|挨着).{0,18}(?:一起|一天|串|步行|走)|(?:半天|一天|\d+小时)(?:就|也)?(?:足够|够了|能逛完)", sentence):
+    if _asserted(r"顺路|(?:步行|走路).{0,12}(?:轻松|不累|方便|可达|就到)|(?:路面|地势|道路|园内|区域|地形).{0,8}平坦|(?:完全|很|非常|比较|相对|十分|更)?适合.{0,8}(?:老人|老年人|轮椅|推车)|(?:很近|相邻|隔壁|挨着).{0,18}(?:一起|一天|串|步行|走)|(?:半天|一天|\d+小时)(?:就|也)?(?:足够|够了|能逛完)", sentence):
         issues.append("output_unverified_route_or_effort")
     if _asserted(r'(?:完全|全程|一点也)?(?:不(?:用|必|需要)|无需)(?:再)?(?:走路|步行)|(?:门口|入口|出口|地铁站).{0,12}(?:很近|不远|就到|方便)', sentence):
         issues.append('output_unverified_access_or_effort')
