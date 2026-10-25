@@ -98,6 +98,40 @@ def normalize_creation_evidence(decision, message):
         "names":[mapping.get(name,name) for name in decision.names],"planning_draft":draft})
 
 
+def normalize_modification_evidence(decision, message):
+    """One validated operation already owns its exact current source.
+
+    The optional duplicate top-level quote cannot suppress that preview. This
+    never creates an operation, accepts a plan, or joins separate source spans.
+    """
+    draft = decision.planning_draft
+    if (decision.intent != 'modify' or decision.authorization_quote or draft is None
+        or len(draft.operations) != 1
+        or draft.primary_intent not in {'replan_trip','add_activity','remove_activity','replace_activity','reorder_activities'}
+        or draft.operations[0].operation != draft.primary_intent):
+        return decision
+    quote = draft.operations[0].raw_text
+    if not quote or message.count(quote) != 1:
+        return decision
+    from app.assistant_capabilities import affirmative_entity_source
+    operation = draft.operations[0]
+    targets = [*operation.activity_mentions, *operation.place_mentions]
+    # Reuse a literal quote only when every proposed object owns a positive
+    # change. A preserved peer cannot borrow another object's action verb.
+    if not targets or any(not affirmative_entity_source(message, quote,
+        r'调整|修改|改|加入|添加|增加|删除|删掉|撤销|取消|替换|换|移|挪|延长|缩短|多留|少留|停留',
+        name, permission_particles=True) for name in targets):
+        return decision
+    try:
+        checked = approved_draft(decision, message)
+    except ValueError:
+        return decision
+    if checked is None:
+        return decision
+    return decision.model_copy(update={'authorization_quote': quote,
+        'planning_draft': checked, 'response_purpose': 'answer'})
+
+
 def approved_draft(decision, message):
     draft = decision.planning_draft
     if decision.intent == 'modify' and (draft is None or draft.primary_intent == 'unsupported'):

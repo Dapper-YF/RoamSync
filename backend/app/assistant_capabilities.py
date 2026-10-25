@@ -302,8 +302,9 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
             kind = "create" if decision.candidate_command.action == "generate" else "modify"
             decision = decision.model_copy(update={"intent": kind, "authorization_quote": decision.candidate_command.source_quote,
                 "capabilities": [], "reason_code": "explicit_write"})
-    from app.assistant_operation import normalize_creation_evidence
+    from app.assistant_operation import normalize_creation_evidence, normalize_modification_evidence
     decision=normalize_creation_evidence(decision,message)
+    decision=normalize_modification_evidence(decision,message)
     # Arguments carry provenance, not model-owned identities. No invented UUIDs.
     user_text = " ".join([message, envelope.browsing_city or "",
         *[m.get("user", "") for m in history[-8:]],

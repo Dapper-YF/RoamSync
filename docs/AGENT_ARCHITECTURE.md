@@ -1386,3 +1386,11 @@ live search images remain topic reference illustrations, not verified scene
 identity, current conditions or evidence of any travel requirement. Missing
 images cannot change text success or formal state. Workflow-only clauses use
 the shared complete-clause guard rather than becoming travel requirements.
+
+For a saved-plan modification with an omitted duplicate top-level source quote,
+one existing supported operation may reuse its unique literal raw_text only
+after the same approved_draft validation and each named target's own affirmative
+change check. Primary and operation types must agree. No operation, target,
+multi-span quote or adoption permission is synthesized; unsupported/read/global
+targetless proposals remain unapproved. Grounding/Planner/Revision/Accept remain
+the execution chain. Stage4 saved-quote baseline5/1 failure; final targeted74 pass.
