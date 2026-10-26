@@ -71,6 +71,21 @@ def test_new_candidate_operation_cannot_request_legacy_plan_or_alias_mode():
         CandidateCommand(action="generate", source_quote="生成候选", plan=value)
 
 
+def test_generation_source_binds_only_unique_authorized_parent():
+    from app.conversation_candidate.commands import bind_generation_source, validate_command
+    message='请生成厦门2026年11月21日的一日候选，去南普陀寺和中山路步行街，10:00—18:00游玩。先看方案再决定，不要保存。'
+    parent=message
+    child=message[message.index('去南普陀寺'):]
+    command=CandidateCommand(action='generate',source_quote=child,plan=plan().model_dump(mode='json'))
+    rebound=bind_generation_source(command,parent,message)
+    assert rebound.source_quote==parent
+    validate_command(rebound,message)
+    assert bind_generation_source(command,parent,message+' '+message).source_quote==child
+    denied='请生成厦门候选，但先不要生成。'
+    denied_command=CandidateCommand(action='generate',source_quote='生成厦门候选',plan=plan().model_dump(mode='json'))
+    assert bind_generation_source(denied_command,denied,denied).source_quote==denied_command.source_quote
+
+
 def test_candidate_operation_uses_its_own_bound_refs_without_read_argument_reinterpretation():
     from app.assistant_capabilities import CapabilityDecision, validate_decision
     from app.assistant_context import ContextEnvelope

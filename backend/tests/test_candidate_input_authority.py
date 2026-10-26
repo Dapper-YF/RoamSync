@@ -91,6 +91,29 @@ def test_literal_name_and_address_can_resolve_without_prior_consultation():
         asyncio.run(resolve_plan(value,"成都",SimpleNamespace(service=Places()),[],"人民公园只作备选，小南街8号的那个"))
 
 
+def test_search_name_mismatch_requests_provider_identity_instead_of_guessing():
+    from app.place_content.contracts import SearchResponse
+    now=datetime.now(UTC)
+    temple=Place(ref={"place_id":uuid4(),"external_ref":{"provider_place_id":"fixture-temple"}},
+        name="古鸡鸣寺",address="鸡鸣寺路1号钟山风景名胜区玄武湖景区内西南侧",
+        category="attraction",city="南京市",location={"longitude":118.795,"latitude":32.061},
+        source={"source_url":"https://fixture.invalid","fetched_at":now,"expires_at":now+timedelta(hours=1)})
+    station=temple.model_copy(update={"name":"鸡鸣寺(地铁站)","category":"other"})
+    class Places:
+        async def search(self, query):
+            return SearchResponse(items=[temple,station],page=1,page_size=12,status="ok")
+    value=plan({"item_ref":"temple","name":"鸡鸣寺","duration_minutes":90,
+        "source_quote":"去鸡鸣寺"})
+    with pytest.raises(ValueError, match="古鸡鸣寺.*鸡鸣寺路1号") as caught:
+        asyncio.run(resolve_plan(value,"南京",SimpleNamespace(service=Places()),[],"去鸡鸣寺"))
+    assert "地铁站" not in str(caught.value)
+    confirmed=plan({"item_ref":"temple","name":"古鸡鸣寺","duration_minutes":90,
+        "source_quote":"选择古鸡鸣寺，地址鸡鸣寺路1号钟山风景名胜区玄武湖景区内西南侧"})
+    result=asyncio.run(resolve_plan(confirmed,"南京",SimpleNamespace(service=Places()),[],
+        "选择古鸡鸣寺，地址鸡鸣寺路1号钟山风景名胜区玄武湖景区内西南侧"))
+    assert result.days[0].items[0].place_id==temple.ref.place_id
+
+
 def test_prior_hard_requirement_reaches_preparation_without_selector_repeating_it():
     from app.assistant_context import ContextEnvelope
     from app.assistant_capabilities import CapabilityDecision

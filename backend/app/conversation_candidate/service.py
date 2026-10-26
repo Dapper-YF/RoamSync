@@ -141,6 +141,17 @@ async def resolve_plan(plan, city, port, history, message, source_refs=None):
                 addressed = [p for p in exact if p.address and p.address in source]
                 for place in addressed or exact:
                     candidates[place.ref.place_id] = place
+                if not candidates and item['kind'] == 'visit':
+                    # Search ranking and partial name overlap are useful to ask
+                    # the user, but never establish the requested POI's identity.
+                    alternatives = [p for p in found.items if p.category == 'attraction'
+                        and p.city and p.city.removesuffix('市') == city.removesuffix('市')
+                        and query in p.name and p.identity_status == 'provider_identity'
+                        and p.source.freshness == 'fresh' and p.source.expires_at > datetime.now(UTC)]
+                    if alternatives:
+                        options = '；'.join(f'{p.name}（{p.district or p.city}，{p.address or "地址未提供"}）'
+                            for p in alternatives[:5])
+                        raise ValueError(f'高德搜索「{query}」返回：{options}。名称尚未与请求地点精确对应；请确认高德的完整名称和地址后再生成候选，尚未保存。')
             if len(candidates)>1:
                 options='；'.join(f'{p.name}（{p.district or p.city}，{p.address or "地址未提供"}）'
                     for p in candidates.values())
