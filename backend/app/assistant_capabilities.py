@@ -18,6 +18,7 @@ from app.saved_intentions import IntentionProposal
 from app.assistant_operation import CreationProposal
 from app.schemas import SemanticIntentDraft
 from app.conversation_candidate.commands import CandidateCommand
+from app.read_calculations import ReadCalculation
 
 
 Capability = Literal["poi", "web", "route", "facts", "itinerary"]
@@ -47,11 +48,13 @@ class ReadTask(BaseModel):
     near_name: str = Field(default="", max_length=120)
     fact_kind: Literal["weather", "opening_hours", "other"] = "other"
     itinerary_purpose: ItineraryPurpose = 'other'
+    calculation: ReadCalculation | None = None
 
 
 
 class CapabilityDecision(BaseModel):
     model_config = ConfigDict(extra="forbid")
+    calculation: ReadCalculation | None = None
     _identity_only: bool = PrivateAttr(default=False)
     intent: Literal["direct", "lookup", "route", "facts", "itinerary", "create", "modify", "execution", "clarify"]
     capabilities: list[Capability] = Field(default_factory=list, max_length=5)
@@ -97,16 +100,28 @@ async def select_capabilities(settings, message, history, envelope, trip_summary
     from app.read_references import place_catalog, resolve_read_text
     referents = place_catalog(history, envelope)
     from app.conversation_candidate.sources import source_registry
+    from app.conversation_candidate.commands import ACTION_VERBS, CHANGE_VERBS, validate_command
+    write_surface=affirmative_action_source(message,message,CHANGE_VERBS+'|'+ACTION_VERBS['generate'])
+    if not write_surface:
+        try:
+            validate_command(CandidateCommand(action='adopt',source_quote=message),message)
+            write_surface=True
+        except ValueError:
+            pass
+    spans=source_registry(history,message)
+    current_prefix=f'user_{len(history[-8:])}'
+    if not write_surface:
+        spans={key:value for key,value in spans.items() if key==current_prefix or key.startswith(current_prefix+'_span_')}
     # Freeze once: neither a repair nor a concurrent caller may change the
     # request, selected objects, effective conditions, or captured trip facts.
     input_text = json.dumps({"message": message,
-        "recent_users": [m.get("user", "")[:1000] for m in history[-8:]],
+        "recent_users": [m.get("user", "")[:1000] for m in history[-8:]] if write_surface else [],
         "selected_places": [{k: p.get(k) for k in ("name", "city", "place_id")} for p in selected],
         "browsing_city": envelope.browsing_city, "effective_conditions": memory_prompt(envelope),
         "current_local_date": local_today().isoformat(), "trip": trip_summary,
         "read_referents": [{k: p.get(k) for k in ('place_id', 'name', 'aliases', 'city')} for p in referents],
         "resolved_read_question": resolve_read_text(message, referents),
-        "user_source_spans": source_registry(history, message)}, ensure_ascii=False)
+        "user_source_spans": spans}, ensure_ascii=False)
     provenance = [*selected, *([{"city": trip_summary["destination"]}]
         if trip_summary and trip_summary.get("destination") else [])]
     client = build_model_client(settings)
@@ -119,6 +134,10 @@ async def select_capabilities(settings, message, history, envelope, trip_summary
     else:
         schema['properties'].pop('candidate_command', None)
     scope_candidate_schema(schema, trip_summary)
+    if not write_surface:
+        for field in ('candidate_command','planning_draft','creation'):
+            schema['properties'].pop(field,None)
+        instructions+='\n本轮没有可用的规划写操作字段。历史问句不作为当前任务；用已投影的有效条件、地点引用与保存快照理解承接，只从当前message及当前user_source_spans提取要回答的子目标。不要输出candidate_command、planning_draft或creation。'
     from app.assistant_selection_contract import known_day_count
     count=known_day_count(message,envelope,history)
     if 'candidate_command' in schema['properties'] and count:
@@ -276,6 +295,9 @@ def _repairable_candidate_format(raw, errors):
 
 
 def validate_decision(decision, message, history, envelope, selected=(), *, _task=False):
+    if decision.calculation is not None:
+        if decision.intent in {'create','modify','execution'} or decision.capabilities:
+            raise CapabilityContractError('calculation_requires_separate_read_task')
     from app.read_references import place_catalog, argument_in_read_scope, resolve_read_text, task_referents, explanation_requested, literal_subjects_cover
     referents = task_referents(message, decision, place_catalog(history, envelope))
     selected = [*selected, *referents]
@@ -290,7 +312,13 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
         decision=decision.model_copy(update={'intent':'direct','capabilities':[]})
     candidate_authorized = False
     if decision.candidate_command is not None:
-        from app.conversation_candidate.commands import validate_command
+        from app.conversation_candidate.commands import validate_command, bind_generation_source
+        if decision.intent=='create' and not any((decision.planning_draft,decision.creation,decision.saved_intentions)):
+            rebound=bind_generation_source(decision.candidate_command,decision.authorization_quote,message)
+            if rebound.source_quote!=decision.candidate_command.source_quote:
+                decision=decision.model_copy(update={'candidate_command':rebound})
+                if active_turn.get():
+                    active_turn.get().record('candidate_source_binding','completed',code='validated_parent_generation_scope')
         try:
             validate_command(decision.candidate_command, message)
         except ValueError:
@@ -451,6 +479,9 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
             if task.source_quote not in message:
                 block(task, '这部分查询无法绑定当前问题，请说明具体要查的内容。')
                 continue
+            if task.calculation is not None and task.capabilities:
+                block(task,'金额计算和其他查询需要独立子任务，避免混用输入或计价单位。')
+                continue
             from app.read_references import bind_read_task_reference
             task = bind_read_task_reference(task, referents)
             if set(task.capabilities) == {'itinerary'}:
@@ -593,7 +624,7 @@ def _task_decision(decision, task):
         set(task.capabilities) & {"poi", "web"} else "facts" if "facts" in task.capabilities
         else "itinerary" if "itinerary" in task.capabilities else "direct")
     result=decision.model_copy(update={**task.model_dump(exclude={"source_quote","source_ref"}), "intent": kind,
-        "read_tasks": [], "clarification": "", "illustrate": False, "advice_focus": "none"})
+        "read_tasks": [], "clarification": "", "illustrate": False, "advice_focus": "none",'calculation':task.calculation})
     result._identity_only=task._identity_only
     return result
 
@@ -1022,6 +1053,13 @@ async def _answer_leaf(settings, decision, message, history, envelope, port, db,
 
 
 async def _answer_leaf_impl(settings, decision, message, history, envelope, port, db, trip_id, session_id, message_id, goal, *, read_lock=None, web_fallback=True, read_snapshot=None, original_request=None, referents=None):
+    if decision.calculation is not None:
+        from app.read_calculations import calculate, render_calculation
+        # Only one complete current cost group is supported. A model-selected
+        # shorter task quote cannot remove another literal expense.
+        receipt=calculate(decision.calculation,original_request or message)
+        return failure_bundle(envelope,render_calculation(receipt),read_tools={'calculation':receipt}), (
+            'complete' if receipt['status']=='computed' else 'partial')
     from app.read_references import place_catalog, resolve_read_text
     referents = place_catalog(history, envelope) if referents is None else referents
     if decision.intent not in {'create', 'modify', 'execution'} and 'itinerary' not in decision.capabilities:

@@ -1,5 +1,40 @@
 # RoamSync Agent v1 architecture contract
 
+## Stage6 condition and arithmetic sources (2026-10-25, in progress)
+
+DATE_TOKEN, anchored_date, scalar source counting and literal date declarations
+share one grammar. Unambiguous slash dates and unpadded ISO dates normalize;
+ambiguous/invalid declarations are distinct from absent dates. The creation
+adapter checks dependent current date clauses and rejected receipts even when
+the action quote is shorter or the same message has another read subgoal.
+Unapplied new dates cannot fall back to an old effective departure date.
+
+Withdrawal metadata retains removed values, source, subject and scope without
+restoring active records. Read and acknowledgement show actual effective values
+separately from withdrawal provenance. Re-adding one condition suppresses only
+that condition's withdrawn display; other removed provenance remains.
+
+Optional ReadCalculation on an existing decision/read task is read-only. It
+binds each proposed integer-fen operand to the complete current literal cost
+group, expands item qualifiers from its source clause, validates completeness,
+duplicates, currency and compatible explicit basis, and computes integer sums/
+balances. Unknown amounts/rates/relations clarify; quantities are never silently
+multiplied. Receipts concern listed input amounts, never a complete final bill.
+This development contract has targeted tests and unresolved real composite
+answer failures; it is not a product acceptance claim.
+
+Read-only selector projection keeps effective conditions, stable referents and
+the saved snapshot; old questions are not current source spans. Unneeded writer
+schemas are removed and unreachable definitions pruned. The existing literal
+action guards control this projection only, never grant new write authority;
+the original downstream operation/source/identity/Accept checks still run.
+
+One confirmed day may have an exactly identical item accidentally repeated in
+the days container. Only that duplicate namespace fault can request one visible
+lossless repair, with the original items untouched and the returned JSON equal
+to the unique expected representation. Unknown data/new items/multiple days do
+not qualify. Full schema, source, identity and business checks run afterwards.
+
 ## Stage6 saved duration operations (2026-10-25, development)
 
 SavedDurationChange is server-owned internal metadata on GroundedIntent and

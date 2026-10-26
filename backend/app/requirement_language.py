@@ -75,7 +75,7 @@ def is_context_only_statement(clause: str) -> bool:
     text = clause.strip(" \t。.!！")
     workflow = (r'(?:请|仍然|依然|仍|先|暂且|暂时|现在|还|只|仅|再|等我确认后|看过再|不要|不|别|不用|暂不)*'
         r'(?:保存|采用|展示|生成|修改|调整)(?:(?:当前|这|那)(?:的|份|个)?)?'
-        r'(?:候选|方案|草案|安排|行程)?(?:并保存|再保存)?(?:了|吧|即可|就行)?')
+        r'(?:候选|方案|草案|安排|行程)?(?:给我看|给我看看|让我看看|供我查看)?(?:并保存|再保存)?(?:了|吧|即可|就行)?')
     if re.fullmatch(workflow, text):
         # Approval/workflow controls are not travel outcome requirements. They
         # remain in source messages and go through the action authorization gate.

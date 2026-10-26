@@ -65,6 +65,8 @@ def _unsupported_advice_clause(sentence, request):
         issues.append('output_unverified_menu_ingredients')
     if _asserted(r'(?:账单|结算|总价|实际花费).{0,12}(?:一定|肯定|保证|不会|不超过|只要|就是)', sentence):
         issues.append('output_unverified_final_bill')
+    if _asserted(r'(?:预算|参考价|参考费用|参考消费|估计费用|这笔钱|这些钱).{0,18}(?:兜住|不会超|不超标|足够|够用|有保障)',sentence):
+        issues.append('output_unverified_final_bill')
     if _asserted(r"(?:口碑|评价).{0,8}(?:好|稳定|不错|可靠)|(?:出品|味道).{0,6}(?:稳定|有保障)|(?:都|均|一定|肯定)(?:能|可以|有|提供|供应).{0,16}(?:清汤|菌汤|鸳鸯|不辣|素食)|(?:清汤).{0,20}(?:辣锅|红锅).{0,8}(?:舀|兑)", sentence):
         issues.append("output_unverified_merchant_attribute")
     if re.search(r"不吃辣|不能吃辣", request) and _asserted(r"(?:直接点|点全|可以点|建议.{0,6})(?:鸳鸯|清油|微辣)|(?:红汤|红锅).{0,15}(?:兑淡|加汤)", sentence):

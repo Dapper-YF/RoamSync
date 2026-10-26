@@ -88,6 +88,31 @@ def validate_command(command, message):
         raise ValueError('来源片段仅用于新候选生成；修改需引用当前活动。')
 
 
+def bind_generation_source(command, parent_quote, message):
+    """Consume an already supplied complete source for the same preview only.
+
+    No source is synthesized and no adopt/discard/edit permission is repaired.
+    The child must be one literal subspan of that unique current parent. Both
+    the parent action guard and all later plan/source/identity checks still run.
+    """
+    if command.action!='generate' or not parent_quote or not command.plan:
+        return command
+    try:
+        validate_command(command,message)
+        return command
+    except ValueError:
+        pass
+    if (message.count(parent_quote)!=1 or message.count(command.source_quote)!=1
+        or command.source_quote not in parent_quote or parent_quote==command.source_quote):
+        return command
+    rebound=command.model_copy(update={'source_quote':parent_quote},deep=True)
+    try:
+        validate_command(rebound,message)
+    except ValueError:
+        return command
+    return rebound
+
+
 def literal_minutes(quote):
     values = [int(m) for m in re.findall(r"(\d+)\s*分钟", quote)]
     values += [round(float(m) * 60) for m in re.findall(r"(\d+(?:\.\d+)?)\s*(?:个)?小时", quote)]

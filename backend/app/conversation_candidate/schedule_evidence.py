@@ -34,10 +34,38 @@ def daily_window_source(message,start,end,history=()):
     current=find(message)
     if current is not None:
         return current[1] if current[0]==desired else None
-    if quoted_clocks(message) or re.search(r'(?:游玩|每日|活动|安排).{0,6}(?:时间|窗口).{0,8}(?:未定|不定|待定|撤销|取消)',message):
+    if re.search(r'(?:游玩|每日|活动|安排).{0,6}(?:时间|窗口).{0,8}(?:未定|不定|待定|撤销|取消)',message):
         return None
-    if not re.search(r'(?:沿用|按|照)(?:刚才|前面|原来|之前)(?:的)?(?:全部|所有|完整)?(?:日期[、，,和与及 ]*)?(?:时间|要求|条件)',message):
+    reference=r'(?:请)?(?:沿用|按|照)(?:刚才|前面|原来|之前|上一条|上次)(?:的)?'
+    inherited=[clause.strip() for clause in re.split(r'[。；;!?！？\n]',message)
+        if re.match(reference,clause.strip()) and re.search(r'时间|窗口|要求|条件',clause)
+        and current_user_evidence_reason(message,clause.strip()) is None]
+    if not inherited:
         return None
+    clocks=list(re.finditer(CLOCK,message))
+    if clocks:
+        # Repeating exactly the prior bounds inside an explicit condition
+        # inheritance is not a new venue/appointment clock. Every current
+        # clock must belong to that one range; never ignore another time.
+        if len(clocks)!=2:
+            return None
+        ranges=[(clause,match) for clause in inherited for match in re.finditer(
+            rf'{CLOCK}\s*(?:—|–|-|~|～|至|到)\s*{CLOCK}',clause)]
+        if len(ranges)!=1:
+            return None
+        clause,match=ranges[0]
+        prefix=clause[:match.start()]
+        if (not re.fullmatch(reference+r'(?:全部|所有|完整|日期|时间|游玩|每日|活动|要求|条件|窗口|时段|[、，,和与及\s])*',prefix)
+            or re.search(r'预约|开放|闭馆|闭园|营业',clause)):
+            return None
+        times=tuple(next(iter(quoted_clocks(m[0]))) for m in re.finditer(CLOCK,match[0]))
+        if times!=desired:
+            return None
+        from app.requirement_language import is_context_only_statement
+        condition=r'(?:[、和与及\s]*(?:(?:[一二三四五六七八九十两\d]+)(?:小时|分钟))?(?:日期|时间|窗口|时段|午餐|步行|交通|要求|条件))*'
+        tails=[part.strip() for part in re.split(r'[，,]',clause[match.end():]) if part.strip()]
+        if any(not (re.fullmatch(condition,part) or is_context_only_statement(part)) for part in tails):
+            return None
     for turn in reversed(history):
         text=turn.get('user','')
         if re.search(r'(?:时间|窗口|时段).{0,8}(?:未定|待定|撤销|取消)|(?:撤销|取消).{0,8}(?:时间|窗口|时段)',text):

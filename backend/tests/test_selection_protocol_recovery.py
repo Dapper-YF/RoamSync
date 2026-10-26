@@ -17,7 +17,7 @@ BASE = {"intent": "itinerary", "capabilities": ["itinerary"],
 SUMMARY = {"destination": "成都", "read_coverage": {"scope_kind": "activity", "trip_version": 3}}
 
 
-def exercise(monkeypatch, outputs, *, raw=None, summary=SUMMARY, hook=None):
+def exercise(monkeypatch, outputs, *, raw=None, summary=SUMMARY, hook=None, message='选中的馆原来保存了多久？'):
     calls, closed = [], []
     history = [{"user": "我选中了第三天的馆"}]
     env = ContextEnvelope(browsing_city="成都")
@@ -40,7 +40,7 @@ def exercise(monkeypatch, outputs, *, raw=None, summary=SUMMARY, hook=None):
         token = active_turn.set(turn)
         try:
             return await selector.select_capabilities(SimpleNamespace(planner_model="test"),
-                "选中的馆原来保存了多久？", history, env, deepcopy(summary))
+                message, history, env, deepcopy(summary))
         finally:
             active_turn.reset(token)
     return run, calls, closed, turn
@@ -56,6 +56,27 @@ def test_extra_root_field_recovers_only_after_explicit_second_strict_output(monk
     assert "candidate" not in json.dumps(repair)
     frozen = json.loads(calls[0]["input_text"])
     assert json.loads(calls[1]["input_text"])["original_request"] == frozen
+
+
+def test_read_selection_cannot_choose_old_questions_or_unused_writer_definitions(monkeypatch):
+    run,calls,_,_=exercise(monkeypatch,[BASE])
+    asyncio.run(run())
+    request=json.loads(calls[0]['input_text'])
+    assert request['recent_users']==[]
+    assert request['user_source_spans'] and all(k.startswith('user_1') for k in request['user_source_spans'])
+    schema=calls[0]['text_format']['schema']
+    assert not set(schema['properties']) & {'candidate_command','creation','planning_draft'}
+    assert 'CandidateDraftPlan' not in schema['$defs']
+
+
+def test_affirmative_preview_still_receives_source_history_and_candidate_schema(monkeypatch):
+    message='请生成厦门2026年11月21日的一日候选，先看方案不要保存。'
+    run,calls,_,_=exercise(monkeypatch,[{'intent':'clarify','reason_code':'missing_arguments',
+        'clarification':'请明确游玩窗口。'}],summary=None,message=message)
+    asyncio.run(run())
+    request=json.loads(calls[0]['input_text'])
+    assert request['recent_users'] and 'user_0' in request['user_source_spans']
+    assert 'candidate_command' in calls[0]['text_format']['schema']['properties']
 
 
 def test_read_task_only_misplaced_parser_metadata_gets_one_visible_format_repair(monkeypatch):

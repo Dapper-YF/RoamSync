@@ -258,5 +258,8 @@ def test_deterministic_recall_does_not_restore_removed_preference_from_withdrawa
         MemoryUpdate(field="preferences", operation="remove", value="不吃辣", source_quote="不再要求不吃辣", scope="personal"),
     ])[0]
     result = recall_conditions(env)
-    assert "我不吃辣" not in result and "不再要求不吃辣" not in result
+    # Withdrawn provenance is now explicitly separated from effective values.
+    active=result.split('已撤销条件：')[0]
+    assert "我不吃辣" not in active and "不再要求不吃辣" not in active
+    assert '已撤销条件：我不吃辣' in result
     assert "不喜欢挨个拍照打卡" in result and "爸爸连续步行不超过15分钟" in result

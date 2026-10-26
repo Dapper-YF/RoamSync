@@ -192,17 +192,25 @@ def approved_draft(decision, message):
 
 
 def _quoted_dates(text, today):
-    from app.assistant_memory import anchored_date
+    from app.assistant_memory import anchored_date, scalar_tokens
     values = []
-    for token in re.finditer(r"20\d{2}-\d{1,2}-\d{1,2}|(?:20\d{2}年)?\d{1,2}月\d{1,2}[日号]?|今天|明天|后天", text):
+    for token in scalar_tokens('start_date',text):
         value = anchored_date(token[0], today)
-        if value:
-            values.append(date.fromisoformat(value))
+        if not value:
+            return []
+        values.append(date.fromisoformat(value))
     # Explicit same-month ranges may omit the second month/year.
     short = re.search(r"(?:(20\d{2})年)?(\d{1,2})月(\d{1,2})[日号]?(?:到|至|[-—–～~])(\d{1,2})[日号]", text)
     if short:
-        first = date.fromisoformat(anchored_date(f"{short[1] or today.year}年{short[2]}月{short[3]}日", today))
-        values.extend([first, first.replace(day=int(short[4]))])
+        start=anchored_date(f"{short[1] or today.year}年{short[2]}月{short[3]}日",today)
+        try:
+            first=date.fromisoformat(start) if start else None
+            last=first.replace(day=int(short[4])) if first else None
+        except ValueError:
+            return []
+        if first is None or last is None or last<first:
+            return []
+        values.extend([first,last])
     return sorted(set(values))
 
 
@@ -221,7 +229,25 @@ def approved_tool_decision(decision, message, envelope, *, today):
                     str((slots.get("city") or {}).get("value", "")).removesuffix("市")):
         return ToolDecision(tool="reply", reply="想去哪个城市走走？")
     quoted = _quoted_dates(decision.authorization_quote, today)
+    from app.assistant_memory import scalar_tokens, literal_date_update, anchored_date, server_memory
+    from app.requirement_language import current_user_evidence_reason
+    # Inspect the dependent date clause independently of other read subgoals.
+    # This only blocks stale creation; it cannot apply a memory/write update.
+    declarations=[literal_date_update(clause) for clause in re.split(r'[，,。；;!?！？\n]',message)]
+    unresolved_literal=any(update and anchored_date(update.value,today) is None
+        and current_user_evidence_reason(message,update.source_quote) is None for update in declarations)
+    rejected_dates=any(update['field']=='start_date' and update['status']=='rejected'
+        and update.get('source_quote') and update['source_quote'] in message
+        and any(anchored_date(token[0],today) is None for token in scalar_tokens('start_date',update['source_quote']))
+        for update in server_memory(envelope).get('latest_receipt',{}).get('updates',[]))
+    if unresolved_literal or rejected_dates or (scalar_tokens('start_date',decision.authorization_quote) and not quoted):
+        return ToolDecision(tool='reply',reply='本次日期存在歧义或不是有效日期，请只确认出发日期（例如2027-04-03）；其他条件保留。')
     saved_start = (slots.get("start_date") or {}).get("value")
+    if saved_start and any(update and (value:=anchored_date(update.value,today)) and value!=saved_start
+        and current_user_evidence_reason(message,update.source_quote) is None for update in declarations):
+        return ToolDecision(tool='reply',reply='本次出发日期与当前有效日期不同，新日期尚未生效。请确认出发日期；其他条件保留。')
+    if saved_start and quoted and quoted[0].isoformat()!=saved_start:
+        return ToolDecision(tool='reply',reply='本次出发日期与当前有效日期不同，新日期尚未生效。请确认出发日期；其他条件保留。')
     start = date.fromisoformat(saved_start) if saved_start else (quoted[0] if quoted else None)
     if start is None or proposal.start_date is not None and proposal.start_date != start:
         return ToolDecision(tool="reply", reply="请明确这次的出发日期。")

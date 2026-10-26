@@ -30,6 +30,33 @@ def errors(raw):
     return error.value.errors(include_input=False,include_context=False,include_url=False)
 
 
+def test_exact_duplicate_item_in_the_day_container_has_one_lossless_representation_repair():
+    proposal=plan().model_dump(mode='json')
+    duplicate=deepcopy(proposal['days'][0]['items'][-1])
+    proposal['days'].append(duplicate)
+    raw={'intent':'create','reason_code':'explicit_write','candidate_command':{
+        'action':'generate','source_quote':'请生成成都11月9日一日候选','plan':proposal}}
+    repaired=representation_repair(raw,errors(raw),TEXT,ContextEnvelope())
+    assert repaired and repaired[0]['candidate_command']['plan']['days']==proposal['days'][:1]
+    changed=deepcopy(raw);changed['candidate_command']['plan']['days'][-1]['name']='另一个未知地点'
+    assert representation_repair(changed,errors(changed),TEXT,ContextEnvelope()) is None
+    assert representation_repair(raw,errors(raw),'请生成候选，天数未定',ContextEnvelope()) is None
+
+
+def test_generation_reuses_its_complete_verified_parent_source_without_creating_adoption_authority():
+    from app.assistant_capabilities import validate_decision
+    full='请生成成都11月9日一日候选，人民公园和宽窄巷子，10:00到18:00游玩，中午留一小时午餐，步行为主。不要保存。'
+    child=full[full.index('人民公园'):]
+    decision=CapabilityDecision(intent='create',reason_code='explicit_write',city='成都',authorization_quote=full,
+        candidate_command={'action':'generate','source_quote':child,'plan':plan().model_dump(mode='json')})
+    result=validate_decision(decision,full,[],ContextEnvelope())
+    assert result.intent=='create' and result.candidate_command.source_quote==full
+    assert decision.candidate_command.source_quote==child
+    denied='如果'+full
+    result=validate_decision(decision.model_copy(update={'authorization_quote':denied}),denied,[],ContextEnvelope())
+    assert result.candidate_command is None
+
+
 def test_read_task_field_name_used_as_intent_has_only_exact_read_container_repair():
     raw={'intent':'read_tasks','reason_code':'stable_knowledge',
         'read_tasks':[{'source_quote':'查个园位置','capabilities':['poi'],'names':['个园']}]}

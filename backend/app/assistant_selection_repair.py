@@ -11,6 +11,9 @@ def representation_repair(raw, errors, message, envelope, history=()):
     result=_representation_repair(raw,errors,message,envelope,history)
     if result:
         return result
+    result=_duplicate_item_namespace(raw,message,envelope,history)
+    if result:
+        return result
     if not (isinstance(raw,dict) and raw.get('intent')=='create'
         and isinstance(raw.get('candidate_command'),dict) and raw['candidate_command'].get('action')=='generate'
         and not any(raw.get(k) for k in ('memory_updates','saved_intentions','planning_draft','creation'))
@@ -50,6 +53,38 @@ def representation_repair(raw, errors, message, envelope, history=()):
         'plan.schedule_constraints daily bounds. Copy required_representation exactly, including '
         'any independently verified empty duplicate day removal. Preserve every real constraint, '
         'quantity, item, source, identity and authority value.')
+
+
+def _duplicate_item_namespace(raw,message,envelope,history):
+    """One-day duplicate item emitted again in days: no new item is moved."""
+    if not (isinstance(raw,dict) and raw.get('intent')=='create'
+        and isinstance(raw.get('candidate_command'),dict) and raw['candidate_command'].get('action')=='generate'
+        and not any(raw.get(k) for k in ('memory_updates','saved_intentions','planning_draft','creation'))):
+        return None
+    from app.assistant_selection_contract import known_day_count
+    if known_day_count(message,envelope,history)!=1:
+        return None
+    expected=deepcopy(raw)
+    try:
+        days=expected['candidate_command']['plan']['days']
+        if not isinstance(days,list) or not 2<=len(days)<=4:
+            return None
+        valid=[day for day in days if isinstance(day,dict) and 'day_index' in day]
+        extras=[day for day in days if day not in valid]
+        if len(valid)!=1 or not extras or valid[0].get('day_index')!=1:
+            return None
+        if any(extra not in valid[0].get('items',[]) for extra in extras):
+            return None
+        expected['candidate_command']['plan']['days']=valid
+        from app.assistant_capabilities import CapabilityDecision
+        CapabilityDecision.model_validate(expected)
+    except (KeyError,TypeError,ValueError):
+        return None
+    return expected,'duplicate_item_namespace',(
+        'Remove ONLY the exactly identical item objects repeated in the days container. '
+        'Each object already exists unchanged, including its item_ref and every field, '
+        'inside the single confirmed day items. Keep that items list and all other JSON '
+        'exactly unchanged. Do not move a new item, remove unknown data or change authority.')
 
 
 def _representation_repair(raw, errors, message, envelope, history=()):

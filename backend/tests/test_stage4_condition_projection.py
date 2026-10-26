@@ -26,6 +26,37 @@ def test_failed_place_preparation_does_not_lose_verified_creation_dates():
     assert approved.tool=='create_trip' and approved.start_date==date(2026,11,9)
 
 
+def test_candidate_city_handoff_retains_literal_city_when_optional_root_metadata_is_omitted():
+    from datetime import date
+    from app.assistant_capabilities import CapabilityDecision
+    from app.assistant_memory import candidate_scalar_updates
+    from app.companion_state import destination_from_text
+    from test_candidate_commands import plan
+    for city in ('南京','厦门','扬州'):
+        text=f'请生成{city}21/11/2026出发的一日候选，去甲园和乙馆，先预览不保存。'
+        proposal=plan().model_dump(mode='json');proposal['schedule_constraints']['start_date']='2026-11-21'
+        decision=CapabilityDecision(intent='create',reason_code='explicit_write',candidate_command={
+            'action':'generate','source_quote':text,'plan':proposal})
+        updates=candidate_scalar_updates(decision,text,today=date(2026,10,25))
+        assert any(update.field=='city' and update.value==city for update in updates)
+        assert destination_from_text(text,planning_authorized=True)==city
+    assert destination_from_text('请生成候选，去玄武湖和鸡鸣寺，10:00—18:00游玩',planning_authorized=True) is None
+
+
+def test_a_sight_in_the_generation_clause_cannot_replace_the_literal_city():
+    from datetime import date
+    from app.assistant_capabilities import CapabilityDecision
+    from app.assistant_memory import candidate_scalar_updates,MemoryUpdate,apply_memory
+    from test_candidate_commands import plan
+    text='请生成南京一日候选去玄武湖'
+    decision=CapabilityDecision(intent='create',reason_code='explicit_write',city='玄武湖',candidate_command={
+        'action':'generate','source_quote':text,'plan':plan().model_dump(mode='json')})
+    assert not any(update.field=='city' for update in candidate_scalar_updates(decision,text,today=date(2026,10,25)))
+    env,_,_=apply_memory(ContextEnvelope(),[],text,'wrong-city',[
+        MemoryUpdate(field='city',value='玄武湖',source_quote=text,scope='trip')])
+    assert 'city' not in env.conversation_memory['slots']
+
+
 def test_candidate_conditions_require_current_matching_affirmative_literals():
     from datetime import date
     from app.assistant_capabilities import CapabilityDecision

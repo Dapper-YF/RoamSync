@@ -5,7 +5,7 @@ from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 from pydantic import BaseModel, ConfigDict, Field
 
-DATE_TOKEN = re.compile(r"今天|明天|后天|20\d{2}-\d{1,2}-\d{1,2}|(?:20\d{2}年)?\d{1,2}月\d{1,2}[日号]?|(?:下下|下|本|这)?(?:周|星期)[一二三四五六日天]")
+DATE_TOKEN = re.compile(r"(?<![\d/-])(?:今天|明天|后天|20\d{2}[-/]\d{1,2}[-/]\d{1,2}(?:\.\d+)?|\d{1,2}/\d{1,2}/20\d{2}(?:\.\d+)?|(?:20\d{2}年)?\d{1,2}月\d{1,2}[日号]?|(?:下下|下|本|这)?(?:周|星期)[一二三四五六日天])(?![\d/-])")
 NUMERAL = r"[一二三四五六七八九十两\d]+"
 
 
@@ -52,6 +52,12 @@ def candidate_scalar_updates(decision, message, *, today):
     generation = [part for part in clauses if affirmative_action_source(message,part,ACTION_VERBS['generate'])]
     values = {'start_date':command.plan.schedule_constraints.start_date.isoformat(),
         'duration_days':str(len(command.plan.days))}
+    from app.companion_state import destination_from_text
+    city=destination_from_text(command.source_quote,planning_authorized=True)
+    if city and decision.city and city.removesuffix('市')!=decision.city.removesuffix('市'):
+        city=None
+    if city and city in message:
+        values['city']=city
     # Literal condition withdrawals run before semantic selection. Do not
     # overwrite their receipt merely because the model omitted its duplicate.
     literal_fields = {update.field for update in literal_conditions(message)}
@@ -61,11 +67,11 @@ def candidate_scalar_updates(decision, message, *, today):
             continue
         # Count every scalar-bearing source before equality testing. A second
         # conflicting date cannot disappear merely because it differs from plan.
-        sources=[part for part in generation if scalar_tokens(key,part)]
+        sources=[part for part in generation if (value in part if key=='city' else scalar_tokens(key,part))]
         if len(sources)!=1 or len(sources[0])>300:
             continue
         quote=sources[0]
-        if _quoted_scalar(key,value,quote,today,message) is not None:
+        if key=='city' or _quoted_scalar(key,value,quote,today,message) is not None:
             updates.append(MemoryUpdate(field=key,value=value,source_quote=quote,scope='trip'))
     return updates
 
@@ -92,8 +98,21 @@ def anchored_date(value, today):
             result += timedelta(days=7)
         return result.isoformat()
     try:
-        if re.fullmatch(r"20\d{2}-\d{1,2}-\d{1,2}", value):
-            return date.fromisoformat(value).isoformat()
+        numeric = re.fullmatch(r"(20\d{2})([-/])(\d{1,2})\2(\d{1,2})",value)
+        if numeric:
+            return date(int(numeric[1]),int(numeric[3]),int(numeric[4])).isoformat()
+        slash = re.fullmatch(r"(\d{1,2})/(\d{1,2})/(20\d{2})",value)
+        if slash:
+            first,second,year=map(int,slash.groups())
+            # Accept only a unique valid interpretation. 03/04 is ambiguous;
+            # 21/11, 11/21 and 11/11 each identify one calendar day.
+            choices=set()
+            for month,day in ((second,first),(first,second)):
+                try:
+                    choices.add(date(year,month,day))
+                except ValueError:
+                    continue
+            return next(iter(choices)).isoformat() if len(choices)==1 else None
         match = re.fullmatch(r"(?:(20\d{2})年)?(\d{1,2})月(\d{1,2})[日号]?", value)
         if match:
             chosen = date(int(match[1] or today.year), int(match[2]), int(match[3]))
@@ -183,6 +202,12 @@ def literal_withdrawals(message):
         if declared(match)]
 
 
+def literal_date_update(message):
+    """A date declaration proposal; consumers still own source/scope checks."""
+    match=re.search(rf"({DATE_TOKEN.pattern})(?:\s*(?:开始|出发|去))|(?:出发(?:日期)?(?:改为|改成|为|是)?|改为|改成)\s*({DATE_TOKEN.pattern})",message)
+    return MemoryUpdate(field='start_date',value=match[1] or match[2],source_quote=match[0],scope='trip') if match else None
+
+
 def literal_conditions(message):
     """Exact date/duration slot answers also work in the existing planning handoff."""
     # A verified single-person declaration does not depend on the selector's
@@ -209,10 +234,9 @@ def literal_conditions(message):
         city = explicit_destination(message)
         if city and city in message:
             updates.append(MemoryUpdate(field="city", value=city, source_quote=city, scope="trip"))
-    date_token = r"今天|明天|后天|20\d{2}-\d{2}-\d{2}|(?:20\d{2}年)?\d{1,2}月\d{1,2}[日号]|(?:下下|下|本|这)?(?:周|星期)[一二三四五六日天]"
-    match = re.search(rf"({date_token})(?:\s*(?:开始|出发|去))|(?:出发(?:日期)?(?:改为|改成|为|是)?|改为|改成)\s*({date_token})", message)
-    if match:
-        updates.append(MemoryUpdate(field="start_date", value=match[1] or match[2], source_quote=match[0], scope="trip"))
+    date_update=literal_date_update(message)
+    if date_update:
+        updates.append(date_update)
     duration = re.search(r"(?:游玩|玩|待|改为|改成|那就)([一二三四五六七八九十两\d]+天)", message)
     if duration:
         updates.append(MemoryUpdate(field="duration_days", value=duration[1], source_quote=duration[0], scope="trip"))
@@ -321,6 +345,12 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
                 continue
         if key == "city" and operation not in {"clear", "remove"} and re.search(r"不去|别去|不要去|不想去|取消去", re.split(r"[，。；!?！？]", prefix)[-1] + quote):
             continue
+        if key=='city' and operation not in {'clear','remove'}:
+            from app.companion_state import destination_from_text
+            declared=destination_from_text(message,planning_authorized=True)
+            if declared and str(normalized).removesuffix('市')!=declared.removesuffix('市'):
+                receipt['reason']='city_role_conflicts_with_literal_destination'
+                continue
         if operation == "clear" and not re.search(r"取消|撤销|撤掉|不限|不设|清除|忘掉|不再|不要|无需|不用|待定|(?:先|还|也)?不定|未定|没(?:有)?定|不确定", quote):
             continue
         evidence = {"value": normalized, "source_quote": quote, "message_id": str(message_id),
@@ -346,7 +376,8 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
         if operation in {"clear", "remove"}:
             withdrawn[withdrawal_key] = {"source_quote": quote, "message_id": str(message_id), "state": "unknown" if key not in {"preferences", "requirements"} else "withdrawn"}
         else:
-            withdrawn.pop(key, None)
+            if key not in {'preferences','requirements'}:
+                withdrawn.pop(key, None)
             withdrawn.pop(key + ":" + value, None)
             if update.replaces:
                 withdrawn[key + ":" + update.replaces] = {"source_quote": quote, "message_id": str(message_id), "state": "superseded"}
@@ -358,6 +389,10 @@ def apply_memory(envelope, history, message, message_id, updates=(), *, today=No
                 matching if operation == 'remove' else [item for item in items if update.replaces
                     and item['value'] == update.replaces and item.get('subject', '') == update.subject
                     and item.get('scope', 'personal') == evidence['scope']])
+            if operation in {'clear','remove'}:
+                removed=[{k:item.get(k) for k in ('value','source_quote','subject','scope')} for item in removed_items]
+                withdrawn[withdrawal_key].update(subject=update.subject,scope=evidence['scope'],removed_conditions=removed)
+                receipt['removed_conditions']=deepcopy(removed)
             # Both stores already contain provenance. Revoke only atoms from
             # the same source message and exact condition clause, never other
             # clauses sharing that message or a durable/global requirement.
@@ -459,6 +494,16 @@ def recall_conditions(envelope):
         literal = [value for value in literal if isinstance(value, str) and value]
         removed = any(k == key or k.startswith(key + ':') for k in withdrawn)
         lines.append(label + "：" + ("；".join(literal) if literal else "已撤销" if removed else "未确定"))
+    for key,record in withdrawn.items():
+        if not key.startswith(('preferences','requirements')) or record.get('state')!='withdrawn':
+            continue
+        for item in record.get('removed_conditions',[]):
+            text=item.get('source_quote') or item.get('value')
+            active_key='preferences' if key.startswith('preferences') else 'requirements'
+            active=any(current.get('value')==item.get('value') and (current.get('subject') or '')==(item.get('subject') or '')
+                and (current.get('scope') or 'personal')==(item.get('scope') or 'personal') for current in memory[active_key])
+            if text and not active:
+                lines.append('已撤销条件：'+text+'（依据：'+record['source_quote']+'）')
     rejected = [r for r in memory.get('latest_receipt', {}).get('updates', []) if r['status'] == 'rejected']
     if rejected:
         lines.append('本次未应用：'+'；'.join(dict.fromkeys(r['field']+'（'+r['reason']+'）' for r in rejected))+'，以上为实际保留值。')
@@ -516,7 +561,15 @@ def condition_ack(envelope, message, changed):
             parts.append(("偏好" if key == "preferences" else "要求") + ("：" + values if values else "已清除"))
         else:
             value = memory["slots"].get(key, {}).get("value")
-            parts.append(names[key] + ("：" + str(value) if value is not None else "已清除"))
+            unit={'party_size':'人','duration_days':'天'}.get(key,'') if type(value)==int else ''
+            parts.append(names[key] + ("：" + str(value)+unit if value is not None else "已清除"))
+    removed=[item for update in receipt.get('updates',[]) if update['status']=='applied'
+        for item in update.get('removed_conditions',[])]
+    if removed:
+        parts.extend('已撤销：'+str(item.get('source_quote') or item['value']) for item in removed)
+        personal=[item.get('source_quote') or item['value'] for item in memory['preferences'] if not item.get('subject')]
+        if personal:
+            parts.append('仍生效的偏好：'+'、'.join(personal))
     failed = '；'.join(dict.fromkeys(r['field'] for r in rejected))
     return ('已更新这次聊天的条件：' + '；'.join(parts) + '。' if parts else '') + (
         '未应用的字段：' + failed + '，原有值保留，请明确说明对应条件。' if failed else '')

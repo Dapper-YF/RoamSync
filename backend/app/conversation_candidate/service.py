@@ -184,6 +184,9 @@ async def build_candidate(command, decision, message, history, envelope, port, o
         if plan is None or plan.schema_version != 2:
             raise ValueError("尚未生成可核对的完整候选，请重试；没有创建旅行。")
         from app.companion_state import destination_from_text
+        declared_city=destination_from_text(command.source_quote,planning_authorized=True)
+        if declared_city and decision.city and declared_city.removesuffix('市')!=decision.city.removesuffix('市'):
+            raise ValueError('候选目的地与本次原话的目的地不一致，尚未生成或保存；请重新生成候选。')
         city = (decision.city or (decision.creation.destination if decision.creation else '')
             or (envelope.conversation_memory.get("slots", {}).get("city") or {}).get("value", "")
             or envelope.browsing_city or destination_from_text(message, planning_authorized=True) or '')
