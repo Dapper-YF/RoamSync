@@ -5,6 +5,17 @@ from collections.abc import Mapping
 from sqlalchemy.engine import make_url
 
 
+def allows_fixture_database(value: str, *legacy_names: str) -> bool:
+    """Allow named fixtures or a unique Stage6 test DB after the global guard."""
+    try:
+        url = make_url(value)
+        name = url.database or ""
+        return bool(url.get_backend_name() == "postgresql" and url.host and not url.query
+            and (name in legacy_names or re.fullmatch(r"roamsync_s6_[a-z0-9_]+_test", name)))
+    except Exception:
+        return False
+
+
 def validate_test_databases(environ: Mapping[str, str]) -> None:
     if environ.get("APP_ENV") != "test":
         raise ValueError("APP_ENV=test must be explicitly set before collecting tests")

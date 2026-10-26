@@ -5,6 +5,7 @@ from datetime import UTC, datetime, timedelta
 from uuid import UUID, uuid4
 
 import pytest
+from _database_safety import allows_fixture_database
 from sqlalchemy import create_engine, func, select, update
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
@@ -51,8 +52,8 @@ class FixturePlaces:
 @pytest.fixture
 def stack():
     url = os.environ.get("PROMOTION_TEST_DATABASE_URL", "")
-    if not url or not url.endswith("/promotion_test"):
-        pytest.skip("requires explicit isolated promotion_test database")
+    if not allows_fixture_database(url, "promotion_test"):
+        pytest.skip("requires explicit isolated promotion test database")
     sync = create_engine(url, poolclass=NullPool)
     Base.metadata.create_all(sync)
     draft_metadata.create_all(sync)

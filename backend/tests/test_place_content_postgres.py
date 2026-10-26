@@ -4,7 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 from sqlalchemy import create_engine
-from sqlalchemy.engine import make_url
+from _database_safety import allows_fixture_database
 
 from app.place_content.provider import normalize_poi
 from app.place_content.repository import ContentRepository, metadata
@@ -12,8 +12,8 @@ from app.place_content.repository import ContentRepository, metadata
 
 def test_postgres_concurrent_favorite_identity_and_owner_isolation():
     url = os.environ.get("DATABASE_URL", "")
-    if os.environ.get("APP_ENV") != "test" or not url or make_url(url).database != "roamsync_test":
-        pytest.skip("requires isolated roamsync_test PostgreSQL and APP_ENV=test")
+    if os.environ.get("APP_ENV") != "test" or not allows_fixture_database(url, "roamsync_test"):
+        pytest.skip("requires explicitly isolated content PostgreSQL and APP_ENV=test")
     engine = create_engine(url)
     metadata.create_all(engine)
     repo = ContentRepository(engine)

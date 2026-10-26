@@ -5,7 +5,23 @@ import sys
 
 import pytest
 
-from _database_safety import validate_test_databases
+from _database_safety import allows_fixture_database, validate_test_databases
+
+
+@pytest.mark.parametrize("database,allowed", [
+    ("roamsync_test_write_protection", True),
+    ("roamsync_s6_official_full_20261026_test", True),
+    ("roamsync_s6_official_promotion_20261026_test", True),
+    ("roamsync", False), ("roamsync_s6_production", False),
+    ("other_test", False), ("roamsync_s6_test_backup", False),
+])
+def test_fixture_database_gate_keeps_unique_test_namespace(database, allowed):
+    assert allows_fixture_database(environment(database)["DATABASE_URL"], "roamsync_test_write_protection") is allowed
+
+
+def test_fixture_database_gate_rejects_query_override_and_non_postgres():
+    assert not allows_fixture_database(environment()["DATABASE_URL"] + "?dbname=roamsync", "roamsync_test")
+    assert not allows_fixture_database("sqlite:///roamsync_s6_fixture_test")
 
 
 def environment(database="roamsync_test"):
