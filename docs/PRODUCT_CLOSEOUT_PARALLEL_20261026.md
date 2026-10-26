@@ -79,3 +79,12 @@ branch codex/journey-handbook; six tracked local modifications plus many
 untracked files. This observation is not a backup or integration. Recheck before
 mutation. Prior plan's no-official-source statement is historical after the
 user's new integration instruction.
+
+Coordinator read-only pre-integration backup completed and hash-verified:
+E:/Study/RoamSync-parallel-evidence-20261026/coordinator/official-before-integration/manifest.json.
+It preserves six locally modified tracked files and2011 untracked files
+(2017 total,397958961 bytes), HEAD/status and working-tree/index patches.
+Source HEAD/status/patches were rechecked unchanged during capture. Ignored
+files are excluded; this is a local-edit backup, not a production DB backup.
+Before eventual integration, check for changes since this snapshot and take a
+new uniquely named snapshot if required. No official integration has occurred.
