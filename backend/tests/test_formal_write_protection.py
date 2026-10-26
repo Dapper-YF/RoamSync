@@ -23,7 +23,10 @@ from app.schemas import CandidateActivity, CandidatePlanSnapshot, TripCreate
 @pytest.fixture
 def sample(monkeypatch):
     url = os.environ.get("DATABASE_URL", "")
-    assert make_url(url).database == "roamsync_test_write_protection"
+    database = make_url(url).database or ""
+    assert database == "roamsync_test_write_protection" or (
+        database.startswith("roamsync_s6_") and database.endswith("_test")
+    )
     engine = create_async_engine(url, poolclass=NullPool)
     sessions = async_sessionmaker(engine, expire_on_commit=False)
     previous_bind = session_factory.kw["bind"]

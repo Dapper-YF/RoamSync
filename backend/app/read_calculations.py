@@ -24,7 +24,14 @@ MONEY=re.compile(r'(?<![\d.,])(-?\d+(?:\.\d{1,2})?)\s*元(?![\d])')
 
 
 def _budget_role(clause,amount):
-    return bool(re.search(r'(?:预算|限额|上限)(?:为|是|约|大约|最多|不超过|控制在)?\s*(?:人民币)?\s*$',clause[:amount.start()]))
+    # A budget is a complete declaration, not any cost whose prefix happens
+    # to end in 预算 (for example 另付超预算10元服务费).
+    prefix=clause[:amount.start()].strip()
+    suffix=clause[amount.end():].strip()
+    return bool(re.fullmatch(
+        r'(?:(?:这次|本次|全程|旅行|行程|总|每人|人均|每位|一人)\s*)*'
+        r'(?:预算|限额|上限)(?:为|是|约|大约|最多|不超过|控制在)?\s*(?:人民币)?',
+        prefix) and re.fullmatch(r'(?:/人|/天|/份)?',suffix))
 
 
 def _basis(text):

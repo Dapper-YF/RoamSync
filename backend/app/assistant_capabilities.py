@@ -49,6 +49,7 @@ class ReadTask(BaseModel):
     fact_kind: Literal["weather", "opening_hours", "other"] = "other"
     itinerary_purpose: ItineraryPurpose = 'other'
     calculation: ReadCalculation | None = None
+    advice_focus: Literal["none", "walking_effort", "rest"] = "none"
 
 
 
@@ -298,6 +299,31 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
     if decision.calculation is not None:
         if decision.intent in {'create','modify','execution'} or decision.capabilities:
             raise CapabilityContractError('calculation_requires_separate_read_task')
+    # One pure explanation may be sliced down to its trailing instruction by
+    # the selector. Bind the answer back to this turn's complete literal
+    # inference, while leaving all peer, tool and writer tasks untouched.
+    explanation_context = (not _task and decision.intent == 'direct'
+        and decision.reason_code == 'stable_knowledge' and not decision.capabilities
+        and not any((decision.candidate_command, decision.planning_draft, decision.creation,
+            decision.saved_intentions, decision.memory_updates, decision.calculation))
+        and len(decision.read_tasks) == 1
+        and not any((decision.names, decision.origin, decision.destination, decision.query))
+        and bool(re.search(r'是否意味着|是否就|能否保证|是否保证|能不能保证', message)))
+    if explanation_context:
+        task=decision.read_tasks[0]
+        if (task.source_quote != message and message.count(task.source_quote) == 1
+            and message.index(task.source_quote) > 0
+            and not any((task.capabilities, task.names, task.origin, task.destination,
+                task.query, task.nearby, task.near_name, task.calculation, task.city))
+            and task.fact_kind == 'other'
+            and bool(re.search(r'说明|核实|判断|为什么|怎么',task.source_quote))):
+            decision=decision.model_copy(update={'read_tasks':[task.model_copy(update={'source_quote':message})]})
+    balance_context = (not _task and decision.intent == 'direct'
+        and decision.reason_code == 'stable_knowledge' and not decision.capabilities
+        and not any((decision.candidate_command, decision.planning_draft, decision.creation,
+            decision.saved_intentions, decision.memory_updates, decision.calculation))
+        and all(not task.capabilities for task in decision.read_tasks)
+        and bool(re.search(r'还剩|剩余|余额|超出预算',message)))
     from app.read_references import place_catalog, argument_in_read_scope, resolve_read_text, task_referents, explanation_requested, literal_subjects_cover
     referents = task_referents(message, decision, place_catalog(history, envelope))
     selected = [*selected, *referents]
@@ -476,6 +502,16 @@ def validate_decision(decision, message, history, envelope, selected=(), *, _tas
                 literal = task.source_quote
                 source = literal if literal in message and bound in literal else bound
                 task = task.model_copy(update={'source_quote':source, 'source_ref':None})
+            if (balance_context and task.source_quote not in message
+                and task.calculation is not None and task.calculation.operation == 'budget_balance'
+                and re.search(r'预算|限额|上限',task.source_quote)
+                and re.search(r'还剩|剩余|余额|超出预算',task.source_quote)):
+                from app.read_calculations import calculate
+                # The model supplied the typed operands. Complete current
+                # literal coverage, budget role and basis are checked before
+                # replacing only this read task's malformed quote.
+                if calculate(task.calculation,message)['status'] == 'computed':
+                    task=task.model_copy(update={'source_quote':message})
             if task.source_quote not in message:
                 block(task, '这部分查询无法绑定当前问题，请说明具体要查的内容。')
                 continue
@@ -624,7 +660,9 @@ def _task_decision(decision, task):
         set(task.capabilities) & {"poi", "web"} else "facts" if "facts" in task.capabilities
         else "itinerary" if "itinerary" in task.capabilities else "direct")
     result=decision.model_copy(update={**task.model_dump(exclude={"source_quote","source_ref"}), "intent": kind,
-        "read_tasks": [], "clarification": "", "illustrate": False, "advice_focus": "none",'calculation':task.calculation})
+        "read_tasks": [], "clarification": "", "illustrate": False,
+        "advice_focus": task.advice_focus if task.advice_focus != 'none' else decision.advice_focus,
+        'calculation':task.calculation})
     result._identity_only=task._identity_only
     return result
 

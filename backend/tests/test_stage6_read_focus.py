@@ -2,6 +2,7 @@ from app.assistant_context import ContextEnvelope
 from app.read_references import place_catalog, resolve_read_text
 from app.read_references import bind_read_task_reference
 from app.assistant_capabilities import CapabilityDecision, ReadTask, validate_decision
+from app.assistant_capabilities import _task_decision
 
 
 def comparison():
@@ -57,3 +58,49 @@ def test_read_task_uses_server_pronoun_binding_instead_of_wrong_model_name():
     history=[comparison(),{'user':'介绍前者'},{'user':'介绍乙馆，再说它的地址'}]
     catalog=place_catalog(history,ContextEnvelope(browsing_city='开封'))
     assert resolve_read_text('它在哪里',catalog)=='乙馆在哪里'
+
+
+def test_opening_hours_property_corrects_poi_label_and_wrong_peer_only_for_complete_read():
+    history=[comparison(),{'user':'第二个的地址是什么？'}]
+    envelope=ContextEnvelope(browsing_city='开封')
+    message='查前一个到后一个的步行路线，再查后一个今天的开放时间'
+    choice=CapabilityDecision(intent='route',reason_code='route_requested',read_tasks=[
+        ReadTask(source_quote='查前一个到后一个的步行路线',capabilities=['poi','route'],
+            origin='甲园',destination='乙馆',mode='walk'),
+        ReadTask(source_quote='再查后一个今天的开放时间',capabilities=['poi'],
+            names=['甲园'],fact_kind='opening_hours')])
+    result=validate_decision(choice,message,history,envelope,[])
+    assert result.read_tasks[0].capabilities==['poi','route']
+    assert result.read_tasks[1].names==['乙馆']
+    assert result.read_tasks[1].capabilities==['facts']
+    assert not result.read_tasks[1]._clarification
+
+
+def test_opening_hours_property_does_not_correct_unknown_relation_or_route():
+    places=place_catalog([comparison(),{'user':'第二个的地址是什么？'}],ContextEnvelope(browsing_city='开封'))
+    for source in ('丙馆比它更早开放吗？','如果它今天开放呢？','不要查它的开放时间'):
+        task=ReadTask(source_quote=source,capabilities=['poi'],names=['甲园'],fact_kind='opening_hours')
+        result=bind_read_task_reference(task,places)
+        assert result.names==['甲园'] and result.capabilities==['poi']
+
+
+def test_single_explanation_tail_keeps_the_parent_inference_and_advice_focus():
+    message='车能开到景区门口，是否意味着长辈完全不用走路？请直接判断，并说明还要核实哪几段。'
+    raw={'intent':'direct','reason_code':'stable_knowledge','advice_focus':'walking_effort',
+        'read_tasks':[{'source_quote':'并说明还要核实哪几段','capabilities':[],
+            'advice_focus':'walking_effort'}]}
+    decision=validate_decision(CapabilityDecision.model_validate(raw),message,[],ContextEnvelope())
+    assert len(decision.read_tasks)==1
+    assert decision.read_tasks[0].source_quote==message
+    assert _task_decision(decision,decision.read_tasks[0]).advice_focus=='walking_effort'
+
+
+def test_explanation_context_does_not_widen_peer_tasks_or_route_or_writer():
+    message='车能开到景区门口，是否意味着完全不用走路？并查门口到停车场路线'
+    tail='是否意味着完全不用走路'
+    for intent,other in [('direct',ReadTask(source_quote='并查门口到停车场路线',capabilities=['poi','route'])),
+                         ('route',None),('create',None)]:
+        tasks=[ReadTask(source_quote=tail)] + ([other] if other else [])
+        decision=CapabilityDecision(intent=intent,reason_code='stable_knowledge',read_tasks=tasks)
+        result=validate_decision(decision,message,[],ContextEnvelope())
+        assert result.read_tasks[0].source_quote==tail
