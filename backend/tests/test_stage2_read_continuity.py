@@ -45,7 +45,11 @@ def test_compound_route_and_hours_share_verified_objects_but_not_peer_queries():
     bad.read_tasks[1] = bad.read_tasks[1].model_copy(update={'names': ['个园'], 'capabilities': ['poi']})
     partial = validate_decision(bad, text, history, ContextEnvelope(browsing_city='扬州'))
     assert partial.intent == 'route' and partial.read_tasks[0].capabilities == ['poi','route']
-    assert not partial.read_tasks[1].capabilities and partial.read_tasks[1]._clarification
+    # The complete opening-hours property and a unique saved referent permit
+    # correcting this read-only POI label; the route peer stays independent.
+    assert partial.read_tasks[1].names == ['何园']
+    assert partial.read_tasks[1].capabilities == ['facts']
+    assert not partial.read_tasks[1]._clarification
 
 
 def test_two_places_do_not_require_repeating_their_canonical_names():

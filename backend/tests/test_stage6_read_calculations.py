@@ -36,6 +36,20 @@ def test_a_cost_named_budget_hotel_is_not_discarded_as_budget_context():
     assert calculate(ReadCalculation.model_validate(data),text)['status']=='needs_clarification'
 
 
+def test_over_budget_service_fee_is_still_a_cost_obligation():
+    data={'operation':'sum','items':[{'source_quote':'门票45元','amount_fen':4500},
+        {'source_quote':'午餐38元','amount_fen':3800}]}
+    source='门票45元，午餐38元，另付超预算10元服务费，合计多少？'
+    result=calculate(ReadCalculation.model_validate(data),source)
+    assert result['status']=='needs_clarification'
+
+
+def test_complete_budget_declaration_can_be_separate_sum_context():
+    data={'operation':'sum','items':[{'source_quote':'门票45元','amount_fen':4500}]}
+    result=calculate(ReadCalculation.model_validate(data),'本次总预算120元，门票45元，合计多少？')
+    assert result['status']=='computed' and result['sum_fen']==4500
+
+
 def test_conditional_reference_price_language_cannot_guarantee_a_final_budget():
     from app.companion_answer_reliability import control_model_text
     text='不能保证最终账单。只要当日不新增第四笔消费，参考价这一层基本能兜住。请先核对完整订单和附加收费。'
@@ -143,3 +157,28 @@ def test_unsupported_group_numerals_do_not_collapse_to_a_shared_zero_basis():
     data={'operation':'budget_balance','budget':{'source_quote':'一百人预算120元','amount_fen':12000},
         'items':[{'source_quote':'二百人门票45元','amount_fen':4500}]}
     assert calculate(ReadCalculation.model_validate(data),text)['status']=='needs_clarification'
+
+
+def test_nonliteral_balance_task_binds_only_verified_current_amount_group():
+    from app.assistant_capabilities import CapabilityDecision, validate_decision
+    from app.assistant_context import ContextEnvelope
+    raw={'intent':'direct','reason_code':'stable_knowledge','read_tasks':[
+        {'source_quote':'已知门票45元、午餐38元、交通22元，合计多少','calculation':{
+            'operation':'sum','items':DATA['items']}},
+        {'source_quote':'一人预算120元……合计多少、还剩多少','calculation':DATA}]}
+    decision=validate_decision(CapabilityDecision.model_validate(raw),TEXT,[],ContextEnvelope())
+    assert decision.read_tasks[1].source_quote==TEXT
+    assert not decision.read_tasks[1]._clarification
+    result=calculate(decision.read_tasks[1].calculation,TEXT)
+    assert result['sum_fen']==10500 and result['balance_fen']==1500
+    for blocked in (
+        {**raw,'intent':'create'},
+        {**raw,'read_tasks':[raw['read_tasks'][1]],'candidate_command':{'action':'adopt','source_quote':'保存'}},
+        {'intent':'direct','reason_code':'stable_knowledge','read_tasks':[
+            {'source_quote':'预算120元……还剩多少','calculation':DATA}]}):
+        message=TEXT if '预算120元……还剩多少' not in blocked['read_tasks'][0]['source_quote'] else TEXT.replace('还剩多少','合计多少')
+        try:
+            checked=validate_decision(CapabilityDecision.model_validate(blocked),message,[],ContextEnvelope())
+        except Exception:
+            continue
+        assert not checked.read_tasks or checked.read_tasks[-1].source_quote!=message

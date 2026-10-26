@@ -179,15 +179,17 @@ def bind_read_task_reference(task, places):
         '时间', '几点', '查询', '帮我', '看看', '请', '再', '查', '看', '的', '到', '吗', '呢')
     for atom in sorted(atoms, key=len, reverse=True):
         remainder = remainder.replace(atom, '')
-    single_property = task.fact_kind == 'opening_hours' and len(matches) == 1 and not remainder.strip(' ?？!！。\t\n')
+    single_property = (task.fact_kind == 'opening_hours' and len(matches) == 1
+        and bool(re.search(r'开放时间|营业时间|开放到几点|几点(?:开放|关门|闭馆|开门)|今天开放|明天开放',source))
+        and not remainder.strip(' ?？!！。\t\n')
+        and task.capabilities in ([], ['poi'], ['facts']))
     if single_property and not task.origin and not task.destination and not any(name in source for name in task.names):
         if all(resolve_read_text(match[0], places) != match[0] for match in matches):
             resolved = resolve_read_text(source, places)
             targets = [p for p in places if any(name and name in resolved for name in [p['name'], *p.get('aliases', [])])]
             if len(targets) == 1 and argument_in_read_scope(targets[0]['name'], source, places):
                 changes.update(names=[targets[0]['name']], query='')
-    if (changes.get('names') and not task.capabilities
-        and re.search(r'开放|开门|营业|闭馆|关门', source)
+    if (changes.get('names') and task.capabilities in ([], ['poi'], ['facts'])
         and not read_clause_denied(source)):
         changes['capabilities'] = ['facts']
     return task.model_copy(update=changes) if changes else task
