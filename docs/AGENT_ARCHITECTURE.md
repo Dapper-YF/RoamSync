@@ -1,5 +1,29 @@
 # RoamSync Agent v1 architecture contract
 
+## Parallel closeout bounded repairs (2026-10-26, integration)
+
+An optional ReadTask.advice_focus carries the same explanation focus as its
+parent decision. Only one pure, source-bound explanation may recover its full
+current inference question from a unique literal trailing instruction; peer
+tool tasks and writer decisions do not acquire this context repair. A malformed
+budget-balance task quote may bind to the complete current message only after
+the existing integer-fen calculator validates every operand, budget role, basis
+and cost-coverage obligation. This changes no write authority.
+
+A separate budget-context clause must match the complete supported declaration,
+including both sides of the amount. A cost such as an over-budget service fee
+remains a coverage obligation. Opening-hours reference/capability recovery is
+limited to one complete property expression and one server-owned referent;
+ordinary address, unknown-relation, route, negative and hypothetical tasks do not
+enter it. Candidate POI lookup with no exact identity presents the actual
+provider name/address for user confirmation instead of binding a partial name.
+
+Explicit attraction counts do not become unsupported duration edits; mixed or
+incomplete duration operations still clarify. No business table, public endpoint
+or alternate acceptance path was added by these parallel deltas. Integrated
+targeted tests pass (167); post-fix B live-provider and whole-product acceptance
+remain unverified. The overall product remains NO-GO.
+
 ## Stage6 condition and arithmetic sources (2026-10-25, in progress)
 
 DATE_TOKEN, anchored_date, scalar source counting and literal date declarations

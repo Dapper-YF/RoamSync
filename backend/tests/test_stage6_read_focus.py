@@ -84,6 +84,13 @@ def test_opening_hours_property_does_not_correct_unknown_relation_or_route():
         assert result.names==['甲园'] and result.capabilities==['poi']
 
 
+def test_address_lookup_does_not_enter_opening_hours_capability_repair():
+    places=place_catalog([comparison(),{'user':'第二个的地址是什么？'}],ContextEnvelope(browsing_city='开封'))
+    task=ReadTask(source_quote='查前一个的地址',capabilities=['poi'],names=['甲园'],fact_kind='other')
+    result=bind_read_task_reference(task,places)
+    assert result.names==['甲园'] and result.capabilities==['poi']
+
+
 def test_single_explanation_tail_keeps_the_parent_inference_and_advice_focus():
     message='车能开到景区门口，是否意味着长辈完全不用走路？请直接判断，并说明还要核实哪几段。'
     raw={'intent':'direct','reason_code':'stable_knowledge','advice_focus':'walking_effort',
