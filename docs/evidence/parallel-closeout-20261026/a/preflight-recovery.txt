@@ -1,0 +1,7 @@
+Initial live invocation, before database creation, exit 1:
+psycopg.OperationalError: connection failed: connection to server at "127.0.0.1", port 15435 failed: FATAL: the database system is starting up
+
+The dedicated test PostgreSQL container then reported automatic recovery and
+"database system is ready to accept connections". The next invocation created
+roamsync_s6_a_live1_test and completed four turns. No product result was
+recorded from the initial failed invocation.
