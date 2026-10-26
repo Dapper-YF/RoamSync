@@ -1,0 +1,13 @@
+E:\Study\RoamSync-parallel-evidence-20261026\c\run_tests.py:11: DeprecationWarning: 'asyncio.WindowsSelectorEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+E:\Study\RoamSync-parallel-evidence-20261026\c\run_tests.py:11: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+F                                                                        [100%]
+================================== FAILURES ===================================
+_ test_quantity_request_changes_whole_trip_without_searching_for_numbered_places _
+tests\test_conversation_regressions.py:71: in test_quantity_request_changes_whole_trip_without_searching_for_numbered_places
+    assert not result["requires_clarification"], result
+E   AssertionError: {'clarification_questions': ['请分别说明每项活动要设为、增加或减少多少分钟；目标须有完整保存状态且可以修改。'], 'grounded_intent': {'ambiguities': ['duration...larify', 'reasons': ['intent_or_entity_incomplete'], 'requires_confirmation': False, 'risk_level': 'medium', ...}, ...}
+E   assert not True
+=========================== short test summary info ===========================
+FAILED tests/test_conversation_regressions.py::test_quantity_request_changes_whole_trip_without_searching_for_numbered_places
