@@ -8,6 +8,7 @@ from app.travel_language import chinese_number
 
 _VERBS = r'增加|延长|多留|多待|再待|减少|缩短|少留|少待|改为|改成|调整为|设为|停留'
 _DURATION = re.compile(r'('+_VERBS+r')\s*([一二三四五六七八九十两半\d.]+)\s*(?:个)?(分钟|小时)')
+_PLACE_COUNT = re.compile(r'(?:增加|添加|再加|多加|加|多安排|减少|少安排)\s*[一二三四五六七八九十两\d.]+\s*(?:个)?(?:景点|景区)')
 
 
 def _literal_name_matches(mention, alias):
@@ -47,8 +48,14 @@ def resolve_operation_targets(operation, entities, target_day, selected_activity
 
 def bind_duration_change(operation, index, targets, trip_version):
     matches = list(_DURATION.finditer(operation.raw_text))
+    place_counts = list(_PLACE_COUNT.finditer(operation.raw_text))
+    # A quantity of places is a planning count, not an incomplete minute edit.
+    # A single operation mixing counts and durations still needs clarification.
+    if matches and place_counts:
+        return None, 'duration_expression_unsupported'
     if not matches:
-        if re.search(r'(?:'+_VERBS+r')\s*[一二三四五六七八九十两半\d.]|(?:'+_VERBS+r').*(?:分钟|小时|刻钟)', operation.raw_text):
+        count_free_text = _PLACE_COUNT.sub('', operation.raw_text)
+        if re.search(r'(?:'+_VERBS+r')\s*[一二三四五六七八九十两半\d.]|(?:'+_VERBS+r').*(?:分钟|小时|刻钟)', count_free_text):
             return None, 'duration_expression_unsupported'
         return None, None
     if len(matches) != 1 or len(targets) != 1:

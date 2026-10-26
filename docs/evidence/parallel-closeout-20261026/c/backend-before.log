@@ -1,0 +1,225 @@
+E:\Study\RoamSync-parallel-evidence-20261026\c\run_tests.py:11: DeprecationWarning: 'asyncio.WindowsSelectorEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+E:\Study\RoamSync-parallel-evidence-20261026\c\run_tests.py:11: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if sys.platform=='win32': asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+FFFFFFFFFFF........                                                      [100%]
+================================== FAILURES ===================================
+_________ test_snapshot_is_frozen_and_does_not_keep_mutable_orm_rows __________
+tests\test_agent_b2_planning_snapshot.py:52: in test_snapshot_is_frozen_and_does_not_keep_mutable_orm_rows
+    snapshot = asyncio.run(loader()(session, session.trip.id, request))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+app\planning_intent_service.py:393: in load_planning_intent_snapshot
+    position=activity.position,
+             ^^^^^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'position'
+___ test_prepared_draft_keeps_query_without_calling_model_or_changing_task ____
+tests\test_agent_b2_planning_snapshot.py:79: in test_prepared_draft_keeps_query_without_calling_model_or_changing_task
+    asyncio.run(run())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_planning_snapshot.py:69: in run
+    snapshot = await loader()(session, session.trip.id, request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\planning_intent_service.py:393: in load_planning_intent_snapshot
+    position=activity.position,
+             ^^^^^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'position'
+___ test_prepared_remove_regrounds_actual_day_activity_and_keeps_other_days ___
+tests\test_agent_b2_planning_snapshot.py:97: in test_prepared_remove_regrounds_actual_day_activity_and_keeps_other_days
+    asyncio.run(run())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_planning_snapshot.py:86: in run
+    snapshot = await loader()(session, session.trip.id, request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\planning_intent_service.py:393: in load_planning_intent_snapshot
+    position=activity.position,
+             ^^^^^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'position'
+____ test_prepared_draft_never_bypasses_foreign_ui_target_or_missing_place ____
+tests\test_agent_b2_planning_snapshot.py:115: in test_prepared_draft_never_bypasses_foreign_ui_target_or_missing_place
+    asyncio.run(run())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_planning_snapshot.py:104: in run
+    snapshot = await loader()(session, session.trip.id, request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\planning_intent_service.py:393: in load_planning_intent_snapshot
+    position=activity.position,
+             ^^^^^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'position'
+_ test_prepared_operation_owns_date_and_period_in_compound_request[\u5148\u89e3\u91ca\u7b2c\u4e00\u5929\u7532\u9986\u7684\u5b89\u6392\uff1b-\u7b2c\u4e8c\u5929\u52a0\u5165\u4e59\u9986-None] _
+tests\test_agent_b2_planning_snapshot.py:136: in test_prepared_operation_owns_date_and_period_in_compound_request
+    asyncio.run(run())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_planning_snapshot.py:127: in run
+    snapshot = await loader()(session, session.trip.id, request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\planning_intent_service.py:393: in load_planning_intent_snapshot
+    position=activity.position,
+             ^^^^^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'position'
+_ test_prepared_operation_owns_date_and_period_in_compound_request[\u7b2c\u4e00\u5929\u4e0a\u5348\u5148\u56de\u7b54\u95ee\u9898\uff1b-\u7b2c\u4e8c\u5929\u4e0b\u5348\u52a0\u5165\u4e59\u9986-afternoon] _
+tests\test_agent_b2_planning_snapshot.py:136: in test_prepared_operation_owns_date_and_period_in_compound_request
+    asyncio.run(run())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_planning_snapshot.py:127: in run
+    snapshot = await loader()(session, session.trip.id, request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\planning_intent_service.py:393: in load_planning_intent_snapshot
+    position=activity.position,
+             ^^^^^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'position'
+_ test_incompatible_prepared_operation_days_do_not_silently_mutate_first_day __
+tests\test_agent_b2_planning_snapshot.py:150: in test_incompatible_prepared_operation_days_do_not_silently_mutate_first_day
+    asyncio.run(run())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_planning_snapshot.py:143: in run
+    snapshot = await loader()(session, session.trip.id, request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\planning_intent_service.py:393: in load_planning_intent_snapshot
+    position=activity.position,
+             ^^^^^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'position'
+_______ test_period_only_operation_reconciles_its_own_ui_day[0-clarify] _______
+tests\test_agent_b2_planning_snapshot.py:171: in test_period_only_operation_reconciles_its_own_ui_day
+    asyncio.run(run())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_planning_snapshot.py:160: in run
+    snapshot = await loader()(session, session.trip.id, request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\planning_intent_service.py:393: in load_planning_intent_snapshot
+    position=activity.position,
+             ^^^^^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'position'
+____ test_period_only_operation_reconciles_its_own_ui_day[1-plan_preview] _____
+tests\test_agent_b2_planning_snapshot.py:171: in test_period_only_operation_reconciles_its_own_ui_day
+    asyncio.run(run())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_planning_snapshot.py:160: in run
+    snapshot = await loader()(session, session.trip.id, request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\planning_intent_service.py:393: in load_planning_intent_snapshot
+    position=activity.position,
+             ^^^^^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'position'
+_____ test_period_only_operation_reconciles_its_own_ui_day[None-clarify] ______
+tests\test_agent_b2_planning_snapshot.py:171: in test_period_only_operation_reconciles_its_own_ui_day
+    asyncio.run(run())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_planning_snapshot.py:160: in run
+    snapshot = await loader()(session, session.trip.id, request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\planning_intent_service.py:393: in load_planning_intent_snapshot
+    position=activity.position,
+             ^^^^^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'position'
+___ test_worker_restores_same_approved_draft_only_for_matching_run_identity ___
+tests\test_agent_b2_planning_snapshot.py:191: in test_worker_restores_same_approved_draft_only_for_matching_run_identity
+    asyncio.run(run())
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Dapper\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\test_agent_b2_planning_snapshot.py:178: in run
+    snapshot = await loader()(session, session.trip.id, request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\planning_intent_service.py:393: in load_planning_intent_snapshot
+    position=activity.position,
+             ^^^^^^^^^^^^^^^^^
+E   AttributeError: 'types.SimpleNamespace' object has no attribute 'position'
+=========================== short test summary info ===========================
+FAILED tests/test_agent_b2_planning_snapshot.py::test_snapshot_is_frozen_and_does_not_keep_mutable_orm_rows
+FAILED tests/test_agent_b2_planning_snapshot.py::test_prepared_draft_keeps_query_without_calling_model_or_changing_task
+FAILED tests/test_agent_b2_planning_snapshot.py::test_prepared_remove_regrounds_actual_day_activity_and_keeps_other_days
+FAILED tests/test_agent_b2_planning_snapshot.py::test_prepared_draft_never_bypasses_foreign_ui_target_or_missing_place
+FAILED tests/test_agent_b2_planning_snapshot.py::test_prepared_operation_owns_date_and_period_in_compound_request[\u5148\u89e3\u91ca\u7b2c\u4e00\u5929\u7532\u9986\u7684\u5b89\u6392\uff1b-\u7b2c\u4e8c\u5929\u52a0\u5165\u4e59\u9986-None]
+FAILED tests/test_agent_b2_planning_snapshot.py::test_prepared_operation_owns_date_and_period_in_compound_request[\u7b2c\u4e00\u5929\u4e0a\u5348\u5148\u56de\u7b54\u95ee\u9898\uff1b-\u7b2c\u4e8c\u5929\u4e0b\u5348\u52a0\u5165\u4e59\u9986-afternoon]
+FAILED tests/test_agent_b2_planning_snapshot.py::test_incompatible_prepared_operation_days_do_not_silently_mutate_first_day
+FAILED tests/test_agent_b2_planning_snapshot.py::test_period_only_operation_reconciles_its_own_ui_day[0-clarify]
+FAILED tests/test_agent_b2_planning_snapshot.py::test_period_only_operation_reconciles_its_own_ui_day[1-plan_preview]
+FAILED tests/test_agent_b2_planning_snapshot.py::test_period_only_operation_reconciles_its_own_ui_day[None-clarify]
+FAILED tests/test_agent_b2_planning_snapshot.py::test_worker_restores_same_approved_draft_only_for_matching_run_identity

@@ -1,11 +1,13 @@
 import asyncio
 import uuid
 from datetime import date, datetime, timedelta, UTC
+from types import SimpleNamespace
 from fastapi.testclient import TestClient
 from app.main import app
 from app.database import AssistantSession, PlanningRun, session_factory
 from app.assistant_service import ToolDecision, send_message
 from app.travel_language import trip_duration, is_generic_place_quantity
+from app.saved_operation_bindings import bind_duration_change
 from app.demo_seed import DEMO_TRIP_ID
 from app.planning_progress import active_run, report_progress, pulse
 from test_assistant_tools import Router, cities
@@ -73,6 +75,20 @@ def test_quantity_request_changes_whole_trip_without_searching_for_numbered_plac
             assert result["grounded_intent"]["target_day_ids"] == []
         named = client.post(f"/api/v1/trips/{DEMO_TRIP_ID}/planning-intent/resolve", json={"message": "第一天增加不存在的真实景点"}).json()
         assert named["requires_clarification"]
+
+
+def test_place_count_is_not_saved_duration_but_incomplete_and_mixed_edits_clarify():
+    target = SimpleNamespace(id=uuid.uuid4(), day_id=uuid.uuid4(), duration_minutes=60,
+        version=2, schedule_locked=False, status="planned")
+    for text in ("增加1个景点", "增加2个景点", "再加一两个景点"):
+        change, issue = bind_duration_change(SimpleNamespace(raw_text=text), 0, [target], 3)
+        assert change is None and issue is None
+    for text in ("第一项增加15", "甲园增加15公里", "甲园增加15分钟，再增加2个景点"):
+        change, issue = bind_duration_change(SimpleNamespace(raw_text=text), 0, [target], 3)
+        assert change is None and issue == "duration_expression_unsupported"
+    change, issue = bind_duration_change(
+        SimpleNamespace(raw_text="甲园增加15分钟", activity_mentions=["甲园"]), 0, [target], 3)
+    assert issue is None and change.before_minutes == 60 and change.after_minutes == 75
 
 
 def test_progress_milestones_are_persisted_and_heartbeat_does_not_fake_advancement():

@@ -8,7 +8,7 @@ from uuid import uuid4
 import pytest
 
 import app.planning_intent_service as service
-from app.database import DayPlan, PlaceCandidate
+from app.database import DayPlan, PlaceCandidate, TripArrangementItem
 from app.schemas import PlanningIntentParseRequest, SemanticIntentDraft, SemanticIntentOperation
 
 
@@ -25,11 +25,18 @@ class ReadSession:
             end_date=date(2026, 11, 19), timezone="Asia/Shanghai", version=3)
         self.days = [SimpleNamespace(id=uuid4(), date=date(2026, 11, 18 + i), position=i) for i in range(2)]
         self.place = SimpleNamespace(id=uuid4(), name="甲馆", category="attraction")
-        self.activity = SimpleNamespace(id=uuid4(), custom_name=None, scheduled_time=time(10), schedule_locked=False)
+        self.activity = SimpleNamespace(id=uuid4(), custom_name=None, scheduled_time=time(10),
+            position=0, duration_minutes=60, version=2, status="planned", schedule_locked=False)
     async def get(self, model, identity): return self.trip if identity == self.trip.id else None
     async def scalars(self, stmt):
         entity = stmt.column_descriptions[0]["entity"]
-        return Rows(self.days if entity is DayPlan else [self.place])
+        if entity is DayPlan:
+            return Rows(self.days)
+        if entity is PlaceCandidate:
+            return Rows([self.place])
+        if entity is TripArrangementItem:
+            return Rows([])
+        raise AssertionError(f"unexpected snapshot query: {entity}")
     async def execute(self, stmt): return Rows([(self.activity, self.days[1], self.place)])
     async def scalar(self, stmt): return None
 
@@ -58,6 +65,10 @@ def test_snapshot_is_frozen_and_does_not_keep_mutable_orm_rows():
     assert snapshot.trip.destination == "汕头"
     assert snapshot.candidates[0].name == "甲馆"
     assert snapshot.days[1].position == 1
+    assert snapshot.activities[0].position == 0
+    assert snapshot.activities[0].duration_minutes == 60
+    assert snapshot.activities[0].version == 2
+    assert snapshot.activities[0].status == "planned"
     with pytest.raises(FrozenInstanceError):
         snapshot.trip.version = 4
 
