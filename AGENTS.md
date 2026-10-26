@@ -3,6 +3,8 @@
 ## Canonical source and deployment
 
 - The user-designated sole official source directory is `E:\Study\RoamSync`.
+- The official workspace uses `main` and tracks `origin/main`. Publish the
+  complete current official code to `main` when the user requests a GitHub sync.
 - Production Compose project `roamsync` must be built and deployed from this
   directory's `compose.yaml` and `.env`, including API, Worker, Web and Postgres.
 - Other checkouts/worktrees are development or historical copies. Do not deploy

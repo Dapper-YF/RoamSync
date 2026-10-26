@@ -1,3 +1,33 @@
+<p align="center"><img src="docs/assets/project-cover.svg" alt="RoamSync：AI 旅行规划与动态行程助手" width="100%"></p>
+
+# RoamSync｜AI 旅行规划与动态行程助手
+
+**严峰的个人项目 · 持续开发中 · Python / FastAPI / LangGraph / PostgreSQL**
+
+把咨询、候选规划、规则校验和用户确认连接到持久化旅行状态。模型产生候选，正式行程由后端校验与事务化服务写入。
+
+[规划工作流代码](backend/app) · [测试](backend/tests) · [Agent 架构](docs/AGENT_ARCHITECTURE.md) · [Web 界面](web/src) · [Android](android)
+
+## 给第一次访问的你
+
+- **重点设计**：确定性路由与 LangGraph、候选 Revision 与正式 Trip 隔离、约束验证、并发版本检查和幂等采用。
+- **阅读顺序**：先看下方界面与运行说明，再看 Agent 架构和对应测试；测试数量与供应商质量以特定版本的实测记录为准。
+- **当前工程基线**：2026-10-26 正式工作区的最新实现已全部提交并整合到 `main`；后端 2,183 项、Web 273 项测试及类型检查、生产构建通过。
+- **当前边界**：真实模型对话仍有已记录的 schema 失败，完整产品验收尚未完成。具体成功、失败和适用范围见[本轮整合记录](docs/parallel-closeout-20261026/integration-report.md)。
+- **公开版本**：包含正式源码、开发文档和历史评测材料。真实 `.env`、本机依赖及生成目录遵循 Git 忽略规则；运行时请配置自己的密钥。
+
+## 首次运行
+
+准备 Docker Desktop，按下方环境说明将 `.env.example` 复制为 `.env` 并填写自己的数据库配置、地图和模型密钥，然后在克隆目录执行：
+
+```powershell
+docker compose up --build -d
+```
+
+访问 `http://127.0.0.1:3000`。先确认 Docker 可用与环境配置完整。`Start-RoamSync.cmd` 是作者本机部署辅助入口；新使用者优先采用上述通用命令，勿依赖作者绝对目录。外部模型与地图接口的可用性、配额和费用由使用者配置。
+
+## 项目详细说明
+
 # RoamSync
 
 正式源码与部署唯一目录：`E:\Study\RoamSync`。其他目录与实验工作区不作为正式部署来源。
@@ -326,8 +356,8 @@ pnpm e2e
 
 ## 项目文档
 
-- [RoamSync 项目策划书](docs/RoamSync项目策划书.docx)
-- [RoamSync 用户需求分析](docs/RoamSync用户需求分析.docx)
+- RoamSync 项目策划书（原始课程文档未纳入公开版）
+- RoamSync 用户需求分析（原始课程文档未纳入公开版）
 - [参考项目调研与许可边界](docs/REFERENCE_RESEARCH.md)
 - [Agent 架构与权限真源](docs/AGENT_ARCHITECTURE.md)
 - [第三方声明](THIRD_PARTY_NOTICES.md)

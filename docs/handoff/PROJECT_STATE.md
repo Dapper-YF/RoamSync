@@ -5,7 +5,8 @@ Last updated: 2026-10-26
 ## Official-source parallel closeout integration (2026-10-26)
 
 VERIFIED A/B/C/D and the shared Stage6 lineage are integrated into the sole
-official source E:/Study/RoamSync on codex/journey-handbook. Original2017 local
+official source E:/Study/RoamSync, now on main tracking origin/main. The prior
+codex/journey-handbook integration is retained in main's ancestry. Original2017 local
 files were preserved and checked against the external recoverable snapshot.
 MEASURED official-source full backend2183 passed,0 failed,0 skipped on two new
 exclusive15435 test databases; source/test hashes remained stable. Six public
