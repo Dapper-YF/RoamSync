@@ -29,6 +29,23 @@ must be separate; reports retain failures and distinguish static/unit/live.
 | Coordinator | Shared docs, source integration, conflict resolution, frozen full acceptance | Official workspace integration followed by same-source final checks |
 
 Workers do not run full suites concurrently or reuse one mutable database.
+
+Created local conversations (all observed active after dispatch):
+
+- A: 01a1758f-dc0b-7231-a9cf-bb7848715cdd, gpt-6-sol/high,
+  E:/Study/RoamSync-closeout-a-candidates-20261026.
+- B: 01a17590-404c-7dc2-9092-f39f92bf45c8, gpt-6-sol/high,
+  E:/Study/RoamSync-closeout-b-answers-20261026.
+- C: 01a17590-8684-73c1-b54b-b43b61411597, gpt-6-sol/high,
+  E:/Study/RoamSync-closeout-c-engineering-20261026.
+- D: 01a17590-d02b-7470-a94f-fa6c6aff6e56, gpt-6-astra/medium,
+  E:/Study/RoamSync-closeout-d-review-20261026.
+
+All four worktrees start at8e53fd68d91720f1cf1674a97483e67f9bff8bf3.
+The coordinator remains in the existing stage6 worktree. Conversation project
+membership does not choose source paths: prompts explicitly require each
+worker's path rather than the project's historical/default C: directory.
+
 Use a distinct fixture DB per lane on test Postgres127.0.0.1:15435. Never use
 production15432. Live runs use their own exclusively created blank DBs.
 Full model inputs/outputs/tools/DB diffs and source hashes must be preserved.
@@ -62,3 +79,12 @@ branch codex/journey-handbook; six tracked local modifications plus many
 untracked files. This observation is not a backup or integration. Recheck before
 mutation. Prior plan's no-official-source statement is historical after the
 user's new integration instruction.
+
+Coordinator read-only pre-integration backup completed and hash-verified:
+E:/Study/RoamSync-parallel-evidence-20261026/coordinator/official-before-integration/manifest.json.
+It preserves six locally modified tracked files and2011 untracked files
+(2017 total,397958961 bytes), HEAD/status and working-tree/index patches.
+Source HEAD/status/patches were rechecked unchanged during capture. Ignored
+files are excluded; this is a local-edit backup, not a production DB backup.
+Before eventual integration, check for changes since this snapshot and take a
+new uniquely named snapshot if required. No official integration has occurred.
