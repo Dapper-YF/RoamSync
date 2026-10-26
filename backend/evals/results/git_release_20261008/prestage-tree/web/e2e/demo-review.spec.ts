@@ -1,0 +1,31 @@
+import { expect, test } from "@playwright/test";
+import { readFileSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+test("explicit rejection of the older candidate records feedback without changing the accepted itinerary", async ({ page }) => {
+  const folder = resolve("../backend/evals/results/demo_acceptance_20261007");
+  const earlier = JSON.parse(readFileSync(resolve(folder, "conversation.json"), "utf8"));
+  const get = async (path: string) => (await page.request.get(`/api/v1/${path}`)).json();
+  const trip = earlier.trip_id;
+  const before = { trip: await get(`trips/${trip}`), days: await get(`trips/${trip}/days`) };
+  const run = await get(`planning-runs/${earlier.run_id}`);
+  expect(run.status).toBe("awaiting_confirmation");
+  await page.goto(`/dev/agent-conversation/${trip}`);
+  await expect(page.getByLabel("告诉旅程总管")).toBeEnabled({ timeout: 30_000 });
+  await page.getByText("对话与方案记录", { exact: true }).click({ timeout: 30_000 });
+  await page.locator(".ai-history-items button").filter({ hasText: run.user_request }).click();
+  await expect(page.getByRole("button", { name: "暂不采用", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "暂不采用", exact: true }).click();
+  await page.getByLabel("拒绝原因", { exact: true }).selectOption("too_rushed");
+  await page.getByLabel("补充拒绝原因", { exact: true }).fill("第一版第二天太赶，保留已经确认并恢复后的正式安排。");
+  await page.getByRole("button", { name: "确认拒绝", exact: true }).click();
+  await expect.poll(async () => (await get(`planning-runs/${earlier.run_id}`)).status).toBe("rejected");
+  const revision = await get(`planning-runs/${earlier.run_id}/revision`);
+  const after = { trip: await get(`trips/${trip}`), days: await get(`trips/${trip}/days`) };
+  writeFileSync(resolve(folder, "review.json"), JSON.stringify({ scope: "older_stale_candidate_rejection", before, after, revision }, null, 2));
+  expect(after).toEqual(before);
+  expect(revision.status).toBe("rejected");
+  expect(revision.rejection_reason_code).toBe("too_rushed");
+  expect(revision.rejection_reason_text).toContain("第二天太赶");
+  await page.screenshot({ path: resolve(folder, "rejection-feedback.png"), fullPage: true });
+});

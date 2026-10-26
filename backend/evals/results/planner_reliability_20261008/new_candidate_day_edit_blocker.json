@@ -1,0 +1,1208 @@
+{
+  "id": "bbea2a1a-e7f1-4bf6-bd6f-cc12ab8200a4",
+  "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+  "disruption_event_id": null,
+  "trigger_type": null,
+  "trigger_fingerprint": null,
+  "trigger_snapshot": {
+    "candidate_edit": {
+      "revision_id": "1e0c5bab-5d7d-45fc-bafe-6f7761112739",
+      "snapshot_hash": "435d08aec546160c3cd683ab6bd6777b6990e6b1f012c203892c77f6fe3aa82c"
+    },
+    "decision_context_summary": {
+      "target_days": [
+        "2026-10-10"
+      ],
+      "formal_activity_count": 0,
+      "route_fact_statuses": [
+        {
+          "date": "2026-10-10",
+          "status": "unavailable"
+        }
+      ],
+      "protected_activity_ids": [],
+      "editable_activity_ids": [],
+      "execution_fields_present": {
+        "current_activity_id": false,
+        "navigation_target_activity_id": false,
+        "current_eta": false,
+        "delay_minutes": false,
+        "minimum_downstream_slack_minutes": false,
+        "first_impacted_activity_id": false
+      },
+      "provenance": {
+        "goals": "user_goal_and_grounded_intent",
+        "formal_itinerary": "persisted_formal_itinerary",
+        "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+        "route_context": "persisted_amap_route",
+        "execution_context": "execution_and_navigation_projection",
+        "active_disruption": "persisted_disruption_projection",
+        "user_preferences": "persisted_trip_preferences",
+        "provider_facts": "planning_provider_facts",
+        "decision_memory": "same_trip_same_target_day_rejected_revisions"
+      },
+      "decision_memory": {
+        "count": 0,
+        "source_revision_ids": [],
+        "source_run_ids": [],
+        "feedback": []
+      }
+    }
+  },
+  "run_type": "initial_plan",
+  "status": "awaiting_clarification",
+  "user_request": "请调整：把2026年10月10日的安排变得轻松一些，不要那么赶，保留其他日期安排不变；先给出新的候选，不要直接保存正式行程。",
+  "response_text": null,
+  "progress": {
+    "events": [
+      {
+        "stage": "intent",
+        "status": "running",
+        "at": "2026-10-08T01:24:10.702312+00:00",
+        "duration_ms": null,
+        "call_id": "a483d937-baa3-43a4-9451-b9dad4caeaac",
+        "provider": null,
+        "purpose": null,
+        "data": {},
+        "sequence": 1
+      },
+      {
+        "stage": "research_decision",
+        "status": "completed",
+        "at": "2026-10-08T01:24:10.792778+00:00",
+        "duration_ms": null,
+        "call_id": null,
+        "provider": null,
+        "purpose": null,
+        "data": {
+          "destination_research_required": false,
+          "destination_research_available": true
+        },
+        "sequence": 2
+      },
+      {
+        "stage": "weather",
+        "status": "running",
+        "at": "2026-10-08T01:24:10.807944+00:00",
+        "duration_ms": null,
+        "call_id": "80e62098-0699-481f-8aef-9ef34795f2b7",
+        "provider": "Open-Meteo",
+        "purpose": "Travel-date weather",
+        "data": {},
+        "sequence": 3
+      },
+      {
+        "stage": "weather",
+        "status": "completed",
+        "at": "2026-10-08T01:24:14.159229+00:00",
+        "duration_ms": 3344,
+        "call_id": "80e62098-0699-481f-8aef-9ef34795f2b7",
+        "provider": "Open-Meteo",
+        "purpose": "Travel-date weather",
+        "data": {
+          "queried_at": "2026-10-08T01:24:14.159183+00:00",
+          "hourly_sample_count": 72
+        },
+        "sequence": 4
+      },
+      {
+        "stage": "goal",
+        "status": "completed",
+        "at": "2026-10-08T01:24:14.217125+00:00",
+        "duration_ms": null,
+        "call_id": null,
+        "provider": null,
+        "purpose": null,
+        "data": {
+          "target_days": [
+            "2026-10-10"
+          ],
+          "hard_goals": {
+            "end_before": null,
+            "max_walking_minutes": null
+          },
+          "soft_goals": {
+            "pace": null,
+            "minimize_walking": false,
+            "preserve_existing": false
+          }
+        },
+        "sequence": 5
+      },
+      {
+        "stage": "context",
+        "status": "completed",
+        "at": "2026-10-08T01:24:14.228108+00:00",
+        "duration_ms": null,
+        "call_id": null,
+        "provider": null,
+        "purpose": null,
+        "data": {
+          "trip": {
+            "id": "58239cd8-b097-4898-870f-f49f1a98719d",
+            "title": "南京历史文化老街巷与本地小吃三日游",
+            "destination": "南京市",
+            "destination_adcode": "320100",
+            "destination_citycode": "025",
+            "center_longitude": 118.796624,
+            "center_latitude": 32.059344,
+            "accommodation": "",
+            "accommodation_poi_id": "",
+            "accommodation_address": "",
+            "accommodation_district": "",
+            "accommodation_longitude": null,
+            "accommodation_latitude": null,
+            "start_date": "2026-10-09",
+            "end_date": "2026-10-11",
+            "total_budget_fen": 300000,
+            "daily_budget_fen": 100000,
+            "currency": "CNY",
+            "timezone": "Asia/Shanghai",
+            "created_at": "2026-10-08T01:22:04.576859Z",
+            "updated_at": "2026-10-08T01:22:04.576859Z",
+            "archived_at": null,
+            "version": 1,
+            "status": "upcoming"
+          },
+          "preferences": {
+            "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+            "pace": "balanced",
+            "interest_categories": [],
+            "transport_modes": [
+              "walk",
+              "transit"
+            ],
+            "daily_start_time": "09:00:00",
+            "daily_end_time": "21:00:00",
+            "meal_preferences": "",
+            "avoid_categories": [],
+            "max_walking_minutes": 60,
+            "free_text_requirements": "一个人出行；喜欢历史文化、老街巷和本地小吃；节奏轻松",
+            "version": 2,
+            "created_at": "2026-10-08T01:22:04.576859Z",
+            "updated_at": "2026-10-08T01:22:04.576859Z"
+          },
+          "days": [
+            {
+              "id": "7943a01d-310a-4d39-bd10-af26cfd79210",
+              "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+              "date": "2026-10-09",
+              "label": "第 1 天",
+              "theme": "探索南京市",
+              "position": 0,
+              "route_mode": "walk",
+              "activities": [],
+              "route_legs": [],
+              "conflicts": []
+            },
+            {
+              "id": "7a68d4b0-48a3-4fe9-9eef-5407401c52f1",
+              "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+              "date": "2026-10-10",
+              "label": "第 2 天",
+              "theme": "探索南京市",
+              "position": 1,
+              "route_mode": "walk",
+              "activities": [],
+              "route_legs": [],
+              "conflicts": []
+            },
+            {
+              "id": "c573c38c-0b6e-4ee8-a3be-161f87499fce",
+              "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+              "date": "2026-10-11",
+              "label": "第 3 天",
+              "theme": "探索南京市",
+              "position": 2,
+              "route_mode": "walk",
+              "activities": [],
+              "route_legs": [],
+              "conflicts": []
+            }
+          ],
+          "candidates": [
+            {
+              "id": "ac2af7dd-a938-41f4-9ba2-11df98482783",
+              "name": "中华门",
+              "category": "sight",
+              "neighborhood": "秦淮区",
+              "description": "中华路",
+              "longitude": 118.781821,
+              "latitude": 32.0128,
+              "suggested_duration_minutes": 90,
+              "estimated_cost_fen": 3000,
+              "rating": 4.7,
+              "tags": [
+                "风景名胜",
+                "国家级景点",
+                "有图片"
+              ],
+              "source": {
+                "id": "ed745d4d-d343-4f6e-b34c-a589d107573e",
+                "title": "高德地点搜索：中华门",
+                "url": "https://www.amap.com/search",
+                "provider": "AMap POI",
+                "queried_at": "2026-10-08T01:23:09.789339Z",
+                "confidence": "high"
+              }
+            },
+            {
+              "id": "200d700c-2189-480a-b75e-7113c1a7a472",
+              "name": "南京博物院",
+              "category": "culture",
+              "neighborhood": "玄武区",
+              "description": "中山东路321号",
+              "longitude": 118.825064,
+              "latitude": 32.040802,
+              "suggested_duration_minutes": 120,
+              "estimated_cost_fen": 3000,
+              "rating": 4.9,
+              "tags": [
+                "博物馆",
+                "博物馆",
+                "有图片"
+              ],
+              "source": {
+                "id": "fdd626d5-3228-4c03-88a0-dc6481042448",
+                "title": "高德地点搜索：南京博物院",
+                "url": "https://www.amap.com/search",
+                "provider": "AMap POI",
+                "queried_at": "2026-10-08T01:23:09.783723Z",
+                "confidence": "high"
+              }
+            },
+            {
+              "id": "9a56a5ff-e301-4ef1-9861-fe270b536ada",
+              "name": "南京大牌档(夫子庙平江府店)",
+              "category": "food",
+              "neighborhood": "秦淮区",
+              "description": "大石坝街48号",
+              "longitude": 118.792634,
+              "latitude": 32.020897,
+              "suggested_duration_minutes": 75,
+              "estimated_cost_fen": 8000,
+              "rating": 4.6,
+              "tags": [
+                "中餐厅",
+                "中餐厅",
+                "有图片"
+              ],
+              "source": {
+                "id": "9e2681ea-ef6f-4ce5-9823-cd5f9c6c08f1",
+                "title": "高德地点搜索：南京大牌档(夫子庙平江府店)",
+                "url": "https://www.amap.com/search",
+                "provider": "AMap POI",
+                "queried_at": "2026-10-08T01:23:09.802736Z",
+                "confidence": "high"
+              }
+            },
+            {
+              "id": "36c83ac0-5037-41cc-b733-7c19614eaa4b",
+              "name": "小潘记鸭血粉丝汤",
+              "category": "food",
+              "neighborhood": "秦淮区",
+              "description": "中山东路198号龙台国际大厦星巴克旁",
+              "longitude": 118.793211,
+              "latitude": 32.040697,
+              "suggested_duration_minutes": 75,
+              "estimated_cost_fen": 8000,
+              "rating": 4.7,
+              "tags": [
+                "中餐厅",
+                "中餐厅",
+                "有图片"
+              ],
+              "source": {
+                "id": "6b26a553-11d5-4f74-8eda-97a822971a6c",
+                "title": "高德地点搜索：小潘记鸭血粉丝汤",
+                "url": "https://www.amap.com/search",
+                "provider": "AMap POI",
+                "queried_at": "2026-10-08T01:23:09.796969Z",
+                "confidence": "high"
+              }
+            },
+            {
+              "id": "4b47fe3a-019c-4140-baaa-4204df9c4838",
+              "name": "明孝陵景区-明孝陵",
+              "category": "sight",
+              "neighborhood": "玄武区",
+              "description": "四方城西路26号",
+              "longitude": 118.839826,
+              "latitude": 32.058692,
+              "suggested_duration_minutes": 90,
+              "estimated_cost_fen": 3000,
+              "rating": 4.6,
+              "tags": [
+                "风景名胜",
+                "风景名胜",
+                "有图片"
+              ],
+              "source": {
+                "id": "c75c2d7a-4b35-490c-931c-aafe083a8ff8",
+                "title": "高德地点搜索：明孝陵景区-明孝陵",
+                "url": "https://www.amap.com/search",
+                "provider": "AMap POI",
+                "queried_at": "2026-10-08T01:23:09.767749Z",
+                "confidence": "high"
+              }
+            },
+            {
+              "id": "b910de7c-ce6d-4320-8593-507d7d1d2c53",
+              "name": "李记清真馆(打钉巷店)",
+              "category": "food",
+              "neighborhood": "秦淮区",
+              "description": "朝天宫街道评事街打钉巷1号",
+              "longitude": 118.779783,
+              "latitude": 32.029251,
+              "suggested_duration_minutes": 75,
+              "estimated_cost_fen": 8000,
+              "rating": 4.9,
+              "tags": [
+                "中餐厅",
+                "清真菜馆",
+                "有图片"
+              ],
+              "source": {
+                "id": "299121cb-e695-45fb-abed-672a26d8048a",
+                "title": "高德地点搜索：李记清真馆(打钉巷店)",
+                "url": "https://www.amap.com/search",
+                "provider": "AMap POI",
+                "queried_at": "2026-10-08T01:23:09.806184Z",
+                "confidence": "high"
+              }
+            },
+            {
+              "id": "98a6f7b8-9dcf-421d-adb0-e55f75160919",
+              "name": "美龄宫",
+              "category": "sight",
+              "neighborhood": "玄武区",
+              "description": "中山陵9号钟山风景名胜区内(南侧)",
+              "longitude": 118.846557,
+              "latitude": 32.045458,
+              "suggested_duration_minutes": 90,
+              "estimated_cost_fen": 3000,
+              "rating": 4.7,
+              "tags": [
+                "风景名胜",
+                "纪念馆",
+                "有图片"
+              ],
+              "source": {
+                "id": "170e58d4-53b0-4083-805d-631dc9ee97a8",
+                "title": "高德地点搜索：美龄宫",
+                "url": "https://www.amap.com/search",
+                "provider": "AMap POI",
+                "queried_at": "2026-10-08T01:23:09.792753Z",
+                "confidence": "high"
+              }
+            },
+            {
+              "id": "b2351439-ad57-4172-af9f-15b63cf0a6e8",
+              "name": "老门东",
+              "category": "sight",
+              "neighborhood": "秦淮区",
+              "description": "剪子巷与箍桶巷交汇处剪子巷54号",
+              "longitude": 118.787645,
+              "latitude": 32.011604,
+              "suggested_duration_minutes": 90,
+              "estimated_cost_fen": 3000,
+              "rating": 4.8,
+              "tags": [
+                "风景名胜",
+                "风景名胜",
+                "有图片"
+              ],
+              "source": {
+                "id": "de0b9834-5c00-44bf-a294-1e2bba675306",
+                "title": "高德地点搜索：老门东",
+                "url": "https://www.amap.com/search",
+                "provider": "AMap POI",
+                "queried_at": "2026-10-08T01:23:09.778225Z",
+                "confidence": "high"
+              }
+            }
+          ],
+          "actual_budget": {
+            "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+            "currency": "CNY",
+            "total_budget_fen": 300000,
+            "total_spent_fen": 0,
+            "total_remaining_fen": 300000,
+            "daily_budget_fen": 100000,
+            "today_spent_fen": 0,
+            "today_remaining_fen": 100000,
+            "local_date": "2026-10-08"
+          },
+          "planning_budget": {
+            "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+            "total_planned_fen": 0,
+            "total_remaining_fen": 300000,
+            "days": [
+              {
+                "day_plan_id": "7943a01d-310a-4d39-bd10-af26cfd79210",
+                "date": "2026-10-09",
+                "planned_fen": 0,
+                "remaining_fen": 100000,
+                "ratio": 0.0,
+                "status": "comfortable"
+              },
+              {
+                "day_plan_id": "7a68d4b0-48a3-4fe9-9eef-5407401c52f1",
+                "date": "2026-10-10",
+                "planned_fen": 0,
+                "remaining_fen": 100000,
+                "ratio": 0.0,
+                "status": "comfortable"
+              },
+              {
+                "day_plan_id": "c573c38c-0b6e-4ee8-a3be-161f87499fce",
+                "date": "2026-10-11",
+                "planned_fen": 0,
+                "remaining_fen": 100000,
+                "ratio": 0.0,
+                "status": "comfortable"
+              }
+            ]
+          },
+          "generated_at": "2026-10-08T01:24:10.763329Z",
+          "execution_recovery": {
+            "frozen_activity_ids": [],
+            "protected_activity_ids": [],
+            "mutable_activity_ids": [],
+            "recovery_options": [],
+            "execution_state": {
+              "status": "not_started"
+            }
+          },
+          "planning_goals": {
+            "target_days": [
+              "2026-10-10"
+            ],
+            "hard_goals": {
+              "end_before": null,
+              "max_walking_minutes": null
+            },
+            "soft_goals": {
+              "pace": null,
+              "minimize_walking": false,
+              "preserve_existing": false
+            }
+          },
+          "formal_route_facts": {
+            "days": [
+              {
+                "date": "2026-10-10",
+                "activity_sequence": [],
+                "route_legs": [],
+                "walking_duration_minutes": 0,
+                "walking_distance_meters": 0,
+                "day_end": null
+              }
+            ]
+          },
+          "decision_context": {
+            "formal_itinerary": {
+              "days": [
+                {
+                  "day_id": "7a68d4b0-48a3-4fe9-9eef-5407401c52f1",
+                  "date": "2026-10-10",
+                  "activities": []
+                }
+              ]
+            },
+            "protected_constraints": {
+              "frozen_activity_ids": [],
+              "protected_activity_ids": [],
+              "editable_activity_ids": [],
+              "provenance": {}
+            },
+            "execution_context": {
+              "status": "not_started",
+              "remaining_activity_ids": []
+            },
+            "decision_memory": [],
+            "provenance": {
+              "goals": "user_goal_and_grounded_intent",
+              "formal_itinerary": "persisted_formal_itinerary",
+              "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+              "route_context": "persisted_amap_route",
+              "execution_context": "execution_and_navigation_projection",
+              "active_disruption": "persisted_disruption_projection",
+              "user_preferences": "persisted_trip_preferences",
+              "provider_facts": "planning_provider_facts",
+              "decision_memory": "same_trip_same_target_day_rejected_revisions"
+            },
+            "route_context": {
+              "days": [
+                {
+                  "date": "2026-10-10",
+                  "route_fact_status": "unavailable",
+                  "route_legs": []
+                }
+              ]
+            }
+          }
+        },
+        "sequence": 6
+      },
+      {
+        "stage": "intent",
+        "status": "completed",
+        "at": "2026-10-08T01:24:14.255570+00:00",
+        "duration_ms": 3528,
+        "call_id": "a483d937-baa3-43a4-9451-b9dad4caeaac",
+        "provider": null,
+        "purpose": null,
+        "data": {
+          "intent_resolution": {
+            "request": {
+              "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+              "user_request": "请调整：把2026年10月10日的安排变得轻松一些，不要那么赶，保留其他日期安排不变；先给出新的候选，不要直接保存正式行程。",
+              "intent": {
+                "intent_type": "modify_day",
+                "source_text": "请调整：把2026年10月10日的安排变得轻松一些，不要那么赶，保留其他日期安排不变；先给出新的候选，不要直接保存正式行程。",
+                "time_scope": {
+                  "day_number": 2,
+                  "day_date": "2026-10-10",
+                  "period": null
+                },
+                "protected_activity_ids": [],
+                "requested_place_queries": [],
+                "requested_pace": null,
+                "missing_fields": [],
+                "ambiguities": [
+                  "activity_not_found:其他日期安排不变"
+                ]
+              },
+              "entry_point": "trip_planner",
+              "selected_day_id": null,
+              "selected_activity_id": null,
+              "target_day_id": "7a68d4b0-48a3-4fe9-9eef-5407401c52f1"
+            },
+            "requires_clarification": true,
+            "clarification_questions": [
+              "当前行程中没有找到“其他日期安排不变”，请重新指定活动。"
+            ],
+            "parser_version": "rules-v1",
+            "semantic_draft": {
+              "primary_intent": "replan_trip",
+              "operations": [
+                {
+                  "operation": "replan_trip",
+                  "raw_text": "请调整：把2026年10月10日的安排变得轻松一些，不要那么赶，保留其他日期安排不变；先给出新的候选，不要直接保存正式行程。",
+                  "date_expression": "10月10日",
+                  "period": null,
+                  "activity_mentions": [],
+                  "place_mentions": [],
+                  "constraints": {
+                    "budget_must_not_increase": false,
+                    "max_additional_cost_fen": null,
+                    "preferred_environment": null,
+                    "max_walking_minutes": null,
+                    "requested_pace": null,
+                    "weather_sensitive": false,
+                    "preserve_completed": true
+                  }
+                }
+              ],
+              "confidence": 0.98,
+              "missing_fields": [],
+              "ambiguities": [],
+              "parser": "rules",
+              "parser_version": "rules-envelope-v1"
+            },
+            "grounded_intent": {
+              "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+              "primary_intent": "replan_trip",
+              "operation_types": [
+                "replan_trip"
+              ],
+              "target_day_ids": [
+                "7a68d4b0-48a3-4fe9-9eef-5407401c52f1"
+              ],
+              "target_activity_ids": [],
+              "candidate_place_ids": [],
+              "unresolved_activity_mentions": [],
+              "unresolved_place_mentions": [],
+              "constraints": {
+                "budget_must_not_increase": false,
+                "max_additional_cost_fen": null,
+                "preferred_environment": null,
+                "max_walking_minutes": null,
+                "requested_pace": null,
+                "weather_sensitive": false,
+                "preserve_completed": true
+              },
+              "missing_fields": [],
+              "ambiguities": [
+                "activity_not_found:其他日期安排不变"
+              ]
+            },
+            "policy_decision": {
+              "operation_mode": "clarify",
+              "risk_level": "medium",
+              "requires_confirmation": false,
+              "reasons": [
+                "intent_or_entity_incomplete"
+              ],
+              "route": "clarify"
+            }
+          },
+          "planning_goals": {
+            "target_days": [
+              "2026-10-10"
+            ],
+            "hard_goals": {
+              "end_before": null,
+              "max_walking_minutes": null
+            },
+            "soft_goals": {
+              "pace": null,
+              "minimize_walking": false,
+              "preserve_existing": false
+            }
+          },
+          "planning_context": {
+            "trip": {
+              "id": "58239cd8-b097-4898-870f-f49f1a98719d",
+              "title": "南京历史文化老街巷与本地小吃三日游",
+              "destination": "南京市",
+              "destination_adcode": "320100",
+              "destination_citycode": "025",
+              "center_longitude": 118.796624,
+              "center_latitude": 32.059344,
+              "accommodation": "",
+              "accommodation_poi_id": "",
+              "accommodation_address": "",
+              "accommodation_district": "",
+              "accommodation_longitude": null,
+              "accommodation_latitude": null,
+              "start_date": "2026-10-09",
+              "end_date": "2026-10-11",
+              "total_budget_fen": 300000,
+              "daily_budget_fen": 100000,
+              "currency": "CNY",
+              "timezone": "Asia/Shanghai",
+              "created_at": "2026-10-08T01:22:04.576859Z",
+              "updated_at": "2026-10-08T01:22:04.576859Z",
+              "archived_at": null,
+              "version": 1,
+              "status": "upcoming"
+            },
+            "preferences": {
+              "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+              "pace": "balanced",
+              "interest_categories": [],
+              "transport_modes": [
+                "walk",
+                "transit"
+              ],
+              "daily_start_time": "09:00:00",
+              "daily_end_time": "21:00:00",
+              "meal_preferences": "",
+              "avoid_categories": [],
+              "max_walking_minutes": 60,
+              "free_text_requirements": "一个人出行；喜欢历史文化、老街巷和本地小吃；节奏轻松",
+              "version": 2,
+              "created_at": "2026-10-08T01:22:04.576859Z",
+              "updated_at": "2026-10-08T01:22:04.576859Z"
+            },
+            "days": [
+              {
+                "id": "7943a01d-310a-4d39-bd10-af26cfd79210",
+                "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+                "date": "2026-10-09",
+                "label": "第 1 天",
+                "theme": "探索南京市",
+                "position": 0,
+                "route_mode": "walk",
+                "activities": [],
+                "route_legs": [],
+                "conflicts": []
+              },
+              {
+                "id": "7a68d4b0-48a3-4fe9-9eef-5407401c52f1",
+                "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+                "date": "2026-10-10",
+                "label": "第 2 天",
+                "theme": "探索南京市",
+                "position": 1,
+                "route_mode": "walk",
+                "activities": [],
+                "route_legs": [],
+                "conflicts": []
+              },
+              {
+                "id": "c573c38c-0b6e-4ee8-a3be-161f87499fce",
+                "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+                "date": "2026-10-11",
+                "label": "第 3 天",
+                "theme": "探索南京市",
+                "position": 2,
+                "route_mode": "walk",
+                "activities": [],
+                "route_legs": [],
+                "conflicts": []
+              }
+            ],
+            "candidates": [
+              {
+                "id": "ac2af7dd-a938-41f4-9ba2-11df98482783",
+                "name": "中华门",
+                "category": "sight",
+                "neighborhood": "秦淮区",
+                "description": "中华路",
+                "longitude": 118.781821,
+                "latitude": 32.0128,
+                "suggested_duration_minutes": 90,
+                "estimated_cost_fen": 3000,
+                "rating": 4.7,
+                "tags": [
+                  "风景名胜",
+                  "国家级景点",
+                  "有图片"
+                ],
+                "source": {
+                  "id": "ed745d4d-d343-4f6e-b34c-a589d107573e",
+                  "title": "高德地点搜索：中华门",
+                  "url": "https://www.amap.com/search",
+                  "provider": "AMap POI",
+                  "queried_at": "2026-10-08T01:23:09.789339Z",
+                  "confidence": "high"
+                }
+              },
+              {
+                "id": "200d700c-2189-480a-b75e-7113c1a7a472",
+                "name": "南京博物院",
+                "category": "culture",
+                "neighborhood": "玄武区",
+                "description": "中山东路321号",
+                "longitude": 118.825064,
+                "latitude": 32.040802,
+                "suggested_duration_minutes": 120,
+                "estimated_cost_fen": 3000,
+                "rating": 4.9,
+                "tags": [
+                  "博物馆",
+                  "博物馆",
+                  "有图片"
+                ],
+                "source": {
+                  "id": "fdd626d5-3228-4c03-88a0-dc6481042448",
+                  "title": "高德地点搜索：南京博物院",
+                  "url": "https://www.amap.com/search",
+                  "provider": "AMap POI",
+                  "queried_at": "2026-10-08T01:23:09.783723Z",
+                  "confidence": "high"
+                }
+              },
+              {
+                "id": "9a56a5ff-e301-4ef1-9861-fe270b536ada",
+                "name": "南京大牌档(夫子庙平江府店)",
+                "category": "food",
+                "neighborhood": "秦淮区",
+                "description": "大石坝街48号",
+                "longitude": 118.792634,
+                "latitude": 32.020897,
+                "suggested_duration_minutes": 75,
+                "estimated_cost_fen": 8000,
+                "rating": 4.6,
+                "tags": [
+                  "中餐厅",
+                  "中餐厅",
+                  "有图片"
+                ],
+                "source": {
+                  "id": "9e2681ea-ef6f-4ce5-9823-cd5f9c6c08f1",
+                  "title": "高德地点搜索：南京大牌档(夫子庙平江府店)",
+                  "url": "https://www.amap.com/search",
+                  "provider": "AMap POI",
+                  "queried_at": "2026-10-08T01:23:09.802736Z",
+                  "confidence": "high"
+                }
+              },
+              {
+                "id": "36c83ac0-5037-41cc-b733-7c19614eaa4b",
+                "name": "小潘记鸭血粉丝汤",
+                "category": "food",
+                "neighborhood": "秦淮区",
+                "description": "中山东路198号龙台国际大厦星巴克旁",
+                "longitude": 118.793211,
+                "latitude": 32.040697,
+                "suggested_duration_minutes": 75,
+                "estimated_cost_fen": 8000,
+                "rating": 4.7,
+                "tags": [
+                  "中餐厅",
+                  "中餐厅",
+                  "有图片"
+                ],
+                "source": {
+                  "id": "6b26a553-11d5-4f74-8eda-97a822971a6c",
+                  "title": "高德地点搜索：小潘记鸭血粉丝汤",
+                  "url": "https://www.amap.com/search",
+                  "provider": "AMap POI",
+                  "queried_at": "2026-10-08T01:23:09.796969Z",
+                  "confidence": "high"
+                }
+              },
+              {
+                "id": "4b47fe3a-019c-4140-baaa-4204df9c4838",
+                "name": "明孝陵景区-明孝陵",
+                "category": "sight",
+                "neighborhood": "玄武区",
+                "description": "四方城西路26号",
+                "longitude": 118.839826,
+                "latitude": 32.058692,
+                "suggested_duration_minutes": 90,
+                "estimated_cost_fen": 3000,
+                "rating": 4.6,
+                "tags": [
+                  "风景名胜",
+                  "风景名胜",
+                  "有图片"
+                ],
+                "source": {
+                  "id": "c75c2d7a-4b35-490c-931c-aafe083a8ff8",
+                  "title": "高德地点搜索：明孝陵景区-明孝陵",
+                  "url": "https://www.amap.com/search",
+                  "provider": "AMap POI",
+                  "queried_at": "2026-10-08T01:23:09.767749Z",
+                  "confidence": "high"
+                }
+              },
+              {
+                "id": "b910de7c-ce6d-4320-8593-507d7d1d2c53",
+                "name": "李记清真馆(打钉巷店)",
+                "category": "food",
+                "neighborhood": "秦淮区",
+                "description": "朝天宫街道评事街打钉巷1号",
+                "longitude": 118.779783,
+                "latitude": 32.029251,
+                "suggested_duration_minutes": 75,
+                "estimated_cost_fen": 8000,
+                "rating": 4.9,
+                "tags": [
+                  "中餐厅",
+                  "清真菜馆",
+                  "有图片"
+                ],
+                "source": {
+                  "id": "299121cb-e695-45fb-abed-672a26d8048a",
+                  "title": "高德地点搜索：李记清真馆(打钉巷店)",
+                  "url": "https://www.amap.com/search",
+                  "provider": "AMap POI",
+                  "queried_at": "2026-10-08T01:23:09.806184Z",
+                  "confidence": "high"
+                }
+              },
+              {
+                "id": "98a6f7b8-9dcf-421d-adb0-e55f75160919",
+                "name": "美龄宫",
+                "category": "sight",
+                "neighborhood": "玄武区",
+                "description": "中山陵9号钟山风景名胜区内(南侧)",
+                "longitude": 118.846557,
+                "latitude": 32.045458,
+                "suggested_duration_minutes": 90,
+                "estimated_cost_fen": 3000,
+                "rating": 4.7,
+                "tags": [
+                  "风景名胜",
+                  "纪念馆",
+                  "有图片"
+                ],
+                "source": {
+                  "id": "170e58d4-53b0-4083-805d-631dc9ee97a8",
+                  "title": "高德地点搜索：美龄宫",
+                  "url": "https://www.amap.com/search",
+                  "provider": "AMap POI",
+                  "queried_at": "2026-10-08T01:23:09.792753Z",
+                  "confidence": "high"
+                }
+              },
+              {
+                "id": "b2351439-ad57-4172-af9f-15b63cf0a6e8",
+                "name": "老门东",
+                "category": "sight",
+                "neighborhood": "秦淮区",
+                "description": "剪子巷与箍桶巷交汇处剪子巷54号",
+                "longitude": 118.787645,
+                "latitude": 32.011604,
+                "suggested_duration_minutes": 90,
+                "estimated_cost_fen": 3000,
+                "rating": 4.8,
+                "tags": [
+                  "风景名胜",
+                  "风景名胜",
+                  "有图片"
+                ],
+                "source": {
+                  "id": "de0b9834-5c00-44bf-a294-1e2bba675306",
+                  "title": "高德地点搜索：老门东",
+                  "url": "https://www.amap.com/search",
+                  "provider": "AMap POI",
+                  "queried_at": "2026-10-08T01:23:09.778225Z",
+                  "confidence": "high"
+                }
+              }
+            ],
+            "actual_budget": {
+              "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+              "currency": "CNY",
+              "total_budget_fen": 300000,
+              "total_spent_fen": 0,
+              "total_remaining_fen": 300000,
+              "daily_budget_fen": 100000,
+              "today_spent_fen": 0,
+              "today_remaining_fen": 100000,
+              "local_date": "2026-10-08"
+            },
+            "planning_budget": {
+              "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+              "total_planned_fen": 0,
+              "total_remaining_fen": 300000,
+              "days": [
+                {
+                  "day_plan_id": "7943a01d-310a-4d39-bd10-af26cfd79210",
+                  "date": "2026-10-09",
+                  "planned_fen": 0,
+                  "remaining_fen": 100000,
+                  "ratio": 0.0,
+                  "status": "comfortable"
+                },
+                {
+                  "day_plan_id": "7a68d4b0-48a3-4fe9-9eef-5407401c52f1",
+                  "date": "2026-10-10",
+                  "planned_fen": 0,
+                  "remaining_fen": 100000,
+                  "ratio": 0.0,
+                  "status": "comfortable"
+                },
+                {
+                  "day_plan_id": "c573c38c-0b6e-4ee8-a3be-161f87499fce",
+                  "date": "2026-10-11",
+                  "planned_fen": 0,
+                  "remaining_fen": 100000,
+                  "ratio": 0.0,
+                  "status": "comfortable"
+                }
+              ]
+            },
+            "generated_at": "2026-10-08T01:24:10.763329Z",
+            "execution_recovery": {
+              "frozen_activity_ids": [],
+              "protected_activity_ids": [],
+              "mutable_activity_ids": [],
+              "recovery_options": [],
+              "execution_state": {
+                "status": "not_started"
+              }
+            },
+            "planning_goals": {
+              "target_days": [
+                "2026-10-10"
+              ],
+              "hard_goals": {
+                "end_before": null,
+                "max_walking_minutes": null
+              },
+              "soft_goals": {
+                "pace": null,
+                "minimize_walking": false,
+                "preserve_existing": false
+              }
+            },
+            "formal_route_facts": {
+              "days": [
+                {
+                  "date": "2026-10-10",
+                  "activity_sequence": [],
+                  "route_legs": [],
+                  "walking_duration_minutes": 0,
+                  "walking_distance_meters": 0,
+                  "day_end": null
+                }
+              ]
+            },
+            "decision_context": {
+              "formal_itinerary": {
+                "days": [
+                  {
+                    "day_id": "7a68d4b0-48a3-4fe9-9eef-5407401c52f1",
+                    "date": "2026-10-10",
+                    "activities": []
+                  }
+                ]
+              },
+              "protected_constraints": {
+                "frozen_activity_ids": [],
+                "protected_activity_ids": [],
+                "editable_activity_ids": [],
+                "provenance": {}
+              },
+              "execution_context": {
+                "status": "not_started",
+                "remaining_activity_ids": []
+              },
+              "decision_memory": [],
+              "provenance": {
+                "goals": "user_goal_and_grounded_intent",
+                "formal_itinerary": "persisted_formal_itinerary",
+                "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+                "route_context": "persisted_amap_route",
+                "execution_context": "execution_and_navigation_projection",
+                "active_disruption": "persisted_disruption_projection",
+                "user_preferences": "persisted_trip_preferences",
+                "provider_facts": "planning_provider_facts",
+                "decision_memory": "same_trip_same_target_day_rejected_revisions"
+              },
+              "route_context": {
+                "days": [
+                  {
+                    "date": "2026-10-10",
+                    "route_fact_status": "unavailable",
+                    "route_legs": []
+                  }
+                ]
+              }
+            }
+          },
+          "external_facts": {
+            "status": "partial",
+            "search": {
+              "status": "not_required",
+              "sources": []
+            },
+            "weather": {
+              "status": "available",
+              "provider": "open_meteo",
+              "queried_at": "2026-10-08T01:24:14.159183+00:00"
+            }
+          }
+        },
+        "sequence": 7
+      }
+    ],
+    "observation_sequence": 7,
+    "observations_truncated": false,
+    "stage": "intent",
+    "message": "网页检索已结束，正在核对你的需求与调整范围…",
+    "updated_at": "2026-10-08T01:24:14.167283+00:00"
+  },
+  "heartbeat_at": "2026-10-08T01:24:14.167283Z",
+  "entry_point": "trip_planner",
+  "selected_day_id": null,
+  "selected_activity_id": null,
+  "intent_resolution": {
+    "request": {
+      "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+      "user_request": "请调整：把2026年10月10日的安排变得轻松一些，不要那么赶，保留其他日期安排不变；先给出新的候选，不要直接保存正式行程。",
+      "intent": {
+        "intent_type": "modify_day",
+        "source_text": "请调整：把2026年10月10日的安排变得轻松一些，不要那么赶，保留其他日期安排不变；先给出新的候选，不要直接保存正式行程。",
+        "time_scope": {
+          "day_number": 2,
+          "day_date": "2026-10-10",
+          "period": null
+        },
+        "protected_activity_ids": [],
+        "requested_place_queries": [],
+        "requested_pace": null,
+        "missing_fields": [],
+        "ambiguities": [
+          "activity_not_found:其他日期安排不变"
+        ]
+      },
+      "entry_point": "trip_planner",
+      "selected_day_id": null,
+      "selected_activity_id": null,
+      "target_day_id": "7a68d4b0-48a3-4fe9-9eef-5407401c52f1"
+    },
+    "requires_clarification": true,
+    "clarification_questions": [
+      "当前行程中没有找到“其他日期安排不变”，请重新指定活动。"
+    ],
+    "parser_version": "rules-v1",
+    "semantic_draft": {
+      "primary_intent": "replan_trip",
+      "operations": [
+        {
+          "operation": "replan_trip",
+          "raw_text": "请调整：把2026年10月10日的安排变得轻松一些，不要那么赶，保留其他日期安排不变；先给出新的候选，不要直接保存正式行程。",
+          "date_expression": "10月10日",
+          "period": null,
+          "activity_mentions": [],
+          "place_mentions": [],
+          "constraints": {
+            "budget_must_not_increase": false,
+            "max_additional_cost_fen": null,
+            "preferred_environment": null,
+            "max_walking_minutes": null,
+            "requested_pace": null,
+            "weather_sensitive": false,
+            "preserve_completed": true
+          }
+        }
+      ],
+      "confidence": 0.98,
+      "missing_fields": [],
+      "ambiguities": [],
+      "parser": "rules",
+      "parser_version": "rules-envelope-v1"
+    },
+    "grounded_intent": {
+      "trip_id": "58239cd8-b097-4898-870f-f49f1a98719d",
+      "primary_intent": "replan_trip",
+      "operation_types": [
+        "replan_trip"
+      ],
+      "target_day_ids": [
+        "7a68d4b0-48a3-4fe9-9eef-5407401c52f1"
+      ],
+      "target_activity_ids": [],
+      "candidate_place_ids": [],
+      "unresolved_activity_mentions": [],
+      "unresolved_place_mentions": [],
+      "constraints": {
+        "budget_must_not_increase": false,
+        "max_additional_cost_fen": null,
+        "preferred_environment": null,
+        "max_walking_minutes": null,
+        "requested_pace": null,
+        "weather_sensitive": false,
+        "preserve_completed": true
+      },
+      "missing_fields": [],
+      "ambiguities": [
+        "activity_not_found:其他日期安排不变"
+      ]
+    },
+    "policy_decision": {
+      "operation_mode": "clarify",
+      "risk_level": "medium",
+      "requires_confirmation": false,
+      "reasons": [
+        "intent_or_entity_incomplete"
+      ],
+      "route": "clarify"
+    }
+  },
+  "base_trip_version": 1,
+  "model_provider": null,
+  "model_name": null,
+  "token_usage": 0,
+  "error_code": null,
+  "error_message": null,
+  "error_details": null,
+  "pending_interrupt": {
+    "kind": "clarification",
+    "questions": [
+      "当前行程中没有找到“其他日期安排不变”，请重新指定活动。"
+    ],
+    "run_id": "bbea2a1a-e7f1-4bf6-bd6f-cc12ab8200a4"
+  },
+  "created_at": "2026-10-08T01:24:04.300078Z",
+  "started_at": "2026-10-08T01:24:10.505318Z",
+  "completed_at": null
+}

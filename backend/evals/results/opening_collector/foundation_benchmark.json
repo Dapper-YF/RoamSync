@@ -1,0 +1,596 @@
+{
+  "benchmark": "travel_fact_resolution_v1",
+  "fixture_time": "2026-09-29T12:00:00+00:00",
+  "measured_at": "2026-10-01T11:41:20.802324+00:00",
+  "fixture_sha256": "90e2b2ab2ec5d08d13150e38d48cc86c3777eec3995e09782d02c036a8db0c7e",
+  "case_count": 28,
+  "passed_cases": 28,
+  "metrics": {
+    "freshness_correctness": {
+      "passed": 28,
+      "total": 28
+    },
+    "provenance_preservation": {
+      "passed": 28,
+      "total": 28
+    },
+    "resolution_correctness": {
+      "passed": 28,
+      "total": 28
+    },
+    "conflict_preservation": {
+      "passed": 28,
+      "total": 28
+    },
+    "unavailable_honesty": {
+      "passed": 16,
+      "total": 16
+    }
+  },
+  "cases": [
+    {
+      "id": "fresh_status",
+      "status": "resolved",
+      "freshness": "fresh",
+      "usable_as_current": true,
+      "value": {
+        "kind": "status",
+        "status": "closed"
+      },
+      "evidence_ids": [
+        "559804de85be207de592977503e15b23571c0930cc8d5750ba9ce2b331023832"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true
+      }
+    },
+    {
+      "id": "stale_status",
+      "status": "stale",
+      "freshness": "stale",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [
+        "d2a9c84de12dd09425ea19a166e393e529a723e8af3c4187bad3871ca8a118e9"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    },
+    {
+      "id": "stale_background",
+      "status": "stale",
+      "freshness": "stale",
+      "usable_as_current": false,
+      "value": {
+        "kind": "status",
+        "status": "closed"
+      },
+      "evidence_ids": [
+        "d2a9c84de12dd09425ea19a166e393e529a723e8af3c4187bad3871ca8a118e9"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true
+      }
+    },
+    {
+      "id": "expired_notice",
+      "status": "no_evidence",
+      "freshness": "expired",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [
+        "559804de85be207de592977503e15b23571c0930cc8d5750ba9ce2b331023832"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    },
+    {
+      "id": "future_notice",
+      "status": "no_evidence",
+      "freshness": "future_effective",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [
+        "559804de85be207de592977503e15b23571c0930cc8d5750ba9ce2b331023832"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    },
+    {
+      "id": "equal_authority_conflict",
+      "status": "conflicting",
+      "freshness": "fresh",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [
+        "559804de85be207de592977503e15b23571c0930cc8d5750ba9ce2b331023832",
+        "ee31790d75624c3d93363b4ff511342c676d4c36c11a9cff18e826e521fd06f6"
+      ],
+      "conflict_count": 2,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    },
+    {
+      "id": "official_temporary_closure",
+      "status": "resolved",
+      "freshness": "fresh",
+      "usable_as_current": true,
+      "value": {
+        "kind": "status",
+        "status": "closed"
+      },
+      "evidence_ids": [
+        "1dacd54d0dba70fea51183d44701f15c39f46af74d161d8e2348b041f0ee4af1",
+        "559804de85be207de592977503e15b23571c0930cc8d5750ba9ce2b331023832"
+      ],
+      "conflict_count": 1,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true
+      }
+    },
+    {
+      "id": "stale_official_fresh_map",
+      "status": "resolved",
+      "freshness": "fresh",
+      "usable_as_current": true,
+      "value": {
+        "kind": "status",
+        "status": "open"
+      },
+      "evidence_ids": [
+        "d2a9c84de12dd09425ea19a166e393e529a723e8af3c4187bad3871ca8a118e9",
+        "eb3aa1bc1fbf7dbe1034cedc1a7ec011f02bd12a00354908842ccec336b45879"
+      ],
+      "conflict_count": 1,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true
+      }
+    },
+    {
+      "id": "provider_unknown",
+      "status": "no_evidence",
+      "freshness": "fresh",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [
+        "df4dddbaef495a203a57e2f10d4fc8efb88597b9fda536910d8813014f291932"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    },
+    {
+      "id": "provider_error",
+      "status": "unavailable",
+      "freshness": "no_evidence",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [],
+      "conflict_count": 0,
+      "provider_failures": [
+        "fixture_provider:provider_unavailable"
+      ],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    },
+    {
+      "id": "provider_timeout",
+      "status": "unavailable",
+      "freshness": "no_evidence",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [],
+      "conflict_count": 0,
+      "provider_failures": [
+        "fixture_provider:provider_timeout"
+      ],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    },
+    {
+      "id": "empty_provider",
+      "status": "no_evidence",
+      "freshness": "no_evidence",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    },
+    {
+      "id": "unsupported_ticket",
+      "status": "unsupported",
+      "freshness": "no_evidence",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    },
+    {
+      "id": "route_eta_unsupported",
+      "status": "unsupported",
+      "freshness": "no_evidence",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    },
+    {
+      "id": "route_duration_prediction",
+      "status": "resolved",
+      "freshness": "fresh",
+      "usable_as_current": true,
+      "value": {
+        "kind": "measurement",
+        "amount": 32.0,
+        "unit": "minutes"
+      },
+      "evidence_ids": [
+        "92035c206dfa33962d1a51562334d8a9dbc76716cedb5d2441d523afdb6978a6"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true
+      }
+    },
+    {
+      "id": "route_estimate_rejected",
+      "status": "unavailable",
+      "freshness": "no_evidence",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [],
+      "conflict_count": 0,
+      "provider_failures": [
+        "amap_route:invalid_provider_data"
+      ],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    },
+    {
+      "id": "poi_identity",
+      "status": "resolved",
+      "freshness": "fresh",
+      "usable_as_current": true,
+      "value": {
+        "kind": "identity",
+        "provider_place_id": "fixture-poi",
+        "name": "人工测试景点"
+      },
+      "evidence_ids": [
+        "d6f3bb241871885f685a4ecf772a1cbc4af009d94f15f8a66de236a3aec1848f"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true
+      }
+    },
+    {
+      "id": "poi_location",
+      "status": "resolved",
+      "freshness": "fresh",
+      "usable_as_current": true,
+      "value": {
+        "kind": "location",
+        "point": {
+          "longitude": 120.1,
+          "latitude": 30.2,
+          "coordinate_system": "gcj02"
+        },
+        "accuracy_meters": null
+      },
+      "evidence_ids": [
+        "f068d3f4f7508efaff93de72f9ae7492778d5fbf8fe9b9ee3a516980cc741250"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true
+      }
+    },
+    {
+      "id": "poi_native_category",
+      "status": "resolved",
+      "freshness": "fresh",
+      "usable_as_current": true,
+      "value": {
+        "kind": "category",
+        "category": "测试分类"
+      },
+      "evidence_ids": [
+        "2a7497eb1ca59496353f1497252db86e01d0d5175a2d659f97bb03a77138bc1f"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true
+      }
+    },
+    {
+      "id": "weather_future_forecast",
+      "status": "resolved",
+      "freshness": "fresh",
+      "usable_as_current": true,
+      "value": {
+        "kind": "weather",
+        "temperature_celsius": 23.0,
+        "precipitation_probability_percent": 70.0,
+        "weather_code": 3
+      },
+      "evidence_ids": [
+        "405bff21386f934db053701cce24db93d6874f0b490d051038b2422e01d8c7e8"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true
+      }
+    },
+    {
+      "id": "weather_stale_forecast",
+      "status": "stale",
+      "freshness": "stale",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [
+        "c2b8f7640c7dda93736ae8c70c13408489737eada6fd2edce3dac91cd3f216b6"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    },
+    {
+      "id": "weather_current_unsupported",
+      "status": "unsupported",
+      "freshness": "no_evidence",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    },
+    {
+      "id": "canonical_navigation_eta",
+      "status": "resolved",
+      "freshness": "fresh",
+      "usable_as_current": true,
+      "value": {
+        "kind": "timestamp",
+        "timestamp": "2026-09-29T12:30:00Z"
+      },
+      "evidence_ids": [
+        "cd21378d25806a971e6d00654249175bc6c64fff9667363c6c88a2831893729c"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true
+      }
+    },
+    {
+      "id": "canonical_navigation_stale",
+      "status": "stale",
+      "freshness": "stale",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [
+        "dd21b2c21e3c9f8e475ca1afaed2efb725c887d4e5f1bc1922ea371f8be85f86"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    },
+    {
+      "id": "canonical_simulation_excluded",
+      "status": "no_evidence",
+      "freshness": "no_evidence",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    },
+    {
+      "id": "canonical_activity_status",
+      "status": "resolved",
+      "freshness": "fresh",
+      "usable_as_current": true,
+      "value": {
+        "kind": "status",
+        "status": "in_progress"
+      },
+      "evidence_ids": [
+        "e847105be0e71b6606b06b26cce721f33fcad55aed670f8ac67feb0d9c93bae2"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true
+      }
+    },
+    {
+      "id": "exact_retry",
+      "status": "resolved",
+      "freshness": "fresh",
+      "usable_as_current": true,
+      "value": {
+        "kind": "status",
+        "status": "closed"
+      },
+      "evidence_ids": [
+        "559804de85be207de592977503e15b23571c0930cc8d5750ba9ce2b331023832"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true
+      }
+    },
+    {
+      "id": "future_current_status_gap",
+      "status": "no_evidence",
+      "freshness": "future_effective",
+      "usable_as_current": false,
+      "value": null,
+      "evidence_ids": [
+        "559804de85be207de592977503e15b23571c0930cc8d5750ba9ce2b331023832"
+      ],
+      "conflict_count": 0,
+      "provider_failures": [],
+      "checks": {
+        "freshness_correctness": true,
+        "provenance_preservation": true,
+        "resolution_correctness": true,
+        "conflict_preservation": true,
+        "unavailable_honesty": true
+      }
+    }
+  ],
+  "limitations": [
+    "Synthetic offline inputs; no live API validation",
+    "Explicit TEST TTLs are not production SLAs",
+    "Deterministic fact resolution, not Agent answer quality",
+    "SQL read-only evidence belongs to PostgreSQL tests"
+  ]
+}

@@ -1,0 +1,2086 @@
+[
+  {
+    "blind_id": "Q001",
+    "file": "fixed18_real.json",
+    "row": 21,
+    "mode": "A",
+    "case_id": "source_valid",
+    "input": "西湖列入世界遗产是哪年？请给出来源。",
+    "history": [],
+    "answer": "现有来源不足以核实这个问题。可以补充具体出处，或改为一般介绍。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 3,
+      "personalization": 5,
+      "source_support": 3,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "没有编造事实；说明证据不足。",
+      "relevance_completeness": "未回答具体问题，未给可操作查证路径。",
+      "naturalness": "简短但模板化。",
+      "personalization": "无偏好上下文，不虚构。",
+      "source_support": "如实承认没有来源，但来源需求未满足。",
+      "uncertainty_safety": "未把通用知识包装成核实结果。"
+    },
+    "fact_check": "无可核实事实；回答的功能缺口单独扣分。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q002",
+    "file": "fixed18_real.json",
+    "row": 6,
+    "mode": "A",
+    "case_id": "comparison",
+    "input": "苏州和南京哪个更适合慢节奏旅行？",
+    "history": [],
+    "answer": "慢节奏旅行更推荐苏州。苏州的园林（拙政园、留园）、平江路、山塘街和评弹茶馆天然适合慢慢逛、慢慢听，古城区节奏舒缓，找家茶馆坐半天很惬意。南京历史底蕴厚重，明孝陵、夫子庙、颐和路也适合闲逛，但城市体量更大、景点更分散，节奏会稍快一些。如果偏好江南水乡的细腻安静，选苏州；如果喜欢历史厚重感、美食多样和博物馆，选南京。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 3
+    },
+    "reasons": {
+      "accuracy": "园林文化可核实；两城市节奏、交通便利程度属于体验判断，未全面核查。",
+      "relevance_completeness": "按慢节奏维度给出条件性比较。",
+      "naturalness": "易读且有明确建议。",
+      "personalization": "正确利用本轮慢节奏需求。",
+      "source_support": "一般知识未伪造检索。",
+      "uncertainty_safety": "把安静或短途交通讲得较确定，没有时段与范围限定。"
+    },
+    "fact_check": "PARTIAL 园林文化核实；体验与交通判断待核验。",
+    "independent_sources": [
+      "https://whc.unesco.org/en/list/813/"
+    ]
+  },
+  {
+    "blind_id": "Q003",
+    "file": "holdout_real.json",
+    "row": 4,
+    "mode": "B",
+    "case_id": "holdout_suzhou_gardens",
+    "input": "苏州古典园林的借景是什么意思？用容易理解的例子解释。",
+    "history": [],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 1,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "没有提出错误事实。",
+      "relevance_completeness": "普通解释或建议被知识库范围限制拦住。",
+      "naturalness": "无关的正式规划声明与内部小型知识库措辞干扰对话。",
+      "personalization": "未虚构用户历史。",
+      "source_support": "无虚构出处；本题不要求资料。",
+      "uncertainty_safety": "守住证据边界，但对一般问题过度保守。"
+    },
+    "fact_check": "无事实断言；不能把准确拒答当作回答完整。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q004",
+    "file": "holdout_real.json",
+    "row": 18,
+    "mode": "A",
+    "case_id": "holdout_source_negation",
+    "input": "不用提供出处，介绍苏州园林为什么值得慢慢看。",
+    "history": [],
+    "answer": "苏州园林值得慢慢看，核心在于它不是“景点”，而是一种需要细读的空间艺术。首先，园林讲究移步换景——一条曲廊、一扇漏窗、一块湖石，角度稍有不同，画面就完全变化，走马观花只能看到假山亭子，慢慢走才能体会造园者如何用借景、框景、对景把有限空间做出无限层次。其次，园林充满文化细节：拙政园的题名、留园的铺地纹样、网师园的匾额楹联，都藏着文人隐逸的志趣与典故，速度一快就全部错过。再者，光影与时间也是造园的一部分——清晨的雾气、午后穿过花窗的光斑、雨打芭蕉，同一处景致在不同时辰完全不同，这正是“慢慢看”的回报。建议挑一两座园林（如拙政园加网师园）深入看，而不是一天赶遍所有名园；网师园面积小而精致，最适合安静体会。",
+    "citations": [],
+    "scores": {
+      "accuracy": 4,
+      "relevance_completeness": 5,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "园林布局、文人审美与微型山水经UNESCO核实；光影和慢游是审美建议。",
+      "relevance_completeness": "直接回应为什么值得慢看，有例子与方法。",
+      "naturalness": "流畅，略长。",
+      "personalization": "遵守不需出处的要求，不虚构偏好。",
+      "source_support": "不假称搜索资料。",
+      "uncertainty_safety": "没有实时状态断言。"
+    },
+    "fact_check": "VERIFIED 核心文化解释；主观审美不作客观排名。",
+    "independent_sources": [
+      "https://whc.unesco.org/en/list/813/"
+    ]
+  },
+  {
+    "blind_id": "Q005",
+    "file": "fixed18_real.json",
+    "row": 22,
+    "mode": "B",
+    "case_id": "source_valid",
+    "input": "西湖列入世界遗产是哪年？请给出来源。",
+    "history": [],
+    "answer": "UNESCO 页面记载，杭州西湖文化景观于2011年列入《世界遗产名录》。",
+    "citations": [
+      {
+        "source_name": "UNESCO World Heritage Centre",
+        "source_url": "https://whc.unesco.org/en/list/1334"
+      }
+    ],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 5,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "2011年由独立UNESCO页面核实。",
+      "relevance_completeness": "直接回答年份，附真实来源。",
+      "naturalness": "简洁准确。",
+      "personalization": "不需要偏好信息。",
+      "source_support": "回答归因与实际UNESCO页面一致。",
+      "uncertainty_safety": "稳定事实有资料支持，不冒称实时验证。"
+    },
+    "fact_check": "VERIFIED 核心事实与来源支持。",
+    "independent_sources": [
+      "https://whc.unesco.org/en/list/1334/"
+    ]
+  },
+  {
+    "blind_id": "Q006",
+    "file": "fixed18_real.json",
+    "row": 4,
+    "mode": "B",
+    "case_id": "culture",
+    "input": "杭州有哪些文化特色？",
+    "history": [],
+    "answer": "UNESCO 资料记载，西湖及其三面环山的景观自公元九世纪起启发诗人、学者与艺术家。\nUNESCO 将湖泊及三面环绕的山体列为西湖文化景观的组成，并记载其中有寺庙、塔、亭、园林、堤道和人工岛。",
+    "citations": [
+      {
+        "source_name": "UNESCO World Heritage Centre",
+        "source_url": "https://whc.unesco.org/en/list/1334"
+      }
+    ],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 3,
+      "naturalness": 3,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "西湖景观要素与九世纪以来文化影响可核实。",
+      "relevance_completeness": "只介绍西湖，未覆盖杭州茶/运河/南宋等主要特色。",
+      "naturalness": "两句资料摘要，缺整体叙述。",
+      "personalization": "无需个性化。",
+      "source_support": "实际来源支持对应断言。",
+      "uncertainty_safety": "未外推未支持事实。"
+    },
+    "fact_check": "VERIFIED 所述事实，覆盖面不足。",
+    "independent_sources": [
+      "https://whc.unesco.org/en/list/1334/"
+    ]
+  },
+  {
+    "blind_id": "Q007",
+    "file": "fixed18_real.json",
+    "row": 20,
+    "mode": "C",
+    "case_id": "specialist_missing",
+    "input": "西湖碑刻的训诂有什么特点？",
+    "history": [],
+    "answer": "西湖碑刻的训诂特点可以从几个方面来看：一是多音义并注，因西湖相关诗文、题名多用古字与通假字，历代重刻和题跋常对难字注音、释义，保留了不少旧读；二是重掌故与地望训释，碑文涉及景点得名（如\"苏堤\"\"孤山\"等）时，注家往往引史志考证地名沿革与人物本事，训诂与考据结合紧密；三是雅俗参照，清代以来金石学者对西湖摩崖题刻的释读既引《说文》《尔雅》等传统字书，也对照方言俗读，形成字书—文献—实物三方互证的路径；四是异文校勘意识强，同一题咏不同朝代重刻时，常以按语注明文字异同。需要说明的是，\"西湖碑刻训诂\"并非一个有统一公认的专题体系，以上是根据碑刻训诂的一般规律和西湖金石研究的常见做法所作的概括，具体碑石的具体训释细节建议参考《西湖摩崖石刻》一类专书或地方金石志核实。若你去杭州想实地看，孤山、飞来峰一带的摩崖题刻最为集中，适合慢慢辨认。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 3,
+      "naturalness": 3,
+      "personalization": 5,
+      "source_support": 4,
+      "uncertainty_safety": 3
+    },
+    "reasons": {
+      "accuracy": "碑刻训诂规律、参考书与具体馆藏断言未找到直接可靠支撑，待核验。",
+      "relevance_completeness": "给出方向，但一般训诂规律被套用于西湖具体材料。",
+      "naturalness": "结构清楚但专业细节过多。",
+      "personalization": "无个人上下文。",
+      "source_support": "没有伪称检索，仍提及待确认书目/研究实践。",
+      "uncertainty_safety": "末尾限定不抵消前文具体学术判断的确定表达。"
+    },
+    "fact_check": "PENDING 专业领域人工文献核查；不计事实准确性排名。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q008",
+    "file": "fixed18_real.json",
+    "row": 18,
+    "mode": "A",
+    "case_id": "specialist_missing",
+    "input": "西湖碑刻的训诂有什么特点？",
+    "history": [],
+    "answer": "西湖碑刻的训诂特点大致可归纳为三点：一是避讳与雅化并用——历代重刻、摹刻时对帝王名讳常作改字或缺笔处理，同时为配合西湖的景致意象，题名多用雅化字词（如以\"湖山\"\"放棹\"等替代口语表达），训释时须还原本字本义；二是引经据典、注明出处——像康熙御题的\"苏堤春晓\"等西湖十景碑，以及《表忠观碑》等名碑，文字多取自诗文与经史，碑文训诂常援引典籍解释词语来源，注重\"因文定义\"；三是字音与字形并重——由于碑体涵盖篆、隶、楷、行多种书体（如汉三老碑已藏于西泠印社），训释往往兼及字形的讹变、通假与古今字辨析。需要说明的是，西湖碑刻数量众多、历代递刻情况复杂，具体某一碑的训诂细节学界仍有不同考订，建议以《西湖志》及西泠印社、岳庙等处的说明牌与研究著录为准。若你想实地看碑，西泠印社汉三老石室和孔庙杭州碑林是不错的选择，碑身特写配合书法视角较出片。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 3,
+      "naturalness": 3,
+      "personalization": 5,
+      "source_support": 4,
+      "uncertainty_safety": 3
+    },
+    "reasons": {
+      "accuracy": "碑刻训诂规律、参考书与具体馆藏断言未找到直接可靠支撑，待核验。",
+      "relevance_completeness": "给出方向，但一般训诂规律被套用于西湖具体材料。",
+      "naturalness": "结构清楚但专业细节过多。",
+      "personalization": "无个人上下文。",
+      "source_support": "没有伪称检索，仍提及待确认书目/研究实践。",
+      "uncertainty_safety": "末尾限定不抵消前文具体学术判断的确定表达。"
+    },
+    "fact_check": "PENDING 专业领域人工文献核查；不计事实准确性排名。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q009",
+    "file": "fixed18_real.json",
+    "row": 37,
+    "mode": "B",
+    "case_id": "tradition",
+    "input": "南京元宵灯会有什么文化特色？",
+    "history": [],
+    "answer": "现有来源不足以核实这个问题。可以补充具体出处，或改为一般介绍。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 3,
+      "personalization": 5,
+      "source_support": 3,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "没有编造事实；说明证据不足。",
+      "relevance_completeness": "未回答具体问题，未给可操作查证路径。",
+      "naturalness": "简短但模板化。",
+      "personalization": "无偏好上下文，不虚构。",
+      "source_support": "如实承认没有来源，但来源需求未满足。",
+      "uncertainty_safety": "未把通用知识包装成核实结果。"
+    },
+    "fact_check": "无可核实事实；回答的功能缺口单独扣分。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q010",
+    "file": "holdout_real.json",
+    "row": 10,
+    "mode": "B",
+    "case_id": "holdout_personal",
+    "input": "按我之前的偏好，在苏州有哪些适合我的文化体验方向？不需要具体行程。",
+    "history": [
+      {
+        "user": "我喜欢园林和传统戏曲，不喜欢商业化打卡，也不想挤在热门街区。",
+        "assistant": "可以先讨论文化体验的类型。"
+      }
+    ],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 1,
+      "naturalness": 2,
+      "personalization": 2,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "无事实编造。",
+      "relevance_completeness": "未提出符合已知偏好的体验。",
+      "naturalness": "模板拒答且引入未要求的正式规划声明。",
+      "personalization": "遗漏明确的安静/园林等偏好。",
+      "source_support": "无伪造资料。",
+      "uncertainty_safety": "过度拒答。"
+    },
+    "fact_check": "无事实断言；已有上下文没有被利用。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q011",
+    "file": "fixed18_real.json",
+    "row": 32,
+    "mode": "C",
+    "case_id": "opening",
+    "input": "南京博物院明天几点开门？",
+    "history": [],
+    "answer": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未确认未知动态事实。",
+      "relevance_completeness": "没有回答所问日期或可用性，仅引导看官方信息。",
+      "naturalness": "天气/开放/票价/交通统一模板，部分没有复述本题预约或灯会。",
+      "personalization": "无个人上下文要求。",
+      "source_support": "无虚构实时出处。",
+      "uncertainty_safety": "不确定性表达诚实，没有模型猜测。"
+    },
+    "fact_check": "实时Provider缺失是预设；不能用当前网站内容补作当时证据。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q012",
+    "file": "holdout_real.json",
+    "row": 7,
+    "mode": "B",
+    "case_id": "holdout_craft_compare",
+    "input": "昆曲和南京云锦分别能让我体验到什么文化特色？",
+    "history": [],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 1,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "没有提出错误事实。",
+      "relevance_completeness": "普通解释或建议被知识库范围限制拦住。",
+      "naturalness": "无关的正式规划声明与内部小型知识库措辞干扰对话。",
+      "personalization": "未虚构用户历史。",
+      "source_support": "无虚构出处；本题不要求资料。",
+      "uncertainty_safety": "守住证据边界，但对一般问题过度保守。"
+    },
+    "fact_check": "无事实断言；不能把准确拒答当作回答完整。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q013",
+    "file": "fixed18_real.json",
+    "row": 26,
+    "mode": "C",
+    "case_id": "source_missing",
+    "input": "南京为什么叫六朝古都？请给出文献来源。",
+    "history": [],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 3,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未编造六朝史料。",
+      "relevance_completeness": "没有答案或有用的官方查证路径。",
+      "naturalness": "模板化，额外正式规划声明无关。",
+      "personalization": "无用户历史需求。",
+      "source_support": "承认不能提供出处；要求未实现。",
+      "uncertainty_safety": "缺资料不回退伪造引用。"
+    },
+    "fact_check": "无事实断言。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q014",
+    "file": "holdout_real.json",
+    "row": 2,
+    "mode": "C",
+    "case_id": "holdout_nanjing_wall",
+    "input": "南京明城墙体现了哪些明代城市建设特点？",
+    "history": [],
+    "answer": "南京明城墙是明代都城建设的杰出代表，主要体现了以下特点：\n\n1. **因地制宜、依山就势**：城墙没有采用规整的方形格局，而是顺应南京的山水地形，把钟山、秦淮河、玄武湖、雨花台等自然要素纳入城内，形成了不规则的多边形布局，体现\"得山川之利、控江湖之势\"的规划思想。\n\n2. **多重城垣的防御体系**：由宫城、皇城、都城、外郭四重城垣层层拱卫，都城墙约35公里，是世界现存最长的砖石城墙之一，体现了明代都城严密等级化的军事防御理念。\n\n3. **严格的材料管理制度**：城砖由长江中下游各府县烧制，砖侧铭刻府县、工匠、监造官姓名（\"物勒工名\"），便于追责，保证质量，反映了明代高度组织化的工程管理。\n\n4. **都城礼制与功能分区**：遵循《周礼·考工记》的传统都城理想（前朝后市、左祖右社的变体），同时突破礼制的方正规范，是礼制传统与实际地理条件妥协融合的典范。\n\n5. **水利与军事兼顾**：设有通济门、东水关等水关涵闸，兼顾航运、排水与防御；城门普遍设瓮城，如中华门瓮城有多重藏兵洞，防御设计极为精巧。\n\n总体来说，南京明城墙展现了明代城市建设\"重防御、重工程管理、因地制宜又兼顾礼制\"的综合特点。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 4,
+      "naturalness": 3,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 3
+    },
+    "reasons": {
+      "accuracy": "四重城垣和地形可核实；纳入城内范围/高度/礼制细节未全核实。",
+      "relevance_completeness": "涵盖规划、防御、工程管理。",
+      "naturalness": "学术术语偏多，长于自然交流。",
+      "personalization": "无个人上下文。",
+      "source_support": "未假称检索。",
+      "uncertainty_safety": "精确数字和礼制归因没有说明限度。"
+    },
+    "fact_check": "PARTIAL 城墙结构核实；范围、高度与礼制细节待核验。",
+    "independent_sources": [
+      "https://www.nanjing.gov.cn/xxgkn/jytabljggk/2023njytabl/shirddbjy/202312/t20231205_4115215.html"
+    ]
+  },
+  {
+    "blind_id": "Q015",
+    "file": "fixed18_real.json",
+    "row": 40,
+    "mode": "B",
+    "case_id": "low_quality",
+    "input": "西湖碑刻历史有什么特点？",
+    "history": [],
+    "answer": "UNESCO 资料记载，西湖及其三面环山的景观自公元九世纪起启发诗人、学者与艺术家。\nUNESCO 将湖泊及三面环绕的山体列为西湖文化景观的组成，并记载其中有寺庙、塔、亭、园林、堤道和人工岛。",
+    "citations": [
+      {
+        "source_name": "UNESCO World Heritage Centre",
+        "source_url": "https://whc.unesco.org/en/list/1334"
+      }
+    ],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 1,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "所述西湖景观事实正确。",
+      "relevance_completeness": "没有回答碑刻历史。",
+      "naturalness": "生硬替换成不相关资料。",
+      "personalization": "无上下文要求。",
+      "source_support": "引用真实且支持所说内容，但不支持用户问题。",
+      "uncertainty_safety": "没有明确提示碑刻资料缺失，容易让人误认为已回答。"
+    },
+    "fact_check": "VERIFIED 断言；相关性失败。",
+    "independent_sources": [
+      "https://whc.unesco.org/en/list/1334/"
+    ]
+  },
+  {
+    "blind_id": "Q016",
+    "file": "fixed18_real.json",
+    "row": 47,
+    "mode": "C",
+    "case_id": "rationale",
+    "input": "为什么当前行程把西湖安排在18点？",
+    "history": [],
+    "answer": "当前没有保存可验证的原始理由，我不能把重新推测的解释说成当时的理由。旅游背景知识不能代替原始决定，也不能证明实时条件。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 3,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "没有编造原规划理由。",
+      "relevance_completeness": "正确解释无法回答的原因，但本例没有保存的真实Revision，不能验有效解释路径。",
+      "naturalness": "表达清楚、长度合适。",
+      "personalization": "没有捏造当前行程决策。",
+      "source_support": "坚持原始决策来源合同。",
+      "uncertainty_safety": "清楚区分推测与原理由。"
+    },
+    "fact_check": "仅验证缺失来源时降级；无真实accepted Revision。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q017",
+    "file": "fixed18_real.json",
+    "row": 29,
+    "mode": "C",
+    "case_id": "forecast",
+    "input": "杭州明天下午天气怎么样？",
+    "history": [],
+    "answer": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未确认未知动态事实。",
+      "relevance_completeness": "没有回答所问日期或可用性，仅引导看官方信息。",
+      "naturalness": "天气/开放/票价/交通统一模板，部分没有复述本题预约或灯会。",
+      "personalization": "无个人上下文要求。",
+      "source_support": "无虚构实时出处。",
+      "uncertainty_safety": "不确定性表达诚实，没有模型猜测。"
+    },
+    "fact_check": "实时Provider缺失是预设；不能用当前网站内容补作当时证据。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q018",
+    "file": "fixed18_real.json",
+    "row": 38,
+    "mode": "C",
+    "case_id": "tradition",
+    "input": "南京元宵灯会有什么文化特色？",
+    "history": [],
+    "answer": "南京元宵灯会（秦淮灯会）是中国延续时间最长的灯会之一，有\"天下第一灯会\"之称，文化特色主要有：\n\n1. **历史底蕴深厚**：源于六朝时期的元宵张灯传统，明代达到鼎盛，明太祖朱元璋曾大力推广秦淮灯火，至今已延续上千年。\n2. **秦淮河与夫子庙的在地融合**：灯会以夫子庙、秦淮河为核心，灯彩与白墙黛瓦、朱雀桥、乌衣巷等历史景观相映，营造出\"桨声灯影里的秦淮河\"的独特意境。\n3. **灯彩工艺传统**：以荷花灯、兔子灯、生肖灯等传统扎制彩灯为代表，秦淮灯彩本身是国家级非物质文化遗产，讲究手工扎、糊、绘。\n4. **民俗内涵丰富**：走桥祈福（\"走百病\"）、赏灯猜谜、买灯讨彩头等习俗代代相传，兼具团圆祈福的文化寓意。\n\n拍照建议：傍晚蓝调时分在文德桥或大成殿广场拍摄灯组与飞檐同框，水面倒影效果最佳；长焦可压缩白鹭洲一带灯组层次。",
+    "citations": [],
+    "scores": {
+      "accuracy": 4,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "南朝传统、明初推广、非遗与秦淮核心区由国家非遗资料核实；细部灯型/机位未全核实。",
+      "relevance_completeness": "回答文化特色，少量额外拍照建议。",
+      "naturalness": "自然可读。",
+      "personalization": "无个人上下文。",
+      "source_support": "未伪造出处。",
+      "uncertainty_safety": "泛文化问题未编造具体今年日期，个别拍摄体验表达过强。"
+    },
+    "fact_check": "PARTIAL 核心文化核实，具体现场机位未核验。",
+    "independent_sources": [
+      "https://www.ihchina.cn/art/detail/id/15014.html"
+    ]
+  },
+  {
+    "blind_id": "Q019",
+    "file": "fixed18_real.json",
+    "row": 11,
+    "mode": "C",
+    "case_id": "solo",
+    "input": "一个人旅游有什么建议？",
+    "history": [],
+    "answer": "一个人旅游建议：\n\n1. 安全第一：选择治安较好的目的地，行程告知家人朋友，住宿选评价好的酒店或青旅单人间，夜晚少去偏僻处。\n2. 行程留弹性：不必排满，独行反而适合随性调整节奏；每天安排1-2个重点即可。\n3. 从\"友好型\"目的地入手：如京都、台北、曼谷、清迈、新加坡，交通便利、旅游设施成熟，适合第一次独旅。\n4. 想认识人可以住青旅、参加free walking tour或烹饪课，兼顾独处与社交。\n5. 实用小贴士：重要证件云端备份、少带现金、用共享位置软件报平安、拍照可用三脚架或请路人帮忙。\n6. 心态上把独行当作享受——不用迁就别人，想吃就吃、想停就停。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 3
+    },
+    "reasons": {
+      "accuracy": "基本安全建议合理；海外城市安全与首次独旅适宜性未独立核查。",
+      "relevance_completeness": "覆盖安全、节奏、社交与实用准备。",
+      "naturalness": "清楚但模板条目较多。",
+      "personalization": "没有虚构经历或偏好。",
+      "source_support": "无假引用。",
+      "uncertainty_safety": "友好目的地概括没有适用范围或个体条件。"
+    },
+    "fact_check": "PARTIAL 一般建议；海外安全相关判断待核验。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q020",
+    "file": "holdout_real.json",
+    "row": 3,
+    "mode": "A",
+    "case_id": "holdout_suzhou_gardens",
+    "input": "苏州古典园林的借景是什么意思？用容易理解的例子解释。",
+    "history": [],
+    "answer": "借景，简单说就是“把园子外面的风景借进来当自己的”。园林设计者故意开一扇窗、留一处缺口，让远处的塔、山或古树仿佛长在自己的院子里，使有限的小园子显得更深、更大。\n\n最经典的例子是拙政园“借”远处的北寺塔：你站在园中，隔着水面和亭台望过去，塔好像就建在园内一样，但其实它在园外一两公里外。这就是《园冶》里说的“巧于因借”。\n\n再打个生活化的比方：你坐在小公寓里，正对着一扇大落地窗，窗外是一棵漂亮的樱花树——虽然树不是你的，但每天的“樱花窗景”就是你家的一部分。苏州园林做的正是这件事，用门窗当“画框”，把园外的山、水、塔裁成一幅画挂进院子。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 5,
+      "naturalness": 5,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "借景北寺塔及约1.5公里由官方园林页面核实。",
+      "relevance_completeness": "定义、实例和生活比喻完整。",
+      "naturalness": "通俗自然。",
+      "personalization": "符合容易理解要求。",
+      "source_support": "未要求来源，不伪称检索。",
+      "uncertainty_safety": "无动态事实。"
+    },
+    "fact_check": "VERIFIED 核心解释及例子。",
+    "independent_sources": [
+      "https://lhsr.sh.gov.cn/jnylwh/20200824/7cc5e5102094470b94a8f771808c1f53.html"
+    ]
+  },
+  {
+    "blind_id": "Q021",
+    "file": "holdout_real.json",
+    "row": 11,
+    "mode": "C",
+    "case_id": "holdout_personal",
+    "input": "按我之前的偏好，在苏州有哪些适合我的文化体验方向？不需要具体行程。",
+    "history": [
+      {
+        "user": "我喜欢园林和传统戏曲，不喜欢商业化打卡，也不想挤在热门街区。",
+        "assistant": "可以先讨论文化体验的类型。"
+      }
+    ],
+    "answer": "结合你喜欢园林、传统戏曲，又避开商业化和拥挤人群，苏州可以考虑这几个方向：\n\n1. 冷门园林深度游：除了拙政园、留园，可以去艺圃、耦园、沧浪亭。艺圃小而静，老苏州茶室氛围浓；耦园地处平江路深处一隅却相对清幽，前身与清代文人生活关系密切，适合慢慢看造园细节。\n2. 书场听评弹：不去观前街一带的旅游化场所，找本地社区老书场（如一些街道文化站书场），下午场多是本地老听客，几元一杯茶的茶位费，听长篇弹词，是更原生态的评弹体验。\n3. 园林夜游与雅集类活动：部分小型园林（如网师园）有夜花园传统，以曲会、昆曲片段点缀，形式比白天的观光更贴近旧时文人雅集，但需留意具体安排以现场为准。\n4. 昆曲深度体验：除山塘街一带的商业演出外，可关注中国昆曲博物馆（全晋会馆内，古戏台本身就很值得看）的演出信息，以及专业院团的公开排演或讲座类活动。\n\n建议把重点放在艺圃＋老书场这个组合上，最贴合你的口味。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 2
+    },
+    "reasons": {
+      "accuracy": "园林文化可核实，几元茶位费、下午常态和现有活动均无当时实时证据。",
+      "relevance_completeness": "给出园林与戏曲方向。",
+      "naturalness": "较详细，可读。",
+      "personalization": "明确利用园林、戏曲和避商业偏好。",
+      "source_support": "不伪造引用。",
+      "uncertainty_safety": "混入未经验证价格和场次常态；不是已验证的事实。"
+    },
+    "fact_check": "PENDING 精确价格与人群状态；安全风险明确。",
+    "independent_sources": [
+      "https://whc.unesco.org/en/list/813/"
+    ]
+  },
+  {
+    "blind_id": "Q022",
+    "file": "holdout_real.json",
+    "row": 17,
+    "mode": "C",
+    "case_id": "holdout_live",
+    "input": "苏州博物馆明天还有预约名额吗？",
+    "history": [],
+    "answer": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未确认未知动态事实。",
+      "relevance_completeness": "没有回答所问日期或可用性，仅引导看官方信息。",
+      "naturalness": "天气/开放/票价/交通统一模板，部分没有复述本题预约或灯会。",
+      "personalization": "无个人上下文要求。",
+      "source_support": "无虚构实时出处。",
+      "uncertainty_safety": "不确定性表达诚实，没有模型猜测。"
+    },
+    "fact_check": "实时Provider缺失是预设；不能用当前网站内容补作当时证据。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q023",
+    "file": "fixed18_real.json",
+    "row": 25,
+    "mode": "B",
+    "case_id": "source_missing",
+    "input": "南京为什么叫六朝古都？请给出文献来源。",
+    "history": [],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 3,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未编造六朝史料。",
+      "relevance_completeness": "没有答案或有用的官方查证路径。",
+      "naturalness": "模板化，额外正式规划声明无关。",
+      "personalization": "无用户历史需求。",
+      "source_support": "承认不能提供出处；要求未实现。",
+      "uncertainty_safety": "缺资料不回退伪造引用。"
+    },
+    "fact_check": "无事实断言。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q024",
+    "file": "fixed18_real.json",
+    "row": 5,
+    "mode": "C",
+    "case_id": "culture",
+    "input": "杭州有哪些文化特色？",
+    "history": [],
+    "answer": "杭州的文化特色可以从几个方面来看：\n\n1. 西湖文化：西湖不仅是自然景观，更承载了白蛇传、梁祝等民间传说，苏堤、白堤因苏东坡、白居易两位诗人而闻名，三面云山一面城的格局体现了中国传统山水美学。\n\n2. 茶文化：杭州是龙井茶的原产地，梅家坞、龙井村一带的茶村保留了采茶、炒茶的传统，虎跑泉与龙井茶并称\"西湖双绝\"，茶馆文化深入市民生活。\n\n3. 佛教与宗教文化：灵隐寺是中国禅宗名刹，飞来峰石窟造像见证了五代至宋元的佛教艺术，净慈寺则与\"南屏晚钟\"的意境相连。\n\n4. 南宋遗产：杭州曾是南宋都城临安，御街、河坊街一带保留了古城格局，官窑瓷器、杭罗织造等技艺延续至今。\n\n5. 民俗与技艺：丝绸文化源远流长，有中国丝绸博物馆可深入了解；张小泉剪刀、王星记扇子等老字号也是江南手工业的代表。\n\n6. 运河文化：京杭大运河南端就在杭州，拱宸桥、桥西历史街区展现了漕运时代的市井生活。\n\n想快速感受的话，可以上午逛河坊街和南宋御街，下午去中国丝绸博物馆或龙井茶村，傍晚沿运河散步看拱宸桥夜景。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "西湖、南宋核心核实；梁祝关联、工艺及石窟细节未逐项核验。",
+      "relevance_completeness": "多维杭州介绍，比只谈西湖完整。",
+      "naturalness": "条目可读，末尾具体一日安排过多。",
+      "personalization": "无额外用户历史。",
+      "source_support": "未伪称检索。",
+      "uncertainty_safety": "没有具体票价/场次，但隐含当天可参观。"
+    },
+    "fact_check": "PARTIAL 核心背景；扩展细节待核验。",
+    "independent_sources": [
+      "https://whc.unesco.org/en/list/1334/"
+    ]
+  },
+  {
+    "blind_id": "Q025",
+    "file": "fixed18_real.json",
+    "row": 33,
+    "mode": "A",
+    "case_id": "dated_event",
+    "input": "今年南京灯会具体举办时间和地点是什么？",
+    "history": [],
+    "answer": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未确认未知动态事实。",
+      "relevance_completeness": "没有回答所问日期或可用性，仅引导看官方信息。",
+      "naturalness": "天气/开放/票价/交通统一模板，部分没有复述本题预约或灯会。",
+      "personalization": "无个人上下文要求。",
+      "source_support": "无虚构实时出处。",
+      "uncertainty_safety": "不确定性表达诚实，没有模型猜测。"
+    },
+    "fact_check": "实时Provider缺失是预设；不能用当前网站内容补作当时证据。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q026",
+    "file": "holdout_real.json",
+    "row": 20,
+    "mode": "C",
+    "case_id": "holdout_source_negation",
+    "input": "不用提供出处，介绍苏州园林为什么值得慢慢看。",
+    "history": [],
+    "answer": "苏州园林值得慢慢看，核心在于它是“可居可游”的空间艺术，而非一眼望尽的风景。第一，看布局：拙政园、留园等以廊、墙、门洞分割空间，曲径通幽、欲扬先抑，走快了就感受不到步移景异的节奏。第二，看细节：花窗的纹样、铺地的图案、匾额楹联的典故，都是造园者的巧思与文人趣味。第三，看意境：借景、对景、框景处处精心，比如从特定窗框看出去，远处塔影或一枝斜梅恰好入画，这些视角需要在园中慢慢停驻才能发现。第四，看时间变化：清晨薄雾、雨打芭蕉、午后光影穿过漏窗，园林之美随光线和天气流动，赶场式游览只能看到皮毛。建议选一两座园子（如拙政园或网师园），留出大半天，坐下来、绕回去、换个角度再看，收获远胜一天打卡五园。",
+    "citations": [],
+    "scores": {
+      "accuracy": 4,
+      "relevance_completeness": 5,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "园林布局、文人审美与微型山水经UNESCO核实；光影和慢游是审美建议。",
+      "relevance_completeness": "直接回应为什么值得慢看，有例子与方法。",
+      "naturalness": "流畅，略长。",
+      "personalization": "遵守不需出处的要求，不虚构偏好。",
+      "source_support": "不假称搜索资料。",
+      "uncertainty_safety": "没有实时状态断言。"
+    },
+    "fact_check": "VERIFIED 核心文化解释；主观审美不作客观排名。",
+    "independent_sources": [
+      "https://whc.unesco.org/en/list/813/"
+    ]
+  },
+  {
+    "blind_id": "Q027",
+    "file": "fixed18_real.json",
+    "row": 35,
+    "mode": "C",
+    "case_id": "dated_event",
+    "input": "今年南京灯会具体举办时间和地点是什么？",
+    "history": [],
+    "answer": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未确认未知动态事实。",
+      "relevance_completeness": "没有回答所问日期或可用性，仅引导看官方信息。",
+      "naturalness": "天气/开放/票价/交通统一模板，部分没有复述本题预约或灯会。",
+      "personalization": "无个人上下文要求。",
+      "source_support": "无虚构实时出处。",
+      "uncertainty_safety": "不确定性表达诚实，没有模型猜测。"
+    },
+    "fact_check": "实时Provider缺失是预设；不能用当前网站内容补作当时证据。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q028",
+    "file": "fixed18_real.json",
+    "row": 12,
+    "mode": "A",
+    "case_id": "preferences",
+    "input": "我不喜欢热门景点，有什么旅游思路？",
+    "history": [],
+    "answer": "不爱热门景点的话，可以试试这几种思路：\n\n1. **反向选点**：去知名目的地的周边小城。比如不去大理古城，改去旁边的沙溪古镇或巍山；不去厦门，改去泉州的石狮、惠安。氛围相近，游客少得多。\n\n2. **兴趣驱动**：不按\"目的地\"规划，而按兴趣找——比如扫街拍摄老集市、探访地方手工艺（徽墨、龙泉青瓷、潮州木雕）、追一条地方美食线。小众兴趣天然避开人流。\n\n3. **季节与时段错峰**：同一地点在淡季或工作日清晨完全是另一番景象。西湖清晨六点和下午三点是两个世界。\n\n4. **慢节奏扎根**：在一个中小城市住上一周，逛菜市场、坐本地公交、找街坊茶馆，比赶几个打卡点收获更真实。\n\n建议先从\"兴趣驱动 + 反向选点\"组合入手，最容易找到合你口味的去处。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 2
+    },
+    "reasons": {
+      "accuracy": "具体周边地点的游客少得多及自然避人流未核实。",
+      "relevance_completeness": "提供多种非打卡思路。",
+      "naturalness": "自然且具体。",
+      "personalization": "围绕避热门需求。",
+      "source_support": "无假引用。",
+      "uncertainty_safety": "小众兴趣天然避人流的保证过强。"
+    },
+    "fact_check": "PENDING 拥挤程度；方法建议不等于现场事实。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q029",
+    "file": "fixed18_real.json",
+    "row": 28,
+    "mode": "B",
+    "case_id": "forecast",
+    "input": "杭州明天下午天气怎么样？",
+    "history": [],
+    "answer": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未确认未知动态事实。",
+      "relevance_completeness": "没有回答所问日期或可用性，仅引导看官方信息。",
+      "naturalness": "天气/开放/票价/交通统一模板，部分没有复述本题预约或灯会。",
+      "personalization": "无个人上下文要求。",
+      "source_support": "无虚构实时出处。",
+      "uncertainty_safety": "不确定性表达诚实，没有模型猜测。"
+    },
+    "fact_check": "实时Provider缺失是预设；不能用当前网站内容补作当时证据。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q030",
+    "file": "fixed18_real.json",
+    "row": 7,
+    "mode": "B",
+    "case_id": "comparison",
+    "input": "苏州和南京哪个更适合慢节奏旅行？",
+    "history": [],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 1,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "没有提出错误事实。",
+      "relevance_completeness": "普通解释或建议被知识库范围限制拦住。",
+      "naturalness": "无关的正式规划声明与内部小型知识库措辞干扰对话。",
+      "personalization": "未虚构用户历史。",
+      "source_support": "无虚构出处；本题不要求资料。",
+      "uncertainty_safety": "守住证据边界，但对一般问题过度保守。"
+    },
+    "fact_check": "无事实断言；不能把准确拒答当作回答完整。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q031",
+    "file": "fixed18_real.json",
+    "row": 42,
+    "mode": "A",
+    "case_id": "source_untrusted",
+    "input": "西湖历史有什么特点？请给出处。",
+    "history": [],
+    "answer": "现有来源不足以核实这个问题。可以补充具体出处，或改为一般介绍。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 3,
+      "personalization": 5,
+      "source_support": 3,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "没有编造事实；说明证据不足。",
+      "relevance_completeness": "未回答具体问题，未给可操作查证路径。",
+      "naturalness": "简短但模板化。",
+      "personalization": "无偏好上下文，不虚构。",
+      "source_support": "如实承认没有来源，但来源需求未满足。",
+      "uncertainty_safety": "未把通用知识包装成核实结果。"
+    },
+    "fact_check": "无可核实事实；回答的功能缺口单独扣分。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q032",
+    "file": "fixed18_real.json",
+    "row": 41,
+    "mode": "C",
+    "case_id": "low_quality",
+    "input": "西湖碑刻历史有什么特点？",
+    "history": [],
+    "answer": "西湖碑刻历史有几个鲜明特点：\n\n1. 历代延续性强：从唐宋到明清乃至近现代均有留刻，南宋时期尤盛，御碑文化发达，如康熙、乾隆南巡时留下大量题字御碑（康熙题\"花港观鱼\"等西湖十景碑即为代表）。\n\n2. 与\"题名景观\"传统结合：碑刻往往对应固定景观，形成\"景以碑传\"的格局，西湖十景的命名和传播很大程度上依赖御碑的权威性。\n\n3. 书体与名家众多：楷、行、草、隶各体兼备，不少出自帝王或文人名士之手，兼具书法艺术与文献价值。\n\n4. 内容多元：除景观题名外，还包括诗词、纪事、佛寺经幢、墓志祠碑等，反映西湖作为山水胜地与人文聚集地的双重属性。\n\n5. 损毁与重建并存：许多古碑历经战乱、动荡毁佚，现存碑刻中相当一部分为后世据拓本或文献复刻重立，故有\"原刻\"与\"重刻\"之别，观赏时值得留意。\n\n实地上，孤山（如西泠印社一带）、净慈寺、湖畔各十景碑亭是较集中的观览点。若对具体某块碑的年代存疑，建议以现场说明牌或专业文献为准。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 4,
+      "naturalness": 3,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 3
+    },
+    "reasons": {
+      "accuracy": "跨时代连续、御碑命名与重刻比例缺直接材料，待核验。",
+      "relevance_completeness": "围绕碑刻历史展开，覆盖多面。",
+      "naturalness": "条目易读但长度偏长。",
+      "personalization": "无个人上下文。",
+      "source_support": "不声称检索或提供假来源。",
+      "uncertainty_safety": "少量限制提示不足以验证专业细节。"
+    },
+    "fact_check": "PENDING 具体碑刻断言；不计准确性排名。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q033",
+    "file": "holdout_real.json",
+    "row": 5,
+    "mode": "C",
+    "case_id": "holdout_suzhou_gardens",
+    "input": "苏州古典园林的借景是什么意思？用容易理解的例子解释。",
+    "history": [],
+    "answer": "借景是苏州古典园林的一个重要造园手法：园林本身空间有限，造园者就把园子外面的自然景色\"借\"进来，作为园林画面的一部分，让有限的园子显得无限深远。\n\n最经典的例子是拙政园\"借景\"北寺塔：站在拙政园里向西远望，能看到园墙外北寺塔的塔身，仿佛这座塔就建在园中一样。塔其实在园外很远的地方，但造园者刻意让视线通廊对准它，把千年古塔\"借\"成了自家园林的远景。\n\n用生活化的方式理解：你家客厅窗外正对一座山，你特意装修时留一扇大落地窗不加遮挡，这扇窗就把山\"借\"进了你家——山不用花你一分钱，却成了你家每天变化的水墨画。\n\n游园小贴士：在拙政园远眺北寺塔的最佳位置是中部山上的亭子附近，建议用长焦镜头压缩空间，把塔和园内亭台框进同一画面，最有\"借景\"的味道。",
+    "citations": [],
+    "scores": {
+      "accuracy": 4,
+      "relevance_completeness": 5,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "借景例子可核实，最佳拍摄位置未独立确认。",
+      "relevance_completeness": "完整定义与比喻。",
+      "naturalness": "清楚，末段拍照非用户所需。",
+      "personalization": "按通俗解释需求回答。",
+      "source_support": "无伪造引用。",
+      "uncertainty_safety": "最佳位置用语过强。"
+    },
+    "fact_check": "PARTIAL 核心例子核实；最佳机位待核验。",
+    "independent_sources": [
+      "https://lhsr.sh.gov.cn/jnylwh/20200824/7cc5e5102094470b94a8f771808c1f53.html"
+    ]
+  },
+  {
+    "blind_id": "Q034",
+    "file": "fixed18_real.json",
+    "row": 27,
+    "mode": "A",
+    "case_id": "forecast",
+    "input": "杭州明天下午天气怎么样？",
+    "history": [],
+    "answer": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未确认未知动态事实。",
+      "relevance_completeness": "没有回答所问日期或可用性，仅引导看官方信息。",
+      "naturalness": "天气/开放/票价/交通统一模板，部分没有复述本题预约或灯会。",
+      "personalization": "无个人上下文要求。",
+      "source_support": "无虚构实时出处。",
+      "uncertainty_safety": "不确定性表达诚实，没有模型猜测。"
+    },
+    "fact_check": "实时Provider缺失是预设；不能用当前网站内容补作当时证据。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q035",
+    "file": "fixed18_real.json",
+    "row": 17,
+    "mode": "C",
+    "case_id": "followup",
+    "input": "那有什么适合我的体验？",
+    "history": [
+      {
+        "user": "我喜欢安静的街巷，不喜欢排队。准备去苏州。",
+        "assistant": "可以从慢节奏的街巷体验开始。"
+      }
+    ],
+    "answer": "结合你喜欢安静街巷、不爱排队的偏好，推荐两个苏州体验：一是清晨逛平江路周边的小巷（如大儒巷、钮家巷），避开主街人流，看枕河人家、老井和石桥，晨光柔和适合拍照；二是去古城区的五卅路、同益里一带的民国里弄，行人少、生活气息浓，适合慢慢走和街拍。建议工作日清晨出行，能最大程度避开排队和人流。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 2
+    },
+    "reasons": {
+      "accuracy": "街巷方向可讨论，行人少、几乎不用排队无实时支撑。",
+      "relevance_completeness": "按上下文给出两类体验。",
+      "naturalness": "简明自然。",
+      "personalization": "准确记住安静、不排队、苏州。",
+      "source_support": "未编造资料。",
+      "uncertainty_safety": "没有证据却保证或暗示低人流。"
+    },
+    "fact_check": "PENDING 人流/排队状态；不把推荐当作核实。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q036",
+    "file": "holdout_real.json",
+    "row": 0,
+    "mode": "A",
+    "case_id": "holdout_nanjing_wall",
+    "input": "南京明城墙体现了哪些明代城市建设特点？",
+    "history": [],
+    "answer": "南京明城墙是研究明代都城建设的活标本，主要体现了这几个特点：\n\n1. **因地制宜、依山就水**：不同于传统方正都城规制，南京城墙顺应紫金山、玄武湖、秦淮河的地形布局，呈不规则形状，体现“得山川之利”的规划思想。\n\n2. **多重城垣体系**：由宫城、皇城、都城、外郭四层构成，层层护卫，反映严格的礼制等级和皇权至上的设计理念。\n\n3. **军事防御功能突出**：城墙高大厚重（都城墙高约14—21米），设有垛口、藏兵洞、瓮城（如中华门瓮城规模全国罕见），考虑实战防御需求。\n\n4. **工程质量标准严格**：城砖上有铭文责任制，烧制州府、工匠、监造官姓名俱在，便于追责，体现明代严密的质量管理制度。\n\n5. **礼制与实用结合**：城门方位、命名兼顾《周礼》都城理想格局，又根据实际防御和经济需要灵活调整。\n\n如果想实地感受，中华门（聚宝门）瓮城和台城段（可望玄武湖与紫金山）最有代表性，也是拍照的好地方——傍晚在中华门下拍光影质感，在台城拍城墙与鸡鸣寺同框非常出片。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 4,
+      "naturalness": 3,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 3
+    },
+    "reasons": {
+      "accuracy": "四重城垣和地形可核实；纳入城内范围/高度/礼制细节未全核实。",
+      "relevance_completeness": "涵盖规划、防御、工程管理。",
+      "naturalness": "学术术语偏多，长于自然交流。",
+      "personalization": "无个人上下文。",
+      "source_support": "未假称检索。",
+      "uncertainty_safety": "精确数字和礼制归因没有说明限度。"
+    },
+    "fact_check": "PARTIAL 城墙结构核实；范围、高度与礼制细节待核验。",
+    "independent_sources": [
+      "https://www.nanjing.gov.cn/xxgkn/jytabljggk/2023njytabl/shirddbjy/202312/t20231205_4115215.html"
+    ]
+  },
+  {
+    "blind_id": "Q037",
+    "file": "holdout_real.json",
+    "row": 8,
+    "mode": "C",
+    "case_id": "holdout_craft_compare",
+    "input": "昆曲和南京云锦分别能让我体验到什么文化特色？",
+    "history": [],
+    "answer": "昆曲和南京云锦代表的是两种不同维度的江南文化体验。\n\n**昆曲——听觉与表演的雅致**：昆曲发源于苏州昆山一带，有六百多年历史，被誉为“百戏之祖”，是联合国教科文组织认定的非物质文化遗产。它能让你体验到的文化特色是明清文人的审美情趣：婉转的水磨腔、细腻的身段、诗意的唱词（如《牡丹亭》中的“良辰美景奈何天”）。在南京，你可以去兰苑剧场等地方看折子戏，感受慢节奏、重意境的古典之美。\n\n**南京云锦——视觉与工艺的华贵**：云锦有一千五百多年历史，因纹样瑰丽如天上云彩而得名，曾是皇家御用织品，“寸锦寸金”。它体现的是南京作为六朝古都的宫廷气派：用真金线、孔雀羽线织造，老式大花楼木织机需两人配合，一天只能织几厘米。去江宁织造博物馆或南京云锦博物馆，能现场看到织造演示，直观理解“锦上添花”背后的匠心。\n\n简单说：昆曲给你的是流动的时间之美——声音、表演与文学；云锦给你的是凝固的空间之美——色彩、纹样与技艺。两者一柔一丽，正好构成南京“雅”与“贵”的两面。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 3
+    },
+    "reasons": {
+      "accuracy": "昆曲源流和云锦手织核心核实；具体年数、每日产量和现场展示可用性待核验。",
+      "relevance_completeness": "两种文化体验区别清晰。",
+      "naturalness": "生动但篇幅过长。",
+      "personalization": "无额外个人历史。",
+      "source_support": "UNESCO非遗核心归属真实，但不是本轮检索。",
+      "uncertainty_safety": "现场能看到展示缺日期确认，触摸描述可能不适用于展品。"
+    },
+    "fact_check": "PARTIAL 核心非遗信息核实；数值与当下展示待核验。",
+    "independent_sources": [
+      "https://ich.unesco.org/en/RL/kun-qu-opera-00004",
+      "https://www.ihchina.cn/art/detail/id/20104.html"
+    ]
+  },
+  {
+    "blind_id": "Q038",
+    "file": "fixed18_real.json",
+    "row": 19,
+    "mode": "B",
+    "case_id": "specialist_missing",
+    "input": "西湖碑刻的训诂有什么特点？",
+    "history": [],
+    "answer": "UNESCO 资料记载，西湖及其三面环山的景观自公元九世纪起启发诗人、学者与艺术家。\nUNESCO 将湖泊及三面环绕的山体列为西湖文化景观的组成，并记载其中有寺庙、塔、亭、园林、堤道和人工岛。\nUNESCO 页面记载，杭州西湖文化景观于2011年列入《世界遗产名录》。\nUNESCO 将西湖描述为清晰体现中国山水美学理想的文化景观。\nUNESCO 页面记载，西湖两条堤道和三座岛屿等主要人工要素，是在公元九至十二世纪间通过反复疏浚形成的。\n\n我倾向于认为：关于西湖碑刻训诂特点的具体资料目前不在可引用的知识范围内，我无法从已有来源回答这一专门学术问题。\n我的建议是：如果你对西湖的文化背景感兴趣，我可以聊聊它的山水美学传统和历史脉络；如有具体旅行需求也可随时告诉我。",
+    "citations": [
+      {
+        "source_name": "UNESCO World Heritage Centre",
+        "source_url": "https://whc.unesco.org/en/list/1334"
+      }
+    ],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 1,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "UNESCO背景事实核实。",
+      "relevance_completeness": "多段背景不能回答训诂问题。",
+      "naturalness": "冗长背景加模板建议，学术不足被称为倾向判断。",
+      "personalization": "没有偏好上下文。",
+      "source_support": "实际引用支持背景；不支持训诂。",
+      "uncertainty_safety": "承认缺专业材料，但用不相关事实稀释这一限制。"
+    },
+    "fact_check": "VERIFIED 背景，不能构成专业问题证据。",
+    "independent_sources": [
+      "https://whc.unesco.org/en/list/1334/"
+    ]
+  },
+  {
+    "blind_id": "Q039",
+    "file": "fixed18_real.json",
+    "row": 30,
+    "mode": "A",
+    "case_id": "opening",
+    "input": "南京博物院明天几点开门？",
+    "history": [],
+    "answer": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未确认未知动态事实。",
+      "relevance_completeness": "没有回答所问日期或可用性，仅引导看官方信息。",
+      "naturalness": "天气/开放/票价/交通统一模板，部分没有复述本题预约或灯会。",
+      "personalization": "无个人上下文要求。",
+      "source_support": "无虚构实时出处。",
+      "uncertainty_safety": "不确定性表达诚实，没有模型猜测。"
+    },
+    "fact_check": "实时Provider缺失是预设；不能用当前网站内容补作当时证据。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q040",
+    "file": "fixed18_real.json",
+    "row": 24,
+    "mode": "A",
+    "case_id": "source_missing",
+    "input": "南京为什么叫六朝古都？请给出文献来源。",
+    "history": [],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n当前没有可用的知识检索证据，检索服务不可用。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 3,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未编造六朝史料。",
+      "relevance_completeness": "没有答案或有用的官方查证路径。",
+      "naturalness": "模板化，额外正式规划声明无关。",
+      "personalization": "无用户历史需求。",
+      "source_support": "承认不能提供出处；要求未实现。",
+      "uncertainty_safety": "缺资料不回退伪造引用。"
+    },
+    "fact_check": "无事实断言。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q041",
+    "file": "fixed18_real.json",
+    "row": 13,
+    "mode": "B",
+    "case_id": "preferences",
+    "input": "我不喜欢热门景点，有什么旅游思路？",
+    "history": [],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n知识库没有检索到与问题相关的资料。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 1,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "没有提出错误事实。",
+      "relevance_completeness": "普通解释或建议被知识库范围限制拦住。",
+      "naturalness": "无关的正式规划声明与内部小型知识库措辞干扰对话。",
+      "personalization": "未虚构用户历史。",
+      "source_support": "无虚构出处；本题不要求资料。",
+      "uncertainty_safety": "守住证据边界，但对一般问题过度保守。"
+    },
+    "fact_check": "无事实断言；不能把准确拒答当作回答完整。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q042",
+    "file": "fixed18_real.json",
+    "row": 10,
+    "mode": "B",
+    "case_id": "solo",
+    "input": "一个人旅游有什么建议？",
+    "history": [],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 1,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "没有提出错误事实。",
+      "relevance_completeness": "普通解释或建议被知识库范围限制拦住。",
+      "naturalness": "无关的正式规划声明与内部小型知识库措辞干扰对话。",
+      "personalization": "未虚构用户历史。",
+      "source_support": "无虚构出处；本题不要求资料。",
+      "uncertainty_safety": "守住证据边界，但对一般问题过度保守。"
+    },
+    "fact_check": "无事实断言；不能把准确拒答当作回答完整。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q043",
+    "file": "fixed18_real.json",
+    "row": 16,
+    "mode": "B",
+    "case_id": "followup",
+    "input": "那有什么适合我的体验？",
+    "history": [
+      {
+        "user": "我喜欢安静的街巷，不喜欢排队。准备去苏州。",
+        "assistant": "可以从慢节奏的街巷体验开始。"
+      }
+    ],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 1,
+      "naturalness": 2,
+      "personalization": 2,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "无事实编造。",
+      "relevance_completeness": "未提出符合已知偏好的体验。",
+      "naturalness": "模板拒答且引入未要求的正式规划声明。",
+      "personalization": "遗漏明确的安静/园林等偏好。",
+      "source_support": "无伪造资料。",
+      "uncertainty_safety": "过度拒答。"
+    },
+    "fact_check": "无事实断言；已有上下文没有被利用。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q044",
+    "file": "fixed18_real.json",
+    "row": 15,
+    "mode": "A",
+    "case_id": "followup",
+    "input": "那有什么适合我的体验？",
+    "history": [
+      {
+        "user": "我喜欢安静的街巷，不喜欢排队。准备去苏州。",
+        "assistant": "可以从慢节奏的街巷体验开始。"
+      }
+    ],
+    "answer": "结合你喜欢安静街巷、不爱排队的偏好，苏州可以试试这两个体验：一是清晨或傍晚逛平江路两侧的小巷，比如大儒巷、悬桥巷一带，避开主街人流，感受水巷生活气息；拍照建议用长焦压缩巷弄纵深，或清晨拍青石板与白墙的柔光。二是步行或骑行走老城区的评弹茶馆路线，找一家本地人常去的小茶馆听评弹，坐在巷子深处几乎不用排队；拍照可抓茶馆内的暖光与人影，注意征得同意。整体走「清晨+小巷+茶馆」的组合，节奏慢、人少，很适合你的偏好。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 2
+    },
+    "reasons": {
+      "accuracy": "街巷方向可讨论，行人少、几乎不用排队无实时支撑。",
+      "relevance_completeness": "按上下文给出两类体验。",
+      "naturalness": "简明自然。",
+      "personalization": "准确记住安静、不排队、苏州。",
+      "source_support": "未编造资料。",
+      "uncertainty_safety": "没有证据却保证或暗示低人流。"
+    },
+    "fact_check": "PENDING 人流/排队状态；不把推荐当作核实。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q045",
+    "file": "holdout_real.json",
+    "row": 9,
+    "mode": "A",
+    "case_id": "holdout_personal",
+    "input": "按我之前的偏好，在苏州有哪些适合我的文化体验方向？不需要具体行程。",
+    "history": [
+      {
+        "user": "我喜欢园林和传统戏曲，不喜欢商业化打卡，也不想挤在热门街区。",
+        "assistant": "可以先讨论文化体验的类型。"
+      }
+    ],
+    "answer": "结合你偏好园林与传统戏曲、避开商业打卡和热门街区，可以考虑这些方向：\n\n1. 小众园林深度游：艺圃、耦园、沧浪亭一带相对安静，适合慢慢看造园细节（花窗、叠石、匾额楹联）。艺圃尤其游客少，本地人多去喝茶。摄影上，清晨光线斜射时拍花窗投影和水面倒影最佳，用长焦压缩廊道层次。\n2. 昆曲清赏而非演出打卡：关注山塘街之外的昆曲馆或评弹书场的非热门场次，如平江路深巷里的老书场或社区评弹，感受本地人日常听书氛围。拍照尽量低调，捕捉演员水袖与灯光的瞬间，用高感光度和较快快门。\n3. 园林×戏曲结合：一些园林偶有夜游或堂会式小型演出（如网师园夜花园），比大型景区演出更贴近传统厅堂展演传统；可留意官方渠道确认场次。\n4. 手作与雅集：苏扇、缂丝、核雕等非遗工作室的小班体验，多在十全街、平江路外围的小巷，比景点店铺更真实。\n\n方向上建议以“小园林+书场+手作雅集”为主线，避开拙政园、狮子林等高峰时段人流。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 3
+    },
+    "reasons": {
+      "accuracy": "园林背景核实；工作室位置、游客少及本地人喝茶常态待核验。",
+      "relevance_completeness": "给出多种体验方向。",
+      "naturalness": "自然但额外摄影篇幅较多。",
+      "personalization": "利用明确偏好。",
+      "source_support": "没有假来源。",
+      "uncertainty_safety": "夜游要求查官方，但对游客少和工作室分布仍过于确定。"
+    },
+    "fact_check": "PARTIAL 文化背景；人流与当前商业体验待核验。",
+    "independent_sources": [
+      "https://whc.unesco.org/en/list/813/"
+    ]
+  },
+  {
+    "blind_id": "Q046",
+    "file": "fixed18_real.json",
+    "row": 1,
+    "mode": "B",
+    "case_id": "history",
+    "input": "南京为什么叫六朝古都？",
+    "history": [],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 1,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "没有提出错误事实。",
+      "relevance_completeness": "普通解释或建议被知识库范围限制拦住。",
+      "naturalness": "无关的正式规划声明与内部小型知识库措辞干扰对话。",
+      "personalization": "未虚构用户历史。",
+      "source_support": "无虚构出处；本题不要求资料。",
+      "uncertainty_safety": "守住证据边界，但对一般问题过度保守。"
+    },
+    "fact_check": "无事实断言；不能把准确拒答当作回答完整。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q047",
+    "file": "holdout_real.json",
+    "row": 12,
+    "mode": "A",
+    "case_id": "holdout_specialist_source",
+    "input": "请根据可靠文献解释苏州虎丘碑文的版本差异，材料不足请说明。",
+    "history": [],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n当前没有可用的知识检索证据，检索服务不可用。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 3,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 3,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未编造虎丘碑文版本。",
+      "relevance_completeness": "按用户要求说明不足，但没有具体缺哪份碑文或拓本。",
+      "naturalness": "模板化声明而非自然学术澄清。",
+      "personalization": "未虚构上下文。",
+      "source_support": "承认缺乏文献；没有提供来源。",
+      "uncertainty_safety": "专业材料不足时守住边界。"
+    },
+    "fact_check": "具体碑文未提供，因此应澄清，不推断版本差异。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q048",
+    "file": "fixed18_real.json",
+    "row": 8,
+    "mode": "C",
+    "case_id": "comparison",
+    "input": "苏州和南京哪个更适合慢节奏旅行？",
+    "history": [],
+    "answer": "如果追求慢节奏，苏州通常更合适。苏州的园林（拙政园、留园）、平江路、山塘街都适合慢慢走、慢慢看，茶馆、评弹、小桥流水本身就是一种节奏，城市规模也较紧凑，步行加短途打车就够用。南京则更具大城气质，历史厚重（明孝陵、总统府、城墙、先锋书店），景点之间距离较远，节奏会稍快一些，但玄武湖环湖、颐和路梧桐街区也很适合放慢脚步。一句话：想沉浸江南市井与园林雅致，选苏州；想在历史纵深里散步，选南京。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 3
+    },
+    "reasons": {
+      "accuracy": "园林文化可核实；两城市节奏、交通便利程度属于体验判断，未全面核查。",
+      "relevance_completeness": "按慢节奏维度给出条件性比较。",
+      "naturalness": "易读且有明确建议。",
+      "personalization": "正确利用本轮慢节奏需求。",
+      "source_support": "一般知识未伪造检索。",
+      "uncertainty_safety": "把安静或短途交通讲得较确定，没有时段与范围限定。"
+    },
+    "fact_check": "PARTIAL 园林文化核实；体验与交通判断待核验。",
+    "independent_sources": [
+      "https://whc.unesco.org/en/list/813/"
+    ]
+  },
+  {
+    "blind_id": "Q049",
+    "file": "fixed18_real.json",
+    "row": 34,
+    "mode": "B",
+    "case_id": "dated_event",
+    "input": "今年南京灯会具体举办时间和地点是什么？",
+    "history": [],
+    "answer": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未确认未知动态事实。",
+      "relevance_completeness": "没有回答所问日期或可用性，仅引导看官方信息。",
+      "naturalness": "天气/开放/票价/交通统一模板，部分没有复述本题预约或灯会。",
+      "personalization": "无个人上下文要求。",
+      "source_support": "无虚构实时出处。",
+      "uncertainty_safety": "不确定性表达诚实，没有模型猜测。"
+    },
+    "fact_check": "实时Provider缺失是预设；不能用当前网站内容补作当时证据。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q050",
+    "file": "fixed18_real.json",
+    "row": 39,
+    "mode": "A",
+    "case_id": "low_quality",
+    "input": "西湖碑刻历史有什么特点？",
+    "history": [],
+    "answer": "西湖碑刻历史有几个鲜明特点：\n\n1. 跨度长、朝代连续：从唐代（如灵隐寺、天竺一带的题刻传统）经五代吴越国、两宋到明清直至近代，历代均有留刻，形成几乎不断层的历史链条，是西湖作为文化名湖的活档案。\n\n2. 皇家题咏突出：南宋定都临安后，'西湖十景'由宫廷画院题名定目；清代康熙皇帝南巡时为十景一一题字立碑（如'苏堤春晓''三潭印月'碑），乾隆又多次题诗叠刻，御碑成为西湖碑刻中最具代表性的一类。\n\n3. 类型多样：既有摩崖题刻（如飞来峰、南山的造像记与题名刻石）、寺庙碑记，也有园林景观碑、禁约告示碑和名人墓碑，兼顾宗教、游记、水利与行政内容。\n\n4. 书法与文学价值高：碑刻汇集楷、行、隶、篆各体，作者包括帝王、文人（如白居易、苏轼相关诗文传统）和僧侣，是研究西湖景观命名演变与文人游历的重要实物。\n\n5. 损毁与重刻并存：不少碑刻历经战乱、风雨剥蚀，部分为后世重刻或重摹，因此参观时新旧碑石并存，'原刻'与'复刻'需留意辨识。\n\n实地看点：飞来峰摩崖石刻、湖心亭'虫二'碑（风月无边）、苏堤御碑等，都是感受这一历史脉络的绝佳去处。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 4,
+      "naturalness": 3,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 3
+    },
+    "reasons": {
+      "accuracy": "跨时代连续、御碑命名与重刻比例缺直接材料，待核验。",
+      "relevance_completeness": "围绕碑刻历史展开，覆盖多面。",
+      "naturalness": "条目易读但长度偏长。",
+      "personalization": "无个人上下文。",
+      "source_support": "不声称检索或提供假来源。",
+      "uncertainty_safety": "少量限制提示不足以验证专业细节。"
+    },
+    "fact_check": "PENDING 具体碑刻断言；不计准确性排名。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q051",
+    "file": "holdout_real.json",
+    "row": 6,
+    "mode": "A",
+    "case_id": "holdout_craft_compare",
+    "input": "昆曲和南京云锦分别能让我体验到什么文化特色？",
+    "history": [],
+    "answer": "昆曲和南京云锦能带给你两种不同维度的江南文化体验。\n\n昆曲是“百戏之祖”，距今六百多年，2001年被列入联合国教科文组织首批人类口述与非物质遗产代表作。看一场昆曲，你能体验到：\n- 中国古典文人审美：唱词源自明清传奇，如《牡丹亭》《长生殿》，曲词典雅，讲究意境；\n- 独特的表演美学：水磨腔婉转细腻，配合水袖、身段和“一桌二椅”的极简舞台，重在写意抒情；\n- 慢节奏的沉浸感：一唱三叹，适合静下心来品味古代文人的情感世界。\n\n南京云锦则代表皇家织造工艺的巅峰，有约1600年历史，同样入选人类非遗，传承人常称其织造技艺“寸锦寸金”。观览云锦，你能体验到：\n- 宫廷文化的华贵：云锦曾专供皇家御用，用金线、孔雀羽织造，色彩灿烂、纹样庄重，体现“锦上添花”的帝王气派；\n- 大花楼木织机的震撼：需要两名织工配合，一天往往只能织几厘米，是中国古代手工织造的活化石；\n- 民俗吉祥寓意：龙凤、祥云、缠枝莲等纹样承载着传统祈福文化。\n\n简单说：昆曲是“听与看”的时间艺术，让你感受江南的雅致与抒情；云锦是“触摸与凝视”的空间艺术，让你见识皇家工艺的极致奢华。在南京，你可以去兰苑剧场听昆曲，到江宁织造博物馆或南京云锦博物馆看云锦，一动一静正好互补。",
+    "citations": [],
+    "scores": {
+      "accuracy": null,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 3
+    },
+    "reasons": {
+      "accuracy": "昆曲源流和云锦手织核心核实；具体年数、每日产量和现场展示可用性待核验。",
+      "relevance_completeness": "两种文化体验区别清晰。",
+      "naturalness": "生动但篇幅过长。",
+      "personalization": "无额外个人历史。",
+      "source_support": "UNESCO非遗核心归属真实，但不是本轮检索。",
+      "uncertainty_safety": "现场能看到展示缺日期确认，触摸描述可能不适用于展品。"
+    },
+    "fact_check": "PARTIAL 核心非遗信息核实；数值与当下展示待核验。",
+    "independent_sources": [
+      "https://ich.unesco.org/en/RL/kun-qu-opera-00004",
+      "https://www.ihchina.cn/art/detail/id/20104.html"
+    ]
+  },
+  {
+    "blind_id": "Q052",
+    "file": "fixed18_real.json",
+    "row": 14,
+    "mode": "C",
+    "case_id": "preferences",
+    "input": "我不喜欢热门景点，有什么旅游思路？",
+    "history": [],
+    "answer": "不喜欢热门景点的话，可以试试几个思路：\n\n1. **反向错位**：去知名目的地的小众角落，比如热门城市周边的县城、老街区，避开主景区，体验更日常的本地生活。\n2. **主题式旅行**：围绕一个兴趣深度展开，比如沿一条老铁路、一条河、一种地方小吃串起路线，比打卡式游览更有味道。\n3. **淡季+非周末**：就算去稍有名气的地方，选淡季工作日，体验也会完全不同。\n4. **慢游小城镇**：选一个中等县城或古镇住几天，逛菜市场、坐本地公交、和店主聊天，摄影素材也更真实自然。\n\n拍摄上，小众地方光线和场景更原生态，早晨和傍晚扫街最容易出片；多拍人和环境的互动，比单纯拍空景更有故事感。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "主题/错峰/慢游是建议，没有具体可验证动态断言。",
+      "relevance_completeness": "提供多种方向，额外摄影稍分散。",
+      "naturalness": "易读自然。",
+      "personalization": "围绕避热门偏好。",
+      "source_support": "没有虚构来源。",
+      "uncertainty_safety": "个别体验会完全不同的措辞稍绝对。"
+    },
+    "fact_check": "无具体外部事实；作为建议评审。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q053",
+    "file": "holdout_real.json",
+    "row": 13,
+    "mode": "B",
+    "case_id": "holdout_specialist_source",
+    "input": "请根据可靠文献解释苏州虎丘碑文的版本差异，材料不足请说明。",
+    "history": [],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 3,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 3,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未编造虎丘碑文版本。",
+      "relevance_completeness": "按用户要求说明不足，但没有具体缺哪份碑文或拓本。",
+      "naturalness": "模板化声明而非自然学术澄清。",
+      "personalization": "未虚构上下文。",
+      "source_support": "承认缺乏文献；没有提供来源。",
+      "uncertainty_safety": "专业材料不足时守住边界。"
+    },
+    "fact_check": "具体碑文未提供，因此应澄清，不推断版本差异。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q054",
+    "file": "fixed18_real.json",
+    "row": 43,
+    "mode": "B",
+    "case_id": "source_untrusted",
+    "input": "西湖历史有什么特点？请给出处。",
+    "history": [],
+    "answer": "UNESCO 资料记载，西湖及其三面环山的景观自公元九世纪起启发诗人、学者与艺术家。\nUNESCO 将湖泊及三面环绕的山体列为西湖文化景观的组成，并记载其中有寺庙、塔、亭、园林、堤道和人工岛。",
+    "citations": [
+      {
+        "source_name": "UNESCO World Heritage Centre",
+        "source_url": "https://whc.unesco.org/en/list/1334"
+      }
+    ],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "文化影响及组成要素经UNESCO核实。",
+      "relevance_completeness": "覆盖历史文化，但疏浚/时代演变较简略。",
+      "naturalness": "短而直接。",
+      "personalization": "无上下文需求。",
+      "source_support": "真实出处与断言对应。",
+      "uncertainty_safety": "没有外推专业或实时事实。"
+    },
+    "fact_check": "VERIFIED 核心答案。",
+    "independent_sources": [
+      "https://whc.unesco.org/en/list/1334/"
+    ]
+  },
+  {
+    "blind_id": "Q055",
+    "file": "holdout_real.json",
+    "row": 1,
+    "mode": "B",
+    "case_id": "holdout_nanjing_wall",
+    "input": "南京明城墙体现了哪些明代城市建设特点？",
+    "history": [],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 1,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "没有提出错误事实。",
+      "relevance_completeness": "普通解释或建议被知识库范围限制拦住。",
+      "naturalness": "无关的正式规划声明与内部小型知识库措辞干扰对话。",
+      "personalization": "未虚构用户历史。",
+      "source_support": "无虚构出处；本题不要求资料。",
+      "uncertainty_safety": "守住证据边界，但对一般问题过度保守。"
+    },
+    "fact_check": "无事实断言；不能把准确拒答当作回答完整。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q056",
+    "file": "fixed18_real.json",
+    "row": 46,
+    "mode": "B",
+    "case_id": "rationale",
+    "input": "为什么当前行程把西湖安排在18点？",
+    "history": [],
+    "answer": "当前没有保存可验证的原始理由，我不能把重新推测的解释说成当时的理由。旅游背景知识不能代替原始决定，也不能证明实时条件。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 3,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "没有编造原规划理由。",
+      "relevance_completeness": "正确解释无法回答的原因，但本例没有保存的真实Revision，不能验有效解释路径。",
+      "naturalness": "表达清楚、长度合适。",
+      "personalization": "没有捏造当前行程决策。",
+      "source_support": "坚持原始决策来源合同。",
+      "uncertainty_safety": "清楚区分推测与原理由。"
+    },
+    "fact_check": "仅验证缺失来源时降级；无真实accepted Revision。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q057",
+    "file": "fixed18_real.json",
+    "row": 0,
+    "mode": "A",
+    "case_id": "history",
+    "input": "南京为什么叫六朝古都？",
+    "history": [],
+    "answer": "南京被称为“六朝古都”，是因为从公元3世纪初到6世纪末，先后有六个王朝在此建都：东吴（孙权定都建业）、东晋，以及南朝的宋、齐、梁、陈。这六个政权均以南京（当时称建业、建康）为都城，前后约360年，因此南京得了“六朝古都”的名号。\n\n这一时期南京是南方的政治文化中心，留下了不少遗迹，如六朝建康城遗址、鸡鸣寺附近的台城段明城墙（相传与六朝宫城相关），以及南京市的标志——六朝博物馆，就建在建康城遗址之上，非常适合对这段历史感兴趣的旅行者顺路一看。",
+    "citations": [],
+    "scores": {
+      "accuracy": 3,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 3
+    },
+    "reasons": {
+      "accuracy": "六个政权正确，3世纪初与官方229年不一致；360年是跨度与建都累计易混淆，台城关联需核查。",
+      "relevance_completeness": "回答核心原因并给参观方向。",
+      "naturalness": "清楚但加入不必要遗址细节。",
+      "personalization": "无虚构偏好。",
+      "source_support": "未伪造出处。",
+      "uncertainty_safety": "相传限定不能验证台城关联，年代应更谨慎。"
+    },
+    "fact_check": "PARTIAL 核心政权核实；年代措辞与遗址关联存在问题。",
+    "independent_sources": [
+      "https://tb.nanjing.gov.cn/njjj/lsyg/"
+    ]
+  },
+  {
+    "blind_id": "Q058",
+    "file": "holdout_real.json",
+    "row": 19,
+    "mode": "B",
+    "case_id": "holdout_source_negation",
+    "input": "不用提供出处，介绍苏州园林为什么值得慢慢看。",
+    "history": [],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 1,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "没有提出错误事实。",
+      "relevance_completeness": "普通解释或建议被知识库范围限制拦住。",
+      "naturalness": "无关的正式规划声明与内部小型知识库措辞干扰对话。",
+      "personalization": "未虚构用户历史。",
+      "source_support": "无虚构出处；本题不要求资料。",
+      "uncertainty_safety": "守住证据边界，但对一般问题过度保守。"
+    },
+    "fact_check": "无事实断言；不能把准确拒答当作回答完整。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q059",
+    "file": "holdout_real.json",
+    "row": 14,
+    "mode": "C",
+    "case_id": "holdout_specialist_source",
+    "input": "请根据可靠文献解释苏州虎丘碑文的版本差异，材料不足请说明。",
+    "history": [],
+    "answer": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 3,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 3,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未编造虎丘碑文版本。",
+      "relevance_completeness": "按用户要求说明不足，但没有具体缺哪份碑文或拓本。",
+      "naturalness": "模板化声明而非自然学术澄清。",
+      "personalization": "未虚构上下文。",
+      "source_support": "承认缺乏文献；没有提供来源。",
+      "uncertainty_safety": "专业材料不足时守住边界。"
+    },
+    "fact_check": "具体碑文未提供，因此应澄清，不推断版本差异。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q060",
+    "file": "fixed18_real.json",
+    "row": 31,
+    "mode": "B",
+    "case_id": "opening",
+    "input": "南京博物院明天几点开门？",
+    "history": [],
+    "answer": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未确认未知动态事实。",
+      "relevance_completeness": "没有回答所问日期或可用性，仅引导看官方信息。",
+      "naturalness": "天气/开放/票价/交通统一模板，部分没有复述本题预约或灯会。",
+      "personalization": "无个人上下文要求。",
+      "source_support": "无虚构实时出处。",
+      "uncertainty_safety": "不确定性表达诚实，没有模型猜测。"
+    },
+    "fact_check": "实时Provider缺失是预设；不能用当前网站内容补作当时证据。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q061",
+    "file": "fixed18_real.json",
+    "row": 23,
+    "mode": "C",
+    "case_id": "source_valid",
+    "input": "西湖列入世界遗产是哪年？请给出来源。",
+    "history": [],
+    "answer": "UNESCO 页面记载，杭州西湖文化景观于2011年列入《世界遗产名录》。",
+    "citations": [
+      {
+        "source_name": "UNESCO World Heritage Centre",
+        "source_url": "https://whc.unesco.org/en/list/1334"
+      }
+    ],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 5,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "2011年由独立UNESCO页面核实。",
+      "relevance_completeness": "直接回答年份，附真实来源。",
+      "naturalness": "简洁准确。",
+      "personalization": "不需要偏好信息。",
+      "source_support": "回答归因与实际UNESCO页面一致。",
+      "uncertainty_safety": "稳定事实有资料支持，不冒称实时验证。"
+    },
+    "fact_check": "VERIFIED 核心事实与来源支持。",
+    "independent_sources": [
+      "https://whc.unesco.org/en/list/1334/"
+    ]
+  },
+  {
+    "blind_id": "Q062",
+    "file": "fixed18_real.json",
+    "row": 2,
+    "mode": "C",
+    "case_id": "history",
+    "input": "南京为什么叫六朝古都？",
+    "history": [],
+    "answer": "南京被称为\"六朝古都\"，是因为从公元3世纪初到6世纪末的约360年间，先后有六个朝代在此建都：东吴（孙权定都建业）、东晋，以及南朝的宋、齐、梁、陈。当时南京称为建业、建康，是中国南方的政治、经济和文化中心。\n\n\"六朝\"时期南京地位极高：它既是汉人在北方战乱后的延续之地，也孕育了辉煌的六朝文化——如王羲之的书法、顾恺之的绘画、竹林玄学与文学繁荣。此后南唐、明朝（初期）、太平天国和中华民国也定都于此，所以南京还有\"十朝都会\"之称，但\"六朝古都\"是最经典的说法。\n\n想感受这段历史，可以去六朝博物馆、鸡鸣寺（始建于西晋附近的同泰寺遗址一带）、明孝陵和石头城遗址，都很适合拍照与寻访古意。",
+    "citations": [],
+    "scores": {
+      "accuracy": 2,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 2
+    },
+    "reasons": {
+      "accuracy": "六政权正确；鸡鸣寺始建于西晋附近的同泰寺遗址的说法混淆时代与寺址，地方志说明两寺不同。",
+      "relevance_completeness": "直接回答原因，但延伸事实带错。",
+      "naturalness": "清楚易读。",
+      "personalization": "无个人历史。",
+      "source_support": "未假称检索。",
+      "uncertainty_safety": "未经验证的寺院关联确定表达。"
+    },
+    "fact_check": "CONTRADICTED 寺院时代/关系；六政权核心VERIFIED。",
+    "independent_sources": [
+      "https://tb.nanjing.gov.cn/njjj/lsyg/",
+      "https://dfz.nanjing.gov.cn/gzdt/202603/t20260304_5799793.html"
+    ]
+  },
+  {
+    "blind_id": "Q063",
+    "file": "fixed18_real.json",
+    "row": 3,
+    "mode": "A",
+    "case_id": "culture",
+    "input": "杭州有哪些文化特色？",
+    "history": [],
+    "answer": "杭州的文化特色可以从几个方面来感受：\n\n1. **西湖文化**：西湖是杭州的灵魂，白居易、苏东坡两位“诗人太守”留下的苏堤、白堤，以及白娘子与许仙的传说，让湖山充满人文诗意。\n\n2. **茶文化**：西湖龙井位列中国十大名茶，梅家坞、龙井村的茶园和茶宴体现了悠久的饮茶传统。\n\n3. **佛教与石窟艺术**：灵隐寺是江南千年名刹，飞来峰的五代至元代石窟造像雕刻精美，是江南少见的石窟艺术群。\n\n4. **运河文化**：京杭大运河南端就在杭州拱宸桥一带，桥西历史街区的老厂房、老民居展现了漕运时代的市井生活。\n\n5. **丝绸与工艺**：杭罗、杭扇、张小泉剪刀等传统工艺闻名，丝绸之府的地位延续千年。\n\n6. **南宋遗韵**：杭州曾为南宋都城临安，御街、官窑博物馆等都能感受到那段历史。\n\n如果想快速体验，可以白天游西湖、逛灵隐，傍晚到拱宸桥运河边走走，晚上看一场宋城《宋城千古情》或杭州剧院的越剧、评话演出，一天之内就能领略多种文化面貌。",
+    "citations": [],
+    "scores": {
+      "accuracy": 2,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 2
+    },
+    "reasons": {
+      "accuracy": "把白堤说成白居易留下的堤不准确，原白公堤与今白堤不同。",
+      "relevance_completeness": "文化维度丰富。",
+      "naturalness": "流畅，但最后安排演出非所问。",
+      "personalization": "无额外个人历史。",
+      "source_support": "无伪造检索来源。",
+      "uncertainty_safety": "暗示当晚可看具体演出，没有可用场次证据。"
+    },
+    "fact_check": "CONTRADICTED 白堤归因；其他细节PARTIAL。",
+    "independent_sources": [
+      "https://whc.unesco.org/en/list/1334/",
+      "https://www.ccdi.gov.cn/lswhn/shijian/201902/t20190227_29393.html"
+    ]
+  },
+  {
+    "blind_id": "Q064",
+    "file": "fixed18_real.json",
+    "row": 36,
+    "mode": "A",
+    "case_id": "tradition",
+    "input": "南京元宵灯会有什么文化特色？",
+    "history": [],
+    "answer": "南京元宵灯会以秦淮灯会最有代表性，素有「秦淮灯彩甲天下」之称，是国家级非物质文化遗产。其文化特色主要有：一是历史底蕴深厚，可追溯至六朝时期的金陵灯市，明代灯市在秦淮河畔尤为鼎盛，「画舫凌波、灯影桨声」成为经典意象；二是灯彩技艺独特，以荷花灯、兔子灯、蛤蟆灯等传统纸扎灯为代表，多用彩纸、绢纱手工扎制，寓意吉祥；三是地点富有文化意味，主要在夫子庙—秦淮河一带和白鹭洲公园，灯会与科举文化、江南水乡风光交融，夫子庙大照壁上的巨型龙灯尤其经典；四是民俗活动丰富，赏灯、猜灯谜、吃元宵一应俱全，是南京年俗的收尾高潮。若前去观灯，建议傍晚入夜后前往，可拍到灯笼与秦淮河水面倒影结合的画面，夫子庙牌坊和文德桥一带机位尤佳。",
+    "citations": [],
+    "scores": {
+      "accuracy": 4,
+      "relevance_completeness": 4,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 4
+    },
+    "reasons": {
+      "accuracy": "南朝传统、明初推广、非遗与秦淮核心区由国家非遗资料核实；细部灯型/机位未全核实。",
+      "relevance_completeness": "回答文化特色，少量额外拍照建议。",
+      "naturalness": "自然可读。",
+      "personalization": "无个人上下文。",
+      "source_support": "未伪造出处。",
+      "uncertainty_safety": "泛文化问题未编造具体今年日期，个别拍摄体验表达过强。"
+    },
+    "fact_check": "PARTIAL 核心文化核实，具体现场机位未核验。",
+    "independent_sources": [
+      "https://www.ihchina.cn/art/detail/id/15014.html"
+    ]
+  },
+  {
+    "blind_id": "Q065",
+    "file": "fixed18_real.json",
+    "row": 44,
+    "mode": "C",
+    "case_id": "source_untrusted",
+    "input": "西湖历史有什么特点？请给出处。",
+    "history": [],
+    "answer": "现有来源不足以核实这个问题。可以补充具体出处，或改为一般介绍。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 3,
+      "personalization": 5,
+      "source_support": 3,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "没有编造事实；说明证据不足。",
+      "relevance_completeness": "未回答具体问题，未给可操作查证路径。",
+      "naturalness": "简短但模板化。",
+      "personalization": "无偏好上下文，不虚构。",
+      "source_support": "如实承认没有来源，但来源需求未满足。",
+      "uncertainty_safety": "未把通用知识包装成核实结果。"
+    },
+    "fact_check": "无可核实事实；回答的功能缺口单独扣分。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q066",
+    "file": "holdout_real.json",
+    "row": 16,
+    "mode": "B",
+    "case_id": "holdout_live",
+    "input": "苏州博物馆明天还有预约名额吗？",
+    "history": [],
+    "answer": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未确认未知动态事实。",
+      "relevance_completeness": "没有回答所问日期或可用性，仅引导看官方信息。",
+      "naturalness": "天气/开放/票价/交通统一模板，部分没有复述本题预约或灯会。",
+      "personalization": "无个人上下文要求。",
+      "source_support": "无虚构实时出处。",
+      "uncertainty_safety": "不确定性表达诚实，没有模型猜测。"
+    },
+    "fact_check": "实时Provider缺失是预设；不能用当前网站内容补作当时证据。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q067",
+    "file": "fixed18_real.json",
+    "row": 45,
+    "mode": "A",
+    "case_id": "rationale",
+    "input": "为什么当前行程把西湖安排在18点？",
+    "history": [],
+    "answer": "当前没有保存可验证的原始理由，我不能把重新推测的解释说成当时的理由。旅游背景知识不能代替原始决定，也不能证明实时条件。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 3,
+      "naturalness": 4,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "没有编造原规划理由。",
+      "relevance_completeness": "正确解释无法回答的原因，但本例没有保存的真实Revision，不能验有效解释路径。",
+      "naturalness": "表达清楚、长度合适。",
+      "personalization": "没有捏造当前行程决策。",
+      "source_support": "坚持原始决策来源合同。",
+      "uncertainty_safety": "清楚区分推测与原理由。"
+    },
+    "fact_check": "仅验证缺失来源时降级；无真实accepted Revision。",
+    "independent_sources": []
+  },
+  {
+    "blind_id": "Q068",
+    "file": "holdout_real.json",
+    "row": 15,
+    "mode": "A",
+    "case_id": "holdout_live",
+    "input": "苏州博物馆明天还有预约名额吗？",
+    "history": [],
+    "answer": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+    "citations": [],
+    "scores": {
+      "accuracy": 5,
+      "relevance_completeness": 2,
+      "naturalness": 2,
+      "personalization": 5,
+      "source_support": 5,
+      "uncertainty_safety": 5
+    },
+    "reasons": {
+      "accuracy": "未确认未知动态事实。",
+      "relevance_completeness": "没有回答所问日期或可用性，仅引导看官方信息。",
+      "naturalness": "天气/开放/票价/交通统一模板，部分没有复述本题预约或灯会。",
+      "personalization": "无个人上下文要求。",
+      "source_support": "无虚构实时出处。",
+      "uncertainty_safety": "不确定性表达诚实，没有模型猜测。"
+    },
+    "fact_check": "实时Provider缺失是预设；不能用当前网站内容补作当时证据。",
+    "independent_sources": []
+  }
+]

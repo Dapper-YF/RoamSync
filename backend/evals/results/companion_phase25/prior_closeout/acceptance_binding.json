@@ -1,0 +1,93 @@
+{
+  "snapshot_sha256": "092c79626184262f5c8b530174fbca290e883ea39a89d7f4710303816d38713e",
+  "local_manifest_match": true,
+  "runtime": {
+    "roamsync-api": {
+      "files": 144,
+      "match": true
+    },
+    "roamsync-agent-worker-1": {
+      "files": 144,
+      "match": true
+    }
+  },
+  "junit": {
+    "focused": {
+      "tests": "155",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "13.969"
+    },
+    "full": {
+      "tests": "632",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "33.781"
+    }
+  },
+  "health": {
+    "http://127.0.0.1:8000/health/live": 200,
+    "http://127.0.0.1:8000/health/ready": 200,
+    "http://127.0.0.1:3000/trips": 200
+  },
+  "production_smoke_correct": 6,
+  "formal_state_unchanged": true,
+  "containers": [
+    {
+      "name": "/roamsync-api",
+      "image": "sha256:75cc7fbd6a49e0fe2a3683903f4c98d5400498c9be7a961299ef366c5cf22b36",
+      "status": "running",
+      "running": true,
+      "health": "healthy",
+      "started": "2026-09-30T03:37:23.289984025Z"
+    },
+    {
+      "name": "/roamsync-agent-worker-1",
+      "image": "sha256:514bd7295fbbeefa6c51ba94182f4f53522c075b73a0951a76ae414b46c3bd87",
+      "status": "running",
+      "running": true,
+      "health": null,
+      "started": "2026-09-30T03:37:23.274040474Z"
+    },
+    {
+      "name": "/roamsync-web",
+      "image": "sha256:9794c7029f6ca25800174e7072d701065df2b6bbff6110dd168f4c6b614f99b8",
+      "status": "running",
+      "running": true,
+      "health": "healthy",
+      "started": "2026-09-30T01:55:06.162947092Z"
+    },
+    {
+      "name": "/roamsync-postgres",
+      "image": "sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73",
+      "status": "running",
+      "running": true,
+      "health": "healthy",
+      "started": "2026-09-30T00:11:31.264431531Z"
+    }
+  ],
+  "holdout_fixture_unchanged": true,
+  "verified_at_utc": "2026-09-30T03:55:07.148366+00:00",
+  "artifact_sha256": {
+    "backend/evals/results/companion_phase25/final/source_snapshot.json": "772c6d7f7b20e806e10c8b2347133aa113ce782ec0fc20556d51b062ab92dd6f",
+    "backend/evals/results/companion_phase25/final/real_model.json": "19b22bfce4d6a76e73a5c9b26129a1bdbe63b604a43091a42fc35e12aafbf7c9",
+    "backend/evals/results/companion_phase25/final/holdout_review_live.json": "f6727ea004572e27f3e8b424553ce60be20c7c6170776a8f16f85a4ee559ccc5",
+    "backend/evals/results/companion_phase25/final/manual_review.json": "008553bb8a08afe328eb606bbc27d1e85643df627cecb516e272db5c34109759",
+    "backend/evals/results/companion_phase25/final/metrics.json": "c857f178f0c3ea8c8baf2ef6593273588232c8611a7bc9608b98e87f967dab64",
+    "backend/evals/results/companion_phase25/final/audit_binding.json": "825c913b64a4b578955e05158fdbdd045106a2c02dcb12968a29c4feab1ddd3b",
+    "backend/evals/results/companion_phase25/final/backend_final.xml": "98881d1a5eff599b9165db97e78074930835564e1adf50d6c646c78118ac4624",
+    "backend/evals/results/companion_phase25/final_focused.xml": "84bf0ff5a433a623218036d49317b513e67a28982b8a6b34429cb9202e5cbb37",
+    "backend/evals/results/companion_phase25/final/production_smoke.json": "2c1a44d7c281435ab33a8e5066b15217f3534d86ef0f5cf487e422ee4a31f57e",
+    "backend/evals/results/companion_phase25/final/production_build.log": "a084afd0ce8a6741bebc155f7338413dc441a6a745d362e515b31f104ce94cb8",
+    "backend/evals/results/companion_phase25/final/production_startup.log": "e5960295a69117d76b2f6c3f8b8673f94db243e65ae58ce2276c275016f812bf",
+    "backend/evals/results/companion_phase25/final/web_test.log": "f8b847abf460607af37d2affa006b2b737d5a7c0e9c34a1aea338804b473f5c7",
+    "backend/evals/results/companion_phase25/final/web_typecheck.log": "5f524a5a892cb612d21ed806a906356e4c528b99b873e71f3bb9fe76a076037d",
+    "backend/evals/results/companion_phase25/final/web_build.log": "0fbc22b4c9c439a72075318e27381de0eb3501078474fab639c297d0293f31b9",
+    "scripts/phase25_review.py": "1280e4fa52d774c11e8a12cc0a6911ed15f34a1a2141aebbea9776cad5fdc182",
+    "scripts/phase25_release_smoke.py": "32274ed27d8d0258d07d4caaa6e0d3147203e36b8555bcf0e16b50ee26e751cc",
+    "scripts/phase25_release_binding.py": "d84db277f56657de5363d996a6aae394f9c6d06f0efba33a5e4d465b6dc78366",
+    "docs/agent/COMPANION_PHASE25_EVAL_PROTOCOL_20260930.md": "06c9288ddf52f0b728ef8cbc97d83ee8a8215a045e6ea96b55469b5a3c4bd501"
+  }
+}

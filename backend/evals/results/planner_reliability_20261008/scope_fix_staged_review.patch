@@ -1,0 +1,204 @@
+diff --git a/backend/app/decision_context.py b/backend/app/decision_context.py
+index 0e96d77..3876e1d 100644
+--- a/backend/app/decision_context.py
++++ b/backend/app/decision_context.py
+@@ -14,16 +14,27 @@ def build_decision_context(*, context: dict, goals: dict, resolution: dict, deci
+     """Select the target-day facts and establish one activity authority split."""
+     grounded = resolution.get("grounded_intent") or {}
+     target_ids = set(grounded.get("target_day_ids") or [])
++    recovery = context.get("execution_recovery") or {}
++    execution = recovery.get("execution_state") or {}
++    execution_reference_ids = {str(execution[key]) for key in (
++        "current_activity_id", "navigation_target_activity_id", "first_impacted_activity_id",
++    ) if execution.get(key)}
++    # Keep referenced execution days as immutable context, even for a request
++    # targeting a different day. Never hide global execution pointers.
+     target_days = [
+         day for day in context.get("days", [])
+         if not target_ids or str(day.get("id")) in target_ids
++        or any(str(activity["id"]) in execution_reference_ids for activity in day.get("activities", []))
+     ]
+     activities = [activity for day in target_days for activity in day.get("activities", [])]
+     activity_ids = {str(activity["id"]) for activity in activities}
+-    recovery = context.get("execution_recovery") or {}
+ 
+     frozen = set(recovery.get("frozen_activity_ids") or [])
+     protected_sources: dict[str, set[str]] = defaultdict(set)
++    for day in target_days:
++        if target_ids and str(day.get("id")) not in target_ids:
++            for activity in day.get("activities", []):
++                protected_sources[str(activity["id"])].add("outside_requested_scope")
+     for activity_id in frozen:
+         protected_sources[activity_id].add("execution_completed_or_skipped")
+     for activity_id in recovery.get("protected_activity_ids") or []:
+diff --git a/backend/tests/test_decision_context.py b/backend/tests/test_decision_context.py
+index 7206e06..5c5703c 100644
+--- a/backend/tests/test_decision_context.py
++++ b/backend/tests/test_decision_context.py
+@@ -115,3 +115,45 @@ def test_invariant_rejects_protected_editable_overlap_and_unknown_route_endpoint
+             "protected_constraints": {"protected_activity_ids": ["A"], "editable_activity_ids": ["A"]},
+         })
+     assert set(exc_info.value.codes) == {"protected_editable_overlap", "route_leg_references_unknown_activity"}
++
++
++def _cross_day_context():
++    from copy import deepcopy
++    context, goals, resolution = _context()
++    extra = deepcopy(context["days"][0]["activities"][-1])
++    extra.update(id="future-editable", status="planned", schedule_locked=False)
++    context["days"].append({"id": "day-2", "date": "2026-10-21", "route_legs": [], "activities": [extra]})
++    unrelated = deepcopy(extra)
++    unrelated["id"] = "unrelated-editable"
++    context["days"].append({"id": "day-3", "date": "2026-10-22", "route_legs": [], "activities": [unrelated]})
++    goals["target_days"] = ["2026-10-21"]
++    resolution["grounded_intent"]["target_day_ids"] = ["day-2"]
++    return context, goals, resolution
++
++
++def test_other_day_request_keeps_execution_references_as_readonly_context():
++    from copy import deepcopy
++    context, goals, resolution = _cross_day_context()
++    before = deepcopy(context)
++    result = build_decision_context(context=context, goals=goals, resolution=resolution)
++    assert context == before
++    assert result["goal_context"]["target_days"] == ["2026-10-21"]
++    assert {day["day_id"] for day in result["formal_itinerary"]["days"]} == {"day-1", "day-2"}
++    assert result["protected_constraints"]["editable_activity_ids"] == ["future-editable"]
++    execution_ids = {activity["id"] for activity in context["days"][0]["activities"]}
++    assert execution_ids <= set(result["protected_constraints"]["protected_activity_ids"])
++    for activity_id in execution_ids:
++        assert "outside_requested_scope" in result["protected_constraints"]["provenance"][activity_id]
++    assert result["execution_context"]["current_activity"]["name"] == "当前活动"
++    assert result["execution_context"]["navigation_target"]["name"] == "导航目标"
++    assert result["execution_context"]["first_impacted_activity_id"] == "activity-target"
++    assert_decision_context_invariants(result)
++
++
++@pytest.mark.parametrize("reference", ["current_activity_id", "navigation_target_activity_id", "first_impacted_activity_id"])
++def test_other_day_request_still_rejects_truly_unknown_execution_references(reference):
++    context, goals, resolution = _cross_day_context()
++    context["execution_recovery"]["execution_state"][reference] = "unknown-activity"
++    with pytest.raises(DecisionContextInvariantError) as error:
++        build_decision_context(context=context, goals=goals, resolution=resolution)
++    assert "execution_references_unknown_activity" in error.value.codes
+diff --git a/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md b/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md
+index 57b62df..ac53ae8 100644
+--- a/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md
++++ b/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md
+@@ -1,14 +1,16 @@
+-# Current reliability checkpoint — 2026-10-08
++# Current clean-release checkpoint — 2026-10-08
+ 
+-Status: NOT READY. Original application8ee7dbf/documentation0b5010fe preserved. The human-approved six-path candidate is 26e33f7ecec848403c0992953c61216ddb305fec, branch codex/roamsync-planner-reliability-20261008; clean checkout E:/Study/RoamSync-planner-reliability-clean-20261008. Source6d0257506c8ae65cbfc640cbdbfd3376b23bac2cf9623306432513f48ddca1eb. Initial checkout was Git clean; later untracked browser evidence under backend/evals/results does not alter tracked source. API/Worker175 shipped files exactly match, no mounts; external provider configuration unchanged. Nginx3001/API8001 share isolated PG17; old failed Runs and Trips remain exactly preserved.
++Status: NOT READY. Application candidate4a523b7bd91df6c7c77c06cff87b2ff6a36a80de on codex/roamsync-planner-reliability-20261008; original8ee7dbf/0b5010fe remain intact. Clean checkout E:/Study/RoamSync-planner-reliability-clean-v2-20261008; backend source3ae41a2daf9229933d1429fd9b2c58ff34a3564fb802f26a337b8c9d9faee52c. API/Worker175 shipped files exactly match; no source mounts. Locked clean Linux/Python3.11/emptyPG17 migrations0→0034:859passed/0fail/error/skip/2warnings. Web125/typecheck/build passed; Web source12b8ee8dc087770ebb1bfdb7563dd0b9052867a1546b162624af0330813a16a2 and built RootFS/artifacts unchanged. Only untracked rehearsal outputs generated after initial clean build.
+ 
+-MEASURED: clean Git locked Backend/Worker/Web builds; empty PG17 migrations0→0034;858 passed/0fail/error/skip/2existing warnings. Web typecheck,125tests and build freshly passed. Bounded predefined real GLM6/6 completed/stop,0retries; strict Research2/2. This is a small sample, not an availability guarantee. Historical Research JSON raw completion/parse position and deeper transport origin remain UNLOCATED; separate categories, no guessed fix or provider replacement.
++MEASURED real browser/Backend/Worker/GLM/AMap/Tavily/Open-Meteo/PG17: initial10-activity valid Candidate pending/UIvisible/formal0/version1; day2 edit3→2activities,360→300minutes, untouched dates exact; explicit Accept formalversion1→2 with9activities. Browser rejection of the older first candidate persists too_rushed feedback without changing accepted formal version2; this stale-only check is not a current-version rejection proof. Execution/extend30 changes projected end by30minutes, formal schedule/version unchanged. Four navigation observations explicitly source=simulation (not device GPS; no compressed visit actions used) cause real Disruption/Worker Recovery. Recovery valid and explicit UI acceptance gives version2→3, planned/formal cost25000fen, Disruption resolved; completed/current/navigation-target formal fields exactly preserved except updated_at. Honest Explanation rationale_unavailable/based_on_prior_decision=false passes, no formal/Run mutation; original-rationale Ledger2.2 remains OPEN. City scope and real facts checks pass.
+ 
+-The new-ref normal browser exploration/facts/create preview/confirmation generated a valid nonempty8-activity Candidate: Trip58239cd8-b097-4898-870f-f49f1a98719d, Run5981caad-00b9-40ca-8d2f-671b4a92717b, Revision1e0c5bab-5d7d-45fc-bafe-6f7761112739. Validator valid=true/errors=[]; route schedule warning transparently recorded. UI visible, pending, formalactivities0/version1. Day2 edit Runbbea2a1a-e7f1-4bf6-bd6f-cc12ab8200a4 remains awaiting_clarification: generated “其他日期安排不变” is incorrectly treated as a missing activity. One normal UI supplement returns200 but retains the same ambiguity. This is a confirmed internal parser defect, independent of historical JSON/transport categories. Candidate Accept and Execution/Disruption/Recovery/Reject/Explanation have NOT passed on this candidate.
++Full current-version rejection gate FAILED: ordinary request adjusts2026-10-11 while current activity美龄宫 is on2026-10-09. Run11230b54-ea1a-46f6-93df-9b8fe0616c7a fails decision_context_invalid/execution_references_unknown_activity. The activity exists in the full persisted itinerary. Builder filters formal_itinerary to requested day yet carries global current_activity_id; unchanged invariant then compares it against only the scoped subset. Formal version3/days unchanged, failure history preserved. This confirmed scope assembly defect is separate from meta/activity parsing and the historical Research JSON/transport faults.
+ 
+-Independent follow-up proposal, NOT applied or committed: replace the exact equality with re.fullmatch(r"其他日期(?:安排)?不变", value), after real alias matching; add the observed form regression plus exact real-alias precedence and unknown venue negative checks. Five focused cases: old candidate1failed/4passed; patched5passed. Validator, Graph, route/time/budget, settings and explicit confirmation unchanged. Proposed source 3ae41a2daf9229933d1429fd9b2c58ff34a3564fb802f26a337b8c9d9faee52c; further source commit needs exact human authorization. Raw evidence/patch/manifests are excluded from Git in backend/evals/results/planner_reliability_20261008.
++Independent proposed correction (not committed/applied to Release): include days referenced by current/navigation-target/first-impacted Execution IDs as read-only context alongside requested days; protect every non-requested activity with outside_requested_scope. Requested target and editable IDs stay confined to third day. Four new regressions, all existing context tests: original1fail/8pass, proposed9pass. Three genuinely unknown pointer negatives remain rejected; strict Invariant function AST is identical, Candidate Validator and Planning Graph byte-identical. Replay of the actual read-only context fails on4a523b7 and passes on proposed source with the same real current pointer protected and only third-day editable IDs; zero provider calls or DB writes for replay. Additional existing source/test paths need exact human scope approval. Proposed manifest: 02a3072930e2dbcacd9112b8aa3c383e7ef2f77c73b8666b645501c3fa1b2af4. Evidence: backend/evals/results/planner_reliability_20261008/proposed_decision_context_scope_fix.patch, scope_red.xml, scope_green.xml, scope_actual_context_replay.json, decision_context_scope_blocker.json.
+ 
+-Production remains unchanged on8000/3000; no deployment/main merge/production migration/reset/Trip deletion. No RELEASE CANDIDATE READY claim. Next: approve the measured follow-up patch, create a new source identity and repeat affected clean locked regression/build/runtime binding and full real browser chain. After complete success only, request online approval. Future deployment plan: preserve current image IDs and external configuration; after explicit authorization take and verify DB backup, confirm production schema/readiness, resolve the automatic migration entrypoint separately, deploy API/Worker/Web together and perform read-only bindings. Rollback restores prior images/configuration while retaining PG volume and newer user records; no down migration/reset/restoration over newer data without separate authorization.
++Provider fixed bounded6/6 completed/stop,0retry/serial, strictResearch2/2 (17.313/23.214s), connect-reuse success; actual deadline error correctly maps ConnectTimeout→planner_timeout. This small sample and successful core chain do not establish production availability. Original malformed Research raw/finishreason/parseposition missing; exact root UNLOCATED. Historical RemoteProtocolError belongs to transport/protocol category; deeper network/gateway/provider cause UNLOCATED. Recovery observed without replacing provider/config/model. No mock, prefix salvage, weakened Validator or invented Candidate.
++
++Production unchanged, seven formal tables/Trip versions exact and images/config retained. Read-only productionPG17.11/schema0034; candidate migrations byte-identical, no production migration executed. Candidate differs in20 shipped source paths (13app/7eval) and Web bundle; APP_ENV development→release_acceptance in isolation, same model endpoint/key (values unprinted). Existing user Trips and failures retained. No main merge/push/deploy/DB reset/volume/data deletion. Only after exact scope approval, new clean candidate full regression and complete real chain including current Reject can establish READY. Future deployment needs separate final approval: verify authorized backup/readiness/schema, preserve prior image IDs/external config, start API without automatic production migration until DB boundary resolved, deploy API/Worker/Web consistently. Rollback restores prior images/config, retains PG volume/newer user data; no down migration/reset/overwriting data without separate authorization.
+ 
+ ## Historical checkpoint preserved below
+ 
+diff --git a/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md b/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md
+index 5f8e321..a0049b8 100644
+--- a/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md
++++ b/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md
+@@ -1,14 +1,16 @@
+-# Current reliability checkpoint — 2026-10-08
++# Current clean-release checkpoint — 2026-10-08
+ 
+-Status: NOT READY. Original application8ee7dbf/documentation0b5010fe preserved. The human-approved six-path candidate is 26e33f7ecec848403c0992953c61216ddb305fec, branch codex/roamsync-planner-reliability-20261008; clean checkout E:/Study/RoamSync-planner-reliability-clean-20261008. Source6d0257506c8ae65cbfc640cbdbfd3376b23bac2cf9623306432513f48ddca1eb. Initial checkout was Git clean; later untracked browser evidence under backend/evals/results does not alter tracked source. API/Worker175 shipped files exactly match, no mounts; external provider configuration unchanged. Nginx3001/API8001 share isolated PG17; old failed Runs and Trips remain exactly preserved.
++Status: NOT READY. Application candidate4a523b7bd91df6c7c77c06cff87b2ff6a36a80de on codex/roamsync-planner-reliability-20261008; original8ee7dbf/0b5010fe remain intact. Clean checkout E:/Study/RoamSync-planner-reliability-clean-v2-20261008; backend source3ae41a2daf9229933d1429fd9b2c58ff34a3564fb802f26a337b8c9d9faee52c. API/Worker175 shipped files exactly match; no source mounts. Locked clean Linux/Python3.11/emptyPG17 migrations0→0034:859passed/0fail/error/skip/2warnings. Web125/typecheck/build passed; Web source12b8ee8dc087770ebb1bfdb7563dd0b9052867a1546b162624af0330813a16a2 and built RootFS/artifacts unchanged. Only untracked rehearsal outputs generated after initial clean build.
+ 
+-MEASURED: clean Git locked Backend/Worker/Web builds; empty PG17 migrations0→0034;858 passed/0fail/error/skip/2existing warnings. Web typecheck,125tests and build freshly passed. Bounded predefined real GLM6/6 completed/stop,0retries; strict Research2/2. This is a small sample, not an availability guarantee. Historical Research JSON raw completion/parse position and deeper transport origin remain UNLOCATED; separate categories, no guessed fix or provider replacement.
++MEASURED real browser/Backend/Worker/GLM/AMap/Tavily/Open-Meteo/PG17: initial10-activity valid Candidate pending/UIvisible/formal0/version1; day2 edit3→2activities,360→300minutes, untouched dates exact; explicit Accept formalversion1→2 with9activities. Browser rejection of the older first candidate persists too_rushed feedback without changing accepted formal version2; this stale-only check is not a current-version rejection proof. Execution/extend30 changes projected end by30minutes, formal schedule/version unchanged. Four navigation observations explicitly source=simulation (not device GPS; no compressed visit actions used) cause real Disruption/Worker Recovery. Recovery valid and explicit UI acceptance gives version2→3, planned/formal cost25000fen, Disruption resolved; completed/current/navigation-target formal fields exactly preserved except updated_at. Honest Explanation rationale_unavailable/based_on_prior_decision=false passes, no formal/Run mutation; original-rationale Ledger2.2 remains OPEN. City scope and real facts checks pass.
+ 
+-The new-ref normal browser exploration/facts/create preview/confirmation generated a valid nonempty8-activity Candidate: Trip58239cd8-b097-4898-870f-f49f1a98719d, Run5981caad-00b9-40ca-8d2f-671b4a92717b, Revision1e0c5bab-5d7d-45fc-bafe-6f7761112739. Validator valid=true/errors=[]; route schedule warning transparently recorded. UI visible, pending, formalactivities0/version1. Day2 edit Runbbea2a1a-e7f1-4bf6-bd6f-cc12ab8200a4 remains awaiting_clarification: generated “其他日期安排不变” is incorrectly treated as a missing activity. One normal UI supplement returns200 but retains the same ambiguity. This is a confirmed internal parser defect, independent of historical JSON/transport categories. Candidate Accept and Execution/Disruption/Recovery/Reject/Explanation have NOT passed on this candidate.
++Full current-version rejection gate FAILED: ordinary request adjusts2026-10-11 while current activity美龄宫 is on2026-10-09. Run11230b54-ea1a-46f6-93df-9b8fe0616c7a fails decision_context_invalid/execution_references_unknown_activity. The activity exists in the full persisted itinerary. Builder filters formal_itinerary to requested day yet carries global current_activity_id; unchanged invariant then compares it against only the scoped subset. Formal version3/days unchanged, failure history preserved. This confirmed scope assembly defect is separate from meta/activity parsing and the historical Research JSON/transport faults.
+ 
+-Independent follow-up proposal, NOT applied or committed: replace the exact equality with re.fullmatch(r"其他日期(?:安排)?不变", value), after real alias matching; add the observed form regression plus exact real-alias precedence and unknown venue negative checks. Five focused cases: old candidate1failed/4passed; patched5passed. Validator, Graph, route/time/budget, settings and explicit confirmation unchanged. Proposed source 3ae41a2daf9229933d1429fd9b2c58ff34a3564fb802f26a337b8c9d9faee52c; further source commit needs exact human authorization. Raw evidence/patch/manifests are excluded from Git in backend/evals/results/planner_reliability_20261008.
++Independent proposed correction (not committed/applied to Release): include days referenced by current/navigation-target/first-impacted Execution IDs as read-only context alongside requested days; protect every non-requested activity with outside_requested_scope. Requested target and editable IDs stay confined to third day. Four new regressions, all existing context tests: original1fail/8pass, proposed9pass. Three genuinely unknown pointer negatives remain rejected; strict Invariant function AST is identical, Candidate Validator and Planning Graph byte-identical. Replay of the actual read-only context fails on4a523b7 and passes on proposed source with the same real current pointer protected and only third-day editable IDs; zero provider calls or DB writes for replay. Additional existing source/test paths need exact human scope approval. Proposed manifest: 02a3072930e2dbcacd9112b8aa3c383e7ef2f77c73b8666b645501c3fa1b2af4. Evidence: backend/evals/results/planner_reliability_20261008/proposed_decision_context_scope_fix.patch, scope_red.xml, scope_green.xml, scope_actual_context_replay.json, decision_context_scope_blocker.json.
+ 
+-Production remains unchanged on8000/3000; no deployment/main merge/production migration/reset/Trip deletion. No RELEASE CANDIDATE READY claim. Next: approve the measured follow-up patch, create a new source identity and repeat affected clean locked regression/build/runtime binding and full real browser chain. After complete success only, request online approval. Future deployment plan: preserve current image IDs and external configuration; after explicit authorization take and verify DB backup, confirm production schema/readiness, resolve the automatic migration entrypoint separately, deploy API/Worker/Web together and perform read-only bindings. Rollback restores prior images/configuration while retaining PG volume and newer user records; no down migration/reset/restoration over newer data without separate authorization.
++Provider fixed bounded6/6 completed/stop,0retry/serial, strictResearch2/2 (17.313/23.214s), connect-reuse success; actual deadline error correctly maps ConnectTimeout→planner_timeout. This small sample and successful core chain do not establish production availability. Original malformed Research raw/finishreason/parseposition missing; exact root UNLOCATED. Historical RemoteProtocolError belongs to transport/protocol category; deeper network/gateway/provider cause UNLOCATED. Recovery observed without replacing provider/config/model. No mock, prefix salvage, weakened Validator or invented Candidate.
++
++Production unchanged, seven formal tables/Trip versions exact and images/config retained. Read-only productionPG17.11/schema0034; candidate migrations byte-identical, no production migration executed. Candidate differs in20 shipped source paths (13app/7eval) and Web bundle; APP_ENV development→release_acceptance in isolation, same model endpoint/key (values unprinted). Existing user Trips and failures retained. No main merge/push/deploy/DB reset/volume/data deletion. Only after exact scope approval, new clean candidate full regression and complete real chain including current Reject can establish READY. Future deployment needs separate final approval: verify authorized backup/readiness/schema, preserve prior image IDs/external config, start API without automatic production migration until DB boundary resolved, deploy API/Worker/Web consistently. Rollback restores prior images/config, retains PG volume/newer user data; no down migration/reset/overwriting data without separate authorization.
+ 
+ ## Historical checkpoint preserved below
+ 
+diff --git a/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md b/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md
+index faa194d..c8b73cb 100644
+--- a/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md
++++ b/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md
+@@ -1,14 +1,16 @@
+-# Current reliability checkpoint — 2026-10-08
++# Current clean-release checkpoint — 2026-10-08
+ 
+-Status: NOT READY. Original application8ee7dbf/documentation0b5010fe preserved. The human-approved six-path candidate is 26e33f7ecec848403c0992953c61216ddb305fec, branch codex/roamsync-planner-reliability-20261008; clean checkout E:/Study/RoamSync-planner-reliability-clean-20261008. Source6d0257506c8ae65cbfc640cbdbfd3376b23bac2cf9623306432513f48ddca1eb. Initial checkout was Git clean; later untracked browser evidence under backend/evals/results does not alter tracked source. API/Worker175 shipped files exactly match, no mounts; external provider configuration unchanged. Nginx3001/API8001 share isolated PG17; old failed Runs and Trips remain exactly preserved.
++Status: NOT READY. Application candidate4a523b7bd91df6c7c77c06cff87b2ff6a36a80de on codex/roamsync-planner-reliability-20261008; original8ee7dbf/0b5010fe remain intact. Clean checkout E:/Study/RoamSync-planner-reliability-clean-v2-20261008; backend source3ae41a2daf9229933d1429fd9b2c58ff34a3564fb802f26a337b8c9d9faee52c. API/Worker175 shipped files exactly match; no source mounts. Locked clean Linux/Python3.11/emptyPG17 migrations0→0034:859passed/0fail/error/skip/2warnings. Web125/typecheck/build passed; Web source12b8ee8dc087770ebb1bfdb7563dd0b9052867a1546b162624af0330813a16a2 and built RootFS/artifacts unchanged. Only untracked rehearsal outputs generated after initial clean build.
+ 
+-MEASURED: clean Git locked Backend/Worker/Web builds; empty PG17 migrations0→0034;858 passed/0fail/error/skip/2existing warnings. Web typecheck,125tests and build freshly passed. Bounded predefined real GLM6/6 completed/stop,0retries; strict Research2/2. This is a small sample, not an availability guarantee. Historical Research JSON raw completion/parse position and deeper transport origin remain UNLOCATED; separate categories, no guessed fix or provider replacement.
++MEASURED real browser/Backend/Worker/GLM/AMap/Tavily/Open-Meteo/PG17: initial10-activity valid Candidate pending/UIvisible/formal0/version1; day2 edit3→2activities,360→300minutes, untouched dates exact; explicit Accept formalversion1→2 with9activities. Browser rejection of the older first candidate persists too_rushed feedback without changing accepted formal version2; this stale-only check is not a current-version rejection proof. Execution/extend30 changes projected end by30minutes, formal schedule/version unchanged. Four navigation observations explicitly source=simulation (not device GPS; no compressed visit actions used) cause real Disruption/Worker Recovery. Recovery valid and explicit UI acceptance gives version2→3, planned/formal cost25000fen, Disruption resolved; completed/current/navigation-target formal fields exactly preserved except updated_at. Honest Explanation rationale_unavailable/based_on_prior_decision=false passes, no formal/Run mutation; original-rationale Ledger2.2 remains OPEN. City scope and real facts checks pass.
+ 
+-The new-ref normal browser exploration/facts/create preview/confirmation generated a valid nonempty8-activity Candidate: Trip58239cd8-b097-4898-870f-f49f1a98719d, Run5981caad-00b9-40ca-8d2f-671b4a92717b, Revision1e0c5bab-5d7d-45fc-bafe-6f7761112739. Validator valid=true/errors=[]; route schedule warning transparently recorded. UI visible, pending, formalactivities0/version1. Day2 edit Runbbea2a1a-e7f1-4bf6-bd6f-cc12ab8200a4 remains awaiting_clarification: generated “其他日期安排不变” is incorrectly treated as a missing activity. One normal UI supplement returns200 but retains the same ambiguity. This is a confirmed internal parser defect, independent of historical JSON/transport categories. Candidate Accept and Execution/Disruption/Recovery/Reject/Explanation have NOT passed on this candidate.
++Full current-version rejection gate FAILED: ordinary request adjusts2026-10-11 while current activity美龄宫 is on2026-10-09. Run11230b54-ea1a-46f6-93df-9b8fe0616c7a fails decision_context_invalid/execution_references_unknown_activity. The activity exists in the full persisted itinerary. Builder filters formal_itinerary to requested day yet carries global current_activity_id; unchanged invariant then compares it against only the scoped subset. Formal version3/days unchanged, failure history preserved. This confirmed scope assembly defect is separate from meta/activity parsing and the historical Research JSON/transport faults.
+ 
+-Independent follow-up proposal, NOT applied or committed: replace the exact equality with re.fullmatch(r"其他日期(?:安排)?不变", value), after real alias matching; add the observed form regression plus exact real-alias precedence and unknown venue negative checks. Five focused cases: old candidate1failed/4passed; patched5passed. Validator, Graph, route/time/budget, settings and explicit confirmation unchanged. Proposed source 3ae41a2daf9229933d1429fd9b2c58ff34a3564fb802f26a337b8c9d9faee52c; further source commit needs exact human authorization. Raw evidence/patch/manifests are excluded from Git in backend/evals/results/planner_reliability_20261008.
++Independent proposed correction (not committed/applied to Release): include days referenced by current/navigation-target/first-impacted Execution IDs as read-only context alongside requested days; protect every non-requested activity with outside_requested_scope. Requested target and editable IDs stay confined to third day. Four new regressions, all existing context tests: original1fail/8pass, proposed9pass. Three genuinely unknown pointer negatives remain rejected; strict Invariant function AST is identical, Candidate Validator and Planning Graph byte-identical. Replay of the actual read-only context fails on4a523b7 and passes on proposed source with the same real current pointer protected and only third-day editable IDs; zero provider calls or DB writes for replay. Additional existing source/test paths need exact human scope approval. Proposed manifest: 02a3072930e2dbcacd9112b8aa3c383e7ef2f77c73b8666b645501c3fa1b2af4. Evidence: backend/evals/results/planner_reliability_20261008/proposed_decision_context_scope_fix.patch, scope_red.xml, scope_green.xml, scope_actual_context_replay.json, decision_context_scope_blocker.json.
+ 
+-Production remains unchanged on8000/3000; no deployment/main merge/production migration/reset/Trip deletion. No RELEASE CANDIDATE READY claim. Next: approve the measured follow-up patch, create a new source identity and repeat affected clean locked regression/build/runtime binding and full real browser chain. After complete success only, request online approval. Future deployment plan: preserve current image IDs and external configuration; after explicit authorization take and verify DB backup, confirm production schema/readiness, resolve the automatic migration entrypoint separately, deploy API/Worker/Web together and perform read-only bindings. Rollback restores prior images/configuration while retaining PG volume and newer user records; no down migration/reset/restoration over newer data without separate authorization.
++Provider fixed bounded6/6 completed/stop,0retry/serial, strictResearch2/2 (17.313/23.214s), connect-reuse success; actual deadline error correctly maps ConnectTimeout→planner_timeout. This small sample and successful core chain do not establish production availability. Original malformed Research raw/finishreason/parseposition missing; exact root UNLOCATED. Historical RemoteProtocolError belongs to transport/protocol category; deeper network/gateway/provider cause UNLOCATED. Recovery observed without replacing provider/config/model. No mock, prefix salvage, weakened Validator or invented Candidate.
++
++Production unchanged, seven formal tables/Trip versions exact and images/config retained. Read-only productionPG17.11/schema0034; candidate migrations byte-identical, no production migration executed. Candidate differs in20 shipped source paths (13app/7eval) and Web bundle; APP_ENV development→release_acceptance in isolation, same model endpoint/key (values unprinted). Existing user Trips and failures retained. No main merge/push/deploy/DB reset/volume/data deletion. Only after exact scope approval, new clean candidate full regression and complete real chain including current Reject can establish READY. Future deployment needs separate final approval: verify authorized backup/readiness/schema, preserve prior image IDs/external config, start API without automatic production migration until DB boundary resolved, deploy API/Worker/Web consistently. Rollback restores prior images/config, retains PG volume/newer user data; no down migration/reset/overwriting data without separate authorization.
+ 
+ ## Historical checkpoint preserved below
+ 
+diff --git a/docs/handoff/LATEST_HANDOFF.md b/docs/handoff/LATEST_HANDOFF.md
+index a8d2026..542dd98 100644
+--- a/docs/handoff/LATEST_HANDOFF.md
++++ b/docs/handoff/LATEST_HANDOFF.md
+@@ -2,28 +2,28 @@
+ 
+ ## Snapshot
+ 
+-2026-10-08. Goal ACTIVE / NOT READY. Approved six-path candidate26e33f7 clean builds and initial Candidate passed. Day2 edit still blocked by a newly measured phrase variant. Follow-up patch tested independently; not applied/committed, exact authorization needed. Production not authorized.
++2026-10-08. Current gate NOT READY. Clean4a523b7 core Candidate→Accept→Execution→Disruption→Recovery and honest Explanation PASSED. Subsequent current-version planning/reject blocked by confirmed cross-day context scope defect. Minimal independent proposal tested; additional two existing paths need authorization. Production not authorized.
+ 
+ ## Current Freeze / Rehearsal Status
+ 
+-Candidate 26e33f7ecec848403c0992953c61216ddb305fec; branch codex/roamsync-planner-reliability-20261008 from0b5010fe. Original8ee7dbf/0b5010fe intact. Clean source6d0257506c8ae65cbfc640cbdbfd3376b23bac2cf9623306432513f48ddca1eb;175 API/Worker files exact/no mounts; built Nginx3001/API8001/isolatedPG17. Only untracked raw browser evidence generated later, tracked source exact.
++Application4a523b7bd91df6c7c77c06cff87b2ff6a36a80de on codex/roamsync-planner-reliability-20261008; original8ee7dbf/0b5010fe intact. Clean source3ae41a2daf9229933d1429fd9b2c58ff34a3564fb802f26a337b8c9d9faee52c;175 API/Worker files exact/no mounts. Built Nginx3001/API8001/isolatedPG17. Initial Git clean; only later raw rehearsal outputs untracked.
+ 
+ ## Latest shadow-mode evidence
+ 
+-MEASURED GLM fixed6/6 completed/stop,0retry; strictResearch2/2; bounded sample only. New-ref Candidate8activities valid/pending/UIvisible; formal0/version1. Day2 Run bbea2a1a… awaiting_clarification for “其他日期安排不变”; one normal supplement does not clear it. Downstream not passed.
++Real initial Candidate10 valid/pending/formal0/version1. Day2 3→2activities/360→300minutes, untouched dates exact; Accept gives9activities/version2. Older stale Candidate Reject persists feedback/formal exact. Execution extends30; four explicit simulation navigation inputs trigger real Recovery; no compressed actions or realGPS claim. Explicit Recovery Accept version3/cost25000fen, completed/current protected/formal exact. Honest rationale_unavailable and city/facts scope passed.
+ 
+ ## Prior milestone baseline (before shadow split)
+ 
+-Production fc3a06ba… unchanged. Earlier dirty-tree full lifecycle and old8ee7 initial Candidate remain historical, not new-ref proof. Three old failed Runs and all preexisting isolated Trip/days/Runs preserved. Source Repair PARTIAL; published-date-only facts. Ledger2.2 OPEN.
++Productionfc3a06ba…/API8000/Web3000 unchanged; seven formal tables/Trip versions exact. Old failed Runs/Trips retained; older dirty-tree successes remain historical. Source Repair PARTIAL/published-date-only facts; Ledger2.2 OPEN.
+ 
+ ## Prior verification
+ 
+-Candidate26e33f7 locked clean Linux/Python3.11/emptyPG17 migrations0→0034:858passed/0fail/error/skip/2warnings. Web125/typecheck/build passed. First9-line patch had4red→green regressions. Follow-up one-line optional-word patch:5focused cases old1fail/4pass → proposed5pass; real aliases take precedence, unknown venue still not meta. Proposed source 3ae41a2daf9229933d1429fd9b2c58ff34a3564fb802f26a337b8c9d9faee52c.
++Clean locked Linux/Python3.11/emptyPG17 migrations0→0034:859passed/0fail/error/skip/2warnings. Web125/typecheck/build/source/artifact binding passed. Meta parser two approved patches: red→green, true aliases/unknown venues protected. Provider fixed6/6 completed/stop,0retry; strictResearch2/2, bounded sample only. Original JSON/transport deeper roots UNLOCATED and separate.
+ 
+ ## Prior blockers (historical)
+ 
+-Research original malformed raw/finishreason/parseposition unavailable; exact root UNLOCATED. RemoteProtocolError is transport/protocol category; deeper gateway/proxy/provider cause UNLOCATED. Current health recovered without provider/config changes. Confirmed internal meta/activity misclassification persists for measured “安排” variant. No mock/salvage/relaxed Validator.
++New current Run11230b54… fails decision_context_invalid. Current美龄宫 exists Oct9 but user targetsOct11; selected-day formal context excludes it while retaining global Execution pointer, so unchanged invariant rejects. This is scope assembly, not deleted activity/provider fault. Formalversion3 exact. Independent proposal retains referenced Execution days as read-only and protects all outside requested scope; Invariant AST/Validator/Graph unchanged. Focus9 cases old1fail/8pass→new9pass; actual-context replay succeeds with onlyOct11 editable, no DB/provider calls.
+ 
+ ## Interview framing
+ 
+-Evidence backend/evals/results/planner_reliability_20261008, candidate_clean_binding.json/candidate_clean_full.xml/candidate_rehearsal_initial/candidate_rehearsal_clarification/proposed_intent_meta_followup.patch/followup_green.xml. Exact further two-source/test patch and four existing reports prepared for review; await authorization for new source commit. Then new clean Git acceptance through Candidate/Accept/Reject/Execution/Disruption/Recovery/Explanation; no old pass substitution. Production/main/DB unchanged; final online approval after all gates pass.
++Evidence backend/evals/results/planner_reliability_20261008, candidate4a523b7_clean_full.xml/clean_binding/execution_invariants, decision_context_scope_blocker.json, proposed_decision_context_scope_fix.patch, scope_actual_context_replay.json. Need explicit extension to backend/app/decision_context.py + backend/tests/test_decision_context.py and original4reports, then new clean source identity/full real chain/current Reject/runtime binding. No RELEASE READY until all gates pass; production/main/DB untouched. Future online approval, backup/schema/entrypoint resolution and preserved-image rollback required separately.

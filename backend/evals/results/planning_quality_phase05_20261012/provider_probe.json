@@ -1,0 +1,97 @@
+{
+  "at_utc": "2026-10-12T00:08:54.964234+00:00",
+  "database_used": false,
+  "production_config_changed": false,
+  "max_probe_requests": 2,
+  "requests": [
+    {
+      "kind": "configured_native_proxy",
+      "proxy": {
+        "scheme": "http",
+        "host": "host.docker.internal",
+        "port": 7897,
+        "path": ""
+      },
+      "base_url": {
+        "scheme": "https",
+        "host": "open.bigmodel.cn",
+        "port": null,
+        "path": "/api/paas/v4"
+      },
+      "model": "glm-5.3-flash",
+      "request_budget": 256,
+      "reasoning": "low",
+      "stream": true,
+      "retries": 0,
+      "timeout": 30,
+      "stage": "request_dispatched_before_response_headers",
+      "http_response_status": null,
+      "success": false,
+      "failure": {
+        "application_code": "planner_unavailable",
+        "exception_chain": [
+          {
+            "type": "APIConnectionError"
+          },
+          {
+            "type": "RemoteProtocolError"
+          },
+          {
+            "type": "RemoteProtocolError"
+          }
+        ]
+      },
+      "seconds": 6.496610000001965
+    },
+    {
+      "kind": "process_local_loopback",
+      "proxy": {
+        "scheme": "http",
+        "host": "127.0.0.1",
+        "port": 7897,
+        "path": ""
+      },
+      "base_url": {
+        "scheme": "https",
+        "host": "open.bigmodel.cn",
+        "port": null,
+        "path": "/api/paas/v4"
+      },
+      "model": "glm-5.3-flash",
+      "request_budget": 256,
+      "reasoning": "low",
+      "stream": true,
+      "retries": 0,
+      "timeout": 30,
+      "stage": "stream_finished",
+      "http_response_status": 200,
+      "status": "completed",
+      "finish_reason": "stop",
+      "success": true,
+      "usage": {
+        "completion_tokens": 13,
+        "prompt_tokens": 126,
+        "total_tokens": 139,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 2,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "seconds": 1.2416479000021354
+    }
+  ],
+  "batch_gate": true,
+  "sdk": {
+    "openai": "2.54.0",
+    "httpx": "0.28.1",
+    "httpcore": "1.0.9"
+  },
+  "selected_proxy": "http://127.0.0.1:7897"
+}

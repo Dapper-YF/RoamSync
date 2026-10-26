@@ -1,0 +1,215 @@
+{
+  "application_commit": "322f55334d16e8cacec60e5e6c126d61cfcca122",
+  "status": "EXTERNAL_PROVIDER_BLOCKED",
+  "protocol": {
+    "reason": "New clean candidate first greeting failed HTTP502 with planner provider could not be reached; no Trip or Run created",
+    "application_commit": "322f55334d16e8cacec60e5e6c126d61cfcca122",
+    "fixed_model_call_count": 3,
+    "sdk_retries": 0,
+    "concurrency": 1,
+    "roles": [
+      "API simple fresh",
+      "Worker strict structured fresh",
+      "Worker exact measured Research fresh"
+    ],
+    "timeout_seconds": 90,
+    "failure_policy": "Any failed call stops real E2E as EXTERNAL_PROVIDER_BLOCKED; no further probe batch",
+    "success_policy": "Permit one fresh unchanged browser rehearsal, preserve first failure; no availability SLO claim"
+  },
+  "success_count": 2,
+  "call_count": 3,
+  "calls": [
+    {
+      "index": 7,
+      "kind": "simple",
+      "transport": "release configured explicit proxy",
+      "retries": 0,
+      "status": "completed",
+      "finish_reason": "stop",
+      "output_chars": 9,
+      "output_sha256": "fad8f826a27299a982028112b1d47dc6a22b55f6d945c580883354928df0d9c7",
+      "usage": {
+        "completion_tokens": 32,
+        "prompt_tokens": 24,
+        "total_tokens": 56,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 27,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "success": true,
+      "error_category": null,
+      "request_observations": [
+        {
+          "host": "open.bigmodel.cn",
+          "path": "/api/paas/v4/chat/completions",
+          "method": "POST",
+          "json_body_sha256": "0ff2e467e2e933ef26792869e0cea1991d91b5470c654567d601ace425781399",
+          "body_bytes": 347,
+          "message_sizes": [
+            {
+              "role": "system",
+              "chars": 29,
+              "utf8_bytes": 29
+            },
+            {
+              "role": "user",
+              "chars": 26,
+              "utf8_bytes": 26
+            }
+          ],
+          "model": "glm-5.3-flash",
+          "response_format": {
+            "type": "text"
+          },
+          "stream": true,
+          "reasoning_effort": "low",
+          "thinking_enabled": "enabled",
+          "max_tokens": 1000
+        }
+      ],
+      "http_observations": [
+        {
+          "status": 200,
+          "http_version": "HTTP/1.1",
+          "content_type": "text/event-stream;charset=UTF-8",
+          "request_id": null
+        }
+      ],
+      "latency_seconds": 3.18
+    },
+    {
+      "index": 8,
+      "kind": "structured",
+      "transport": "release configured explicit proxy",
+      "retries": 0,
+      "status": "completed",
+      "finish_reason": "stop",
+      "output_chars": 27,
+      "output_sha256": "e6e2ac66d1d9a09bdbc6ad1b88428a3dd64bffeaec4da8d83b7bbea189562f4d",
+      "usage": {
+        "completion_tokens": 15,
+        "prompt_tokens": 158,
+        "total_tokens": 173,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "success": true,
+      "parse_valid": true,
+      "error_category": null,
+      "normalization_applied": true,
+      "request_observations": [
+        {
+          "host": "open.bigmodel.cn",
+          "path": "/api/paas/v4/chat/completions",
+          "method": "POST",
+          "json_body_sha256": "ae50a6cd46bc420521be4057b4810fe4ad83c72aeb737f1f0b6b2f387bf56345",
+          "body_bytes": 755,
+          "message_sizes": [
+            {
+              "role": "system",
+              "chars": 342,
+              "utf8_bytes": 392
+            },
+            {
+              "role": "user",
+              "chars": 18,
+              "utf8_bytes": 18
+            }
+          ],
+          "model": "glm-5.3-flash",
+          "response_format": {
+            "type": "json_object"
+          },
+          "stream": true,
+          "reasoning_effort": "low",
+          "thinking_enabled": "enabled",
+          "max_tokens": 1000
+        }
+      ],
+      "http_observations": [
+        {
+          "status": 200,
+          "http_version": "HTTP/1.1",
+          "content_type": "text/event-stream;charset=UTF-8",
+          "request_id": null
+        }
+      ],
+      "latency_seconds": 1.678
+    },
+    {
+      "index": 9,
+      "kind": "research",
+      "transport": "release configured explicit proxy",
+      "retries": 0,
+      "success": false,
+      "error_category": "http_protocol_error",
+      "exception_chain": [
+        "RemoteProtocolError",
+        "RemoteProtocolError"
+      ],
+      "http_status": null,
+      "translated_code": "planner_unavailable",
+      "retryable": true,
+      "request_observations": [
+        {
+          "host": "open.bigmodel.cn",
+          "path": "/api/paas/v4/chat/completions",
+          "method": "POST",
+          "json_body_sha256": "97e33ca84c9b122f1df0583f391cb38d38c57ffa791f6c751640ab8679c5fe02",
+          "body_bytes": 17133,
+          "message_sizes": [
+            {
+              "role": "system",
+              "chars": 2277,
+              "utf8_bytes": 3561
+            },
+            {
+              "role": "user",
+              "chars": 6265,
+              "utf8_bytes": 12651
+            }
+          ],
+          "model": "glm-5.3-flash",
+          "response_format": {
+            "type": "json_object"
+          },
+          "stream": true,
+          "reasoning_effort": "low",
+          "thinking_enabled": "enabled",
+          "max_tokens": 20000
+        }
+      ],
+      "http_observations": [
+        {
+          "status": 200,
+          "http_version": "HTTP/1.1",
+          "content_type": "text/event-stream;charset=UTF-8",
+          "request_id": null
+        }
+      ],
+      "latency_seconds": 15.425
+    }
+  ],
+  "deeper_transport_root": "UNLOCATED",
+  "historical_JSON_root": "UNLOCATED; raw malformed response and terminal state not retained",
+  "further_model_calls": 0,
+  "candidate_gate": "NOT PASSED",
+  "full_E2E": "PAUSED"
+}

@@ -1,0 +1,207 @@
+{
+  "kind": "production",
+  "base": "http://127.0.0.1:3000",
+  "cases": [
+    {
+      "message": "那就玩四天的吧，帮我罗列一下成都的所有热门景点",
+      "message_id": "2a9b63c4-71a0-43c3-9700-8ff9329360b5",
+      "summary": {
+        "version": 1,
+        "correlation_id": "2a9b63c4-71a0-43c3-9700-8ff9329360b5",
+        "answer_status": "complete",
+        "answer_attempts": 1,
+        "duration_ms": 16104,
+        "selection": {
+          "intent": "direct",
+          "capabilities": [],
+          "reason_code": "stable_knowledge",
+          "argument_source": "current_user_scoped_history_or_selected_place"
+        },
+        "events": [
+          {
+            "stage": "selection",
+            "status": "running",
+            "elapsed_ms": 127
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 2237,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 2108
+          },
+          {
+            "stage": "selection",
+            "status": "completed",
+            "elapsed_ms": 2237
+          },
+          {
+            "stage": "companion",
+            "status": "running",
+            "elapsed_ms": 2262
+          },
+          {
+            "stage": "answer",
+            "status": "running",
+            "elapsed_ms": 2296
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 16089,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 13793
+          },
+          {
+            "stage": "answer",
+            "status": "completed",
+            "elapsed_ms": 16089
+          },
+          {
+            "stage": "companion",
+            "status": "completed",
+            "elapsed_ms": 16104
+          }
+        ]
+      },
+      "answer": "四天玩成都不算赶，市区和周边都能兼顾。先说市区值得去的热门景点：\n\n- 武侯祠＋锦里：武侯祠是三国主题的祠堂园林，锦里古街就在旁边，适合下午逛完顺便吃小吃。\n- 杜甫草堂：园林式的诗人故居，环境清幽，和武侯祠方向相近，可以安排在同一天。\n- 宽窄巷子：清代街巷改造的商业街区，老建筑配茶馆和店铺，适合傍晚闲逛。\n- 大熊猫繁育研究基地：看熊猫最好赶早上，熊猫上午比较活跃。\n- 人民公园：本地人喝茶、掏耳朵的地方，鹤鸣茶社坐一下午很典型。\n- 春熙路、太古里：购物和看城市面貌的核心商圈，晚上逛比较合适。\n\n如果愿意留一天出市区：\n- 都江堰＋青城山：离成都不远，一日往返常见，水利古迹加山景。\n- 乐山大佛、峨眉山：稍远一些，各需要一整天甚至更久，四天行程里取舍要看你想不想去。\n\n四天比较从容的分法是市区景点分两三天慢慢逛，最后一天选都江堰或乐山其中一个。具体每天的搭配你定了想去哪几个再说。",
+      "event_types": [
+        "status",
+        "analysis_delta",
+        "answer_delta",
+        "done"
+      ],
+      "trip_id": null
+    },
+    {
+      "message": "查成都明天的天气，并查询成都武侯祠博物馆到成都杜甫草堂博物馆的驾车路线",
+      "message_id": "afee2d93-b7ad-440c-8434-2fb119113d2b",
+      "summary": {
+        "version": 1,
+        "correlation_id": "afee2d93-b7ad-440c-8434-2fb119113d2b",
+        "answer_status": "complete",
+        "answer_attempts": 0,
+        "duration_ms": 5508,
+        "selection": {
+          "intent": "lookup",
+          "capabilities": [
+            "facts",
+            "route",
+            "poi"
+          ],
+          "reason_code": "current_information",
+          "argument_source": "current_user_scoped_history_or_selected_place"
+        },
+        "events": [
+          {
+            "stage": "selection",
+            "status": "running",
+            "elapsed_ms": 11
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 1835,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 1823
+          },
+          {
+            "stage": "selection",
+            "status": "completed",
+            "elapsed_ms": 1835
+          },
+          {
+            "stage": "selection_policy",
+            "status": "completed",
+            "elapsed_ms": 1835,
+            "code": "explicit_compound_reads",
+            "capabilities": [
+              "facts",
+              "route",
+              "poi"
+            ]
+          },
+          {
+            "stage": "selection_policy",
+            "status": "completed",
+            "elapsed_ms": 1835,
+            "code": "explicit_compound_reads",
+            "capabilities": [
+              "facts",
+              "route",
+              "poi"
+            ]
+          },
+          {
+            "stage": "companion",
+            "status": "running",
+            "elapsed_ms": 1856
+          },
+          {
+            "stage": "poi",
+            "status": "running",
+            "elapsed_ms": 1857
+          },
+          {
+            "stage": "poi",
+            "status": "running",
+            "elapsed_ms": 1857
+          },
+          {
+            "stage": "poi",
+            "status": "completed",
+            "elapsed_ms": 2215
+          },
+          {
+            "stage": "poi",
+            "status": "completed",
+            "elapsed_ms": 2217
+          },
+          {
+            "stage": "route",
+            "status": "running",
+            "elapsed_ms": 2217
+          },
+          {
+            "stage": "route",
+            "status": "completed",
+            "elapsed_ms": 3155
+          },
+          {
+            "stage": "facts",
+            "status": "running",
+            "elapsed_ms": 3228
+          },
+          {
+            "stage": "facts",
+            "status": "completed",
+            "elapsed_ms": 5484
+          },
+          {
+            "stage": "companion",
+            "status": "completed",
+            "elapsed_ms": 5495
+          }
+        ]
+      },
+      "answer": "路线：\n成都武侯祠博物馆 → 成都杜甫草堂博物馆：路线服务给出的驾车估计为3735米、1036秒；这是供应商估计时间，不是实时到达保证。\n\n天气与实时信息：\n成都明天有可能下雨，出门可以备把伞。\n\n预计气温约14–20°C。",
+      "event_types": [
+        "status",
+        "reset",
+        "answer_delta",
+        "done"
+      ],
+      "trip_id": null
+    }
+  ],
+  "errors": [],
+  "refresh_restored": true,
+  "mobile_overflow": false,
+  "passed": true
+}

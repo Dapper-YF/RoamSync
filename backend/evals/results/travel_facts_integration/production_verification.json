@@ -1,0 +1,41 @@
+{
+  "images": {
+    "roamsync-api": {
+      "image_id": "sha256:279f914ee53153a01becf9e67882712dfb11474877e61721f6bd53598f087f1e",
+      "running": true,
+      "health": "healthy"
+    },
+    "roamsync-agent-worker-1": {
+      "image_id": "sha256:1ec79e6a88593ad4d70ddcc6be0c0d35b38d62a91740e35b117b11e87d505942",
+      "running": true,
+      "health": "no_healthcheck"
+    }
+  },
+  "worker_process_running": true,
+  "health": {
+    "http://127.0.0.1:8000/health/live": 200,
+    "http://127.0.0.1:8000/health/ready": 200,
+    "http://127.0.0.1:3000": 200
+  },
+  "before_deployment_to_after_smoke_unchanged": {
+    "trips": true,
+    "planning_runs": true,
+    "plan_revisions": true,
+    "trip_versions": true
+  },
+  "source_binding": {
+    "roamsync-api": {
+      "files": 165,
+      "match": true
+    },
+    "roamsync-agent-worker-1": {
+      "files": 165,
+      "match": true
+    }
+  },
+  "deployed_slices": [
+    "Knowledge Coverage",
+    "Travel Facts Integration v1"
+  ],
+  "web_rebuilt": false
+}

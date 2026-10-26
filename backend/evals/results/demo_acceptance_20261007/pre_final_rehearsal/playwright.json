@@ -1,0 +1,162 @@
+{
+  "config": {
+    "argv": [
+      "D:\\nodejs\\node.exe",
+      "E:\\Study\\RoamSync\\web\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "e2e/demo-execution.spec.ts",
+      "--config",
+      "playwright.acceptance.config.ts"
+    ],
+    "configFile": "E:\\Study\\RoamSync\\web\\playwright.acceptance.config.ts",
+    "rootDir": "E:/Study/RoamSync/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "E:/Study/RoamSync/backend/evals/results/demo_acceptance_20261007/browser",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "E:/Study/RoamSync/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "demo-*.spec.ts"
+        ],
+        "timeout": 900000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../backend/evals/results/demo_acceptance_20261007/playwright.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "demo-execution.spec.ts",
+      "file": "demo-execution.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real execution experience and simulated navigation produce an explicitly accepted recovery",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 900000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 125452,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -27,8 +27,8 @@\u001b[39m\n\u001b[2m      \"queried_at\": \"2026-10-07T15:22:35.305380Z\",\u001b[22m\n\u001b[2m      \"title\": \"高德地点搜索：南京博物院\",\u001b[22m\n\u001b[2m      \"url\": \"https://www.amap.com/search?id=B001907TGR\",\u001b[22m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"status\": \"completed\",\u001b[22m\n\u001b[32m-   \"updated_at\": \"2026-10-07T15:30:57.444893Z\",\u001b[39m\n\u001b[31m+   \"updated_at\": \"2026-10-07T15:38:09.469841Z\",\u001b[39m\n\u001b[2m    \"version\": 1,\u001b[22m\n\u001b[2m  }\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -27,8 +27,8 @@\u001b[39m\n\u001b[2m      \"queried_at\": \"2026-10-07T15:22:35.305380Z\",\u001b[22m\n\u001b[2m      \"title\": \"高德地点搜索：南京博物院\",\u001b[22m\n\u001b[2m      \"url\": \"https://www.amap.com/search?id=B001907TGR\",\u001b[22m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"status\": \"completed\",\u001b[22m\n\u001b[32m-   \"updated_at\": \"2026-10-07T15:30:57.444893Z\",\u001b[39m\n\u001b[31m+   \"updated_at\": \"2026-10-07T15:38:09.469841Z\",\u001b[39m\n\u001b[2m    \"version\": 1,\u001b[22m\n\u001b[2m  }\u001b[22m\n    at E:\\Study\\RoamSync\\web\\e2e\\demo-execution.spec.ts:118:81",
+                    "location": {
+                      "file": "E:\\Study\\RoamSync\\web\\e2e\\demo-execution.spec.ts",
+                      "column": 81,
+                      "line": 118
+                    },
+                    "snippet": "  116 |     expect((await get(`planning-runs/${runId}`)).status).toBe(\"accepted\");\n  117 |     const first = report.formal_before_recovery[0].activities[0];\n> 118 |     expect(report.after.days[0].activities.find((a: any) => a.id === first.id)).toEqual(first);\n      |                                                                                 ^\n  119 |     await page.screenshot({ path: resolve(evidence, \"recovery-applied.png\"), fullPage: true });\n  120 |     report.status = \"execution_recovery_passed_explanation_pending\"; save();\n  121 |   } catch (error) {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "E:\\Study\\RoamSync\\web\\e2e\\demo-execution.spec.ts",
+                        "column": 81,
+                        "line": 118
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -27,8 +27,8 @@\u001b[39m\n\u001b[2m      \"queried_at\": \"2026-10-07T15:22:35.305380Z\",\u001b[22m\n\u001b[2m      \"title\": \"高德地点搜索：南京博物院\",\u001b[22m\n\u001b[2m      \"url\": \"https://www.amap.com/search?id=B001907TGR\",\u001b[22m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"status\": \"completed\",\u001b[22m\n\u001b[32m-   \"updated_at\": \"2026-10-07T15:30:57.444893Z\",\u001b[39m\n\u001b[31m+   \"updated_at\": \"2026-10-07T15:38:09.469841Z\",\u001b[39m\n\u001b[2m    \"version\": 1,\u001b[22m\n\u001b[2m  }\u001b[22m\n\n  116 |     expect((await get(`planning-runs/${runId}`)).status).toBe(\"accepted\");\n  117 |     const first = report.formal_before_recovery[0].activities[0];\n> 118 |     expect(report.after.days[0].activities.find((a: any) => a.id === first.id)).toEqual(first);\n      |                                                                                 ^\n  119 |     await page.screenshot({ path: resolve(evidence, \"recovery-applied.png\"), fullPage: true });\n  120 |     report.status = \"execution_recovery_passed_explanation_pending\"; save();\n  121 |   } catch (error) {\n    at E:\\Study\\RoamSync\\web\\e2e\\demo-execution.spec.ts:118:81"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-07T15:36:04.102Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "E:\\Study\\RoamSync\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-execution-real-execut-13aae-xplicitly-accepted-recovery\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\Study\\RoamSync\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-execution-real-execut-13aae-xplicitly-accepted-recovery\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "E:\\Study\\RoamSync\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-execution-real-execut-13aae-xplicitly-accepted-recovery\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "E:\\Study\\RoamSync\\web\\e2e\\demo-execution.spec.ts",
+                    "column": 81,
+                    "line": 118
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "5117e92399dea6beeebb-f67a30929be3170de601",
+          "file": "demo-execution.spec.ts",
+          "line": 7,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-07T15:36:03.209Z",
+    "duration": 127307.12999999999,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

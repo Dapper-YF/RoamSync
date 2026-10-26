@@ -21,8 +21,11 @@ provider name/address for user confirmation instead of binding a partial name.
 Explicit attraction counts do not become unsupported duration edits; mixed or
 incomplete duration operations still clarify. No business table, public endpoint
 or alternate acceptance path was added by these parallel deltas. Integrated
-targeted tests pass (167); post-fix B live-provider and whole-product acceptance
-remain unverified. The overall product remains NO-GO.
+targeted tests pass (167), followed by 2183 official-source backend tests with no
+failures or skips. Six official-source public B turns use real GLM/AMap/search,
+retain the same app hash and leave all eight business tables unchanged. This is
+public regression evidence; whole-product acceptance remains unverified and the
+overall product remains NO-GO.
 
 ## Stage6 condition and arithmetic sources (2026-10-25, in progress)
 

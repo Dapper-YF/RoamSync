@@ -1,0 +1,3785 @@
+{
+  "measured_at": "2026-09-29T03:46:50.368890+00:00",
+  "mode": "live",
+  "model_configuration": {
+    "provider": "glm",
+    "model": "glm-5.3-flash",
+    "reasoning_effort": "max"
+  },
+  "corpus": "hangzhou_reviewed_v1_real_source_paraphrases",
+  "database_access": false,
+  "mutation_evidence": "No DB and no mutation port in this eval; formal snapshots measured separately in PostgreSQL tests",
+  "claim_entailment": "manual review required; valid refs are not sentence verification",
+  "results": [
+    {
+      "id": "history",
+      "message": "西湖有什么历史？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "关于西湖的历史，依据现有资料（UNESCO世界遗产中心）：西湖及其三面环山的景观自九世纪以来持续启发着诗人、学者与艺术家；湖中的堤、岛以及寺塔园林等人工要素，体现了中国传统山水审美。2011年，“杭州西湖文化景观”被列入《世界遗产名录》。需要说明的是，目前提供的资料仅涵盖这一文化景观层面的概述；更具体的朝代沿革、人物故事或各景点建造细节暂无来源支持，如需深入了解建议进一步核实。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "history_culture"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": null,
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [
+          {
+            "evidence_ref": "knowledge_ff175cbcc44e7538_593b42038743d5fde8d1adf8977c0948",
+            "text": "西湖及三面环山的景观自九世纪以来启发了诗人、学者与艺术家。堤、岛及寺塔园林等人工要素体现了中国传统山水审美。杭州西湖文化景观于2011年列入世界遗产。",
+            "source_reference": "https://whc.unesco.org/en/list/1334",
+            "knowledge_type": "history_culture",
+            "scope": "stable",
+            "document_id": "hz-westlake-history",
+            "chunk_id": "593b42038743d5fde8d1adf8977c09489077e608df0783df65829a8a0c596cf8",
+            "document_title": "西湖历史与文化景观",
+            "source_name": "UNESCO World Heritage Centre",
+            "source_type": "web",
+            "source_authority": "institutional",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": "tourism_corpus:curated:hz-westlake-history",
+            "place_name": "西湖"
+          }
+        ],
+        "answer_evidence_refs": [
+          "knowledge_ff175cbcc44e7538_593b42038743d5fde8d1adf8977c0948"
+        ],
+        "knowledge_retrieval": {
+          "status": "available",
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:46:50.386620Z",
+          "retrieved_document_refs": [
+            "hz-westlake-history"
+          ],
+          "retrieved_chunk_refs": [
+            "593b42038743d5fde8d1adf8977c09489077e608df0783df65829a8a0c596cf8"
+          ]
+        },
+        "grounding_status": "citations_validated",
+        "grounding_limitations": [
+          "claim_entailment_not_verified",
+          "tourism_knowledge_not_live_verified"
+        ]
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 39.984,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 1380,
+            "prompt_tokens": 1475,
+            "total_tokens": 2855,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1212,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0
+            }
+          }
+        }
+      ],
+      "knowledge_requests": [
+        {
+          "query": "西湖有什么历史？",
+          "destination": null,
+          "knowledge_types": [
+            "history_culture"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_ff175cbcc44e7538_593b42038743d5fde8d1adf8977c0948",
+              "text": "西湖及三面环山的景观自九世纪以来启发了诗人、学者与艺术家。堤、岛及寺塔园林等人工要素体现了中国传统山水审美。杭州西湖文化景观于2011年列入世界遗产。",
+              "source_reference": "https://whc.unesco.org/en/list/1334",
+              "knowledge_type": "history_culture",
+              "scope": "stable",
+              "document_id": "hz-westlake-history",
+              "chunk_id": "593b42038743d5fde8d1adf8977c09489077e608df0783df65829a8a0c596cf8",
+              "document_title": "西湖历史与文化景观",
+              "source_name": "UNESCO World Heritage Centre",
+              "source_type": "web",
+              "source_authority": "institutional",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": "tourism_corpus:curated:hz-westlake-history",
+              "place_name": "西湖"
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:46:50.386620Z"
+        }
+      ]
+    },
+    {
+      "id": "culture",
+      "message": "西湖文化景观有哪些文化特点？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "根据检索到的资料（来源：UNESCO世界遗产中心），西湖文化景观的文化特点可归纳为三点：\n\n1. 悠久的文学艺术渊源：自九世纪以来，西湖及三面环山的景观持续启发诗人、学者与艺术家，形成了深厚的文化艺术积淀。\n2. 中国传统山水审美的载体：堤、岛及寺塔园林等人工要素与自然山水相融合，体现了中国传统的山水审美理念。\n3. 世界遗产地位：杭州西湖文化景观于2011年列入世界遗产名录。\n\n以上为已提供知识资料明确支持的内容。关于更具体的文化细节（如历代题名景观、具体寺塔沿革等），当前资料未覆盖，我不会以记忆补充为已核实事实；如需进一步了解，可告诉我方向，我再基于可检索的资料说明。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "history_culture"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": null,
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [
+          {
+            "evidence_ref": "knowledge_ff175cbcc44e7538_593b42038743d5fde8d1adf8977c0948",
+            "text": "西湖及三面环山的景观自九世纪以来启发了诗人、学者与艺术家。堤、岛及寺塔园林等人工要素体现了中国传统山水审美。杭州西湖文化景观于2011年列入世界遗产。",
+            "source_reference": "https://whc.unesco.org/en/list/1334",
+            "knowledge_type": "history_culture",
+            "scope": "stable",
+            "document_id": "hz-westlake-history",
+            "chunk_id": "593b42038743d5fde8d1adf8977c09489077e608df0783df65829a8a0c596cf8",
+            "document_title": "西湖历史与文化景观",
+            "source_name": "UNESCO World Heritage Centre",
+            "source_type": "web",
+            "source_authority": "institutional",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": "tourism_corpus:curated:hz-westlake-history",
+            "place_name": "西湖"
+          }
+        ],
+        "answer_evidence_refs": [
+          "knowledge_ff175cbcc44e7538_593b42038743d5fde8d1adf8977c0948"
+        ],
+        "knowledge_retrieval": {
+          "status": "available",
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:47:30.357501Z",
+          "retrieved_document_refs": [
+            "hz-westlake-history"
+          ],
+          "retrieved_chunk_refs": [
+            "593b42038743d5fde8d1adf8977c09489077e608df0783df65829a8a0c596cf8"
+          ]
+        },
+        "grounding_status": "citations_validated",
+        "grounding_limitations": [
+          "claim_entailment_not_verified",
+          "tourism_knowledge_not_live_verified"
+        ]
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 59.227,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 2094,
+            "prompt_tokens": 1478,
+            "total_tokens": 3572,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1871,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0
+            }
+          }
+        }
+      ],
+      "knowledge_requests": [
+        {
+          "query": "西湖文化景观有哪些文化特点？",
+          "destination": null,
+          "knowledge_types": [
+            "history_culture"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_ff175cbcc44e7538_593b42038743d5fde8d1adf8977c0948",
+              "text": "西湖及三面环山的景观自九世纪以来启发了诗人、学者与艺术家。堤、岛及寺塔园林等人工要素体现了中国传统山水审美。杭州西湖文化景观于2011年列入世界遗产。",
+              "source_reference": "https://whc.unesco.org/en/list/1334",
+              "knowledge_type": "history_culture",
+              "scope": "stable",
+              "document_id": "hz-westlake-history",
+              "chunk_id": "593b42038743d5fde8d1adf8977c09489077e608df0783df65829a8a0c596cf8",
+              "document_title": "西湖历史与文化景观",
+              "source_name": "UNESCO World Heritage Centre",
+              "source_type": "web",
+              "source_authority": "institutional",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": "tourism_corpus:curated:hz-westlake-history",
+              "place_name": "西湖"
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:47:30.357501Z"
+        }
+      ]
+    },
+    {
+      "id": "history_paraphrase",
+      "message": "西湖的历史背景能简单介绍一下吗？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "简单介绍一下：西湖及其三面环山的景观格局自九世纪以来，一直启发着诗人、学者与艺术家。历代营造的堤、岛以及寺塔园林等人工要素，与自然山水相融合，体现了中国传统山水审美。2011年，「杭州西湖文化景观」被列入《世界遗产名录》。以上内容依据 UNESCO 世界遗产中心的资料；如需更详细的历代沿革（如各朝代的具体营造与变迁），现有资料未覆盖，可再做检索补充。\n1. 西湖文化景观：如果这次出行关注历史文化视角，可以把西湖作为文化观赏对象，重点感受其山水格局与堤、岛、寺塔园林等传统造景要素。仅为参考建议，是否纳入行程由你决定，不会改动现有安排。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_aaeddf2ecc2359f6950d72806f38786a",
+            "suggestion_type": "place",
+            "title": "西湖文化景观",
+            "summary": "如果这次出行关注历史文化视角，可以把西湖作为文化观赏对象，重点感受其山水格局与堤、岛、寺塔园林等传统造景要素。仅为参考建议，是否纳入行程由你决定，不会改动现有安排。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "西湖文化景观"
+              }
+            ],
+            "destination": null,
+            "reasons": [
+              "自九世纪以来启发了历代诗人、学者与艺术家的景观",
+              "堤、岛、寺塔园林等要素体现中国传统山水审美",
+              "2011年列入世界遗产，具有较高的历史文化价值"
+            ],
+            "evidence_refs": [
+              "knowledge_ff175cbcc44e7538_593b42038743d5fde8d1adf8977c0948"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:48:53.258739Z",
+            "conversation_turn_id": "turn-2",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "history_culture"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": null,
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [
+          {
+            "evidence_ref": "knowledge_ff175cbcc44e7538_593b42038743d5fde8d1adf8977c0948",
+            "text": "西湖及三面环山的景观自九世纪以来启发了诗人、学者与艺术家。堤、岛及寺塔园林等人工要素体现了中国传统山水审美。杭州西湖文化景观于2011年列入世界遗产。",
+            "source_reference": "https://whc.unesco.org/en/list/1334",
+            "knowledge_type": "history_culture",
+            "scope": "stable",
+            "document_id": "hz-westlake-history",
+            "chunk_id": "593b42038743d5fde8d1adf8977c09489077e608df0783df65829a8a0c596cf8",
+            "document_title": "西湖历史与文化景观",
+            "source_name": "UNESCO World Heritage Centre",
+            "source_type": "web",
+            "source_authority": "institutional",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": "tourism_corpus:curated:hz-westlake-history",
+            "place_name": "西湖"
+          }
+        ],
+        "answer_evidence_refs": [
+          "knowledge_ff175cbcc44e7538_593b42038743d5fde8d1adf8977c0948"
+        ],
+        "knowledge_retrieval": {
+          "status": "available",
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:48:29.580224Z",
+          "retrieved_document_refs": [
+            "hz-westlake-history"
+          ],
+          "retrieved_chunk_refs": [
+            "593b42038743d5fde8d1adf8977c09489077e608df0783df65829a8a0c596cf8"
+          ]
+        },
+        "grounding_status": "citations_validated",
+        "grounding_limitations": [
+          "claim_entailment_not_verified",
+          "tourism_knowledge_not_live_verified"
+        ]
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 23.686,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 922,
+            "prompt_tokens": 1479,
+            "total_tokens": 2401,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 581,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0
+            }
+          }
+        }
+      ],
+      "knowledge_requests": [
+        {
+          "query": "西湖的历史背景能简单介绍一下吗？",
+          "destination": null,
+          "knowledge_types": [
+            "history_culture"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_ff175cbcc44e7538_593b42038743d5fde8d1adf8977c0948",
+              "text": "西湖及三面环山的景观自九世纪以来启发了诗人、学者与艺术家。堤、岛及寺塔园林等人工要素体现了中国传统山水审美。杭州西湖文化景观于2011年列入世界遗产。",
+              "source_reference": "https://whc.unesco.org/en/list/1334",
+              "knowledge_type": "history_culture",
+              "scope": "stable",
+              "document_id": "hz-westlake-history",
+              "chunk_id": "593b42038743d5fde8d1adf8977c09489077e608df0783df65829a8a0c596cf8",
+              "document_title": "西湖历史与文化景观",
+              "source_name": "UNESCO World Heritage Centre",
+              "source_type": "web",
+              "source_authority": "institutional",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": "tourism_corpus:curated:hz-westlake-history",
+              "place_name": "西湖"
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:48:29.580224Z"
+        }
+      ]
+    },
+    {
+      "id": "profile",
+      "message": "杭州西湖的景观有哪些构成要素？",
+      "goal": {
+        "goal_type": "destination_exploration",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_destination_exploration"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "依据已提供的知识来源（UNESCO 世界遗产中心的杭州西湖目的地概况），西湖景观的构成要素可归纳为四类：①湖泊——景观的核心水体；②山体——三面环抱湖面，构成自然背景；③城市界面——湖的一面与杭州城市相接，形成湖城相连的格局；④人文要素——堤岛、寺塔与园林。这些自然与人文要素共同构成西湖文化景观，体现人与自然相融合的传统。需要说明的是，当前资料只列出了上述要素类别，未提供更细分的具体景目或细节，如需进一步了解可另行核实补充来源。\n1. 西湖文化景观探索：以湖泊、山体、堤岛、寺塔、园林为主线，感受西湖三面环山、一面接城的湖城格局，适合作为杭州目的地探索的核心对象。",
+        "goal_type": "destination_exploration",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_98ac0cfcaed15829b7ff7f9be50a1f93",
+            "suggestion_type": "destination",
+            "title": "西湖文化景观探索",
+            "summary": "以湖泊、山体、堤岛、寺塔、园林为主线，感受西湖三面环山、一面接城的湖城格局，适合作为杭州目的地探索的核心对象。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "西湖文化景观探索"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "知识来源显示湖泊、堤岛、寺塔和园林共同构成西湖文化景观",
+              "三面环山、一面与城市相接的格局兼顾自然与人文体验",
+              "整体体现人与自然相融合的传统，契合目的地探索目标"
+            ],
+            "evidence_refs": [
+              "knowledge_54dbec63406dfe4d_beccb000a6a1053e3809103d16e6db16"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:49:39.892775Z",
+            "conversation_turn_id": "turn-3",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "destination_profile"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [
+          {
+            "evidence_ref": "knowledge_54dbec63406dfe4d_beccb000a6a1053e3809103d16e6db16",
+            "text": "西湖景观三面环山，一面与杭州城市相接。湖泊、堤岛、寺塔和园林共同构成文化景观，体现人与自然相融合的传统。",
+            "source_reference": "https://whc.unesco.org/en/list/1334",
+            "knowledge_type": "destination_profile",
+            "scope": "stable",
+            "document_id": "hz-westlake-profile",
+            "chunk_id": "beccb000a6a1053e3809103d16e6db165c7619adbb4c7c0d07cfb8d195efe6b1",
+            "document_title": "杭州西湖目的地概况",
+            "source_name": "UNESCO World Heritage Centre",
+            "source_type": "web",
+            "source_authority": "institutional",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": "tourism_corpus:curated:hz-westlake-profile",
+            "place_name": "西湖"
+          }
+        ],
+        "answer_evidence_refs": [
+          "knowledge_54dbec63406dfe4d_beccb000a6a1053e3809103d16e6db16"
+        ],
+        "knowledge_retrieval": {
+          "status": "available",
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:48:53.269970Z",
+          "retrieved_document_refs": [
+            "hz-westlake-profile"
+          ],
+          "retrieved_chunk_refs": [
+            "beccb000a6a1053e3809103d16e6db165c7619adbb4c7c0d07cfb8d195efe6b1"
+          ]
+        },
+        "grounding_status": "citations_validated",
+        "grounding_limitations": [
+          "claim_entailment_not_verified",
+          "tourism_knowledge_not_live_verified"
+        ]
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 46.634,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 1705,
+            "prompt_tokens": 1463,
+            "total_tokens": 3168,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1330,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0
+            }
+          }
+        }
+      ],
+      "knowledge_requests": [
+        {
+          "query": "杭州西湖的景观有哪些构成要素？",
+          "destination": "杭州",
+          "knowledge_types": [
+            "destination_profile"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_54dbec63406dfe4d_beccb000a6a1053e3809103d16e6db16",
+              "text": "西湖景观三面环山，一面与杭州城市相接。湖泊、堤岛、寺塔和园林共同构成文化景观，体现人与自然相融合的传统。",
+              "source_reference": "https://whc.unesco.org/en/list/1334",
+              "knowledge_type": "destination_profile",
+              "scope": "stable",
+              "document_id": "hz-westlake-profile",
+              "chunk_id": "beccb000a6a1053e3809103d16e6db165c7619adbb4c7c0d07cfb8d195efe6b1",
+              "document_title": "杭州西湖目的地概况",
+              "source_name": "UNESCO World Heritage Centre",
+              "source_type": "web",
+              "source_authority": "institutional",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": "tourism_corpus:curated:hz-westlake-profile",
+              "place_name": "西湖"
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:48:53.269970Z"
+        }
+      ]
+    },
+    {
+      "id": "lifestyle",
+      "message": "杭州有什么当地生活体验？",
+      "goal": {
+        "goal_type": "destination_exploration",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_destination_exploration"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "根据杭州文旅的资料，目前可核实的当地生活主题是「茶馆与喝茶」：老式茶楼里观景、品茶、过慢生活。两个有出处的方向：北山路一带的茶舍把观湖和喝茶结合，适合安静地看湖；吴山一带的茶楼则把城市观景和宋式文化元素结合，更有古韵。需要说明：这份资料只支持「茶生活体验」这个主题，不能证明具体店铺目前是否营业、价格、预约方式或服务细节，去之前建议自行核实。其他类型的当地生活体验（如市集、街巷生活等）在当前知识来源中没有证据，暂不作为已核实的推荐。\n1. 北山路湖畔茶舍喝茶：老式茶舍结合观湖与喝茶，可以把西湖景致和慢节奏的茶生活放在一起，适合安排一段安静的下午茶时光。\n2. 吴山宋式茶楼体验：吴山一带的茶楼结合城市观景与宋式文化元素，可以一边喝茶一边感受杭州的历史氛围。\n3. 以「半日茶生活」作为当地体验主线：如果没有特定偏好，可以选北山路或吴山其中一处茶馆，留出半天不赶行程，用观景+品茶的方式体验杭州本地慢生活。",
+        "goal_type": "destination_exploration",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_c14989cff94050b6b9cb7b52728276de",
+            "suggestion_type": "place",
+            "title": "北山路湖畔茶舍喝茶",
+            "summary": "老式茶舍结合观湖与喝茶，可以把西湖景致和慢节奏的茶生活放在一起，适合安排一段安静的下午茶时光。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "北山路湖畔茶舍喝茶"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "资料明确提到北山路茶舍结合观湖与喝茶，属于杭州茶生活体验的代表场景",
+              "适合想在行程中放慢节奏、体验本地茶文化的 traveler",
+              "观景与品茶结合，不需要额外安排复杂活动"
+            ],
+            "evidence_refs": [
+              "knowledge_7845fcd2aec3e818_3d9eaeeb96d27af65f19660335da38d8"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:50:19.048468Z",
+            "conversation_turn_id": "turn-4",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_8629668bd6ba5f26aa4cb1ce00f4b9f6",
+            "suggestion_type": "place",
+            "title": "吴山宋式茶楼体验",
+            "summary": "吴山一带的茶楼结合城市观景与宋式文化元素，可以一边喝茶一边感受杭州的历史氛围。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "吴山宋式茶楼体验"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "资料明确提到吴山茶楼结合城市观景与宋式文化元素",
+              "比单纯喝茶多一层文化体验维度",
+              "可与吴山周边的城市漫步形成自然搭配"
+            ],
+            "evidence_refs": [
+              "knowledge_7845fcd2aec3e818_3d9eaeeb96d27af65f19660335da38d8"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:50:19.048468Z",
+            "conversation_turn_id": "turn-4",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_78060245f120526597589ca84513077b",
+            "suggestion_type": "strategy",
+            "title": "以「半日茶生活」作为当地体验主线",
+            "summary": "如果没有特定偏好，可以选北山路或吴山其中一处茶馆，留出半天不赶行程，用观景+品茶的方式体验杭州本地慢生活。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "以「半日茶生活」作为当地体验主线"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "茶生活是当前资料中唯一有官方来源支持的当地生活主题",
+              "半日节奏灵活，容易嵌入现有行程而不打乱安排",
+              "两个区域风格不同，可按想看湖景还是城市/宋韵氛围来选"
+            ],
+            "evidence_refs": [
+              "knowledge_7845fcd2aec3e818_3d9eaeeb96d27af65f19660335da38d8"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:50:19.048468Z",
+            "conversation_turn_id": "turn-4",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "local_lifestyle"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [
+          {
+            "evidence_ref": "knowledge_7845fcd2aec3e818_3d9eaeeb96d27af65f19660335da38d8",
+            "text": "杭州文旅介绍了老式茶楼茶馆中的观景、品茶与慢生活体验。北山路的茶舍结合观湖与喝茶，吴山的茶楼结合城市观景与宋式文化元素。本文只保留茶生活体验主题，不证明店铺目前经营、预约、价格或服务。",
+            "source_reference": "https://wgly.hangzhou.gov.cn/art/2023/1/17/art_1229505585_58944038.html",
+            "knowledge_type": "local_lifestyle",
+            "scope": "stable",
+            "document_id": "hz-tea-lifestyle",
+            "chunk_id": "3d9eaeeb96d27af65f19660335da38d8f7cf5fa4b3a4400942b399ced6c4b41d",
+            "document_title": "杭州当地生活：茶馆与喝茶",
+            "source_name": "杭州市文化广电旅游局 / 杭州会奖旅游",
+            "source_type": "web",
+            "source_authority": "official_destination",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": null,
+            "place_name": null
+          }
+        ],
+        "answer_evidence_refs": [
+          "knowledge_7845fcd2aec3e818_3d9eaeeb96d27af65f19660335da38d8"
+        ],
+        "knowledge_retrieval": {
+          "status": "available",
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:49:39.900066Z",
+          "retrieved_document_refs": [
+            "hz-tea-lifestyle"
+          ],
+          "retrieved_chunk_refs": [
+            "3d9eaeeb96d27af65f19660335da38d8f7cf5fa4b3a4400942b399ced6c4b41d"
+          ]
+        },
+        "grounding_status": "citations_validated",
+        "grounding_limitations": [
+          "claim_entailment_not_verified",
+          "tourism_knowledge_not_live_verified"
+        ]
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 39.159,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 1150,
+            "prompt_tokens": 1520,
+            "total_tokens": 2670,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 536,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0
+            }
+          }
+        }
+      ],
+      "knowledge_requests": [
+        {
+          "query": "杭州有什么当地生活体验？",
+          "destination": "杭州",
+          "knowledge_types": [
+            "local_lifestyle"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_7845fcd2aec3e818_3d9eaeeb96d27af65f19660335da38d8",
+              "text": "杭州文旅介绍了老式茶楼茶馆中的观景、品茶与慢生活体验。北山路的茶舍结合观湖与喝茶，吴山的茶楼结合城市观景与宋式文化元素。本文只保留茶生活体验主题，不证明店铺目前经营、预约、价格或服务。",
+              "source_reference": "https://wgly.hangzhou.gov.cn/art/2023/1/17/art_1229505585_58944038.html",
+              "knowledge_type": "local_lifestyle",
+              "scope": "stable",
+              "document_id": "hz-tea-lifestyle",
+              "chunk_id": "3d9eaeeb96d27af65f19660335da38d8f7cf5fa4b3a4400942b399ced6c4b41d",
+              "document_title": "杭州当地生活：茶馆与喝茶",
+              "source_name": "杭州市文化广电旅游局 / 杭州会奖旅游",
+              "source_type": "web",
+              "source_authority": "official_destination",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": null,
+              "place_name": null
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:49:39.900066Z"
+        }
+      ]
+    },
+    {
+      "id": "tea_lifestyle",
+      "message": "杭州茶馆有哪些慢生活体验？",
+      "goal": {
+        "goal_type": "destination_exploration",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_destination_exploration"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "根据杭州文旅的介绍，杭州茶馆的慢生活体验主要围绕老式茶楼茶馆的“观景+品茶”展开，有两个有代表性的方向：一是北山路一带的茶舍，把观湖与喝茶结合，适合临湖慢坐、长时间发呆；二是吴山一带的茶楼，把城市观景与宋式文化元素结合，适合边喝茶边感受宋韵氛围。总体思路是以茶配景、放慢节奏，把茶馆停留本身当作体验的一部分。提醒：以上来自文旅主题介绍，仅覆盖茶生活体验方向，无法确认具体店铺当前是否营业、预约方式或价格，出行前建议再自行核实。\n1. 北山路茶舍：临湖观景慢饮：北山路一带的茶舍将观湖与喝茶结合，可以在湖边慢慢喝茶、看风景，把茶馆停留本身当作慢生活体验。\n2. 吴山茶楼：城市观景配宋式文化：吴山一带的茶楼将城市观景与宋式文化元素结合，喝茶之余可俯瞰城市、感受宋韵氛围。\n3. 以老式茶楼作为慢节奏锚点：可以把老式茶楼茶馆的“观景+品茶”作为探索杭州的慢节奏方式，在行程中预留一段不赶时间的茶馆停留。",
+        "goal_type": "destination_exploration",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_382cddcf817b5d99bf96f9038183aadb",
+            "suggestion_type": "experience",
+            "title": "北山路茶舍：临湖观景慢饮",
+            "summary": "北山路一带的茶舍将观湖与喝茶结合，可以在湖边慢慢喝茶、看风景，把茶馆停留本身当作慢生活体验。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "北山路茶舍：临湖观景慢饮"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "杭州文旅将北山路茶舍列为观湖与喝茶结合的代表",
+              "观景加品茶的形式节奏舒缓，适合长时间慢坐"
+            ],
+            "evidence_refs": [
+              "knowledge_7845fcd2aec3e818_3d9eaeeb96d27af65f19660335da38d8"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:51:46.950512Z",
+            "conversation_turn_id": "turn-5",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_1042f19b3e6b56f597db1963015c6cad",
+            "suggestion_type": "experience",
+            "title": "吴山茶楼：城市观景配宋式文化",
+            "summary": "吴山一带的茶楼将城市观景与宋式文化元素结合，喝茶之余可俯瞰城市、感受宋韵氛围。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "吴山茶楼：城市观景配宋式文化"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "杭州文旅提到吴山茶楼结合城市观景与宋式文化元素",
+              "适合想在品茶之外叠加一层文化体验的选择"
+            ],
+            "evidence_refs": [
+              "knowledge_7845fcd2aec3e818_3d9eaeeb96d27af65f19660335da38d8"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:51:46.950512Z",
+            "conversation_turn_id": "turn-5",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_6002752bb04556ca8990c8eaa9efca15",
+            "suggestion_type": "strategy",
+            "title": "以老式茶楼作为慢节奏锚点",
+            "summary": "可以把老式茶楼茶馆的“观景+品茶”作为探索杭州的慢节奏方式，在行程中预留一段不赶时间的茶馆停留。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "以老式茶楼作为慢节奏锚点"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "杭州文旅将老式茶楼茶馆的观景与品茶归入慢生活体验主题",
+              "观景与品茶可在不同区域灵活搭配，按当天节奏选择"
+            ],
+            "evidence_refs": [
+              "knowledge_7845fcd2aec3e818_3d9eaeeb96d27af65f19660335da38d8"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:51:46.950512Z",
+            "conversation_turn_id": "turn-5",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "local_lifestyle"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [
+          {
+            "evidence_ref": "knowledge_7845fcd2aec3e818_3d9eaeeb96d27af65f19660335da38d8",
+            "text": "杭州文旅介绍了老式茶楼茶馆中的观景、品茶与慢生活体验。北山路的茶舍结合观湖与喝茶，吴山的茶楼结合城市观景与宋式文化元素。本文只保留茶生活体验主题，不证明店铺目前经营、预约、价格或服务。",
+            "source_reference": "https://wgly.hangzhou.gov.cn/art/2023/1/17/art_1229505585_58944038.html",
+            "knowledge_type": "local_lifestyle",
+            "scope": "stable",
+            "document_id": "hz-tea-lifestyle",
+            "chunk_id": "3d9eaeeb96d27af65f19660335da38d8f7cf5fa4b3a4400942b399ced6c4b41d",
+            "document_title": "杭州当地生活：茶馆与喝茶",
+            "source_name": "杭州市文化广电旅游局 / 杭州会奖旅游",
+            "source_type": "web",
+            "source_authority": "official_destination",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": null,
+            "place_name": null
+          }
+        ],
+        "answer_evidence_refs": [
+          "knowledge_7845fcd2aec3e818_3d9eaeeb96d27af65f19660335da38d8"
+        ],
+        "knowledge_retrieval": {
+          "status": "available",
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:50:19.055888Z",
+          "retrieved_document_refs": [
+            "hz-tea-lifestyle"
+          ],
+          "retrieved_chunk_refs": [
+            "3d9eaeeb96d27af65f19660335da38d8f7cf5fa4b3a4400942b399ced6c4b41d"
+          ]
+        },
+        "grounding_status": "citations_validated",
+        "grounding_limitations": [
+          "claim_entailment_not_verified",
+          "tourism_knowledge_not_live_verified"
+        ]
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 87.907,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 3376,
+            "prompt_tokens": 1522,
+            "total_tokens": 4898,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2774,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 64
+            }
+          }
+        }
+      ],
+      "knowledge_requests": [
+        {
+          "query": "杭州茶馆有哪些慢生活体验？",
+          "destination": "杭州",
+          "knowledge_types": [
+            "local_lifestyle"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_7845fcd2aec3e818_3d9eaeeb96d27af65f19660335da38d8",
+              "text": "杭州文旅介绍了老式茶楼茶馆中的观景、品茶与慢生活体验。北山路的茶舍结合观湖与喝茶，吴山的茶楼结合城市观景与宋式文化元素。本文只保留茶生活体验主题，不证明店铺目前经营、预约、价格或服务。",
+              "source_reference": "https://wgly.hangzhou.gov.cn/art/2023/1/17/art_1229505585_58944038.html",
+              "knowledge_type": "local_lifestyle",
+              "scope": "stable",
+              "document_id": "hz-tea-lifestyle",
+              "chunk_id": "3d9eaeeb96d27af65f19660335da38d8f7cf5fa4b3a4400942b399ced6c4b41d",
+              "document_title": "杭州当地生活：茶馆与喝茶",
+              "source_name": "杭州市文化广电旅游局 / 杭州会奖旅游",
+              "source_type": "web",
+              "source_authority": "official_destination",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": null,
+              "place_name": null
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:50:19.055888Z"
+        }
+      ]
+    },
+    {
+      "id": "autumn",
+      "message": "秋天去杭州有什么特点？",
+      "goal": {
+        "goal_type": "destination_exploration",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_destination_exploration"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "根据现有资料，杭州秋天一个有代表性的特色是满觉陇的赏桂民俗：秋季桂花与山谷景观结合，赏桂在当地长期传承，构成这一季节体验的文化主题。需要说明的是，这份资料只介绍秋季赏桂这一一般特色，不能证明某天的开花程度、具体花期、活动是否举行或实时天气，出行前建议另行核实。此外，本次检索仅返回这一条知识，杭州秋天的其他方面（如气候感受、其他季节景观等）目前缺少有来源的资料，无法给出已确认的说明。\n1. 满觉陇秋季赏桂体验（待核实建议）：满觉陇以秋季赏桂民俗著称，桂花与山谷景观共同构成当地的季节文化体验。此为基于资料的一般性介绍，具体花期、开花程度、现场活动与天气情况需在出行前核实。",
+        "goal_type": "destination_exploration",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_d33a05475f6350b5b49df75f162e67d9",
+            "suggestion_type": "experience",
+            "title": "满觉陇秋季赏桂体验（待核实建议）",
+            "summary": "满觉陇以秋季赏桂民俗著称，桂花与山谷景观共同构成当地的季节文化体验。此为基于资料的一般性介绍，具体花期、开花程度、现场活动与天气情况需在出行前核实。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "满觉陇秋季赏桂体验（待核实建议）"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "赏桂是当地长期传承的秋季民俗，文化主题突出",
+              "桂花与山谷景观结合，属于典型的秋季季节体验",
+              "适合作为杭州秋季目的地探索时的了解方向"
+            ],
+            "evidence_refs": [
+              "knowledge_97b0e8d8f8415efa_e07da13e943e79126788ec0a28eadff9"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:52:21.089159Z",
+            "conversation_turn_id": "turn-6",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "seasonal_experience"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [
+            "autumn"
+          ],
+          "experience_tags": [],
+          "filter_signals": [
+            "explicit_season"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [
+          {
+            "evidence_ref": "knowledge_97b0e8d8f8415efa_e07da13e943e79126788ec0a28eadff9",
+            "text": "满觉陇的赏桂民俗长期传承，秋日桂花与山谷景观构成当地季节体验的文化主题。这里仅介绍秋季赏桂这一一般特色，不证明某天开花程度、具体花期、活动举行或实时天气。",
+            "source_reference": "https://www.hzzx.gov.cn/cshz/content/2026-09/24/content_9315838.htm",
+            "knowledge_type": "seasonal_experience",
+            "scope": "stable",
+            "document_id": "hz-autumn-osmanthus",
+            "chunk_id": "e07da13e943e79126788ec0a28eadff98df5e3d134c3a0baf18cdfa5ba266666",
+            "document_title": "杭州秋天：满觉陇赏桂文化",
+            "source_name": "杭州政协网（转载杭州网、杭州通客户端）",
+            "source_type": "web",
+            "source_authority": "official_government",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": "tourism_corpus:curated:hz-autumn-osmanthus",
+            "place_name": "满觉陇"
+          }
+        ],
+        "answer_evidence_refs": [
+          "knowledge_97b0e8d8f8415efa_e07da13e943e79126788ec0a28eadff9"
+        ],
+        "knowledge_retrieval": {
+          "status": "available",
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:51:46.967841Z",
+          "retrieved_document_refs": [
+            "hz-autumn-osmanthus"
+          ],
+          "retrieved_chunk_refs": [
+            "e07da13e943e79126788ec0a28eadff98df5e3d134c3a0baf18cdfa5ba266666"
+          ]
+        },
+        "grounding_status": "citations_validated",
+        "grounding_limitations": [
+          "claim_entailment_not_verified",
+          "tourism_knowledge_not_live_verified"
+        ]
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 34.137,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 1042,
+            "prompt_tokens": 1522,
+            "total_tokens": 2564,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 677,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 64
+            }
+          }
+        }
+      ],
+      "knowledge_requests": [
+        {
+          "query": "秋天去杭州有什么特点？",
+          "destination": "杭州",
+          "knowledge_types": [
+            "seasonal_experience"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [
+            "autumn"
+          ],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_97b0e8d8f8415efa_e07da13e943e79126788ec0a28eadff9",
+              "text": "满觉陇的赏桂民俗长期传承，秋日桂花与山谷景观构成当地季节体验的文化主题。这里仅介绍秋季赏桂这一一般特色，不证明某天开花程度、具体花期、活动举行或实时天气。",
+              "source_reference": "https://www.hzzx.gov.cn/cshz/content/2026-09/24/content_9315838.htm",
+              "knowledge_type": "seasonal_experience",
+              "scope": "stable",
+              "document_id": "hz-autumn-osmanthus",
+              "chunk_id": "e07da13e943e79126788ec0a28eadff98df5e3d134c3a0baf18cdfa5ba266666",
+              "document_title": "杭州秋天：满觉陇赏桂文化",
+              "source_name": "杭州政协网（转载杭州网、杭州通客户端）",
+              "source_type": "web",
+              "source_authority": "official_government",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": "tourism_corpus:curated:hz-autumn-osmanthus",
+              "place_name": "满觉陇"
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:51:46.967841Z"
+        }
+      ]
+    },
+    {
+      "id": "autumn_culture",
+      "message": "杭州秋季赏桂有哪些文化特色？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "依据已检索的资料（杭州政协网转载的《杭州秋天：满觉陇赏桂文化》），杭州秋季赏桂的文化特色主要体现在满觉陇一带：1）赏桂民俗长期传承，是当地延续已久的秋季习俗，具有稳定的民俗文化底蕴；2）满觉陇地处山谷，秋日桂花与山谷景观相融合，共同构成当地秋季季节体验的文化主题。需要说明的是：以上属于稳定的季节性文化介绍，资料本身不能证明某一天的开花程度、具体花期、是否举办活动或实时天气；若您想安排具体日期前往，建议出行前另行核实当年花况与相关活动信息。目前这仅作为文化背景说明，未对任何行程做改动。\n1. 满觉陇赏桂（待核实的秋季文化体验点）：满觉陇是杭州秋季赏桂民俗的代表地点，桂花与山谷景观构成当地秋季文化主题；此条仅为待核实建议，尚未纳入任何行程，花期与活动情况需另行确认。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_fbdcebcfe6b75009b784b9438e6c7289",
+            "suggestion_type": "place",
+            "title": "满觉陇赏桂（待核实的秋季文化体验点）",
+            "summary": "满觉陇是杭州秋季赏桂民俗的代表地点，桂花与山谷景观构成当地秋季文化主题；此条仅为待核实建议，尚未纳入任何行程，花期与活动情况需另行确认。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "满觉陇赏桂（待核实的秋季文化体验点）"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "资料记载满觉陇赏桂民俗长期传承，文化底蕴稳定",
+              "桂花与山谷景观结合，是杭州秋季季节体验的文化主题"
+            ],
+            "evidence_refs": [
+              "knowledge_97b0e8d8f8415efa_e07da13e943e79126788ec0a28eadff9"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:52:49.993586Z",
+            "conversation_turn_id": "turn-7",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "history_culture",
+            "seasonal_experience"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [
+            "autumn"
+          ],
+          "experience_tags": [],
+          "filter_signals": [
+            "explicit_season"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [
+          {
+            "evidence_ref": "knowledge_97b0e8d8f8415efa_e07da13e943e79126788ec0a28eadff9",
+            "text": "满觉陇的赏桂民俗长期传承，秋日桂花与山谷景观构成当地季节体验的文化主题。这里仅介绍秋季赏桂这一一般特色，不证明某天开花程度、具体花期、活动举行或实时天气。",
+            "source_reference": "https://www.hzzx.gov.cn/cshz/content/2026-09/24/content_9315838.htm",
+            "knowledge_type": "seasonal_experience",
+            "scope": "stable",
+            "document_id": "hz-autumn-osmanthus",
+            "chunk_id": "e07da13e943e79126788ec0a28eadff98df5e3d134c3a0baf18cdfa5ba266666",
+            "document_title": "杭州秋天：满觉陇赏桂文化",
+            "source_name": "杭州政协网（转载杭州网、杭州通客户端）",
+            "source_type": "web",
+            "source_authority": "official_government",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": "tourism_corpus:curated:hz-autumn-osmanthus",
+            "place_name": "满觉陇"
+          }
+        ],
+        "answer_evidence_refs": [
+          "knowledge_97b0e8d8f8415efa_e07da13e943e79126788ec0a28eadff9"
+        ],
+        "knowledge_retrieval": {
+          "status": "available",
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:52:21.099296Z",
+          "retrieved_document_refs": [
+            "hz-autumn-osmanthus"
+          ],
+          "retrieved_chunk_refs": [
+            "e07da13e943e79126788ec0a28eadff98df5e3d134c3a0baf18cdfa5ba266666"
+          ]
+        },
+        "grounding_status": "citations_validated",
+        "grounding_limitations": [
+          "claim_entailment_not_verified",
+          "tourism_knowledge_not_live_verified"
+        ]
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 28.902,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 1058,
+            "prompt_tokens": 1525,
+            "total_tokens": 2583,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 668,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 64
+            }
+          }
+        }
+      ],
+      "knowledge_requests": [
+        {
+          "query": "杭州秋季赏桂有哪些文化特色？",
+          "destination": "杭州",
+          "knowledge_types": [
+            "history_culture",
+            "seasonal_experience"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [
+            "autumn"
+          ],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_97b0e8d8f8415efa_e07da13e943e79126788ec0a28eadff9",
+              "text": "满觉陇的赏桂民俗长期传承，秋日桂花与山谷景观构成当地季节体验的文化主题。这里仅介绍秋季赏桂这一一般特色，不证明某天开花程度、具体花期、活动举行或实时天气。",
+              "source_reference": "https://www.hzzx.gov.cn/cshz/content/2026-09/24/content_9315838.htm",
+              "knowledge_type": "seasonal_experience",
+              "scope": "stable",
+              "document_id": "hz-autumn-osmanthus",
+              "chunk_id": "e07da13e943e79126788ec0a28eadff98df5e3d134c3a0baf18cdfa5ba266666",
+              "document_title": "杭州秋天：满觉陇赏桂文化",
+              "source_name": "杭州政协网（转载杭州网、杭州通客户端）",
+              "source_type": "web",
+              "source_authority": "official_government",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": "tourism_corpus:curated:hz-autumn-osmanthus",
+              "place_name": "满觉陇"
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:52:21.099296Z"
+        }
+      ]
+    },
+    {
+      "id": "parents",
+      "message": "杭州适合带父母玩吗？",
+      "goal": {
+        "goal_type": "recommendation",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_recommendation"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "总体来说，杭州适合带父母以慢节奏方式游玩。依据官方长辈出游原则：按父母身体条件选择活动，避免高风险、高强度项目，优先考虑无障碍设施较完善的景点，并保持舒缓节奏、安排途中休息。建议出发前先与父母确认体力与休息需求，再决定活动强度。需要说明：目前资料只覆盖长辈出游的一般原则，未包含杭州具体景点的无障碍设施、开放情况或交通现状，这些需另行核实；如父母有健康方面的顾虑，请结合自身情况判断。\n1. 按父母身体条件选择舒缓活动：带父母游杭州时，先评估体力与健康状况，避免高风险、高强度项目，优先考虑无障碍设施较完善的景点，保持舒缓节奏。\n2. 慢节奏游览并预留休息时间：为父母安排杭州行程时预留充裕游览时间，途中合理安排休息；可先讨论体力与休息需求，再确定活动强度。具体路段与设施仍需另行核实。",
+        "goal_type": "recommendation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_7a11721e7a24598dac8465a9a434c7f9",
+            "suggestion_type": "strategy",
+            "title": "按父母身体条件选择舒缓活动",
+            "summary": "带父母游杭州时，先评估体力与健康状况，避免高风险、高强度项目，优先考虑无障碍设施较完善的景点，保持舒缓节奏。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "按父母身体条件选择舒缓活动"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "官方老年旅游服务规范强调按身体条件选择活动，避免高风险和高强度项目",
+              "优先无障碍设施较完善的景点有助于降低长辈出行负担",
+              "舒缓节奏更符合长辈出游的舒适需求"
+            ],
+            "evidence_refs": [
+              "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:53:37.583516Z",
+            "conversation_turn_id": "turn-8",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_95466e62e83057ea812434aedc746e22",
+            "suggestion_type": "strategy",
+            "title": "慢节奏游览并预留休息时间",
+            "summary": "为父母安排杭州行程时预留充裕游览时间，途中合理安排休息；可先讨论体力与休息需求，再确定活动强度。具体路段与设施仍需另行核实。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "慢节奏游览并预留休息时间"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "长辈出游一般原则建议舒缓节奏与充裕游览时间",
+              "合理安排途中休息可减少长辈疲劳",
+              "先了解父母休息需求，便于后续选择合适的活动强度"
+            ],
+            "evidence_refs": [
+              "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:53:37.583516Z",
+            "conversation_turn_id": "turn-8",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "audience_strategy",
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [
+            "senior"
+          ],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [
+            "parent_word_to_senior_filter_not_age_fact"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [
+          {
+            "evidence_ref": "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8",
+            "text": "国家旅游局公布的老年旅游服务规范强调按身体条件选择活动，避免高风险和高强度项目，选择无障碍设施较完善的景点并保持舒缓节奏、安排休息。这是用于杭州旅行讨论的一般长辈出游原则，不是某个杭州景点无障碍现状或个人健康适宜性的证明。",
+            "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+            "knowledge_type": "audience_strategy",
+            "scope": "stable",
+            "document_id": "hz-senior-strategy",
+            "chunk_id": "27c9242da2d8c76b45cce22e607f1ca81f45315967949297a2450f48a9af5263",
+            "document_title": "带父母杭州慢游：长辈出游一般原则",
+            "source_name": "国家旅游局 / 北京市政府门户转载",
+            "source_type": "web",
+            "source_authority": "official_government",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": null,
+            "place_name": null
+          },
+          {
+            "evidence_ref": "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8",
+            "text": "长辈出游的一般服务原则包括舒缓游览节奏、给予充裕游览时间，并合理安排途中休息。用于杭州慢游时，可先讨论体力、休息需求及活动强度；具体路段与设施仍须另行核实。本文不提供正式日程。",
+            "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+            "knowledge_type": "travel_strategy",
+            "scope": "stable",
+            "document_id": "hz-slow-travel-strategy",
+            "chunk_id": "8c919d6231a97b531a9ebcbc56922af87e56c66b716f5fafb598d9dd430feb4e",
+            "document_title": "杭州轻松慢游：节奏与休息",
+            "source_name": "国家旅游局 / 北京市政府门户转载",
+            "source_type": "web",
+            "source_authority": "official_government",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": null,
+            "place_name": null
+          }
+        ],
+        "answer_evidence_refs": [
+          "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8",
+          "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8"
+        ],
+        "knowledge_retrieval": {
+          "status": "available",
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:52:50.003931Z",
+          "retrieved_document_refs": [
+            "hz-senior-strategy",
+            "hz-slow-travel-strategy"
+          ],
+          "retrieved_chunk_refs": [
+            "27c9242da2d8c76b45cce22e607f1ca81f45315967949297a2450f48a9af5263",
+            "8c919d6231a97b531a9ebcbc56922af87e56c66b716f5fafb598d9dd430feb4e"
+          ]
+        },
+        "grounding_status": "citations_validated",
+        "grounding_limitations": [
+          "claim_entailment_not_verified",
+          "tourism_knowledge_not_live_verified"
+        ]
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 47.588,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 1650,
+            "prompt_tokens": 1907,
+            "total_tokens": 3557,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1096,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 704
+            }
+          }
+        }
+      ],
+      "knowledge_requests": [
+        {
+          "query": "杭州适合带父母玩吗？",
+          "destination": "杭州",
+          "knowledge_types": [
+            "audience_strategy",
+            "travel_strategy"
+          ],
+          "max_results": 5,
+          "audience_tags": [
+            "senior"
+          ],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8",
+              "text": "国家旅游局公布的老年旅游服务规范强调按身体条件选择活动，避免高风险和高强度项目，选择无障碍设施较完善的景点并保持舒缓节奏、安排休息。这是用于杭州旅行讨论的一般长辈出游原则，不是某个杭州景点无障碍现状或个人健康适宜性的证明。",
+              "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+              "knowledge_type": "audience_strategy",
+              "scope": "stable",
+              "document_id": "hz-senior-strategy",
+              "chunk_id": "27c9242da2d8c76b45cce22e607f1ca81f45315967949297a2450f48a9af5263",
+              "document_title": "带父母杭州慢游：长辈出游一般原则",
+              "source_name": "国家旅游局 / 北京市政府门户转载",
+              "source_type": "web",
+              "source_authority": "official_government",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": null,
+              "place_name": null
+            },
+            {
+              "evidence_ref": "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8",
+              "text": "长辈出游的一般服务原则包括舒缓游览节奏、给予充裕游览时间，并合理安排途中休息。用于杭州慢游时，可先讨论体力、休息需求及活动强度；具体路段与设施仍须另行核实。本文不提供正式日程。",
+              "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+              "knowledge_type": "travel_strategy",
+              "scope": "stable",
+              "document_id": "hz-slow-travel-strategy",
+              "chunk_id": "8c919d6231a97b531a9ebcbc56922af87e56c66b716f5fafb598d9dd430feb4e",
+              "document_title": "杭州轻松慢游：节奏与休息",
+              "source_name": "国家旅游局 / 北京市政府门户转载",
+              "source_type": "web",
+              "source_authority": "official_government",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": null,
+              "place_name": null
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:52:50.003931Z"
+        }
+      ]
+    },
+    {
+      "id": "senior",
+      "message": "带长辈去杭州如何安排得轻松些？",
+      "goal": {
+        "goal_type": "travel_advice",
+        "confidence": 0.92,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_travel_advice"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "带长辈游杭州想轻松些，可以把握几个原则：先结合长辈的体力、休息需求和能接受的活动强度来筛选安排；整体节奏放舒缓，每天留充裕的游览时间，并在途中合理安排休息；避免高风险、高强度项目，倾向选择无障碍设施较完善的景点。需要说明：以上来自长辈出游的一般服务原则；当前资料未提供杭州具体路段、景点及其无障碍设施现状，确定具体地点前需另行核实。如你能补充长辈的体力情况或偏好，我可以给出更贴合的讨论方向。\n1. 出发前先评估长辈体力与活动强度：把体力、休息需求和可接受的活动强度作为筛选安排的第一步，避开高强度、高风险项目。\n2. 采用舒缓节奏并预留途中休息：每天安排宽松的游览时间，不赶行程，并在途中合理安排休息，让长辈保持舒适的游览状态。\n3. 优先讨论无障碍设施较完善的景点方向：挑选具体景点时可倾向无障碍设施较完善的地方；但杭州各景点的无障碍现状需另行核实后再确认。",
+        "goal_type": "travel_advice",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_b2cda4f959fb559aa3162c5fa17cb542",
+            "suggestion_type": "strategy",
+            "title": "出发前先评估长辈体力与活动强度",
+            "summary": "把体力、休息需求和可接受的活动强度作为筛选安排的第一步，避开高强度、高风险项目。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "出发前先评估长辈体力与活动强度"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "规范强调应按身体条件选择活动",
+              "避免高风险和高强度项目可降低旅途负担"
+            ],
+            "evidence_refs": [
+              "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:54:51.030734Z",
+            "conversation_turn_id": "turn-9",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_d9cba1fc6b7d542bbbfd0d57279d1b36",
+            "suggestion_type": "strategy",
+            "title": "采用舒缓节奏并预留途中休息",
+            "summary": "每天安排宽松的游览时间，不赶行程，并在途中合理安排休息，让长辈保持舒适的游览状态。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "采用舒缓节奏并预留途中休息"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "慢游原则建议舒缓游览节奏并给予充裕游览时间",
+              "合理安排途中休息有助于长辈保持体力"
+            ],
+            "evidence_refs": [
+              "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:54:51.030734Z",
+            "conversation_turn_id": "turn-9",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_957ff000fa3e5e19a375234fba025e7c",
+            "suggestion_type": "strategy",
+            "title": "优先讨论无障碍设施较完善的景点方向",
+            "summary": "挑选具体景点时可倾向无障碍设施较完善的地方；但杭州各景点的无障碍现状需另行核实后再确认。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "优先讨论无障碍设施较完善的景点方向"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "一般原则建议选择无障碍设施较完善的景点",
+              "当前资料未包含杭州具体景点设施信息，需核实后再定"
+            ],
+            "evidence_refs": [
+              "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:54:51.030734Z",
+            "conversation_turn_id": "turn-9",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "audience_strategy",
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [
+            "senior"
+          ],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [
+            "parent_word_to_senior_filter_not_age_fact"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [
+          {
+            "evidence_ref": "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8",
+            "text": "长辈出游的一般服务原则包括舒缓游览节奏、给予充裕游览时间，并合理安排途中休息。用于杭州慢游时，可先讨论体力、休息需求及活动强度；具体路段与设施仍须另行核实。本文不提供正式日程。",
+            "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+            "knowledge_type": "travel_strategy",
+            "scope": "stable",
+            "document_id": "hz-slow-travel-strategy",
+            "chunk_id": "8c919d6231a97b531a9ebcbc56922af87e56c66b716f5fafb598d9dd430feb4e",
+            "document_title": "杭州轻松慢游：节奏与休息",
+            "source_name": "国家旅游局 / 北京市政府门户转载",
+            "source_type": "web",
+            "source_authority": "official_government",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": null,
+            "place_name": null
+          },
+          {
+            "evidence_ref": "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8",
+            "text": "国家旅游局公布的老年旅游服务规范强调按身体条件选择活动，避免高风险和高强度项目，选择无障碍设施较完善的景点并保持舒缓节奏、安排休息。这是用于杭州旅行讨论的一般长辈出游原则，不是某个杭州景点无障碍现状或个人健康适宜性的证明。",
+            "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+            "knowledge_type": "audience_strategy",
+            "scope": "stable",
+            "document_id": "hz-senior-strategy",
+            "chunk_id": "27c9242da2d8c76b45cce22e607f1ca81f45315967949297a2450f48a9af5263",
+            "document_title": "带父母杭州慢游：长辈出游一般原则",
+            "source_name": "国家旅游局 / 北京市政府门户转载",
+            "source_type": "web",
+            "source_authority": "official_government",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": null,
+            "place_name": null
+          }
+        ],
+        "answer_evidence_refs": [
+          "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8",
+          "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8"
+        ],
+        "knowledge_retrieval": {
+          "status": "available",
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:53:37.594824Z",
+          "retrieved_document_refs": [
+            "hz-slow-travel-strategy",
+            "hz-senior-strategy"
+          ],
+          "retrieved_chunk_refs": [
+            "8c919d6231a97b531a9ebcbc56922af87e56c66b716f5fafb598d9dd430feb4e",
+            "27c9242da2d8c76b45cce22e607f1ca81f45315967949297a2450f48a9af5263"
+          ]
+        },
+        "grounding_status": "citations_validated",
+        "grounding_limitations": [
+          "claim_entailment_not_verified",
+          "tourism_knowledge_not_live_verified"
+        ]
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 73.448,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 2573,
+            "prompt_tokens": 1912,
+            "total_tokens": 4485,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2039,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 704
+            }
+          }
+        }
+      ],
+      "knowledge_requests": [
+        {
+          "query": "带长辈去杭州如何安排得轻松些？",
+          "destination": "杭州",
+          "knowledge_types": [
+            "audience_strategy",
+            "travel_strategy"
+          ],
+          "max_results": 5,
+          "audience_tags": [
+            "senior"
+          ],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8",
+              "text": "长辈出游的一般服务原则包括舒缓游览节奏、给予充裕游览时间，并合理安排途中休息。用于杭州慢游时，可先讨论体力、休息需求及活动强度；具体路段与设施仍须另行核实。本文不提供正式日程。",
+              "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+              "knowledge_type": "travel_strategy",
+              "scope": "stable",
+              "document_id": "hz-slow-travel-strategy",
+              "chunk_id": "8c919d6231a97b531a9ebcbc56922af87e56c66b716f5fafb598d9dd430feb4e",
+              "document_title": "杭州轻松慢游：节奏与休息",
+              "source_name": "国家旅游局 / 北京市政府门户转载",
+              "source_type": "web",
+              "source_authority": "official_government",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": null,
+              "place_name": null
+            },
+            {
+              "evidence_ref": "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8",
+              "text": "国家旅游局公布的老年旅游服务规范强调按身体条件选择活动，避免高风险和高强度项目，选择无障碍设施较完善的景点并保持舒缓节奏、安排休息。这是用于杭州旅行讨论的一般长辈出游原则，不是某个杭州景点无障碍现状或个人健康适宜性的证明。",
+              "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+              "knowledge_type": "audience_strategy",
+              "scope": "stable",
+              "document_id": "hz-senior-strategy",
+              "chunk_id": "27c9242da2d8c76b45cce22e607f1ca81f45315967949297a2450f48a9af5263",
+              "document_title": "带父母杭州慢游：长辈出游一般原则",
+              "source_name": "国家旅游局 / 北京市政府门户转载",
+              "source_type": "web",
+              "source_authority": "official_government",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": null,
+              "place_name": null
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:53:37.594824Z"
+        }
+      ]
+    },
+    {
+      "id": "low_intensity",
+      "message": "带老人游杭州，怎么控制活动强度？",
+      "goal": {
+        "goal_type": "travel_advice",
+        "confidence": 0.92,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_travel_advice"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "带长辈游杭州，控制活动强度可从三方面入手：一是出发前先了解老人的体力状况和休息需求，据此决定每天的活动量；二是整体放缓游览节奏，给每处停留留足时间，并在途中合理安排休息；三是按身体条件选择活动，避开高风险和高强度项目，优先考虑无障碍条件较好的场所。需要说明：以上是资料中的一般长辈出游原则，不构成正式日程；具体某段步道坡度、设施现状等仍需另行核实。\n1. 先评估体力与休息需求再定活动量：出发前与长辈沟通体力状况、易疲劳时段和需要的休息频率，以评估结果决定每日活动强度和总时长。\n2. 舒缓节奏并预留途中休息：整体放缓游览节奏，给予充裕的游览时间，并在路线中合理安排休息点，而不是连续赶行程。\n3. 低强度活动优先，避开高风险项目：按长辈身体条件挑选活动，避免高风险和高强度项目，优先考虑无障碍设施较完善的景点。",
+        "goal_type": "travel_advice",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_5230944191f05e3881bbb9991bb89345",
+            "suggestion_type": "strategy",
+            "title": "先评估体力与休息需求再定活动量",
+            "summary": "出发前与长辈沟通体力状况、易疲劳时段和需要的休息频率，以评估结果决定每日活动强度和总时长。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "先评估体力与休息需求再定活动量"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "资料提到长辈出游可先讨论体力、休息需求及活动强度",
+              "老人个体差异较大，先评估可避免安排超出承受范围的活动"
+            ],
+            "evidence_refs": [
+              "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8",
+              "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:55:58.316439Z",
+            "conversation_turn_id": "turn-10",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_b87ca3721922556bb3c78d80d9398660",
+            "suggestion_type": "strategy",
+            "title": "舒缓节奏并预留途中休息",
+            "summary": "整体放缓游览节奏，给予充裕的游览时间，并在路线中合理安排休息点，而不是连续赶行程。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "舒缓节奏并预留途中休息"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "资料将舒缓节奏、充裕游览时间和途中休息列为长辈出游的一般服务原则",
+              "放缓节奏有助于把单日强度控制在老人可承受范围内"
+            ],
+            "evidence_refs": [
+              "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:55:58.316439Z",
+            "conversation_turn_id": "turn-10",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_59c9ca68116b5dcd93049be595ee1cff",
+            "suggestion_type": "strategy",
+            "title": "低强度活动优先，避开高风险项目",
+            "summary": "按长辈身体条件挑选活动，避免高风险和高强度项目，优先考虑无障碍设施较完善的景点。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "低强度活动优先，避开高风险项目"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "资料建议老年游客按身体条件选择活动，避免高风险和高强度项目",
+              "资料同时提示优先选择无障碍设施较完善的景点，并保持舒缓节奏"
+            ],
+            "evidence_refs": [
+              "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:55:58.316439Z",
+            "conversation_turn_id": "turn-10",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": {
+          "options": [
+            "单区域慢游：一天集中在一小片区域",
+            "半日活动加午间休息",
+            "多景点连游"
+          ],
+          "dimensions": [
+            "体力消耗",
+            "休息安排灵活性",
+            "单日覆盖范围",
+            "对老人状态的适应性"
+          ],
+          "summary": "单区域慢游和半日活动加午休通常更容易控制强度、留出休息余地；多景点连游覆盖更广但节奏紧张、体力消耗大，对长辈一般不友好。具体选择应结合出发前的体力评估，相关场所的实际设施情况需另行核实。"
+        },
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "audience_strategy",
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [
+            "senior"
+          ],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [
+            "parent_word_to_senior_filter_not_age_fact"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [
+          {
+            "evidence_ref": "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8",
+            "text": "长辈出游的一般服务原则包括舒缓游览节奏、给予充裕游览时间，并合理安排途中休息。用于杭州慢游时，可先讨论体力、休息需求及活动强度；具体路段与设施仍须另行核实。本文不提供正式日程。",
+            "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+            "knowledge_type": "travel_strategy",
+            "scope": "stable",
+            "document_id": "hz-slow-travel-strategy",
+            "chunk_id": "8c919d6231a97b531a9ebcbc56922af87e56c66b716f5fafb598d9dd430feb4e",
+            "document_title": "杭州轻松慢游：节奏与休息",
+            "source_name": "国家旅游局 / 北京市政府门户转载",
+            "source_type": "web",
+            "source_authority": "official_government",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": null,
+            "place_name": null
+          },
+          {
+            "evidence_ref": "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8",
+            "text": "国家旅游局公布的老年旅游服务规范强调按身体条件选择活动，避免高风险和高强度项目，选择无障碍设施较完善的景点并保持舒缓节奏、安排休息。这是用于杭州旅行讨论的一般长辈出游原则，不是某个杭州景点无障碍现状或个人健康适宜性的证明。",
+            "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+            "knowledge_type": "audience_strategy",
+            "scope": "stable",
+            "document_id": "hz-senior-strategy",
+            "chunk_id": "27c9242da2d8c76b45cce22e607f1ca81f45315967949297a2450f48a9af5263",
+            "document_title": "带父母杭州慢游：长辈出游一般原则",
+            "source_name": "国家旅游局 / 北京市政府门户转载",
+            "source_type": "web",
+            "source_authority": "official_government",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": null,
+            "place_name": null
+          }
+        ],
+        "answer_evidence_refs": [
+          "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8",
+          "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8"
+        ],
+        "knowledge_retrieval": {
+          "status": "available",
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:54:51.042190Z",
+          "retrieved_document_refs": [
+            "hz-slow-travel-strategy",
+            "hz-senior-strategy"
+          ],
+          "retrieved_chunk_refs": [
+            "8c919d6231a97b531a9ebcbc56922af87e56c66b716f5fafb598d9dd430feb4e",
+            "27c9242da2d8c76b45cce22e607f1ca81f45315967949297a2450f48a9af5263"
+          ]
+        },
+        "grounding_status": "citations_validated",
+        "grounding_limitations": [
+          "claim_entailment_not_verified",
+          "tourism_knowledge_not_live_verified"
+        ]
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 67.285,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 2079,
+            "prompt_tokens": 1911,
+            "total_tokens": 3990,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1239,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 64
+            }
+          }
+        }
+      ],
+      "knowledge_requests": [
+        {
+          "query": "带老人游杭州，怎么控制活动强度？",
+          "destination": "杭州",
+          "knowledge_types": [
+            "audience_strategy",
+            "travel_strategy"
+          ],
+          "max_results": 5,
+          "audience_tags": [
+            "senior"
+          ],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8",
+              "text": "长辈出游的一般服务原则包括舒缓游览节奏、给予充裕游览时间，并合理安排途中休息。用于杭州慢游时，可先讨论体力、休息需求及活动强度；具体路段与设施仍须另行核实。本文不提供正式日程。",
+              "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+              "knowledge_type": "travel_strategy",
+              "scope": "stable",
+              "document_id": "hz-slow-travel-strategy",
+              "chunk_id": "8c919d6231a97b531a9ebcbc56922af87e56c66b716f5fafb598d9dd430feb4e",
+              "document_title": "杭州轻松慢游：节奏与休息",
+              "source_name": "国家旅游局 / 北京市政府门户转载",
+              "source_type": "web",
+              "source_authority": "official_government",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": null,
+              "place_name": null
+            },
+            {
+              "evidence_ref": "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8",
+              "text": "国家旅游局公布的老年旅游服务规范强调按身体条件选择活动，避免高风险和高强度项目，选择无障碍设施较完善的景点并保持舒缓节奏、安排休息。这是用于杭州旅行讨论的一般长辈出游原则，不是某个杭州景点无障碍现状或个人健康适宜性的证明。",
+              "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+              "knowledge_type": "audience_strategy",
+              "scope": "stable",
+              "document_id": "hz-senior-strategy",
+              "chunk_id": "27c9242da2d8c76b45cce22e607f1ca81f45315967949297a2450f48a9af5263",
+              "document_title": "带父母杭州慢游：长辈出游一般原则",
+              "source_name": "国家旅游局 / 北京市政府门户转载",
+              "source_type": "web",
+              "source_authority": "official_government",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": null,
+              "place_name": null
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:54:51.042190Z"
+        }
+      ]
+    },
+    {
+      "id": "photography",
+      "message": "杭州有哪些适合摄影的地方？",
+      "goal": {
+        "goal_type": "recommendation",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_recommendation"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "根据已提供的资料，西湖是杭州有据可查的摄影主题地：它包含湖面、堤道、人工岛以及亭台、寺塔与树木，这些要素构成多种景观视线，体现传统山水审美，因此围绕「湖—堤—山」的关系观察与构图是值得尝试的拍摄方向。需要说明：该资料来自对景观本身的描述，并不能证明最佳机位、拍摄时刻或当天人流情况，具体拍摄条件建议出行前自行核实。另外，当前知识库仅提供了西湖这一处的摄影体验资料，杭州其他地点没有已给出的证据来源，我不能把它们当作已核实事实列出；如需扩大推荐范围，可在补充检索后再讨论。\n1. 西湖：湖面、堤道与亭塔的山水景观摄影：西湖文化景观由湖面、堤道、人工岛及亭台、寺塔、树木组成，构成多种景观视线，适合以传统山水审美为线索进行取景与构图探索。",
+        "goal_type": "recommendation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_7afd851b5d1d555ca378af058c353b62",
+            "suggestion_type": "place",
+            "title": "西湖：湖面、堤道与亭塔的山水景观摄影",
+            "summary": "西湖文化景观由湖面、堤道、人工岛及亭台、寺塔、树木组成，构成多种景观视线，适合以传统山水审美为线索进行取景与构图探索。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "西湖：湖面、堤道与亭塔的山水景观摄影"
+              }
+            ],
+            "destination": "杭州",
+            "reasons": [
+              "景观要素丰富，湖、堤、岛、亭塔可组合出多样的画面层次",
+              "多种景观视线为构图提供了清晰的观察线索",
+              "体现传统山水审美，摄影主题表达明确"
+            ],
+            "evidence_refs": [
+              "knowledge_ac9cdda3cd113303_793d4c48a08854351bf7efb2b2002429"
+            ],
+            "grounding": "knowledge_supported",
+            "created_at": "2026-09-29T03:56:51.561352Z",
+            "conversation_turn_id": "turn-11",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "place_experience"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [
+          {
+            "evidence_ref": "knowledge_ac9cdda3cd113303_793d4c48a08854351bf7efb2b2002429",
+            "text": "西湖文化景观包含湖面、堤道、人工岛以及亭台、寺塔与树木。这些要素构成多种景观视线，也体现传统山水审美。可把观察湖、堤与山的关系作为摄影讨论方向；这是根据景观描述提出的体验建议，不证明最佳机位、拍摄时刻或人流。",
+            "source_reference": "https://whc.unesco.org/en/list/1334",
+            "knowledge_type": "place_experience",
+            "scope": "stable",
+            "document_id": "hz-westlake-experience",
+            "chunk_id": "793d4c48a08854351bf7efb2b2002429b6a44375ddec76c8c762b11ba5056f25",
+            "document_title": "西湖摄影与景观体验",
+            "source_name": "UNESCO World Heritage Centre",
+            "source_type": "web",
+            "source_authority": "institutional",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": "tourism_corpus:curated:hz-westlake-experience",
+            "place_name": "西湖"
+          }
+        ],
+        "answer_evidence_refs": [
+          "knowledge_ac9cdda3cd113303_793d4c48a08854351bf7efb2b2002429"
+        ],
+        "knowledge_retrieval": {
+          "status": "available",
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:55:58.328230Z",
+          "retrieved_document_refs": [
+            "hz-westlake-experience"
+          ],
+          "retrieved_chunk_refs": [
+            "793d4c48a08854351bf7efb2b2002429b6a44375ddec76c8c762b11ba5056f25"
+          ]
+        },
+        "grounding_status": "citations_validated",
+        "grounding_limitations": [
+          "claim_entailment_not_verified",
+          "tourism_knowledge_not_live_verified"
+        ]
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 53.247,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 1629,
+            "prompt_tokens": 1499,
+            "total_tokens": 3128,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1235,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 64
+            }
+          }
+        }
+      ],
+      "knowledge_requests": [
+        {
+          "query": "杭州有哪些适合摄影的地方？",
+          "destination": "杭州",
+          "knowledge_types": [
+            "place_experience"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_ac9cdda3cd113303_793d4c48a08854351bf7efb2b2002429",
+              "text": "西湖文化景观包含湖面、堤道、人工岛以及亭台、寺塔与树木。这些要素构成多种景观视线，也体现传统山水审美。可把观察湖、堤与山的关系作为摄影讨论方向；这是根据景观描述提出的体验建议，不证明最佳机位、拍摄时刻或人流。",
+              "source_reference": "https://whc.unesco.org/en/list/1334",
+              "knowledge_type": "place_experience",
+              "scope": "stable",
+              "document_id": "hz-westlake-experience",
+              "chunk_id": "793d4c48a08854351bf7efb2b2002429b6a44375ddec76c8c762b11ba5056f25",
+              "document_title": "西湖摄影与景观体验",
+              "source_name": "UNESCO World Heritage Centre",
+              "source_type": "web",
+              "source_authority": "institutional",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": "tourism_corpus:curated:hz-westlake-experience",
+              "place_name": "西湖"
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:55:58.328230Z"
+        }
+      ]
+    },
+    {
+      "id": "unsupported_claim_trap",
+      "message": "西湖形成于什么精确年份？",
+      "goal": {
+        "goal_type": "travel_advice",
+        "confidence": 0.92,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_travel_advice"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n目前知识检索未返回任何与西湖相关的资料，因此我无法基于已提供的证据给出西湖形成的\"精确年份\"。需要说明的是：自然湖泊的形成通常经历漫长的地质与水文演变过程，即便查证权威资料，也往往不存在单一、有明确记载的精确年份；这类问题需要专门的地理或史学来源核实，超出了我当前可用的旅行知识范围。我不能凭记忆把未经核实的说法当作确认事实提供。如果你正在规划西湖相关的行程，欢迎告诉我出行时间或偏好，我可以基于你提供的资料给出非约束性的建议与比较。",
+        "goal_type": "travel_advice",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": true,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": []
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_no_results",
+            "message": "知识库没有检索到与问题相关的资料。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": null,
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "status": "unavailable",
+          "outcome": "no_results",
+          "advisory": {
+            "knowledge_sufficient": false,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [
+              "no_matching_knowledge"
+            ],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:56:51.587516Z",
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": []
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 39.596,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 896,
+            "prompt_tokens": 1134,
+            "total_tokens": 2030,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 760,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 64
+            }
+          }
+        }
+      ],
+      "knowledge_requests": [
+        {
+          "query": "西湖形成于什么精确年份？",
+          "destination": null,
+          "knowledge_types": [
+            "travel_strategy"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "unavailable",
+          "evidence": [],
+          "outcome": "no_results",
+          "advisory": {
+            "knowledge_sufficient": false,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [
+              "no_matching_knowledge"
+            ],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:56:51.587516Z"
+        }
+      ]
+    },
+    {
+      "id": "no_season_results",
+      "message": "春天去杭州有什么特点？",
+      "goal": {
+        "goal_type": "destination_exploration",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_destination_exploration"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n知识库没有检索到与问题相关的资料。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+        "goal_type": "destination_exploration",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "seasonal_experience"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [
+            "spring"
+          ],
+          "experience_tags": [],
+          "filter_signals": [
+            "explicit_season"
+          ]
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_no_results",
+            "message": "知识库没有检索到与问题相关的资料。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "status": "unavailable",
+          "outcome": "no_results",
+          "advisory": {
+            "knowledge_sufficient": false,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [
+              "no_matching_knowledge"
+            ],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:57:31.187144Z",
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": []
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 0.008,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 0,
+      "provider_observations": [],
+      "knowledge_requests": [
+        {
+          "query": "春天去杭州有什么特点？",
+          "destination": "杭州",
+          "knowledge_types": [
+            "seasonal_experience"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [
+            "spring"
+          ],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "unavailable",
+          "evidence": [],
+          "outcome": "no_results",
+          "advisory": {
+            "knowledge_sufficient": false,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [
+              "no_matching_knowledge"
+            ],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:57:31.187144Z"
+        }
+      ]
+    },
+    {
+      "id": "unsupported_destination",
+      "message": "苏州有什么历史？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+        "goal_type": "explanation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "history_culture"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": []
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unsupported_query",
+            "message": "当前小型知识库不覆盖这个目的地或主题。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "status": "unavailable",
+          "outcome": "unsupported_query",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": []
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 0.007,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 0,
+      "provider_observations": [],
+      "knowledge_requests": [
+        {
+          "query": "苏州有什么历史？",
+          "destination": "苏州",
+          "knowledge_types": [
+            "history_culture"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "unavailable",
+          "evidence": [],
+          "outcome": "unsupported_query",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null
+        }
+      ]
+    },
+    {
+      "id": "live_hours",
+      "message": "西湖今天几点关门？",
+      "goal": {
+        "goal_type": "travel_chat",
+        "confidence": 0.55,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": false,
+        "live_fact_likely_required": true,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "uncertain_no_mutation_authorization"
+        ]
+      },
+      "knowledge_tool_required": false,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+        "goal_type": "travel_chat",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": false,
+          "knowledge_types": [],
+          "live_fact_required": true,
+          "fact_types": [
+            "opening_hours"
+          ],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": []
+        },
+        "information_gaps": [
+          {
+            "code": "live_fact_unavailable",
+            "message": "当前无法实时核实天气、开放、票价或交通等事实。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": null,
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "live_verification_required",
+        "grounding_limitations": []
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": false,
+      "original_rationale_violation": null,
+      "latency_seconds": 0.006,
+      "knowledge_tool_called": false,
+      "knowledge_tool_calls": 0,
+      "provider_attempts": 0,
+      "provider_observations": [],
+      "knowledge_requests": [],
+      "retrieval_results": []
+    },
+    {
+      "id": "live_weather",
+      "message": "明天杭州下雨吗？",
+      "goal": {
+        "goal_type": "travel_advice",
+        "confidence": 0.92,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_travel_advice"
+        ]
+      },
+      "knowledge_tool_required": false,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+        "goal_type": "travel_advice",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": false,
+          "knowledge_types": [],
+          "live_fact_required": true,
+          "fact_types": [
+            "weather"
+          ],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": []
+        },
+        "information_gaps": [
+          {
+            "code": "live_fact_unavailable",
+            "message": "当前无法实时核实天气、开放、票价或交通等事实。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "live_verification_required",
+        "grounding_limitations": []
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": false,
+      "original_rationale_violation": null,
+      "latency_seconds": 0.006,
+      "knowledge_tool_called": false,
+      "knowledge_tool_calls": 0,
+      "provider_attempts": 0,
+      "provider_observations": [],
+      "knowledge_requests": [],
+      "retrieval_results": []
+    },
+    {
+      "id": "original_reason",
+      "message": "为什么你推荐18点去西湖？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "knowledge_tool_required": false,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "当前没有保存可验证的原始理由，我不能把重新推测的解释说成当时的理由。",
+        "goal_type": "explanation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": {
+          "subject_ref": null,
+          "explanation_type": "rationale_unavailable",
+          "reasons": [],
+          "evidence_refs": [],
+          "based_on_prior_decision": false,
+          "source_turn_ref": null,
+          "source_decision_ref": null,
+          "fact_freshness_warning": "无法证明任何重建解释是原始规划理由。",
+          "missing_evidence": [
+            "persisted_original_rationale"
+          ]
+        },
+        "information_need": {
+          "knowledge_required": false,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": true,
+          "trip_context_required": true,
+          "preferences_required": false,
+          "itinerary_required": true,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": []
+        },
+        "information_gaps": [
+          {
+            "code": "rationale_unavailable",
+            "message": "没有找到可验证的原始理由记录。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": null,
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "decision_context_required",
+        "grounding_limitations": []
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": false,
+      "latency_seconds": 0.007,
+      "knowledge_tool_called": false,
+      "knowledge_tool_calls": 0,
+      "provider_attempts": 0,
+      "provider_observations": [],
+      "knowledge_requests": [],
+      "retrieval_results": []
+    },
+    {
+      "id": "ack",
+      "message": "谢谢。",
+      "goal": {
+        "goal_type": "travel_chat",
+        "confidence": 0.95,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": false,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_travel_chat"
+        ]
+      },
+      "knowledge_tool_required": false,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "不客气！很高兴能帮到你。如果之后还想聊聊目的地灵感、行程思路或旅行中的其他问题，随时告诉我。祝你旅途愉快！",
+        "goal_type": "travel_chat",
+        "status": "completed",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": false,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": null,
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "not_applicable",
+        "grounding_limitations": []
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 6.696,
+      "knowledge_tool_called": false,
+      "knowledge_tool_calls": 0,
+      "provider_attempts": 1,
+      "provider_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 130,
+            "prompt_tokens": 1003,
+            "total_tokens": 1133,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 72,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 704
+            }
+          }
+        }
+      ],
+      "knowledge_requests": [],
+      "retrieval_results": []
+    },
+    {
+      "id": "liked",
+      "message": "第二个不错。",
+      "goal": {
+        "goal_type": "travel_chat",
+        "confidence": 0.55,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": false,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "uncertain_no_mutation_authorization"
+        ]
+      },
+      "knowledge_tool_required": false,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "这条建议序号没有对应记录，请明确说出要讨论的建议。",
+        "goal_type": "travel_chat",
+        "status": "needs_clarification",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": false,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": []
+        },
+        "information_gaps": [
+          {
+            "code": "unknown_suggestion",
+            "message": "这条建议序号没有对应记录，请明确说出要讨论的建议。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "not_applicable",
+        "grounding_limitations": []
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 0.007,
+      "knowledge_tool_called": false,
+      "knowledge_tool_calls": 0,
+      "provider_attempts": 0,
+      "provider_observations": [],
+      "knowledge_requests": [],
+      "retrieval_results": []
+    }
+  ],
+  "complete": true,
+  "case_count": 20,
+  "real_provider_attempts": 14,
+  "fake_provider_calls": 0,
+  "knowledge_tool_precision": 1.0,
+  "knowledge_tool_recall": 1.0,
+  "tool_confusion": {
+    "true_positive": 15,
+    "false_positive": 0,
+    "false_negative": 0
+  },
+  "errors": 0,
+  "live_fact_violations": 0,
+  "original_rationale_violations": 0
+}

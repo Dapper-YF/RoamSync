@@ -1,5 +1,12 @@
 # RoamSync
 
+正式源码与部署唯一目录：`E:\Study\RoamSync`。其他目录与实验工作区不作为正式部署来源。
+
+启动 Docker Desktop 后，双击本目录的 `Start-RoamSync.cmd`，即可从本目录当前代码重新构建并启动
+`roamsync` 项目的 Web、API、Worker 和数据库，保留已有旅行数据。访问 <http://127.0.0.1:3000>。
+Docker Desktop 中对 `roamsync` 点击启动，会运行最近一次构建的版本；修改代码后请再次运行脚本更新镜像。
+运行 `scripts/verify-roamsync.ps1` 可检查容器部署来源与后端源码是否一致。
+
 2026-09-08 Web 重构：统一旅程入口、精简创建、活动直接完成/跳过与首次规划地点准备已落地。交付范围和未完成项见 [本轮重构记录](docs/WEB_REFACTOR_20260908.md)。
 
 后续已完成模型连接、完整日期覆盖和交通时间修正，并通过真实首次规划与局部调整的确认、刷新验收，见 [真实 AI 流程修复](docs/AI_FLOW_REFACTOR_20260908.md)。

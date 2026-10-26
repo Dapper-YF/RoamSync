@@ -1,0 +1,123 @@
+{
+  "run": {
+    "id": "a5ede415-6165-4636-a2b9-97998a374d13",
+    "trip_id": "00000000-0000-4000-8000-000000000002",
+    "trip_title": "Goal-Aware Demo · 杭州从容一日游",
+    "status": "awaiting_confirmation",
+    "run_type": "replan",
+    "base_trip_version": 1,
+    "current_trip_version": 1,
+    "model": "glm-5.3-flash",
+    "provider": "glm",
+    "created_at": "2026-09-29T15:21:47.625531+00:00",
+    "started_at": "2026-09-29T15:22:01.033177+00:00",
+    "completed_at": null,
+    "intent": "modify_day",
+    "error_code": null,
+    "planning_finished_at": "2026-09-29T15:22:24.727527+00:00"
+  },
+  "stages": [
+    {
+      "id": "message",
+      "status": "completed",
+      "duration_ms": null,
+      "attempts": 0,
+      "source": "revision / checkpoint / run"
+    },
+    {
+      "id": "intent",
+      "status": "completed",
+      "duration_ms": 5169,
+      "attempts": 1,
+      "source": "progress.events"
+    },
+    {
+      "id": "goal",
+      "status": "completed",
+      "duration_ms": null,
+      "attempts": 0,
+      "source": "progress.events"
+    },
+    {
+      "id": "context",
+      "status": "completed",
+      "duration_ms": null,
+      "attempts": 0,
+      "source": "progress.events"
+    },
+    {
+      "id": "research",
+      "status": "skipped",
+      "duration_ms": null,
+      "attempts": 0,
+      "source": "execution decision"
+    },
+    {
+      "id": "poi",
+      "status": "skipped",
+      "duration_ms": null,
+      "attempts": 0,
+      "source": "execution decision"
+    },
+    {
+      "id": "planner",
+      "status": "completed",
+      "duration_ms": 18239,
+      "attempts": 1,
+      "source": "progress.events"
+    },
+    {
+      "id": "route",
+      "status": "completed",
+      "duration_ms": 20,
+      "attempts": 1,
+      "source": "progress.events"
+    },
+    {
+      "id": "validator",
+      "status": "completed",
+      "duration_ms": 103,
+      "attempts": 1,
+      "source": "progress.events"
+    },
+    {
+      "id": "revision",
+      "status": "completed",
+      "duration_ms": 228,
+      "attempts": 1,
+      "source": "progress.events"
+    },
+    {
+      "id": "user_decision",
+      "status": "running",
+      "duration_ms": null,
+      "attempts": 0,
+      "source": "unavailable"
+    }
+  ],
+  "tools": [
+    {
+      "stage": "weather",
+      "provider": "Open-Meteo",
+      "purpose": "Travel-date weather",
+      "status": "failed",
+      "duration_ms": 5017
+    },
+    {
+      "stage": "planner",
+      "provider": "glm",
+      "purpose": "Generate Candidate",
+      "status": "completed",
+      "duration_ms": 18239
+    },
+    {
+      "stage": "route",
+      "provider": "AMap / cache",
+      "purpose": "Route enrichment (includes persisted cache lookup)",
+      "status": "completed",
+      "duration_ms": 20
+    }
+  ],
+  "event_count": 17,
+  "error": null
+}

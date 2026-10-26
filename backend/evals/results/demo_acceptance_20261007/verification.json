@@ -1,0 +1,70 @@
+{
+  "status": "PARTIAL_pre_release",
+  "checked_at": "2026-10-07T16:33:08.776186+00:00",
+  "source_sha256": "1acc754b9122b2aded24612947f74f3c23ea7017ee388c8a4412bd4c6cddb2e5",
+  "source_repair_baseline": "ec632e11594c179402b09eecdb10cce8adeed0228cdd58f608d343aab522383c",
+  "changed_backend_paths": [
+    "app/assistant_service.py",
+    "app/candidate_edit.py",
+    "app/candidate_route_service.py",
+    "app/companion_information.py",
+    "app/navigation/execution_context.py",
+    "app/openai_planner.py",
+    "app/plan_revision_service.py",
+    "app/planning_explanation.py",
+    "app/planning_graph.py",
+    "app/planning_intent_service.py",
+    "app/planning_run_repository.py",
+    "tests/test_candidate_edit.py",
+    "tests/test_knowledge_coverage.py",
+    "tests/test_planning_runs.py",
+    "tests/test_planning_setting_references.py",
+    "tests/test_recovery_route_enrichment.py"
+  ],
+  "full_backend": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "854",
+      "time": "51.150",
+      "timestamp": "2026-10-07T16:27:43.128253+00:00",
+      "hostname": "24ac3050e155"
+    }
+  ],
+  "costs_fen": 19000,
+  "production_formal_equal": true,
+  "current_valid_candidate_rejection_passed": true,
+  "knowledge_scope_live_passed": true,
+  "reproducible_git_release": false,
+  "production_deployed": false,
+  "git_index_empty": true,
+  "release_path_count": 363,
+  "explicit_deletions": [
+    "web/.env.test",
+    "web/src/components/TripBriefingDrawer.tsx"
+  ],
+  "artifacts": {
+    "conversation.json": "28b01c314f5ce456c45057a925804edb78c93ff9f78081fac50e54e77abe0b1f",
+    "lifecycle.json": "3331fd476b4a290d808bfb24af86cf1d8b716aeb31c2a526f9daecc2901adc55",
+    "execution.json": "67b74f02c34812e5ee947c5db9dc88b31bfbc42d3f8a5eab615c40ce404ecc0f",
+    "explanation.json": "516e8a8ca49a4f25a5700304be2d527a07c95ca0184387c07fe065b99cccf1e6",
+    "review.json": "2579a831bf94dc0b5b2af9627fb964c5d846e945ff3012eadcf4be20e6bd5d34",
+    "current-review.json": "5d122a17b6bad7f9053894abacb48b1df46fa855ecd36f569764a025b30691d6",
+    "current-review_resumed_clarification.json": "3e5a2bca044fde0c7c39d649922aaba46bb20d209b1284eeeb3fc4c71e182434",
+    "knowledge-scope.json": "703f5976dbef3ead48a0914af6c7a4b1a5fb7186c5572762830585d9f9cccf5a",
+    "backend_scope_final.xml": "5370bafb622f94355f7ecb864382313ff76e8c0901797ea53c339054055eed3b",
+    "authority_followup.xml": "0810d67544f968894adec8d00351cdc626e2996d0899b34dde98675e5ed91931",
+    "knowledge_scope_linux.xml": "4525ea1b9d9ee9cb681792a4f8f0171966b718206175e331b3e3ec93baf50054",
+    "web_final.json": "541ee5d685865c0855abbaf5977e5f202fba030806b8b58fd8b490e1ce8e46e7",
+    "formal_current_final.json": "79e7618c2a63f444bcb06f529ba912ea8fde1b0d5cf8d7aadc88fde9bd2ba95c",
+    "final_source.json": "941e56d8e5c5ffd50e1604b74734dc60835a20be49fa94903066cf2e82bdb62d",
+    "slice_source_overlay.zip": "8847ca719d76843f8c6537573c9cf972e994b0c6694af7419d9cf3048bd93e1f",
+    "release_allowlist.json": "9d1dca03cf96fc2d4d136024dc70aefa945c5ebad10ff23066fc6ba89524e190",
+    "knowledge_frozen/final_results.json": "32a0eb709967e46d1dc9979f67216e42feb1071bf65d44cab18159f8787a4431",
+    "runtime_final_binding.json": "93b7c882f64c82028820f1f2b0c502df3a1d0a42cc74217e22f4e7a55e3f1bfd",
+    "release_diff_scope.json": "9c12d692085b0f7749060820d2642455a7d5e3d2e167510bb2a32d18151b072e"
+  },
+  "evidence_scope": "Earlier real lifecycle plus latest-source authority/scoped-fact segments; clean-ref complete rehearsal and deployment pending, not all17 gates achieved."
+}

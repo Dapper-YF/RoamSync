@@ -1,0 +1,199 @@
+{
+  "id": "62cc5036-2fdf-4533-a13e-16ef8ede8fd2",
+  "trip_id": "8470275b-d3f0-44d5-984d-d576b79d0d3f",
+  "disruption_event_id": null,
+  "trigger_type": null,
+  "trigger_fingerprint": null,
+  "trigger_snapshot": {
+    "effective_requirements": []
+  },
+  "run_type": "initial_plan",
+  "status": "failed",
+  "user_request": "请在11月4日13:00安排青羊区的人民公园，停留60分钟，其他日期保持不变，先生成候选。",
+  "response_text": null,
+  "progress": {
+    "events": [
+      {
+        "stage": "intent",
+        "status": "running",
+        "at": "2026-10-22T03:48:17.636880+00:00",
+        "duration_ms": null,
+        "call_id": "742d219e-577a-4b21-8dfd-b42dae9bf1f6",
+        "provider": null,
+        "purpose": null,
+        "data": {},
+        "sequence": 1
+      },
+      {
+        "stage": "research_decision",
+        "status": "completed",
+        "at": "2026-10-22T03:48:17.898035+00:00",
+        "duration_ms": null,
+        "call_id": null,
+        "provider": null,
+        "purpose": null,
+        "data": {
+          "destination_research_required": true,
+          "destination_research_available": true
+        },
+        "sequence": 2
+      },
+      {
+        "stage": "research",
+        "status": "running",
+        "at": "2026-10-22T03:48:17.929359+00:00",
+        "duration_ms": null,
+        "call_id": "95ba11f5-b4e6-4d06-886f-e331e2cf5adc",
+        "provider": null,
+        "purpose": "Resolve sourced destination candidates",
+        "data": {},
+        "sequence": 3
+      },
+      {
+        "stage": "research",
+        "status": "failed",
+        "at": "2026-10-22T03:48:17.945118+00:00",
+        "duration_ms": 0,
+        "call_id": "95ba11f5-b4e6-4d06-886f-e331e2cf5adc",
+        "provider": null,
+        "purpose": "Resolve sourced destination candidates",
+        "data": {
+          "error_code": "planner_research_unavailable"
+        },
+        "sequence": 4
+      },
+      {
+        "stage": "intent",
+        "status": "failed",
+        "at": "2026-10-22T03:48:17.964640+00:00",
+        "duration_ms": 303,
+        "call_id": "742d219e-577a-4b21-8dfd-b42dae9bf1f6",
+        "provider": null,
+        "purpose": null,
+        "data": {
+          "error_code": "planner_research_unavailable"
+        },
+        "sequence": 5
+      }
+    ],
+    "observation_sequence": 5,
+    "observations_truncated": false,
+    "stage": "intent",
+    "message": "网页检索已结束，正在核对你的需求与调整范围…",
+    "updated_at": "2026-10-22T03:48:17.915477+00:00"
+  },
+  "heartbeat_at": "2026-10-22T03:48:17.915477Z",
+  "entry_point": "trip_planner",
+  "selected_day_id": "0b69497d-5c91-42d5-874d-7323c26cb05d",
+  "selected_activity_id": null,
+  "intent_resolution": {
+    "request": {
+      "trip_id": "8470275b-d3f0-44d5-984d-d576b79d0d3f",
+      "user_request": "请在11月4日13:00安排青羊区的人民公园，停留60分钟，其他日期保持不变，先生成候选。",
+      "intent": {
+        "intent_type": "unknown",
+        "source_text": "请在11月4日13:00安排青羊区的人民公园，停留60分钟，其他日期保持不变，先生成候选。",
+        "time_scope": {
+          "day_number": 3,
+          "day_date": "2026-11-04",
+          "period": null
+        },
+        "protected_activity_ids": [],
+        "requested_place_queries": [],
+        "requested_pace": null,
+        "missing_fields": [],
+        "ambiguities": [
+          "unsupported_or_ambiguous_intent"
+        ]
+      },
+      "entry_point": "trip_planner",
+      "selected_day_id": "0b69497d-5c91-42d5-874d-7323c26cb05d",
+      "selected_activity_id": null,
+      "target_day_id": "0b69497d-5c91-42d5-874d-7323c26cb05d"
+    },
+    "requires_clarification": false,
+    "clarification_questions": [
+      "你希望创建完整行程、重新规划全程，还是调整某一天？"
+    ],
+    "parser_version": "rules-v1",
+    "semantic_draft": {
+      "primary_intent": "replan_trip",
+      "operations": [
+        {
+          "operation": "replan_trip",
+          "raw_text": "请在11月4日13:00安排青羊区的人民公园，停留60分钟，其他日期保持不变，先生成候选。",
+          "date_expression": null,
+          "period": null,
+          "activity_mentions": [],
+          "place_mentions": [
+            "人民公园"
+          ],
+          "constraints": {
+            "budget_must_not_increase": false,
+            "max_additional_cost_fen": null,
+            "preferred_environment": null,
+            "max_walking_minutes": null,
+            "requested_pace": null,
+            "weather_sensitive": false,
+            "preserve_completed": true
+          }
+        }
+      ],
+      "confidence": 0.9,
+      "missing_fields": [],
+      "ambiguities": [],
+      "parser": "hybrid",
+      "parser_version": "current-turn-v1"
+    },
+    "grounded_intent": {
+      "trip_id": "8470275b-d3f0-44d5-984d-d576b79d0d3f",
+      "primary_intent": "replan_trip",
+      "operation_types": [
+        "replan_trip"
+      ],
+      "target_day_ids": [
+        "0b69497d-5c91-42d5-874d-7323c26cb05d"
+      ],
+      "target_activity_ids": [],
+      "candidate_place_ids": [
+        "e1d62083-fb37-413f-adca-8180d3782ed7"
+      ],
+      "unresolved_activity_mentions": [],
+      "unresolved_place_mentions": [],
+      "constraints": {
+        "budget_must_not_increase": false,
+        "max_additional_cost_fen": null,
+        "preferred_environment": null,
+        "max_walking_minutes": null,
+        "requested_pace": null,
+        "weather_sensitive": false,
+        "preserve_completed": true
+      },
+      "missing_fields": [],
+      "ambiguities": []
+    },
+    "policy_decision": {
+      "operation_mode": "preview_change",
+      "risk_level": "medium",
+      "requires_confirmation": true,
+      "reasons": [
+        "formal_plan_change"
+      ],
+      "route": "plan_preview"
+    }
+  },
+  "base_trip_version": 1,
+  "model_provider": null,
+  "model_name": null,
+  "token_usage": 0,
+  "error_code": "planner_research_unavailable",
+  "error_message": "目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。",
+  "error_details": {
+    "category": "provider_failure",
+    "reliability": {}
+  },
+  "pending_interrupt": null,
+  "created_at": "2026-10-22T03:48:15.179284Z",
+  "started_at": "2026-10-22T03:48:17.172299Z",
+  "completed_at": "2026-10-22T03:48:17.996503Z"
+}

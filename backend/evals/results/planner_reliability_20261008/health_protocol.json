@@ -1,0 +1,23 @@
+{
+  "max_model_calls": 6,
+  "client_retries": 0,
+  "concurrency": 1,
+  "call_plan": [
+    "api/simple/fresh",
+    "worker/simple/fresh",
+    "worker/ResearchOutput/actual_previous_input/fresh",
+    "worker/ResearchOutput/identical_input/reuse_same_client",
+    "worker/small_structured/fresh",
+    "api/small_structured/fresh"
+  ],
+  "required_success": {
+    "total": 6,
+    "simple": 2,
+    "research": 2,
+    "small_structured": 2
+  },
+  "failure_policy": "Record every planned result. No rerun replaces a failed sample. Any criterion failure stops Candidate gate.",
+  "no_thinking_capture": true,
+  "raw_terminal_output_excluded_git": true,
+  "request_timeout_seconds": 90
+}

@@ -1,0 +1,27 @@
+flowchart LR
+    U[用户旅行请求] --> R{确定性目标路由<br/>travel_goal_router}
+    R -->|咨询/信息查询| C[只读 Companion 流程]
+    R -->|明确规划意图| I[规则意图解析与实体绑定<br/>rules-v1 + 服务端 Trip/Activity]
+    I -->|缺失/歧义| Q[澄清问题]
+    Q --> U
+    I -->|意图已确认| API[Planning API<br/>创建 PlanningRun]
+    API --> W[Agent Worker]
+    W --> G[LangGraph<br/>读取上下文 → 生成 → 校验]
+    G <--> CP[(PostgreSQL<br/>PlanningRun + Graph Checkpoint)]
+    G --> CTX[只读正式 Trip / 偏好 / 活动上下文]
+    CTX --> G
+    G --> MODEL[Planner 模型<br/>仅输出候选结构]
+    G --> TOOLS[地点研究与路线补充]
+    TOOLS <--> MAP[高德 POI / 路线服务]
+    TOOLS <--> SEARCH[可选网页检索 / 天气服务]
+    MODEL --> V[确定性 Validator<br/>日期、归属、来源、时间、路线、预算、保护项]
+    TOOLS --> V
+    V -->|失败| FIX[有限修正或明确失败<br/>不创建可采用候选]
+    FIX --> G
+    V -->|通过| REV[保存待审 PlanRevision<br/>仍不是正式日程]
+    REV --> DEC{用户决定}
+    DEC -->|拒绝| REJ[标记拒绝 / 保存反馈<br/>不改正式 Trip]
+    DEC -->|接受| ACCEPT[Accept 服务<br/>重查 Trip 版本并重新校验]
+    ACCEPT -->|旧版本或校验失败| ERR[409 / 422<br/>保留正式 Trip]
+    ACCEPT -->|当前且有效| TX[一个接受事务<br/>更新活动、路线、版本与 Revision 状态]
+    TX --> TRIP[(正式 Trip / DayPlan / Activity / RouteLeg)]

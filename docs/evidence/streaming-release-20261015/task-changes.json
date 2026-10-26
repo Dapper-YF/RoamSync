@@ -1,0 +1,11 @@
+{
+  "production_change": "backend/app/assistant_stream.py: rollback failure still sends terminal error",
+  "new_regression": "backend/tests/test_assistant_stream.py::test_sse_failure_terminates_even_when_database_rollback_fails",
+  "new_supporting_files": [
+    "scripts/verify-streaming-provider.py",
+    "scripts/streaming-release-state.py",
+    "web/e2e/assistant-stream-release.smoke.mjs"
+  ],
+  "private_conversations_recorded": false,
+  "other_worktree_deployed": false
+}

@@ -1,0 +1,48 @@
+{
+  "config": {
+    "provider": "glm",
+    "model": "glm-5.3-flash",
+    "base_url": {
+      "scheme": "https",
+      "host": "open.bigmodel.cn",
+      "port": null,
+      "path": "/api/paas/v4"
+    },
+    "proxy": {
+      "scheme": "http",
+      "host": "host.docker.internal",
+      "port": 7897,
+      "path": ""
+    },
+    "credentials_present": true,
+    "timeout": 90.0,
+    "retries": 0,
+    "cwd": "E:\\Study\\RoamSync",
+    "env_file_exists": true,
+    "openai_sdk": "2.54.0",
+    "httpx": "0.28.1"
+  },
+  "request": {
+    "input": "Return a JSON object with ok=true.",
+    "max_output_tokens": 256,
+    "reasoning_effort": "low"
+  },
+  "real": true,
+  "database_used": false,
+  "success": false,
+  "failure": {
+    "application_code": "planner_unavailable",
+    "exception_chain": [
+      {
+        "type": "APIConnectionError"
+      },
+      {
+        "type": "RemoteProtocolError"
+      },
+      {
+        "type": "RemoteProtocolError"
+      }
+    ]
+  },
+  "seconds": 7.38528180000003
+}

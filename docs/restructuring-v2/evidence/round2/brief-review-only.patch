@@ -1,0 +1,957 @@
+--- canonical/backend/app/planning_brief.py
++++ brief/backend/app/planning_brief.py
+@@ -0,0 +1,233 @@
++"""Source-bound conversation requirements, using the existing Run JSON snapshot.
++
++This is context transport, not a new hard constraint or identity resolver.
++Public PlanningRunCreate cannot inject this internal envelope.
++"""
++import copy
++import hashlib
++import json
++import re
++from app.companion_contracts import BriefInterest, PlanningBrief, PreferenceStatement
++from pydantic import ValidationError
++
++
++class PlanningBriefError(ValueError):
++    pass
++
++
++def digest(value):
++    return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
++
++
++def _parse(value):
++    try:
++        return PlanningBrief.model_validate(value)
++    except ValidationError as exc:
++        raise PlanningBriefError('planning_brief_schema_invalid') from exc
++
++
++def _assertion(text):
++    return not re.search(r'[？?]|吗[。！!]*$|假如|假设|如果|你觉得|为什么|是否|会不会', text)
++
++
++def _declarations(brief):
++    return (brief.requirements+brief.confirmed_preferences+brief.user_decisions+
++            list(brief.field_sources.values())+[p.declaration for p in brief.candidate_interests if p.declaration])
++
++
++def _statement(session, turn, excerpt, kind, value, index=0, polarity="positive"):
++    from app.companion_state import stable_identity
++    return PreferenceStatement(text=excerpt[:1000], source_turn_id=turn,
++        source_session_id=session, source_user_excerpt=excerpt[:1000], confirmation="explicit",
++        polarity=polarity, kind=kind, value=value[:1000],
++        statement_id=stable_identity("statement", session, turn, index))
++
++
++def enrich_brief(brief, session, turn, message, messages):
++    from app.companion_state import project_conversation, resolve_suggestions, interaction_status
++    turns = [(str(m.get("id", "legacy")), str(m.get("user", ""))) for m in messages] + [(turn, message)]
++    requirements = []
++    previous = {}
++    categories = {"culture": r"文化|人文|博物馆|历史", "shopping": r"购物|逛街|商业",
++                  "nature": r"自然|公园|登山", "food": r"美食|小吃"}
++    for source_turn, text in turns:
++        # Do not spread a negative preference across a contrasting positive
++        # assertion ("不喜欢购物，但喜欢文化"). Keep excerpts as user substrings.
++        clauses = re.split(r"[，,；;。\n]|但是|不过|但|(?=不(?:太)?喜欢)", text)
++        for clause_index, clause in enumerate(clauses[:20]):
++            if not clause.strip() or not _assertion(clause):
++                continue
++            polarity = "cancelled" if re.search(r"取消|不再|别再|不要再", clause) else "negative" if re.search(r"不(?:太)?喜欢|不想|不要|避开|不去", clause) else "positive"
++            values = []
++            if re.search(r"喜欢|偏好|想|希望|重点|取消|不再|不要|避开", clause):
++                values += [("avoidance" if polarity == "negative" else "preference", key) for key, pattern in categories.items() if re.search(pattern, clause)]
++            pace = next((v for v,p in [("relaxed",r"轻松|慢游|不赶|别太赶"),("intensive",r"紧凑|充实"),("balanced",r"均衡|适中")] if re.search(p,clause)), None)
++            if pace:
++                values.append(("pace", pace))
++            if re.search(r"旅行目标|主要想|重点想|目的是|希望", clause):
++                values.append(("travel_goal", clause))
++            if (re.search(r"必须|必去|一定.{0,20}(?:去|安排|加入|包含|放进)", clause)
++                and not re.search(r"不一定|不必|不需要|无需|没有必要",clause) and polarity == "positive"):
++                values.append(("must_do", clause))
++            for offset, (kind, value) in enumerate(values):
++                item = _statement(session, source_turn, clause, kind, value, clause_index*10+offset, polarity)
++                key = "pace" if kind == "pace" else "category:"+value if value in categories else kind+":"+value
++                if key in previous:
++                    item = item.model_copy(update={'supersedes_refs': [previous[key]]})
++                previous[key] = item.statement_id
++                requirements.append(item)
++    # Preserve existing generic explicit preference statements without inventing
++    # a category when the deterministic vocabulary does not cover the wording.
++    enriched = []
++    for i, item in enumerate(brief.confirmed_preferences):
++        if not _assertion(item.text):
++            continue
++        enriched.append(_statement(session, item.source_turn_id, item.text, "preference", item.text, 900+i,
++            "cancelled" if re.search(r"取消|不再|别再|不要再",item.text) else "negative" if re.search(r"不(?:太)?喜欢|不想|避开",item.text) else "positive"))
++    selections = {}
++    history = []
++    for source_turn, text in turns:
++        selected = []
++        if re.search(r"suggestion_[0-9a-f]{32}|第[一二三四五六七八九十\d]+[个项条]|它|那个地方|那条建议|这个建议",text):
++            state = project_conversation(history)
++            selected, _ = resolve_suggestions(text, state)
++        status = interaction_status(text)
++        for selection_index, suggestion in enumerate(selected):
++            if re.search(r"不想|不要|不喜欢|取消|不去", text):
++                selections.pop(suggestion.suggestion_id, None)
++            elif status in {"user_liked", "user_confirmed", "must_do"} or source_turn == turn:
++                selections[suggestion.suggestion_id] = BriefInterest(suggestion_ref=suggestion.suggestion_id,
++                    display_name=suggestion.title, entity_refs=suggestion.entity_refs, status=status if status != "discussed" else "user_confirmed",
++                    source_turn_ref=suggestion.conversation_turn_id,
++                    declaration=_statement(session, source_turn, text[:1000], "must_do" if status == "must_do" else "preference",
++                                           suggestion.title, 990+selection_index))
++        if source_turn != turn:
++            original = next((m for m in messages if str(m.get("id")) == source_turn), None)
++            if original:
++                history.append(original)
++    interests = list(selections.values())[-10:]
++    requirements = requirements[-60:]
++    # Every rich statement has bounded user provenance; old contracts still
++    # parse with defaults but cannot self-assert confirmation in a new envelope.
++    decisions = [_statement(session,p.source_turn_id,p.text,"decision",p.text,950+i) for i,p in enumerate(brief.user_decisions) if _assertion(p.text)]
++    field_sources = {}
++    for i, key in enumerate(('date_request','party_statement','budget_statement')):
++        value = getattr(brief, key)
++        source = next(((tid, text) for tid,text in reversed(turns) if value and text[:1000]==value), None)
++        if source:
++            field_sources[key] = _statement(session,source[0],source[1],'decision',value,980+i)
++    return brief.model_copy(update={"requirements":requirements, "confirmed_preferences":enriched,
++        "avoidances":[p for p in enriched if p.polarity=="negative"], "user_decisions":decisions,
++        "travel_goals":[p for p in requirements if p.kind=="travel_goal"][-30:],
++        "pace_request":next((p for p in reversed(requirements) if p.kind=="pace"),None),
++        "field_sources":field_sources,
++        "candidate_interests":interests, "must_do":[p.suggestion_ref for p in interests if p.status=="must_do"],
++        "suggestion_refs":[p.suggestion_ref for p in interests],
++        "source_turn_refs":list(dict.fromkeys([p.source_turn_id for p in requirements+enriched+decisions+list(field_sources.values())]+
++            [p.source_turn_ref for p in interests]+[p.declaration.source_turn_id for p in interests]+[turn]))[-60:]})
++
++
++async def bind_brief(db, brief_data, source_session_id, trip_id, version, run_id):
++    from app.database import AssistantSession
++    from app.companion_state import build_planning_brief
++    from app.travel_goal_router import route_travel_goal
++    brief = _parse(brief_data)
++    row = await db.get(AssistantSession, source_session_id)
++    if row is None or row.trip_id != trip_id:
++        raise PlanningBriefError("planning_brief_session_trip_mismatch")
++    matches = [i for i,m in enumerate(row.messages) if str(m.get("id"))==brief.authorization_turn_id]
++    if len(matches)!=1:
++        raise PlanningBriefError("planning_brief_authorization_missing")
++    index = matches[0]
++    source = row.messages[index]
++    raw = str(source.get("user", ""))
++    history = list(row.messages[:index])
++    canonical = build_planning_brief(str(row.id),brief.authorization_turn_id,raw,route_travel_goal(raw, history),history)
++    if canonical is None or canonical.status!="prepared" or canonical.model_dump(mode="json")!=brief.model_dump(mode="json"):
++        raise PlanningBriefError("planning_brief_untrusted_source")
++    payload = brief.model_dump(mode="json")
++    if len(json.dumps(payload,ensure_ascii=False).encode())>48000:
++        raise PlanningBriefError("planning_brief_payload_too_large")
++    proofs = {str(m['id']):digest(str(m.get('user',''))) for m in row.messages[:index+1] if str(m.get('id')) in brief.source_turn_refs}
++    declarations = _declarations(brief)
++    if any(p.source_turn_id not in proofs for p in declarations):
++        raise PlanningBriefError('planning_brief_source_limit_exceeded')
++    envelope = {"schema_version":1, "source_session_id":str(row.id), "target_trip_id":str(trip_id),
++        "base_trip_version":version, "run_id":str(run_id), "authorization_turn_id":brief.authorization_turn_id,
++        "payload":payload, "payload_sha256":digest(payload), "source_turn_digests":proofs}
++    binding = {k:envelope[k] for k in ("source_session_id","target_trip_id","base_trip_version","run_id","authorization_turn_id","payload_sha256")}
++    binding['envelope_sha256'] = digest(envelope)
++    return envelope, binding
++
++
++def load_brief(run, current_version):
++    snapshot = run.trigger_snapshot or {}
++    envelope = snapshot.get('planning_brief')
++    if envelope is None and 'planning_brief' not in snapshot:
++        return None
++    binding = snapshot.get('planning_brief_binding') or {}
++    expected_keys = {'source_session_id','target_trip_id','base_trip_version','run_id','authorization_turn_id','payload_sha256','envelope_sha256'}
++    if not isinstance(binding,dict) or set(binding)!=expected_keys:
++        raise PlanningBriefError('planning_brief_binding_invalid')
++    if not isinstance(envelope,dict) or envelope.get('schema_version')!=1 or digest(envelope)!=binding.get('envelope_sha256'):
++        raise PlanningBriefError('planning_brief_hash_invalid')
++    if envelope.get('target_trip_id')!=str(run.trip_id) or envelope.get('run_id')!=str(run.id):
++        raise PlanningBriefError('planning_brief_run_trip_mismatch')
++    if envelope.get('base_trip_version')!=run.base_trip_version or current_version!=run.base_trip_version:
++        raise PlanningBriefError('planning_brief_stale_version')
++    if any(envelope.get(k)!=binding.get(k) for k in binding if k!='envelope_sha256'):
++        raise PlanningBriefError('planning_brief_binding_invalid')
++    payload = envelope.get('payload')
++    if digest(payload)!=envelope.get('payload_sha256'):
++        raise PlanningBriefError('planning_brief_payload_hash_invalid')
++    brief = _parse(payload)
++    if brief.status!='prepared' or brief.authorization_turn_id!=envelope.get('authorization_turn_id'):
++        raise PlanningBriefError('planning_brief_authorization_invalid')
++    declarations = _declarations(brief)
++    if len({p.statement_id for p in declarations})!=len(declarations):
++        raise PlanningBriefError('planning_brief_statement_identity_invalid')
++    for item in declarations:
++        if (item.source_session_id!=envelope.get('source_session_id') or not item.statement_id or
++            item.source_turn_id not in envelope.get('source_turn_digests',{}) or not item.source_user_excerpt or
++            item.confirmation not in {'explicit','confirmed'}):
++            raise PlanningBriefError('planning_brief_statement_source_invalid')
++    return copy.deepcopy(envelope)
++
++
++def project_requirements(envelope, context):
++    brief = PlanningBrief.model_validate(envelope['payload'])
++    active = {}; overridden=[]
++    for item in brief.requirements:
++        key = 'pace' if item.kind=='pace' else 'category:'+str(item.value) if item.value in {'culture','shopping','nature','food'} else item.kind+':'+str(item.value)
++        if key in active:
++            overridden.append({'statement':active[key].model_dump(mode='json'),'reason':'later_explicit_user_statement', 'by':item.statement_id})
++        active[key]=item
++    defaults=copy.deepcopy(context.get('preferences') or {})
++    effective=copy.deepcopy(defaults)
++    positive=[p.value for p in active.values() if p.value in {'culture','shopping','nature','food'} and p.polarity=='positive']
++    negative=[p.value for p in active.values() if p.value in {'culture','shopping','nature','food'} and p.polarity=='negative']
++    cancelled=[p.value for p in active.values() if p.value in {'culture','shopping','nature','food'} and p.polarity=='cancelled']
++    if positive: effective['interest_categories']=positive
++    effective['interest_categories']=[v for v in effective.get('interest_categories',[]) if v not in negative+cancelled]
++    effective['avoid_categories']=list(dict.fromkeys([v for v in effective.get('avoid_categories',[]) if v not in positive+cancelled]+negative))
++    pace=active.get('pace')
++    if pace and pace.polarity=='positive': effective['pace']=pace.value
++    for key in ['interest_categories','avoid_categories','pace']:
++        if defaults.get(key)!=effective.get(key):
++            overridden.append({'trip_preference_field':key,'previous':defaults.get(key),'effective':effective.get(key),
++                'reason':'explicit_conversation_requirement_over_soft_default','source':'persisted_trip_preferences'})
++    return {'binding':{k:envelope[k] for k in ('source_session_id','target_trip_id','base_trip_version','run_id','payload_sha256')},
++        'active_statements':[p.model_dump(mode='json') for p in active.values()], 'overridden':overridden,
++        'explicit_user_preferences':[p.model_dump(mode='json') for p in brief.confirmed_preferences],
++        'user_decisions':[p.model_dump(mode='json') for p in brief.user_decisions],
++        'date_request':brief.date_request,'party_statement':brief.party_statement,'budget_statement':brief.budget_statement,
++        'field_sources':{k:v.model_dump(mode='json') for k,v in brief.field_sources.items() if k in {'date_request','party_statement','budget_statement'}},
++        'effective_soft_preferences':effective, 'confirmed_suggestions':[{
++            'suggestion_ref':p.suggestion_ref,'display_name':p.display_name,'confirmation':p.status,
++            'source':p.declaration.model_dump(mode='json') if p.declaration else None,
++            'formal_identity_resolved':False} for p in brief.candidate_interests],
++        'user_request':brief.user_request, 'open_questions':brief.open_questions,
++        'semantic_only_kinds':['must_do','travel_goal'],
++        'authority_order':['formal_trip_and_execution','legal_current_request','confirmed_session_preferences','trip_preferences_soft_defaults','unconfirmed_suggestions'],
++        'formal_constraints':{k:context.get('trip',{}).get(k) for k in ('destination','start_date','end_date','total_budget_fen','daily_budget_fen')},
++        'hard_constraint_capabilities_added':[]}
+--- canonical/backend/app/companion_contracts.py
++++ brief/backend/app/companion_contracts.py
+@@ -222,7 +222,15 @@
+ class PreferenceStatement(Contract):
+     text: str = Field(min_length=1, max_length=1000)
+     source_turn_id: str
+-    scope: Literal["conversation"] = "conversation"
++    scope: Literal["conversation", "trip"] = "conversation"
++    statement_id: str | None = None
++    source_session_id: str | None = None
++    source_user_excerpt: str | None = Field(default=None, max_length=1000)
++    confirmation: Literal["explicit", "confirmed", "proposed"] = "proposed"
++    polarity: Literal["positive", "negative", "cancelled"] = "positive"
++    supersedes_refs: list[str] = Field(default_factory=list, max_length=30)
++    kind: Literal["preference", "avoidance", "must_do", "travel_goal", "pace", "decision"] = "preference"
++    value: str | None = Field(default=None, max_length=1000)
+ 
+ 
+ class BriefInterest(Contract):
+@@ -231,9 +239,11 @@
+     entity_refs: list[EntityReference] = Field(default_factory=list)
+     status: SuggestionStatus
+     source_turn_ref: str
++    declaration: PreferenceStatement | None = None
+ 
+ 
+ class PlanningBrief(Contract):
++    schema_version: int = Field(default=1, ge=1, le=1)
+     brief_id: str = Field(pattern=r"^brief_[0-9a-f]{32}$")
+     status: Literal["prepared", "needs_clarification"]
+     authorization_turn_id: str
+@@ -251,6 +261,10 @@
+     open_questions: list[str] = Field(default_factory=list, max_length=10)
+     source_turn_refs: list[str] = Field(default_factory=list, max_length=60)
+     suggestion_refs: list[str] = Field(default_factory=list, max_length=10)
++    requirements: list[PreferenceStatement] = Field(default_factory=list, max_length=60)
++    travel_goals: list[PreferenceStatement] = Field(default_factory=list, max_length=30)
++    pace_request: PreferenceStatement | None = None
++    field_sources: dict[str, PreferenceStatement] = Field(default_factory=dict, max_length=3)
+ 
+ 
+ class CompanionContext(Contract):
+@@ -276,7 +290,6 @@
+ 
+ 
+ class CompanionResult(Contract):
+-    analysis_summary: str = Field(default="", max_length=600)
+     response_text: str = Field(min_length=1, max_length=5000)
+     goal_type: CompanionGoal
+     status: Literal["completed", "needs_information", "needs_clarification"] = "completed"
+@@ -319,7 +332,6 @@
+ 
+ class CompanionDraft(Contract):
+     """Model boundary excludes identity, authority, status, original rationale and handoff."""
+-    analysis_summary: str = Field(default="", max_length=600)
+     response_text: str = Field(min_length=1, max_length=3000)
+     suggestions: list[SuggestionDraft] = Field(default_factory=list, max_length=10)
+     comparison: CompanionComparison | None = None
+@@ -336,7 +348,6 @@
+ 
+ class CompanionAnswerDraft(Contract):
+     """Knowledge wire contract: source facts are selected and rendered by server."""
+-    analysis_summary: str = Field(default="", max_length=600)
+     agent_claims: list[AgentAnswerText] = Field(default_factory=list, max_length=8)
+     suggestions: list[SuggestionDraft] = Field(default_factory=list, max_length=10)
+     comparison: CompanionComparison | None = None
+--- canonical/backend/app/companion_state.py
++++ brief/backend/app/companion_state.py
+@@ -141,7 +141,7 @@
+     user_texts = [str(m.get("user", "")) for m in messages] + [message]
+     latest = lambda pattern: next((t[:1000] for t in reversed(user_texts) if re.search(pattern, t)), None)
+     duration = trip_duration(message)
+-    return PlanningBrief(brief_id=stable_identity("brief", session_id, turn_id),
++    brief = PlanningBrief(brief_id=stable_identity("brief", session_id, turn_id),
+         status="needs_clarification" if gaps else "prepared", authorization_turn_id=turn_id,
+         user_request=message, destination=destination_from_text(message, planning_authorized=True) or state.destination,
+         date_request=latest(r"\d{1,4}[年月/-]|下周|出发|返程|国庆|元旦"),
+@@ -152,3 +152,5 @@
+         candidate_interests=interests, must_do=[s.suggestion_id for s in selected] if status == "must_do" else [],
+         user_decisions=[*state.decisions, current][-30:], open_questions=[gap.message for gap in gaps],
+         source_turn_refs=list(dict.fromkeys(relevant_turns))[-60:], suggestion_refs=[s.suggestion_id for s in selected])
++    from app.planning_brief import enrich_brief
++    return enrich_brief(brief, session_id, turn_id, message, messages)
+--- canonical/backend/app/assistant_service.py
++++ brief/backend/app/assistant_service.py
+@@ -395,6 +395,10 @@
+             row.pending_action = await prepare_action(db, decision, current, trips, city_search,
+                 explicit_daily_budget=bool(re.search(r"(?:每日|每天|一天)(?:的)?(?:预算|花费|开销)|(?:每日|每天|一天)\s*(?:不超过|最多|控制在)?\s*[一二三四五六七八九十百千万两\d.]+\s*(?:元|块)", user_text)))
+             action = row.pending_action
++            if brief:
++                from app.planning_brief import digest
++                action['planning_brief'] = brief.model_dump(mode='json')
++                action['planning_brief_sha256'] = digest(action['planning_brief'])
+             count = (date.fromisoformat(action["end_date"]) - date.fromisoformat(action["start_date"])).days + 1
+             budget_text = (f"总预算 {action['total_budget_fen'] / 100:g} 元，每日预算 {action['daily_budget_fen'] / 100:.2f} 元" if action["total_budget_fen"] is not None else "未设置预算上限")
+             reply = f"请核对：{action['city']['name']}，{action['start_date']} 至 {action['end_date']}，共 {count} 天，{budget_text}。确认后执行。"
+@@ -409,14 +413,19 @@
+             reply = "我会结合正式行程，说明安排和建议的理由。" if decision.tool == "query_trip" else "我会按这次要求准备候选调整，并说明修改理由。"
+             request = decision.planning_request.strip() or message
+             has_plan = bool(await db.scalar(select(Activity.id).join(DayPlan).where(DayPlan.trip_id == target).limit(1)))
++            if brief:
++                # Persist the exact authorization turn in this transaction before
++                # validating sources. The final reply replaces this placeholder.
++                row.messages = [*row.messages, {'id':str(message_id),'user':message,'assistant':''}]
+             run = await create_planning_run(db, target, PlanningRunCreate(run_type="replan" if has_plan else "initial_plan", user_request=request,
+-                selected_day_id=selected_day_id if target == row.trip_id else None, selected_activity_id=selected_activity_id if target == row.trip_id else None), commit=False)
++                selected_day_id=selected_day_id if target == row.trip_id else None, selected_activity_id=selected_activity_id if target == row.trip_id else None), commit=False,
++                planning_brief=brief.model_dump(mode='json') if brief else None, source_session_id=row.id if brief else None)
+             if decision.tool == "plan_trip" and target == row.trip_id:
+                 from app.candidate_edit import bind_initial_candidate
+                 await bind_initial_candidate(db, previous_run_id, run)
+             row.trip_id, row.latest_run_id = target, run.id
+             row.pending_action = None
+-    row.messages = [*row.messages, {"id": str(message_id), "user": message, "assistant": reply, "tool": decision.tool,
++    row.messages = [*[m for m in row.messages if str(m.get('id')) != str(message_id)], {"id": str(message_id), "user": message, "assistant": reply, "tool": decision.tool,
+         "run_id": str(row.latest_run_id) if row.latest_run_id else None,
+         "goal_routing": goal_routing.model_dump(mode="json"),
+         "planning_brief": brief.model_dump(mode="json") if brief else None}]
+@@ -507,7 +516,16 @@
+     if action["tool"] != "reschedule_trip":
+         await db.flush()
+         has_plan = bool(await db.scalar(select(Activity.id).join(DayPlan).where(DayPlan.trip_id == trip.id).limit(1)))
+-        run = await create_planning_run(db, trip.id, PlanningRunCreate(run_type="replan" if has_plan else "initial_plan", user_request="请根据已保存的日期、预算和旅行偏好生成完整行程。"), commit=False)
++        saved_brief = action.get('planning_brief')
++        if saved_brief:
++            from app.planning_brief import digest
++            if digest(saved_brief) != action.get('planning_brief_sha256'):
++                raise AssistantToolError('这份旅行需求预览已变化，请重新核对。')
++        # Reuse is authorized by the confirmed action. Keep the existing routing
++        # command while transporting the original request in its sealed Brief.
++        planning_request = saved_brief['user_request'] if saved_brief and action['tool'] != 'reuse_trip' else "请根据已保存的日期、预算和旅行偏好生成完整行程。"
++        run = await create_planning_run(db, trip.id, PlanningRunCreate(run_type="replan" if has_plan else "initial_plan", user_request=planning_request), commit=False,
++            planning_brief=saved_brief, source_session_id=row.id if saved_brief else None)
+         row.latest_run_id = run.id
+     row.pending_action = None
+     row.applied_actions = {**row.applied_actions, action_id: str(trip.id)}
+--- canonical/backend/app/planning_graph.py
++++ brief/backend/app/planning_graph.py
+@@ -12,7 +12,8 @@
+ 
+ from app.candidate_route_service import enrich_candidate_routes
+ from app.candidate_schedule import repair_route_schedule
+-from app.database import PlanningRun, PlanRevision, TripDisruptionEvent, session_factory
++from app.database import PlanningRun, PlanRevision, TripDisruptionEvent, Trip, session_factory
++from app.planning_brief import load_brief, project_requirements, digest, PlanningBriefError
+ from app.config import get_settings
+ from app.external_facts import ExternalFactError, fetch_open_meteo, search_tavily
+ from app.plan_revision_service import accept_plan_revision, validate_candidate_plan
+@@ -152,6 +153,9 @@
+         run_id = uuid.UUID(state["run_id"])
+         trip_id = uuid.UUID(state["trip_id"])
+         async with session_factory() as session:
++            bound_run = await session.get(PlanningRun, run_id)
++            bound_trip = await session.get(Trip, trip_id)
++            envelope = load_brief(bound_run, bound_trip.version)
+             await _set_run_status(session, run_id, "researching")
+             context = await build_planning_context(session, trip_id)
+             context_data = context.model_dump(mode="json")
+@@ -274,6 +278,10 @@
+                         deficit_minutes=deficit, activities=activities
+                     )],
+                 })
++            if envelope:
++                requirement_context = project_requirements(envelope, context_data)
++                context_data['user_requirement_context'] = requirement_context
++                context_data['preferences'] = requirement_context['effective_soft_preferences']
+             goals = extract_planning_goals(
+                 user_request=state["user_request"],
+                 intent_resolution=resolution.model_dump(mode="json"),
+@@ -295,6 +303,8 @@
+             # live evaluations can establish what the Planner was allowed to
+             # see without recording hidden reasoning or provider input text.
+             existing_snapshot = dict(run.trigger_snapshot or {})
++            if envelope:
++                existing_snapshot['planning_brief_projection_sha256'] = digest(context_data['user_requirement_context'])
+             decision = context_data["decision_context"]
+             execution = decision["execution_context"]
+             existing_snapshot["decision_context_summary"] = {
+@@ -436,6 +446,12 @@
+             run = await session.get(PlanningRun, uuid.UUID(state["run_id"]))
+             if run is not None:
+                 snapshot = dict(run.trigger_snapshot or {})
++                trip = await session.get(Trip, run.trip_id)
++                envelope = load_brief(run, trip.version)
++                if envelope and digest(state['planning_context'].get('user_requirement_context')) != snapshot.get('planning_brief_projection_sha256'):
++                    raise PlanningBriefError('planning_brief_checkpoint_projection_invalid')
++                if envelope and digest(state['planning_context']['decision_context'].get('user_requirement_context')) != snapshot.get('planning_brief_projection_sha256'):
++                    raise PlanningBriefError('planning_brief_checkpoint_decision_context_invalid')
+                 memory_summary = dict((snapshot.get("decision_context_summary") or {}).get("decision_memory") or {})
+                 memory_summary.update({
+                     "context_propagated": True,
+--- canonical/backend/app/planning_graph_runtime.py
++++ brief/backend/app/planning_graph_runtime.py
+@@ -5,6 +5,7 @@
+ 
+ from app.destination_research import research_destination
+ from app.planning_progress import track_progress
++from app.planning_brief import PlanningBriefError
+ from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+ from langgraph.types import Command
+ from pydantic import TypeAdapter
+@@ -152,6 +153,9 @@
+     except GoalConstraintsUnsatisfiedError as exc:
+         await _mark_failed(run_id, "goal_constraints_unsatisfied", str(exc), {"goal_satisfaction": exc.feedback, "category": "planner_semantic_constraint_failure"})
+         return PlanningExecutionResult(pending_interrupt=None)
++    except PlanningBriefError as exc:
++        await _mark_failed(run_id, 'planning_brief_invalid', str(exc), {'category':'input_binding_failure'})
++        return PlanningExecutionResult(pending_interrupt=None)
+     except DecisionContextInvariantError as exc:
+         await _mark_failed(run_id, "decision_context_invalid", str(exc), {"invariant_errors": exc.codes})
+         return PlanningExecutionResult(pending_interrupt=None)
+--- canonical/backend/app/planning_run_repository.py
++++ brief/backend/app/planning_run_repository.py
+@@ -53,7 +53,12 @@
+     trigger_key: str | None = None,
+     trigger_snapshot: dict | None = None,
+     trigger_fingerprint: str | None = None,
++    planning_brief: dict | None = None,
++    source_session_id: uuid.UUID | None = None,
+ ) -> PlanningRun:
++    from app.planning_brief import PlanningBriefError
++    if planning_brief is None and any(k in (trigger_snapshot or {}) for k in ('planning_brief','planning_brief_binding')):
++        raise PlanningBriefError('planning_brief_unvalidated_snapshot')
+     trip = await get_trip(session, trip_id)
+     disruption = None
+     if payload.disruption_event_id is not None:
+@@ -117,6 +122,13 @@
+         trigger_snapshot=trigger_snapshot,
+         trigger_fingerprint=trigger_fingerprint,
+     )
++    if planning_brief is not None:
++        from app.planning_brief import bind_brief, PlanningBriefError
++        if source_session_id is None or any(k in (trigger_snapshot or {}) for k in ('planning_brief','planning_brief_binding')):
++            raise PlanningBriefError('planning_brief_internal_source_required')
++        run.id = uuid.uuid4()
++        envelope, binding = await bind_brief(session, planning_brief, source_session_id, trip_id, trip.version, run.id)
++        run.trigger_snapshot = {**(trigger_snapshot or {}), 'planning_brief':envelope, 'planning_brief_binding':binding}
+     session.add(run)
+     try:
+         if commit:
+--- canonical/backend/app/openai_planner.py
++++ brief/backend/app/openai_planner.py
+@@ -455,6 +455,7 @@
+         "protected_constraints": decision_context.get("protected_constraints"),
+         "activity_decision_semantics": decision_context.get("activity_decision_semantics", []),
+         "user_preferences": decision_context.get("user_preferences"),
++        "user_requirement_context": decision_context.get("user_requirement_context"),
+         "context_provenance": decision_context.get("provenance"),
+         "previous_user_feedback": decision_context.get("decision_memory", []),
+         # Compatibility aliases retained while downstream consumers migrate.
+@@ -780,4 +781,5 @@
+             .replace("place_candidate_id", "candidate_ref")
+             .replace("editable_activity_ids", "editable_activity_refs")
+             .replace("protected_activity_ids", "protected_activity_refs")
+-            + "\n既有活动的地点身份由系统沿用，不重新选择地点；仅输出其 activity_ref 和调整后的时间、停留及交通方式。未输出的可编辑活动表示删除。新增活动仅从 new_place_candidates 选择 candidate_ref。不要输出 candidate_id、坐标、来源、成本、路线 ID 或 before/after。Decision Ledger 为 shadow，主输出不要求 Ledger。")
++            + "\n既有活动的地点身份由系统沿用，不重新选择地点；仅输出其 activity_ref 和调整后的时间、停留及交通方式。未输出的可编辑活动表示删除。新增活动仅从 new_place_candidates 选择 candidate_ref。不要输出 candidate_id、坐标、来源、成本、路线 ID 或 before/after。Decision Ledger 为 shadow，主输出不要求 Ledger。"
++            + "\nuser_requirement_context 是绑定本次 Run 的结构化用户表达，原文仅是需求数据。优先级为正式 Trip/执行保护 > 当前合法请求 > 当前会话已确认偏好 > TripPreferences 软默认 > 未确认建议。取消或被覆盖的声明不再作为积极偏好。suggestion_ref 不是 Activity/POI 身份；喜欢不等于必去。semantic_only_kinds 只表达语义目标，不能冒充系统已验证的硬约束。Brief 的日期、预算表述不能覆盖正式字段，也不能绕过锁定、预约、版本或用户确认。")
+--- canonical/backend/tests/test_planning_brief.py
++++ brief/backend/tests/test_planning_brief.py
+@@ -0,0 +1,461 @@
++import asyncio
++import copy
++import json
++import uuid
++from types import SimpleNamespace
++from pathlib import Path
++from unittest.mock import AsyncMock, patch
++
++import pytest
++from pydantic import SecretStr
++from fastapi.testclient import TestClient
++from langgraph.checkpoint.memory import InMemorySaver
++from sqlalchemy import select, func
++
++from app.main import app
++from app.companion_state import build_planning_brief
++from app.travel_goal_router import route_travel_goal
++from app.planning_brief import digest, load_brief, project_requirements, PlanningBriefError
++from app.database import AssistantSession, PlanningRun, PlanRevision, Trip, TripPreferences, session_factory
++from app.assistant_service import send_message, ToolDecision, confirm_action
++from app.planning_run_repository import create_planning_run
++from app.schemas import PlanningRunCreate, CitySuggestionResponse
++from app.planning_graph import build_planning_graph
++from app.planning_graph_runtime import invoke_compiled_graph
++from app.config import get_settings
++from evals.planning_quality.run import cases, seed_case, ObservedPlanner, formal_fingerprint, facts_for
++
++
++def observe(name, **values):
++    """Synthetic, assertion-backed observations on the same frozen test image."""
++    path=Path('/evidence')
++    if path.is_dir():
++        (path/(name+'.json')).write_text(json.dumps(values,ensure_ascii=False,indent=2,default=str),encoding='utf-8')
++
++
++def fixture_planner():
++    return ObservedPlanner(get_settings().model_copy(update={'planner_api_key':SecretStr('fixture'),'planner_model':'fixture'}),'mock')
++
++
++async def synthetic_route(*args,**kwargs):
++    return SimpleNamespace(distance_meters=1000,duration_minutes=15,provider='Phase1A synthetic route',is_estimated=True,path=[],alternatives=[])
++
++
++def brief(history=None, message='请生成完整行程，我喜欢文化，旅行目标是了解历史，希望轻松一点'):
++    return build_planning_brief('session','authorization',message,route_travel_goal(message),history or [])
++
++
++def test_statements_keep_excerpts_and_cancellation_does_not_create_formal_identity():
++    value=brief([{'id':'earlier','user':'我喜欢购物','assistant':'模型说你必须去某个商场'},
++                 {'id':'cancel','user':'取消购物偏好','assistant':'收到'}])
++    projection=project_requirements({'payload':value.model_dump(mode='json'), 'source_session_id':'session',
++      'target_trip_id':'trip','base_trip_version':1,'run_id':'run','payload_sha256':'fixture'},
++      {'preferences':{'interest_categories':['shopping'],'avoid_categories':[],'pace':'intensive'},
++       'trip':{'total_budget_fen':10000}})
++    assert projection['effective_soft_preferences']['interest_categories']==['culture']
++    assert projection['effective_soft_preferences']['pace']=='relaxed'
++    assert 'shopping' not in projection['effective_soft_preferences']['avoid_categories']
++    assert any(p['reason']=='later_explicit_user_statement' for p in projection['overridden'])
++    assert projection['hard_constraint_capabilities_added']==[]
++    assert value.must_do==[]
++    assert all(p.source_user_excerpt==p.text and p.source_session_id=='session' for p in value.requirements)
++    assert all('模型说' not in p.text for p in value.requirements)
++
++
++@pytest.mark.parametrize('change',['hash','trip','session','version','payload','run','authorization'])
++def test_envelope_tampering_rejected_without_reading_latest_chat(change):
++    payload=brief().model_dump(mode='json')
++    envelope={'schema_version':1,'source_session_id':'session','target_trip_id':'trip','base_trip_version':1,
++      'run_id':'run','authorization_turn_id':'authorization','payload':payload,'payload_sha256':digest(payload),
++      'source_turn_digests':{'authorization':'sealed-at-creation'}}
++    binding={k:envelope[k] for k in ('source_session_id','target_trip_id','base_trip_version','run_id','authorization_turn_id','payload_sha256')}
++    binding['envelope_sha256']=digest(envelope)
++    run=SimpleNamespace(id='run',trip_id='trip',base_trip_version=1,trigger_snapshot={'planning_brief':envelope,'planning_brief_binding':binding})
++    assert load_brief(run,1)['payload']==payload
++    if change=='hash': binding['envelope_sha256']='bad'
++    elif change=='version': run.base_trip_version=2
++    elif change=='trip': run.trip_id='other'
++    elif change=='run': run.id='other'
++    elif change=='session': envelope['source_session_id']='other'
++    elif change=='authorization': envelope['authorization_turn_id']='other'
++    else: envelope['payload']['requirements'][0]['value']='shopping'
++    with pytest.raises(PlanningBriefError): load_brief(run,run.base_trip_version)
++
++
++def test_legacy_brief_defaults_and_runs_without_brief_are_compatible():
++    from app.companion_contracts import PreferenceStatement
++    assert PreferenceStatement(text='旧偏好',source_turn_id='legacy').confirmation=='proposed'
++    assert load_brief(SimpleNamespace(trigger_snapshot={}),999) is None
++    with pytest.raises(Exception):
++        PlanningRunCreate(run_type='initial_plan',user_request='生成行程',planning_brief={'forged':True})
++
++
++class Router:
++    def __init__(self,decision): self.decision=decision; self.seen=[]
++    async def decide(self,context):
++        self.seen.append(copy.deepcopy(context))
++        # Mutating the router's JSON cannot mutate the server's typed Brief.
++        if context.get('planning_brief'): context['planning_brief']['requirements']=[]
++        return self.decision
++
++
++@pytest.mark.parametrize('mode',['brief','legacy','conflict'])
++def test_existing_trip_graph_and_checkpoint_resume_keep_the_original_brief(mode):
++    with TestClient(app):
++        async def scenario():
++            case=cases()[0]
++            state=await seed_case(case,'phase1a-'+mode+'-'+uuid.uuid4().hex)
++            trip_id=uuid.UUID(state['trip_id'])
++            async with session_factory() as db:
++                history=[{'id':'preference','user':'我喜欢文化，希望轻松一点','assistant':'普通会话回复'}]
++                if mode=='conflict': history.append({'id':'current-negative','user':'我不喜欢购物','assistant':'收到'})
++                row=AssistantSession(trip_id=trip_id,messages=history,applied_actions={})
++                db.add(row); await db.commit()
++                if mode=='conflict':
++                    prefs=await db.get(TripPreferences,trip_id); prefs.interest_categories=['shopping']; prefs.pace='intensive'; await db.commit(); await db.refresh(prefs)
++                router=Router(ToolDecision(tool='plan_trip',reply='准备候选',planning_request=state['user_request']))
++                if mode=='legacy':
++                    run=await create_planning_run(db,trip_id,PlanningRunCreate(run_type='initial_plan',user_request=state['user_request']))
++                else:
++                    row=await send_message(db,row.id,'请生成完整行程',uuid.uuid4(),router=router)
++                    run=await db.get(PlanningRun,row.latest_run_id)
++                    assert run.trigger_snapshot['planning_brief']['payload']['requirements']
++                    assert router.seen[0]['planning_brief']['requirements']
++                sealed=copy.deepcopy(run.trigger_snapshot)
++                # Later conversation is explicitly excluded from retry inputs.
++                row.messages=[*row.messages,{'id':'later','user':'我喜欢购物，安排得紧凑','assistant':'稍后讨论'}]
++                await db.commit()
++            before=await formal_fingerprint(trip_id)
++            planner=fixture_planner()
++            checkpoint=InMemorySaver()
++            graph=build_planning_graph(checkpoint,provider=planner)
++            async def route(*args,**kwargs):
++                return SimpleNamespace(distance_meters=1000,duration_minutes=15,provider='Phase1A synthetic route',is_estimated=True,path=[],alternatives=[])
++            with patch('app.planning_graph._collect_external_facts',AsyncMock(return_value=facts_for(case))),patch('app.candidate_route_service.resolve_route_result',route):
++                result=await invoke_compiled_graph(graph,run)
++            assert result.pending_interrupt['kind']=='approval'
++            assert await formal_fingerprint(trip_id)==before
++            wire=planner.inputs[-1]
++            if mode!='legacy':
++                projected=wire['user_requirement_context']
++                assert projected['binding']['payload_sha256']==sealed['planning_brief']['payload_sha256']
++                assert wire['preferences']['pace']=='relaxed'
++                assert wire['preferences']['interest_categories']==['culture']
++                assert '我喜欢购物，安排得紧凑' not in json.dumps(projected,ensure_ascii=False)
++                if mode=='conflict': assert projected['overridden']
++            else: assert wire['user_requirement_context'] is None
++            # Restart graph instance with the same checkpoint: resume approval
++            # performs no second model generation and leaves formal state intact.
++            resumed=build_planning_graph(checkpoint,provider=planner)
++            result=await invoke_compiled_graph(resumed,run,resume={'decision':'reject','answer':None})
++            assert len(planner.inputs)==1
++            assert await formal_fingerprint(trip_id)==before
++            async with session_factory() as db:
++                persisted=await db.get(PlanningRun,run.id)
++                if mode!='legacy':
++                    assert persisted.trigger_snapshot['planning_brief']==sealed['planning_brief']
++                    assert persisted.trigger_snapshot['planning_brief_binding']==sealed['planning_brief_binding']
++                    assert 'decision_context_summary' in persisted.trigger_snapshot
++            observe('graph-'+mode, mode='mock_original_graph', input=wire, sealed=sealed,
++                final=planner.outputs, formal_unchanged=True, model_calls=len(planner.inputs), approval=result.pending_interrupt)
++        asyncio.run(scenario())
++
++
++@pytest.mark.parametrize('forge',['excerpt','source_session','confirmation','value'])
++def test_forged_source_rejected_before_run_insert(forge):
++    with TestClient(app):
++        async def scenario():
++            state=await seed_case(cases()[0],'phase1a-source-'+uuid.uuid4().hex)
++            trip_id=uuid.UUID(state['trip_id'])
++            async with session_factory() as db:
++                row=AssistantSession(trip_id=trip_id,messages=[],applied_actions={}); db.add(row); await db.flush()
++                message='请生成完整行程，我喜欢文化'
++                turn=str(uuid.uuid4())
++                value=build_planning_brief(str(row.id),turn,message,route_travel_goal(message),[]).model_dump(mode='json')
++                row.messages=[{'id':turn,'user':message,'assistant':'收到'}]; await db.commit()
++                item=value['requirements'][0]
++                if forge=='excerpt': item['source_user_excerpt']='我喜欢购物'
++                elif forge=='source_session': item['source_session_id']=str(uuid.uuid4())
++                elif forge=='confirmation': item['confirmation']='confirmed'
++                else: item['value']='shopping'
++                before=await db.scalar(select(func.count()).select_from(PlanningRun))
++                with pytest.raises(PlanningBriefError):
++                    await create_planning_run(db,trip_id,PlanningRunCreate(run_type='initial_plan',user_request=message),
++                        planning_brief=value,source_session_id=row.id)
++                assert await db.scalar(select(func.count()).select_from(PlanningRun))==before
++        asyncio.run(scenario())
++
++
++def test_new_trip_creation_carries_pretrip_brief_without_router_rewriting():
++    from datetime import date
++    with TestClient(app):
++        async def scenario():
++            async with session_factory() as db:
++                row=AssistantSession(messages=[{'id':'culture','user':'我喜欢文化，希望轻松一点','assistant':'旅行讨论'}],applied_actions={})
++                db.add(row); await db.commit()
++                router=Router(ToolDecision(tool='create_trip',reply='核对',destination='杭州',start_date=date(2027,1,1),end_date=date(2027,1,1),total_budget_fen=100000))
++                async def city_search(keyword):
++                    return [CitySuggestionResponse(name='杭州市',adcode='330100',citycode='0571',longitude=120.15,latitude=30.27)]
++                row=await send_message(db,row.id,'帮我规划2027年1月1日杭州一日游，预算1000元',uuid.uuid4(),router=router,city_search=city_search)
++                action=copy.deepcopy(row.pending_action)
++                assert action['planning_brief']['requirements']
++                row=await confirm_action(db,row.id,action['id'],True)
++                run=await db.get(PlanningRun,row.latest_run_id)
++                assert run.trigger_snapshot['planning_brief']['payload']==action['planning_brief']
++                assert run.trigger_snapshot['planning_brief']['target_trip_id']==str(row.trip_id)
++                assert run.trigger_snapshot['planning_brief']['source_session_id']==str(row.id)
++                assert run.user_request==action['planning_brief']['user_request']
++                assert load_brief(run,run.base_trip_version)
++            # Reuse the frozen Phase0 pool, transplanting only synthetic records
++            # into this newly created test Trip; the production Graph is reused.
++            from evals.planning_quality.run import state_for
++            from app.database import SourceRecord, PlaceCandidate
++            from datetime import datetime, UTC
++            case={**cases()[0],'date':'2027-01-01'}
++            pool=state_for(case,'phase1a-new-'+uuid.uuid4().hex)['planning_context']['candidates']
++            async with session_factory() as db:
++                for item in pool:
++                    db.add(SourceRecord(id=uuid.UUID(item['source']['id']),trip_id=row.trip_id,title=item['name'],
++                        url='https://example.org/phase1a',provider='Phase0 synthetic POI',confidence='low',queried_at=datetime.now(UTC)))
++                await db.flush()
++                for index,item in enumerate(pool):
++                    db.add(PlaceCandidate(id=uuid.UUID(item['id']),trip_id=row.trip_id,source_record_id=uuid.UUID(item['source']['id']),
++                        slug='new-'+str(index),**{k:v for k,v in item.items() if k not in {'id','source'}}))
++                await db.commit()
++            before=await formal_fingerprint(row.trip_id)
++            planner=fixture_planner()
++            with patch('app.planning_graph._collect_external_facts',AsyncMock(return_value=facts_for(case))),patch('app.candidate_route_service.resolve_route_result',synthetic_route):
++                result=await invoke_compiled_graph(build_planning_graph(InMemorySaver(),provider=planner),run)
++            assert result.pending_interrupt['kind']=='approval'
++            assert planner.inputs[0]['preferences']['pace']=='relaxed'
++            assert planner.inputs[0]['preferences']['interest_categories']==['culture']
++            assert planner.inputs[0]['user_requirement_context']['user_request']==action['planning_brief']['user_request']
++            assert await formal_fingerprint(row.trip_id)==before
++            observe('graph-new-trip',mode='mock_original_graph',input=planner.inputs[0],sealed=run.trigger_snapshot,
++                final=planner.outputs,formal_unchanged=True,interrupt=result.pending_interrupt)
++        asyncio.run(scenario())
++
++
++def test_questions_and_model_inferences_are_not_confirmed_preferences():
++    value=brief([{'id':'question','user':'如果喜欢购物是不是应该紧凑一点？','assistant':'你应该喜欢购物'},
++                 {'id':'old','user':'我喜欢文化','assistant':'建议必须去购物广场'}]+[
++                    {'id':'unrelated-'+str(i),'user':'谢谢','assistant':'不客气'} for i in range(70)])
++    assert any(p.source_turn_id=='old' and p.value=='culture' for p in value.requirements)
++    assert all(p.source_turn_id!='question' for p in value.requirements+value.confirmed_preferences)
++    assert not value.must_do
++
++
++def test_brief_does_not_override_other_days_current_execution_or_formal_limits():
++    from test_decision_context import _cross_day_context
++    from app.decision_context import build_decision_context, assert_decision_context_invariants
++    context,goals,resolution=_cross_day_context()
++    context['trip']={'destination':'杭州市','total_budget_fen':10000,'daily_budget_fen':5000}
++    value=brief(message='请生成完整行程，我喜欢文化，必须去正在执行的活动，预算无限')
++    envelope={'payload':value.model_dump(mode='json'),'source_session_id':'session','target_trip_id':'trip',
++        'base_trip_version':1,'run_id':'run','payload_sha256':digest(value.model_dump(mode='json'))}
++    requirement=project_requirements(envelope,context)
++    context['user_requirement_context']=requirement
++    context['preferences']=requirement['effective_soft_preferences']
++    decision=build_decision_context(context=context,goals=goals,resolution=resolution)
++    assert decision['protected_constraints']['editable_activity_ids']==['future-editable']
++    assert decision['execution_context']['current_activity']['name']=='当前活动'
++    assert 'outside_requested_scope' in decision['protected_constraints']['provenance']['activity-target']
++    assert requirement['formal_constraints']['total_budget_fen']==10000
++    assert requirement['hard_constraint_capabilities_added']==[]
++    assert_decision_context_invariants(decision)
++
++
++def test_durable_worker_lease_retry_uses_original_snapshot_after_later_chat():
++    from datetime import datetime, timedelta, UTC
++    from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
++    from app.agent_worker import claim_next_run, execute_claimed_run
++    from app.planning_graph_runtime import execute_planning_run
++    with TestClient(app):
++        async def scenario():
++            case=cases()[0]
++            state=await seed_case(case,'phase1a-lease-'+uuid.uuid4().hex)
++            trip_id=uuid.UUID(state['trip_id'])
++            async with session_factory() as db:
++                row=AssistantSession(trip_id=trip_id,messages=[{'id':'original','user':'我喜欢文化，希望轻松一点','assistant':'收到'}],applied_actions={})
++                db.add(row); await db.commit()
++                row=await send_message(db,row.id,'请生成完整行程',uuid.uuid4(),router=Router(ToolDecision(tool='plan_trip',reply='候选',planning_request=state['user_request'])))
++                run=await db.get(PlanningRun,row.latest_run_id)
++                sealed=copy.deepcopy(run.trigger_snapshot['planning_brief'])
++                run.created_at=datetime(1970,1,1,tzinfo=UTC); await db.commit()
++            before=await formal_fingerprint(trip_id)
++            planner=fixture_planner()
++            class InterruptedProvider:
++                async def generate(self,state):
++                    await planner.generate(state)
++                    raise RuntimeError('synthetic worker process interruption before revision persistence')
++            with patch('app.planning_graph._collect_external_facts',AsyncMock(return_value=facts_for(case))),patch('app.candidate_route_service.resolve_route_result',synthetic_route):
++                async with AsyncPostgresSaver.from_conn_string(get_settings().checkpoint_database_url) as saver:
++                    await saver.setup()
++                    with pytest.raises(RuntimeError,match='synthetic worker process interruption'):
++                        await invoke_compiled_graph(build_planning_graph(saver,provider=InterruptedProvider()),run)
++                async with session_factory() as db:
++                    latest=await db.get(PlanningRun,run.id)
++                    assert latest.status=='planning'
++                    latest.worker_lease_expires_at=datetime.now(UTC)-timedelta(seconds=10)
++                    row=await db.get(AssistantSession,row.id)
++                    row.messages=[*row.messages,{'id':'later-retry','user':'我喜欢购物，改得紧凑一点','assistant':'另一次讨论'}]
++                    await db.commit()
++                assert await claim_next_run()==run.id
++                async def execute_owned(run_id):
++                    return await execute_planning_run(run_id,provider=planner)
++                with patch('app.agent_worker.execute_planning_run',execute_owned):
++                    await execute_claimed_run(run.id)
++            assert len(planner.inputs)==2
++            assert planner.inputs[0]['user_requirement_context']==planner.inputs[1]['user_requirement_context']
++            assert planner.inputs[0]['preferences']==planner.inputs[1]['preferences']
++            assert await formal_fingerprint(trip_id)==before
++            async with session_factory() as db:
++                saved=await db.get(PlanningRun,run.id)
++                assert saved.status=='awaiting_confirmation',saved.error_message
++                assert saved.trigger_snapshot['planning_brief']==sealed
++                assert saved.worker_id is None and saved.worker_lease_expires_at is None
++                # A clarify decision cannot bypass the approval boundary.
++                from app.planning_graph_runtime import _validate_decision
++                from app.schemas import PlanningRunDecision
++                with pytest.raises(ValueError,match='waiting for approval'):
++                    _validate_decision(saved,PlanningRunDecision(decision='clarify',answer='确认'))
++            observe('worker-retry',mode='mock_original_graph_postgres_checkpoint',inputs=planner.inputs,
++                immutable_envelope=True,formal_unchanged=True,lease_reclaimed=True,final_status=saved.status)
++        asyncio.run(scenario())
++
++
++def test_existing_trip_adjustment_with_brief_keeps_other_date_and_current_execution():
++    from datetime import datetime, timedelta, time, UTC
++    from app.database import DayPlan, Activity, TripExecution
++    with TestClient(app):
++        async def scenario():
++            case=cases()[0]
++            state=await seed_case(case,'phase1a-adjust-'+uuid.uuid4().hex)
++            trip_id=uuid.UUID(state['trip_id'])
++            async with session_factory() as db:
++                trip=await db.get(Trip,trip_id)
++                day=await db.scalar(select(DayPlan).where(DayPlan.trip_id==trip_id))
++                target=day.date+timedelta(days=1)
++                trip.end_date=target
++                second=DayPlan(trip_id=trip_id,date=target,position=1,label='第二天',theme='',route_mode='transit')
++                db.add(second); await db.flush()
++                for index,d in enumerate((day,second)):
++                    db.add(Activity(id=uuid.uuid4(),day_plan_id=d.id,place_candidate_id=uuid.UUID(state['planning_context']['candidates'][index]['id']),
++                        scheduled_time=time(9),duration_minutes=60,estimated_cost_fen=1000,position=0,status='active' if index==0 else 'planned'))
++                await db.flush()
++                current=await db.scalar(select(Activity).where(Activity.day_plan_id==day.id))
++                db.add(TripExecution(trip_id=trip_id,current_date=day.date,current_day_plan_id=day.id,current_activity_id=current.id,
++                    actual_started_at=datetime.now(UTC),itinerary_version=trip.version))
++                row=AssistantSession(trip_id=trip_id,messages=[{'id':'pref','user':'我喜欢文化，希望轻松一点','assistant':'收到'}],applied_actions={})
++                db.add(row); await db.commit()
++                row=await send_message(db,row.id,'请调整第二天的行程',uuid.uuid4(),router=Router(ToolDecision(tool='plan_trip',reply='准备调整',planning_request='请调整第二天的行程')))
++                run=await db.get(PlanningRun,row.latest_run_id)
++                assert run.run_type=='replan'
++                current_id=str(current.id)
++            before=await formal_fingerprint(trip_id)
++            planner=fixture_planner()
++            with patch('app.planning_graph._collect_external_facts',AsyncMock(return_value=facts_for({**case,'date':str(target)}))),patch('app.candidate_route_service.resolve_route_result',synthetic_route):
++                result=await invoke_compiled_graph(build_planning_graph(InMemorySaver(),provider=planner),run)
++            assert result.pending_interrupt['kind']=='approval'
++            wire=planner.inputs[0]
++            assert wire['allowed_dates']==[str(target)]
++            assert wire['execution_state']['current_activity']['name']==state['planning_context']['candidates'][0]['name']
++            assert wire['preferences']['interest_categories']==['culture']
++            assert await formal_fingerprint(trip_id)==before
++            async with session_factory() as db:
++                revision=await db.scalar(select(PlanRevision).where(PlanRevision.planning_run_id==run.id))
++                assert revision.status=='pending'
++                current=await db.get(Activity,uuid.UUID(current_id))
++                assert current.status=='active' and current.scheduled_time==time(9)
++            observe('graph-existing-adjust',mode='mock_original_graph',input=wire,final=planner.outputs,
++                target_date=str(target),current_activity_unchanged=True,formal_unchanged=True,interrupt=result.pending_interrupt)
++        asyncio.run(scenario())
++
++
++@pytest.mark.parametrize('invalid',['missing_binding','invalid_schema','duplicate_statement','stale_trip_version'])
++def test_invalid_envelope_shape_and_old_version_fail_closed(invalid):
++    payload=brief().model_dump(mode='json')
++    envelope={'schema_version':1,'source_session_id':'session','target_trip_id':'trip','base_trip_version':1,
++        'run_id':'run','authorization_turn_id':'authorization','payload':payload,'source_turn_digests':{'authorization':digest('synthetic-user')}}
++    if invalid=='invalid_schema': payload['requirements'][0]['confirmation']='forged'
++    if invalid=='duplicate_statement': payload['requirements'][1]['statement_id']=payload['requirements'][0]['statement_id']
++    envelope['payload_sha256']=digest(payload)
++    binding={k:envelope[k] for k in ('source_session_id','target_trip_id','base_trip_version','run_id','authorization_turn_id','payload_sha256')}
++    binding['envelope_sha256']=digest(envelope)
++    if invalid=='missing_binding': binding.pop('source_session_id')
++    run=SimpleNamespace(id='run',trip_id='trip',base_trip_version=1,trigger_snapshot={'planning_brief':envelope,'planning_brief_binding':binding})
++    with pytest.raises(PlanningBriefError): load_brief(run,2 if invalid=='stale_trip_version' else 1)
++
++
++def test_negative_preference_and_optional_visit_are_not_positive_or_must_do():
++    value=brief(message='请生成完整行程，我不太喜欢购物，不一定要去某个商场')
++    assert any(p.value=='shopping' and p.polarity=='negative' for p in value.requirements)
++    assert all(p.kind!='must_do' for p in value.requirements)
++
++
++def test_contrasting_preferences_keep_each_polarity_and_original_excerpt():
++    message='请生成完整行程，我不喜欢购物但喜欢文化'
++    value=brief(message=message)
++    assert {(p.value,p.polarity) for p in value.requirements}=={('shopping','negative'),('culture','positive')}
++    assert all(p.source_user_excerpt in message for p in value.requirements)
++
++
++def test_checkpoint_forged_decision_projection_rejected_before_second_provider_call():
++    with TestClient(app):
++        async def scenario():
++            state=await seed_case(cases()[0],'phase1a-checkpoint-'+uuid.uuid4().hex)
++            tid=uuid.UUID(state['trip_id'])
++            async with session_factory() as db:
++                row=AssistantSession(trip_id=tid,messages=[{'id':'pref','user':'我喜欢文化','assistant':'收到'}],applied_actions={})
++                db.add(row); await db.commit()
++                row=await send_message(db,row.id,'请生成完整行程',uuid.uuid4(),router=Router(ToolDecision(tool='plan_trip',reply='候选',planning_request=state['user_request'])))
++                run=await db.get(PlanningRun,row.latest_run_id)
++            planner=fixture_planner()
++            class Interrupted:
++                async def generate(self,state):
++                    await planner.generate(state)
++                    raise RuntimeError('synthetic interrupted checkpoint')
++            graph=build_planning_graph(InMemorySaver(),provider=Interrupted())
++            config={'configurable':{'thread_id':str(run.id)}}
++            with patch('app.planning_graph._collect_external_facts',AsyncMock(return_value=facts_for(cases()[0]))):
++                with pytest.raises(RuntimeError,match='synthetic interrupted checkpoint'):
++                    await invoke_compiled_graph(graph,run)
++            snapshot=await graph.aget_state(config)
++            context=copy.deepcopy(snapshot.values['planning_context'])
++            context['decision_context']['user_requirement_context']['active_statements'][0]['value']='forged'
++            await graph.aupdate_state(config,{'planning_context':context},as_node='resolve_intent')
++            with pytest.raises(PlanningBriefError,match='checkpoint_decision_context_invalid'):
++                await graph.ainvoke(None,config)
++            assert len(planner.inputs)==1
++            observe('checkpoint-tampering',provider_calls=1,rejected_before_second_call=True)
++        asyncio.run(scenario())
++
++
++def test_runtime_invalid_brief_is_actionable_failure_before_external_calls():
++    from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
++    from app.planning_graph_runtime import execute_planning_run
++    with TestClient(app):
++        async def scenario():
++            state=await seed_case(cases()[0],'phase1a-invalid-runtime-'+uuid.uuid4().hex)
++            tid=uuid.UUID(state['trip_id'])
++            async with session_factory() as db:
++                row=AssistantSession(trip_id=tid,messages=[{'id':'pref','user':'我喜欢文化','assistant':'收到'}],applied_actions={})
++                db.add(row); await db.commit()
++                row=await send_message(db,row.id,'请生成完整行程',uuid.uuid4(),router=Router(ToolDecision(tool='plan_trip',reply='候选',planning_request=state['user_request'])))
++                run=await db.get(PlanningRun,row.latest_run_id)
++                snapshot=copy.deepcopy(run.trigger_snapshot)
++                snapshot['planning_brief']['payload']['requirements'][0]['value']='forged'
++                run.trigger_snapshot=snapshot; await db.commit()
++            async with AsyncPostgresSaver.from_conn_string(get_settings().checkpoint_database_url) as saver:
++                await saver.setup()
++            planner=fixture_planner()
++            collector=AsyncMock()
++            with patch('app.planning_graph._collect_external_facts',collector):
++                result=await execute_planning_run(run.id,provider=planner)
++            assert result.pending_interrupt is None and not planner.inputs
++            collector.assert_not_called()
++            async with session_factory() as db:
++                saved=await db.get(PlanningRun,run.id)
++                assert saved.status=='failed' and saved.error_code=='planning_brief_invalid'
++            observe('runtime-invalid-brief',failure_code=saved.error_code,provider_calls=0,external_calls=0)
++        asyncio.run(scenario())

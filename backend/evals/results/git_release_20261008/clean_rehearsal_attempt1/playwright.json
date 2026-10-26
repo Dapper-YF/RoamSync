@@ -1,0 +1,261 @@
+{
+  "config": {
+    "argv": [
+      "D:\\nodejs\\node.exe",
+      "E:\\Study\\RoamSync-release-20261008\\web\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "e2e/demo-acceptance.spec.ts",
+      "e2e/demo-lifecycle.spec.ts",
+      "--config",
+      "playwright.acceptance.config.ts"
+    ],
+    "configFile": "E:\\Study\\RoamSync-release-20261008\\web\\playwright.acceptance.config.ts",
+    "rootDir": "E:/Study/RoamSync-release-20261008/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "E:/Study/RoamSync-release-20261008/backend/evals/results/demo_acceptance_20261007/browser",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "E:/Study/RoamSync-release-20261008/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "demo-*.spec.ts"
+        ],
+        "timeout": 900000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../backend/evals/results/demo_acceptance_20261007/playwright.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "demo-acceptance.spec.ts",
+      "file": "demo-acceptance.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real conversation reaches validated candidate without formal itinerary mutation",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 900000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 29011,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at E:\\Study\\RoamSync-release-20261008\\web\\e2e\\demo-acceptance.spec.ts:61:142",
+                    "location": {
+                      "file": "E:\\Study\\RoamSync-release-20261008\\web\\e2e\\demo-acceptance.spec.ts",
+                      "column": 142,
+                      "line": 61
+                    },
+                    "snippet": "  59 |       }\n  60 |       if (index === 4) {\n> 61 |         expect(last.companion_result.resolved_facts.some((f: any) => f.requirement.fact_type === \"weather.forecast\" && f.usable_as_current)).toBe(true);\n     |                                                                                                                                              ^\n  62 |       }\n  63 |       if (index === 3) {\n  64 |         expect(last.assistant).not.toContain(\"西湖\");"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "E:\\Study\\RoamSync-release-20261008\\web\\e2e\\demo-acceptance.spec.ts",
+                        "column": 142,
+                        "line": 61
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  59 |       }\n  60 |       if (index === 4) {\n> 61 |         expect(last.companion_result.resolved_facts.some((f: any) => f.requirement.fact_type === \"weather.forecast\" && f.usable_as_current)).toBe(true);\n     |                                                                                                                                              ^\n  62 |       }\n  63 |       if (index === 3) {\n  64 |         expect(last.assistant).not.toContain(\"西湖\");\n    at E:\\Study\\RoamSync-release-20261008\\web\\e2e\\demo-acceptance.spec.ts:61:142"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "turn \u001b[33m1\u001b[39m \u001b[33m200\u001b[39m companion\n"
+                    },
+                    {
+                      "text": "turn \u001b[33m2\u001b[39m \u001b[33m200\u001b[39m companion\n"
+                    },
+                    {
+                      "text": "turn \u001b[33m3\u001b[39m \u001b[33m200\u001b[39m companion\n"
+                    },
+                    {
+                      "text": "turn \u001b[33m4\u001b[39m \u001b[33m200\u001b[39m companion\n"
+                    },
+                    {
+                      "text": "turn \u001b[33m5\u001b[39m \u001b[33m200\u001b[39m companion\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-08T00:29:24.662Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "E:\\Study\\RoamSync-release-20261008\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-acceptance-real-conve-a9828-t-formal-itinerary-mutation\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\Study\\RoamSync-release-20261008\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-acceptance-real-conve-a9828-t-formal-itinerary-mutation\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "E:\\Study\\RoamSync-release-20261008\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-acceptance-real-conve-a9828-t-formal-itinerary-mutation\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "E:\\Study\\RoamSync-release-20261008\\web\\e2e\\demo-acceptance.spec.ts",
+                    "column": 142,
+                    "line": 61
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "61294b7db1cf8fbd45a6-edf4ed7786db12b305f7",
+          "file": "demo-acceptance.spec.ts",
+          "line": 7,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "demo-lifecycle.spec.ts",
+      "file": "demo-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "lifecycle revises an unaccepted candidate then formalizes only on explicit approval",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 900000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 385,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"candidate_gate_passed_lifecycle_pending\"\u001b[39m\nReceived: \u001b[31m\"failed\"\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"candidate_gate_passed_lifecycle_pending\"\u001b[39m\nReceived: \u001b[31m\"failed\"\u001b[39m\n    at E:\\Study\\RoamSync-release-20261008\\web\\e2e\\demo-lifecycle.spec.ts:10:26",
+                    "location": {
+                      "file": "E:\\Study\\RoamSync-release-20261008\\web\\e2e\\demo-lifecycle.spec.ts",
+                      "column": 26,
+                      "line": 10
+                    },
+                    "snippet": "   8 |   expect(new URL(test.info().project.use.baseURL!).port).toBe(\"3001\");\n   9 |   const earlier = JSON.parse(readFileSync(resolve(evidence, \"conversation.json\"), \"utf8\"));\n> 10 |   expect(earlier.status).toBe(\"candidate_gate_passed_lifecycle_pending\");\n     |                          ^\n  11 |   const resume = process.env.ROAMSYNC_LIFECYCLE_RESUME === \"1\";\n  12 |   const report: Record<string, any> = resume\n  13 |     ? JSON.parse(readFileSync(resolve(evidence, \"lifecycle.json\"), \"utf8\"))"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "E:\\Study\\RoamSync-release-20261008\\web\\e2e\\demo-lifecycle.spec.ts",
+                        "column": 26,
+                        "line": 10
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"candidate_gate_passed_lifecycle_pending\"\u001b[39m\nReceived: \u001b[31m\"failed\"\u001b[39m\n\n   8 |   expect(new URL(test.info().project.use.baseURL!).port).toBe(\"3001\");\n   9 |   const earlier = JSON.parse(readFileSync(resolve(evidence, \"conversation.json\"), \"utf8\"));\n> 10 |   expect(earlier.status).toBe(\"candidate_gate_passed_lifecycle_pending\");\n     |                          ^\n  11 |   const resume = process.env.ROAMSYNC_LIFECYCLE_RESUME === \"1\";\n  12 |   const report: Record<string, any> = resume\n  13 |     ? JSON.parse(readFileSync(resolve(evidence, \"lifecycle.json\"), \"utf8\"))\n    at E:\\Study\\RoamSync-release-20261008\\web\\e2e\\demo-lifecycle.spec.ts:10:26"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-08T00:29:55.831Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "E:\\Study\\RoamSync-release-20261008\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-lifecycle-lifecycle-r-97bc7-s-only-on-explicit-approval\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\Study\\RoamSync-release-20261008\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-lifecycle-lifecycle-r-97bc7-s-only-on-explicit-approval\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "E:\\Study\\RoamSync-release-20261008\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-lifecycle-lifecycle-r-97bc7-s-only-on-explicit-approval\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "E:\\Study\\RoamSync-release-20261008\\web\\e2e\\demo-lifecycle.spec.ts",
+                    "column": 26,
+                    "line": 10
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ff3dd5d965940becb5e2-ae8cf8d4166f6889e8cc",
+          "file": "demo-lifecycle.spec.ts",
+          "line": 7,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-08T00:29:23.849Z",
+    "duration": 33088.859,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

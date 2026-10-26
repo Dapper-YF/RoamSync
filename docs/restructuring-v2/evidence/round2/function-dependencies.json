@@ -1,0 +1,2024 @@
+{
+  "planning_context.py": [
+    {
+      "symbol": "build_planning_context",
+      "start": 12,
+      "end": 36,
+      "calls": [
+        "set",
+        "sorted",
+        "PlanningContextResponse",
+        "get_trip",
+        "get_trip_preferences",
+        "get_day_plans",
+        "get_candidates",
+        "get_budget",
+        "get_planning_budget",
+        "build_execution_recovery_context",
+        "str",
+        "TripResponse.model_validate",
+        "TripPreferencesResponse.model_validate",
+        "datetime.now"
+      ]
+    }
+  ],
+  "openai_planner.py": [
+    {
+      "symbol": "build_planner_input",
+      "start": 322,
+      "end": 561,
+      "calls": [
+        "set",
+        "assert_decision_context_invariants",
+        "context.get('destination_research', {}).get",
+        "candidate_base_from_context",
+        "preserved_candidate_activities",
+        "state.get",
+        "context.get",
+        "build_decision_context",
+        "date.fromisoformat",
+        "sorted",
+        "PlannerConstraintsUnsatisfiedError",
+        "uuid.UUID",
+        "any",
+        "_AllowedPlace",
+        "candidate_data.append",
+        "resolution.get",
+        "decision_context.get",
+        "(context.get('execution_recovery') or {}).get",
+        "(resolution.get('grounded_intent') or {}).get",
+        "(decision_context.get('protected_constraints') or {}).get",
+        "current_places.append",
+        "sum",
+        "context.get('actual_budget', {}).get",
+        "context.get('planning_budget', {}).get",
+        "activity.get",
+        "out_of_scope_activities.append",
+        "str",
+        "protected_activities.append",
+        "day.isoformat",
+        "bool",
+        "candidate_base.model_dump",
+        "item.get",
+        "previous.get",
+        "research.values",
+        "{**(decision_context.get('goal_context', {}).get('hard_goals') or {}), **(decision_context.get('goal_context', {}).get('soft_goals') or {})}.items",
+        "day.get",
+        "(research or {}).get(candidate['id'], {}).get",
+        "list(research).index",
+        "len",
+        "float",
+        "(research or {}).get",
+        "list",
+        "decision_context.get('goal_context', {}).get"
+      ]
+    },
+    {
+      "symbol": "resolve_planner_output",
+      "start": 564,
+      "end": 596,
+      "calls": [
+        "set",
+        "enumerate",
+        "CandidatePlanSnapshot",
+        "allowed_places.get",
+        "activities.append",
+        "'、'.join",
+        "ValueError",
+        "used_replacements.add",
+        "CandidateActivity",
+        "day.isoformat",
+        "selection.reason.strip",
+        "sorted"
+      ]
+    },
+    {
+      "symbol": "normalize_structured_json",
+      "start": 599,
+      "end": 602,
+      "calls": [
+        "value.strip",
+        "_JSON_FENCE_PATTERN.fullmatch",
+        "match.group"
+      ]
+    },
+    {
+      "symbol": "parse_planner_output",
+      "start": 605,
+      "end": 632,
+      "calls": [
+        "json.loads",
+        "dict",
+        "payload.get",
+        "isinstance",
+        "normalize_structured_json",
+        "ValueError",
+        "TypeAdapter(list[DecisionLedgerEntry]).validate_python",
+        "errors.append",
+        "re.search",
+        "PlannerDraftOutput.model_validate",
+        "list",
+        "len",
+        "dict.fromkeys",
+        "TypeAdapter",
+        "item.get"
+      ]
+    },
+    {
+      "symbol": "build_constrained_planner_schema",
+      "start": 635,
+      "end": 661,
+      "calls": [
+        "PlannerDraftOutput.model_json_schema",
+        "sorted",
+        "str",
+        "day.isoformat",
+        "ledger_refs.get"
+      ]
+    },
+    {
+      "symbol": "preserve_out_of_scope_activities",
+      "start": 664,
+      "end": 732,
+      "calls": [
+        "candidate_base_from_context",
+        "set",
+        "bool",
+        "list",
+        "snapshot.model_copy",
+        "state['intent_resolution'].get",
+        "str",
+        "date.fromisoformat",
+        "grounded.get",
+        "completed.append",
+        "CandidateActivity",
+        "preserved_candidate_activities"
+      ]
+    },
+    {
+      "symbol": "translate_model_error",
+      "start": 735,
+      "end": 775,
+      "calls": [
+        "isinstance",
+        "PlannerProviderError"
+      ]
+    },
+    {
+      "symbol": "semantic_planner_instructions",
+      "start": 778,
+      "end": 783,
+      "calls": [
+        "PLANNER_INSTRUCTIONS.replace('allowed_places', 'new_place_candidates').replace('place_candidate_id', 'candidate_ref').replace('editable_activity_ids', 'editable_activity_refs').replace",
+        "PLANNER_INSTRUCTIONS.replace('allowed_places', 'new_place_candidates').replace('place_candidate_id', 'candidate_ref').replace",
+        "PLANNER_INSTRUCTIONS.replace('allowed_places', 'new_place_candidates').replace",
+        "PLANNER_INSTRUCTIONS.replace"
+      ]
+    },
+    {
+      "symbol": "require_unique_places",
+      "start": 102,
+      "end": 107,
+      "calls": [
+        "model_validator",
+        "len",
+        "sorted",
+        "ValueError",
+        "set",
+        "str",
+        "', '.join",
+        "ids.count"
+      ]
+    },
+    {
+      "symbol": "__init__",
+      "start": 119,
+      "end": 136,
+      "calls": [
+        "settings.planner_api_key.get_secret_value",
+        "settings.planner_model.strip",
+        "PlannerNotConfiguredError",
+        "settings.planner_provider.strip",
+        "build_model_client"
+      ]
+    },
+    {
+      "symbol": "answer",
+      "start": 138,
+      "end": 167,
+      "calls": [
+        "datetime.now(ZoneInfo(context['trip'].get('timezone', 'Asia/Shanghai'))).date().isoformat",
+        "AnswerGeneration",
+        "context.get",
+        "PlannerProviderError",
+        "response.output_text.strip",
+        "str",
+        "int",
+        "datetime.now(ZoneInfo(context['trip'].get('timezone', 'Asia/Shanghai'))).date",
+        "place.get",
+        "create_model_response",
+        "translate_model_error",
+        "supplied.get",
+        "getattr",
+        "activity.get",
+        "leg.get",
+        "day.get",
+        "datetime.now",
+        "json.dumps",
+        "ZoneInfo",
+        "context['trip'].get",
+        "state.get"
+      ]
+    },
+    {
+      "symbol": "generate",
+      "start": 169,
+      "end": 269,
+      "calls": [
+        "build_planner_input",
+        "PlannerEntityBindings",
+        "len",
+        "bindings.prompt",
+        "range",
+        "AssertionError",
+        "PlannerConstraintsUnsatisfiedError",
+        "json.dumps",
+        "bindings.schema",
+        "getattr",
+        "int",
+        "self.last_reliability.setdefault('usage', []).append",
+        "DraftGeneration",
+        "state.get",
+        "prompt.get",
+        "PlannerProviderError",
+        "parse_semantic_planner_output",
+        "resolve_planner_activity_references",
+        "self.last_reliability['attempts'].append",
+        "preserve_out_of_scope_activities",
+        "state['planning_context'].get('destination_research', {}).get",
+        "selected.update",
+        "self._create_response",
+        "logger.warning",
+        "translate_model_error",
+        "self.last_reliability.setdefault",
+        "snapshot.model_copy",
+        "str",
+        "any",
+        "ValueError",
+        "state['planning_context'].get",
+        "research.items",
+        "isinstance",
+        "'; '.join",
+        "type",
+        "item.get",
+        "'、'.join",
+        "report_progress",
+        "list",
+        "item.reason.strip",
+        "dict.fromkeys",
+        "exc.errors",
+        "'.'.join",
+        "map"
+      ]
+    },
+    {
+      "symbol": "_create_response",
+      "start": 271,
+      "end": 319,
+      "calls": [
+        "json.dumps",
+        "getattr",
+        "SimpleNamespace",
+        "self.provider_name.lower",
+        "self.client.chat.completions.create",
+        "create_model_response",
+        "responses.create",
+        "semantic_planner_instructions"
+      ]
+    }
+  ],
+  "planner_entity_resolution.py": [
+    {
+      "symbol": "parse_semantic_planner_output",
+      "start": 139,
+      "end": 159,
+      "calls": [
+        "json.loads",
+        "dict",
+        "payload.pop",
+        "SemanticPlannerOutput.model_validate",
+        "normalize_structured_json",
+        "isinstance",
+        "ValueError",
+        "re.search",
+        "errors.append",
+        "TypeAdapter(list[DecisionLedgerEntry]).validate_python",
+        "payload.get",
+        "bindings.codec.decode",
+        "len",
+        "TypeAdapter"
+      ]
+    },
+    {
+      "symbol": "resolve_planner_activity_references",
+      "start": 162,
+      "end": 183,
+      "calls": [
+        "set",
+        "enumerate",
+        "CandidatePlanSnapshot",
+        "refs.get",
+        "used.add",
+        "activities.append",
+        "InvalidPlannerReference",
+        "ValueError",
+        "CandidateActivity",
+        "selection.reason.strip",
+        "', '.join"
+      ]
+    },
+    {
+      "symbol": "__init__",
+      "start": 44,
+      "end": 62,
+      "calls": [
+        "PlannerReferenceCodec",
+        "enumerate",
+        "prompt.get",
+        "next",
+        "self.codec.encode_map.items",
+        "str",
+        "allowed.values",
+        "len"
+      ]
+    },
+    {
+      "symbol": "prompt",
+      "start": 64,
+      "end": 116,
+      "calls": [
+        "dict",
+        "self.codec.encode",
+        "rename",
+        "list",
+        "prompt.pop",
+        "memory.get",
+        "choices.update",
+        "previous.get",
+        "isinstance",
+        "str",
+        "choices.get",
+        "item.get",
+        "decision.update",
+        "activities.append",
+        "item.items",
+        "prompt.get",
+        "summary.items",
+        "self.existing.items",
+        "route_refs.get",
+        "k.replace('activity_ids', 'activity_refs').replace('activity_id', 'activity_ref').replace",
+        "self.candidates.items",
+        "value.items",
+        "self.candidates.values",
+        "k.replace('activity_ids', 'activity_refs').replace",
+        "k.replace"
+      ]
+    },
+    {
+      "symbol": "schema",
+      "start": 118,
+      "end": 136,
+      "calls": [
+        "SemanticPlannerOutput.model_json_schema",
+        "list",
+        "sorted",
+        "variants.append",
+        "schema['$defs'].pop",
+        "d.isoformat",
+        "schema['$defs'][name]['properties'].get"
+      ]
+    },
+    {
+      "symbol": "rename",
+      "start": 107,
+      "end": 112,
+      "calls": [
+        "isinstance",
+        "k.replace('activity_ids', 'activity_refs').replace('activity_id', 'activity_ref').replace",
+        "rename",
+        "value.items",
+        "k.replace('activity_ids', 'activity_refs').replace",
+        "k.replace"
+      ]
+    }
+  ],
+  "plan_revision_service.py": [
+    {
+      "symbol": "_execution_immutable_activity_ids",
+      "start": 39,
+      "end": 55,
+      "calls": [
+        "list",
+        "session.scalar",
+        "(await session.scalars(select(ActivityExecution).where(ActivityExecution.trip_execution_id == execution.id))).all",
+        "protected.add",
+        "select(TripExecution).where",
+        "set",
+        "select(NavigationSession).where",
+        "NavigationSession.status.in_",
+        "select",
+        "session.scalars",
+        "select(ActivityExecution).where"
+      ]
+    },
+    {
+      "symbol": "validate_candidate_plan",
+      "start": 64,
+      "end": 495,
+      "calls": [
+        "list",
+        "set",
+        "defaultdict",
+        "bool",
+        "protected.items",
+        "intervals.items",
+        "sum",
+        "daily_cost.items",
+        "PlanValidationResult",
+        "session.get",
+        "get_trip_preferences",
+        "get_budget",
+        "(await session.scalars(select(DayPlan).where(DayPlan.trip_id == trip_id))).all",
+        "(await session.scalars(select(Activity).join(DayPlan).where(DayPlan.trip_id == trip_id))).all",
+        "execution_invariants_required",
+        "(await session.scalars(select(PlaceCandidate).where(PlaceCandidate.trip_id == trip_id, PlaceCandidate.id.in_(requested_place_ids or {uuid.uuid4()})))).all",
+        "(await session.scalars(select(SourceRecord.id).where(SourceRecord.trip_id == trip_id, SourceRecord.id.in_(requested_sources or {uuid.uuid4()})))).all",
+        "errors.append",
+        "len",
+        "candidate_by_replacement.get",
+        "preserved_candidate_activities",
+        "places_by_id.get",
+        "any",
+        "intervals[activity.day_date].append",
+        "route_nodes[activity.day_date].append",
+        "final_place_ids.append",
+        "next",
+        "intervals[day.date].append",
+        "route_nodes[day.date].append",
+        "original_counts.items",
+        "sorted",
+        "zip",
+        "actual_routes[leg.day_date].append",
+        "enumerate",
+        "daily_cost.values",
+        "_execution_immutable_activity_ids",
+        "session.scalar",
+        "existing_by_id.get",
+        "PlanValidationIssue",
+        "datetime.combine",
+        "route_nodes.get",
+        "actual_routes.get",
+        "select(TripExecution).where",
+        "projected_activity_end",
+        "session.scalars",
+        "select(ActivityExecution).where",
+        "candidate_matches_existing",
+        "ZoneInfo",
+        "select(DayPlan).where",
+        "select(Activity).join(DayPlan).where",
+        "select",
+        "total_extension_minutes",
+        "select(PlaceCandidate).where",
+        "select(SourceRecord.id).where",
+        "'、'.join",
+        "PlaceCandidate.id.in_",
+        "SourceRecord.id.in_",
+        "day.isoformat",
+        "activity.day_date.isoformat",
+        "str",
+        "select(Activity).join",
+        "authoritative_boundary.isoformat",
+        "candidate_start.isoformat",
+        "day_date.isoformat",
+        "uuid.uuid4"
+      ]
+    },
+    {
+      "symbol": "accept_plan_revision",
+      "start": 498,
+      "end": 662,
+      "calls": [
+        "CandidatePlanSnapshot.model_validate",
+        "result.model_dump",
+        "list",
+        "enumerate",
+        "defaultdict",
+        "activities_by_day.items",
+        "datetime.now",
+        "session.scalar",
+        "validate_candidate_plan",
+        "InvalidPlanRevisionError",
+        "(await session.scalars(select(DayPlan).where(DayPlan.trip_id == trip.id))).all",
+        "(await session.scalars(select(Activity).join(DayPlan).where(DayPlan.trip_id == trip.id))).all",
+        "execution_invariants_required",
+        "session.execute",
+        "session.flush",
+        "activities_by_day[candidate.day_date].append",
+        "session.add",
+        "supersede_navigation_sessions_for_itinerary",
+        "session.commit",
+        "session.refresh",
+        "select(PlanRevision).where(PlanRevision.id == revision_id).with_for_update",
+        "select(PlanningRun).where(PlanningRun.id == revision.planning_run_id).with_for_update",
+        "select(Trip).where(Trip.id == revision.trip_id).with_for_update",
+        "uuid.UUID",
+        "session.get",
+        "load_initial_candidate",
+        "session.rollback",
+        "_execution_immutable_activity_ids",
+        "set",
+        "delete(RouteLeg).where",
+        "next",
+        "activities_by_day[day.date].append",
+        "existing_by_id.get",
+        "Activity",
+        "sorted",
+        "RouteLeg",
+        "str",
+        "evaluate_activity_experience_time_impact",
+        "(await _snapshot(session, execution, activity_execution, impact.model_dump(mode='json'))).get",
+        "trigger.get",
+        "RouteLeg.day_plan_id.in_",
+        "session.delete",
+        "select(TripExecution).where(TripExecution.trip_id == trip.id).with_for_update",
+        "select(TripDisruptionEvent).where(TripDisruptionEvent.id == run.disruption_event_id).with_for_update",
+        "select(PlanRevision).where",
+        "select(PlanningRun).where",
+        "select(Trip).where",
+        "date.fromisoformat",
+        "PlanningIntentResolution.model_validate",
+        "session.scalars",
+        "delete",
+        "revision.difference_summary.get",
+        "select(DayPlan).where",
+        "select(Activity).join(DayPlan).where",
+        "item.model_dump",
+        "select(TripExecution).where",
+        "select(TripDisruptionEvent).where",
+        "select",
+        "_snapshot",
+        "impact.model_dump",
+        "select(Activity).join"
+      ]
+    },
+    {
+      "symbol": "__init__",
+      "start": 59,
+      "end": 61,
+      "calls": [
+        "super().__init__",
+        "super"
+      ]
+    },
+    {
+      "symbol": "candidate_matches_existing",
+      "start": 228,
+      "end": 236,
+      "calls": [
+        "bool"
+      ]
+    }
+  ],
+  "planning_graph.py": [
+    {
+      "symbol": "_set_run_status",
+      "start": 103,
+      "end": 112,
+      "calls": [
+        "session.get",
+        "RuntimeError",
+        "datetime.now",
+        "session.commit"
+      ]
+    },
+    {
+      "symbol": "should_research_destinations",
+      "start": 115,
+      "end": 133,
+      "calls": [
+        "bool"
+      ]
+    },
+    {
+      "symbol": "build_planning_graph",
+      "start": 136,
+      "end": 701,
+      "calls": [
+        "StateGraph",
+        "builder.add_node",
+        "builder.add_edge",
+        "builder.add_conditional_edges",
+        "builder.compile",
+        "UnavailableDraftProvider",
+        "trace",
+        "uuid.UUID",
+        "PlanningIntentResolution.model_validate",
+        "ValueError",
+        "getattr",
+        "interrupt",
+        "str(response.get('answer') or '').strip",
+        "assert_decision_context_invariants",
+        "check_goal_satisfaction",
+        "result.model_dump",
+        "CandidatePlanSnapshot.model_validate",
+        "set",
+        "validate_decision_ledger",
+        "PlannerConstraintsUnsatisfiedError",
+        "hard_goal_feedback",
+        "can_repair_hard_goals",
+        "GoalConstraintsUnsatisfiedError",
+        "response.get",
+        "Command",
+        "observed('intent', graph=True, output_summary=project_state)",
+        "observed('planner', graph=True, purpose='Generate Candidate', output_summary=project_state)",
+        "observed('answer', graph=True, output_summary=project_state)",
+        "observed('validator', graph=True, output_summary=project_state)",
+        "observed('goal_check', graph=True, output_summary=project_state)",
+        "observed('revision', graph=True, output_summary=project_state)",
+        "observed('user_decision', graph=True, output_summary=project_state)",
+        "trace_observer.record",
+        "session_factory",
+        "context.model_dump",
+        "should_research_destinations",
+        "resolution.model_dump",
+        "extract_planning_goals",
+        "goals.model_dump",
+        "formal_route_facts",
+        "build_decision_context",
+        "dict",
+        "context_data.get('destination_research', {}).get",
+        "report_progress",
+        "PlannerNotConfiguredError",
+        "list",
+        "names.update",
+        "reversed",
+        "answer",
+        "result.text.strip",
+        "datetime.now",
+        "state.get",
+        "draft_provider.generate",
+        "generation.snapshot.model_dump",
+        "state['planning_context'].get",
+        "get_settings",
+        "result.errors.extend",
+        "snapshot.model_dump",
+        "GoalSatisfactionResult.model_validate",
+        "candidate_cost_totals",
+        "str",
+        "observed",
+        "_set_run_status",
+        "build_planning_context",
+        "resolve_planning_intent",
+        "record",
+        "_collect_external_facts",
+        "session.get",
+        "RuntimeError",
+        "candidate_base.model_dump",
+        "context_data.setdefault",
+        "max",
+        "recovery.update",
+        "retrieve_decision_memory",
+        "sum",
+        "session.commit",
+        "(await session.scalars(select(PlanningRun).where(PlanningRun.trip_id == uuid.UUID(state['trip_id']), PlanningRun.id != uuid.UUID(state['run_id'])).order_by(PlanningRun.created_at.desc()).limit(6))).all",
+        "(await session.scalars(select(PlanRevision).where(PlanRevision.planning_run_id.in_([item.id for item in previous]), PlanRevision.status.in_(['pending', 'accepted'])).order_by(PlanRevision.created_at.desc()).limit(2))).all",
+        "conversation.append",
+        "memory_summary.update",
+        "PlanningGoals.model_validate",
+        "any",
+        "intent.get",
+        "scope.get",
+        "validate_candidate_plan",
+        "all",
+        "re.search",
+        "repair_route_schedule",
+        "day.isoformat",
+        "dict.fromkeys",
+        "save_plan_revision",
+        "accept_plan_revision",
+        "reject_revision",
+        "PlanningIntentParseRequest",
+        "destination_researcher",
+        "candidate_researcher",
+        "load_initial_candidate",
+        "recovery.get",
+        "RecoveryActivity",
+        "len",
+        "context_data.get",
+        "context.get",
+        "bool",
+        "date.fromisoformat",
+        "enrich_candidate_routes",
+        "sorted",
+        "external_facts.get('search', {}).get",
+        "external_facts.get('weather', {}).get",
+        "refresh_experience_trigger_snapshot",
+        "experience['impact'].get",
+        "int",
+        "execution.get",
+        "goals.soft_goals.model_dump",
+        "project_context",
+        "(snapshot.get('decision_context_summary') or {}).get",
+        "snapshot.get",
+        "state['planning_context'].get('formal_route_facts', {}).get",
+        "state['planning_context']['decision_context'].get",
+        "candidate_base_from_context",
+        "reconcile_route_repair_ledger",
+        "result.warnings.append",
+        "describe_plan_changes",
+        "research.get",
+        "disruption.impact_snapshot.get",
+        "item.as_dict",
+        "context_data['formal_route_facts'].get",
+        "session.scalars",
+        "PlanValidationIssue",
+        "state.get('decision_summary', {}).get",
+        "external_facts.get",
+        "enumerate_recovery_options",
+        "select(PlanningRun).where(PlanningRun.trip_id == uuid.UUID(state['trip_id']), PlanningRun.id != uuid.UUID(state['run_id'])).order_by(PlanningRun.created_at.desc()).limit",
+        "select(PlanRevision).where(PlanRevision.planning_run_id.in_([item.id for item in previous]), PlanRevision.status.in_(['pending', 'accepted'])).order_by(PlanRevision.created_at.desc()).limit",
+        "names.get",
+        "revision.proposed_snapshot.get",
+        "goals.hard_goals.model_dump().values",
+        "item.get",
+        "select(PlanningRun).where(PlanningRun.trip_id == uuid.UUID(state['trip_id']), PlanningRun.id != uuid.UUID(state['run_id'])).order_by",
+        "select(PlanRevision).where(PlanRevision.planning_run_id.in_([item.id for item in previous]), PlanRevision.status.in_(['pending', 'accepted'])).order_by",
+        "goals.hard_goals.model_dump",
+        "PlanningRun.created_at.desc",
+        "PlanRevision.created_at.desc",
+        "select(PlanningRun).where",
+        "select(PlanRevision).where",
+        "PlanRevision.planning_run_id.in_",
+        "PlanRevision.status.in_",
+        "select"
+      ]
+    },
+    {
+      "symbol": "_collect_external_facts",
+      "start": 704,
+      "end": 758,
+      "calls": [
+        "get_settings",
+        "trip.get",
+        "re.search",
+        "report_progress",
+        "search_tavily",
+        "re.sub",
+        "float",
+        "sum",
+        "len",
+        "fetch_open_meteo",
+        "search.payload.get",
+        "set",
+        "str",
+        "context.get",
+        "focused.payload.get",
+        "item.get",
+        "date.fromisoformat",
+        "merged.append",
+        "urls.add",
+        "' '.join",
+        "context.get('preferences', {}).get"
+      ]
+    },
+    {
+      "symbol": "generate",
+      "start": 72,
+      "end": 72,
+      "calls": []
+    },
+    {
+      "symbol": "record",
+      "start": 78,
+      "end": 79,
+      "calls": []
+    },
+    {
+      "symbol": "generate",
+      "start": 99,
+      "end": 100,
+      "calls": [
+        "PlannerNotConfiguredError"
+      ]
+    },
+    {
+      "symbol": "trace",
+      "start": 146,
+      "end": 148,
+      "calls": [
+        "trace_observer.record"
+      ]
+    },
+    {
+      "symbol": "resolve_intent_node",
+      "start": 150,
+      "end": 362,
+      "calls": [
+        "trace",
+        "uuid.UUID",
+        "session_factory",
+        "context.model_dump",
+        "should_research_destinations",
+        "resolution.model_dump",
+        "extract_planning_goals",
+        "goals.model_dump",
+        "formal_route_facts",
+        "build_decision_context",
+        "dict",
+        "context_data.get('destination_research', {}).get",
+        "_set_run_status",
+        "build_planning_context",
+        "report_progress",
+        "resolve_planning_intent",
+        "set",
+        "record",
+        "_collect_external_facts",
+        "session.get",
+        "RuntimeError",
+        "candidate_base.model_dump",
+        "context_data.setdefault",
+        "max",
+        "recovery.update",
+        "retrieve_decision_memory",
+        "sum",
+        "session.commit",
+        "PlanningIntentParseRequest",
+        "destination_researcher",
+        "state.get",
+        "any",
+        "candidate_researcher",
+        "load_initial_candidate",
+        "PlannerConstraintsUnsatisfiedError",
+        "recovery.get",
+        "RecoveryActivity",
+        "len",
+        "context_data.get",
+        "external_facts.get('search', {}).get",
+        "external_facts.get('weather', {}).get",
+        "refresh_experience_trigger_snapshot",
+        "experience['impact'].get",
+        "int",
+        "str",
+        "execution.get",
+        "goals.soft_goals.model_dump",
+        "project_context",
+        "research.get",
+        "disruption.impact_snapshot.get",
+        "item.as_dict",
+        "context_data['formal_route_facts'].get",
+        "external_facts.get",
+        "enumerate_recovery_options",
+        "goals.hard_goals.model_dump().values",
+        "goals.hard_goals.model_dump"
+      ]
+    },
+    {
+      "symbol": "route_after_intent",
+      "start": 364,
+      "end": 373,
+      "calls": [
+        "PlanningIntentResolution.model_validate",
+        "ValueError"
+      ]
+    },
+    {
+      "symbol": "answer_node",
+      "start": 375,
+      "end": 410,
+      "calls": [
+        "getattr",
+        "report_progress",
+        "PlannerNotConfiguredError",
+        "session_factory",
+        "list",
+        "names.update",
+        "reversed",
+        "answer",
+        "result.text.strip",
+        "ValueError",
+        "datetime.now",
+        "(await session.scalars(select(PlanningRun).where(PlanningRun.trip_id == uuid.UUID(state['trip_id']), PlanningRun.id != uuid.UUID(state['run_id'])).order_by(PlanningRun.created_at.desc()).limit(6))).all",
+        "(await session.scalars(select(PlanRevision).where(PlanRevision.planning_run_id.in_([item.id for item in previous]), PlanRevision.status.in_(['pending', 'accepted'])).order_by(PlanRevision.created_at.desc()).limit(2))).all",
+        "conversation.append",
+        "session.get",
+        "session.commit",
+        "context.get",
+        "uuid.UUID",
+        "session.scalars",
+        "select(PlanningRun).where(PlanningRun.trip_id == uuid.UUID(state['trip_id']), PlanningRun.id != uuid.UUID(state['run_id'])).order_by(PlanningRun.created_at.desc()).limit",
+        "select(PlanRevision).where(PlanRevision.planning_run_id.in_([item.id for item in previous]), PlanRevision.status.in_(['pending', 'accepted'])).order_by(PlanRevision.created_at.desc()).limit",
+        "names.get",
+        "revision.proposed_snapshot.get",
+        "item.get",
+        "select(PlanningRun).where(PlanningRun.trip_id == uuid.UUID(state['trip_id']), PlanningRun.id != uuid.UUID(state['run_id'])).order_by",
+        "select(PlanRevision).where(PlanRevision.planning_run_id.in_([item.id for item in previous]), PlanRevision.status.in_(['pending', 'accepted'])).order_by",
+        "PlanningRun.created_at.desc",
+        "PlanRevision.created_at.desc",
+        "select(PlanningRun).where",
+        "select(PlanRevision).where",
+        "PlanRevision.planning_run_id.in_",
+        "PlanRevision.status.in_",
+        "select"
+      ]
+    },
+    {
+      "symbol": "clarify_node",
+      "start": 412,
+      "end": 429,
+      "calls": [
+        "PlanningIntentResolution.model_validate",
+        "interrupt",
+        "str(response.get('answer') or '').strip",
+        "state.get",
+        "ValueError",
+        "str",
+        "response.get"
+      ]
+    },
+    {
+      "symbol": "plan_node",
+      "start": 431,
+      "end": 474,
+      "calls": [
+        "trace",
+        "assert_decision_context_invariants",
+        "session_factory",
+        "report_progress",
+        "draft_provider.generate",
+        "generation.snapshot.model_dump",
+        "_set_run_status",
+        "session.get",
+        "dict",
+        "memory_summary.update",
+        "RuntimeError",
+        "session.commit",
+        "uuid.UUID",
+        "bool",
+        "len",
+        "(snapshot.get('decision_context_summary') or {}).get",
+        "snapshot.get",
+        "state['planning_context'].get",
+        "state['planning_context'].get('formal_route_facts', {}).get",
+        "state['planning_context']['decision_context'].get"
+      ]
+    },
+    {
+      "symbol": "goal_check_node",
+      "start": 476,
+      "end": 487,
+      "calls": [
+        "check_goal_satisfaction",
+        "result.model_dump",
+        "trace",
+        "state.get",
+        "state['planning_context'].get",
+        "PlanningGoals.model_validate",
+        "CandidatePlanSnapshot.model_validate"
+      ]
+    },
+    {
+      "symbol": "validate_node",
+      "start": 489,
+      "end": 574,
+      "calls": [
+        "trace",
+        "uuid.UUID",
+        "CandidatePlanSnapshot.model_validate",
+        "set",
+        "validate_decision_ledger",
+        "session_factory",
+        "get_settings",
+        "result.errors.extend",
+        "snapshot.model_dump",
+        "result.model_dump",
+        "state.get",
+        "any",
+        "intent.get",
+        "scope.get",
+        "_set_run_status",
+        "session.get",
+        "report_progress",
+        "validate_candidate_plan",
+        "all",
+        "re.search",
+        "repair_route_schedule",
+        "day.isoformat",
+        "date.fromisoformat",
+        "enrich_candidate_routes",
+        "len",
+        "sorted",
+        "PlanningIntentResolution.model_validate",
+        "bool",
+        "candidate_base_from_context",
+        "reconcile_route_repair_ledger",
+        "result.warnings.append",
+        "PlanValidationIssue",
+        "str",
+        "getattr"
+      ]
+    },
+    {
+      "symbol": "route_after_validation",
+      "start": 576,
+      "end": 584,
+      "calls": [
+        "PlannerConstraintsUnsatisfiedError",
+        "state.get"
+      ]
+    },
+    {
+      "symbol": "review_node",
+      "start": 586,
+      "end": 587,
+      "calls": [
+        "state.get"
+      ]
+    },
+    {
+      "symbol": "route_after_goal_check",
+      "start": 589,
+      "end": 595,
+      "calls": [
+        "hard_goal_feedback",
+        "can_repair_hard_goals",
+        "GoalConstraintsUnsatisfiedError",
+        "GoalSatisfactionResult.model_validate",
+        "state.get"
+      ]
+    },
+    {
+      "symbol": "goal_repair_node",
+      "start": 597,
+      "end": 601,
+      "calls": [
+        "hard_goal_feedback",
+        "state.get",
+        "GoalSatisfactionResult.model_validate"
+      ]
+    },
+    {
+      "symbol": "persist_node",
+      "start": 603,
+      "end": 644,
+      "calls": [
+        "trace",
+        "uuid.UUID",
+        "CandidatePlanSnapshot.model_validate",
+        "session_factory",
+        "candidate_cost_totals",
+        "list",
+        "str",
+        "dict.fromkeys",
+        "save_plan_revision",
+        "describe_plan_changes",
+        "len",
+        "state.get",
+        "state['planning_context'].get",
+        "state.get('decision_summary', {}).get"
+      ]
+    },
+    {
+      "symbol": "approval_node",
+      "start": 646,
+      "end": 658,
+      "calls": [
+        "interrupt",
+        "response.get",
+        "trace",
+        "Command",
+        "ValueError"
+      ]
+    },
+    {
+      "symbol": "accept_node",
+      "start": 660,
+      "end": 663,
+      "calls": [
+        "session_factory",
+        "accept_plan_revision",
+        "uuid.UUID"
+      ]
+    },
+    {
+      "symbol": "reject_node",
+      "start": 665,
+      "end": 668,
+      "calls": [
+        "session_factory",
+        "reject_revision",
+        "uuid.UUID"
+      ]
+    }
+  ],
+  "planning_graph_runtime.py": [
+    {
+      "symbol": "invoke_compiled_graph",
+      "start": 42,
+      "end": 74,
+      "calls": [
+        "result.get",
+        "PlanningExecutionResult",
+        "Command",
+        "graph.ainvoke",
+        "pending_interrupt_adapter.validate_python(interrupts[0].value).model_dump",
+        "str",
+        "pending_interrupt_adapter.validate_python"
+      ]
+    },
+    {
+      "symbol": "execute_planning_run",
+      "start": 77,
+      "end": 98,
+      "calls": [
+        "get_settings",
+        "asyncio.timeout",
+        "PlanningExecutionResult",
+        "track_progress",
+        "_mark_failed",
+        "_execute_planning_run"
+      ]
+    },
+    {
+      "symbol": "_execute_planning_run",
+      "start": 101,
+      "end": 163,
+      "calls": [
+        "get_settings",
+        "session_factory",
+        "_validate_decision",
+        "session.get",
+        "AsyncPostgresSaver.from_conn_string",
+        "build_planning_graph",
+        "PlanningExecutionResult",
+        "OpenAIResponsesPlanner",
+        "build_semantic_intent_provider",
+        "invoke_compiled_graph",
+        "_mark_failed",
+        "UnavailableDraftProvider",
+        "str",
+        "session.commit",
+        "getattr"
+      ]
+    },
+    {
+      "symbol": "_mark_failed",
+      "start": 166,
+      "end": 177,
+      "calls": [
+        "session_factory",
+        "datetime.now",
+        "session.get",
+        "session.commit"
+      ]
+    },
+    {
+      "symbol": "_validate_decision",
+      "start": 180,
+      "end": 195,
+      "calls": [
+        "ValueError"
+      ]
+    }
+  ],
+  "planning_run_repository.py": [
+    {
+      "symbol": "create_planning_run",
+      "start": 45,
+      "end": 132,
+      "calls": [
+        "PlanningRun",
+        "session.add",
+        "get_trip",
+        "route_travel_goal",
+        "resolve_planning_intent",
+        "UnsupportedPlanningIntentError",
+        "session.refresh",
+        "RecoveryPlanningConflictError",
+        "session.scalar",
+        "StalePlanningRunError",
+        "PlanningIntentParseRequest",
+        "resolution.model_dump",
+        "select(TripDisruptionEvent).where(TripDisruptionEvent.id == payload.disruption_event_id).with_for_update",
+        "session.commit",
+        "session.flush",
+        "session.rollback",
+        "select(TripDisruptionEvent).where",
+        "select"
+      ]
+    },
+    {
+      "symbol": "get_planning_run",
+      "start": 135,
+      "end": 139,
+      "calls": [
+        "session.get"
+      ]
+    },
+    {
+      "symbol": "list_planning_runs",
+      "start": 142,
+      "end": 155,
+      "calls": [
+        "list",
+        "get_trip",
+        "(await session.scalars(select(PlanningRun).where(PlanningRun.trip_id == trip_id).order_by(PlanningRun.created_at.desc()).limit(limit))).all",
+        "session.scalars",
+        "select(PlanningRun).where(PlanningRun.trip_id == trip_id).order_by(PlanningRun.created_at.desc()).limit",
+        "select(PlanningRun).where(PlanningRun.trip_id == trip_id).order_by",
+        "PlanningRun.created_at.desc",
+        "select(PlanningRun).where",
+        "select"
+      ]
+    },
+    {
+      "symbol": "get_latest_revision",
+      "start": 158,
+      "end": 170,
+      "calls": [
+        "get_planning_run",
+        "session.scalar",
+        "select(PlanRevision).where(PlanRevision.planning_run_id == run_id).order_by(PlanRevision.revision_number.desc()).limit",
+        "select(PlanRevision).where(PlanRevision.planning_run_id == run_id).order_by",
+        "PlanRevision.revision_number.desc",
+        "select(PlanRevision).where",
+        "select"
+      ]
+    },
+    {
+      "symbol": "save_plan_revision",
+      "start": 173,
+      "end": 251,
+      "calls": [
+        "PlanRevision",
+        "session.add",
+        "get_planning_run",
+        "get_trip",
+        "session.scalar",
+        "int",
+        "session.flush",
+        "session.commit",
+        "session.refresh",
+        "enrich_candidate_routes",
+        "select(PlanRevision).where(PlanRevision.planning_run_id == run_id, PlanRevision.status == 'pending').order_by(PlanRevision.revision_number.desc()).limit",
+        "reason.strip",
+        "proposed_snapshot.model_dump",
+        "CandidateRouteLeg",
+        "str",
+        "bool",
+        "select(PlanRevision).where(PlanRevision.planning_run_id == run_id, PlanRevision.status == 'pending').order_by",
+        "PlanRevision.revision_number.desc",
+        "select(func.coalesce(func.max(PlanRevision.revision_number), 0)).where",
+        "item.model_dump",
+        "select(PlanRevision).where",
+        "select",
+        "func.coalesce",
+        "func.max"
+      ]
+    },
+    {
+      "symbol": "reject_revision",
+      "start": 254,
+      "end": 281,
+      "calls": [
+        "datetime.now",
+        "dict",
+        "session.get",
+        "get_planning_run",
+        "bool",
+        "str",
+        "session.commit",
+        "session.refresh"
+      ]
+    }
+  ],
+  "candidate_route_service.py": [
+    {
+      "symbol": "enrich_candidate_routes",
+      "start": 27,
+      "end": 143,
+      "calls": [
+        "observed",
+        "list",
+        "defaultdict",
+        "set",
+        "sorted",
+        "snapshot.model_copy",
+        "(await session.scalars(select(DayPlan).where(DayPlan.trip_id == trip_id))).all",
+        "(await session.execute(select(Activity, DayPlan, PlaceCandidate).join(DayPlan, Activity.day_plan_id == DayPlan.id).join(PlaceCandidate, Activity.place_candidate_id == PlaceCandidate.id).where(DayPlan.trip_id == trip_id))).tuples",
+        "execution_invariants_required",
+        "nodes_by_day[day.date].append",
+        "(await session.scalars(select(PlaceCandidate).where(PlaceCandidate.trip_id == trip_id, PlaceCandidate.id.in_(requested_place_ids or {uuid.uuid4()})))).all",
+        "places_by_id.get",
+        "nodes_by_day[item.day_date].append",
+        "nodes_by_day.items",
+        "enumerate",
+        "_execution_immutable_activity_ids",
+        "_PlanNode",
+        "zip",
+        "route_legs.append",
+        "CandidateRouteLeg",
+        "session.scalars",
+        "session.execute",
+        "resolve_route_result",
+        "MapProviderError",
+        "result.model_dump",
+        "select(DayPlan).where",
+        "select(Activity, DayPlan, PlaceCandidate).join(DayPlan, Activity.day_plan_id == DayPlan.id).join(PlaceCandidate, Activity.place_candidate_id == PlaceCandidate.id).where",
+        "select(PlaceCandidate).where",
+        "str",
+        "datetime.now",
+        "PlaceCandidate.id.in_",
+        "select",
+        "select(Activity, DayPlan, PlaceCandidate).join(DayPlan, Activity.day_plan_id == DayPlan.id).join",
+        "select(Activity, DayPlan, PlaceCandidate).join",
+        "uuid.uuid4"
+      ]
+    }
+  ],
+  "planning_goals.py": [
+    {
+      "symbol": "extract_planning_goals",
+      "start": 18,
+      "end": 54,
+      "calls": [
+        "_END_BEFORE.search",
+        "re.sub",
+        "any",
+        "constraints.get",
+        "PlanningGoals.model_validate",
+        "intent_resolution.get",
+        "grounded.get",
+        "(context.get('preferences') or {}).get",
+        "context.get",
+        "int",
+        "sorted",
+        "match.group",
+        "set"
+      ]
+    },
+    {
+      "symbol": "formal_route_facts",
+      "start": 57,
+      "end": 88,
+      "calls": [
+        "set",
+        "context.get",
+        "days.append",
+        "day.get",
+        "names.get",
+        "sum",
+        "max",
+        "_end_time"
+      ]
+    },
+    {
+      "symbol": "check_goal_satisfaction",
+      "start": 91,
+      "end": 146,
+      "calls": [
+        "set",
+        "formal_route_facts",
+        "sum",
+        "GoalSatisfactionResult.model_validate",
+        "str",
+        "max",
+        "results.append",
+        "((before_context.get('decision_context') or {}).get('protected_constraints') or {}).get",
+        "before_context.get",
+        "day.get",
+        "item.day_date.isoformat",
+        "item.get",
+        "_end_time",
+        "len",
+        "(before_context.get('decision_context') or {}).get"
+      ]
+    },
+    {
+      "symbol": "hard_goal_feedback",
+      "start": 149,
+      "end": 150,
+      "calls": [
+        "item.model_dump"
+      ]
+    },
+    {
+      "symbol": "can_repair_hard_goals",
+      "start": 153,
+      "end": 155,
+      "calls": [
+        "bool",
+        "hard_goal_feedback"
+      ]
+    },
+    {
+      "symbol": "_end_time",
+      "start": 158,
+      "end": 161,
+      "calls": [
+        "datetime.strptime"
+      ]
+    }
+  ],
+  "candidate_schedule.py": [
+    {
+      "symbol": "_minutes",
+      "start": 6,
+      "end": 8,
+      "calls": [
+        "isinstance",
+        "time.fromisoformat"
+      ]
+    },
+    {
+      "symbol": "repair_route_schedule",
+      "start": 11,
+      "end": 85,
+      "calls": [
+        "_minutes",
+        "sorted",
+        "candidates.items",
+        "str",
+        "context['preferences'].get",
+        "reversed",
+        "any",
+        "time",
+        "adjustments.append",
+        "updated.append",
+        "snapshot.model_copy",
+        "frozen.add",
+        "min",
+        "item.model_copy",
+        "frozen.update",
+        "max",
+        "durations.items",
+        "item.day_date.isoformat",
+        "item.planned_start_time.isoformat",
+        "changed_time.isoformat"
+      ]
+    }
+  ],
+  "assistant_service.py": [
+    {
+      "symbol": "_creation_facts",
+      "start": 70,
+      "end": 88,
+      "calls": [
+        "trip_duration",
+        "bool",
+        "CreationFacts",
+        "re.search",
+        "_LEADING_DESTINATION.search",
+        "_DATE_MARKER.search",
+        "_DATE_RANGE.search"
+      ]
+    },
+    {
+      "symbol": "_is_new_trip_request",
+      "start": 91,
+      "end": 108,
+      "calls": [
+        "re.search",
+        "bool",
+        "_LEADING_DESTINATION.search",
+        "any",
+        "_DATE_MARKER.search"
+      ]
+    },
+    {
+      "symbol": "_creation_clarification",
+      "start": 111,
+      "end": 122,
+      "calls": [
+        "_creation_facts"
+      ]
+    },
+    {
+      "symbol": "session_response",
+      "start": 174,
+      "end": 177,
+      "calls": [
+        "str"
+      ]
+    },
+    {
+      "symbol": "get_or_create_session",
+      "start": 180,
+      "end": 188,
+      "calls": [
+        "db.scalar",
+        "AssistantSession",
+        "db.add",
+        "get_trip",
+        "select(AssistantSession).where(AssistantSession.trip_id == trip_id).order_by(AssistantSession.updated_at.desc()).limit",
+        "db.commit",
+        "select(AssistantSession).where(AssistantSession.trip_id == trip_id).order_by",
+        "AssistantSession.updated_at.desc",
+        "select(AssistantSession).where",
+        "select"
+      ]
+    },
+    {
+      "symbol": "locked_session",
+      "start": 191,
+      "end": 195,
+      "calls": [
+        "db.scalar",
+        "AssistantToolError",
+        "select(AssistantSession).where(AssistantSession.id == session_id).with_for_update",
+        "select(AssistantSession).where",
+        "select"
+      ]
+    },
+    {
+      "symbol": "reset_pre_trip_session",
+      "start": 198,
+      "end": 208,
+      "calls": [
+        "AssistantSession",
+        "db.add",
+        "locked_session",
+        "AssistantToolError",
+        "db.delete",
+        "db.commit"
+      ]
+    },
+    {
+      "symbol": "source_signature",
+      "start": 211,
+      "end": 217,
+      "calls": [
+        "list",
+        "hashlib.sha256(json.dumps(value).encode()).hexdigest",
+        "(await db.scalars(select(DayPlan).where(DayPlan.trip_id == trip.id).order_by(DayPlan.position))).all",
+        "(await db.scalars(select(Activity).join(DayPlan).where(DayPlan.trip_id == trip.id).order_by(Activity.id))).all",
+        "db.get",
+        "hashlib.sha256",
+        "str",
+        "json.dumps(value).encode",
+        "db.scalars",
+        "select(DayPlan).where(DayPlan.trip_id == trip.id).order_by",
+        "select(Activity).join(DayPlan).where(DayPlan.trip_id == trip.id).order_by",
+        "json.dumps",
+        "select(DayPlan).where",
+        "select(Activity).join(DayPlan).where",
+        "select",
+        "select(Activity).join"
+      ]
+    },
+    {
+      "symbol": "prepare_action",
+      "start": 220,
+      "end": 265,
+      "calls": [
+        "next",
+        "datetime.now(ZoneInfo(source.timezone if source else 'Asia/Shanghai')).date",
+        "AssistantToolError",
+        "exact[0].model_dump",
+        "list",
+        "str",
+        "decision.start_date.isoformat",
+        "decision.end_date.isoformat",
+        "datetime.now",
+        "city_search",
+        "len",
+        "(await db.scalars(select(Activity).join(DayPlan).where(DayPlan.trip_id == source.id, DayPlan.position >= days_count))).all",
+        "uuid.uuid4",
+        "ZoneInfo",
+        "max",
+        "source.destination.rstrip",
+        "float",
+        "source_signature",
+        "c.name.rstrip",
+        "destination.rstrip",
+        "db.scalars",
+        "select(Activity).join(DayPlan).where",
+        "select(Activity).join",
+        "select"
+      ]
+    },
+    {
+      "symbol": "send_message",
+      "start": 269,
+      "end": 424,
+      "calls": [
+        "any",
+        "build_planning_brief",
+        "next",
+        "list",
+        "goal_routing.model_dump",
+        "'\\n'.join",
+        "claims_missing_candidate",
+        "locked_session",
+        "observation_stage",
+        "route_travel_goal",
+        "str",
+        "list_trips",
+        "datetime.now(ZoneInfo(current.timezone if current else 'Asia/Shanghai')).date().isoformat",
+        "plan.preferences.model_dump",
+        "brief.model_dump",
+        "AssistantRouter",
+        "_is_new_trip_request",
+        "_creation_clarification",
+        "ToolDecision",
+        "re.search",
+        "trip_duration",
+        "db.commit",
+        "ResponderProvider",
+        "_LazyDefaultKnowledgeTool",
+        "CompanionRuntime",
+        "(await db.scalars(select(PlanningRun).where(PlanningRun.trip_id == current.id).order_by(PlanningRun.created_at.desc()).limit(12))).all",
+        "m.get",
+        "build_planning_context",
+        "router.decide",
+        "AssistantToolError",
+        "CompanionContextReader",
+        "get_default_fact_tool",
+        "runtime.run",
+        "isinstance",
+        "result.model_dump",
+        "db.scalar",
+        "m.items",
+        "datetime.now(ZoneInfo(current.timezone if current else 'Asia/Shanghai')).date",
+        "date.fromisoformat",
+        "timedelta",
+        "_DATE_RANGE.search",
+        "prepare_action",
+        "bool",
+        "select(PlanningRun.id).where(PlanningRun.trip_id == row.trip_id, PlanningRun.status == 'answered', PlanningRun.response_text.is_not(None)).limit",
+        "' '.join",
+        "reversed",
+        "item.get",
+        "decision.planning_request.strip",
+        "create_planning_run",
+        "companion_responder",
+        "CompanionDraft",
+        "db.scalars",
+        "datetime.now",
+        "PlanningRunCreate",
+        "bind_initial_candidate",
+        "context.model_dump",
+        "select(PlanningRun.id).where",
+        "select(PlanningRun).where(PlanningRun.trip_id == current.id).order_by(PlanningRun.created_at.desc()).limit",
+        "ZoneInfo",
+        "select(Activity.id).join(DayPlan).where(DayPlan.trip_id == target).limit",
+        "PlanningRun.response_text.is_not",
+        "select",
+        "select(PlanningRun).where(PlanningRun.trip_id == current.id).order_by",
+        "select(Activity.id).join(DayPlan).where",
+        "PlanningRun.created_at.desc",
+        "select(PlanningRun).where",
+        "select(Activity.id).join"
+      ]
+    },
+    {
+      "symbol": "shift_trip_dates",
+      "start": 435,
+      "end": 450,
+      "calls": [
+        "list",
+        "range",
+        "(await db.scalars(select(DayPlan).where(DayPlan.trip_id == trip.id).order_by(DayPlan.position))).all",
+        "db.flush",
+        "date",
+        "timedelta",
+        "db.delete",
+        "len",
+        "db.add",
+        "DayPlan",
+        "db.scalars",
+        "select(DayPlan).where(DayPlan.trip_id == trip.id).order_by",
+        "select(DayPlan).where",
+        "select"
+      ]
+    },
+    {
+      "symbol": "confirm_action",
+      "start": 453,
+      "end": 517,
+      "calls": [
+        "locked_session",
+        "AssistantToolError",
+        "date.fromisoformat",
+        "(await db.scalars(select(PlanningRun).where(PlanningRun.trip_id == trip.id, PlanningRun.status.in_(['queued', 'researching', 'planning', 'validating', 'awaiting_clarification', 'awaiting_confirmation'])))).all",
+        "(await db.scalars(select(PlanRevision).where(PlanRevision.trip_id == trip.id, PlanRevision.status == 'pending'))).all",
+        "db.get",
+        "db.add",
+        "bool",
+        "str",
+        "db.commit",
+        "get_trip",
+        "db.refresh",
+        "shift_trip_dates",
+        "(await db.scalars(select(Activity).join(DayPlan).where(DayPlan.trip_id == trip.id))).all",
+        "(preferences.free_text_requirements + '\\n' + action['preferences']).strip",
+        "AssistantSession",
+        "db.flush",
+        "create_planning_run",
+        "uuid.UUID",
+        "source_signature",
+        "duplicate_trip",
+        "create_trip",
+        "db.scalar",
+        "PlanningRunCreate",
+        "uuid.uuid4",
+        "db.scalars",
+        "TripCreate",
+        "select(Activity.id).join(DayPlan).where(DayPlan.trip_id == trip.id).limit",
+        "select(PlanningRun).where",
+        "select(PlanRevision).where",
+        "setattr",
+        "PlanningRun.status.in_",
+        "select(Activity).join(DayPlan).where",
+        "city.get",
+        "getattr",
+        "select(Activity.id).join(DayPlan).where",
+        "select",
+        "select(Activity).join",
+        "select(Activity.id).join"
+      ]
+    },
+    {
+      "symbol": "decide",
+      "start": 153,
+      "end": 171,
+      "calls": [
+        "get_settings",
+        "build_model_client",
+        "AssistantToolError",
+        "ToolDecision.model_validate_json",
+        "settings.planner_api_key.get_secret_value",
+        "create_model_response",
+        "normalize_structured_json",
+        "translate_model_error",
+        "client.close",
+        "json.dumps",
+        "ToolDecision.model_json_schema"
+      ]
+    },
+    {
+      "symbol": "claims_missing_candidate",
+      "start": 382,
+      "end": 385,
+      "calls": [
+        "re.search"
+      ]
+    },
+    {
+      "symbol": "retrieve",
+      "start": 430,
+      "end": 432,
+      "calls": [
+        "observed_stage",
+        "get_default_knowledge_tool",
+        "tool.retrieve"
+      ]
+    },
+    {
+      "symbol": "generate",
+      "start": 281,
+      "end": 283,
+      "calls": [
+        "companion_responder",
+        "isinstance",
+        "CompanionDraft",
+        "context.model_dump"
+      ]
+    }
+  ],
+  "repository.py": [
+    {
+      "symbol": "create_trip",
+      "start": 40,
+      "end": 65,
+      "calls": [
+        "Trip",
+        "session.add",
+        "session.flush",
+        "TripPreferences",
+        "timedelta",
+        "session.refresh",
+        "payload.model_dump",
+        "DayPlan",
+        "session.commit"
+      ]
+    },
+    {
+      "symbol": "get_trip",
+      "start": 68,
+      "end": 72,
+      "calls": [
+        "session.get"
+      ]
+    },
+    {
+      "symbol": "list_trips",
+      "start": 75,
+      "end": 82,
+      "calls": [
+        "list",
+        "(await session.scalars(select(Trip).order_by(Trip.start_date.desc(), Trip.created_at.desc()))).all",
+        "session.scalars",
+        "select(Trip).order_by",
+        "Trip.start_date.desc",
+        "Trip.created_at.desc",
+        "select"
+      ]
+    },
+    {
+      "symbol": "update_trip",
+      "start": 85,
+      "end": 154,
+      "calls": [
+        "payload.model_dump",
+        "values.get",
+        "list",
+        "set",
+        "values.items",
+        "enumerate",
+        "get_trip",
+        "ValueError",
+        "(await session.scalars(select(DayPlan).where(DayPlan.trip_id == trip_id).order_by(DayPlan.position))).all",
+        "wanted_dates.append",
+        "timedelta",
+        "setattr",
+        "session.flush",
+        "by_date.get",
+        "session.commit",
+        "session.refresh",
+        "session.scalar",
+        "int",
+        "session.delete",
+        "DayPlan",
+        "session.add",
+        "select(func.count(Activity.id)).where",
+        "session.scalars",
+        "Activity.day_plan_id.in_",
+        "select(DayPlan).where(DayPlan.trip_id == trip_id).order_by",
+        "select",
+        "func.count",
+        "select(DayPlan).where"
+      ]
+    },
+    {
+      "symbol": "duplicate_trip",
+      "start": 157,
+      "end": 304,
+      "calls": [
+        "Trip",
+        "session.add",
+        "(await session.scalars(select(SourceRecord).where(SourceRecord.trip_id == trip_id))).all",
+        "(await session.scalars(select(PlaceCandidate).where(PlaceCandidate.trip_id == trip_id))).all",
+        "(await session.scalars(select(DayPlan).where(DayPlan.trip_id == trip_id))).all",
+        "(await session.scalars(select(Activity).join(DayPlan, Activity.day_plan_id == DayPlan.id).where(DayPlan.trip_id == trip_id))).all",
+        "(await session.scalars(select(RouteLeg).join(DayPlan, RouteLeg.day_plan_id == DayPlan.id).where(DayPlan.trip_id == trip_id))).all",
+        "get_trip",
+        "session.flush",
+        "session.get",
+        "SourceRecord",
+        "PlaceCandidate",
+        "DayPlan",
+        "Activity",
+        "session.refresh",
+        "TripPreferences",
+        "RouteLeg",
+        "session.commit",
+        "session.scalars",
+        "list",
+        "select(SourceRecord).where",
+        "select(PlaceCandidate).where",
+        "select(DayPlan).where",
+        "select(Activity).join(DayPlan, Activity.day_plan_id == DayPlan.id).where",
+        "select(RouteLeg).join(DayPlan, RouteLeg.day_plan_id == DayPlan.id).where",
+        "select",
+        "select(Activity).join",
+        "select(RouteLeg).join"
+      ]
+    },
+    {
+      "symbol": "archive_trip",
+      "start": 307,
+      "end": 313,
+      "calls": [
+        "datetime.now",
+        "get_trip",
+        "session.commit",
+        "session.refresh"
+      ]
+    },
+    {
+      "symbol": "get_trip_deletion_preview",
+      "start": 316,
+      "end": 327,
+      "calls": [
+        "select(DayPlan.id).where",
+        "TripDeletionPreviewResponse",
+        "get_trip",
+        "select",
+        "int",
+        "session.scalar",
+        "select(func.count(DayPlan.id)).where",
+        "select(func.count(Activity.id)).where",
+        "select(func.count(PlaceCandidate.id)).where",
+        "select(func.count(Expense.id)).where",
+        "Activity.day_plan_id.in_",
+        "func.count"
+      ]
+    },
+    {
+      "symbol": "delete_trip",
+      "start": 330,
+      "end": 333,
+      "calls": [
+        "get_trip",
+        "session.execute",
+        "session.commit",
+        "delete(Trip).where",
+        "delete"
+      ]
+    },
+    {
+      "symbol": "get_trip_preferences",
+      "start": 336,
+      "end": 347,
+      "calls": [
+        "get_trip",
+        "session.get",
+        "TripPreferences",
+        "session.add",
+        "session.commit",
+        "session.refresh"
+      ]
+    },
+    {
+      "symbol": "update_trip_preferences",
+      "start": 350,
+      "end": 363,
+      "calls": [
+        "payload.model_dump(exclude={'version'}).items",
+        "get_trip_preferences",
+        "setattr",
+        "session.commit",
+        "session.refresh",
+        "payload.model_dump"
+      ]
+    },
+    {
+      "symbol": "_same_expense",
+      "start": 366,
+      "end": 375,
+      "calls": [
+        "existing.spent_at.astimezone",
+        "payload.spent_at.astimezone"
+      ]
+    },
+    {
+      "symbol": "create_expense",
+      "start": 378,
+      "end": 418,
+      "calls": [
+        "Expense",
+        "session.add",
+        "get_trip",
+        "session.scalar",
+        "session.refresh",
+        "select(Expense).where",
+        "_same_expense",
+        "session.commit",
+        "datetime.now",
+        "session.rollback",
+        "select"
+      ]
+    },
+    {
+      "symbol": "get_budget",
+      "start": 421,
+      "end": 454,
+      "calls": [
+        "ZoneInfo",
+        "datetime.now",
+        "now_local.date",
+        "datetime.combine(local_date, time.min, tzinfo=timezone).astimezone",
+        "datetime.combine(local_date, time.max, tzinfo=timezone).astimezone",
+        "int",
+        "BudgetResponse",
+        "get_trip",
+        "session.scalar",
+        "datetime.combine",
+        "select(func.coalesce(func.sum(Expense.amount_fen), 0)).where",
+        "select",
+        "func.coalesce",
+        "func.sum"
+      ]
+    }
+  ]
+}

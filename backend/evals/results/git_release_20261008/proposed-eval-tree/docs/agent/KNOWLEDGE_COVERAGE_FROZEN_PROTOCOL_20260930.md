@@ -1,0 +1,11 @@
+# Knowledge coverage protocol v1
+
+60 cases frozen before any app/corpus modification, 2026-09-30. Fixture and freeze_manifest are in backend/evals/results/knowledge_coverage. Reviewer: single Codex, no independent human audit. New contrasts/combinations are independent of old expressions, but known capability gaps informed the category design; after baseline unsealing final is frozen-label regression, not a pristine blind generalization estimate.
+
+Each immutable case records mode, runtime/mutation, topics/answer mode, need, permitted/forbidden types, assertion IDs/equivalence groups, sufficiency, live boundary, planning permission, notes, review status. All labels stay fixed; disputes are recorded separately with original metrics retained. Equivalent landscape assertions are allowed only through predeclared groups. No global independent factuality claim is inferred from valid citation references.
+
+Baseline/final use a neutral controlled provider: real lexical retrieval + need + graph + server-grounded assertions. This measures source/need coverage, not model advice usefulness. General placeholder output does not earn substantive coverage. Real subset of 24 IDs is selected before baseline, no fake fallback; outputs, calls, evidence, claims, tokens/latency/repairs recorded. Final outputs hashed before single-reviewer manual assessment; no further tuning after that freeze.
+
+Metrics: runtime/authority, expected topics/knowledge/live/mode need correctness, forbidden/allowed type checks, assertion coverage over cases with expected IDs, relevance proxy with manual verification, question sufficiency, supported/partial/unsupported source claims, applicability/attribution, mixed stable+live answer, utility/over-refusal, natural prose. Unsupported detail cases have no required IDs and are not scored as substantive coverage just because unrelated facts appear. Empty exact expectation is not a retrieval relevance proof.
+
+Safety: general knowledge unverified; source facts limited to registered text/scope; recommendation unverified, no fabricated publisher endorsement; live component cannot use current-memory facts. Stable+live questions should answer stable evidence and explicitly limit live part. No Travel Facts, no DB/Planning authority in eval runner. Full existing PostgreSQL suite separately proves persistence/mutation safety.

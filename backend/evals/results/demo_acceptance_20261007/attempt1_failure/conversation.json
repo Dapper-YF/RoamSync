@@ -1,0 +1,738 @@
+{
+  "status": "failed",
+  "mock": false,
+  "isolated": true,
+  "turns": [
+    {
+      "text": "你好",
+      "http_status": 200,
+      "session_id": "f038043c-5d43-427b-aa56-692b7c548641",
+      "last": {
+        "id": "aa2ba459-f8e5-480e-b9d1-51fa670746be",
+        "user": "你好",
+        "assistant": "你好！我是你的旅行伙伴，可以聊聊目的地灵感、文化历史、摄影技巧或当地生活体验。有什么想去的地方或感兴趣的话题吗？",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.95,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "companion_travel_chat"
+          ]
+        },
+        "companion_result": {
+          "response_text": "你好！我是你的旅行伙伴，可以聊聊目的地灵感、文化历史、摄影技巧或当地生活体验。有什么想去的地方或感兴趣的话题吗？",
+          "goal_type": "travel_chat",
+          "status": "completed",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_required": false,
+            "general_knowledge_allowed": true,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": null,
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "not_applicable",
+          "grounding_limitations": [
+            "model_general_knowledge_unverified"
+          ],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        }
+      },
+      "pending_action": null
+    },
+    {
+      "text": "最近想出去玩，一个人有点怕无聊，先聊聊，不要创建旅行。",
+      "http_status": 200,
+      "session_id": "f038043c-5d43-427b-aa56-692b7c548641",
+      "last": {
+        "id": "a3d188d6-7535-4709-b4b0-4b3b01404512",
+        "user": "最近想出去玩，一个人有点怕无聊，先聊聊，不要创建旅行。",
+        "assistant": "一个人旅行其实没那么容易无聊，关键是选对玩法。给你两个抗无聊的思路：一是选体验型目的地，比如泉州或潮州这类小城，街头小吃、骑楼老街、寺庙都可以随性逛，随时能和本地人搭话，节奏完全由自己掌控；二是参加半日徒步、手作课或美食导览这类轻量活动，一个人也能自然融入小群体，还能拍出有故事感的照片——人文街拍建议多用35mm左右的焦段，多观察市集、茶馆里的生活细节。反过来，太安静的海岛或长途自驾反而容易放大孤独感。你现在更想去热闹有烟火气的地方，还是想找个安静放松的地方？",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.55,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "uncertain_no_mutation_authorization"
+          ]
+        },
+        "companion_result": {
+          "response_text": "一个人旅行其实没那么容易无聊，关键是选对玩法。给你两个抗无聊的思路：一是选体验型目的地，比如泉州或潮州这类小城，街头小吃、骑楼老街、寺庙都可以随性逛，随时能和本地人搭话，节奏完全由自己掌控；二是参加半日徒步、手作课或美食导览这类轻量活动，一个人也能自然融入小群体，还能拍出有故事感的照片——人文街拍建议多用35mm左右的焦段，多观察市集、茶馆里的生活细节。反过来，太安静的海岛或长途自驾反而容易放大孤独感。你现在更想去热闹有烟火气的地方，还是想找个安静放松的地方？",
+          "goal_type": "travel_chat",
+          "status": "completed",
+          "suggestions": [
+            {
+              "suggestion_id": "suggestion_a8b3055bb8085b61a8c742b6b19ac527",
+              "suggestion_type": "destination",
+              "title": "泉州或潮州小城漫游",
+              "summary": "体验型目的地，适合一个人随性逛吃，不易无聊。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "泉州或潮州小城漫游"
+                }
+              ],
+              "destination": null,
+              "reasons": [
+                "烟火气足，街头小吃和老街适合独游",
+                "易与本地人互动，节奏自由"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-07T13:51:47.247680Z",
+              "conversation_turn_id": "a3d188d6-7535-4709-b4b0-4b3b01404512",
+              "status": "suggested"
+            },
+            {
+              "suggestion_id": "suggestion_cfae803486d85ec79c935375804f707f",
+              "suggestion_type": "strategy",
+              "title": "参加半日体验活动融入小群体",
+              "summary": "通过徒步、手作课或美食导览等轻量活动结识同好，缓解独游孤独感。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "参加半日体验活动融入小群体"
+                }
+              ],
+              "destination": null,
+              "reasons": [
+                "一个人也能自然融入",
+                "自带拍摄和话题素材"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-07T13:51:47.247680Z",
+              "conversation_turn_id": "a3d188d6-7535-4709-b4b0-4b3b01404512",
+              "status": "suggested"
+            }
+          ],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_required": false,
+            "general_knowledge_allowed": true,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": null,
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "unverified_proposal",
+          "grounding_limitations": [
+            "model_general_knowledge_unverified"
+          ],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        }
+      },
+      "pending_action": null
+    },
+    {
+      "text": "南京怎么样？我喜欢历史文化和老街巷，想轻松一点。",
+      "http_status": 200,
+      "session_id": "f038043c-5d43-427b-aa56-692b7c548641",
+      "last": {
+        "id": "2d3e6101-b177-4c9a-866a-5582070ff279",
+        "user": "南京怎么样？我喜欢历史文化和老街巷，想轻松一点。",
+        "assistant": "南京很适合你这种偏好，历史文化密度高，节奏也可以很松。老门东一带是必逛：明清风格的街巷里藏着小吃、茶馆和手作店，傍晚灯笼亮起时最适合人文街拍，建议清晨或工作日去避开人流。夫子庙—秦淮河一带虽然商业，但沿河夜景和大照壁仍值得一看，坐一段游船或沿河散步就很轻松。想安静点可以去颐和路民国公馆区，梧桐树影配老洋房，几乎没什么游客，随手一拍都是年代感。历史爱好者的话，南京城墙（中华门段）可以登城慢走，六朝、明代的层叠历史在博物馆里也有很好的呈现。一个人逛完全不怕无聊——这些地方本身就有市井烟火气，独游节奏刚好。你可以先说说更想看哪类：老街市井、民国建筑还是博物馆？",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "explanation",
+          "confidence": 0.94,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "companion_explanation"
+          ]
+        },
+        "companion_result": {
+          "response_text": "南京很适合你这种偏好，历史文化密度高，节奏也可以很松。老门东一带是必逛：明清风格的街巷里藏着小吃、茶馆和手作店，傍晚灯笼亮起时最适合人文街拍，建议清晨或工作日去避开人流。夫子庙—秦淮河一带虽然商业，但沿河夜景和大照壁仍值得一看，坐一段游船或沿河散步就很轻松。想安静点可以去颐和路民国公馆区，梧桐树影配老洋房，几乎没什么游客，随手一拍都是年代感。历史爱好者的话，南京城墙（中华门段）可以登城慢走，六朝、明代的层叠历史在博物馆里也有很好的呈现。一个人逛完全不怕无聊——这些地方本身就有市井烟火气，独游节奏刚好。你可以先说说更想看哪类：老街市井、民国建筑还是博物馆？",
+          "goal_type": "explanation",
+          "status": "completed",
+          "suggestions": [
+            {
+              "suggestion_id": "suggestion_e13a51e41cb7567f98153d050edb476a",
+              "suggestion_type": "place",
+              "title": "老门东历史街区",
+              "summary": "明清风格老街巷，市井烟火气足，适合独游慢逛和人文街拍。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "老门东历史街区"
+                }
+              ],
+              "destination": null,
+              "reasons": [
+                "老街巷与小吃密度高，节奏轻松",
+                "傍晚灯光下适合人文摄影",
+                "独游不易无聊"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-07T13:52:02.679480Z",
+              "conversation_turn_id": "2d3e6101-b177-4c9a-866a-5582070ff279",
+              "status": "suggested"
+            },
+            {
+              "suggestion_id": "suggestion_20716d2a5fe359b7a03089e1099886ac",
+              "suggestion_type": "place",
+              "title": "颐和路民国公馆区",
+              "summary": "梧桐树影下的民国老洋房街区，游客少、氛围安静。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "颐和路民国公馆区"
+                }
+              ],
+              "destination": null,
+              "reasons": [
+                "契合历史建筑兴趣",
+                "清静适合放松漫游",
+                "年代感人像与街景易出片"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-07T13:52:02.679480Z",
+              "conversation_turn_id": "2d3e6101-b177-4c9a-866a-5582070ff279",
+              "status": "suggested"
+            },
+            {
+              "suggestion_id": "suggestion_cef495c4f6e0571896d94f1eeaf06a03",
+              "suggestion_type": "place",
+              "title": "南京城墙中华门段与秦淮河",
+              "summary": "登明城墙俯瞰老城，傍晚沿秦淮河散步或乘船看夜景。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "南京城墙中华门段与秦淮河"
+                }
+              ],
+              "destination": null,
+              "reasons": [
+                "感受六朝至明代层叠历史",
+                "轻松的city walk式玩法",
+                "夜景摄影题材丰富"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-07T13:52:02.679480Z",
+              "conversation_turn_id": "2d3e6101-b177-4c9a-866a-5582070ff279",
+              "status": "suggested"
+            }
+          ],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": {
+            "options": [
+              "老门东",
+              "颐和路公馆区",
+              "夫子庙—秦淮河"
+            ],
+            "dimensions": [
+              "历史氛围",
+              "人流与节奏",
+              "摄影题材",
+              "适合放松程度"
+            ],
+            "summary": "老门东历史感与烟火气兼具，最贴合老街巷偏好；颐和路最安静、民国建筑出片；夫子庙最热闹但商业化重，建议傍晚看夜景即可。"
+          },
+          "explanation": null,
+          "information_need": {
+            "knowledge_required": false,
+            "general_knowledge_allowed": true,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "mixed",
+            "requested_fact_topics": [
+              "history_general"
+            ]
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": null,
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "unverified_proposal",
+          "grounding_limitations": [
+            "model_general_knowledge_unverified"
+          ],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        }
+      },
+      "pending_action": null
+    },
+    {
+      "text": "请根据可靠资料介绍南京的历史文化和老街巷；如果资料不足就说明，不要猜。",
+      "http_status": 200,
+      "session_id": "f038043c-5d43-427b-aa56-692b7c548641",
+      "last": {
+        "id": "eb43f473-59ed-45f8-9465-bf3fcc667d43",
+        "user": "请根据可靠资料介绍南京的历史文化和老街巷；如果资料不足就说明，不要猜。",
+        "assistant": "UNESCO 资料记载，西湖及其三面环山的景观自公元九世纪起启发诗人、学者与艺术家。\nUNESCO 将湖泊及三面环绕的山体列为西湖文化景观的组成，并记载其中有寺庙、塔、亭、园林、堤道和人工岛。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "explanation",
+          "confidence": 0.94,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "companion_explanation"
+          ]
+        },
+        "companion_result": {
+          "response_text": "UNESCO 资料记载，西湖及其三面环山的景观自公元九世纪起启发诗人、学者与艺术家。\nUNESCO 将湖泊及三面环绕的山体列为西湖文化景观的组成，并记载其中有寺庙、塔、亭、园林、堤道和人工岛。",
+          "goal_type": "explanation",
+          "status": "completed",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_required": true,
+            "general_knowledge_allowed": false,
+            "knowledge_types": [
+              "history_culture"
+            ],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "factual",
+            "requested_fact_topics": [
+              "history_general"
+            ]
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": null,
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [
+            {
+              "evidence_ref": "knowledge_03f9fdbb3bc55d3c_0b61323f4381a254bd5ea3406cc0ca15",
+              "text": "西湖及三面环山的景观自九世纪以来启发了诗人、学者与艺术家。堤、岛及寺塔园林等人工要素体现了中国传统山水审美。杭州西湖文化景观于2011年列入世界遗产。 UNESCO 页面还记载，两条堤道与三座岛屿等主要人工要素是在九至十二世纪的反复疏浚中形成。",
+              "source_reference": "https://whc.unesco.org/en/list/1334",
+              "knowledge_type": "history_culture",
+              "scope": "stable",
+              "document_id": "hz-westlake-history",
+              "chunk_id": "0b61323f4381a254bd5ea3406cc0ca15ece3cb2752cda34ca480da34d53347d8",
+              "document_title": "西湖历史与文化景观",
+              "source_name": "UNESCO World Heritage Centre",
+              "source_type": "web",
+              "source_authority": "institutional",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": "tourism_corpus:curated:hz-westlake-history",
+              "place_name": "西湖",
+              "applicability": "place",
+              "applicability_target": "西湖",
+              "content_origin": "source_paraphrase",
+              "source_page_title": "West Lake Cultural Landscape of Hangzhou",
+              "curator_title": "西湖历史与文化景观",
+              "answerable_assertions": [
+                {
+                  "assertion_id": "west_lake.history_general.9th_century",
+                  "text": "UNESCO 资料记载，西湖及其三面环山的景观自公元九世纪起启发诗人、学者与艺术家。",
+                  "claim_type": "retrieved_fact",
+                  "topics": [
+                    "history_general"
+                  ],
+                  "applicability": {
+                    "scope": "place",
+                    "target": "西湖"
+                  }
+                },
+                {
+                  "assertion_id": "west_lake.landscape_components",
+                  "text": "UNESCO 将湖泊及三面环绕的山体列为西湖文化景观的组成，并记载其中有寺庙、塔、亭、园林、堤道和人工岛。",
+                  "claim_type": "retrieved_fact",
+                  "topics": [
+                    "landscape_components",
+                    "history_general"
+                  ],
+                  "applicability": {
+                    "scope": "place",
+                    "target": "西湖"
+                  }
+                }
+              ]
+            }
+          ],
+          "answer_evidence_refs": [
+            "knowledge_03f9fdbb3bc55d3c_0b61323f4381a254bd5ea3406cc0ca15"
+          ],
+          "knowledge_retrieval": {
+            "status": "available",
+            "outcome": "available",
+            "advisory": {
+              "knowledge_sufficient": true,
+              "live_fact_verification_required": false,
+              "planning_decision_context_required": false,
+              "reasons": [],
+              "warnings": [],
+              "evidence_kind": "tourism_knowledge_not_live_verified"
+            },
+            "retrieval_mode": "lexical",
+            "retrieved_at": "2026-10-07T13:52:03.141150Z",
+            "retrieved_document_refs": [
+              "hz-westlake-history"
+            ],
+            "retrieved_chunk_refs": [
+              "0b61323f4381a254bd5ea3406cc0ca15ece3cb2752cda34ca480da34d53347d8"
+            ]
+          },
+          "grounding_status": "citations_validated",
+          "grounding_limitations": [
+            "claim_entailment_not_verified",
+            "tourism_knowledge_not_live_verified"
+          ],
+          "claims": [
+            {
+              "claim_id": "claim_90f8c10b8b11517fab076c634df531d6",
+              "text": "UNESCO 资料记载，西湖及其三面环山的景观自公元九世纪起启发诗人、学者与艺术家。",
+              "claim_type": "retrieved_fact",
+              "evidence_refs": [
+                "knowledge_03f9fdbb3bc55d3c_0b61323f4381a254bd5ea3406cc0ca15"
+              ],
+              "assertion_ids": [
+                "west_lake.history_general.9th_century"
+              ],
+              "applicability": {
+                "scope": "place",
+                "target": "西湖"
+              },
+              "support_status": "supported",
+              "applicability_status": "compatible",
+              "attribution_status": "accurate",
+              "source_attributions": [
+                {
+                  "source_organization": "UNESCO World Heritage Centre",
+                  "source_page_title": "West Lake Cultural Landscape of Hangzhou",
+                  "source_url": "https://whc.unesco.org/en/list/1334",
+                  "document_id": "hz-westlake-history"
+                }
+              ]
+            },
+            {
+              "claim_id": "claim_883e749f25165c52a399a4827f274b65",
+              "text": "UNESCO 将湖泊及三面环绕的山体列为西湖文化景观的组成，并记载其中有寺庙、塔、亭、园林、堤道和人工岛。",
+              "claim_type": "retrieved_fact",
+              "evidence_refs": [
+                "knowledge_03f9fdbb3bc55d3c_0b61323f4381a254bd5ea3406cc0ca15"
+              ],
+              "assertion_ids": [
+                "west_lake.landscape_components"
+              ],
+              "applicability": {
+                "scope": "place",
+                "target": "西湖"
+              },
+              "support_status": "supported",
+              "applicability_status": "compatible",
+              "attribution_status": "accurate",
+              "source_attributions": [
+                {
+                  "source_organization": "UNESCO World Heritage Centre",
+                  "source_page_title": "West Lake Cultural Landscape of Hangzhou",
+                  "source_url": "https://whc.unesco.org/en/list/1334",
+                  "document_id": "hz-westlake-history"
+                }
+              ]
+            }
+          ],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        }
+      },
+      "pending_action": null
+    },
+    {
+      "text": "南京明天下午天气怎么样？",
+      "http_status": 200,
+      "session_id": "f038043c-5d43-427b-aa56-692b7c548641",
+      "last": {
+        "id": "7ecc732d-3579-44cb-933e-61daf7157f9d",
+        "user": "南京明天下午天气怎么样？",
+        "assistant": "我现在没有拿到可靠的地点坐标，无法核实天气预报。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "destination_exploration",
+          "confidence": 0.93,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": true,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "companion_destination_exploration"
+          ]
+        },
+        "companion_result": {
+          "response_text": "我现在没有拿到可靠的地点坐标，无法核实天气预报。",
+          "goal_type": "destination_exploration",
+          "status": "needs_information",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_required": false,
+            "general_knowledge_allowed": false,
+            "knowledge_types": [],
+            "live_fact_required": true,
+            "forecast_required": true,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [
+              "weather"
+            ],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [
+            {
+              "code": "live_fact_unavailable",
+              "message": "我现在没有拿到可靠的地点坐标，无法核实天气预报。"
+            }
+          ],
+          "planning_handoff": null,
+          "conversation_destination": null,
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "live_verification_required",
+          "grounding_limitations": [],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": {
+            "requirements": [],
+            "place_result": {
+              "contract_version": "travel-facts-v1",
+              "requirement": {
+                "contract_version": "travel-facts-v1",
+                "fact_type": "place.location",
+                "subject": {
+                  "kind": "place",
+                  "ref": "city-search:Nanjing",
+                  "name": "南京",
+                  "destination": "南京"
+                },
+                "time_scope": null,
+                "required_freshness_seconds": 86400,
+                "minimum_authority": "specialist",
+                "required": true,
+                "reason": "forecast internal location prerequisite",
+                "allow_stale": false
+              },
+              "resolution_status": "unavailable",
+              "freshness_status": "no_evidence",
+              "value": null,
+              "selected_fact": null,
+              "selected_evidence": [],
+              "conflicting_facts": [],
+              "conflicting_evidence": [],
+              "rejected_candidates": [],
+              "evidence": [],
+              "confidence": "none",
+              "usable_as_current": false,
+              "provider_failures": [
+                "open_meteo_geocoding:provider_unavailable"
+              ],
+              "reasons": [
+                "no_usable_evidence"
+              ],
+              "resolved_at": "2026-10-07T13:52:12.210830Z"
+            },
+            "location_label": "",
+            "timezone": null,
+            "message": "我现在没有拿到可靠的地点坐标，无法核实天气预报。",
+            "clarification": false
+          },
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        }
+      },
+      "pending_action": null
+    }
+  ],
+  "observations": [],
+  "session_id": "f038043c-5d43-427b-aa56-692b7c548641",
+  "error": "\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m"
+}

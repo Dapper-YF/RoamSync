@@ -1,0 +1,31 @@
+[
+  {
+    "Url": "http://localhost:8000/health/live",
+    "Status": 200,
+    "Body": "{\"status\":\"ok\"}"
+  },
+  {
+    "Url": "http://localhost:8000/health/ready",
+    "Status": 200,
+    "Body": "{\"status\":\"ready\"}"
+  },
+  {
+    "Url": "http://localhost:3000/healthz",
+    "Status": 200,
+    "Body": [
+      111,
+      107,
+      10
+    ]
+  },
+  {
+    "Url": "http://localhost:8000/api/v1/trips/not-a-uuid",
+    "Status": 422,
+    "Body": "{\"detail\":[{\"type\":\"uuid_parsing\",\"loc\":[\"path\",\"trip_id\"],\"msg\":\"Input should be a valid UUID, invalid character: found `n` at 1\",\"input\":\"not-a-uuid\",\"ctx\":{\"error\":\"invalid character: found `n` at 1\"}}]}"
+  },
+  {
+    "Url": "http://localhost:8000/api/v1/trips/ffffffff-ffff-4fff-8fff-ffffffffffff",
+    "Status": 404,
+    "Body": "{\"detail\":\"trip not found\"}"
+  }
+]

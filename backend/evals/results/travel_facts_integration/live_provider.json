@@ -1,0 +1,151 @@
+{
+  "request_time": "2026-09-30T08:51:57.497354+00:00",
+  "plan": {
+    "requirements": [],
+    "place_result": {
+      "contract_version": "travel-facts-v1",
+      "requirement": {
+        "contract_version": "travel-facts-v1",
+        "fact_type": "place.location",
+        "subject": {
+          "kind": "place",
+          "ref": "city-search:Hangzhou",
+          "name": "杭州",
+          "destination": "杭州"
+        },
+        "time_scope": null,
+        "required_freshness_seconds": 86400,
+        "minimum_authority": "specialist",
+        "required": true,
+        "reason": "forecast internal location prerequisite",
+        "allow_stale": false
+      },
+      "resolution_status": "unavailable",
+      "freshness_status": "no_evidence",
+      "value": null,
+      "selected_fact": null,
+      "selected_evidence": [],
+      "conflicting_facts": [],
+      "conflicting_evidence": [],
+      "rejected_candidates": [],
+      "evidence": [],
+      "confidence": "none",
+      "usable_as_current": false,
+      "provider_failures": [
+        "open_meteo_geocoding:provider_unavailable"
+      ],
+      "reasons": [
+        "no_usable_evidence"
+      ],
+      "resolved_at": "2026-09-30T08:51:52.332567Z"
+    },
+    "location_label": "",
+    "timezone": null,
+    "message": "我现在没有拿到可靠的地点坐标，无法核实天气预报。",
+    "clarification": false
+  },
+  "resolved": [],
+  "companion": {
+    "response_text": "我现在没有拿到可靠的地点坐标，无法核实天气预报。",
+    "goal_type": "destination_exploration",
+    "status": "needs_information",
+    "suggestions": [],
+    "resolved_suggestion_refs": [],
+    "interactions": [],
+    "comparison": null,
+    "explanation": null,
+    "information_need": {
+      "knowledge_required": false,
+      "general_knowledge_allowed": false,
+      "knowledge_types": [],
+      "live_fact_required": true,
+      "forecast_required": true,
+      "fact_requirements": [],
+      "fact_types": [
+        "weather"
+      ],
+      "search_required": false,
+      "decision_history_required": false,
+      "trip_context_required": false,
+      "preferences_required": false,
+      "itinerary_required": false,
+      "audience_tags": [],
+      "season_tags": [],
+      "experience_tags": [],
+      "filter_signals": [],
+      "answer_mode": "advisory",
+      "requested_fact_topics": []
+    },
+    "information_gaps": [
+      {
+        "code": "live_fact_unavailable",
+        "message": "我现在没有拿到可靠的地点坐标，无法核实天气预报。"
+      }
+    ],
+    "planning_handoff": null,
+    "conversation_destination": "杭州",
+    "runtime_trace": [
+      "interpret_goal",
+      "resolve_conversation",
+      "determine_information_need",
+      "gather_read_only_context",
+      "generate_interaction",
+      "extract_interaction_outcome",
+      "planning_handoff_not_authorized",
+      "prepare_conversation_persistence"
+    ],
+    "knowledge_evidence": [],
+    "answer_evidence_refs": [],
+    "knowledge_retrieval": null,
+    "grounding_status": "live_verification_required",
+    "grounding_limitations": [],
+    "claims": [],
+    "claim_validation_issues": [],
+    "forecast_plan": {
+      "requirements": [],
+      "place_result": {
+        "contract_version": "travel-facts-v1",
+        "requirement": {
+          "contract_version": "travel-facts-v1",
+          "fact_type": "place.location",
+          "subject": {
+            "kind": "place",
+            "ref": "city-search:Hangzhou",
+            "name": "杭州",
+            "destination": "杭州"
+          },
+          "time_scope": null,
+          "required_freshness_seconds": 86400,
+          "minimum_authority": "specialist",
+          "required": true,
+          "reason": "forecast internal location prerequisite",
+          "allow_stale": false
+        },
+        "resolution_status": "unavailable",
+        "freshness_status": "no_evidence",
+        "value": null,
+        "selected_fact": null,
+        "selected_evidence": [],
+        "conflicting_facts": [],
+        "conflicting_evidence": [],
+        "rejected_candidates": [],
+        "evidence": [],
+        "confidence": "none",
+        "usable_as_current": false,
+        "provider_failures": [
+          "open_meteo_geocoding:provider_unavailable"
+        ],
+        "reasons": [
+          "no_usable_evidence"
+        ],
+        "resolved_at": "2026-09-30T08:51:57.474592Z"
+      },
+      "location_label": "",
+      "timezone": null,
+      "message": "我现在没有拿到可靠的地点坐标，无法核实天气预报。",
+      "clarification": false
+    },
+    "resolved_facts": []
+  },
+  "observations": []
+}

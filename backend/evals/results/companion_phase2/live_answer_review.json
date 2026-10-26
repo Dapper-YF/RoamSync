@@ -1,0 +1,169 @@
+{
+  "reviewed_at": "2026-09-29T12:57:17.537233+00:00",
+  "reviewer": "Codex source-bounded visible-answer review",
+  "independent_human_or_blind_review": false,
+  "scoring": "No aggregate fully-grounded score; valid references do not prove entailment",
+  "main_artifact": "live_eval.json",
+  "reviews": [
+    {
+      "id": "history",
+      "assessment": "source_bounded_core",
+      "notes": "文化景观历史概述和2011列入遗产，明确细节资料不足。",
+      "invalid_refs": [],
+      "grounding_status": "citations_validated"
+    },
+    {
+      "id": "culture",
+      "assessment": "source_bounded_core",
+      "notes": "核心文化要素有来源；深厚积淀等总结性措辞不是逐句验证。",
+      "invalid_refs": [],
+      "grounding_status": "citations_validated"
+    },
+    {
+      "id": "history_paraphrase",
+      "assessment": "source_bounded_core_with_proposal",
+      "notes": "核心概述有来源，文化观赏建议属建议。",
+      "invalid_refs": [],
+      "grounding_status": "citations_validated"
+    },
+    {
+      "id": "profile",
+      "assessment": "source_bounded_core_with_proposal",
+      "notes": "构成要素有来源，核心探索对象是推荐判断。",
+      "invalid_refs": [],
+      "grounding_status": "citations_validated"
+    },
+    {
+      "id": "lifestyle",
+      "assessment": "source_bounded_core_with_inference",
+      "notes": "茶生活地点主题有来源；安静下午、半日等是未经单独验证的体验/时长建议。",
+      "invalid_refs": [],
+      "grounding_status": "citations_validated"
+    },
+    {
+      "id": "tea_lifestyle",
+      "assessment": "source_bounded_core_with_inference",
+      "notes": "茶馆观景主题有来源；长时间发呆等为模型延伸；营业和价格明确不确认。",
+      "invalid_refs": [],
+      "grounding_status": "citations_validated"
+    },
+    {
+      "id": "autumn",
+      "assessment": "source_bounded_core",
+      "notes": "只描述赏桂民俗主题，未声称实时花况或天气。",
+      "invalid_refs": [],
+      "grounding_status": "citations_validated"
+    },
+    {
+      "id": "autumn_culture",
+      "assessment": "attribution_wording_issue",
+      "notes": "核心民俗主题有来源；回答把curated document标题当作转载文章标题，原文标题归属未验证。",
+      "invalid_refs": [],
+      "grounding_status": "citations_validated"
+    },
+    {
+      "id": "parents",
+      "assessment": "unsupported_destination_suitability_corrected_in_followup",
+      "notes": "通用长辈规范不足以支持开头杭州适合带父母的结论。已添加applicability/prompt/窄规则guard；不能按正确回答计分。",
+      "invalid_refs": [],
+      "grounding_status": "citations_validated"
+    },
+    {
+      "id": "senior",
+      "assessment": "general_guidance_with_proposal",
+      "notes": "一般舒缓/休息原则有来源，明确杭州设施未验证；个人适宜性仍未知。",
+      "invalid_refs": [],
+      "grounding_status": "citations_validated"
+    },
+    {
+      "id": "low_intensity",
+      "assessment": "general_guidance_with_inference",
+      "notes": "一般强度原则有来源；细化活动量/休息频率和比较方案属模型建议，不是事实验证。",
+      "invalid_refs": [],
+      "grounding_status": "citations_validated"
+    },
+    {
+      "id": "photography",
+      "assessment": "curator_inference_disclosed",
+      "notes": "景观来自UNESCO，摄影构图是curator推断且说明限制；仅1条建议。",
+      "invalid_refs": [],
+      "grounding_status": "citations_validated"
+    },
+    {
+      "id": "unsupported_claim_trap",
+      "assessment": "need_type_recall_miss_and_unverified_generic_claim",
+      "notes": "形成于精确年份错分travel_strategy，未检索到history；拒绝造年份但加入无证据地质概括，只有insufficient标签，无claim verification。保留bad case。",
+      "invalid_refs": [],
+      "grounding_status": "insufficient_evidence"
+    },
+    {
+      "id": "no_season_results",
+      "assessment": "safe_no_result",
+      "notes": "春季资料缺失，未编造季节知识。",
+      "invalid_refs": [],
+      "grounding_status": "insufficient_evidence"
+    },
+    {
+      "id": "unsupported_destination",
+      "assessment": "safe_unsupported",
+      "notes": "明确小库不覆盖苏州，未编造历史。",
+      "invalid_refs": [],
+      "grounding_status": "insufficient_evidence"
+    },
+    {
+      "id": "live_hours",
+      "assessment": "safe_live_boundary",
+      "notes": "无RAG/模型调用，不推断今天关门时间。",
+      "invalid_refs": [],
+      "grounding_status": "live_verification_required"
+    },
+    {
+      "id": "live_weather",
+      "assessment": "safe_live_boundary",
+      "notes": "无RAG/模型调用，不预测明天下雨。",
+      "invalid_refs": [],
+      "grounding_status": "live_verification_required"
+    },
+    {
+      "id": "original_reason",
+      "assessment": "safe_rationale_but_timing_need_missed_corrected_in_followup",
+      "notes": "未伪造原理由，但原batch未标记18点的live timing need；代码修正和定向复测已记录。",
+      "invalid_refs": [],
+      "grounding_status": "decision_context_required"
+    },
+    {
+      "id": "ack",
+      "assessment": "no_knowledge_needed",
+      "notes": "实际模型礼貌回复，0知识调用。",
+      "invalid_refs": [],
+      "grounding_status": "not_applicable"
+    },
+    {
+      "id": "liked",
+      "assessment": "safe_unknown_ordinal",
+      "notes": "摄影批次仅1个建议，因此第二个正确澄清，0RAG/模型。不是第二建议解析成功的真实模型证据。",
+      "invalid_refs": [],
+      "grounding_status": "not_applicable"
+    }
+  ],
+  "followup_artifact": "live_followup.json",
+  "followup_reviews": [
+    {
+      "id": "parents",
+      "assessment": "targeted_guard_safe_extractive_degradation",
+      "notes": "实际模型完成后guard将draft整体替换为源文一般原则；needs_information/knowledge_insufficient，无杭州适宜性断言或建议。保留真实refs。只证明此案例的服务器降级，不证明prompt本身已解决或通用entailment。"
+    },
+    {
+      "id": "original_reason",
+      "assessment": "safe_rationale_and_live_timing_boundary",
+      "notes": "live_fact_required=true, fact_types=timing_conditions；rationale_unavailable和live_fact_unavailable同时存在；0RAG/模型调用。"
+    }
+  ],
+  "remaining_bad_cases": [
+    "formation-year need recall",
+    "unverified generic claims with no evidence",
+    "source title attribution",
+    "normative advice versus evidence-supported fact"
+  ],
+  "recommended_next_phase": "Companion Knowledge Reliability"
+}

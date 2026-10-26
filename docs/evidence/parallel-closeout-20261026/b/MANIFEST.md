@@ -1,6 +1,6 @@
 # B lane evidence manifest
 
-Product code commit: `30142f8348ffd5afd626b6b81404833e87a6b253`. Hashes below were measured from the integrated candidate; the source files are unchanged from that product commit, and `test_stage6_read_focus.py` also contains one coordinator-added address-query boundary test.
+Product code commit: `30142f8348ffd5afd626b6b81404833e87a6b253`. Hashes below describe integration candidate `9738473`, including the coordinator-added address-query boundary test. Later official fixture-gate changes are test-only; the actual official source/test hashes used by the full regression are recorded in `../integration/official-source-freeze.json`.
 
 ## Product source SHA-256
 

@@ -1,0 +1,149 @@
+{
+  "candidate_commit": "4a523b7bd91df6c7c77c06cff87b2ff6a36a80de",
+  "production_containers": {
+    "roamsync-api": {
+      "id": "0a91a3adc7c62ccf2b21018f7bf64e9dc35ffbb0b0853a4f03a9eabab1535522",
+      "image": "sha256:60723c02c240875e3956744440ab19ea609dcf8ca31b6668a00845b57c2ef7a5",
+      "image_tag": "roamsync-api",
+      "running": true,
+      "volume_mount_count": 0,
+      "ports": {
+        "8000/tcp": [
+          {
+            "HostIp": "0.0.0.0",
+            "HostPort": "8000"
+          },
+          {
+            "HostIp": "::",
+            "HostPort": "8000"
+          }
+        ]
+      }
+    },
+    "roamsync-agent-worker-1": {
+      "id": "e15e78ade495c872c1c1e80596d4af8faf63673afb75e126ba82de2f92fce004",
+      "image": "sha256:5a219e84f4a6a873316609425bbf5b22075f13ec16607dd097ce32e63ef52c6a",
+      "image_tag": "roamsync-agent-worker",
+      "running": true,
+      "volume_mount_count": 0,
+      "ports": {}
+    },
+    "roamsync-web": {
+      "id": "001247b864a2e008ac1bc89cf7fd31d1dcd39383a975882e4b5c42e33c71c610",
+      "image": "sha256:9794c7029f6ca25800174e7072d701065df2b6bbff6110dd168f4c6b614f99b8",
+      "image_tag": "roamsync-web",
+      "running": true,
+      "volume_mount_count": 0,
+      "ports": {
+        "80/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "3000"
+          }
+        ]
+      }
+    },
+    "roamsync-postgres": {
+      "id": "445884a844dabda0a4ad1ba601891bebacdca18057de4c4a44186632530fedab",
+      "image": "sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73",
+      "image_tag": "postgres:17-alpine",
+      "running": true,
+      "volume_mount_count": 1,
+      "ports": {
+        "5432/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "54329"
+          }
+        ]
+      }
+    }
+  },
+  "shipped_source_differences": {
+    "evals/knowledge_coverage.py": {
+      "production": "459ea7d539764a3b49c7d65549581c3e4a0e0c6ab4aea1246c646196e0c8cbc0",
+      "candidate": "ee0e759eff452c8e22645a986bd2fcdf72356cc057f7afde9a1091c46c537495"
+    },
+    "evals/opening_collector.py": {
+      "production": null,
+      "candidate": "8557dc21a385aaa164d00e7795fc0632a86c9fce8facaa58d7283b95f3ed33eb"
+    },
+    "evals/phase25_final.py": {
+      "production": "bf6081452f498812ddae49183587396340bac066f4c64a190b1f8f12e767db40",
+      "candidate": "8d69c658123aee0e4a21b24f4989946fa3b5c0707ee49fa6d598f9834d843f3e"
+    },
+    "evals/source_repair.py": {
+      "production": null,
+      "candidate": "086250c2d3d25da3324b500e5cf95754d3378990a705a7d94490422f7958a00b"
+    },
+    "evals/fixtures/phase25_holdout_v1.json": {
+      "production": null,
+      "candidate": "07505a83aa6921639f70f82af4670a1a6624b038000cf5a849757e718ddeec22"
+    },
+    "evals/fixtures/knowledge_coverage_frozen_v1.json": {
+      "production": null,
+      "candidate": "f19b8c0b9b823a070d3295918bca2357bb5f4529f456f482f8fcdc9c27d3c5c1"
+    },
+    "evals/fixtures/knowledge_coverage_manifest.json": {
+      "production": null,
+      "candidate": "0427c5067f7b23653ad4a062485db61d71026a88d8fbf63ee1ffa298dbe45246"
+    },
+    "app/companion_information.py": {
+      "production": "b1d9d9c7f1fea1961fc435856d74ed4f165ea44226bdcaffbd166d43fd7bf1cd",
+      "candidate": "ea4c7536bf24c3068e963a25ddbf746f830c5980cd8c44fbc06fbb80794eb676"
+    },
+    "app/openai_planner.py": {
+      "production": "9c9aeaa3549b673b3a43c7e7eaa0acb10d5d13a86e801dd8b241c21690ac40b0",
+      "candidate": "3fa7f88e720810ca141716bd6389c382bb701943948fb3b76b1e30a294728adb"
+    },
+    "app/assistant_service.py": {
+      "production": "91bb96ba7ca1c919f2570607f9720a404ff60f9184c69cf2206a2a284993a2a8",
+      "candidate": "dc7ffe27fa7af65a09388d4fb07a05176e05dd92902749b69ec9eeb19001432a"
+    },
+    "app/planning_explanation.py": {
+      "production": "afe136dd6b447d2e01c2824d03968aa6b0c1d8edc012fe6edf42172de7001d31",
+      "candidate": "c830c25751d6cc369cd0f5298bd77970fd800856d727e0fd1c49e3be3b775eab"
+    },
+    "app/planning_graph.py": {
+      "production": "2e8b73f234b944a99440ac2040dc8e24346d2c90f0f7292c24ff87ca2e81eb0b",
+      "candidate": "8789a2588d765d5f6fcdb53f4aa2d6828d6ae65e98f3b24a1491720a58fe0f28"
+    },
+    "app/planning_intent_service.py": {
+      "production": "8a4056f05a21cc161c962b845a4d2558a2244954ea1bbd0d48d5ca6e39971dd1",
+      "candidate": "684d1b9f1e1ed4e67c8f6336c9f2134f6588860930a33007c07951933347dc92"
+    },
+    "app/planning_run_repository.py": {
+      "production": "f1aebabb6eb03d6ee8ed0bb00a3c7845d341a36881f5dfbc28488d2b735e8ff0",
+      "candidate": "2f5b14b892a90945cedf8e0117d06bcb4c3c5d5d27ab4da3a31022bc707c646e"
+    },
+    "app/candidate_edit.py": {
+      "production": null,
+      "candidate": "e7177e54750a9293b0678c50845b949b98d2e529eb13de50bd35ba0762736f4a"
+    },
+    "app/plan_revision_service.py": {
+      "production": "ce63c8bd855c04c1d29dc0201720ec74dc41ea53602bdaffcd34002132008167",
+      "candidate": "808d223c0aa21743b433bdbd32558c92aae0b703d52f3474acd815818ee64ad2"
+    },
+    "app/candidate_route_service.py": {
+      "production": "89c55e6bc126c53eb3ed6b82ca6b315f93ffbf79ad88ab0ec9acba3cc53377a0",
+      "candidate": "db16c43bbd108e92daee5791a867dcbd04eb578f067a3b3520befade33ab6440"
+    },
+    "app/navigation/execution_context.py": {
+      "production": "7e3625d0f02dd5c64369ed16d31a35793544d6cee10e38d6436b8e4d792ea809",
+      "candidate": "4ddcd5bad2f6f2f3969c38ab35920d75c7c791808fbd90f7d69dee529154c9e3"
+    },
+    "app/travel_facts/source_review.py": {
+      "production": null,
+      "candidate": "faf9c66b8afbfee7cbbbadcdf9a79000699cee4fc0673d7b3f5a9faf4472bd06"
+    },
+    "app/travel_facts/official_collector.py": {
+      "production": null,
+      "candidate": "beea13c91bf24fa68f94f02d375fb9d1c53fe381071f595bc9f2b6c995101e22"
+    }
+  },
+  "production_extra_source_paths": [],
+  "production_changed": false,
+  "production_authorization": false,
+  "rollback_executed": false,
+  "production_db_entrypoint_must_be_resolved_before_approved_deploy": true
+}

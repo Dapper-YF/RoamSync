@@ -1,0 +1,55 @@
+[
+  {
+    "index": 9,
+    "kind": "research",
+    "transport": "release configured explicit proxy",
+    "retries": 0,
+    "success": false,
+    "error_category": "http_protocol_error",
+    "exception_chain": [
+      "RemoteProtocolError",
+      "RemoteProtocolError"
+    ],
+    "http_status": null,
+    "translated_code": "planner_unavailable",
+    "retryable": true,
+    "request_observations": [
+      {
+        "host": "open.bigmodel.cn",
+        "path": "/api/paas/v4/chat/completions",
+        "method": "POST",
+        "json_body_sha256": "97e33ca84c9b122f1df0583f391cb38d38c57ffa791f6c751640ab8679c5fe02",
+        "body_bytes": 17133,
+        "message_sizes": [
+          {
+            "role": "system",
+            "chars": 2277,
+            "utf8_bytes": 3561
+          },
+          {
+            "role": "user",
+            "chars": 6265,
+            "utf8_bytes": 12651
+          }
+        ],
+        "model": "glm-5.3-flash",
+        "response_format": {
+          "type": "json_object"
+        },
+        "stream": true,
+        "reasoning_effort": "low",
+        "thinking_enabled": "enabled",
+        "max_tokens": 20000
+      }
+    ],
+    "http_observations": [
+      {
+        "status": 200,
+        "http_version": "HTTP/1.1",
+        "content_type": "text/event-stream;charset=UTF-8",
+        "request_id": null
+      }
+    ],
+    "latency_seconds": 15.425
+  }
+]

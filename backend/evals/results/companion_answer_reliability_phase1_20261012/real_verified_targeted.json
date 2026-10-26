@@ -1,0 +1,1175 @@
+{
+  "real": true,
+  "database_used": false,
+  "model": "glm-5.3-flash",
+  "provider": "glm",
+  "endpoint": {
+    "scheme": "https",
+    "host": "open.bigmodel.cn",
+    "port": null,
+    "path": "/api/paas/v4"
+  },
+  "proxy": {
+    "scheme": "http",
+    "host": "127.0.0.1",
+    "port": 7897,
+    "path": ""
+  },
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "reasoning_effort": "low",
+  "max_output_tokens": 8000,
+  "format_repair_limit": 1,
+  "sensitive_retry_limit": 0,
+  "maximum_cases": 4,
+  "prompt_sha256": "f00d64737cb2c5351666b842a374a7c2de22b7654720e33e9a18987d9cc20f79",
+  "planned_cases": [
+    {
+      "id": "Q021",
+      "text": "按我之前的偏好，在苏州有哪些适合我的文化体验方向？不需要具体行程。",
+      "history": [
+        {
+          "user": "我喜欢园林和传统戏曲，不喜欢商业化打卡，也不想挤在热门街区。",
+          "assistant": "可以先讨论文化体验的类型。"
+        }
+      ]
+    },
+    {
+      "id": "Q035",
+      "text": "那有什么适合我的体验？",
+      "history": [
+        {
+          "user": "我喜欢安静的街巷，不喜欢排队。准备去苏州。",
+          "assistant": "可以从慢节奏的街巷体验开始。"
+        }
+      ]
+    },
+    {
+      "id": "Q044",
+      "text": "那有什么适合我的体验？",
+      "history": [
+        {
+          "user": "我喜欢安静的街巷，不喜欢排队。准备去苏州。",
+          "assistant": "可以从慢节奏的街巷体验开始。"
+        }
+      ]
+    },
+    {
+      "id": "conditional",
+      "text": "我不喜欢排队，想在苏州慢慢走，有什么带条件的建议？"
+    }
+  ],
+  "fact_tool": "absent; unavailable-fact tests, no fabricated live provider",
+  "rows": [
+    {
+      "id": "Q021",
+      "input": "按我之前的偏好，在苏州有哪些适合我的文化体验方向？不需要具体行程。",
+      "history": [
+        {
+          "user": "我喜欢园林和传统戏曲，不喜欢商业化打卡，也不想挤在热门街区。",
+          "assistant": "可以先讨论文化体验的类型。"
+        }
+      ],
+      "filter_probe": false,
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": true,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": true,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "按你偏好园林与传统戏曲、避开商业化热门街区，可以往这几个方向体验：一是小型或冷门园林，如艺圃、耦园、沧浪亭、五峰园，适合慢慢品味造园意趣，而非走热门的拙政园、留园；二是听一场传统昆曲或评弹，可选平江路周边之外的社区小书场或茶馆书场，比如山塘街深处或老居民区附近的评弹书场，既有生活气息，也更贴近本地人日常；三是关注昆曲传习所或戏曲博物馆的小型演出与讲座，如中国昆曲博物馆周边，常有面向戏迷的小剧场次；四是逛园林周边的老巷与旧宅，把园林和市井生活结合起来，比如沧浪亭旁的可园、颜文樑纪念馆一带。总体思路是选小体量、本地人参与的场所，避开旅游团的动线。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_cee6820771e159e4b6dd080c87c5793d",
+            "suggestion_type": "place",
+            "title": "艺圃",
+            "summary": "小体量冷门园林，适合静观造园意趣。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "艺圃"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "符合避开热门街区偏好",
+              "园林主题契合"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-12T00:27:46.554303Z",
+            "conversation_turn_id": "Q021",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_f4fda5cc62d4509e81f81d731197f308",
+            "suggestion_type": "place",
+            "title": "耦园",
+            "summary": "位于城东北护城河边，有独特成双成对的布局意象。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "耦园"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "冷门园林",
+              "适合慢游"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-12T00:27:46.554303Z",
+            "conversation_turn_id": "Q021",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_bc1529e95b5658ada04569e9f4e61820",
+            "suggestion_type": "experience",
+            "title": "本地人书场的评弹演出",
+            "summary": "选非旅游街区的社区书场或茶馆，贴近日常的评弹体验。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "本地人书场的评弹演出"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "契合传统戏曲偏好",
+              "避开商业化打卡"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-12T00:27:46.554303Z",
+            "conversation_turn_id": "Q021",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_533c424a01365d09ab8f2e1f8fe1e32e",
+            "suggestion_type": "experience",
+            "title": "中国昆曲博物馆小型演出或讲座",
+            "summary": "面向戏迷的剧场次与展示，适合深入了解昆曲。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "中国昆曲博物馆小型演出或讲座"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "传统戏曲深度体验",
+              "非热门打卡路线"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-12T00:27:46.554303Z",
+            "conversation_turn_id": "Q021",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_ab84e30fb70b5927a4551584c9e31b28",
+            "suggestion_type": "strategy",
+            "title": "选小体量园林+老巷组合",
+            "summary": "以小园和老街区结合的方式替代热门园林大动线。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "选小体量园林+老巷组合"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "避挤",
+              "契合园林与市井结合的兴趣"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-12T00:27:46.554303Z",
+            "conversation_turn_id": "Q021",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "context_required",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "saved_context_read_only"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "mixed",
+          "requested_fact_topics": [
+            "history_general"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [
+          "output_unverified_crowding"
+        ],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "latency_seconds": 11.387758400000166,
+      "model_calls": 1,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 517,
+            "prompt_tokens": 1354,
+            "total_tokens": 1871,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 5,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 1344
+            }
+          },
+          "duration_seconds": 11.027564600000915,
+          "finish_reason": "stop",
+          "visible_output": "\n{\"response_text\": \"按你偏好园林与传统戏曲、避开商业化热门街区，可以往这几个方向体验：一是小型或冷门园林，如艺圃、耦园、沧浪亭、五峰园，规模小、氛围安静，适合慢慢品味造园意趣，而非走热门的拙政园、留园；二是听一场传统昆曲或评弹，可选平江路周边之外的社区小书场或茶馆书场，比如山塘街深处或老居民区附近的评弹书场，既有生活气息，也更贴近本地人日常；三是关注昆曲传习所或戏曲博物馆的小型演出与讲座，如中国昆曲博物馆周边，常有面向戏迷的小剧场次；四是逛园林周边的老巷与旧宅，把园林和市井生活结合起来，比如沧浪亭旁的可园、颜文樑纪念馆一带。总体思路是选小体量、本地人参与的场所，避开旅游团的动线。\", \"suggestions\": [{\"suggestion_type\": \"place\", \"title\": \"艺圃\", \"summary\": \"小体量冷门园林，游人少，适合静观造园意趣。\", \"reasons\": [\"符合避开热门街区偏好\", \"园林主题契合\"]}, {\"suggestion_type\": \"place\", \"title\": \"耦园\", \"summary\": \"位于城东北护城河边，相对安静，有独特成双成对的布局意象。\", \"reasons\": [\"冷门园林\", \"适合慢游\"]}, {\"suggestion_type\": \"experience\", \"title\": \"本地人书场的评弹演出\", \"summary\": \"选非旅游街区的社区书场或茶馆，贴近日常的评弹体验。\", \"reasons\": [\"契合传统戏曲偏好\", \"避开商业化打卡\"]}, {\"suggestion_type\": \"experience\", \"title\": \"中国昆曲博物馆小型演出或讲座\", \"summary\": \"面向戏迷的剧场次与展示，适合深入了解昆曲。\", \"reasons\": [\"传统戏曲深度体验\", \"非热门打卡路线\"]}, {\"suggestion_type\": \"strategy\", \"title\": \"选小体量园林+老巷组合\", \"summary\": \"以小园和老街区结合的方式替代热门园林大动线。\", \"reasons\": [\"避挤\", \"契合园林与市井结合的兴趣\"]}], \"comparison\": null, \"evidence_refs\": []}\n"
+        }
+      ],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "total_tokens": 1871,
+      "local_control_seconds": 0.0009814000004553236,
+      "original_draft": {
+        "response_text": "按你偏好园林与传统戏曲、避开商业化热门街区，可以往这几个方向体验：一是小型或冷门园林，如艺圃、耦园、沧浪亭、五峰园，规模小、氛围安静，适合慢慢品味造园意趣，而非走热门的拙政园、留园；二是听一场传统昆曲或评弹，可选平江路周边之外的社区小书场或茶馆书场，比如山塘街深处或老居民区附近的评弹书场，既有生活气息，也更贴近本地人日常；三是关注昆曲传习所或戏曲博物馆的小型演出与讲座，如中国昆曲博物馆周边，常有面向戏迷的小剧场次；四是逛园林周边的老巷与旧宅，把园林和市井生活结合起来，比如沧浪亭旁的可园、颜文樑纪念馆一带。总体思路是选小体量、本地人参与的场所，避开旅游团的动线。",
+        "suggestions": [
+          {
+            "suggestion_type": "place",
+            "title": "艺圃",
+            "summary": "小体量冷门园林，游人少，适合静观造园意趣。",
+            "reasons": [
+              "符合避开热门街区偏好",
+              "园林主题契合"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "place",
+            "title": "耦园",
+            "summary": "位于城东北护城河边，相对安静，有独特成双成对的布局意象。",
+            "reasons": [
+              "冷门园林",
+              "适合慢游"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "experience",
+            "title": "本地人书场的评弹演出",
+            "summary": "选非旅游街区的社区书场或茶馆，贴近日常的评弹体验。",
+            "reasons": [
+              "契合传统戏曲偏好",
+              "避开商业化打卡"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "experience",
+            "title": "中国昆曲博物馆小型演出或讲座",
+            "summary": "面向戏迷的剧场次与展示，适合深入了解昆曲。",
+            "reasons": [
+              "传统戏曲深度体验",
+              "非热门打卡路线"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "strategy",
+            "title": "选小体量园林+老巷组合",
+            "summary": "以小园和老街区结合的方式替代热门园林大动线。",
+            "reasons": [
+              "避挤",
+              "契合园林与市井结合的兴趣"
+            ],
+            "evidence_refs": []
+          }
+        ],
+        "comparison": null,
+        "evidence_refs": []
+      },
+      "controlled_draft": {
+        "response_text": "按你偏好园林与传统戏曲、避开商业化热门街区，可以往这几个方向体验：一是小型或冷门园林，如艺圃、耦园、沧浪亭、五峰园，适合慢慢品味造园意趣，而非走热门的拙政园、留园；二是听一场传统昆曲或评弹，可选平江路周边之外的社区小书场或茶馆书场，比如山塘街深处或老居民区附近的评弹书场，既有生活气息，也更贴近本地人日常；三是关注昆曲传习所或戏曲博物馆的小型演出与讲座，如中国昆曲博物馆周边，常有面向戏迷的小剧场次；四是逛园林周边的老巷与旧宅，把园林和市井生活结合起来，比如沧浪亭旁的可园、颜文樑纪念馆一带。总体思路是选小体量、本地人参与的场所，避开旅游团的动线。",
+        "suggestions": [
+          {
+            "suggestion_type": "place",
+            "title": "艺圃",
+            "summary": "小体量冷门园林，适合静观造园意趣。",
+            "reasons": [
+              "符合避开热门街区偏好",
+              "园林主题契合"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "place",
+            "title": "耦园",
+            "summary": "位于城东北护城河边，有独特成双成对的布局意象。",
+            "reasons": [
+              "冷门园林",
+              "适合慢游"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "experience",
+            "title": "本地人书场的评弹演出",
+            "summary": "选非旅游街区的社区书场或茶馆，贴近日常的评弹体验。",
+            "reasons": [
+              "契合传统戏曲偏好",
+              "避开商业化打卡"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "experience",
+            "title": "中国昆曲博物馆小型演出或讲座",
+            "summary": "面向戏迷的剧场次与展示，适合深入了解昆曲。",
+            "reasons": [
+              "传统戏曲深度体验",
+              "非热门打卡路线"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "strategy",
+            "title": "选小体量园林+老巷组合",
+            "summary": "以小园和老街区结合的方式替代热门园林大动线。",
+            "reasons": [
+              "避挤",
+              "契合园林与市井结合的兴趣"
+            ],
+            "evidence_refs": []
+          }
+        ],
+        "comparison": null,
+        "evidence_refs": []
+      },
+      "control_issues": [
+        "output_unverified_crowding"
+      ]
+    },
+    {
+      "id": "Q035",
+      "input": "那有什么适合我的体验？",
+      "history": [
+        {
+          "user": "我喜欢安静的街巷，不喜欢排队。准备去苏州。",
+          "assistant": "可以从慢节奏的街巷体验开始。"
+        }
+      ],
+      "filter_probe": false,
+      "goal": {
+        "goal_type": "recommendation",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": true,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": true,
+        "clarification_needed": false,
+        "signals": [
+          "companion_recommendation"
+        ]
+      },
+      "output": {
+        "response_text": "结合你喜欢安静街巷、不爱排队的偏好，可以试试这些苏州体验：清晨逛平江路支巷（如大儒巷、钮家巷），能感受老苏州的慢生活；再去五峰园或艺圃，适合静坐喝茶；傍晚可以走山塘街西侧的偏段或阊门一带的老街。",
+        "goal_type": "recommendation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_eb30faf4fdaf5ef39021a2ee73463a4e",
+            "suggestion_type": "experience",
+            "title": "清晨逛平江路支巷",
+            "summary": "大儒巷、钮家巷等支巷清晨安静，能体验老苏州慢生活。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "清晨逛平江路支巷"
+              }
+            ],
+            "destination": "有什么",
+            "reasons": [
+              "符合喜欢安静街巷的偏好",
+              "清晨人流较少"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-12T00:27:51.612406Z",
+            "conversation_turn_id": "Q035",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_fe9d657bbd34529e93dc5c3a41c3073d",
+            "suggestion_type": "place",
+            "title": "艺圃",
+            "summary": "小而精的园林，适合静坐喝茶。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "艺圃"
+              }
+            ],
+            "destination": "有什么",
+            "reasons": [
+              "避开热门大园林的拥挤",
+              "氛围清静"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-12T00:27:51.612406Z",
+            "conversation_turn_id": "Q035",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_eecb754f174c5d979d54ad725770e567",
+            "suggestion_type": "experience",
+            "title": "山塘街西侧偏段与阊门老街",
+            "summary": "傍晚走山塘街偏西段或阊门一带，比核心段清静。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "山塘街西侧偏段与阊门老街"
+              }
+            ],
+            "destination": "有什么",
+            "reasons": [
+              "保留老街生活气息"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-12T00:27:51.612406Z",
+            "conversation_turn_id": "Q035",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "context_required",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "saved_context_read_only"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "有什么",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [
+          "output_unverified_crowding"
+        ],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "latency_seconds": 5.037241400001221,
+      "model_calls": 1,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 262,
+            "prompt_tokens": 1297,
+            "total_tokens": 1559,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 1280
+            }
+          },
+          "duration_seconds": 4.84728520000499,
+          "finish_reason": "stop",
+          "visible_output": "\n{\"response_text\":\"结合你喜欢安静街巷、不爱排队的偏好，可以试试这些苏州体验：清晨逛平江路支巷（如大儒巷、钮家巷），赶早人少，能感受老苏州的慢生活；再去五峰园或艺圃，这类小园林游客少，适合静坐喝茶；傍晚可以走山塘街西侧的偏段或阊门一带的老街，比核心段清静得多。\",\"suggestions\":[{\"suggestion_type\":\"experience\",\"title\":\"清晨逛平江路支巷\",\"summary\":\"大儒巷、钮家巷等支巷清晨安静，能体验老苏州慢生活。\",\"reasons\":[\"符合喜欢安静街巷的偏好\",\"清晨人流较少\"]},{\"suggestion_type\":\"place\",\"title\":\"艺圃\",\"summary\":\"小而精的园林，游客相对少，适合静坐喝茶。\",\"reasons\":[\"避开热门大园林的拥挤\",\"氛围清静\"]},{\"suggestion_type\":\"experience\",\"title\":\"山塘街西侧偏段与阊门老街\",\"summary\":\"傍晚走山塘街偏西段或阊门一带，比核心段清静。\",\"reasons\":[\"人少安静\",\"保留老街生活气息\"]}]}\n"
+        }
+      ],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "total_tokens": 1559,
+      "local_control_seconds": 0.0007303999955183826,
+      "original_draft": {
+        "response_text": "结合你喜欢安静街巷、不爱排队的偏好，可以试试这些苏州体验：清晨逛平江路支巷（如大儒巷、钮家巷），赶早人少，能感受老苏州的慢生活；再去五峰园或艺圃，这类小园林游客少，适合静坐喝茶；傍晚可以走山塘街西侧的偏段或阊门一带的老街，比核心段清静得多。",
+        "suggestions": [
+          {
+            "suggestion_type": "experience",
+            "title": "清晨逛平江路支巷",
+            "summary": "大儒巷、钮家巷等支巷清晨安静，能体验老苏州慢生活。",
+            "reasons": [
+              "符合喜欢安静街巷的偏好",
+              "清晨人流较少"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "place",
+            "title": "艺圃",
+            "summary": "小而精的园林，游客相对少，适合静坐喝茶。",
+            "reasons": [
+              "避开热门大园林的拥挤",
+              "氛围清静"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "experience",
+            "title": "山塘街西侧偏段与阊门老街",
+            "summary": "傍晚走山塘街偏西段或阊门一带，比核心段清静。",
+            "reasons": [
+              "人少安静",
+              "保留老街生活气息"
+            ],
+            "evidence_refs": []
+          }
+        ],
+        "comparison": null,
+        "evidence_refs": []
+      },
+      "controlled_draft": {
+        "response_text": "结合你喜欢安静街巷、不爱排队的偏好，可以试试这些苏州体验：清晨逛平江路支巷（如大儒巷、钮家巷），能感受老苏州的慢生活；再去五峰园或艺圃，适合静坐喝茶；傍晚可以走山塘街西侧的偏段或阊门一带的老街。",
+        "suggestions": [
+          {
+            "suggestion_type": "experience",
+            "title": "清晨逛平江路支巷",
+            "summary": "大儒巷、钮家巷等支巷清晨安静，能体验老苏州慢生活。",
+            "reasons": [
+              "符合喜欢安静街巷的偏好",
+              "清晨人流较少"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "place",
+            "title": "艺圃",
+            "summary": "小而精的园林，适合静坐喝茶。",
+            "reasons": [
+              "避开热门大园林的拥挤",
+              "氛围清静"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "experience",
+            "title": "山塘街西侧偏段与阊门老街",
+            "summary": "傍晚走山塘街偏西段或阊门一带，比核心段清静。",
+            "reasons": [
+              "保留老街生活气息"
+            ],
+            "evidence_refs": []
+          }
+        ],
+        "comparison": null,
+        "evidence_refs": []
+      },
+      "control_issues": [
+        "output_unverified_crowding"
+      ]
+    },
+    {
+      "id": "Q044",
+      "input": "那有什么适合我的体验？",
+      "history": [
+        {
+          "user": "我喜欢安静的街巷，不喜欢排队。准备去苏州。",
+          "assistant": "可以从慢节奏的街巷体验开始。"
+        }
+      ],
+      "filter_probe": false,
+      "goal": {
+        "goal_type": "recommendation",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": true,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": true,
+        "clarification_needed": false,
+        "signals": [
+          "companion_recommendation"
+        ]
+      },
+      "output": {
+        "response_text": "结合你喜欢安静街巷、不爱排队的偏好，在苏州推荐两个体验：一是清晨去平江路周边的支巷漫步，比如钮家巷、大儒巷，避开主街人流，感受本地水巷生活气息；二是去同里或锦溪这样的周边水乡古镇，选非周末、傍晚时分在老街巷里慢慢走，整体节奏比热门景点从容得多。",
+        "goal_type": "recommendation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_948f3f907ffe5409b5f07b14104484b1",
+            "suggestion_type": "experience",
+            "title": "平江路支巷清晨漫步",
+            "summary": "走钮家巷、大儒巷等支巷而非平江路主街，避开人流，感受安静的苏州水巷生活。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "平江路支巷清晨漫步"
+              }
+            ],
+            "destination": "有什么",
+            "reasons": [
+              "契合喜欢安静街巷的偏好",
+              "降低排队和拥挤烦恼。"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-12T00:28:00.961171Z",
+            "conversation_turn_id": "Q044",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_c80bbb48c9d75d8c8a0a0c18793fffc0",
+            "suggestion_type": "destination",
+            "title": "锦溪或同里的非周末傍晚老街",
+            "summary": "周边水乡古镇的老巷，避开主街与高峰时段，节奏慢、氛围静。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "锦溪或同里的非周末傍晚老街"
+              }
+            ],
+            "destination": "有什么",
+            "reasons": [
+              "比周庄、乌镇等热门古镇安静",
+              "傍晚光线好且游客较少"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-12T00:28:00.961171Z",
+            "conversation_turn_id": "Q044",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "context_required",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "saved_context_read_only"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "有什么",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [
+          "output_unverified_crowding"
+        ],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "latency_seconds": 9.34462579999672,
+      "model_calls": 1,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 435,
+            "prompt_tokens": 1297,
+            "total_tokens": 1732,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 198,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 1280
+            }
+          },
+          "duration_seconds": 9.192299299997103,
+          "finish_reason": "stop",
+          "visible_output": "{\"response_text\":\"结合你喜欢安静街巷、不爱排队的偏好，在苏州推荐两个体验：一是清晨去平江路周边的支巷漫步，比如钮家巷、大儒巷，避开主街人流，感受本地水巷生活气息；二是去同里或锦溪这样的周边水乡古镇，选非周末、傍晚时分在老街巷里慢慢走，整体节奏比热门景点从容得多。\",\"suggestions\":[{\"suggestion_type\":\"experience\",\"title\":\"平江路支巷清晨漫步\",\"summary\":\"走钮家巷、大儒巷等支巷而非平江路主街，避开人流，感受安静的苏州水巷生活。\",\"reasons\":[\"契合喜欢安静街巷的偏好\",\"清晨人流少，降低排队和拥挤烦恼\"]},{\"suggestion_type\":\"destination\",\"title\":\"锦溪或同里的非周末傍晚老街\",\"summary\":\"周边水乡古镇的老巷，避开主街与高峰时段，节奏慢、氛围静。\",\"reasons\":[\"比周庄、乌镇等热门古镇安静\",\"傍晚光线好且游客较少\"]}],\"comparison\":null,\"evidence_refs\":[]}"
+        }
+      ],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "total_tokens": 1732,
+      "local_control_seconds": 0.0004059999992023222,
+      "original_draft": {
+        "response_text": "结合你喜欢安静街巷、不爱排队的偏好，在苏州推荐两个体验：一是清晨去平江路周边的支巷漫步，比如钮家巷、大儒巷，避开主街人流，感受本地水巷生活气息；二是去同里或锦溪这样的周边水乡古镇，选非周末、傍晚时分在老街巷里慢慢走，整体节奏比热门景点从容得多。",
+        "suggestions": [
+          {
+            "suggestion_type": "experience",
+            "title": "平江路支巷清晨漫步",
+            "summary": "走钮家巷、大儒巷等支巷而非平江路主街，避开人流，感受安静的苏州水巷生活。",
+            "reasons": [
+              "契合喜欢安静街巷的偏好",
+              "清晨人流少，降低排队和拥挤烦恼"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "destination",
+            "title": "锦溪或同里的非周末傍晚老街",
+            "summary": "周边水乡古镇的老巷，避开主街与高峰时段，节奏慢、氛围静。",
+            "reasons": [
+              "比周庄、乌镇等热门古镇安静",
+              "傍晚光线好且游客较少"
+            ],
+            "evidence_refs": []
+          }
+        ],
+        "comparison": null,
+        "evidence_refs": []
+      },
+      "controlled_draft": {
+        "response_text": "结合你喜欢安静街巷、不爱排队的偏好，在苏州推荐两个体验：一是清晨去平江路周边的支巷漫步，比如钮家巷、大儒巷，避开主街人流，感受本地水巷生活气息；二是去同里或锦溪这样的周边水乡古镇，选非周末、傍晚时分在老街巷里慢慢走，整体节奏比热门景点从容得多。",
+        "suggestions": [
+          {
+            "suggestion_type": "experience",
+            "title": "平江路支巷清晨漫步",
+            "summary": "走钮家巷、大儒巷等支巷而非平江路主街，避开人流，感受安静的苏州水巷生活。",
+            "reasons": [
+              "契合喜欢安静街巷的偏好",
+              "降低排队和拥挤烦恼。"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "destination",
+            "title": "锦溪或同里的非周末傍晚老街",
+            "summary": "周边水乡古镇的老巷，避开主街与高峰时段，节奏慢、氛围静。",
+            "reasons": [
+              "比周庄、乌镇等热门古镇安静",
+              "傍晚光线好且游客较少"
+            ],
+            "evidence_refs": []
+          }
+        ],
+        "comparison": null,
+        "evidence_refs": []
+      },
+      "control_issues": [
+        "output_unverified_crowding"
+      ]
+    },
+    {
+      "id": "conditional",
+      "input": "我不喜欢排队，想在苏州慢慢走，有什么带条件的建议？",
+      "history": [],
+      "filter_probe": false,
+      "goal": {
+        "goal_type": "recommendation",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_recommendation"
+        ]
+      },
+      "output": {
+        "response_text": "在苏州慢慢走、避开排队，可以这样安排：\n\n1. 选时间开门早或人流分散的园林：沧浪亭、网师园通常比拙政园、留园清静，清晨开园前后入园体验更好；平江路、山塘街在早晨或工作日白天也比傍晚舒服。\n\n2. 用老街巷和步行路线替代热门景点：从平江路拐进钮家巷、大儒巷一带，或者走十全街、五卅路附近的巷子，3. 博物馆类（如苏州博物馆本馆）参观人数多，或改看忠王府周边、艺圃等小而精的园林。\n\n4. 条件策略：节假日和周末人流明显更多，尽量选工作日出行；热门景点提前在官方渠道预约、早到，是减少现场等待的两个关键条件。",
+        "goal_type": "recommendation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_735b3a568e1652adbcd6a92e9fdedbb6",
+            "suggestion_type": "strategy",
+            "title": "选冷门园林替代热门园林",
+            "summary": "适合慢逛。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "选冷门园林替代热门园林"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "规模小而精致，适合慢慢走",
+              "避开最热门的排队场景"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-12T00:28:09.365250Z",
+            "conversation_turn_id": "conditional",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_526f53012b245e06bb3999b52ef28c76",
+            "suggestion_type": "strategy",
+            "title": "清晨入园 + 工作日出行",
+            "summary": "开园时段和工作日人流明显更少，是减少排队的两个关键条件。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "清晨入园 + 工作日出行"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "早到可显著减少现场等待",
+              "热门景点建议提前官方渠道预约"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-12T00:28:09.365250Z",
+            "conversation_turn_id": "conditional",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_709fe74873885062990d642cc571aaee",
+            "suggestion_type": "place",
+            "title": "平江路及周边巷弄慢行",
+            "summary": "但钮家巷、大儒巷等支巷清静，适合无目的地漫步。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "平江路及周边巷弄慢行"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "体验老苏州街巷生活"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-12T00:28:09.365250Z",
+            "conversation_turn_id": "conditional",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "context_required",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "saved_context_read_only"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [
+          "output_unverified_crowding",
+          "output_unverified_queue"
+        ],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "latency_seconds": 8.401529299997492,
+      "model_calls": 1,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 453,
+            "prompt_tokens": 1270,
+            "total_tokens": 1723,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 7,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 1216
+            }
+          },
+          "duration_seconds": 8.269158199997037,
+          "finish_reason": "stop",
+          "visible_output": "\n{\"response_text\": \"在苏州慢慢走、避开排队，可以这样安排：\\n\\n1. 选时间开门早或人流分散的园林：沧浪亭、网师园通常比拙政园、留园清静，清晨开园前后入园体验更好；平江路、山塘街在早晨或工作日白天也比傍晚舒服。\\n\\n2. 用老街巷和步行路线替代热门景点：从平江路拐进钮家巷、大儒巷一带，或者走十全街、五卅路附近的巷子，慢慢逛基本不需要排队。\\n\\n3. 博物馆类（如苏州博物馆本馆）参观人数多，如不想排队可考虑条件替代：只在人少时段去，或改看忠王府周边、艺圃等小而精的园林。\\n\\n4. 条件策略：节假日和周末人流明显更多，尽量选工作日出行；热门景点提前在官方渠道预约、早到，是减少现场等待的两个关键条件。\", \"suggestions\": [{\"suggestion_type\": \"strategy\", \"title\": \"选冷门园林替代热门园林\", \"summary\": \"沧浪亭、网师园、艺圃通常人流少于拙政园、留园，适合慢逛。\", \"reasons\": [\"规模小而精致，适合慢慢走\", \"避开最热门的排队场景\"]}, {\"suggestion_type\": \"strategy\", \"title\": \"清晨入园 + 工作日出行\", \"summary\": \"开园时段和工作日人流明显更少，是减少排队的两个关键条件。\", \"reasons\": [\"早到可显著减少现场等待\", \"热门景点建议提前官方渠道预约\"]}, {\"suggestion_type\": \"place\", \"title\": \"平江路及周边巷弄慢行\", \"summary\": \"平江路主街人多，但钮家巷、大儒巷等支巷清静，适合无目的地漫步。\", \"reasons\": [\"基本无需排队\", \"体验老苏州街巷生活\"]}], \"comparison\": null, \"evidence_refs\": []}\n"
+        }
+      ],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "total_tokens": 1723,
+      "local_control_seconds": 0.0005837000062456354,
+      "original_draft": {
+        "response_text": "在苏州慢慢走、避开排队，可以这样安排：\n\n1. 选时间开门早或人流分散的园林：沧浪亭、网师园通常比拙政园、留园清静，清晨开园前后入园体验更好；平江路、山塘街在早晨或工作日白天也比傍晚舒服。\n\n2. 用老街巷和步行路线替代热门景点：从平江路拐进钮家巷、大儒巷一带，或者走十全街、五卅路附近的巷子，慢慢逛基本不需要排队。\n\n3. 博物馆类（如苏州博物馆本馆）参观人数多，如不想排队可考虑条件替代：只在人少时段去，或改看忠王府周边、艺圃等小而精的园林。\n\n4. 条件策略：节假日和周末人流明显更多，尽量选工作日出行；热门景点提前在官方渠道预约、早到，是减少现场等待的两个关键条件。",
+        "suggestions": [
+          {
+            "suggestion_type": "strategy",
+            "title": "选冷门园林替代热门园林",
+            "summary": "沧浪亭、网师园、艺圃通常人流少于拙政园、留园，适合慢逛。",
+            "reasons": [
+              "规模小而精致，适合慢慢走",
+              "避开最热门的排队场景"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "strategy",
+            "title": "清晨入园 + 工作日出行",
+            "summary": "开园时段和工作日人流明显更少，是减少排队的两个关键条件。",
+            "reasons": [
+              "早到可显著减少现场等待",
+              "热门景点建议提前官方渠道预约"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "place",
+            "title": "平江路及周边巷弄慢行",
+            "summary": "平江路主街人多，但钮家巷、大儒巷等支巷清静，适合无目的地漫步。",
+            "reasons": [
+              "基本无需排队",
+              "体验老苏州街巷生活"
+            ],
+            "evidence_refs": []
+          }
+        ],
+        "comparison": null,
+        "evidence_refs": []
+      },
+      "controlled_draft": {
+        "response_text": "在苏州慢慢走、避开排队，可以这样安排：\n\n1. 选时间开门早或人流分散的园林：沧浪亭、网师园通常比拙政园、留园清静，清晨开园前后入园体验更好；平江路、山塘街在早晨或工作日白天也比傍晚舒服。\n\n2. 用老街巷和步行路线替代热门景点：从平江路拐进钮家巷、大儒巷一带，或者走十全街、五卅路附近的巷子，3. 博物馆类（如苏州博物馆本馆）参观人数多，或改看忠王府周边、艺圃等小而精的园林。\n\n4. 条件策略：节假日和周末人流明显更多，尽量选工作日出行；热门景点提前在官方渠道预约、早到，是减少现场等待的两个关键条件。",
+        "suggestions": [
+          {
+            "suggestion_type": "strategy",
+            "title": "选冷门园林替代热门园林",
+            "summary": "适合慢逛。",
+            "reasons": [
+              "规模小而精致，适合慢慢走",
+              "避开最热门的排队场景"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "strategy",
+            "title": "清晨入园 + 工作日出行",
+            "summary": "开园时段和工作日人流明显更少，是减少排队的两个关键条件。",
+            "reasons": [
+              "早到可显著减少现场等待",
+              "热门景点建议提前官方渠道预约"
+            ],
+            "evidence_refs": []
+          },
+          {
+            "suggestion_type": "place",
+            "title": "平江路及周边巷弄慢行",
+            "summary": "但钮家巷、大儒巷等支巷清静，适合无目的地漫步。",
+            "reasons": [
+              "体验老苏州街巷生活"
+            ],
+            "evidence_refs": []
+          }
+        ],
+        "comparison": null,
+        "evidence_refs": []
+      },
+      "control_issues": [
+        "output_unverified_crowding",
+        "output_unverified_queue"
+      ]
+    }
+  ],
+  "complete": true
+}

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="9" time="0.087" timestamp="2026-10-08T01:49:16.073466+00:00" hostname="49ad068e1ae3"><testcase classname="tests.test_decision_context" name="test_context_exposes_persisted_route_and_execution_facts_with_provenance" time="0.001" /><testcase classname="tests.test_decision_context" name="test_context_carries_request_scoped_decision_memory_with_provenance" time="0.000" /><testcase classname="tests.test_decision_context" name="test_activity_semantics_coexist_with_goals_memory_and_recovery_context" time="0.000" /><testcase classname="tests.test_decision_context" name="test_completed_current_navigation_target_and_locked_are_never_editable" time="0.000" /><testcase classname="tests.test_decision_context" name="test_invariant_rejects_protected_editable_overlap_and_unknown_route_endpoint" time="0.000" /><testcase classname="tests.test_decision_context" name="test_other_day_request_keeps_execution_references_as_readonly_context" time="0.001"><failure message="app.planning_errors.DecisionContextInvariantError: decision context invariant failed: execution_references_unknown_activity">def test_other_day_request_keeps_execution_references_as_readonly_context():
+        from copy import deepcopy
+        context, goals, resolution = _cross_day_context()
+        before = deepcopy(context)
+&gt;       result = build_decision_context(context=context, goals=goals, resolution=resolution)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_decision_context.py:138: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/decision_context.py:140: in build_decision_context
+    assert_decision_context_invariants(decision_context)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+decision_context = {'active_disruption': None, 'activity_decision_semantics': [{'activity_id': 'future-editable', 'can_skip': True, 'impo... 'current_activity_id': 'activity-current', 'current_eta': '2026-10-20T11:45:00+08:00', 'delay_minutes': 45, ...}, ...}
+
+    def assert_decision_context_invariants(decision_context: dict) -&gt; None:
+        """Reject malformed context before a model can consume it."""
+        codes: list[str] = []
+        formal_days = decision_context.get("formal_itinerary", {}).get("days", [])
+        activity_ids = {
+            str(activity["activity_id"])
+            for day in formal_days for activity in day.get("activities", [])
+        }
+        semantic_ids = {str(item["activity_id"]) for item in decision_context.get("activity_decision_semantics", [])}
+        if "activity_decision_semantics" in decision_context and semantic_ids != activity_ids:
+            codes.append("activity_semantics_mismatch")
+        for item in decision_context.get("activity_decision_semantics", []):
+            if item.get("importance") == "must_do" and item.get("can_skip"):
+                codes.append("must_do_activity_skippable")
+            minimum = item.get("minimum_duration_minutes")
+            if minimum is not None and minimum &gt; item.get("planned_duration_minutes", 0):
+                codes.append("minimum_duration_exceeds_planned")
+        contract = decision_context.get("protected_constraints", {})
+        protected = set(contract.get("protected_activity_ids") or [])
+        editable = set(contract.get("editable_activity_ids") or [])
+        if protected &amp; editable:
+            codes.append("protected_editable_overlap")
+        if (protected | editable) - activity_ids:
+            codes.append("activity_contract_references_unknown_activity")
+        for day in decision_context.get("route_context", {}).get("days", []):
+            for leg in day.get("route_legs", []):
+                if str(leg["from_activity_id"]) not in activity_ids or str(leg["to_activity_id"]) not in activity_ids:
+                    codes.append("route_leg_references_unknown_activity")
+        execution = decision_context.get("execution_context") or {}
+        for key in ("current_activity_id", "navigation_target_activity_id", "first_impacted_activity_id"):
+            value = execution.get(key)
+            if value and str(value) not in activity_ids:
+                codes.append("execution_references_unknown_activity")
+                break
+        target_days = set((decision_context.get("goal_context") or {}).get("target_days") or [])
+        itinerary_days = {day["date"] for day in formal_days}
+        if target_days and not target_days &lt;= itinerary_days:
+            codes.append("goal_target_day_not_in_formal_itinerary")
+        if codes:
+&gt;           raise DecisionContextInvariantError(codes)
+E           app.planning_errors.DecisionContextInvariantError: decision context invariant failed: execution_references_unknown_activity
+
+app/decision_context.py:183: DecisionContextInvariantError</failure></testcase><testcase classname="tests.test_decision_context" name="test_other_day_request_still_rejects_truly_unknown_execution_references[current_activity_id]" time="0.001" /><testcase classname="tests.test_decision_context" name="test_other_day_request_still_rejects_truly_unknown_execution_references[navigation_target_activity_id]" time="0.000" /><testcase classname="tests.test_decision_context" name="test_other_day_request_still_rejects_truly_unknown_execution_references[first_impacted_activity_id]" time="0.001" /></testsuite></testsuites>

@@ -1,0 +1,82 @@
+{
+  "milestone": "Travel Decision Agent MVP",
+  "date": "2026-09-27",
+  "trip_id": "00000000-0000-4000-8000-000000000003",
+  "target_day": "2026-10-20",
+  "request": "请帮我调整 2026-10-20 当天的行程。我希望轻松一点，尽量少走路，18:00 前结束，现有活动尽量不要大改。",
+  "dependency_preflight": "DEMO READY",
+  "formal_itinerary": {
+    "activity_count": 5,
+    "amap_route_leg_count": 4,
+    "estimated_route_leg_count": 0,
+    "formal_conflict_count": 0,
+    "walking_minutes": 174,
+    "current_final_end_time": "18:04",
+    "must_do_activity": "中国美术学院美术馆",
+    "must_do_minimum_duration_minutes": 60
+  },
+  "attempts": [
+    {
+      "run_id": "11677f8d-2cfb-4a26-81e6-c93cfae809e0",
+      "fixture_variant": "ten_place_candidates",
+      "status": "failed",
+      "error_code": "planner_invalid_output",
+      "error_category": "unverified_place_candidate_id",
+      "retained_in_current_database": false,
+      "note": "Deleted only by the dedicated demo reset after the failure was recorded."
+    },
+    {
+      "run_id": "431e6693-92aa-4c99-8566-3f42e51f2f77",
+      "fixture_variant": "ten_place_candidates",
+      "status": "failed",
+      "error_code": "planner_invalid_output",
+      "error_category": "unverified_place_candidate_id",
+      "retained_in_current_database": false,
+      "note": "Same request retry; deleted only by the dedicated demo reset."
+    },
+    {
+      "run_id": "7bdb175e-af05-45ad-bdc6-1c55135cdd5e",
+      "fixture_variant": "five_formal_place_candidates",
+      "status": "failed",
+      "error_code": "planner_invalid_output",
+      "error_category": "invalid_explanation_after_candidate_route_and_one_review",
+      "candidate_reached": true,
+      "route_enrichment_reached": true,
+      "token_usage": 36002,
+      "retained_in_current_database": false
+    },
+    {
+      "run_id": "576523d0-a70b-4f09-9644-9fbef8bd81ba",
+      "fixture_variant": "five_formal_place_candidates",
+      "status": "failed",
+      "error_code": "planner_invalid_output",
+      "error_category": "unverified_place_candidate_id",
+      "token_usage": 0,
+      "retained_in_current_database": false
+    },
+    {
+      "run_id": "29dbac6c-030c-4a5e-aa25-74cf643990b3",
+      "fixture_variant": "five_formal_place_candidates_no_locked_activity",
+      "status": "failed",
+      "error_code": "planner_constraints_unsatisfied",
+      "error_category": "decision_ledger_evidence_validation",
+      "candidate_reached": true,
+      "route_enrichment_reached": true,
+      "validator_reached": true,
+      "validation_error_codes": [
+        "decision_evidence_unresolved",
+        "decision_memory_basis_missing",
+        "decision_tradeoff_cost_unverified"
+      ],
+      "token_usage": 56072,
+      "retained_in_current_database": true
+    }
+  ],
+  "completed_two_round_stability_runs": 0,
+  "first_pending_revision": null,
+  "rejection_feedback_persisted": false,
+  "second_round_memory_retrieved": false,
+  "decision_ledger_status": "OPEN",
+  "decision_ledger_blocks_revision_in_current_production_path": true,
+  "overall_demo_exit_gate": "NOT_PASSED"
+}

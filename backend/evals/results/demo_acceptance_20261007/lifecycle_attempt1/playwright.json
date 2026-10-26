@@ -1,0 +1,163 @@
+{
+  "config": {
+    "argv": [
+      "D:\\nodejs\\node.exe",
+      "E:\\Study\\RoamSync\\web\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "playwright.acceptance.config.ts",
+      "--grep",
+      "lifecycle"
+    ],
+    "configFile": "E:\\Study\\RoamSync\\web\\playwright.acceptance.config.ts",
+    "rootDir": "E:/Study/RoamSync/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "E:/Study/RoamSync/backend/evals/results/demo_acceptance_20261007/browser",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "E:/Study/RoamSync/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "demo-*.spec.ts"
+        ],
+        "timeout": 900000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../backend/evals/results/demo_acceptance_20261007/playwright.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "demo-lifecycle.spec.ts",
+      "file": "demo-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "lifecycle revises an unaccepted candidate then formalizes only on explicit approval",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 900000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11231,
+                  "error": {
+                    "message": "Error: Second-day Run awaiting_clarification: {\"kind\":\"clarification\",\"questions\":[\"当前行程中没有找到“原有旅行日期2026年10月9日至10月11日”，请重新指定活动。\",\"当前行程中没有找到“总预算3000元”，请重新指定活动。\",\"当前行程中没有找到“一人出行”，请重新指定活动。\",\"当前行程中没有找到“喜欢历史文化”，请重新指定活动。\",\"当前行程中没有找到“老街巷”，请重新指定活动。\",\"当前行程中没有找到“本地小吃的偏好”，请重新指定活动。\"],\"run_id\":\"51076f6d-c26f-40f1-8a00-339c2662de30\"}",
+                    "stack": "Error: Second-day Run awaiting_clarification: {\"kind\":\"clarification\",\"questions\":[\"当前行程中没有找到“原有旅行日期2026年10月9日至10月11日”，请重新指定活动。\",\"当前行程中没有找到“总预算3000元”，请重新指定活动。\",\"当前行程中没有找到“一人出行”，请重新指定活动。\",\"当前行程中没有找到“喜欢历史文化”，请重新指定活动。\",\"当前行程中没有找到“老街巷”，请重新指定活动。\",\"当前行程中没有找到“本地小吃的偏好”，请重新指定活动。\"],\"run_id\":\"51076f6d-c26f-40f1-8a00-339c2662de30\"}\n    at expect.poll.timeout (E:\\Study\\RoamSync\\web\\e2e\\demo-lifecycle.spec.ts:43:89)\n    at E:\\Study\\RoamSync\\web\\e2e\\demo-lifecycle.spec.ts:39:5",
+                    "location": {
+                      "file": "E:\\Study\\RoamSync\\web\\e2e\\demo-lifecycle.spec.ts",
+                      "column": 89,
+                      "line": 43
+                    },
+                    "snippet": "  41 |       report.latest_run = run;\n  42 |       save();\n> 43 |       if ([\"failed\", \"cancelled\", \"awaiting_clarification\"].includes(run.status)) throw new Error(`Second-day Run ${run.status}: ${run.error_code ?? JSON.stringify(run.pending_interrupt)}`);\n     |                                                                                         ^\n  44 |       return run.status;\n  45 |     }, { timeout: 480_000, intervals: [2000, 5000] }).toBe(\"awaiting_confirmation\");\n  46 |     const revised = await get(`planning-runs/${report.run_id}/revision`);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "E:\\Study\\RoamSync\\web\\e2e\\demo-lifecycle.spec.ts",
+                        "column": 89,
+                        "line": 43
+                      },
+                      "message": "Error: Second-day Run awaiting_clarification: {\"kind\":\"clarification\",\"questions\":[\"当前行程中没有找到“原有旅行日期2026年10月9日至10月11日”，请重新指定活动。\",\"当前行程中没有找到“总预算3000元”，请重新指定活动。\",\"当前行程中没有找到“一人出行”，请重新指定活动。\",\"当前行程中没有找到“喜欢历史文化”，请重新指定活动。\",\"当前行程中没有找到“老街巷”，请重新指定活动。\",\"当前行程中没有找到“本地小吃的偏好”，请重新指定活动。\"],\"run_id\":\"51076f6d-c26f-40f1-8a00-339c2662de30\"}\n\n  41 |       report.latest_run = run;\n  42 |       save();\n> 43 |       if ([\"failed\", \"cancelled\", \"awaiting_clarification\"].includes(run.status)) throw new Error(`Second-day Run ${run.status}: ${run.error_code ?? JSON.stringify(run.pending_interrupt)}`);\n     |                                                                                         ^\n  44 |       return run.status;\n  45 |     }, { timeout: 480_000, intervals: [2000, 5000] }).toBe(\"awaiting_confirmation\");\n  46 |     const revised = await get(`planning-runs/${report.run_id}/revision`);\n    at expect.poll.timeout (E:\\Study\\RoamSync\\web\\e2e\\demo-lifecycle.spec.ts:43:89)\n    at E:\\Study\\RoamSync\\web\\e2e\\demo-lifecycle.spec.ts:39:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-07T14:05:19.990Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "E:\\Study\\RoamSync\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-lifecycle-lifecycle-r-97bc7-s-only-on-explicit-approval\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\Study\\RoamSync\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-lifecycle-lifecycle-r-97bc7-s-only-on-explicit-approval\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "E:\\Study\\RoamSync\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-lifecycle-lifecycle-r-97bc7-s-only-on-explicit-approval\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "E:\\Study\\RoamSync\\web\\e2e\\demo-lifecycle.spec.ts",
+                    "column": 89,
+                    "line": 43
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ff3dd5d965940becb5e2-ae8cf8d4166f6889e8cc",
+          "file": "demo-lifecycle.spec.ts",
+          "line": 7,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-07T14:05:19.255Z",
+    "duration": 12982.112000000001,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

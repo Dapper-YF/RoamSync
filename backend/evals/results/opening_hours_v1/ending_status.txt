@@ -1,0 +1,629 @@
+ M .env.example
+ M .gitignore
+ M README.md
+ M android/app/build.gradle.kts
+ M android/app/src/main/AndroidManifest.xml
+ M android/app/src/main/java/com/roamsync/app/MainActivity.kt
+ M android/app/src/main/java/com/roamsync/app/data/remote/ApiModels.kt
+ M android/app/src/main/java/com/roamsync/app/data/remote/RoamSyncApi.kt
+ M android/app/src/main/java/com/roamsync/app/di/NetworkModule.kt
+ M android/app/src/main/java/com/roamsync/app/ui/RoamSyncTheme.kt
+ M android/app/src/main/java/com/roamsync/app/ui/RoamSyncViewModel.kt
+ M backend/Dockerfile
+ M backend/app/agent_worker.py
+ M backend/app/candidate_route_service.py
+ M backend/app/config.py
+ M backend/app/database.py
+ M backend/app/demo_seed.py
+ M backend/app/init_checkpoints.py
+ M backend/app/main.py
+ M backend/app/maps_service.py
+ M backend/app/openai_planner.py
+ M backend/app/plan_revision_service.py
+ M backend/app/planner_repository.py
+ M backend/app/planning_context.py
+ M backend/app/planning_errors.py
+ M backend/app/planning_graph.py
+ M backend/app/planning_graph_runtime.py
+ M backend/app/planning_intent_service.py
+ M backend/app/planning_run_repository.py
+ M backend/app/repository.py
+ M backend/app/schemas.py
+ M backend/pyproject.toml
+ M backend/tests/test_openai_planner.py
+ M backend/tests/test_planner.py
+ M backend/tests/test_planning_graph.py
+ M backend/tests/test_planning_intents.py
+ M backend/tests/test_planning_runs.py
+ M backend/uv.lock
+ M compose.yaml
+ M docs/AGENT_ARCHITECTURE.md
+ M docs/DEMO_RUNBOOK.md
+ D web/.env.test
+ M web/e2e/planner.spec.ts
+ M web/e2e/planner.spec.ts-snapshots/planner-1024-win32.png
+ M web/e2e/planner.spec.ts-snapshots/planner-1440-win32.png
+ M web/nginx.conf
+ M web/playwright.config.ts
+ M web/src/App.test.tsx
+ M web/src/App.tsx
+ M web/src/components/AiPlannerPanel.tsx
+ M web/src/components/Inspector.tsx
+ M web/src/components/PlannerSidebar.tsx
+ D web/src/components/TripBriefingDrawer.tsx
+ M web/src/data/apiTripPlanningRepository.test.ts
+ M web/src/data/apiTripPlanningRepository.ts
+ M web/src/data/demoData.ts
+ M web/src/data/mockTripPlanningRepository.test.ts
+ M web/src/data/mockTripPlanningRepository.ts
+ M web/src/domain/types.ts
+ M web/src/main.tsx
+ M web/src/styles.css
+ M web/vite.config.ts
+?? .tmp-days.json
+?? AGENTS.md
+?? ROAMSYNC_CURRENT_STATE_AUDIT_20260921.md
+?? android-phase-d-launch.png
+?? android-phase-d-major.png
+?? android-phase-d-unlock.png
+?? android/app/src/main/java/com/roamsync/app/data/remote/ExecutionModels.kt
+?? android/app/src/main/java/com/roamsync/app/data/remote/PlanningModels.kt
+?? android/app/src/main/java/com/roamsync/app/navigation/AmapNavigationSource.kt
+?? android/app/src/main/java/com/roamsync/app/navigation/AmapPrivacyGate.kt
+?? android/app/src/main/java/com/roamsync/app/navigation/DelayScenario.kt
+?? android/app/src/main/java/com/roamsync/app/navigation/NavigationModule.kt
+?? android/app/src/main/java/com/roamsync/app/navigation/NavigationObservationMapper.kt
+?? android/app/src/main/java/com/roamsync/app/navigation/NavigationObservationRepository.kt
+?? android/app/src/main/java/com/roamsync/app/navigation/NavigationRuntime.kt
+?? android/app/src/main/java/com/roamsync/app/navigation/NavigationSource.kt
+?? android/app/src/main/java/com/roamsync/app/navigation/ObservationOutbox.kt
+?? android/app/src/main/java/com/roamsync/app/navigation/ObservationUploadPolicy.kt
+?? android/app/src/main/java/com/roamsync/app/ui/ExecutionPresentation.kt
+?? android/app/src/main/java/com/roamsync/app/ui/MobileApp.kt
+?? android/app/src/main/java/com/roamsync/app/ui/RouteMap.kt
+?? android/app/src/main/res/drawable-nodpi/roamsync_launcher.png
+?? android/app/src/main/res/drawable/ic_launcher_artwork.xml
+?? android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+?? android/app/src/main/res/values/launcher_colors.xml
+?? android/app/src/test/java/com/roamsync/app/navigation/NavigationObservationCoreTest.kt
+?? android/app/src/test/java/com/roamsync/app/ui/ExecutionPresentationTest.kt
+?? android/app/src/test/java/com/roamsync/app/ui/PlanningWorkflowTest.kt
+?? backend/app/activity_experience_impact.py
+?? backend/app/agent_monitor.py
+?? backend/app/agent_observation.py
+?? backend/app/assistant_routes.py
+?? backend/app/assistant_service.py
+?? backend/app/candidate_schedule.py
+?? backend/app/companion_context.py
+?? backend/app/companion_contracts.py
+?? backend/app/companion_facts.py
+?? backend/app/companion_graph.py
+?? backend/app/companion_grounding.py
+?? backend/app/companion_information.py
+?? backend/app/companion_knowledge.py
+?? backend/app/companion_provider.py
+?? backend/app/companion_runtime.py
+?? backend/app/companion_state.py
+?? backend/app/decision_context.py
+?? backend/app/decision_ledger.py
+?? backend/app/decision_memory.py
+?? backend/app/demo_preflight.py
+?? backend/app/destination_research.py
+?? backend/app/dialogue_observation.py
+?? backend/app/experience_replanning_service.py
+?? backend/app/external_facts.py
+?? backend/app/goal_aware_demo.py
+?? backend/app/initial_places_service.py
+?? backend/app/knowledge_corpus/hangzhou_reviewed_v1.json
+?? backend/app/model_client.py
+?? backend/app/navigation/__init__.py
+?? backend/app/navigation/delay_impact.py
+?? backend/app/navigation/disruption_service.py
+?? backend/app/navigation/event_detector.py
+?? backend/app/navigation/execution_context.py
+?? backend/app/navigation/execution_projection.py
+?? backend/app/navigation/execution_read_model.py
+?? backend/app/navigation/fake_routing_provider.py
+?? backend/app/navigation/observation_ingestion.py
+?? backend/app/navigation/providers.py
+?? backend/app/navigation/recovery.py
+?? backend/app/navigation/session_service.py
+?? backend/app/navigation/start_navigation.py
+?? backend/app/openai_intent_parser.py
+?? backend/app/planner_entity_resolution.py
+?? backend/app/planner_references.py
+?? backend/app/planning_explanation.py
+?? backend/app/planning_goals.py
+?? backend/app/planning_progress.py
+?? backend/app/timeline_impact.py
+?? backend/app/tourism_knowledge/__init__.py
+?? backend/app/tourism_knowledge/boundary.py
+?? backend/app/tourism_knowledge/ingestion.py
+?? backend/app/tourism_knowledge/interfaces.py
+?? backend/app/tourism_knowledge/models.py
+?? backend/app/tourism_knowledge/ranking.py
+?? backend/app/tourism_knowledge/repository.py
+?? backend/app/tourism_knowledge/service.py
+?? backend/app/tourism_knowledge_adapter.py
+?? backend/app/travel_decision_demo.py
+?? backend/app/travel_facts/__init__.py
+?? backend/app/travel_facts/adapters.py
+?? backend/app/travel_facts/execution.py
+?? backend/app/travel_facts/interfaces.py
+?? backend/app/travel_facts/models.py
+?? backend/app/travel_facts/normalization.py
+?? backend/app/travel_facts/opening_hours.py
+?? backend/app/travel_facts/policies.py
+?? backend/app/travel_facts/repository.py
+?? backend/app/travel_facts/resolution.py
+?? backend/app/travel_facts/search_evidence.py
+?? backend/app/travel_facts/service.py
+?? backend/app/travel_goal_router.py
+?? backend/app/travel_language.py
+?? backend/app/trip_execution_service.py
+?? backend/evals/__init__.py
+?? backend/evals/agent_reliability/__init__.py
+?? backend/evals/agent_reliability/run.py
+?? backend/evals/companion_conversation_smoke.py
+?? backend/evals/companion_forecast.py
+?? backend/evals/companion_phase1/__init__.py
+?? backend/evals/companion_phase1/run.py
+?? backend/evals/companion_phase2/__init__.py
+?? backend/evals/companion_phase2/run.py
+?? backend/evals/intent_cases.py
+?? backend/evals/knowledge_coverage.py
+?? backend/evals/opening_hours_v1.py
+?? backend/evals/phase25_final.py
+?? backend/evals/results/activity_decision_semantics_stage21/normal_tradeoff_live_20260924.json
+?? backend/evals/results/agent_reliability/reliability_20260928.json
+?? backend/evals/results/baseline-offline/ambiguous-relaxed.json
+?? backend/evals/results/baseline-offline/bad-but-valid-rush.json
+?? backend/evals/results/baseline-offline/budget-pressure.json
+?? backend/evals/results/baseline-offline/culture-not-shopping.json
+?? backend/evals/results/baseline-offline/initial-hangzhou-cultural.json
+?? backend/evals/results/baseline-offline/initial_plan_control.json
+?? backend/evals/results/baseline-offline/initial_plan_with_budget_expression.json
+?? backend/evals/results/baseline-offline/must-do-show-conflict.json
+?? backend/evals/results/baseline-offline/provider-failure.json
+?? backend/evals/results/baseline-offline/recovery-delay-45.json
+?? backend/evals/results/baseline-offline/reject-repeat-density.json
+?? backend/evals/results/companion_phase1/android_junit_summary.json
+?? backend/evals/results/companion_phase1/baseline.xml
+?? backend/evals/results/companion_phase1/final.xml
+?? backend/evals/results/companion_phase1/regression_20260929.json
+?? backend/evals/results/companion_phase1/runtime_eval.json
+?? backend/evals/results/companion_phase1/travel_goal_eval.json
+?? backend/evals/results/companion_phase2/android_junit_summary.json
+?? backend/evals/results/companion_phase2/baseline.xml
+?? backend/evals/results/companion_phase2/curated_benchmark.json
+?? backend/evals/results/companion_phase2/final.xml
+?? backend/evals/results/companion_phase2/integration_audit.json
+?? backend/evals/results/companion_phase2/live_answer_review.json
+?? backend/evals/results/companion_phase2/live_eval.json
+?? backend/evals/results/companion_phase2/live_eval_initial.json
+?? backend/evals/results/companion_phase2/live_followup.json
+?? backend/evals/results/companion_phase2/live_transport_diagnostic.json
+?? backend/evals/results/companion_phase2/phase1_runtime_regression.json
+?? backend/evals/results/companion_phase2/phase_a_benchmark.json
+?? backend/evals/results/companion_phase2/phase_a_implementation.patch
+?? backend/evals/results/companion_phase2/regression_20260929.json
+?? backend/evals/results/companion_phase2/tool_precision.json
+?? backend/evals/results/companion_phase2/travel_goal_eval.json
+?? backend/evals/results/companion_phase25/baseline.xml
+?? backend/evals/results/companion_phase25/final/acceptance_binding.json
+?? backend/evals/results/companion_phase25/final/audit_binding.json
+?? backend/evals/results/companion_phase25/final/backend_before_protocol_fixture_fix.xml
+?? backend/evals/results/companion_phase25/final/backend_final.xml
+?? backend/evals/results/companion_phase25/final/container_status.json
+?? backend/evals/results/companion_phase25/final/holdout_before_named_subject_fix.json
+?? backend/evals/results/companion_phase25/final/holdout_review.json
+?? backend/evals/results/companion_phase25/final/holdout_review_initial.json
+?? backend/evals/results/companion_phase25/final/holdout_review_live.json
+?? backend/evals/results/companion_phase25/final/holdout_review_live_attempt2.json
+?? backend/evals/results/companion_phase25/final/holdout_review_live_before_budget_fixture_fix.json
+?? backend/evals/results/companion_phase25/final/holdout_review_live_before_topic_cleanup.json
+?? backend/evals/results/companion_phase25/final/holdout_review_live_pre_final.json
+?? backend/evals/results/companion_phase25/final/manual_review.json
+?? backend/evals/results/companion_phase25/final/metrics.json
+?? backend/evals/results/companion_phase25/final/production_smoke.json
+?? backend/evals/results/companion_phase25/final/provider_diagnostic.json
+?? backend/evals/results/companion_phase25/final/provider_diagnostic_draft.json
+?? backend/evals/results/companion_phase25/final/real_model.json
+?? backend/evals/results/companion_phase25/final/real_model_attempt1.json
+?? backend/evals/results/companion_phase25/final/real_model_attempt2.json
+?? backend/evals/results/companion_phase25/final/real_model_attempt3.json
+?? backend/evals/results/companion_phase25/final/real_model_attempt4.json
+?? backend/evals/results/companion_phase25/final/real_model_before_budget_fixture_fix.json
+?? backend/evals/results/companion_phase25/final/real_model_before_control_normalization.json
+?? backend/evals/results/companion_phase25/final/real_model_before_named_subject_fix.json
+?? backend/evals/results/companion_phase25/final/real_model_before_reuse_authority_audit.json
+?? backend/evals/results/companion_phase25/final/real_model_before_topic_cleanup.json
+?? backend/evals/results/companion_phase25/final/real_model_interrupted.json
+?? backend/evals/results/companion_phase25/final/real_model_pre_final.json
+?? backend/evals/results/companion_phase25/final/reality_recheck.json
+?? backend/evals/results/companion_phase25/final/source_snapshot.json
+?? backend/evals/results/companion_phase25/final_focused.xml
+?? backend/evals/results/companion_phase25/final_verification.json
+?? backend/evals/results/companion_phase25/holdout_v1.json
+?? backend/evals/results/companion_phase25/prior_closeout/acceptance_binding.json
+?? backend/evals/results/companion_phase25/prior_closeout/audit_binding.json
+?? backend/evals/results/companion_phase25/prior_closeout/backend_before_protocol_fixture_fix.xml
+?? backend/evals/results/companion_phase25/prior_closeout/backend_final.xml
+?? backend/evals/results/companion_phase25/prior_closeout/container_status.json
+?? backend/evals/results/companion_phase25/prior_closeout/engineering_report.md
+?? backend/evals/results/companion_phase25/prior_closeout/final_focused.xml
+?? backend/evals/results/companion_phase25/prior_closeout/holdout_review.json
+?? backend/evals/results/companion_phase25/prior_closeout/holdout_review_initial.json
+?? backend/evals/results/companion_phase25/prior_closeout/holdout_review_live.json
+?? backend/evals/results/companion_phase25/prior_closeout/holdout_review_live_attempt2.json
+?? backend/evals/results/companion_phase25/prior_closeout/holdout_review_live_before_budget_fixture_fix.json
+?? backend/evals/results/companion_phase25/prior_closeout/holdout_review_live_before_topic_cleanup.json
+?? backend/evals/results/companion_phase25/prior_closeout/holdout_review_live_pre_final.json
+?? backend/evals/results/companion_phase25/prior_closeout/manual_review.json
+?? backend/evals/results/companion_phase25/prior_closeout/metrics.json
+?? backend/evals/results/companion_phase25/prior_closeout/production_smoke.json
+?? backend/evals/results/companion_phase25/prior_closeout/provider_diagnostic.json
+?? backend/evals/results/companion_phase25/prior_closeout/provider_diagnostic_draft.json
+?? backend/evals/results/companion_phase25/prior_closeout/real_model.json
+?? backend/evals/results/companion_phase25/prior_closeout/real_model_attempt1.json
+?? backend/evals/results/companion_phase25/prior_closeout/real_model_attempt2.json
+?? backend/evals/results/companion_phase25/prior_closeout/real_model_attempt3.json
+?? backend/evals/results/companion_phase25/prior_closeout/real_model_attempt4.json
+?? backend/evals/results/companion_phase25/prior_closeout/real_model_before_budget_fixture_fix.json
+?? backend/evals/results/companion_phase25/prior_closeout/real_model_before_control_normalization.json
+?? backend/evals/results/companion_phase25/prior_closeout/real_model_before_reuse_authority_audit.json
+?? backend/evals/results/companion_phase25/prior_closeout/real_model_before_topic_cleanup.json
+?? backend/evals/results/companion_phase25/prior_closeout/real_model_interrupted.json
+?? backend/evals/results/companion_phase25/prior_closeout/real_model_pre_final.json
+?? backend/evals/results/companion_phase25/prior_closeout/source_snapshot.json
+?? backend/evals/results/companion_phase25/repository_audit.json
+?? backend/evals/results/decision_context_stage11/decision_context_engine_mvp_20260924.json
+?? backend/evals/results/decision_ledger_stage22/closure_live_20260927.json
+?? backend/evals/results/decision_ledger_stage22/live_20260924.json
+?? backend/evals/results/knowledge_coverage/backend_final.xml
+?? backend/evals/results/knowledge_coverage/baseline_results.json
+?? backend/evals/results/knowledge_coverage/comparison.json
+?? backend/evals/results/knowledge_coverage/failure_taxonomy.json
+?? backend/evals/results/knowledge_coverage/final_before_mixed_schema_fix.json
+?? backend/evals/results/knowledge_coverage/final_before_stable_query_projection.json
+?? backend/evals/results/knowledge_coverage/final_results.json
+?? backend/evals/results/knowledge_coverage/focused.xml
+?? backend/evals/results/knowledge_coverage/freeze_manifest.json
+?? backend/evals/results/knowledge_coverage/frozen_v1.json
+?? backend/evals/results/knowledge_coverage/manual_review.json
+?? backend/evals/results/knowledge_coverage/output_freeze.json
+?? backend/evals/results/knowledge_coverage/real_results.json
+?? backend/evals/results/knowledge_coverage/verification.json
+?? backend/evals/results/opening_hours_v1/backend_before_identity_fix.xml
+?? backend/evals/results/opening_hours_v1/backend_final.xml
+?? backend/evals/results/opening_hours_v1/baseline_runtime/companion_contracts.py
+?? backend/evals/results/opening_hours_v1/baseline_runtime/companion_facts.py
+?? backend/evals/results/opening_hours_v1/baseline_runtime/companion_graph.py
+?? backend/evals/results/opening_hours_v1/baseline_runtime/companion_information.py
+?? backend/evals/results/opening_hours_v1/baseline_runtime/travel_facts/models.py
+?? backend/evals/results/opening_hours_v1/baseline_runtime/travel_facts/resolution.py
+?? backend/evals/results/opening_hours_v1/chatgpt_handoff_summary.md
+?? backend/evals/results/opening_hours_v1/ending_status.txt
+?? backend/evals/results/opening_hours_v1/final_source.json
+?? backend/evals/results/opening_hours_v1/focused.xml
+?? backend/evals/results/opening_hours_v1/foundation_benchmark.json
+?? backend/evals/results/opening_hours_v1/health.json
+?? backend/evals/results/opening_hours_v1/knowledge_original_hashes.json
+?? backend/evals/results/opening_hours_v1/knowledge_regression/final_results.json
+?? backend/evals/results/opening_hours_v1/knowledge_regression/freeze_manifest.json
+?? backend/evals/results/opening_hours_v1/knowledge_regression/frozen_v1.json
+?? backend/evals/results/opening_hours_v1/official_api_discovery.txt
+?? backend/evals/results/opening_hours_v1/official_api_probe.json
+?? backend/evals/results/opening_hours_v1/official_js_discovery.json
+?? backend/evals/results/opening_hours_v1/previous_source.json
+?? backend/evals/results/opening_hours_v1/production_after_deploy.json
+?? backend/evals/results/opening_hours_v1/production_before.json
+?? backend/evals/results/opening_hours_v1/production_before_identity_fix.json
+?? backend/evals/results/opening_hours_v1/production_binding.json
+?? backend/evals/results/opening_hours_v1/production_binding_before_identity_fix.json
+?? backend/evals/results/opening_hours_v1/production_migration.txt
+?? backend/evals/results/opening_hours_v1/production_smoke.json
+?? backend/evals/results/opening_hours_v1/production_smoke_network_failure.json
+?? backend/evals/results/opening_hours_v1/real_before_identity_fix.json
+?? backend/evals/results/opening_hours_v1/real_companion.json
+?? backend/evals/results/opening_hours_v1/real_companion_network_failure.json
+?? backend/evals/results/opening_hours_v1/real_source_validation.json
+?? backend/evals/results/opening_hours_v1/source_probe.json
+?? backend/evals/results/opening_hours_v1/starting_head.txt
+?? backend/evals/results/opening_hours_v1/starting_runtime_verification.json
+?? backend/evals/results/opening_hours_v1/starting_status.txt
+?? backend/evals/results/opening_hours_v1/verification.json
+?? backend/evals/results/opening_hours_v1/zhejiang_content_probe.json
+?? backend/evals/results/stage0_live_baseline/bad_but_valid_complete.json
+?? backend/evals/results/stage0_live_baseline/initial_plan_control.json
+?? backend/evals/results/stage0_live_baseline/initial_plan_control_after_citycode_correction.json
+?? backend/evals/results/stage0_live_baseline/initial_plan_control_after_container_proxy.json
+?? backend/evals/results/stage0_live_baseline/initial_plan_with_budget_expression.json
+?? backend/evals/results/stage0_live_baseline/must_do_show_conflict_exact_refs.json
+?? backend/evals/results/stage0_live_baseline/must_do_show_conflict_provider_failure.json
+?? backend/evals/results/stage0_live_baseline/must_do_show_conflict_retry_preplanning_failure.json
+?? backend/evals/results/stage0_live_baseline/recovery_delay_45_complete.json
+?? backend/evals/results/stage0_live_baseline/reject_replan_complete.json
+?? backend/evals/results/travel_decision_demo/glm_reference_fix_20260928.json
+?? backend/evals/results/travel_decision_demo/live_20260927.json
+?? backend/evals/results/travel_decision_demo/shadow_live_20260927.json
+?? backend/evals/results/travel_facts_integration/backend_final.xml
+?? backend/evals/results/travel_facts_integration/companion_eval.json
+?? backend/evals/results/travel_facts_integration/focused.xml
+?? backend/evals/results/travel_facts_integration/foundation.xml
+?? backend/evals/results/travel_facts_integration/foundation_benchmark.json
+?? backend/evals/results/travel_facts_integration/foundation_full.diff
+?? backend/evals/results/travel_facts_integration/import_manifest.json
+?? backend/evals/results/travel_facts_integration/knowledge_regression/final_results.json
+?? backend/evals/results/travel_facts_integration/knowledge_regression/freeze_manifest.json
+?? backend/evals/results/travel_facts_integration/knowledge_regression/frozen_v1.json
+?? backend/evals/results/travel_facts_integration/live_provider.json
+?? backend/evals/results/travel_facts_integration/live_provider_validated.json
+?? backend/evals/results/travel_facts_integration/production_before.json
+?? backend/evals/results/travel_facts_integration/production_binding.json
+?? backend/evals/results/travel_facts_integration/production_smoke.json
+?? backend/evals/results/travel_facts_integration/production_verification.json
+?? backend/evals/results/travel_facts_integration/real_companion.json
+?? backend/evals/results/travel_facts_integration/real_companion_before_final_context.json
+?? backend/evals/results/travel_facts_integration/source_snapshot.json
+?? backend/evals/results/travel_facts_integration/starting_manifest.json
+?? backend/evals/results/travel_facts_integration/verification.json
+?? backend/evals/results/travel_goal_routing/phase0_20260929.json
+?? backend/evals/results/travel_goal_routing/regression_20260929.json
+?? backend/evals/run_intent_eval.py
+?? backend/evals/run_planner_e2e_smoke.py
+?? backend/evals/run_provider_smoke.py
+?? backend/evals/run_travel_benchmark.py
+?? backend/evals/run_travel_goal_eval.py
+?? backend/evals/scenarios/travel_agent_v1.json
+?? backend/evals/tourism_knowledge/__init__.py
+?? backend/evals/tourism_knowledge/cases.json
+?? backend/evals/tourism_knowledge/corpus.json
+?? backend/evals/tourism_knowledge/fixtures.py
+?? backend/evals/tourism_knowledge/results.json
+?? backend/evals/tourism_knowledge/run.py
+?? backend/evals/tourism_knowledge/verification.json
+?? backend/evals/travel_benchmark.py
+?? backend/evals/travel_facts/README.md
+?? backend/evals/travel_facts/__init__.py
+?? backend/evals/travel_facts/baseline.json
+?? backend/evals/travel_facts/cases.json
+?? backend/evals/travel_facts/fixtures.py
+?? backend/evals/travel_facts/results.json
+?? backend/evals/travel_facts/run.py
+?? backend/evals/travel_facts/verification.json
+?? backend/evals/travel_goal_cases.py
+?? backend/migrations/versions/20260903_0014_trip_execution.py
+?? backend/migrations/versions/20260903_0015_intent_envelope.py
+?? backend/migrations/versions/20260907_0016_planning_worker_lease.py
+?? backend/migrations/versions/20260908_0017_planning_failure_details.py
+?? backend/migrations/versions/20260909_0018_assistant_answers.py
+?? backend/migrations/versions/20260909_0019_assistant_sessions.py
+?? backend/migrations/versions/20260910_0020_planning_progress.py
+?? backend/migrations/versions/20260914_0021_optional_trip_budget.py
+?? backend/migrations/versions/20260915_0022_navigation_sessions.py
+?? backend/migrations/versions/20260915_0023_trip_disruption_events.py
+?? backend/migrations/versions/20260915_0024_recovery_planning.py
+?? backend/migrations/versions/20260916_0025_navigation_observations.py
+?? backend/migrations/versions/20260921_0026_activity_experience_events.py
+?? backend/migrations/versions/20260921_0027_activity_experience_impact_index.py
+?? backend/migrations/versions/20260921_0028_execution_itinerary_version.py
+?? backend/migrations/versions/20260921_0029_experience_replanning_trigger.py
+?? backend/migrations/versions/20260921_0030_automatic_recovery_serialization.py
+?? backend/migrations/versions/20260921_0031_experience_trigger_fingerprint.py
+?? backend/migrations/versions/20260922_0032_activity_importance.py
+?? backend/migrations/versions/20260924_0033_plan_revision_rejection_feedback.py
+?? backend/migrations/versions/20260924_0034_activity_decision_semantics.py
+?? backend/tests/fixtures/opening_hours/nanjing.json
+?? backend/tests/fixtures/opening_hours/zhejiang.json
+?? backend/tests/test_activity_decision_semantics.py
+?? backend/tests/test_activity_experience_recovery.py
+?? backend/tests/test_agent_monitor.py
+?? backend/tests/test_agent_reliability_metrics.py
+?? backend/tests/test_agent_worker.py
+?? backend/tests/test_assistant_answers.py
+?? backend/tests/test_assistant_tools.py
+?? backend/tests/test_candidate_schedule.py
+?? backend/tests/test_companion_conversation_policy.py
+?? backend/tests/test_companion_fact_safety.py
+?? backend/tests/test_companion_facts.py
+?? backend/tests/test_companion_knowledge.py
+?? backend/tests/test_companion_runtime.py
+?? backend/tests/test_conversation_regressions.py
+?? backend/tests/test_decision_context.py
+?? backend/tests/test_decision_ledger.py
+?? backend/tests/test_decision_memory.py
+?? backend/tests/test_delay_impact.py
+?? backend/tests/test_destination_research.py
+?? backend/tests/test_dialogue_observation.py
+?? backend/tests/test_external_facts.py
+?? backend/tests/test_initial_places.py
+?? backend/tests/test_intent_eval_dataset.py
+?? backend/tests/test_knowledge_coverage.py
+?? backend/tests/test_map_network.py
+?? backend/tests/test_mobile_error_contract.py
+?? backend/tests/test_model_client.py
+?? backend/tests/test_navigation_event_detector.py
+?? backend/tests/test_navigation_observation_ingestion.py
+?? backend/tests/test_navigation_sessions.py
+?? backend/tests/test_navigation_start.py
+?? backend/tests/test_opening_hours.py
+?? backend/tests/test_phase25_final.py
+?? backend/tests/test_planner_entity_resolution.py
+?? backend/tests/test_planner_references.py
+?? backend/tests/test_planning_explanation.py
+?? backend/tests/test_planning_goals.py
+?? backend/tests/test_recovery_options.py
+?? backend/tests/test_timeline_impact.py
+?? backend/tests/test_tourism_knowledge.py
+?? backend/tests/test_travel_benchmark.py
+?? backend/tests/test_travel_decision_demo.py
+?? backend/tests/test_travel_facts.py
+?? backend/tests/test_travel_facts_eval.py
+?? backend/tests/test_travel_facts_execution.py
+?? backend/tests/test_travel_goal_routing.py
+?? backend/tests/test_trip_execution.py
+?? docs/AGENT_MONITOR_DEMO.md
+?? docs/AI_ENRICHMENT_FIX_20260909.md
+?? docs/AI_FLOW_REFACTOR_20260908.md
+?? docs/AI_PLAN_SYNC_20260909.md
+?? docs/ASSISTANT_CONVERSATION_20260909.md
+?? docs/ASSISTANT_TOOLS_20260909.md
+?? docs/CONVERSATION_QUANTITY_PROGRESS_20260910.md
+?? docs/DALI_DATE_SCOPE_FIX_20260910.md
+?? docs/DESTINATION_RESEARCH_20260909.md
+?? docs/INTENT_EVAL_BASELINE.md
+?? docs/MOBILE_REFACTOR_20260909.md
+?? docs/NAVIGATION_EXECUTION_DESIGN_20260915.md
+?? docs/OPEN_DATA_API_RESEARCH.md
+?? "docs/RoamSync\346\223\215\344\275\234\346\211\213\345\206\214.docx"
+?? docs/TRIP_SETTINGS_CLARIFICATION_FIX_20260910.md
+?? docs/WEB_REALITY_AUDIT.md
+?? docs/WEB_REFACTOR_20260908.md
+?? docs/agent/ACTIVITY_DECISION_SEMANTICS_MVP_20260924.md
+?? docs/agent/AGENT_EVALUATION_BASELINE_20260923.md
+?? docs/agent/AGENT_INTELLIGENCE_AUDIT_20260923.md
+?? docs/agent/AGENT_INTELLIGENCE_UPGRADE_PLAN_20260923.md
+?? docs/agent/AGENT_RELIABILITY_ENTITY_RESOLUTION_20260928.md
+?? docs/agent/AI_STRUCTURED_OUTPUT_FIX_20260928.md
+?? docs/agent/COMPANION_CONVERSATION_POLICY_20260930.md
+?? docs/agent/COMPANION_KNOWLEDGE_COVERAGE_20260930.md
+?? docs/agent/COMPANION_PHASE25_EVAL_PROTOCOL_20260930.md
+?? docs/agent/DECISION_CONTEXT_ENGINE_MVP_20260924.md
+?? docs/agent/DECISION_LEDGER_CLOSURE_PASS_20260927.md
+?? docs/agent/DECISION_LEDGER_MVP_20260924.md
+?? docs/agent/DECISION_LEDGER_SHADOW_MODE_20260927.md
+?? docs/agent/DECISION_MEMORY_MVP_20260924.md
+?? docs/agent/GOAL_AWARE_DEMO_20260924.md
+?? docs/agent/KNOWLEDGE_COVERAGE_FROZEN_PROTOCOL_20260930.md
+?? docs/agent/OPENING_HOURS_SOURCE_DECISION_20261001.md
+?? docs/agent/PLANNING_WORKER_STALL_20260930.md
+?? docs/agent/TOURISM_KNOWLEDGE_PHASE_A_20260929.md
+?? docs/agent/TRAVEL_COMPANION_PHASE1_20260929.md
+?? docs/agent/TRAVEL_COMPANION_PHASE25_FINAL_20260930.md
+?? docs/agent/TRAVEL_COMPANION_PHASE2_20260929.md
+?? docs/agent/TRAVEL_DECISION_AGENT_DEMO_CHECKLIST_20260928.md
+?? docs/agent/TRAVEL_DECISION_AGENT_DEMO_FREEZE_20260928.md
+?? docs/agent/TRAVEL_DECISION_AGENT_DEMO_QA_20260928.md
+?? docs/agent/TRAVEL_DECISION_AGENT_MILESTONE_DEMO_20260927.md
+?? docs/agent/TRAVEL_FACTS_INTEGRATION_REALITY_20260930.md
+?? docs/agent/TRAVEL_FACTS_INTEGRATION_V1_20260930.md
+?? docs/agent/TRAVEL_FACTS_PHASE_B_20260929.md
+?? docs/agent/TRAVEL_GOAL_ROUTING_PHASE0_20260929.md
+?? docs/agent/VERIFIED_OPENING_HOURS_V1_20261001.md
+?? docs/branding/roamsync-android-icon-v1.png
+?? docs/branding/roamsync-android-icon-v1.prompt.txt
+?? docs/evidence/agent-monitor/backend-baseline.xml
+?? docs/evidence/agent-monitor/backend-final.xml
+?? docs/evidence/agent-monitor/backend-monitor.xml
+?? docs/evidence/agent-monitor/demo-after-restart.json
+?? docs/evidence/agent-monitor/demo-awaiting_confirmation.json
+?? docs/evidence/agent-monitor/demo-failed.json
+?? docs/evidence/agent-monitor/web-final.json
+?? docs/evidence/ai-enrichment-20260909.json
+?? docs/evidence/ai-flow-20260908.json
+?? docs/evidence/ai-plan-sync-20260909.json
+?? docs/evidence/android/assistant-reschedule.png
+?? docs/evidence/android/budget.png
+?? docs/evidence/android/itinerary.png
+?? docs/evidence/android/map.png
+?? docs/evidence/android/roamsync-home.png
+?? docs/evidence/assistant-conversation-20260909.json
+?? docs/evidence/assistant-tools-before.json
+?? docs/evidence/assistant-tools-created-plan.json
+?? docs/evidence/assistant-tools-created.json
+?? docs/evidence/assistant-tools-final-verification.json
+?? docs/evidence/assistant-tools-followup-applied.json
+?? docs/evidence/assistant-tools-followup-complete.json
+?? docs/evidence/assistant-tools-followup-confirmed.json
+?? docs/evidence/assistant-tools-followup-final.json
+?? docs/evidence/assistant-tools-followup-fixed.json
+?? docs/evidence/assistant-tools-followup-revision.json
+?? docs/evidence/assistant-tools-followup-success.json
+?? docs/evidence/assistant-tools-followup-verified.json
+?? docs/evidence/assistant-tools-followup.json
+?? docs/evidence/assistant-tools-question.json
+?? docs/evidence/assistant-tools-reschedule-applied.json
+?? docs/evidence/assistant-tools-reschedule-preview.json
+?? docs/evidence/assistant-tools-reuse-applied.json
+?? docs/evidence/assistant-tools-reuse-preview.json
+?? docs/evidence/assistant-tools-smoke.json
+?? docs/evidence/assistant-ui-desktop.png
+?? docs/evidence/assistant-ui-mobile.png
+?? docs/evidence/assistant-ui-proposal.png
+?? docs/evidence/dali-date-scope-retry.json
+?? docs/evidence/dali-research-debug.json
+?? docs/evidence/home-message-immediate.png
+?? docs/evidence/live-destination-research.json
+?? docs/evidence/live-planning-progress.png
+?? docs/evidence/live-route-constraint.png
+?? docs/evidence/planning-reason-recheck.json
+?? docs/evidence/quantity-planner-output.json
+?? docs/evidence/research-verify-facts.json
+?? docs/evidence/research-verify-model.json
+?? docs/evidence/shangrila-quantity-retry.json
+?? docs/evidence/trip-setting-clarification-recovery.json
+?? docs/handoff/ACTIVITY_EXPERIENCE_PHASE1A_20260921.md
+?? docs/handoff/ACTIVITY_EXPERIENCE_PHASE1B_20260921.md
+?? docs/handoff/LATEST_HANDOFF.md
+?? docs/handoff/PROJECT_STATE.md
+?? docs/handoff/TOURISM_KNOWLEDGE_PHASE_A_20260929.md
+?? docs/handoff/TRAVEL_FACTS_PHASE_B_HANDOFF.md
+?? lan-connection-verified.png
+?? phase-e-disruption-fixed.png
+?? phase-e-disruption-target.png
+?? phase-e-disruption.png
+?? phase-e-launch.png
+?? phase-e-recovery-failed.png
+?? scripts/audit_official_hours_api.py
+?? scripts/audit_opening_sources.py
+?? scripts/close_knowledge_coverage.py
+?? scripts/demo-preflight.ps1
+?? scripts/forecast_production_smoke.py
+?? scripts/freeze_knowledge_eval.py
+?? scripts/opening_production_smoke.py
+?? scripts/phase25_diagnostic.py
+?? scripts/phase25_finalize_report.py
+?? scripts/phase25_release_binding.py
+?? scripts/phase25_release_smoke.py
+?? scripts/phase25_review.py
+?? scripts/report_forecast_integration.py
+?? scripts/report_opening_hours.py
+?? scripts/reset-travel-decision-demo.ps1
+?? scripts/start-travel-decision-demo.ps1
+?? web/e2e/planner.spec.ts-snapshots/planner-390-win32.png
+?? web/src/components/ActivityExperienceCard.test.tsx
+?? web/src/components/ActivityExperienceCard.tsx
+?? web/src/components/AgentConversation.tsx
+?? web/src/components/AgentMonitor.css
+?? web/src/components/AgentMonitor.test.tsx
+?? web/src/components/AgentMonitor.tsx
+?? web/src/components/AiPlannerPanel.css
+?? web/src/components/AiPlannerPanel.test.tsx
+?? web/src/components/CompanionThinking.test.tsx
+?? web/src/components/CompanionThinking.tsx
+?? web/src/components/DecisionSummary.test.tsx
+?? web/src/components/DecisionSummary.tsx
+?? web/src/components/DisruptionDetailCard.test.tsx
+?? web/src/components/DisruptionDetailCard.tsx
+?? web/src/components/ExecutionStatusCard.test.tsx
+?? web/src/components/ExecutionStatusCard.tsx
+?? web/src/components/Inspector.test.tsx
+?? web/src/components/PlanningFailure.test.tsx
+?? web/src/components/PlanningFailure.tsx
+?? web/src/components/PlanningGoalCard.test.tsx
+?? web/src/components/PlanningGoalCard.tsx
+?? web/src/components/PlanningProgress.test.tsx
+?? web/src/components/PlanningProgress.tsx
+?? web/src/components/RecoveryPanel.test.tsx
+?? web/src/components/RecoveryPanel.tsx
+?? web/src/components/ResearchEvidence.test.tsx
+?? web/src/components/ResearchEvidence.tsx
+?? web/src/hooks/useExecutionProgress.test.tsx
+?? web/src/hooks/useExecutionProgress.ts
+?? web/src/utils/agentMonitorChannel.ts
+?? web/src/utils/executionPresentation.test.ts
+?? web/src/utils/executionPresentation.ts
+?? web/src/utils/journey.test.ts
+?? web/src/utils/journey.ts
+?? web/src/utils/planningMessages.ts

@@ -1,0 +1,102 @@
+{
+  "recorded_at": "2026-09-29T03:18:33.608899+00:00",
+  "repository_head_at_start": "5572849",
+  "evidence_scope": "working tree, isolated Linux/PostgreSQL backend, local Web and Android unit suites; no deploy or live model quality batch",
+  "linux_postgresql": {
+    "baseline": {
+      "tests": 405,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "junit": "baseline.xml",
+      "passed": 405,
+      "pytest_seconds": 46.33,
+      "warnings": 2,
+      "log": "linux_postgresql_baseline.log"
+    },
+    "final": {
+      "tests": 429,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "junit": "final.xml",
+      "passed": 429,
+      "pytest_seconds": 49.69,
+      "warnings": 2,
+      "log": "linux_postgresql_final.log"
+    },
+    "new_collected_tests": 24,
+    "warning_description": "existing Starlette HTTP_422_UNPROCESSABLE_ENTITY deprecations in test_planner.py"
+  },
+  "web": {
+    "passed": 101,
+    "failed": 0,
+    "files": 18,
+    "test_seconds": 18.44,
+    "typecheck": "PASS",
+    "build": "PASS",
+    "build_seconds": 5.87,
+    "existing_react_act_stderr_warnings": 3,
+    "evidence": "observed terminal output this turn; no full raw Web log saved"
+  },
+  "android": {
+    "passed": 35,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "gradle_build": "BUILD SUCCESSFUL",
+    "gradle_seconds": 16,
+    "junit_summary": "android_junit_summary.json",
+    "real_device": false
+  },
+  "runtime_eval": {
+    "checks": 21,
+    "passed": 21,
+    "fake_provider_calls": 3,
+    "real_provider_calls": 0,
+    "database_access": false,
+    "artifact": "runtime_eval.json",
+    "mutation_evidence": "actual backend PostgreSQL integration tests, not this offline eval"
+  },
+  "travel_goal_eval": {
+    "cases": 60,
+    "runtime_correct": 60,
+    "goal_correct": 60,
+    "error_a": 0,
+    "error_b": 0,
+    "provider_calls": 0,
+    "artifact": "travel_goal_eval.json"
+  },
+  "intermediate_bad_cases": [
+    {
+      "run": "first focused backend",
+      "passed": 64,
+      "failed": 1,
+      "issue": "legacy answered PlanningRun prose continuation blocked by new ordinal Brief",
+      "resolution": "narrow explicit-Planning legacy compatibility; original test retained"
+    },
+    {
+      "run": "runtime eval intermediate",
+      "passed": 20,
+      "checks": 21,
+      "issue": "duplicate saved Suggestion titles masked raw live-fact subject",
+      "resolution": "separate raw fact/schedule names from explicit Suggestion reference binding"
+    }
+  ],
+  "parallel_rag": {
+    "worktree": "E:/Study/RoamSync-tourism-knowledge",
+    "branch": "codex/tourism-knowledge-phase-a",
+    "last_observed_head": "5023a28",
+    "last_observed_status": "clean",
+    "merged": false,
+    "registered_knowledge_tool": false
+  },
+  "migration_added": false,
+  "deployed": false,
+  "limitations": [
+    "Development fixtures, not blind holdout",
+    "No real Companion quality measurement",
+    "No Tourism Knowledge adapter integration",
+    "Decision Ledger Stage 2.2 OPEN; Demo rehearsal NOT READY"
+  ]
+}

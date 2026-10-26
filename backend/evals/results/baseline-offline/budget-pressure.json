@@ -1,0 +1,115 @@
+{
+  "scenario_id": "budget-pressure",
+  "artifact": {
+    "validation": {
+      "valid": true,
+      "errors": []
+    },
+    "candidate": {
+      "activities": [],
+      "explanation": ""
+    },
+    "tool_calls": [],
+    "changed_activity_ids": [],
+    "preserved_activity_ids": [],
+    "explanation_claims": [],
+    "explanation_evidence": [],
+    "final_outcome": "requires_live_provider_run"
+  },
+  "metrics": {
+    "intent_routing_accuracy": null,
+    "constraint_violation_rate": 0.0,
+    "goal_satisfaction": 1.0,
+    "preference_preservation": 1.0,
+    "unnecessary_change_rate": 0.0,
+    "tool_precision": 1.0,
+    "tool_recall": 0.0,
+    "forbidden_tool_calls": [],
+    "explanation_faithfulness": null,
+    "repeat_error": false,
+    "bad_but_valid_detected": false,
+    "validation_error_codes": []
+  },
+  "trace": {
+    "schema_version": "travel-agent-trace-v1",
+    "scenario_id": "budget-pressure",
+    "run_id": "offline:budget-pressure",
+    "started_at": "2026-09-23T01:40:18.164088+00:00",
+    "completed_at": "2026-09-23T01:40:18.164100+00:00",
+    "events": [
+      {
+        "graph_step": "fixture_baseline",
+        "kind": "context",
+        "input_fact_refs": [
+          "actual_spend",
+          "budget",
+          "route"
+        ],
+        "data": {
+          "mode": "offline"
+        },
+        "elapsed_ms": null
+      },
+      {
+        "graph_step": "final_outcome",
+        "kind": "decision",
+        "input_fact_refs": [],
+        "data": {
+          "outcome": "requires_live_provider_run"
+        },
+        "elapsed_ms": null
+      }
+    ]
+  },
+  "semantic_review": {
+    "schema_version": "travel-agent-semantic-rubric-v1",
+    "scenario": {
+      "id": "budget-pressure",
+      "kind": "budget_pressure",
+      "title": "预算压力",
+      "input": {
+        "request": "预算内调整行程",
+        "facts": [
+          "actual_spend",
+          "budget",
+          "route"
+        ]
+      },
+      "expected": {},
+      "required_tools": [
+        "route"
+      ],
+      "forbidden_tools": []
+    },
+    "artifact": {
+      "validation": {
+        "valid": true,
+        "errors": []
+      },
+      "candidate": {
+        "activities": [],
+        "explanation": ""
+      },
+      "tool_calls": [],
+      "changed_activity_ids": [],
+      "preserved_activity_ids": [],
+      "explanation_claims": [],
+      "explanation_evidence": [],
+      "final_outcome": "requires_live_provider_run"
+    },
+    "rubric": {
+      "relaxed_pace": "Does the proposal avoid implausibly short meals/visits and excessive consecutive stops?",
+      "tradeoff_grounding": "Does it link each major compromise to a supplied fact, constraint, or explicit preference?",
+      "uncertainty_honesty": "Does it avoid presenting unavailable provider facts as known?"
+    },
+    "required_output": {
+      "scores": {
+        "relaxed_pace": "0..2",
+        "tradeoff_grounding": "0..2",
+        "uncertainty_honesty": "0..2"
+      },
+      "evidence": "fact references and concise explanation",
+      "verdict": "pass|fail|unknown"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+package com.roamsync.app.data.remote
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class HealthResponse(val status: String)
+
+@Serializable
+data class TripCreateRequest(
+    val title: String,
+    @SerialName("start_date") val startDate: String,
+    @SerialName("end_date") val endDate: String,
+    @SerialName("total_budget_fen") val totalBudgetFen: Long,
+    @SerialName("daily_budget_fen") val dailyBudgetFen: Long,
+    val currency: String = "CNY",
+    val timezone: String = "Asia/Shanghai",
+)
+
+@Serializable
+data class TripResponse(
+    val id: String,
+    val title: String,
+    @SerialName("start_date") val startDate: String,
+    @SerialName("end_date") val endDate: String,
+    @SerialName("total_budget_fen") val totalBudgetFen: Long,
+    @SerialName("daily_budget_fen") val dailyBudgetFen: Long,
+    val currency: String,
+    val timezone: String,
+)
+
+@Serializable
+data class ExpenseCreateRequest(
+    @SerialName("idempotency_key") val idempotencyKey: String,
+    @SerialName("amount_fen") val amountFen: Long,
+    val category: String,
+    val description: String,
+)
+
+@Serializable
+data class ExpenseResponse(
+    val id: String,
+    @SerialName("trip_id") val tripId: String,
+    val duplicate: Boolean,
+)
+
+@Serializable
+data class BudgetResponse(
+    @SerialName("trip_id") val tripId: String,
+    val currency: String,
+    @SerialName("total_budget_fen") val totalBudgetFen: Long,
+    @SerialName("total_spent_fen") val totalSpentFen: Long,
+    @SerialName("total_remaining_fen") val totalRemainingFen: Long,
+    @SerialName("daily_budget_fen") val dailyBudgetFen: Long,
+    @SerialName("today_spent_fen") val todaySpentFen: Long,
+    @SerialName("today_remaining_fen") val todayRemainingFen: Long,
+    @SerialName("local_date") val localDate: String,
+)

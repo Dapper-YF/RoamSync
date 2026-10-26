@@ -1,0 +1,64 @@
+{
+  "version": "companion-knowledge-strategy-v1",
+  "fixture_sha256": "50a640606966e6dbc48385502b0e34d1fadec8dd1e7e8cc597a81be0222cfab7",
+  "real_model": true,
+  "model": "glm-5.3-flash",
+  "provider": "glm",
+  "reasoning_effort": "low",
+  "max_output_tokens": 8000,
+  "format_repair_limit": 1,
+  "provider_retries": 0,
+  "temperature": "provider default; not independently configurable by Companion",
+  "fact_tool": "absent; deliberately measures unavailable-information degradation",
+  "rules": {
+    "accuracy": "0 incorrect / 1 partial or uncertain / 2 correct; check stable historical statements against independent sources",
+    "completeness": "0 missed / 1 partial / 2 covers requested aspects",
+    "relevance": "0 off-topic / 1 partly / 2 directly answers",
+    "naturalness": "0 rigid / 1 usable / 2 fluent and context-aware",
+    "citation_authenticity": "every attributed fact must use supplied canonical source and supported assertion; model knowledge is not retrieved evidence",
+    "hallucination": "record unsupported factual statements and unverified dynamic assertions separately",
+    "review": "scores remain null until a human reviews saved output; controlled responses never establish answer quality"
+  },
+  "rows": [
+    {
+      "case_id": "history",
+      "mode": "A",
+      "input": "南京为什么叫六朝古都？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": null,
+      "error": "PlannerProviderError",
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 7.529423999999835,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "manual_scores": {
+        "accuracy": null,
+        "completeness": null,
+        "relevance": null,
+        "naturalness": null,
+        "hallucination": null
+      },
+      "checks": {
+        "runtime_expected": false,
+        "no_runtime_mutation": true
+      }
+    }
+  ],
+  "complete": false
+}

@@ -1,0 +1,68 @@
+{
+  "index": 6,
+  "kind": "structured",
+  "transport": "release configured explicit proxy",
+  "retries": 0,
+  "status": "completed",
+  "finish_reason": "stop",
+  "output_chars": 27,
+  "output_sha256": "e6e2ac66d1d9a09bdbc6ad1b88428a3dd64bffeaec4da8d83b7bbea189562f4d",
+  "usage": {
+    "completion_tokens": 15,
+    "prompt_tokens": 158,
+    "total_tokens": 173,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": null,
+      "cached_tokens": 0
+    }
+  },
+  "success": true,
+  "parse_valid": true,
+  "error_category": null,
+  "normalization_applied": true,
+  "request_observations": [
+    {
+      "host": "open.bigmodel.cn",
+      "path": "/api/paas/v4/chat/completions",
+      "method": "POST",
+      "json_body_sha256": "ae50a6cd46bc420521be4057b4810fe4ad83c72aeb737f1f0b6b2f387bf56345",
+      "body_bytes": 755,
+      "message_sizes": [
+        {
+          "role": "system",
+          "chars": 342,
+          "utf8_bytes": 392
+        },
+        {
+          "role": "user",
+          "chars": 18,
+          "utf8_bytes": 18
+        }
+      ],
+      "model": "glm-5.3-flash",
+      "response_format": {
+        "type": "json_object"
+      },
+      "stream": true,
+      "reasoning_effort": "low",
+      "thinking_enabled": "enabled",
+      "max_tokens": 1000
+    }
+  ],
+  "http_observations": [
+    {
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "content_type": "text/event-stream;charset=UTF-8",
+      "request_id": null
+    }
+  ],
+  "latency_seconds": 1.551
+}

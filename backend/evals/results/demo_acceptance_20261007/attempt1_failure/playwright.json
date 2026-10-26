@@ -1,0 +1,177 @@
+{
+  "config": {
+    "argv": [
+      "D:\\nodejs\\node.exe",
+      "E:\\Study\\RoamSync\\web\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "playwright.acceptance.config.ts"
+    ],
+    "configFile": "E:\\Study\\RoamSync\\web\\playwright.acceptance.config.ts",
+    "rootDir": "E:/Study/RoamSync/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "E:/Study/RoamSync/backend/evals/results/demo_acceptance_20261007/browser",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "E:/Study/RoamSync/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "demo-acceptance.spec.ts"
+        ],
+        "timeout": 900000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../backend/evals/results/demo_acceptance_20261007/playwright.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "demo-acceptance.spec.ts",
+      "file": "demo-acceptance.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real conversation reaches validated candidate without formal itinerary mutation",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 900000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 40368,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at E:\\Study\\RoamSync\\web\\e2e\\demo-acceptance.spec.ts:53:142",
+                    "location": {
+                      "file": "E:\\Study\\RoamSync\\web\\e2e\\demo-acceptance.spec.ts",
+                      "column": 142,
+                      "line": 53
+                    },
+                    "snippet": "  51 |       }\n  52 |       if (index === 4) {\n> 53 |         expect(last.companion_result.resolved_facts.some((f: any) => f.requirement.fact_type === \"weather.forecast\" && f.usable_as_current)).toBe(true);\n     |                                                                                                                                              ^\n  54 |       }\n  55 |       if (index === 5) {\n  56 |         expect(last.companion_result.resolved_facts.some((f: any) => f.requirement.fact_type === \"place.opening_hours\" && f.usable_as_current)).toBe(true);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "E:\\Study\\RoamSync\\web\\e2e\\demo-acceptance.spec.ts",
+                        "column": 142,
+                        "line": 53
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  51 |       }\n  52 |       if (index === 4) {\n> 53 |         expect(last.companion_result.resolved_facts.some((f: any) => f.requirement.fact_type === \"weather.forecast\" && f.usable_as_current)).toBe(true);\n     |                                                                                                                                              ^\n  54 |       }\n  55 |       if (index === 5) {\n  56 |         expect(last.companion_result.resolved_facts.some((f: any) => f.requirement.fact_type === \"place.opening_hours\" && f.usable_as_current)).toBe(true);\n    at E:\\Study\\RoamSync\\web\\e2e\\demo-acceptance.spec.ts:53:142"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "turn \u001b[33m1\u001b[39m \u001b[33m200\u001b[39m companion\n"
+                    },
+                    {
+                      "text": "turn \u001b[33m2\u001b[39m \u001b[33m200\u001b[39m companion\n"
+                    },
+                    {
+                      "text": "turn \u001b[33m3\u001b[39m \u001b[33m200\u001b[39m companion\n"
+                    },
+                    {
+                      "text": "turn \u001b[33m4\u001b[39m \u001b[33m200\u001b[39m companion\n"
+                    },
+                    {
+                      "text": "turn \u001b[33m5\u001b[39m \u001b[33m200\u001b[39m companion\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-07T13:51:32.145Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "E:\\Study\\RoamSync\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-acceptance-real-conve-a9828-t-formal-itinerary-mutation\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\Study\\RoamSync\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-acceptance-real-conve-a9828-t-formal-itinerary-mutation\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "E:\\Study\\RoamSync\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-acceptance-real-conve-a9828-t-formal-itinerary-mutation\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "E:\\Study\\RoamSync\\web\\e2e\\demo-acceptance.spec.ts",
+                    "column": 142,
+                    "line": 53
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "61294b7db1cf8fbd45a6-edf4ed7786db12b305f7",
+          "file": "demo-acceptance.spec.ts",
+          "line": 7,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-07T13:51:31.390Z",
+    "duration": 42873.381,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

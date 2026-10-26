@@ -1,0 +1,36 @@
+--- a/scripts/start-travel-decision-demo.ps1
++++ b/scripts/start-travel-decision-demo.ps1
+@@ -21,5 +21,4 @@
+ 
+ & "$PSScriptRoot\demo-preflight.ps1"
+ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+-& "$PSScriptRoot\reset-travel-decision-demo.ps1"
+-exit $LASTEXITCODE
++Write-Output "Services ready. Existing trip data preserved; no reset is performed."
+--- a/backend/evals/knowledge_coverage.py
++++ b/backend/evals/knowledge_coverage.py
+@@ -17,8 +17,11 @@
+ def load(name): return json.loads((OUT/name).read_text(encoding='utf-8'))
+ def save(name,obj): (OUT/name).write_text(json.dumps(obj,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+ async def run(mode):
+-    fixture=load('frozen_v1.json'); manifest=load('freeze_manifest.json')
+-    assert hashlib.sha256((OUT/'frozen_v1.json').read_bytes()).hexdigest()==manifest['fixture_sha256']
++    inputs=Path(__file__).resolve().parent/'fixtures'
++    OUT.mkdir(parents=True,exist_ok=True)
++    fixture=json.loads((inputs/'knowledge_coverage_frozen_v1.json').read_text(encoding='utf-8'))
++    manifest=json.loads((inputs/'knowledge_coverage_manifest.json').read_text(encoding='utf-8'))
++    assert hashlib.sha256((inputs/'knowledge_coverage_frozen_v1.json').read_bytes()).hexdigest()==manifest['fixture_sha256']
+     provider=ModelCompanionProvider() if mode=='real' else Neutral()
+     cases=fixture['cases'] if mode!='real' else [c for c in fixture['cases'] if c['case_id'] in fixture['real_model_case_ids']]
+     report={'protocol_version':fixture['protocol_version'],'fixture_sha256':manifest['fixture_sha256'],'snapshot':snapshot(),'measured_at':datetime.now(UTC).isoformat(),'mode':mode,'reviewer':'single Codex; exact registered paraphrase/scope plus manual output review; no independent website audit','controlled_provider':mode!='real','cases':[],'complete':False}
+--- a/backend/evals/phase25_final.py
++++ b/backend/evals/phase25_final.py
+@@ -74,7 +74,7 @@
+ 
+ async def holdout(real=False):
+     provider = ModelCompanionProvider() if real else NeutralProvider()
+-    path=ROOT/"evals/results/companion_phase25/holdout_v1.json"
++    path=ROOT/"evals/fixtures/phase25_holdout_v1.json"
+     original=path.read_bytes(); fixture=json.loads(original)
+     report={"snapshot":snapshot(),"fixture_sha256":hashlib.sha256(original).hexdigest(),
+         "protocol":"phase25-v2", "mode":"real_source_replay" if real else "controlled_contract_replay", "blind":False, "unsealed_and_used_for_targeted_bug_fixes":True, "reviewer":"Codex registered-assertion audit plus recorded case-level review",

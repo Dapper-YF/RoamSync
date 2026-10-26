@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="4" time="3.584" timestamp="2026-10-08T01:06:26.462021+00:00" hostname="8089053fdfd6"><testcase classname="tests.test_planning_intents" name="test_day_candidate_edit_plan_frame_is_not_a_missing_activity[\u4fdd\u7559\u6574\u4f53\u4e09\u5929\uff082026-10-09\u81f32026-10-11\uff09\u6846\u67b6\u4e0e\u5176\u4ed6\u65e5\u671f\u4e0d\u53d8]" time="0.097"><failure message="AssertionError: {'clarification_questions': ['当前行程中没有找到“整体三天（2026-10-09至2026-10-11）框架”，请重新指定活动。', '当前行程中没有找到“其他日期不变”，请重新指定活动。'], 'grou...larify', 'reasons': ['intent_or_entity_incomplete'], 'requires_confirmation': False, 'risk_level': 'medium', ...}, ...}&#10;assert not True">preservation = '保留整体三天（2026-10-09至2026-10-11）框架与其他日期不变'
+
+    @pytest.mark.parametrize("preservation", [
+        "保留整体三天（2026-10-09至2026-10-11）框架与其他日期不变",
+        "保留整体三天(2026-10-09至2026-10-11)框架与其他日期不变",
+        "保留其他日期不变",
+    ])
+    def test_day_candidate_edit_plan_frame_is_not_a_missing_activity(preservation):
+        with TestClient(app) as client:
+            trip = client.post("/api/v1/trips", json={
+                "title": "南京候选编辑回归", "destination": "南京",
+                "start_date": "2026-10-09", "end_date": "2026-10-11",
+                "total_budget_fen": 300000, "daily_budget_fen": 100000,
+            }).json()
+            before = client.get(f"/api/v1/trips/{trip['id']}/days").json()
+            message = f"请调整当前行程：把2026年10月10日的安排放轻松一些，减少当天活动密度和赶场，{preservation}，仅给出新的候选方案，不直接保存为正式行程。"
+            result = client.post(f"/api/v1/trips/{trip['id']}/planning-intent/resolve", json={"message": message}).json()
+&gt;           assert not result["requires_clarification"], result
+E           AssertionError: {'clarification_questions': ['当前行程中没有找到“整体三天（2026-10-09至2026-10-11）框架”，请重新指定活动。', '当前行程中没有找到“其他日期不变”，请重新指定活动。'], 'grou...larify', 'reasons': ['intent_or_entity_incomplete'], 'requires_confirmation': False, 'risk_level': 'medium', ...}, ...}
+E           assert not True
+
+tests/test_planning_intents.py:606: AssertionError</failure></testcase><testcase classname="tests.test_planning_intents" name="test_day_candidate_edit_plan_frame_is_not_a_missing_activity[\u4fdd\u7559\u6574\u4f53\u4e09\u5929(2026-10-09\u81f32026-10-11)\u6846\u67b6\u4e0e\u5176\u4ed6\u65e5\u671f\u4e0d\u53d8]" time="0.046"><failure message="AssertionError: {'clarification_questions': ['当前行程中没有找到“整体三天(2026-10-09至2026-10-11)框架”，请重新指定活动。', '当前行程中没有找到“其他日期不变”，请重新指定活动。'], 'grou...larify', 'reasons': ['intent_or_entity_incomplete'], 'requires_confirmation': False, 'risk_level': 'medium', ...}, ...}&#10;assert not True">preservation = '保留整体三天(2026-10-09至2026-10-11)框架与其他日期不变'
+
+    @pytest.mark.parametrize("preservation", [
+        "保留整体三天（2026-10-09至2026-10-11）框架与其他日期不变",
+        "保留整体三天(2026-10-09至2026-10-11)框架与其他日期不变",
+        "保留其他日期不变",
+    ])
+    def test_day_candidate_edit_plan_frame_is_not_a_missing_activity(preservation):
+        with TestClient(app) as client:
+            trip = client.post("/api/v1/trips", json={
+                "title": "南京候选编辑回归", "destination": "南京",
+                "start_date": "2026-10-09", "end_date": "2026-10-11",
+                "total_budget_fen": 300000, "daily_budget_fen": 100000,
+            }).json()
+            before = client.get(f"/api/v1/trips/{trip['id']}/days").json()
+            message = f"请调整当前行程：把2026年10月10日的安排放轻松一些，减少当天活动密度和赶场，{preservation}，仅给出新的候选方案，不直接保存为正式行程。"
+            result = client.post(f"/api/v1/trips/{trip['id']}/planning-intent/resolve", json={"message": message}).json()
+&gt;           assert not result["requires_clarification"], result
+E           AssertionError: {'clarification_questions': ['当前行程中没有找到“整体三天(2026-10-09至2026-10-11)框架”，请重新指定活动。', '当前行程中没有找到“其他日期不变”，请重新指定活动。'], 'grou...larify', 'reasons': ['intent_or_entity_incomplete'], 'requires_confirmation': False, 'risk_level': 'medium', ...}, ...}
+E           assert not True
+
+tests/test_planning_intents.py:606: AssertionError</failure></testcase><testcase classname="tests.test_planning_intents" name="test_day_candidate_edit_plan_frame_is_not_a_missing_activity[\u4fdd\u7559\u5176\u4ed6\u65e5\u671f\u4e0d\u53d8]" time="0.045"><failure message="AssertionError: {'clarification_questions': ['当前行程中没有找到“其他日期不变”，请重新指定活动。'], 'grounded_intent': {'ambiguities': ['activity_not_found:其他...larify', 'reasons': ['intent_or_entity_incomplete'], 'requires_confirmation': False, 'risk_level': 'medium', ...}, ...}&#10;assert not True">preservation = '保留其他日期不变'
+
+    @pytest.mark.parametrize("preservation", [
+        "保留整体三天（2026-10-09至2026-10-11）框架与其他日期不变",
+        "保留整体三天(2026-10-09至2026-10-11)框架与其他日期不变",
+        "保留其他日期不变",
+    ])
+    def test_day_candidate_edit_plan_frame_is_not_a_missing_activity(preservation):
+        with TestClient(app) as client:
+            trip = client.post("/api/v1/trips", json={
+                "title": "南京候选编辑回归", "destination": "南京",
+                "start_date": "2026-10-09", "end_date": "2026-10-11",
+                "total_budget_fen": 300000, "daily_budget_fen": 100000,
+            }).json()
+            before = client.get(f"/api/v1/trips/{trip['id']}/days").json()
+            message = f"请调整当前行程：把2026年10月10日的安排放轻松一些，减少当天活动密度和赶场，{preservation}，仅给出新的候选方案，不直接保存为正式行程。"
+            result = client.post(f"/api/v1/trips/{trip['id']}/planning-intent/resolve", json={"message": message}).json()
+&gt;           assert not result["requires_clarification"], result
+E           AssertionError: {'clarification_questions': ['当前行程中没有找到“其他日期不变”，请重新指定活动。'], 'grounded_intent': {'ambiguities': ['activity_not_found:其他...larify', 'reasons': ['intent_or_entity_incomplete'], 'requires_confirmation': False, 'risk_level': 'medium', ...}, ...}
+E           assert not True
+
+tests/test_planning_intents.py:606: AssertionError</failure></testcase><testcase classname="tests.test_planning_intents" name="test_plan_frame_meta_does_not_hide_known_or_unknown_venue_references" time="0.001"><failure message="AssertionError: assert ['activity_no...found:其他日期不变'] == ['activity_no...nd:不存在的三天博物馆']&#10;  &#10;  Left contains one more item: 'activity_not_found:其他日期不变'&#10;  Use -v to get more diff">def test_plan_frame_meta_does_not_hide_known_or_unknown_venue_references():
+        from datetime import date
+        from app.planning_intent_service import _ActivityEntity, _resolve_protected_activities
+        activity, day = uuid.uuid4(), uuid.uuid4()
+        entities = [_ActivityEntity(activity, day, date(2026, 10, 10), ("框架博物馆",))]
+        ambiguities = []
+        protected = _resolve_protected_activities("请调整第二天，保留框架博物馆与不存在的三天博物馆与其他日期不变", entities, None, ambiguities, target_day_id=day)
+        assert protected == [activity]
+&gt;       assert ambiguities == ["activity_not_found:不存在的三天博物馆"]
+E       AssertionError: assert ['activity_no...found:其他日期不变'] == ['activity_no...nd:不存在的三天博物馆']
+E         
+E         Left contains one more item: 'activity_not_found:其他日期不变'
+E         Use -v to get more diff
+
+tests/test_planning_intents.py:621: AssertionError</failure></testcase></testsuite></testsuites>

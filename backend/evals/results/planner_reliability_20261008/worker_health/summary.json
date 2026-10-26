@@ -1,0 +1,276 @@
+[
+  {
+    "index": 2,
+    "kind": "simple",
+    "transport": "release configured explicit proxy",
+    "retries": 0,
+    "status": "completed",
+    "finish_reason": "stop",
+    "output_chars": 9,
+    "output_sha256": "fad8f826a27299a982028112b1d47dc6a22b55f6d945c580883354928df0d9c7",
+    "usage": {
+      "completion_tokens": 26,
+      "prompt_tokens": 24,
+      "total_tokens": 50,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 21,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "success": true,
+    "error_category": null,
+    "request_observations": [
+      {
+        "host": "open.bigmodel.cn",
+        "path": "/api/paas/v4/chat/completions",
+        "method": "POST",
+        "json_body_sha256": "0ff2e467e2e933ef26792869e0cea1991d91b5470c654567d601ace425781399",
+        "body_bytes": 347,
+        "message_sizes": [
+          {
+            "role": "system",
+            "chars": 29,
+            "utf8_bytes": 29
+          },
+          {
+            "role": "user",
+            "chars": 26,
+            "utf8_bytes": 26
+          }
+        ],
+        "model": "glm-5.3-flash",
+        "response_format": {
+          "type": "text"
+        },
+        "stream": true,
+        "reasoning_effort": "low",
+        "thinking_enabled": "enabled",
+        "max_tokens": 1000
+      }
+    ],
+    "http_observations": [
+      {
+        "status": 200,
+        "http_version": "HTTP/1.1",
+        "content_type": "text/event-stream;charset=UTF-8",
+        "request_id": null
+      }
+    ],
+    "latency_seconds": 1.999
+  },
+  {
+    "index": 3,
+    "kind": "research",
+    "transport": "release configured explicit proxy",
+    "retries": 0,
+    "status": "completed",
+    "finish_reason": "stop",
+    "output_chars": 1575,
+    "output_sha256": "bcdd9f19ba287e98bcc505d9259827e15d365c73b8948734fef93f93ddb9e87a",
+    "usage": {
+      "completion_tokens": 801,
+      "prompt_tokens": 4547,
+      "total_tokens": 5348,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 11,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "success": true,
+    "parse_valid": true,
+    "error_category": null,
+    "normalization_applied": false,
+    "research_places": 10,
+    "schema_sha256": "fc81d5083e710600656129b90ec087fdf9c094422a4d6cb73189f95d433fc2eb",
+    "request_observations": [
+      {
+        "host": "open.bigmodel.cn",
+        "path": "/api/paas/v4/chat/completions",
+        "method": "POST",
+        "json_body_sha256": "97e33ca84c9b122f1df0583f391cb38d38c57ffa791f6c751640ab8679c5fe02",
+        "body_bytes": 17133,
+        "message_sizes": [
+          {
+            "role": "system",
+            "chars": 2277,
+            "utf8_bytes": 3561
+          },
+          {
+            "role": "user",
+            "chars": 6265,
+            "utf8_bytes": 12651
+          }
+        ],
+        "model": "glm-5.3-flash",
+        "response_format": {
+          "type": "json_object"
+        },
+        "stream": true,
+        "reasoning_effort": "low",
+        "thinking_enabled": "enabled",
+        "max_tokens": 20000
+      }
+    ],
+    "http_observations": [
+      {
+        "status": 200,
+        "http_version": "HTTP/1.1",
+        "content_type": "text/event-stream;charset=UTF-8",
+        "request_id": null
+      }
+    ],
+    "latency_seconds": 17.313
+  },
+  {
+    "index": 4,
+    "kind": "research",
+    "transport": "release configured explicit proxy",
+    "retries": 0,
+    "status": "completed",
+    "finish_reason": "stop",
+    "output_chars": 2517,
+    "output_sha256": "6abd59101e87a068947556d81bb01435e3fa40b540d74a97efb6aee4b5bd9cb0",
+    "usage": {
+      "completion_tokens": 1296,
+      "prompt_tokens": 4547,
+      "total_tokens": 5843,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 89,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "success": true,
+    "parse_valid": true,
+    "error_category": null,
+    "normalization_applied": true,
+    "research_places": 11,
+    "schema_sha256": "fc81d5083e710600656129b90ec087fdf9c094422a4d6cb73189f95d433fc2eb",
+    "request_observations": [
+      {
+        "host": "open.bigmodel.cn",
+        "path": "/api/paas/v4/chat/completions",
+        "method": "POST",
+        "json_body_sha256": "97e33ca84c9b122f1df0583f391cb38d38c57ffa791f6c751640ab8679c5fe02",
+        "body_bytes": 17133,
+        "message_sizes": [
+          {
+            "role": "system",
+            "chars": 2277,
+            "utf8_bytes": 3561
+          },
+          {
+            "role": "user",
+            "chars": 6265,
+            "utf8_bytes": 12651
+          }
+        ],
+        "model": "glm-5.3-flash",
+        "response_format": {
+          "type": "json_object"
+        },
+        "stream": true,
+        "reasoning_effort": "low",
+        "thinking_enabled": "enabled",
+        "max_tokens": 20000
+      }
+    ],
+    "http_observations": [
+      {
+        "status": 200,
+        "http_version": "HTTP/1.1",
+        "content_type": "text/event-stream;charset=UTF-8",
+        "request_id": null
+      }
+    ],
+    "latency_seconds": 23.214
+  },
+  {
+    "index": 5,
+    "kind": "structured",
+    "transport": "release configured explicit proxy",
+    "retries": 0,
+    "status": "completed",
+    "finish_reason": "stop",
+    "output_chars": 30,
+    "output_sha256": "edcf2b1fb00987414ffcda7bb84f995d9197e412d8b77322a483a23bf0cee02c",
+    "usage": {
+      "completion_tokens": 17,
+      "prompt_tokens": 158,
+      "total_tokens": 175,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 0,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "success": true,
+    "parse_valid": true,
+    "error_category": null,
+    "normalization_applied": true,
+    "request_observations": [
+      {
+        "host": "open.bigmodel.cn",
+        "path": "/api/paas/v4/chat/completions",
+        "method": "POST",
+        "json_body_sha256": "ae50a6cd46bc420521be4057b4810fe4ad83c72aeb737f1f0b6b2f387bf56345",
+        "body_bytes": 755,
+        "message_sizes": [
+          {
+            "role": "system",
+            "chars": 342,
+            "utf8_bytes": 392
+          },
+          {
+            "role": "user",
+            "chars": 18,
+            "utf8_bytes": 18
+          }
+        ],
+        "model": "glm-5.3-flash",
+        "response_format": {
+          "type": "json_object"
+        },
+        "stream": true,
+        "reasoning_effort": "low",
+        "thinking_enabled": "enabled",
+        "max_tokens": 1000
+      }
+    ],
+    "http_observations": [
+      {
+        "status": 200,
+        "http_version": "HTTP/1.1",
+        "content_type": "text/event-stream;charset=UTF-8",
+        "request_id": null
+      }
+    ],
+    "latency_seconds": 1.087
+  }
+]

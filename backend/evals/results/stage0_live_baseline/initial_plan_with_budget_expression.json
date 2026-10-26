@@ -1,0 +1,10 @@
+{
+  "schema_version": "travel-agent-evaluation-result-v1",
+  "benchmark_version": "travel-agent-v1",
+  "scenario_id": "initial_plan_with_budget_expression",
+  "mode": "live",
+  "production_metadata": {"provider": "deepseek", "model": "deepseek-v4-flash", "reasoning_effort": "none", "planning_run_id": "ca98cfd2-0d3b-462c-98b7-aa1b0181d401", "trip_id_redacted": "fcdc…e615", "token_usage": 0},
+  "artifact": {"resolved_intent": "adjust_budget", "resolved_run_type": "initial_plan", "missing_fields": ["target_day"], "clarification_triggered": true, "clarification_reason": ["intent_or_entity_incomplete"], "early_exit_stage": "resolve_intent", "reachability": {"intent_resolver":"reached", "context_builder":"reached", "destination_research":"not_reached", "external_tools":"reached", "planner":"not_reached", "route_enrichment":"not_reached", "validator":"not_reached", "critic":"not_applicable", "revision":"not_reached", "persistence":"not_reached", "user_decision":"not_applicable"}, "tool_calls": [], "validation": {}, "candidate": {}},
+  "metrics": {"intent_routing_accuracy": 0.0, "planner_metrics": "not_applicable"},
+  "trace": {"scenario":"initial_plan_with_budget_expression", "steps":["PlanningRun created", "resolve_intent", "resolved intent=adjust_budget", "missing target_day", "clarification requested", "early exit"], "private_reasoning_recorded": false}
+}

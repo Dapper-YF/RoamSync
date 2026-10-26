@@ -1,0 +1,753 @@
+[
+  {
+    "scenario": "weather-route",
+    "turn": 1,
+    "user": "查成都明天的天气，并查询成都武侯祠博物馆到成都杜甫草堂博物馆的驾车路线",
+    "answer": "路线：\n成都武侯祠博物馆 → 成都杜甫草堂博物馆：路线服务给出的驾车估计为3735米、1162秒；这是供应商估计时间，不是实时到达保证。\n\n天气与实时信息：\n成都明天有可能下雨，出门可以备把伞。\n\n预计气温约14–20°C。",
+    "summary": {
+      "version": 1,
+      "correlation_id": "f01c284b-6ae7-4b47-aa04-f72154af7104",
+      "answer_status": "complete",
+      "answer_attempts": 0,
+      "duration_ms": 8612,
+      "selection": {
+        "intent": "lookup",
+        "capabilities": [
+          "facts",
+          "poi",
+          "route"
+        ],
+        "reason_code": "route_requested",
+        "argument_source": "current_user_scoped_history_or_selected_place"
+      },
+      "events": [
+        {
+          "stage": "selection",
+          "status": "running",
+          "elapsed_ms": 153
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 3097,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 2943
+        },
+        {
+          "stage": "selection",
+          "status": "completed",
+          "elapsed_ms": 3097
+        },
+        {
+          "stage": "selection_policy",
+          "status": "completed",
+          "elapsed_ms": 3099,
+          "code": "explicit_compound_reads",
+          "capabilities": [
+            "facts",
+            "poi",
+            "route"
+          ]
+        },
+        {
+          "stage": "selection_policy",
+          "status": "completed",
+          "elapsed_ms": 3099,
+          "code": "explicit_compound_reads",
+          "capabilities": [
+            "facts",
+            "poi",
+            "route"
+          ]
+        },
+        {
+          "stage": "companion",
+          "status": "running",
+          "elapsed_ms": 3169
+        },
+        {
+          "stage": "poi",
+          "status": "running",
+          "elapsed_ms": 3174
+        },
+        {
+          "stage": "poi",
+          "status": "running",
+          "elapsed_ms": 3174
+        },
+        {
+          "stage": "poi",
+          "status": "completed",
+          "elapsed_ms": 5193
+        },
+        {
+          "stage": "poi",
+          "status": "completed",
+          "elapsed_ms": 5206
+        },
+        {
+          "stage": "route",
+          "status": "running",
+          "elapsed_ms": 5207
+        },
+        {
+          "stage": "facts",
+          "status": "running",
+          "elapsed_ms": 6144
+        },
+        {
+          "stage": "route",
+          "status": "completed",
+          "elapsed_ms": 6400
+        },
+        {
+          "stage": "facts",
+          "status": "completed",
+          "elapsed_ms": 8568
+        },
+        {
+          "stage": "companion",
+          "status": "completed",
+          "elapsed_ms": 8595
+        }
+      ]
+    },
+    "goal": {
+      "goal_type": "travel_chat",
+      "confidence": 0.93,
+      "target_runtime": "companion",
+      "mutation_requested": false,
+      "trip_context_required": false,
+      "knowledge_required": true,
+      "live_fact_likely_required": true,
+      "referenced_entities": [],
+      "referenced_previous_decision": false,
+      "clarification_needed": false,
+      "signals": [
+        "semantic_route_requested"
+      ]
+    },
+    "actual_tools": [
+      "route",
+      "facts"
+    ],
+    "place_count": 2,
+    "trip_id": null,
+    "pending_action": false,
+    "tool": "reply",
+    "seconds": 8.81
+  },
+  {
+    "scenario": "web-route",
+    "turn": 1,
+    "user": "查询成都武侯祠博物馆到成都杜甫草堂博物馆的步行路线，并搜索成都博物馆官方预约资料",
+    "answer": "路线：\n成都武侯祠博物馆 → 成都杜甫草堂博物馆：路线服务给出的步行估计为4160米、3328秒；这是供应商估计时间，不是实时到达保证。\n\n参考资料：\n查到的资料中有以下相关内容：\n\n页面中出现日期 2020-03-22：网上预约方式：扫描下方二维码，关注成都博物馆微信公众号，进入右下角“活动”栏目，在“门票预约”中进行预约。 [4]\n\n页面中出现日期 2020-03-22：观众需提前预约6日内的参观门票，每日凌晨2时停止预约当日参观门票。 [4]\n\n成都博物馆票务系统微信小程序为计划参观成都博物馆的游客提供便捷的线上预约服务，涵盖个人门票预订、团队预约审核、活动讲座报名及官方研学讲解。 [3]\n\n部分页面只取得搜索摘要，尚未核实完整正文；旧资料不代表当前规则。",
+    "summary": {
+      "version": 1,
+      "correlation_id": "c516d34a-d372-422f-a881-5781e85201b1",
+      "answer_status": "partial",
+      "answer_attempts": 1,
+      "duration_ms": 12137,
+      "selection": {
+        "intent": "route",
+        "capabilities": [
+          "poi",
+          "route",
+          "web"
+        ],
+        "reason_code": "route_requested",
+        "argument_source": "current_user_scoped_history_or_selected_place"
+      },
+      "events": [
+        {
+          "stage": "selection",
+          "status": "running",
+          "elapsed_ms": 49
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 2343,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 2292
+        },
+        {
+          "stage": "selection",
+          "status": "completed",
+          "elapsed_ms": 2343
+        },
+        {
+          "stage": "selection_policy",
+          "status": "completed",
+          "elapsed_ms": 2343,
+          "code": "explicit_compound_reads",
+          "capabilities": [
+            "poi",
+            "route",
+            "web"
+          ]
+        },
+        {
+          "stage": "selection_policy",
+          "status": "completed",
+          "elapsed_ms": 2343,
+          "code": "explicit_compound_reads",
+          "capabilities": [
+            "poi",
+            "route",
+            "web"
+          ]
+        },
+        {
+          "stage": "web",
+          "status": "running",
+          "elapsed_ms": 2344
+        },
+        {
+          "stage": "poi",
+          "status": "running",
+          "elapsed_ms": 2345
+        },
+        {
+          "stage": "poi",
+          "status": "running",
+          "elapsed_ms": 2346
+        },
+        {
+          "stage": "poi",
+          "status": "completed",
+          "elapsed_ms": 3994
+        },
+        {
+          "stage": "poi",
+          "status": "completed",
+          "elapsed_ms": 3999
+        },
+        {
+          "stage": "route",
+          "status": "running",
+          "elapsed_ms": 3999
+        },
+        {
+          "stage": "route",
+          "status": "completed",
+          "elapsed_ms": 5120
+        },
+        {
+          "stage": "web",
+          "status": "completed",
+          "elapsed_ms": 6319
+        },
+        {
+          "stage": "web_extract",
+          "status": "running",
+          "elapsed_ms": 6319
+        },
+        {
+          "stage": "web_extract",
+          "status": "completed",
+          "elapsed_ms": 7974
+        },
+        {
+          "stage": "answer",
+          "status": "running",
+          "elapsed_ms": 8019
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 12136,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 4116
+        },
+        {
+          "stage": "answer",
+          "status": "completed",
+          "elapsed_ms": 12136
+        }
+      ]
+    },
+    "goal": {
+      "goal_type": "travel_chat",
+      "confidence": 0.55,
+      "target_runtime": "companion",
+      "mutation_requested": false,
+      "trip_context_required": false,
+      "knowledge_required": false,
+      "live_fact_likely_required": false,
+      "referenced_entities": [],
+      "referenced_previous_decision": false,
+      "clarification_needed": false,
+      "signals": [
+        "semantic_route_requested"
+      ]
+    },
+    "actual_tools": [
+      "route",
+      "web_search"
+    ],
+    "place_count": 2,
+    "trip_id": null,
+    "pending_action": false,
+    "tool": "reply",
+    "seconds": 13.42
+  },
+  {
+    "scenario": "itinerary-web-missing-target",
+    "turn": 1,
+    "user": "告诉我当前保存的行程，并联网搜索成都本周的展览",
+    "answer": "参考资料：\n以下是查到的参考资料，尚未核实是否适用于当前时间：\n\n2026年4月30日-8月23日 成都博物馆1号临展厅 [1]\n\n钢铁与荣耀——意大利都灵王宫博物馆藏骑士... [1]\n\n部分页面只取得搜索摘要，尚未核实完整正文；旧资料不代表当前规则。\n\n已保存的安排：\n当前没有选中的已保存行程，请先打开你要查看的旅行安排。",
+    "summary": {
+      "version": 1,
+      "correlation_id": "1d9937d1-f252-4cc0-b05f-13a6d85a10fa",
+      "answer_status": "partial",
+      "answer_attempts": 1,
+      "duration_ms": 9870,
+      "selection": {
+        "intent": "itinerary",
+        "capabilities": [
+          "itinerary",
+          "web"
+        ],
+        "reason_code": "saved_state",
+        "argument_source": "current_user_scoped_history_or_selected_place"
+      },
+      "events": [
+        {
+          "stage": "selection",
+          "status": "running",
+          "elapsed_ms": 49
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 3124,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 3072
+        },
+        {
+          "stage": "selection",
+          "status": "completed",
+          "elapsed_ms": 3124
+        },
+        {
+          "stage": "selection_policy",
+          "status": "completed",
+          "elapsed_ms": 3124,
+          "code": "explicit_compound_reads",
+          "capabilities": [
+            "itinerary",
+            "web"
+          ]
+        },
+        {
+          "stage": "selection_policy",
+          "status": "completed",
+          "elapsed_ms": 3124,
+          "code": "explicit_compound_reads",
+          "capabilities": [
+            "itinerary",
+            "web"
+          ]
+        },
+        {
+          "stage": "web",
+          "status": "running",
+          "elapsed_ms": 3125
+        },
+        {
+          "stage": "web",
+          "status": "completed",
+          "elapsed_ms": 4516
+        },
+        {
+          "stage": "web_extract",
+          "status": "running",
+          "elapsed_ms": 4516
+        },
+        {
+          "stage": "web_extract",
+          "status": "completed",
+          "elapsed_ms": 6505
+        },
+        {
+          "stage": "answer",
+          "status": "running",
+          "elapsed_ms": 6548
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 9870,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 3321
+        },
+        {
+          "stage": "answer",
+          "status": "completed",
+          "elapsed_ms": 9870
+        }
+      ]
+    },
+    "goal": {
+      "goal_type": "travel_chat",
+      "confidence": 0.55,
+      "target_runtime": "companion",
+      "mutation_requested": false,
+      "trip_context_required": false,
+      "knowledge_required": false,
+      "live_fact_likely_required": false,
+      "referenced_entities": [],
+      "referenced_previous_decision": false,
+      "clarification_needed": false,
+      "signals": [
+        "semantic_saved_state"
+      ]
+    },
+    "actual_tools": [
+      "web_search"
+    ],
+    "place_count": 0,
+    "trip_id": null,
+    "pending_action": false,
+    "tool": "reply",
+    "seconds": 9.93
+  },
+  {
+    "scenario": "weather-saved-itinerary",
+    "turn": 1,
+    "user": "查成都明天的天气，并告诉我当前已保存的行程有哪些安排",
+    "answer": "天气与实时信息：\n成都明天有可能下雨，出门可以备把伞。\n\n预计气温约14–20°C。\n\n已保存的安排：\n目前这份「复合查询验收旅行」（目的地成都市）里没有已保存的行程安排——正式行程和安排列表都是空的，所以暂时没有可汇报的具体项目。另外你之前问的明天成都天气，我这边没有实时天气数据，无法确认，建议出发前查一下最新预报。",
+    "summary": {
+      "version": 1,
+      "correlation_id": "d8b18e81-136d-4b60-bbef-6c27c53ed8e7",
+      "answer_status": "complete",
+      "answer_attempts": 1,
+      "duration_ms": 7209,
+      "selection": {
+        "intent": "facts",
+        "capabilities": [
+          "facts",
+          "itinerary"
+        ],
+        "reason_code": "current_information",
+        "argument_source": "current_user_scoped_history_or_selected_place"
+      },
+      "events": [
+        {
+          "stage": "selection",
+          "status": "running",
+          "elapsed_ms": 45
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 2391,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 2344
+        },
+        {
+          "stage": "selection",
+          "status": "completed",
+          "elapsed_ms": 2391
+        },
+        {
+          "stage": "selection_policy",
+          "status": "completed",
+          "elapsed_ms": 2392,
+          "code": "explicit_compound_reads",
+          "capabilities": [
+            "facts",
+            "itinerary"
+          ]
+        },
+        {
+          "stage": "selection_policy",
+          "status": "completed",
+          "elapsed_ms": 2392,
+          "code": "explicit_compound_reads",
+          "capabilities": [
+            "facts",
+            "itinerary"
+          ]
+        },
+        {
+          "stage": "companion",
+          "status": "running",
+          "elapsed_ms": 2480
+        },
+        {
+          "stage": "companion",
+          "status": "running",
+          "elapsed_ms": 2571
+        },
+        {
+          "stage": "facts",
+          "status": "running",
+          "elapsed_ms": 2650
+        },
+        {
+          "stage": "facts",
+          "status": "completed",
+          "elapsed_ms": 2798
+        },
+        {
+          "stage": "companion",
+          "status": "completed",
+          "elapsed_ms": 2818
+        },
+        {
+          "stage": "answer",
+          "status": "running",
+          "elapsed_ms": 3004
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 7202,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 4197
+        },
+        {
+          "stage": "answer",
+          "status": "completed",
+          "elapsed_ms": 7202
+        },
+        {
+          "stage": "companion",
+          "status": "completed",
+          "elapsed_ms": 7208
+        }
+      ]
+    },
+    "goal": {
+      "goal_type": "travel_chat",
+      "confidence": 0.93,
+      "target_runtime": "companion",
+      "mutation_requested": false,
+      "trip_context_required": false,
+      "knowledge_required": true,
+      "live_fact_likely_required": true,
+      "referenced_entities": [],
+      "referenced_previous_decision": false,
+      "clarification_needed": false,
+      "signals": [
+        "semantic_current_information"
+      ]
+    },
+    "actual_tools": [
+      "facts"
+    ],
+    "place_count": 0,
+    "trip_id": "295bd331-b8a7-4bd7-9569-7b011db0d9bc",
+    "pending_action": false,
+    "tool": "reply",
+    "seconds": 7.35
+  },
+  {
+    "scenario": "creation-field-continuation",
+    "turn": 1,
+    "user": "帮我安排成都四天行程",
+    "answer": "准备什么时候出发？",
+    "summary": {
+      "version": 1,
+      "correlation_id": "d73ebd86-a542-46ef-a85d-54601be07672",
+      "answer_status": "complete",
+      "answer_attempts": 0,
+      "duration_ms": 2075,
+      "selection": {
+        "intent": "create",
+        "capabilities": [],
+        "reason_code": "explicit_write",
+        "argument_source": "current_user_scoped_history_or_selected_place"
+      },
+      "events": [
+        {
+          "stage": "selection",
+          "status": "running",
+          "elapsed_ms": 39
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 2073,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 2031
+        },
+        {
+          "stage": "selection",
+          "status": "completed",
+          "elapsed_ms": 2073
+        }
+      ]
+    },
+    "goal": {
+      "goal_type": "trip_planning",
+      "confidence": 0.9,
+      "target_runtime": "planning",
+      "mutation_requested": true,
+      "trip_context_required": false,
+      "knowledge_required": false,
+      "live_fact_likely_required": false,
+      "referenced_entities": [],
+      "referenced_previous_decision": false,
+      "clarification_needed": false,
+      "signals": [
+        "semantic_explicit_user_request"
+      ]
+    },
+    "actual_tools": [],
+    "place_count": 0,
+    "trip_id": null,
+    "pending_action": false,
+    "tool": "reply",
+    "seconds": 4.37
+  },
+  {
+    "scenario": "creation-field-continuation",
+    "turn": 2,
+    "user": "明天出发",
+    "answer": "请核对：成都市，2026-10-22 至 2026-10-25，共 4 天，未设置预算上限。确认后执行。",
+    "summary": {
+      "version": 1,
+      "correlation_id": "5fdd668a-b294-4c92-9d9f-1dd53032c631",
+      "answer_status": "complete",
+      "answer_attempts": 0,
+      "duration_ms": 0,
+      "selection": {
+        "intent": "create",
+        "capabilities": [],
+        "reason_code": "planning_field_follow_up",
+        "argument_source": "saved_planning_dialogue"
+      },
+      "events": []
+    },
+    "goal": {
+      "goal_type": "trip_planning",
+      "confidence": 0.86,
+      "target_runtime": "planning",
+      "mutation_requested": false,
+      "trip_context_required": false,
+      "knowledge_required": false,
+      "live_fact_likely_required": false,
+      "referenced_entities": [],
+      "referenced_previous_decision": false,
+      "clarification_needed": false,
+      "signals": [
+        "planning_field_follow_up"
+      ]
+    },
+    "actual_tools": [],
+    "place_count": 0,
+    "trip_id": null,
+    "pending_action": true,
+    "tool": "create_trip",
+    "seconds": 5.44
+  },
+  {
+    "scenario": "creation-field-continuation",
+    "turn": 3,
+    "user": "先不要保存，只看建议",
+    "answer": "好的，先不保存任何内容。给你几个适合四天成都行程的建议参考：市区内宽窄巷子、锦里、武侯祠、杜甫草堂和熊猫基地是常规核心；如果对历史和石刻有兴趣，都江堰加青城山是经典的一日远郊安排。等你想清楚方向或确认行程后，再告诉我怎么安排就行。",
+    "summary": {
+      "version": 1,
+      "correlation_id": "f463496b-246e-48c1-997a-6659ef1bb6dc",
+      "answer_status": "complete",
+      "answer_attempts": 1,
+      "duration_ms": 11683,
+      "selection": {
+        "intent": "direct",
+        "capabilities": [],
+        "reason_code": "stable_knowledge",
+        "argument_source": "current_user_scoped_history_or_selected_place"
+      },
+      "events": [
+        {
+          "stage": "selection",
+          "status": "running",
+          "elapsed_ms": 45
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 1900,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 1853
+        },
+        {
+          "stage": "selection",
+          "status": "completed",
+          "elapsed_ms": 1900
+        },
+        {
+          "stage": "companion",
+          "status": "running",
+          "elapsed_ms": 1963
+        },
+        {
+          "stage": "answer",
+          "status": "running",
+          "elapsed_ms": 2009
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 11678,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 9669
+        },
+        {
+          "stage": "answer",
+          "status": "completed",
+          "elapsed_ms": 11678
+        },
+        {
+          "stage": "companion",
+          "status": "completed",
+          "elapsed_ms": 11683
+        }
+      ]
+    },
+    "goal": {
+      "goal_type": "travel_chat",
+      "confidence": 0.93,
+      "target_runtime": "companion",
+      "mutation_requested": false,
+      "trip_context_required": false,
+      "knowledge_required": true,
+      "live_fact_likely_required": false,
+      "referenced_entities": [],
+      "referenced_previous_decision": false,
+      "clarification_needed": false,
+      "signals": [
+        "semantic_stable_knowledge"
+      ]
+    },
+    "actual_tools": [],
+    "place_count": 0,
+    "trip_id": null,
+    "pending_action": true,
+    "tool": "reply",
+    "seconds": 11.76
+  }
+]

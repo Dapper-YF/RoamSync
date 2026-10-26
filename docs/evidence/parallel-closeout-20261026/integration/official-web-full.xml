@@ -1,0 +1,740 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="273" failures="0" errors="0" time="73.2873521">
+    <testsuite name="src/App.test.tsx" timestamp="2026-10-26T01:09:36.027Z" hostname="LAPTOP-STSGT0SJ" tests="16" failures="0" errors="0" skipped="0" time="23.2677071">
+        <testcase classname="src/App.test.tsx" name="planner workbench &gt; opens the fixed demo route and synchronizes the selected activity" time="2.3808327">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="planner workbench &gt; adds a mock place and updates the budget" time="0.8594249">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="planner workbench &gt; selects a verified city and accommodation POI during trip setup" time="1.5807679">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="planner workbench &gt; loads and persists the structured planning profile" time="1.2556369">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="planner workbench &gt; edits an activity and moves it to another day" time="3.1131722">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="planner workbench &gt; asks before closing an activity form with unsaved changes" time="2.4180183">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="planner workbench &gt; keeps generated AI runs in the visible history" time="1.4673866">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="saves completion without creating an execution session" time="1.3299525">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="opens the global assistant without requiring a trip" time="0.1529284">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="opens the monitor from the trip manager before a trip exists" time="0.4472045">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="shows the pre-trip conversation beside an unfiltered monitor" time="0.0893424">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="keeps the saved trip when saving preferences fails and retries without duplicating it" time="1.4247729">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="opens the committed AI plan and preserves it after remount (refresh failure: false)" time="3.0331595">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="opens the committed AI plan and preserves it after remount (refresh failure: true)" time="2.7364767">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="updates an already open itinerary when another client accepts new places" time="0.1335895">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="does not let an in-flight background refresh erase an activity draft" time="0.8391491">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/data/apiTripPlanningRepository.test.ts" timestamp="2026-10-26T01:09:36.039Z" hostname="LAPTOP-STSGT0SJ" tests="14" failures="0" errors="0" skipped="0" time="0.0598452">
+        <testcase classname="src/data/apiTripPlanningRepository.test.ts" name="ApiTripPlanningRepository &gt; maps only the server-retrieved decision memory attached to a PlanningRun" time="0.0154176">
+        </testcase>
+        <testcase classname="src/data/apiTripPlanningRepository.test.ts" name="ApiTripPlanningRepository &gt; maps the execution-progress BFF contract and preserves unknown risk" time="0.0036584">
+        </testcase>
+        <testcase classname="src/data/apiTripPlanningRepository.test.ts" name="ApiTripPlanningRepository &gt; sends all assistant operations as JSON including conversation and selection IDs" time="0.0037898">
+        </testcase>
+        <testcase classname="src/data/apiTripPlanningRepository.test.ts" name="ApiTripPlanningRepository &gt; maps snake_case trip DTOs using the real trip UUID" time="0.0062865">
+        </testcase>
+        <testcase classname="src/data/apiTripPlanningRepository.test.ts" name="ApiTripPlanningRepository &gt; maps real AMap city suggestions" time="0.0033877">
+        </testcase>
+        <testcase classname="src/data/apiTripPlanningRepository.test.ts" name="ApiTripPlanningRepository &gt; maps and updates the structured planning profile" time="0.0045957">
+        </testcase>
+        <testcase classname="src/data/apiTripPlanningRepository.test.ts" name="ApiTripPlanningRepository &gt; returns the server-generated activity id after adding a place" time="0.001937">
+        </testcase>
+        <testcase classname="src/data/apiTripPlanningRepository.test.ts" name="ApiTripPlanningRepository &gt; surfaces API error details" time="0.0028071">
+        </testcase>
+        <testcase classname="src/data/apiTripPlanningRepository.test.ts" name="ApiTripPlanningRepository &gt; surfaces structured map provider error messages" time="0.0020413">
+        </testcase>
+        <testcase classname="src/data/apiTripPlanningRepository.test.ts" name="ApiTripPlanningRepository &gt; maps persisted route legs and sends server-side place searches" time="0.0040425">
+        </testcase>
+        <testcase classname="src/data/apiTripPlanningRepository.test.ts" name="ApiTripPlanningRepository &gt; persists a transient POI snapshot only when adding it" time="0.0019221">
+        </testcase>
+        <testcase classname="src/data/apiTripPlanningRepository.test.ts" name="ApiTripPlanningRepository &gt; maps and updates editable activity fields with optimistic versioning" time="0.0014908">
+        </testcase>
+        <testcase classname="src/data/apiTripPlanningRepository.test.ts" name="ApiTripPlanningRepository &gt; maps both day plans returned by a cross-day move" time="0.0012738">
+        </testcase>
+        <testcase classname="src/data/apiTripPlanningRepository.test.ts" name="ApiTripPlanningRepository &gt; maps a persisted Agent run and its candidate revision" time="0.002517">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/data/assistantStream.test.ts" timestamp="2026-10-26T01:09:36.049Z" hostname="LAPTOP-STSGT0SJ" tests="2" failures="0" errors="0" skipped="0" time="1.0371603">
+        <testcase classname="src/data/assistantStream.test.ts" name="decodes split UTF-8 and delivers deltas before done" time="0.8638873">
+        </testcase>
+        <testcase classname="src/data/assistantStream.test.ts" name="never treats a truncated answer as a completed session" time="0.0058072">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/data/mockTripPlanningRepository.test.ts" timestamp="2026-10-26T01:09:36.051Z" hostname="LAPTOP-STSGT0SJ" tests="4" failures="0" errors="0" skipped="0" time="0.032647">
+        <testcase classname="src/data/mockTripPlanningRepository.test.ts" name="LocalTripPlanningRepository &gt; adds, persists, reorders, and removes activities" time="0.0162939">
+        </testcase>
+        <testcase classname="src/data/mockTripPlanningRepository.test.ts" name="LocalTripPlanningRepository &gt; ignores persisted data with an incompatible schema version" time="0.0038456">
+        </testcase>
+        <testcase classname="src/data/mockTripPlanningRepository.test.ts" name="LocalTripPlanningRepository &gt; restores the built-in demo" time="0.0023112">
+        </testcase>
+        <testcase classname="src/data/mockTripPlanningRepository.test.ts" name="LocalTripPlanningRepository &gt; records a travel event when requesting dynamic replanning" time="0.0064347">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/data/placeContentRepository.test.ts" timestamp="2026-10-26T01:09:36.054Z" hostname="LAPTOP-STSGT0SJ" tests="6" failures="0" errors="0" skipped="0" time="0.0396471">
+        <testcase classname="src/data/placeContentRepository.test.ts" name="preserves canonical UUID and unknown facts while withholding unlicensed photos" time="0.0071839">
+        </testcase>
+        <testcase classname="src/data/placeContentRepository.test.ts" name="passes provider aliases through as metadata without changing the canonical UUID" time="0.0010175">
+        </testcase>
+        <testcase classname="src/data/placeContentRepository.test.ts" name="requires an image usage basis even when availability is claimed" time="0.0006749">
+        </testcase>
+        <testcase classname="src/data/placeContentRepository.test.ts" name="maps B favorites without sending any client owner identity" time="0.0141791">
+        </testcase>
+        <testcase classname="src/data/placeContentRepository.test.ts" name="converts route coordinates and offers external handoff without claiming navigation started" time="0.0087313">
+        </testcase>
+        <testcase classname="src/data/placeContentRepository.test.ts" name="discovers from explicit GCJ02 point and filters without client owner identity" time="0.0037506">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/data/productAssistantContext.test.ts" timestamp="2026-10-26T01:09:36.058Z" hostname="LAPTOP-STSGT0SJ" tests="6" failures="0" errors="0" skipped="0" time="0.0176766">
+        <testcase classname="src/data/productAssistantContext.test.ts" name="C line assistant context boundary &gt; leaves the free assistant city omitted so follow-up requests retain server context" time="0.0038266">
+        </testcase>
+        <testcase classname="src/data/productAssistantContext.test.ts" name="C line assistant context boundary &gt; carries canonical identity without action permission or inferred GPS" time="0.0013219">
+        </testcase>
+        <testcase classname="src/data/productAssistantContext.test.ts" name="C line assistant context boundary &gt; clears prior place context when discussing a Trip" time="0.0015671">
+        </testcase>
+        <testcase classname="src/data/productAssistantContext.test.ts" name="C line assistant context boundary &gt; does not invent UUIDs for old Provider identities" time="0.0014289">
+        </testcase>
+        <testcase classname="src/data/productAssistantContext.test.ts" name="sends comparison identities and filters without client place facts or action authority" time="0.0050309">
+        </testcase>
+        <testcase classname="src/data/productAssistantContext.test.ts" name="reads saved drafts by identity and version without accepting client plan prose" time="0.0013093">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/data/streamBuffer.test.ts" timestamp="2026-10-26T01:09:36.061Z" hostname="LAPTOP-STSGT0SJ" tests="2" failures="0" errors="0" skipped="0" time="0.0327466">
+        <testcase classname="src/data/streamBuffer.test.ts" name="coalesces individual network characters and bounds first-content latency" time="0.0222693">
+        </testcase>
+        <testcase classname="src/data/streamBuffer.test.ts" name="flushes complete clauses and never loses a tail or leaks a reset attempt" time="0.0049952">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/discovery/DiscoveryNavigation.test.tsx" timestamp="2026-10-26T01:09:36.063Z" hostname="LAPTOP-STSGT0SJ" tests="2" failures="0" errors="0" skipped="0" time="3.3177744">
+        <testcase classname="src/discovery/DiscoveryNavigation.test.tsx" name="keeps successful search in Explore and restores its URL on a fresh mount" time="2.3372724">
+        </testcase>
+        <testcase classname="src/discovery/DiscoveryNavigation.test.tsx" name="takes both empty favorites links back to Explore" time="0.9776753">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/ActivityExperienceCard.test.tsx" timestamp="2026-10-26T01:09:36.065Z" hostname="LAPTOP-STSGT0SJ" tests="5" failures="0" errors="0" skipped="0" time="0.6543271">
+        <testcase classname="src/components/ActivityExperienceCard.test.tsx" name="ActivityExperienceCard &gt; records arrival before offering the activity start command" time="0.3588538">
+            <system-err>
+An update to ActivityExperienceCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/components/ActivityExperienceCard.test.tsx" name="ActivityExperienceCard &gt; shows arrived state and starts the existing activity execution action" time="0.0536868">
+            <system-err>
+An update to ActivityExperienceCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/components/ActivityExperienceCard.test.tsx" name="ActivityExperienceCard &gt; renders persisted experience facts and sends distinct extend actions" time="0.1369149">
+        </testcase>
+        <testcase classname="src/components/ActivityExperienceCard.test.tsx" name="ActivityExperienceCard &gt; explains absorbed, at-risk and infeasible states without inventing a new plan" time="0.0466694">
+        </testcase>
+        <testcase classname="src/components/ActivityExperienceCard.test.tsx" name="ActivityExperienceCard &gt; records leave early through the server-owned command" time="0.05328">
+            <system-err>
+An update to ActivityExperienceCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/AgentMonitor.test.tsx" timestamp="2026-10-26T01:09:36.070Z" hostname="LAPTOP-STSGT0SJ" tests="15" failures="0" errors="0" skipped="0" time="3.4113862">
+        <testcase classname="src/components/AgentMonitor.test.tsx" name="shows an empty state and offers the ordinary trip UI" time="0.3923512">
+        </testcase>
+        <testcase classname="src/components/AgentMonitor.test.tsx" name="selects stages and distinguishes skipped and unavailable fields" time="0.3141272">
+        </testcase>
+        <testcase classname="src/components/AgentMonitor.test.tsx" name="replays an older run without following the latest" time="0.2276881">
+        </testcase>
+        <testcase classname="src/components/AgentMonitor.test.tsx" name="opens a bookmarked historical run even outside the recent list" time="0.0894368">
+        </testcase>
+        <testcase classname="src/components/AgentMonitor.test.tsx" name="follows a new live run on the next poll" time="0.2596217">
+        </testcase>
+        <testcase classname="src/components/AgentMonitor.test.tsx" name="retains the displayed trace after transient polling errors" time="0.1409583">
+        </testcase>
+        <testcase classname="src/components/AgentMonitor.test.tsx" name="does not allow a stale request for a previous run to overwrite selection" time="0.1527111">
+        </testcase>
+        <testcase classname="src/components/AgentMonitor.test.tsx" name="presentation mode hides developer JSON and follows the running node" time="0.2990743">
+        </testcase>
+        <testcase classname="src/components/AgentMonitor.test.tsx" name="shows failed run errors and real tool summaries" time="0.1801756">
+        </testcase>
+        <testcase classname="src/components/AgentMonitor.test.tsx" name="shows a persisted rejection without claiming an itinerary change" time="0.2211969">
+        </testcase>
+        <testcase classname="src/components/AgentMonitor.test.tsx" name="offers the real conversation and monitor side by side" time="0.1289185">
+        </testcase>
+        <testcase classname="src/components/AgentMonitor.test.tsx" name="observes an outgoing dialogue immediately and never reuses an old run for an answer" time="0.1609984">
+        </testcase>
+        <testcase classname="src/components/AgentMonitor.test.tsx" name="keeps a dialogue bound to its exact run even when another run is newer" time="0.3234829">
+        </testcase>
+        <testcase classname="src/components/AgentMonitor.test.tsx" name="polls actual Companion stages while the assistant request is still pending" time="0.1950571">
+        </testcase>
+        <testcase classname="src/components/AgentMonitor.test.tsx" name="automatically advances to the currently running stage" time="0.3216553">
+            <system-err>
+An update to AgentMonitor inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+An update to AgentMonitor inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AgentMonitor inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AgentMonitor inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AgentMonitor inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/AiPlannerPanel.test.tsx" timestamp="2026-10-26T01:09:36.080Z" hostname="LAPTOP-STSGT0SJ" tests="30" failures="0" errors="0" skipped="0" time="10.4761906">
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="shows analysis then growing answer before the streaming request completes" time="1.066586">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="renders a Companion reply with routing metadata and no planning run" time="0.1017208">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="only shows rejection feedback actually retrieved for the current planning run" time="0.1749707">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="immediately echoes homepage input while the assistant request is pending" time="0.1368599">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="retains a failed message and reuses its id when retried" time="0.1685202">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="continues polling after a temporary status request failure" time="3.188574">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="renders the authoritative tool answer once in its conversation turn" time="0.1244097">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="previews a homepage conversation and opens the created trip only after confirmation" time="0.3997266">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="restores conversation and refreshes the current trip after a confirmed reschedule" time="0.1546062">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="sends initial planning with selection context instead of a hardcoded second-day adjustment" time="0.2905308">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="restores clarification and immediately displays a returned proposal" time="0.3600032">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="recovers a saved candidate after remount without creating another task" time="0.2315903">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="shows planning history failures without blocking Companion chat" time="0.1081113">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="sends with Enter, inserts a newline with Shift+Enter and ignores Chinese composition" time="0.4443981">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="submits a clarification with Enter" time="0.3674052">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="allows questions while a proposal awaits approval and renders the answer without an apply button" time="0.4209209">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="restores an answer on reopen and shows specific reasons on proposal cards" time="0.2431709">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="hides unsupported walking claims while keeping a pending revision actionable" time="0.1660865">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="removes a rejected proposal from the active plan and keeps new planning available" time="0.480698">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="retries a failed planning run with the exact request and creates an independent run" time="0.239045">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="starts an independent failed-run retry even when an assistant session is present" time="0.2310679">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="clears pre-trip history, preview and draft, then sends with the new session" time="0.5747002">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="preserves the conversation and draft if clearing fails" time="0.2350635">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="offers no clearing button for a saved trip" time="0.0793667">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="restores the session&apos;s current candidate after navigating to the created trip" time="0.0808062">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="does not restore a saved run belonging to a different trip" time="0.0481584">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="restores planning progress without opening developer monitoring" time="0.0582825">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="recovers a unique pending proposal after an old Companion reply cleared the session pointer" time="0.0750148">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="does not silently choose between multiple pending proposals" time="0.0484501">
+        </testcase>
+        <testcase classname="src/components/AiPlannerPanel.test.tsx" name="keeps the candidate visible while answering a Companion explanation" time="0.1711693">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/AssistantAnswer.test.tsx" timestamp="2026-10-26T01:09:36.096Z" hostname="LAPTOP-STSGT0SJ" tests="6" failures="0" errors="0" skipped="0" time="0.4274431">
+        <testcase classname="src/components/AssistantAnswer.test.tsx" name="renders optional illustrations without factual web sources and hides failed images" time="0.2504874">
+        </testcase>
+        <testcase classname="src/components/AssistantAnswer.test.tsx" name="links only server-owned references and labels page reads" time="0.0399133">
+        </testcase>
+        <testcase classname="src/components/AssistantAnswer.test.tsx" name="shows a reviewed place photo with attribution without requiring its name in prose" time="0.0632726">
+        </testcase>
+        <testcase classname="src/components/AssistantAnswer.test.tsx" name="only renders exact current-turn search images and keeps text when an image fails" time="0.0320908">
+        </testcase>
+        <testcase classname="src/components/AssistantAnswer.test.tsx" name="embeds a loaded picture beside its own paragraph and shows no reference-photo label" time="0.0280576">
+        </testcase>
+        <testcase classname="src/components/AssistantAnswer.test.tsx" name="does not render unsafe image schemes or unavailable search leftovers" time="0.0099423">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/CompanionThinking.test.tsx" timestamp="2026-10-26T01:09:36.101Z" hostname="LAPTOP-STSGT0SJ" tests="5" failures="0" errors="0" skipped="0" time="0.4140026">
+        <testcase classname="src/components/CompanionThinking.test.tsx" name="Companion answer presentation &gt; collapses the separate summary when the answer starts and lets the user reopen it" time="0.3505142">
+        </testcase>
+        <testcase classname="src/components/CompanionThinking.test.tsx" name="Companion answer presentation &gt; keeps saved summaries collapsed and omits an absent summary" time="0.0327248">
+        </testcase>
+        <testcase classname="src/components/CompanionThinking.test.tsx" name="Companion answer presentation &gt; cleans diagnostic headings and internal citations in persisted replies" time="0.0011717">
+        </testcase>
+        <testcase classname="src/components/CompanionThinking.test.tsx" name="Companion answer presentation &gt; does not expose internal general-knowledge metadata or invent thinking" time="0.0049759">
+        </testcase>
+        <testcase classname="src/components/CompanionThinking.test.tsx" name="Companion answer presentation &gt; retains actual source links as an optional collapsed reference" time="0.0205485">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/DecisionSummary.test.tsx" timestamp="2026-10-26T01:09:36.104Z" hostname="LAPTOP-STSGT0SJ" tests="2" failures="0" errors="0" skipped="0" time="0.1220805">
+        <testcase classname="src/components/DecisionSummary.test.tsx" name="shows only validated remove, preserve and duration decisions in a collapsed panel" time="0.109912">
+        </testcase>
+        <testcase classname="src/components/DecisionSummary.test.tsx" name="keeps historical revisions readable without a ledger" time="0.0080082">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/DisruptionDetailCard.test.tsx" timestamp="2026-10-26T01:09:36.107Z" hostname="LAPTOP-STSGT0SJ" tests="4" failures="0" errors="0" skipped="0" time="0.1965836">
+        <testcase classname="src/components/DisruptionDetailCard.test.tsx" name="DisruptionDetailCard &gt; explains an active infeasible itinerary and its timestamps" time="0.1407688">
+        </testcase>
+        <testcase classname="src/components/DisruptionDetailCard.test.tsx" name="DisruptionDetailCard &gt; maps missed time window and shows a ready revision without decisions" time="0.0207695">
+        </testcase>
+        <testcase classname="src/components/DisruptionDetailCard.test.tsx" name="DisruptionDetailCard &gt; keeps rejected risk and stale detail visible" time="0.0211055">
+        </testcase>
+        <testcase classname="src/components/DisruptionDetailCard.test.tsx" name="DisruptionDetailCard &gt; does not occupy space without a disruption and safely handles a missing detail" time="0.009621">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/ExecutionStatusCard.test.tsx" timestamp="2026-10-26T01:09:36.111Z" hostname="LAPTOP-STSGT0SJ" tests="7" failures="0" errors="0" skipped="0" time="0.4822214">
+        <testcase classname="src/components/ExecutionStatusCard.test.tsx" name="ExecutionStatusCard &gt; shows normal execution facts" time="0.159302">
+        </testcase>
+        <testcase classname="src/components/ExecutionStatusCard.test.tsx" name="ExecutionStatusCard &gt; shows delay without claiming a disruption" time="0.0219182">
+        </testcase>
+        <testcase classname="src/components/ExecutionStatusCard.test.tsx" name="ExecutionStatusCard &gt; shows disruption facts" time="0.0216946">
+        </testcase>
+        <testcase classname="src/components/ExecutionStatusCard.test.tsx" name="ExecutionStatusCard &gt; keeps unknown distinct from normal" time="0.0147365">
+        </testcase>
+        <testcase classname="src/components/ExecutionStatusCard.test.tsx" name="ExecutionStatusCard &gt; keeps stale data visible during a refresh failure" time="0.025438">
+        </testcase>
+        <testcase classname="src/components/ExecutionStatusCard.test.tsx" name="ExecutionStatusCard &gt; shows loading and no-session states" time="0.0208178">
+        </testcase>
+        <testcase classname="src/components/ExecutionStatusCard.test.tsx" name="ExecutionStatusCard &gt; starts the trip only from the not-started state" time="0.2134853">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/Inspector.test.tsx" timestamp="2026-10-26T01:09:36.116Z" hostname="LAPTOP-STSGT0SJ" tests="3" failures="0" errors="0" skipped="0" time="1.1867314">
+        <testcase classname="src/components/Inspector.test.tsx" name="Inspector activity importance &gt; edits importance with product language and saves the repository payload" time="0.7038437">
+        </testcase>
+        <testcase classname="src/components/Inspector.test.tsx" name="Inspector activity importance &gt; shows a lightweight must-do tag on the activity detail" time="0.0352021">
+        </testcase>
+        <testcase classname="src/components/Inspector.test.tsx" name="Inspector activity importance &gt; edits non-skippable and minimum-stay semantics and shows them after reload" time="0.4427256">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/PlacePhotos.test.tsx" timestamp="2026-10-26T01:09:36.119Z" hostname="LAPTOP-STSGT0SJ" tests="3" failures="0" errors="0" skipped="0" time="0.4373153">
+        <testcase classname="src/components/PlacePhotos.test.tsx" name="rejects wrong place, unreviewed license and arbitrary URLs" time="0.0069126">
+        </testcase>
+        <testcase classname="src/components/PlacePhotos.test.tsx" name="keeps attribution and gracefully handles an image failing without hiding content" time="0.3291109">
+        </testcase>
+        <testcase classname="src/components/PlacePhotos.test.tsx" name="browses multiple photos and shows their individual credits" time="0.0967849">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/PlanningFailure.test.tsx" timestamp="2026-10-26T01:09:36.122Z" hostname="LAPTOP-STSGT0SJ" tests="4" failures="0" errors="0" skipped="0" time="0.583718">
+        <testcase classname="src/components/PlanningFailure.test.tsx" name="retries a timing failure without steering the user&apos;s goal toward fewer places" time="0.3873636">
+        </testcase>
+        <testcase classname="src/components/PlanningFailure.test.tsx" name="offers a retry for connection failure" time="0.0702613">
+        </testcase>
+        <testcase classname="src/components/PlanningFailure.test.tsx" name="explains the missing route and preserves transport preferences when suggesting changes" time="0.0658308">
+        </testcase>
+        <testcase classname="src/components/PlanningFailure.test.tsx" name="hides internal reference errors and keeps retry available" time="0.0566548">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/PlanningGoalCard.test.tsx" timestamp="2026-10-26T01:09:36.125Z" hostname="LAPTOP-STSGT0SJ" tests="1" failures="0" errors="0" skipped="0" time="0.2014666">
+        <testcase classname="src/components/PlanningGoalCard.test.tsx" name="PlanningGoalCard &gt; renders structured goals and satisfied, unsatisfied, and partial results" time="0.1984204">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/PlanningProgress.test.tsx" timestamp="2026-10-26T01:09:36.126Z" hostname="LAPTOP-STSGT0SJ" tests="1" failures="0" errors="0" skipped="0" time="0.2283977">
+        <testcase classname="src/components/PlanningProgress.test.tsx" name="shows elapsed waiting and stale heartbeat without inventing a new stage" time="0.2248704">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/RecoveryPanel.test.tsx" timestamp="2026-10-26T01:09:36.128Z" hostname="LAPTOP-STSGT0SJ" tests="7" failures="0" errors="0" skipped="0" time="0.6809727">
+        <testcase classname="src/components/RecoveryPanel.test.tsx" name="RecoveryPanel &gt; renders persisted facts before the explanation and exposes one candidate decision" time="0.342093">
+        </testcase>
+        <testcase classname="src/components/RecoveryPanel.test.tsx" name="RecoveryPanel &gt; does not invent unsupported recovery metrics" time="0.0247482">
+        </testcase>
+        <testcase classname="src/components/RecoveryPanel.test.tsx" name="RecoveryPanel &gt; accepts only after lightweight confirmation, then refreshes formal and execution state" time="0.096781">
+        </testcase>
+        <testcase classname="src/components/RecoveryPanel.test.tsx" name="RecoveryPanel &gt; rejects without refreshing formal itinerary and keeps the disruption decision server-owned" time="0.0409935">
+        </testcase>
+        <testcase classname="src/components/RecoveryPanel.test.tsx" name="RecoveryPanel &gt; maps a version conflict to stale-candidate guidance and refreshes reads" time="0.0722612">
+        </testcase>
+        <testcase classname="src/components/RecoveryPanel.test.tsx" name="RecoveryPanel &gt; guards duplicate mutations and disables a stale execution projection" time="0.0947616">
+        </testcase>
+        <testcase classname="src/components/RecoveryPanel.test.tsx" name="RecoveryPanel &gt; does not render an actionable panel once no pending server revision exists" time="0.0045297">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/ResearchEvidence.test.tsx" timestamp="2026-10-26T01:09:36.132Z" hostname="LAPTOP-STSGT0SJ" tests="1" failures="0" errors="0" skipped="0" time="0.2242827">
+        <testcase classname="src/components/ResearchEvidence.test.tsx" name="shows deduplicated research links and omits unsafe source URLs" time="0.2199472">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/drafts/DraftPages.test.tsx" timestamp="2026-10-26T01:09:36.134Z" hostname="LAPTOP-STSGT0SJ" tests="3" failures="0" errors="0" skipped="0" time="0.6813861">
+        <testcase classname="src/drafts/DraftPages.test.tsx" name="creates an undated draft and opens its editor without a Trip request" time="0.4434928">
+        </testcase>
+        <testcase classname="src/drafts/DraftPages.test.tsx" name="restores a cancelled draft and marks unknown locations" time="0.1182153">
+        </testcase>
+        <testcase classname="src/drafts/DraftPages.test.tsx" name="shows a recoverable failure and keeps the existing plan" time="0.1154863">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/drafts/DraftPromotionPanel.test.tsx" timestamp="2026-10-26T01:09:36.136Z" hostname="LAPTOP-STSGT0SJ" tests="4" failures="0" errors="0" skipped="0" time="0.8517721">
+        <testcase classname="src/drafts/DraftPromotionPanel.test.tsx" name="prepares without creating and confirms exactly the displayed hash with an explicit action" time="0.5577498">
+        </testcase>
+        <testcase classname="src/drafts/DraftPromotionPanel.test.tsx" name="keeps unresolved places visible, blocks adoption, and permits explicit create-only" time="0.0973053">
+        </testcase>
+        <testcase classname="src/drafts/DraftPromotionPanel.test.tsx" name="restores failed-operation Trip links and resumes the same operation after refresh" time="0.0978911">
+        </testcase>
+        <testcase classname="src/drafts/DraftPromotionPanel.test.tsx" name="retains typed calendar text across transport changes and rejects invalid calendar dates" time="0.0946619">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/hooks/useExecutionProgress.test.tsx" timestamp="2026-10-26T01:09:36.139Z" hostname="LAPTOP-STSGT0SJ" tests="4" failures="0" errors="0" skipped="0" time="0.2761831">
+        <testcase classname="src/hooks/useExecutionProgress.test.tsx" name="useExecutionProgress &gt; preserves the backend unknown state" time="0.107482">
+        </testcase>
+        <testcase classname="src/hooks/useExecutionProgress.test.tsx" name="useExecutionProgress &gt; keeps last successful data and marks it stale after a refresh failure" time="0.0742802">
+        </testcase>
+        <testcase classname="src/hooks/useExecutionProgress.test.tsx" name="useExecutionProgress &gt; fences an old response after a trip switch" time="0.0758806">
+        </testcase>
+        <testcase classname="src/hooks/useExecutionProgress.test.tsx" name="useExecutionProgress &gt; does not let an older refresh overwrite a newer response for one trip" time="0.0153034">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/journeys/handbookModel.test.ts" timestamp="2026-10-26T01:09:36.143Z" hostname="LAPTOP-STSGT0SJ" tests="9" failures="0" errors="0" skipped="0" time="0.0580076">
+        <testcase classname="src/journeys/handbookModel.test.ts" name="shared handbook read model &gt; restores explicit selection, then today, then first day" time="0.0046374">
+        </testcase>
+        <testcase classname="src/journeys/handbookModel.test.ts" name="shared handbook read model &gt; preview is derived without mutating saved state and map uses same rows" time="0.0028596">
+        </testcase>
+        <testcase classname="src/journeys/handbookModel.test.ts" name="shared handbook read model &gt; unaffected dates preserve activities and deliberate free time" time="0.0336261">
+        </testcase>
+        <testcase classname="src/journeys/handbookModel.test.ts" name="shared handbook read model &gt; removed activities do not become map markers and unknown coordinates are excluded" time="0.003078">
+        </testcase>
+        <testcase classname="src/journeys/handbookModel.test.ts" name="shared handbook read model &gt; omitted fixed or execution-protected activities remain visible in preview" time="0.0025255">
+        </testcase>
+        <testcase classname="src/journeys/handbookModel.test.ts" name="shared handbook read model &gt; does not match an explicit foreign identity or merge two visits to the same place" time="0.0018738">
+        </testcase>
+        <testcase classname="src/journeys/handbookModel.test.ts" name="shared handbook read model &gt; reviews all dates when scope is absent, including removal of an entire day" time="0.001939">
+        </testcase>
+        <testcase classname="src/journeys/handbookModel.test.ts" name="shared handbook read model &gt; retains an out-of-trip candidate date for review instead of hiding it" time="0.0010842">
+        </testcase>
+        <testcase classname="src/journeys/handbookModel.test.ts" name="shared handbook read model &gt; shows a place replacement on the new coordinates and detects cost-only changes" time="0.0019395">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/journeys/HandbookPhotoLoading.test.tsx" timestamp="2026-10-26T01:09:36.148Z" hostname="LAPTOP-STSGT0SJ" tests="5" failures="0" errors="0" skipped="0" time="0.5016009">
+        <testcase classname="src/journeys/HandbookPhotoLoading.test.tsx" name="loads a sourced reference photo for a confirmed saved place outside the reviewed catalog" time="0.354755">
+        </testcase>
+        <testcase classname="src/journeys/HandbookPhotoLoading.test.tsx" name="does not show photos returned for a different provider identity" time="0.0092655">
+        </testcase>
+        <testcase classname="src/journeys/HandbookPhotoLoading.test.tsx" name="never resolves a photo by an unbound activity title" time="0.0058805">
+        </testcase>
+        <testcase classname="src/journeys/HandbookPhotoLoading.test.tsx" name="discards an old photo response after switching to another saved activity" time="0.0948913">
+        </testcase>
+        <testcase classname="src/journeys/HandbookPhotoLoading.test.tsx" name="hides a failed remote image without removing the saved activity content" time="0.0332064">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/journeys/HandbookPhotos.test.tsx" timestamp="2026-10-26T01:09:36.151Z" hostname="LAPTOP-STSGT0SJ" tests="4" failures="0" errors="0" skipped="0" time="0.0073606">
+        <testcase classname="src/journeys/HandbookPhotos.test.tsx" name="requires exact canonical and provider identity for activity imagery" time="0.0040278">
+        </testcase>
+        <testcase classname="src/journeys/HandbookPhotos.test.tsx" name="matches exact identity even when an activity has a custom title" time="0.0002702">
+        </testcase>
+        <testcase classname="src/journeys/HandbookPhotos.test.tsx" name="allows a labeled destination image without claiming an activity match" time="0.0002783">
+        </testcase>
+        <testcase classname="src/journeys/HandbookPhotos.test.tsx" name="retains coordinate guards and rejects unbound custom or missing names" time="0.0007799">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/journeys/HandbookRouteContinuity.test.tsx" timestamp="2026-10-26T01:09:36.154Z" hostname="LAPTOP-STSGT0SJ" tests="2" failures="0" errors="0" skipped="0" time="0.9822155">
+        <testcase classname="src/journeys/HandbookRouteContinuity.test.tsx" name="shows the actual route to the next place when deliberate free time lies between stops" time="0.7635877">
+        </testcase>
+        <testcase classname="src/journeys/HandbookRouteContinuity.test.tsx" name="queries the next stop from the preceding place across an unlocated free window" time="0.213923">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/journeys/JourneyFormal.test.tsx" timestamp="2026-10-26T01:09:36.156Z" hostname="LAPTOP-STSGT0SJ" tests="4" failures="0" errors="0" skipped="0" time="1.6796819">
+        <testcase classname="src/journeys/JourneyFormal.test.tsx" name="the handbook binds a selected activity without opening a scheduling form" time="0.8715232">
+        </testcase>
+        <testcase classname="src/journeys/JourneyFormal.test.tsx" name="opens a fresh revision on its changed day and continues that date without rejecting it" time="0.2700158">
+        </testcase>
+        <testcase classname="src/journeys/JourneyFormal.test.tsx" name="binds an explicit activity adjustment to the existing day and activity identity" time="0.2164748">
+        </testcase>
+        <testcase classname="src/journeys/JourneyFormal.test.tsx" name="explains absorbed stay changes without a disruption and sends an explicitly selected extension" time="0.3171568">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/journeys/JourneyReview.test.tsx" timestamp="2026-10-26T01:09:36.159Z" hostname="LAPTOP-STSGT0SJ" tests="4" failures="0" errors="0" skipped="0" time="0.5003237">
+        <testcase classname="src/journeys/JourneyReview.test.tsx" name="exposes before/after and unaffected dates before an explicit acceptance" time="0.3875125">
+        </testcase>
+        <testcase classname="src/journeys/JourneyReview.test.tsx" name="blocks adoption when the displayed scope or version cannot be trusted: {&quot;stale&quot;:true}" time="0.0465762">
+        </testcase>
+        <testcase classname="src/journeys/JourneyReview.test.tsx" name="blocks adoption when the displayed scope or version cannot be trusted: {&quot;unverified&quot;:true}" time="0.0326695">
+        </testcase>
+        <testcase classname="src/journeys/JourneyReview.test.tsx" name="blocks adoption when the displayed scope or version cannot be trusted: {&quot;revision&quot;:{&quot;id&quot;:&quot;r&quot;,&quot;planningRunId&quot;:&quot;run&quot;,&quot;planningGoals&quot;:{&quot;targetDays&quot;:[&quot;2026-11-03&quot;]},&quot;reason&quot;:&quot;避开中午，下午慢慢逛。&quot;,&quot;activities&quot;:[{&quot;candidateId&quot;:&quot;c&quot;,&quot;replacesActivityId&quot;:&quot;a&quot;,&quot;placeCandidateId&quot;:&quot;p&quot;,&quot;dayDate&quot;:&quot;2026-11-09&quot;,&quot;plannedStartTime&quot;:&quot;14:00&quot;,&quot;durationMinutes&quot;:45}]}}" time="0.0289648">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/journeys/Journeys.test.tsx" timestamp="2026-10-26T01:09:36.163Z" hostname="LAPTOP-STSGT0SJ" tests="7" failures="0" errors="0" skipped="0" time="5.8543738">
+        <testcase classname="src/journeys/Journeys.test.tsx" name="keeps unsaved draft edits through leaving, refresh and version conflict without overwriting them" time="0.3612979">
+        </testcase>
+        <testcase classname="src/journeys/Journeys.test.tsx" name="saves only after reviewing a complete before/after and sends the protected version" time="1.1409282">
+        </testcase>
+        <testcase classname="src/journeys/Journeys.test.tsx" name="sends a selected relative day as backend-enforced scope and creates no Trip" time="0.4068899">
+        </testcase>
+        <testcase classname="src/journeys/Journeys.test.tsx" name="starts a new draft without a preset city, location permission or formal Trip" time="0.1142964">
+        </testcase>
+        <testcase classname="src/journeys/Journeys.test.tsx" name="reports a model failure returned in HTTP 200 without claiming generation is underway" time="0.7382819">
+        </testcase>
+        <testcase classname="src/journeys/Journeys.test.tsx" name="locks a lost promotion response to the same authorization and request id" time="0.2084273">
+        </testcase>
+        <testcase classname="src/journeys/Journeys.test.tsx" name="polls an in-flight generation and allows cancellation before its HTTP request finishes" time="2.8797843">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/journeys/SavedIntentionsPanel.test.tsx" timestamp="2026-10-26T01:09:36.168Z" hostname="LAPTOP-STSGT0SJ" tests="2" failures="0" errors="0" skipped="0" time="0.5930665">
+        <testcase classname="src/journeys/SavedIntentionsPanel.test.tsx" name="retains the saved item and visible error after a failed revoke and refresh" time="0.4962838">
+        </testcase>
+        <testcase classname="src/journeys/SavedIntentionsPanel.test.tsx" name="does not silently transfer against a newer trip version than the visible list" time="0.0926675">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/journeyRouting/JourneyRoutePage.test.tsx" timestamp="2026-10-26T01:09:36.170Z" hostname="LAPTOP-STSGT0SJ" tests="4" failures="0" errors="0" skipped="0" time="0.6910985">
+        <testcase classname="src/journeyRouting/JourneyRoutePage.test.tsx" name="formal activity route &gt; queries coordinates without using formal candidate IDs and restores returned route" time="0.52295">
+        </testcase>
+        <testcase classname="src/journeyRouting/JourneyRoutePage.test.tsx" name="formal activity route &gt; refuses unverified coordinate source and external return links" time="0.0015274">
+        </testcase>
+        <testcase classname="src/journeyRouting/JourneyRoutePage.test.tsx" name="formal activity route &gt; shows missing-coordinate state without route query" time="0.034997">
+        </testcase>
+        <testcase classname="src/journeyRouting/JourneyRoutePage.test.tsx" name="formal activity route &gt; discards a late route after a map selection changes its origin" time="0.1271486">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/nearby/state.test.ts" timestamp="2026-10-26T01:09:36.174Z" hostname="LAPTOP-STSGT0SJ" tests="7" failures="0" errors="0" skipped="0" time="0.0377933">
+        <testcase classname="src/nearby/state.test.ts" name="nearby coordinate boundary &gt; converts browser WGS84 rather than sending it to AMap unchanged" time="0.0143048">
+        </testcase>
+        <testcase classname="src/nearby/state.test.ts" name="nearby coordinate boundary &gt; rejects invalid or unsupported location NaN,30" time="0.0025256">
+        </testcase>
+        <testcase classname="src/nearby/state.test.ts" name="nearby coordinate boundary &gt; rejects invalid or unsupported location 181,30" time="0.0005161">
+        </testcase>
+        <testcase classname="src/nearby/state.test.ts" name="nearby coordinate boundary &gt; rejects invalid or unsupported location 104,91" time="0.0003326">
+        </testcase>
+        <testcase classname="src/nearby/state.test.ts" name="nearby coordinate boundary &gt; rejects invalid or unsupported location 0,0" time="0.0004876">
+        </testcase>
+        <testcase classname="src/nearby/state.test.ts" name="nearby coordinate boundary &gt; rejects invalid or unsupported location -73,40" time="0.0004425">
+        </testcase>
+        <testcase classname="src/nearby/state.test.ts" name="nearby coordinate boundary &gt; distance is symmetric and does not treat a nearby point as the same location" time="0.0007277">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/product/AssistantDecisions.test.tsx" timestamp="2026-10-26T01:09:36.179Z" hostname="LAPTOP-STSGT0SJ" tests="1" failures="0" errors="0" skipped="0" time="0.290445">
+        <testcase classname="src/product/AssistantDecisions.test.tsx" name="keeps saved revision acceptance while showing only concise changed stops" time="0.288095">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/product/AssistantPlaceMap.test.tsx" timestamp="2026-10-26T01:09:36.181Z" hostname="LAPTOP-STSGT0SJ" tests="2" failures="0" errors="0" skipped="0" time="0.219331">
+        <testcase classname="src/product/AssistantPlaceMap.test.tsx" name="shows the existing map without an extra action and keeps the detail destination" time="0.1880128">
+        </testcase>
+        <testcase classname="src/product/AssistantPlaceMap.test.tsx" name="keeps details when old messages lack usable coordinates, without inventing a map location" time="0.0288302">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/product/CandidateAssistant.test.tsx" timestamp="2026-10-26T01:09:36.184Z" hostname="LAPTOP-STSGT0SJ" tests="6" failures="0" errors="0" skipped="0" time="2.3179452">
+        <testcase classname="src/product/CandidateAssistant.test.tsx" name="does not represent metadata as an adoptable itinerary" time="0.6178066">
+        </testcase>
+        <testcase classname="src/product/CandidateAssistant.test.tsx" name="sends exactly the published binding and shows saving until confirmed" time="0.3172156">
+        </testcase>
+        <testcase classname="src/product/CandidateAssistant.test.tsx" name="preserves a specific conflict message and never claims a failed save succeeded" time="0.2322771">
+        </testcase>
+        <testcase classname="src/product/CandidateAssistant.test.tsx" name="uses candidate projection once and suppresses the legacy metadata card" time="0.2961817">
+        </testcase>
+        <testcase classname="src/product/CandidateAssistant.test.tsx" name="reuses the same exact request identity after an uncertain network failure" time="0.3942806">
+        </testcase>
+        <testcase classname="src/product/CandidateAssistant.test.tsx" name="rereads the same session on explicit recovery and enables only its new binding" time="0.4558359">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/product/ConversationCandidate.test.tsx" timestamp="2026-10-26T01:09:36.188Z" hostname="LAPTOP-STSGT0SJ" tests="12" failures="0" errors="0" skipped="0" time="0.8452112">
+        <testcase classname="src/product/ConversationCandidate.test.tsx" name="presents server order, source narrative and route without opening the full timeline" time="0.4444185">
+        </testcase>
+        <testcase classname="src/product/ConversationCandidate.test.tsx" name="does not offer adoption during saving" time="0.0374255">
+        </testcase>
+        <testcase classname="src/product/ConversationCandidate.test.tsx" name="does not offer adoption during stale" time="0.0278836">
+        </testcase>
+        <testcase classname="src/product/ConversationCandidate.test.tsx" name="does not offer adoption during failed" time="0.0312681">
+        </testcase>
+        <testcase classname="src/product/ConversationCandidate.test.tsx" name="does not offer adoption during needs_input" time="0.0286975">
+        </testcase>
+        <testcase classname="src/product/ConversationCandidate.test.tsx" name="does not offer adoption during needs_review" time="0.0231035">
+        </testcase>
+        <testcase classname="src/product/ConversationCandidate.test.tsx" name="shows saved navigation only for server confirmed saved candidate" time="0.0291324">
+        </testcase>
+        <testcase classname="src/product/ConversationCandidate.test.tsx" name="preserves the same image element when only a stop time changes" time="0.0651584">
+        </testcase>
+        <testcase classname="src/product/ConversationCandidate.test.tsx" name="renders unresolved places without photos or an adoption action" time="0.0414352">
+        </testcase>
+        <testcase classname="src/product/ConversationCandidate.test.tsx" name="allows the server saved result to supersede a local invalidated binding" time="0.0229037">
+        </testcase>
+        <testcase classname="src/product/ConversationCandidate.test.tsx" name="discloses server cost and structured constraints in the read-only details" time="0.046785">
+        </testcase>
+        <testcase classname="src/product/ConversationCandidate.test.tsx" name="does not turn unspecified server budgets or walking limits into zero-valued constraints" time="0.0426567">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/product/NaturalAssistant.test.tsx" timestamp="2026-10-26T01:09:36.196Z" hostname="LAPTOP-STSGT0SJ" tests="9" failures="0" errors="0" skipped="0" time="1.4010594">
+        <testcase classname="src/product/NaturalAssistant.test.tsx" name="natural assistant result boundary &gt; shows a dated whole-day creation preview without inventing clock times" time="0.4115005">
+        </testcase>
+        <testcase classname="src/product/NaturalAssistant.test.tsx" name="natural assistant result boundary &gt; stops polling a terminal run instead of querying forever" time="0.0657636">
+        </testcase>
+        <testcase classname="src/product/NaturalAssistant.test.tsx" name="natural assistant result boundary &gt; shows the candidate&apos;s actual tradeoff before adoption" time="0.063274">
+        </testcase>
+        <testcase classname="src/product/NaturalAssistant.test.tsx" name="natural assistant result boundary &gt; persists a page decision with the displayed version and reloads the common result" time="0.2121619">
+        </testcase>
+        <testcase classname="src/product/NaturalAssistant.test.tsx" name="natural assistant result boundary &gt; shows a human conflict and never retries the stale edit automatically" time="0.156138">
+        </testcase>
+        <testcase classname="src/product/NaturalAssistant.test.tsx" name="natural assistant result boundary &gt; sends 把玄武湖改成备选 against the same displayed Trip and message identity" time="0.1597661">
+        </testcase>
+        <testcase classname="src/product/NaturalAssistant.test.tsx" name="natural assistant result boundary &gt; sends 玄武湖还是备选，不要排进去 against the same displayed Trip and message identity" time="0.1341132">
+        </testcase>
+        <testcase classname="src/product/NaturalAssistant.test.tsx" name="natural assistant result boundary &gt; opens a free conversation without creating a Trip or a plan" time="0.0213352">
+        </testcase>
+        <testcase classname="src/product/NaturalAssistant.test.tsx" name="keeps legacy saved revisions concise without losing their protected acceptance" time="0.1718601">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/product/PreferencePanel.test.tsx" timestamp="2026-10-26T01:09:36.202Z" hostname="LAPTOP-STSGT0SJ" tests="1" failures="0" errors="0" skipped="0" time="0.3733839">
+        <testcase classname="src/product/PreferencePanel.test.tsx" name="loads explicit preferences and persists only user selections" time="0.3690761">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/product/ProductExperience.test.tsx" timestamp="2026-10-26T01:09:36.204Z" hostname="LAPTOP-STSGT0SJ" tests="5" failures="0" errors="0" skipped="0" time="2.2630777">
+        <testcase classname="src/product/ProductExperience.test.tsx" name="searches a selected real city and category through the explore repository" time="0.7943095">
+        </testcase>
+        <testcase classname="src/product/ProductExperience.test.tsx" name="starts from a representative city theme and scopes theme chips to their place category" time="0.2438358">
+        </testcase>
+        <testcase classname="src/product/ProductExperience.test.tsx" name="shows unknown facts honestly and saves a place through the API" time="0.2942794">
+        </testcase>
+        <testcase classname="src/product/ProductExperience.test.tsx" name="loads the real favorites endpoint and offers exploration when it is empty" time="0.0781643">
+        </testcase>
+        <testcase classname="src/product/ProductExperience.test.tsx" name="applies only an explicitly confirmed nearby point and user filters" time="0.8478124">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/product/RevisionReview.test.tsx" timestamp="2026-10-26T01:09:36.208Z" hostname="LAPTOP-STSGT0SJ" tests="3" failures="0" errors="0" skipped="0" time="0.1783678">
+        <testcase classname="src/product/RevisionReview.test.tsx" name="shows deleted activities and bound risk warnings" time="0.1546997">
+        </testcase>
+        <testcase classname="src/product/RevisionReview.test.tsx" name="sends passive binding on discussion and adopts via the common chat writer" time="0.0161599">
+        </testcase>
+        <testcase classname="src/product/RevisionReview.test.tsx" name="does not submit an incomplete or stale displayed review" time="0.0047926">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/product/TravelAssistant.test.tsx" timestamp="2026-10-26T01:09:36.210Z" hostname="LAPTOP-STSGT0SJ" tests="12" failures="0" errors="0" skipped="0" time="3.177497">
+        <testcase classname="src/product/TravelAssistant.test.tsx" name="starts an isolated new chat without deleting the prior messages" time="0.4525227">
+        </testcase>
+        <testcase classname="src/product/TravelAssistant.test.tsx" name="retries a persisted failed answer with a new message id and retains its diagnostic" time="0.1999951">
+        </testcase>
+        <testcase classname="src/product/TravelAssistant.test.tsx" name="offers retry for a legacy provider failure without execution metadata" time="0.1159536">
+        </testcase>
+        <testcase classname="src/product/TravelAssistant.test.tsx" name="does not project legacy or other Topic messages into C&apos;s active Topic" time="0.0799571">
+        </testcase>
+        <testcase classname="src/product/TravelAssistant.test.tsx" name="opens C&apos;s server-matched canonical place cards without inventing provider IDs" time="0.2176546">
+        </testcase>
+        <testcase classname="src/product/TravelAssistant.test.tsx" name="keeps the active global session and draft when navigating and reopening the drawer" time="0.3986417">
+        </testcase>
+        <testcase classname="src/product/TravelAssistant.test.tsx" name="uses explicit Trip scope and clears it when opening from a real place" time="0.2821125">
+        </testcase>
+        <testcase classname="src/product/TravelAssistant.test.tsx" name="streams the independent Companion endpoint with actual browse context and no Trip or physical location" time="0.48602">
+        </testcase>
+        <testcase classname="src/product/TravelAssistant.test.tsx" name="only links search results with real provider identities and requires an explicit search city" time="0.4387426">
+        </testcase>
+        <testcase classname="src/product/TravelAssistant.test.tsx" name="keeps exploration and favorites available after a model error and retries with the same message id" time="0.3844405">
+        </testcase>
+        <testcase classname="src/product/TravelAssistant.test.tsx" name="renders a grounded AI route and carries canonical endpoints to the map" time="0.0586351">
+        </testcase>
+        <testcase classname="src/product/TravelAssistant.test.tsx" name="shows unavailable AI routes without inventing an estimated result" time="0.0588822">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/product/UnifiedAssistant.test.tsx" timestamp="2026-10-26T01:09:36.218Z" hostname="LAPTOP-STSGT0SJ" tests="7" failures="0" errors="0" skipped="0" time="1.9527485">
+        <testcase classname="src/product/UnifiedAssistant.test.tsx" name="adopts into the same Provider session and the drawer continues that conversation with a version fence" time="1.1146887">
+        </testcase>
+        <testcase classname="src/product/UnifiedAssistant.test.tsx" name="refreshes the same Trip after adopting a date-change preview and uses its new version" time="0.3609079">
+        </testcase>
+        <testcase classname="src/product/UnifiedAssistant.test.tsx" name="drops a late arrangement read after switching Trips" time="0.069621">
+        </testcase>
+        <testcase classname="src/product/UnifiedAssistant.test.tsx" name="explicit free chat on a Trip page stays unbound" time="0.0572654">
+        </testcase>
+        <testcase classname="src/product/UnifiedAssistant.test.tsx" name="completion in an old scope cannot cancel the new Trip read" time="0.2419728">
+        </testcase>
+        <testcase classname="src/product/UnifiedAssistant.test.tsx" name="declares existing date-change authority without weakening normal edits" time="0.001175">
+        </testcase>
+        <testcase classname="src/product/UnifiedAssistant.test.tsx" name="shows a whole blank day with its date while preserving ordinary timed free windows" time="0.1021612">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/utils/executionPresentation.test.ts" timestamp="2026-10-26T01:09:36.222Z" hostname="LAPTOP-STSGT0SJ" tests="5" failures="0" errors="0" skipped="0" time="0.0057739">
+        <testcase classname="src/utils/executionPresentation.test.ts" name="getExecutionPresentation &gt; maps normal without changing backend risk" time="0.0019462">
+        </testcase>
+        <testcase classname="src/utils/executionPresentation.test.ts" name="getExecutionPresentation &gt; maps eta_delayed without changing backend risk" time="0.0004227">
+        </testcase>
+        <testcase classname="src/utils/executionPresentation.test.ts" name="getExecutionPresentation &gt; maps disruption without changing backend risk" time="0.0001804">
+        </testcase>
+        <testcase classname="src/utils/executionPresentation.test.ts" name="getExecutionPresentation &gt; maps unknown without changing backend risk" time="0.0002481">
+        </testcase>
+        <testcase classname="src/utils/executionPresentation.test.ts" name="keeps rejected recovery distinct from a resolved disruption" time="0.0004664">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/utils/journey.test.ts" timestamp="2026-10-26T01:09:36.226Z" hostname="LAPTOP-STSGT0SJ" tests="2" failures="0" errors="0" skipped="0" time="0.0046993">
+        <testcase classname="src/utils/journey.test.ts" name="derives dates inclusively and preserves archives without execution controls" time="0.0025336">
+        </testcase>
+        <testcase classname="src/utils/journey.test.ts" name="opens today&apos;s date, falling back to first date outside the trip" time="0.0005596">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/utils/planner.test.ts" timestamp="2026-10-26T01:09:36.228Z" hostname="LAPTOP-STSGT0SJ" tests="3" failures="0" errors="0" skipped="0" time="0.0106248">
+        <testcase classname="src/utils/planner.test.ts" name="planner calculations &gt; calculates a deterministic daily budget" time="0.0040644">
+        </testcase>
+        <testcase classname="src/utils/planner.test.ts" name="planner calculations &gt; marks overspending and never relies on floating yuan values" time="0.0006821">
+        </testcase>
+        <testcase classname="src/utils/planner.test.ts" name="planner calculations &gt; builds route legs in timeline order" time="0.002825">
+        </testcase>
+    </testsuite>
+</testsuites>

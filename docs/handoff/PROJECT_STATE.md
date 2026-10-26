@@ -1,6 +1,23 @@
 # RoamSync project state
 
-Last updated: 2026-10-25
+Last updated: 2026-10-26
+
+## Official-source parallel closeout integration (2026-10-26)
+
+VERIFIED A/B/C/D and the shared Stage6 lineage are integrated into the sole
+official source E:/Study/RoamSync on codex/journey-handbook. Original2017 local
+files were preserved and checked against the external recoverable snapshot.
+MEASURED official-source full backend2183 passed,0 failed,0 skipped on two new
+exclusive15435 test databases; source/test hashes remained stable. Six public
+real GLM/AMap/search B turns pass their bounded criteria, app hash stable and
+eight business tables unchanged. No new business table or public write entry.
+Official Web49 files/273 tests, typecheck and production build pass. Official A
+public Nanjing/Xiamen previews reach ready, but Nanjing's second turn produces
+an invalid nonempty duplicate day and is rejected; the raw failure is retained.
+Whole-product GO remains pending the complete browser/adoption/safety chain
+and one independent sealed measurement. No deployment or production DB change.
+See docs/parallel-closeout-20261026/integration-report.md for final engineering
+checks, commit scope and remaining limitations.
 
 ## Stage6 shared references and bound saved modifications (2026-10-25)
 

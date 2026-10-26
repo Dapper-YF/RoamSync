@@ -1,0 +1,61 @@
+{
+  "scenario": "must_do_show_conflict_exact_refs",
+  "run_id": "b743553e-5eb1-43e0-84c0-f3b26b93c42f",
+  "trip_id": "5f68b539-1bae-45e4-bb0d-225c85cb981c",
+  "input": "2026-10-12 下午，浙江省博物馆(孤山馆区)和晚上19:00的杭州大剧院演出都必须保留，请帮我调整当天行程。",
+  "control_design": {
+    "same_trip_as_generic_reference_scenario": true,
+    "eliminated_variables": [
+      "generic_place_reference_ambiguity",
+      "target_day_ambiguity"
+    ],
+    "preserved_natural_language_constraint": "两个活动都必须保留"
+  },
+  "fixture_precondition": {
+    "status": "PASS",
+    "target_day": "2026-10-12",
+    "museum": {
+      "name": "浙江省博物馆(孤山馆区)",
+      "schedule": "15:00-18:10",
+      "schedule_locked": true
+    },
+    "show": {
+      "name": "杭州大剧院",
+      "schedule": "19:00-20:30",
+      "schedule_locked": true
+    },
+    "available_transfer_minutes": 50,
+    "amap_transit_minutes": 77,
+    "route_conflict_exists": true
+  },
+  "intent_resolution_observed": {
+    "intent_type": "modify_day",
+    "target_day": "2026-10-12",
+    "requested_place_queries": [],
+    "existing_activity_references": [],
+    "missing_fields": [],
+    "ambiguities": [],
+    "clarification_required": false
+  },
+  "pipeline": {
+    "intent": "success",
+    "context": "reached",
+    "destination_research": "failed",
+    "tavily": "not_reached",
+    "amap_poi": "not_reached",
+    "clarification": "not_applicable",
+    "resume": "not_applicable",
+    "deepseek": "not_reached",
+    "candidate": "not_reached",
+    "route_enrichment": "not_reached",
+    "validator": "not_reached",
+    "plan_revision": "not_produced"
+  },
+  "failure": {
+    "error_code": "planner_requested_place_unresolved",
+    "message": "未唯一匹配到你指定的地点：杭州大剧院演出。请补充准确名称或所在区域后重新规划。",
+    "classification": "existing_activity_reference_resolution_failure",
+    "token_usage": 0
+  },
+  "stage0_interpretation": "Even with an explicit formal target day and the persisted museum name, the production pipeline treated the natural-language reference to the existing Hangzhou Grand Theatre show as a new place request before Planner execution. Must-do trade-off reasoning is blocked, not failed."
+}

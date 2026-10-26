@@ -1,0 +1,162 @@
+{
+  "config": {
+    "argv": [
+      "D:\\nodejs\\node.exe",
+      "E:\\Study\\RoamSync\\web\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "e2e/demo-execution.spec.ts",
+      "--config",
+      "playwright.acceptance.config.ts"
+    ],
+    "configFile": "E:\\Study\\RoamSync\\web\\playwright.acceptance.config.ts",
+    "rootDir": "E:/Study/RoamSync/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "E:/Study/RoamSync/backend/evals/results/demo_acceptance_20261007/browser",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "E:/Study/RoamSync/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "demo-*.spec.ts"
+        ],
+        "timeout": 900000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../backend/evals/results/demo_acceptance_20261007/playwright.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "demo-execution.spec.ts",
+      "file": "demo-execution.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real execution experience and simulated navigation produce an explicitly accepted recovery",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 900000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1682,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"in_progress\"\u001b[39m\nReceived: \u001b[31mundefined\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"in_progress\"\u001b[39m\nReceived: \u001b[31mundefined\u001b[39m\n    at E:\\Study\\RoamSync\\web\\e2e\\demo-execution.spec.ts:38:72",
+                    "location": {
+                      "file": "E:\\Study\\RoamSync\\web\\e2e\\demo-execution.spec.ts",
+                      "column": 72,
+                      "line": 38
+                    },
+                    "snippet": "  36 |     await expect.poll(async () => (await get(`trips/${trip}/execution-progress`)).current_activity_experience.total_extension_minutes).toBe(30);\n  37 |     report.experience_after = await get(`trips/${trip}/execution-progress`); save();\n> 38 |     expect(report.experience_after.current_activity_experience.status).toBe(\"in_progress\");\n     |                                                                        ^\n  39 |     expect(Date.parse(report.experience_after.current_activity_experience.projected_end_at) - Date.parse(report.experience_before.current_activity_experience.projected_end_at)).toBe(30 * 60_000);\n  40 |     expect(report.experience_after.experience_impact).toBeTruthy();\n  41 |     expect(await get(`trips/${trip}/days`)).toEqual(report.before.days);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "E:\\Study\\RoamSync\\web\\e2e\\demo-execution.spec.ts",
+                        "column": 72,
+                        "line": 38
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"in_progress\"\u001b[39m\nReceived: \u001b[31mundefined\u001b[39m\n\n  36 |     await expect.poll(async () => (await get(`trips/${trip}/execution-progress`)).current_activity_experience.total_extension_minutes).toBe(30);\n  37 |     report.experience_after = await get(`trips/${trip}/execution-progress`); save();\n> 38 |     expect(report.experience_after.current_activity_experience.status).toBe(\"in_progress\");\n     |                                                                        ^\n  39 |     expect(Date.parse(report.experience_after.current_activity_experience.projected_end_at) - Date.parse(report.experience_before.current_activity_experience.projected_end_at)).toBe(30 * 60_000);\n  40 |     expect(report.experience_after.experience_impact).toBeTruthy();\n  41 |     expect(await get(`trips/${trip}/days`)).toEqual(report.before.days);\n    at E:\\Study\\RoamSync\\web\\e2e\\demo-execution.spec.ts:38:72"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-07T15:29:14.834Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "E:\\Study\\RoamSync\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-execution-real-execut-13aae-xplicitly-accepted-recovery\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\Study\\RoamSync\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-execution-real-execut-13aae-xplicitly-accepted-recovery\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "E:\\Study\\RoamSync\\backend\\evals\\results\\demo_acceptance_20261007\\browser\\demo-execution-real-execut-13aae-xplicitly-accepted-recovery\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "E:\\Study\\RoamSync\\web\\e2e\\demo-execution.spec.ts",
+                    "column": 72,
+                    "line": 38
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "5117e92399dea6beeebb-f67a30929be3170de601",
+          "file": "demo-execution.spec.ts",
+          "line": 7,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-07T15:29:14.038Z",
+    "duration": 3295.8860000000004,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

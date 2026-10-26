@@ -1,0 +1,496 @@
+{
+  "measured_at": "2026-09-29T03:43:57.112823+00:00",
+  "mode": "live",
+  "model_configuration": {
+    "provider": "glm",
+    "model": "glm-5.3-flash",
+    "reasoning_effort": "max"
+  },
+  "corpus": "hangzhou_reviewed_v1_real_source_paraphrases",
+  "database_access": false,
+  "mutation_evidence": "No DB and no mutation port in this eval; formal snapshots measured separately in PostgreSQL tests",
+  "claim_entailment": "manual review required; valid refs are not sentence verification",
+  "results": [
+    {
+      "id": "history",
+      "message": "西湖有什么历史？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": null,
+      "error": "PlannerProviderError",
+      "invalid_refs": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 18.076,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [],
+      "knowledge_requests": [
+        {
+          "query": "西湖有什么历史？",
+          "destination": null,
+          "knowledge_types": [
+            "history_culture"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_ff175cbcc44e7538_593b42038743d5fde8d1adf8977c0948",
+              "text": "西湖及三面环山的景观自九世纪以来启发了诗人、学者与艺术家。堤、岛及寺塔园林等人工要素体现了中国传统山水审美。杭州西湖文化景观于2011年列入世界遗产。",
+              "source_reference": "https://whc.unesco.org/en/list/1334",
+              "knowledge_type": "history_culture",
+              "scope": "stable",
+              "document_id": "hz-westlake-history",
+              "chunk_id": "593b42038743d5fde8d1adf8977c09489077e608df0783df65829a8a0c596cf8",
+              "document_title": "西湖历史与文化景观",
+              "source_name": "UNESCO World Heritage Centre",
+              "source_type": "web",
+              "source_authority": "institutional",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": "tourism_corpus:curated:hz-westlake-history",
+              "place_name": "西湖"
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:43:57.128080Z"
+        }
+      ]
+    },
+    {
+      "id": "culture",
+      "message": "西湖文化景观有哪些文化特点？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": null,
+      "error": "PlannerProviderError",
+      "invalid_refs": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 16.394,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [],
+      "knowledge_requests": [
+        {
+          "query": "西湖文化景观有哪些文化特点？",
+          "destination": null,
+          "knowledge_types": [
+            "history_culture"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_ff175cbcc44e7538_593b42038743d5fde8d1adf8977c0948",
+              "text": "西湖及三面环山的景观自九世纪以来启发了诗人、学者与艺术家。堤、岛及寺塔园林等人工要素体现了中国传统山水审美。杭州西湖文化景观于2011年列入世界遗产。",
+              "source_reference": "https://whc.unesco.org/en/list/1334",
+              "knowledge_type": "history_culture",
+              "scope": "stable",
+              "document_id": "hz-westlake-history",
+              "chunk_id": "593b42038743d5fde8d1adf8977c09489077e608df0783df65829a8a0c596cf8",
+              "document_title": "西湖历史与文化景观",
+              "source_name": "UNESCO World Heritage Centre",
+              "source_type": "web",
+              "source_authority": "institutional",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": "tourism_corpus:curated:hz-westlake-history",
+              "place_name": "西湖"
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:44:15.197967Z"
+        }
+      ]
+    },
+    {
+      "id": "history_paraphrase",
+      "message": "西湖的历史背景能简单介绍一下吗？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": null,
+      "error": "PlannerProviderError",
+      "invalid_refs": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 16.45,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [],
+      "knowledge_requests": [
+        {
+          "query": "西湖的历史背景能简单介绍一下吗？",
+          "destination": null,
+          "knowledge_types": [
+            "history_culture"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_ff175cbcc44e7538_593b42038743d5fde8d1adf8977c0948",
+              "text": "西湖及三面环山的景观自九世纪以来启发了诗人、学者与艺术家。堤、岛及寺塔园林等人工要素体现了中国传统山水审美。杭州西湖文化景观于2011年列入世界遗产。",
+              "source_reference": "https://whc.unesco.org/en/list/1334",
+              "knowledge_type": "history_culture",
+              "scope": "stable",
+              "document_id": "hz-westlake-history",
+              "chunk_id": "593b42038743d5fde8d1adf8977c09489077e608df0783df65829a8a0c596cf8",
+              "document_title": "西湖历史与文化景观",
+              "source_name": "UNESCO World Heritage Centre",
+              "source_type": "web",
+              "source_authority": "institutional",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": "tourism_corpus:curated:hz-westlake-history",
+              "place_name": "西湖"
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:44:31.593918Z"
+        }
+      ]
+    },
+    {
+      "id": "profile",
+      "message": "杭州西湖的景观有哪些构成要素？",
+      "goal": {
+        "goal_type": "destination_exploration",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_destination_exploration"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": null,
+      "error": "PlannerProviderError",
+      "invalid_refs": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 16.525,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [],
+      "knowledge_requests": [
+        {
+          "query": "杭州西湖的景观有哪些构成要素？",
+          "destination": "杭州",
+          "knowledge_types": [
+            "destination_profile"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_54dbec63406dfe4d_beccb000a6a1053e3809103d16e6db16",
+              "text": "西湖景观三面环山，一面与杭州城市相接。湖泊、堤岛、寺塔和园林共同构成文化景观，体现人与自然相融合的传统。",
+              "source_reference": "https://whc.unesco.org/en/list/1334",
+              "knowledge_type": "destination_profile",
+              "scope": "stable",
+              "document_id": "hz-westlake-profile",
+              "chunk_id": "beccb000a6a1053e3809103d16e6db165c7619adbb4c7c0d07cfb8d195efe6b1",
+              "document_title": "杭州西湖目的地概况",
+              "source_name": "UNESCO World Heritage Centre",
+              "source_type": "web",
+              "source_authority": "institutional",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": "tourism_corpus:curated:hz-westlake-profile",
+              "place_name": "西湖"
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:44:48.060201Z"
+        }
+      ]
+    },
+    {
+      "id": "lifestyle",
+      "message": "杭州有什么当地生活体验？",
+      "goal": {
+        "goal_type": "destination_exploration",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_destination_exploration"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": null,
+      "error": "PlannerProviderError",
+      "invalid_refs": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 16.434,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [],
+      "knowledge_requests": [
+        {
+          "query": "杭州有什么当地生活体验？",
+          "destination": "杭州",
+          "knowledge_types": [
+            "local_lifestyle"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_7845fcd2aec3e818_3d9eaeeb96d27af65f19660335da38d8",
+              "text": "杭州文旅介绍了老式茶楼茶馆中的观景、品茶与慢生活体验。北山路的茶舍结合观湖与喝茶，吴山的茶楼结合城市观景与宋式文化元素。本文只保留茶生活体验主题，不证明店铺目前经营、预约、价格或服务。",
+              "source_reference": "https://wgly.hangzhou.gov.cn/art/2023/1/17/art_1229505585_58944038.html",
+              "knowledge_type": "local_lifestyle",
+              "scope": "stable",
+              "document_id": "hz-tea-lifestyle",
+              "chunk_id": "3d9eaeeb96d27af65f19660335da38d8f7cf5fa4b3a4400942b399ced6c4b41d",
+              "document_title": "杭州当地生活：茶馆与喝茶",
+              "source_name": "杭州市文化广电旅游局 / 杭州会奖旅游",
+              "source_type": "web",
+              "source_authority": "official_destination",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": null,
+              "place_name": null
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:45:04.573829Z"
+        }
+      ]
+    },
+    {
+      "id": "tea_lifestyle",
+      "message": "杭州茶馆有哪些慢生活体验？",
+      "goal": {
+        "goal_type": "destination_exploration",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_destination_exploration"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": null,
+      "error": "PlannerProviderError",
+      "invalid_refs": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 16.485,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [],
+      "knowledge_requests": [
+        {
+          "query": "杭州茶馆有哪些慢生活体验？",
+          "destination": "杭州",
+          "knowledge_types": [
+            "local_lifestyle"
+          ],
+          "max_results": 5,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_7845fcd2aec3e818_3d9eaeeb96d27af65f19660335da38d8",
+              "text": "杭州文旅介绍了老式茶楼茶馆中的观景、品茶与慢生活体验。北山路的茶舍结合观湖与喝茶，吴山的茶楼结合城市观景与宋式文化元素。本文只保留茶生活体验主题，不证明店铺目前经营、预约、价格或服务。",
+              "source_reference": "https://wgly.hangzhou.gov.cn/art/2023/1/17/art_1229505585_58944038.html",
+              "knowledge_type": "local_lifestyle",
+              "scope": "stable",
+              "document_id": "hz-tea-lifestyle",
+              "chunk_id": "3d9eaeeb96d27af65f19660335da38d8f7cf5fa4b3a4400942b399ced6c4b41d",
+              "document_title": "杭州当地生活：茶馆与喝茶",
+              "source_name": "杭州市文化广电旅游局 / 杭州会奖旅游",
+              "source_type": "web",
+              "source_authority": "official_destination",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": null,
+              "place_name": null
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:45:21.012057Z"
+        }
+      ]
+    }
+  ],
+  "complete": false
+}

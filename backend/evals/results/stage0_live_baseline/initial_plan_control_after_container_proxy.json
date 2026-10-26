@@ -1,0 +1,52 @@
+{
+  "schema_version": "travel-agent-evaluation-result-v1",
+  "benchmark_version": "travel-agent-v1",
+  "scenario_id": "initial_plan_control",
+  "mode": "live",
+  "production_metadata": {
+    "planning_run_id": "d1c4e646-4ece-4fd5-a40e-069f6cf228f6",
+    "provider": "deepseek",
+    "model": "deepseek-flash",
+    "token_usage": 30052
+  },
+  "artifact": {
+    "resolved_intent": "create_plan",
+    "resolved_run_type": "initial_plan",
+    "early_exit_stage": "route_enrichment",
+    "reachability": {
+      "intent_resolver": "reached",
+      "context_builder": "reached",
+      "destination_research": "reached",
+      "external_tools": "reached",
+      "planner": "reached",
+      "route_enrichment": "failed",
+      "validator": "not_reached",
+      "critic": "not_applicable",
+      "revision": "not_reached",
+      "persistence": "not_reached",
+      "user_decision": "not_applicable"
+    },
+    "provider": "amap",
+    "operation": "v5 direction route enrichment",
+    "provider_error_code": "map_provider_rejected",
+    "provider_message": "INVALID_PARAMS",
+    "validation": {},
+    "candidate": {}
+  },
+  "metrics": {
+    "intent_routing_accuracy": 1.0,
+    "planner_metrics": "not_applicable"
+  },
+  "trace": {
+    "scenario": "initial_plan_control",
+    "steps": [
+      "PlanningRun created",
+      "resolve_intent: create_plan",
+      "destination research reached",
+      "DeepSeek Planner reached",
+      "route enrichment: AMap v5 direction rejected request (INVALID_PARAMS)",
+      "early exit"
+    ],
+    "private_reasoning_recorded": false
+  }
+}

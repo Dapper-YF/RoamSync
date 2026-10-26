@@ -1,0 +1,208 @@
+{
+  "commit": "4a523b7bd91df6c7c77c06cff87b2ff6a36a80de",
+  "failed_run": {
+    "id": "11230b54-ea1a-46f6-93df-9b8fe0616c7a",
+    "trip_id": "b9805317-9e0b-4067-911b-61c20680ef5a",
+    "disruption_event_id": null,
+    "trigger_type": null,
+    "trigger_fingerprint": null,
+    "trigger_snapshot": null,
+    "run_type": "replan",
+    "status": "failed",
+    "user_request": "请调整2026年10月11日的后续行程，让节奏轻松一点，保留当前活动和已完成活动，生成候选待用户确认，不直接保存。",
+    "response_text": null,
+    "progress": {
+      "events": [
+        {
+          "stage": "intent",
+          "status": "running",
+          "at": "2026-10-08T01:43:33.711092+00:00",
+          "duration_ms": null,
+          "call_id": "7a1d6257-da5a-4a72-a456-814e6cf07cb5",
+          "provider": null,
+          "purpose": null,
+          "data": {},
+          "sequence": 1
+        },
+        {
+          "stage": "research_decision",
+          "status": "completed",
+          "at": "2026-10-08T01:43:33.789340+00:00",
+          "duration_ms": null,
+          "call_id": null,
+          "provider": null,
+          "purpose": null,
+          "data": {
+            "destination_research_required": false,
+            "destination_research_available": true
+          },
+          "sequence": 2
+        },
+        {
+          "stage": "weather",
+          "status": "running",
+          "at": "2026-10-08T01:43:33.804314+00:00",
+          "duration_ms": null,
+          "call_id": "b4a627bc-cf33-4781-868d-9fdfc4ace049",
+          "provider": "Open-Meteo",
+          "purpose": "Travel-date weather",
+          "data": {},
+          "sequence": 3
+        },
+        {
+          "stage": "weather",
+          "status": "completed",
+          "at": "2026-10-08T01:43:35.073681+00:00",
+          "duration_ms": 1264,
+          "call_id": "b4a627bc-cf33-4781-868d-9fdfc4ace049",
+          "provider": "Open-Meteo",
+          "purpose": "Travel-date weather",
+          "data": {
+            "queried_at": "2026-10-08T01:43:35.073647+00:00",
+            "hourly_sample_count": 72
+          },
+          "sequence": 4
+        },
+        {
+          "stage": "intent",
+          "status": "failed",
+          "at": "2026-10-08T01:43:35.088271+00:00",
+          "duration_ms": 1371,
+          "call_id": "7a1d6257-da5a-4a72-a456-814e6cf07cb5",
+          "provider": null,
+          "purpose": null,
+          "data": {
+            "error_code": "DecisionContextInvariantError"
+          },
+          "sequence": 5
+        }
+      ],
+      "observation_sequence": 5,
+      "observations_truncated": false,
+      "stage": "intent",
+      "message": "网页检索已结束，正在核对你的需求与调整范围…",
+      "updated_at": "2026-10-08T01:43:35.078039+00:00"
+    },
+    "heartbeat_at": "2026-10-08T01:43:35.078039Z",
+    "entry_point": "trip_planner",
+    "selected_day_id": null,
+    "selected_activity_id": null,
+    "intent_resolution": {
+      "request": {
+        "trip_id": "b9805317-9e0b-4067-911b-61c20680ef5a",
+        "user_request": "请调整2026年10月11日的后续行程，让节奏轻松一点，保留当前活动和已完成活动，生成候选待用户确认，不直接保存。",
+        "intent": {
+          "intent_type": "modify_day",
+          "source_text": "请调整2026年10月11日的后续行程，让节奏轻松一点，保留当前活动和已完成活动，生成候选待用户确认，不直接保存。",
+          "time_scope": {
+            "day_number": 3,
+            "day_date": "2026-10-11",
+            "period": null
+          },
+          "protected_activity_ids": [],
+          "requested_place_queries": [],
+          "requested_pace": "relaxed",
+          "missing_fields": [],
+          "ambiguities": []
+        },
+        "entry_point": "trip_planner",
+        "selected_day_id": null,
+        "selected_activity_id": null,
+        "target_day_id": "17277ecd-2dd7-4e41-bbf9-1a43fb23657e"
+      },
+      "requires_clarification": false,
+      "clarification_questions": [],
+      "parser_version": "rules-v1",
+      "semantic_draft": {
+        "primary_intent": "replan_trip",
+        "operations": [
+          {
+            "operation": "replan_trip",
+            "raw_text": "请调整2026年10月11日的后续行程，让节奏轻松一点，保留当前活动和已完成活动，生成候选待用户确认，不直接保存。",
+            "date_expression": "10月11日",
+            "period": null,
+            "activity_mentions": [],
+            "place_mentions": [],
+            "constraints": {
+              "budget_must_not_increase": false,
+              "max_additional_cost_fen": null,
+              "preferred_environment": null,
+              "max_walking_minutes": null,
+              "requested_pace": "relaxed",
+              "weather_sensitive": false,
+              "preserve_completed": true
+            }
+          }
+        ],
+        "confidence": 0.98,
+        "missing_fields": [],
+        "ambiguities": [],
+        "parser": "rules",
+        "parser_version": "rules-envelope-v1"
+      },
+      "grounded_intent": {
+        "trip_id": "b9805317-9e0b-4067-911b-61c20680ef5a",
+        "primary_intent": "replan_trip",
+        "operation_types": [
+          "replan_trip"
+        ],
+        "target_day_ids": [
+          "17277ecd-2dd7-4e41-bbf9-1a43fb23657e"
+        ],
+        "target_activity_ids": [],
+        "candidate_place_ids": [],
+        "unresolved_activity_mentions": [],
+        "unresolved_place_mentions": [],
+        "constraints": {
+          "budget_must_not_increase": false,
+          "max_additional_cost_fen": null,
+          "preferred_environment": null,
+          "max_walking_minutes": null,
+          "requested_pace": "relaxed",
+          "weather_sensitive": false,
+          "preserve_completed": true
+        },
+        "missing_fields": [],
+        "ambiguities": []
+      },
+      "policy_decision": {
+        "operation_mode": "preview_change",
+        "risk_level": "medium",
+        "requires_confirmation": true,
+        "reasons": [
+          "formal_plan_change"
+        ],
+        "route": "plan_preview"
+      }
+    },
+    "base_trip_version": 3,
+    "model_provider": null,
+    "model_name": null,
+    "token_usage": 0,
+    "error_code": "decision_context_invalid",
+    "error_message": "decision context invariant failed: execution_references_unknown_activity",
+    "error_details": {
+      "invariant_errors": [
+        "execution_references_unknown_activity"
+      ]
+    },
+    "pending_interrupt": null,
+    "created_at": "2026-10-08T01:43:29.269163Z",
+    "started_at": "2026-10-08T01:43:33.629778Z",
+    "completed_at": "2026-10-08T01:43:35.096450Z"
+  },
+  "requested_target_day_ids": [
+    "17277ecd-2dd7-4e41-bbf9-1a43fb23657e"
+  ],
+  "current_activity_id": "85db7d82-184c-4a0d-86ec-a30507e3010e",
+  "current_activity_exists_in_whole_formal_itinerary": true,
+  "current_activity_day": {
+    "day_id": "6d3ac749-bd6d-49e1-8ba6-357d1b6893ad",
+    "date": "2026-10-09",
+    "name": "美龄宫"
+  },
+  "current_activity_outside_requested_scope": true,
+  "formal_before_after_exact": true,
+  "trip_version": 3,
+  "interpretation": "Builder restricts formal_itinerary to requested day but retains global current_activity_id; invariant compares global execution pointer to selected-day subset."
+}

@@ -1,0 +1,89 @@
+{
+  "scenario": "reject-repeat-density",
+  "trip_id": "032ef9f6-2a1f-4652-870b-fbc449eb20f0",
+  "date": "2026-10-14",
+  "formal_fixture": {
+    "activity_count": 6,
+    "coordinates_complete": true,
+    "citycode_adcode_complete": true,
+    "route_provider": "AMap Route 2.0",
+    "deterministic_validator_valid": true
+  },
+  "planning_run_a": {
+    "run_id": "7f3a01e7-ca54-4f5e-b29d-f94e4e562789",
+    "revision_id": "f1401b1d-d754-4490-a74f-094b7b614e81",
+    "request": "请调整 2026-10-14 的行程，希望轻松一点，并尽量少走路。",
+    "intent": {"requested_pace": "relaxed", "target_day": "2026-10-14"},
+    "status_before_reject": "awaiting_confirmation",
+    "candidate_fingerprint": {
+      "activity_count": 6,
+      "preserved": ["浙江省博物馆(孤山馆区)", "中国印学博物馆", "楼外楼(杭州西湖风景名胜区店)", "西湖博物馆", "中国丝绸博物馆", "南宋官窑博物馆"],
+      "added": [],
+      "removed": [],
+      "culture_durations_minutes": [30, 30, 40, 45, 40],
+      "route_duration_minutes": 95,
+      "route_distance_meters": 14653,
+      "walking_duration_minutes": 15,
+      "walking_distance_meters": 1060,
+      "day_end": "16:40",
+      "explanation_claims": ["放松节奏", "尽量少走路", "不新增地点"]
+    }
+  },
+  "reject_action": {
+    "production_api": "POST /api/v1/plan-revisions/{revision_id}/reject",
+    "revision_status": "rejected",
+    "planning_run_status": "rejected",
+    "pending_interrupt_cleared": true,
+    "production_rejection_reason": null,
+    "evaluation_rejection_reason": "两个文化场馆仍各仅30分钟，不符合本评估对 relaxed 文化体验的最低质量期待。",
+    "evaluation_reason_injected_to_production": false
+  },
+  "decision_memory_provenance_before_b": {
+    "revision_a_existed": {"persisted": true, "retrieved": false, "visible_to_planner": false},
+    "revision_a_rejected_status": {"persisted": true, "retrieved": false, "visible_to_planner": false},
+    "revision_a_candidate_summary": {"persisted": true, "retrieved": false, "visible_to_planner": false},
+    "revision_a_user_request": {"persisted": true, "retrieved": false, "visible_to_planner": false},
+    "rejection_reason": {"persisted": false, "retrieved": false, "visible_to_planner": false},
+    "revision_a_explanation": {"persisted": true, "retrieved": false, "visible_to_planner": false},
+    "previous_planning_run_or_conversation_history": {"persisted": true, "retrieved": false, "visible_to_planner": false},
+    "evidence": "Direct PlanningRun graph rebuilds planning context from the formal trip and does not query prior PlanningRuns or PlanRevisions. Assistant-session history masking is not on this direct PlanningRun path."
+  },
+  "planning_run_b": {
+    "run_id": "4b797d0e-6c61-45ed-a285-59f9d6e5a0a8",
+    "revision_id": "f809961f-007d-4d5a-aa8f-bb57a4fa974e",
+    "request": "请再调整一次 2026-10-14 当天的行程。",
+    "intent": {"requested_pace": null, "target_day": "2026-10-14"},
+    "status": "awaiting_confirmation",
+    "candidate_fingerprint": {
+      "activity_count": 7,
+      "preserved": ["浙江省博物馆(孤山馆区)", "中国印学博物馆", "楼外楼(杭州西湖风景名胜区店)", "西湖博物馆", "中国丝绸博物馆"],
+      "added": ["灵隐寺", "南宋御街"],
+      "removed": ["南宋官窑博物馆"],
+      "culture_durations_minutes": [40, 40, 90, 40, 40],
+      "route_duration_minutes": 257,
+      "route_distance_meters": 23263,
+      "walking_duration_minutes": 10,
+      "walking_distance_meters": 708,
+      "day_end": "20:17",
+      "review_count": 1,
+      "explanation_claims": ["恢复可行节奏", "保留主要游览时长"]
+    }
+  },
+  "comparison": {
+    "culture_duration_rejection_metric": {"a": [30, 30], "b": [40, 40], "repeat_error": false},
+    "activity_count": {"a": 6, "b": 7},
+    "route_duration_minutes": {"a": 95, "b": 257},
+    "walking_duration_minutes": {"a": 15, "b": 10},
+    "day_end": {"a": "16:40", "b": "20:17"},
+    "memory_causality_supported": false,
+    "interpretation": "B happened to eliminate the evaluator's A-duration issue, but no rejected-state or rejection-reason evidence was available to Planner B. This is non-causal variance, not demonstrated decision-memory adaptation."
+  },
+  "token_usage": {
+    "run_a_total": 22155,
+    "run_b_destination_research": 14062,
+    "run_b_planner": 41029,
+    "run_b_total": 55091,
+    "sequence_total": 77246
+  },
+  "production_code_changed": false
+}

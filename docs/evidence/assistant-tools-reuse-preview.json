@@ -1,0 +1,48 @@
+{
+  "id": "0a015e90-76c4-4831-80e0-d66ded889f01",
+  "trip_id": "4ecab86a-754f-42b1-a7bc-bb703ea75e6e",
+  "messages": [
+    {
+      "id": "18e969d3-c8e2-4a0b-88f6-56b731a8e51d",
+      "user": "把当前这趟旅行整体改期到2027年2月1日至2日，保留已有活动、预算和偏好。",
+      "assistant": "正在为您调整日期至2027年2月1日至2日，保留现有活动、预算与偏好。",
+      "tool": "reschedule_trip",
+      "run_id": null
+    },
+    {
+      "id": "4b024794-0313-48c7-ac43-7691e18a1c9c",
+      "user": "确认执行",
+      "assistant": "已改期，原有活动已按天移动；旅行状态会随新日期更新。",
+      "trip_id": "4ecab86a-754f-42b1-a7bc-bb703ea75e6e"
+    },
+    {
+      "id": "fe1f362a-cd2f-4e1b-b0d7-a7c91b66c654",
+      "user": "参考这趟旅行，再创建一次新的杭州旅行，日期2027年3月1日至2日，保留原旅行，不要覆盖；新旅行叫助手复用验收。",
+      "assistant": "好的，我将依据当前这趟杭州旅行（保留原旅行不动）为模板，为您创建一趟新的杭州行程：标题「助手复用验收」，日期为2027年3月1日至3月2日，并继承原目的地的预算与偏好。请确认后点击执行按钮完成创建。",
+      "tool": "reuse_trip",
+      "run_id": null
+    }
+  ],
+  "pending_action": {
+    "id": "ca4aaeb5-a0a5-4ae8-a0f9-37d4d993dd71",
+    "tool": "reuse_trip",
+    "source_trip_id": "4ecab86a-754f-42b1-a7bc-bb703ea75e6e",
+    "source_signature": "f92fb4ee23eefe86d1c748347e4f6e1852250697c1d7265e8c86b0496d2c6744",
+    "source_title": "杭州两日一夜 · 湖山人文之旅（副本）",
+    "city": {
+      "name": "杭州",
+      "adcode": "330100",
+      "citycode": "0571",
+      "longitude": 120.15507,
+      "latitude": 30.274085
+    },
+    "title": "助手复用验收",
+    "start_date": "2027-03-01",
+    "end_date": "2027-03-02",
+    "total_budget_fen": 420000,
+    "daily_budget_fen": 100000,
+    "preferences": "",
+    "summary": "参考旧旅行创建新旅行，继承适用偏好；消费与完成记录留在原旅行中。"
+  },
+  "latest_run_id": null
+}

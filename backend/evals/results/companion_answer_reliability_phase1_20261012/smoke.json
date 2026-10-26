@@ -1,0 +1,55 @@
+{
+  "config": {
+    "provider": "glm",
+    "model": "glm-5.3-flash",
+    "base_url": {
+      "scheme": "https",
+      "host": "open.bigmodel.cn",
+      "port": null,
+      "path": "/api/paas/v4"
+    },
+    "proxy": {
+      "scheme": "http",
+      "host": "127.0.0.1",
+      "port": 7897,
+      "path": ""
+    },
+    "credentials_present": true,
+    "timeout": 90.0,
+    "retries": 0,
+    "cwd": "E:\\Study\\RoamSync",
+    "env_file_exists": true,
+    "openai_sdk": "2.54.0",
+    "httpx": "0.28.1"
+  },
+  "request": {
+    "input": "Return a JSON object with ok=true.",
+    "max_output_tokens": 256,
+    "reasoning_effort": "low"
+  },
+  "real": true,
+  "database_used": false,
+  "response": {
+    "status": "completed",
+    "finish_reason": "stop",
+    "output": "\n{\"ok\": true}\n",
+    "usage": {
+      "completion_tokens": 11,
+      "prompt_tokens": 126,
+      "total_tokens": 137,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 0,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": null,
+        "cached_tokens": 0
+      }
+    }
+  },
+  "success": true,
+  "seconds": 7.705695099997683
+}

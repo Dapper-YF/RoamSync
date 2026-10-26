@@ -1,0 +1,80 @@
+{
+  "snapshot_sha256": "092c79626184262f5c8b530174fbca290e883ea39a89d7f4710303816d38713e",
+  "live": {
+    "cases": 16,
+    "errors": 0,
+    "real_provider_generations": 8,
+    "format_repairs": 0,
+    "goal_correct": 15,
+    "runtime_correct": 16,
+    "premature_planning_authorizations": 0,
+    "exploration_turns": 6,
+    "unnecessary_slot_questions": 0,
+    "repeated_planning_ctas": 0,
+    "completed_responses": 16,
+    "substantive_responses": 10,
+    "partial_or_limitation_responses": 5,
+    "planning_transitions": 1,
+    "tool_tp": 6,
+    "tool_fp": 0,
+    "tool_fn": 0,
+    "knowledge_precision": 1.0,
+    "knowledge_recall": 1.0,
+    "source_factual_claims": 14,
+    "source_factual_review": {
+      "supported": 14
+    },
+    "all_structured_claim_review": {
+      "supported": 14,
+      "not_applicable": 5,
+      "recommendation_not_fact": 3
+    },
+    "general_unverified_answers": 7
+  },
+  "holdout": {
+    "cases": 50,
+    "pending_reviews": 0,
+    "errors": 0,
+    "real_provider_generations": 13,
+    "format_repairs": 0,
+    "original_fixture_metrics": {
+      "cases": 50,
+      "pending": 0,
+      "routing_correct": 50,
+      "planning_authorization_correct": 50,
+      "need_correct": 39,
+      "expected_assertions_covered": 34,
+      "unsupported_factual_claim": 0,
+      "recommendation_separation": 50
+    },
+    "retrieval_related_cases": 43,
+    "retrieval_calls": 44,
+    "usefulness": {
+      "useful_substantive_answer": 28,
+      "partial_or_honest_limited_answer": 14,
+      "missed_or_irrelevant": 2,
+      "useful_safe_live_limitation": 6
+    },
+    "source_factual_review": {
+      "supported": 57
+    },
+    "all_structured_claim_review": {
+      "supported": 57,
+      "not_applicable": 38,
+      "recommendation_not_fact": 28
+    },
+    "manual_embedded_factual_cautions": [
+      {
+        "case_id": "rec_04",
+        "label": "unsupported",
+        "text": "三面云山一面湖",
+        "note": "Decorative phrase in a recommendation has no supporting assertion; not an official quotation."
+      }
+    ],
+    "optional_date_invitation_cases": [
+      "rec_03"
+    ],
+    "blind": false,
+    "label_changes": 0
+  }
+}

@@ -1,0 +1,4367 @@
+{
+  "real": true,
+  "database_used": false,
+  "formal_planning_executed": false,
+  "turn_inputs": [
+    "我想先了解南京的文化特色，暂时不做行程。",
+    "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+    "苏州和南京哪个更适合我这种慢节奏旅行？先比较，不要规划。",
+    "帮我规划南京三天行程，优先历史文化和安静街巷。"
+  ],
+  "rows": [
+    {
+      "mode": "A",
+      "turn": 0,
+      "input": "我想先了解南京的文化特色，暂时不做行程。",
+      "history": [],
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "南京的文化特色可以用几个关键词概括：\n\n1. 六朝古都：东吴、东晋和南朝宋齐梁陈均建都于此，另有南唐、明初、太平天国和民国，留下深厚的历史层叠感。明孝陵、明城墙、中山陵都是不同时代的印记。\n\n2. 秦淮文化：夫子庙—秦淮河一带是古代科举与市井生活的中心，江南贡院曾是全国最大科场，画舫夜游至今仍是经典体验。\n\n3. 民国风情：颐和路公馆区、总统府、中山大道的梧桐树荫，构成独特的民国气质。\n\n4. 文学与科举传统：江南贡院、鸡鸣寺、乌衣巷等处处有诗词典故，《桃花扇》《儒林外史》都以南京为背景。\n\n5. 市井味道：鸭血粉丝汤、盐水鸭、汤包，以及评事街、老门东一带的街巷生活气息。\n\n如果想深游，老门东和颐和路比热门景区更能感受本地文化氛围。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_a786bd2fad44505e9247bbb0176bb61b",
+            "suggestion_type": "place",
+            "title": "老门东历史文化街区",
+            "summary": "明清街巷格局与传统民居改造街区，能感受南京本地市井文化。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "老门东历史文化街区"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "比夫子庙更贴近本地生活",
+              "传统建筑与小吃集中",
+              "适合慢逛和人文摄影"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:07:17.324975Z",
+            "conversation_turn_id": "dialogue-0",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_58550f40631156c697c2f74ae1efbf44",
+            "suggestion_type": "place",
+            "title": "颐和路民国公馆区",
+            "summary": "民国时期高级住宅区，梧桐掩映下的老洋房建筑群。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "颐和路民国公馆区"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "南京民国文化的代表",
+              "人少安静适合散步",
+              "建筑摄影题材丰富"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:07:17.324975Z",
+            "conversation_turn_id": "dialogue-0",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_ffd96a010e3e512188442cec91e5f8eb",
+            "suggestion_type": "experience",
+            "title": "秦淮河画舫夜游",
+            "summary": "乘画舫夜游秦淮河，体验夫子庙—白鹭洲一带的灯影水色。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "秦淮河画舫夜游"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "秦淮文化的经典体验方式",
+              "夜景氛围独特",
+              "感受古诗词中的秦淮意境"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:07:17.324975Z",
+            "conversation_turn_id": "dialogue-0",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "general_knowledge",
+          "knowledge_strategy": "general_only",
+          "knowledge_reasons": [
+            "stable_model_knowledge_no_retrieval"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "factual",
+          "requested_fact_topics": [
+            "history_general"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "南京",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "checks": {
+        "companion_routed": true,
+        "no_handoff": true
+      },
+      "latency_seconds": 11.301898700000038,
+      "rag_calls": 0,
+      "observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 446,
+            "prompt_tokens": 1203,
+            "total_tokens": 1649,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 768
+            }
+          },
+          "duration_seconds": 10.998790099999951,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "mode": "A",
+      "turn": 1,
+      "input": "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+      "history": [
+        {
+          "id": "dialogue-0",
+          "user": "我想先了解南京的文化特色，暂时不做行程。",
+          "assistant": "南京的文化特色可以用几个关键词概括：\n\n1. 六朝古都：东吴、东晋和南朝宋齐梁陈均建都于此，另有南唐、明初、太平天国和民国，留下深厚的历史层叠感。明孝陵、明城墙、中山陵都是不同时代的印记。\n\n2. 秦淮文化：夫子庙—秦淮河一带是古代科举与市井生活的中心，江南贡院曾是全国最大科场，画舫夜游至今仍是经典体验。\n\n3. 民国风情：颐和路公馆区、总统府、中山大道的梧桐树荫，构成独特的民国气质。\n\n4. 文学与科举传统：江南贡院、鸡鸣寺、乌衣巷等处处有诗词典故，《桃花扇》《儒林外史》都以南京为背景。\n\n5. 市井味道：鸭血粉丝汤、盐水鸭、汤包，以及评事街、老门东一带的街巷生活气息。\n\n如果想深游，老门东和颐和路比热门景区更能感受本地文化氛围。",
+          "goal_routing": {
+            "goal_type": "explanation",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_explanation"
+            ]
+          },
+          "companion_result": {
+            "response_text": "南京的文化特色可以用几个关键词概括：\n\n1. 六朝古都：东吴、东晋和南朝宋齐梁陈均建都于此，另有南唐、明初、太平天国和民国，留下深厚的历史层叠感。明孝陵、明城墙、中山陵都是不同时代的印记。\n\n2. 秦淮文化：夫子庙—秦淮河一带是古代科举与市井生活的中心，江南贡院曾是全国最大科场，画舫夜游至今仍是经典体验。\n\n3. 民国风情：颐和路公馆区、总统府、中山大道的梧桐树荫，构成独特的民国气质。\n\n4. 文学与科举传统：江南贡院、鸡鸣寺、乌衣巷等处处有诗词典故，《桃花扇》《儒林外史》都以南京为背景。\n\n5. 市井味道：鸭血粉丝汤、盐水鸭、汤包，以及评事街、老门东一带的街巷生活气息。\n\n如果想深游，老门东和颐和路比热门景区更能感受本地文化氛围。",
+            "goal_type": "explanation",
+            "status": "completed",
+            "suggestions": [
+              {
+                "suggestion_id": "suggestion_a786bd2fad44505e9247bbb0176bb61b",
+                "suggestion_type": "place",
+                "title": "老门东历史文化街区",
+                "summary": "明清街巷格局与传统民居改造街区，能感受南京本地市井文化。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "老门东历史文化街区"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "比夫子庙更贴近本地生活",
+                  "传统建筑与小吃集中",
+                  "适合慢逛和人文摄影"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:17.324975Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_58550f40631156c697c2f74ae1efbf44",
+                "suggestion_type": "place",
+                "title": "颐和路民国公馆区",
+                "summary": "民国时期高级住宅区，梧桐掩映下的老洋房建筑群。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "颐和路民国公馆区"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "南京民国文化的代表",
+                  "人少安静适合散步",
+                  "建筑摄影题材丰富"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:17.324975Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_ffd96a010e3e512188442cec91e5f8eb",
+                "suggestion_type": "experience",
+                "title": "秦淮河画舫夜游",
+                "summary": "乘画舫夜游秦淮河，体验夫子庙—白鹭洲一带的灯影水色。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "秦淮河画舫夜游"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "秦淮文化的经典体验方式",
+                  "夜景氛围独特",
+                  "感受古诗词中的秦淮意境"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:17.324975Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              }
+            ],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "general_knowledge",
+              "knowledge_strategy": "general_only",
+              "knowledge_reasons": [
+                "stable_model_knowledge_no_retrieval"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": false,
+              "general_knowledge_allowed": true,
+              "knowledge_types": [],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": false,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "factual",
+              "requested_fact_topics": [
+                "history_general"
+              ]
+            },
+            "information_gaps": [],
+            "planning_handoff": null,
+            "conversation_destination": "南京",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": null,
+            "grounding_status": "unverified_proposal",
+            "grounding_limitations": [
+              "model_general_knowledge_unverified"
+            ],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        }
+      ],
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "根据你的偏好——安静街巷、历史文化、避开人流、慢慢体验——在之前提到的老门东和颐和路之外，再补充两个特别契合的地方：\n\n1. 颐和路—宁海路一带的民国街区漫步：梧桐树影下的老洋房与围墙小院，几乎没有商业气息，随意拐进一条支巷都是景。适合清晨或傍晚去，光线斜打在黄墙上最好拍；建议手机调低饱和度、保留暖色调，能拍出老南京的沉静感。\n\n2. 门东边缘的边营巷、三条营一带：多数游客集中在老门东主街，往南边的窄巷走几步人立刻少下来，老砖墙、老门牌和晒衣杆的市井细节都在这里。\n\n3. 评事街—熙南里一带：甘熙故居（南京现存规模较大的清代私宅群）人不多，能安静看传统民居布局和金陵文化展示；周边街巷有老城南的生活气息。\n\n4. 鸡鸣寺周边的城墙根慢走：不必进寺排香，沿台城段明城墙下的绿道慢慢走，一侧是古寺黄墙、一侧是玄武湖，历史感与安静兼具。清晨最佳。\n\n小建议：热门点（中山陵、总统府、夫子庙主街）人流高峰多在上午十点到下午三点，若想顺路看，尽量赶早或傍晚；慢体验优先选街巷而非景点入口。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_18eafa6ce4ef529ca73db6cbe125f4e8",
+            "suggestion_type": "place",
+            "title": "颐和路—宁海路民国街区慢逛",
+            "summary": "梧桐掩映的民国公馆区，安静少人，适合清晨或傍晚慢慢走。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "颐和路—宁海路民国街区慢逛"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "契合喜欢安静街巷与民国历史的偏好",
+              "无需门票、不排队",
+              "光线柔和时人文摄影效果好"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:07:32.659396Z",
+            "conversation_turn_id": "dialogue-1",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_cd17b4f29eb6525ba7c3d06f2abf94ea",
+            "suggestion_type": "place",
+            "title": "门东边营巷与三条营窄巷",
+            "summary": "老门东主街南侧的安静支巷，市井细节与老建筑保存完好。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "门东边营巷与三条营窄巷"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "避开老门东主街人流",
+              "本地生活气息浓",
+              "适合慢逛和街拍"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:07:32.659396Z",
+            "conversation_turn_id": "dialogue-1",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_cef55e8a00dd57b89ac30df953dc7fc0",
+            "suggestion_type": "place",
+            "title": "熙南里—甘熙故居",
+            "summary": "清代私宅建筑群与老城南街巷，游客较少，可安静看传统民居文化。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "熙南里—甘熙故居"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "清代建筑与金陵民俗展示",
+              "人流远少于总统府",
+              "周边街巷生活气息浓"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:07:32.659396Z",
+            "conversation_turn_id": "dialogue-1",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_721aa4169d515a908a8707084457233f",
+            "suggestion_type": "experience",
+            "title": "台城段明城墙根慢走",
+            "summary": "沿鸡鸣寺旁城墙下的绿道散步，古寺、城墙与玄武湖景致相连。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "台城段明城墙根慢走"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "不进寺不排队也能感受历史氛围",
+              "清晨安静",
+              "黄墙与城墙摄影题材佳"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:07:32.659396Z",
+            "conversation_turn_id": "dialogue-1",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "context_required",
+          "knowledge_strategy": "general_only",
+          "knowledge_reasons": [
+            "saved_context_read_only"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "mixed",
+          "requested_fact_topics": [
+            "history_general"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "南京",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "checks": {
+        "companion_routed": true,
+        "no_handoff": true
+      },
+      "latency_seconds": 15.320214099999703,
+      "rag_calls": 0,
+      "observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 621,
+            "prompt_tokens": 2069,
+            "total_tokens": 2690,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 12,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 768
+            }
+          },
+          "duration_seconds": 15.16397790000019,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "mode": "A",
+      "turn": 2,
+      "input": "苏州和南京哪个更适合我这种慢节奏旅行？先比较，不要规划。",
+      "history": [
+        {
+          "id": "dialogue-0",
+          "user": "我想先了解南京的文化特色，暂时不做行程。",
+          "assistant": "南京的文化特色可以用几个关键词概括：\n\n1. 六朝古都：东吴、东晋和南朝宋齐梁陈均建都于此，另有南唐、明初、太平天国和民国，留下深厚的历史层叠感。明孝陵、明城墙、中山陵都是不同时代的印记。\n\n2. 秦淮文化：夫子庙—秦淮河一带是古代科举与市井生活的中心，江南贡院曾是全国最大科场，画舫夜游至今仍是经典体验。\n\n3. 民国风情：颐和路公馆区、总统府、中山大道的梧桐树荫，构成独特的民国气质。\n\n4. 文学与科举传统：江南贡院、鸡鸣寺、乌衣巷等处处有诗词典故，《桃花扇》《儒林外史》都以南京为背景。\n\n5. 市井味道：鸭血粉丝汤、盐水鸭、汤包，以及评事街、老门东一带的街巷生活气息。\n\n如果想深游，老门东和颐和路比热门景区更能感受本地文化氛围。",
+          "goal_routing": {
+            "goal_type": "explanation",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_explanation"
+            ]
+          },
+          "companion_result": {
+            "response_text": "南京的文化特色可以用几个关键词概括：\n\n1. 六朝古都：东吴、东晋和南朝宋齐梁陈均建都于此，另有南唐、明初、太平天国和民国，留下深厚的历史层叠感。明孝陵、明城墙、中山陵都是不同时代的印记。\n\n2. 秦淮文化：夫子庙—秦淮河一带是古代科举与市井生活的中心，江南贡院曾是全国最大科场，画舫夜游至今仍是经典体验。\n\n3. 民国风情：颐和路公馆区、总统府、中山大道的梧桐树荫，构成独特的民国气质。\n\n4. 文学与科举传统：江南贡院、鸡鸣寺、乌衣巷等处处有诗词典故，《桃花扇》《儒林外史》都以南京为背景。\n\n5. 市井味道：鸭血粉丝汤、盐水鸭、汤包，以及评事街、老门东一带的街巷生活气息。\n\n如果想深游，老门东和颐和路比热门景区更能感受本地文化氛围。",
+            "goal_type": "explanation",
+            "status": "completed",
+            "suggestions": [
+              {
+                "suggestion_id": "suggestion_a786bd2fad44505e9247bbb0176bb61b",
+                "suggestion_type": "place",
+                "title": "老门东历史文化街区",
+                "summary": "明清街巷格局与传统民居改造街区，能感受南京本地市井文化。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "老门东历史文化街区"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "比夫子庙更贴近本地生活",
+                  "传统建筑与小吃集中",
+                  "适合慢逛和人文摄影"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:17.324975Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_58550f40631156c697c2f74ae1efbf44",
+                "suggestion_type": "place",
+                "title": "颐和路民国公馆区",
+                "summary": "民国时期高级住宅区，梧桐掩映下的老洋房建筑群。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "颐和路民国公馆区"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "南京民国文化的代表",
+                  "人少安静适合散步",
+                  "建筑摄影题材丰富"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:17.324975Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_ffd96a010e3e512188442cec91e5f8eb",
+                "suggestion_type": "experience",
+                "title": "秦淮河画舫夜游",
+                "summary": "乘画舫夜游秦淮河，体验夫子庙—白鹭洲一带的灯影水色。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "秦淮河画舫夜游"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "秦淮文化的经典体验方式",
+                  "夜景氛围独特",
+                  "感受古诗词中的秦淮意境"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:17.324975Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              }
+            ],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "general_knowledge",
+              "knowledge_strategy": "general_only",
+              "knowledge_reasons": [
+                "stable_model_knowledge_no_retrieval"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": false,
+              "general_knowledge_allowed": true,
+              "knowledge_types": [],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": false,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "factual",
+              "requested_fact_topics": [
+                "history_general"
+              ]
+            },
+            "information_gaps": [],
+            "planning_handoff": null,
+            "conversation_destination": "南京",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": null,
+            "grounding_status": "unverified_proposal",
+            "grounding_limitations": [
+              "model_general_knowledge_unverified"
+            ],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        },
+        {
+          "id": "dialogue-1",
+          "user": "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+          "assistant": "根据你的偏好——安静街巷、历史文化、避开人流、慢慢体验——在之前提到的老门东和颐和路之外，再补充两个特别契合的地方：\n\n1. 颐和路—宁海路一带的民国街区漫步：梧桐树影下的老洋房与围墙小院，几乎没有商业气息，随意拐进一条支巷都是景。适合清晨或傍晚去，光线斜打在黄墙上最好拍；建议手机调低饱和度、保留暖色调，能拍出老南京的沉静感。\n\n2. 门东边缘的边营巷、三条营一带：多数游客集中在老门东主街，往南边的窄巷走几步人立刻少下来，老砖墙、老门牌和晒衣杆的市井细节都在这里。\n\n3. 评事街—熙南里一带：甘熙故居（南京现存规模较大的清代私宅群）人不多，能安静看传统民居布局和金陵文化展示；周边街巷有老城南的生活气息。\n\n4. 鸡鸣寺周边的城墙根慢走：不必进寺排香，沿台城段明城墙下的绿道慢慢走，一侧是古寺黄墙、一侧是玄武湖，历史感与安静兼具。清晨最佳。\n\n小建议：热门点（中山陵、总统府、夫子庙主街）人流高峰多在上午十点到下午三点，若想顺路看，尽量赶早或傍晚；慢体验优先选街巷而非景点入口。",
+          "goal_routing": {
+            "goal_type": "explanation",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_explanation"
+            ]
+          },
+          "companion_result": {
+            "response_text": "根据你的偏好——安静街巷、历史文化、避开人流、慢慢体验——在之前提到的老门东和颐和路之外，再补充两个特别契合的地方：\n\n1. 颐和路—宁海路一带的民国街区漫步：梧桐树影下的老洋房与围墙小院，几乎没有商业气息，随意拐进一条支巷都是景。适合清晨或傍晚去，光线斜打在黄墙上最好拍；建议手机调低饱和度、保留暖色调，能拍出老南京的沉静感。\n\n2. 门东边缘的边营巷、三条营一带：多数游客集中在老门东主街，往南边的窄巷走几步人立刻少下来，老砖墙、老门牌和晒衣杆的市井细节都在这里。\n\n3. 评事街—熙南里一带：甘熙故居（南京现存规模较大的清代私宅群）人不多，能安静看传统民居布局和金陵文化展示；周边街巷有老城南的生活气息。\n\n4. 鸡鸣寺周边的城墙根慢走：不必进寺排香，沿台城段明城墙下的绿道慢慢走，一侧是古寺黄墙、一侧是玄武湖，历史感与安静兼具。清晨最佳。\n\n小建议：热门点（中山陵、总统府、夫子庙主街）人流高峰多在上午十点到下午三点，若想顺路看，尽量赶早或傍晚；慢体验优先选街巷而非景点入口。",
+            "goal_type": "explanation",
+            "status": "completed",
+            "suggestions": [
+              {
+                "suggestion_id": "suggestion_18eafa6ce4ef529ca73db6cbe125f4e8",
+                "suggestion_type": "place",
+                "title": "颐和路—宁海路民国街区慢逛",
+                "summary": "梧桐掩映的民国公馆区，安静少人，适合清晨或傍晚慢慢走。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "颐和路—宁海路民国街区慢逛"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "契合喜欢安静街巷与民国历史的偏好",
+                  "无需门票、不排队",
+                  "光线柔和时人文摄影效果好"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:32.659396Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_cd17b4f29eb6525ba7c3d06f2abf94ea",
+                "suggestion_type": "place",
+                "title": "门东边营巷与三条营窄巷",
+                "summary": "老门东主街南侧的安静支巷，市井细节与老建筑保存完好。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "门东边营巷与三条营窄巷"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "避开老门东主街人流",
+                  "本地生活气息浓",
+                  "适合慢逛和街拍"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:32.659396Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_cef55e8a00dd57b89ac30df953dc7fc0",
+                "suggestion_type": "place",
+                "title": "熙南里—甘熙故居",
+                "summary": "清代私宅建筑群与老城南街巷，游客较少，可安静看传统民居文化。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "熙南里—甘熙故居"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "清代建筑与金陵民俗展示",
+                  "人流远少于总统府",
+                  "周边街巷生活气息浓"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:32.659396Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_721aa4169d515a908a8707084457233f",
+                "suggestion_type": "experience",
+                "title": "台城段明城墙根慢走",
+                "summary": "沿鸡鸣寺旁城墙下的绿道散步，古寺、城墙与玄武湖景致相连。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "台城段明城墙根慢走"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "不进寺不排队也能感受历史氛围",
+                  "清晨安静",
+                  "黄墙与城墙摄影题材佳"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:32.659396Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              }
+            ],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "context_required",
+              "knowledge_strategy": "general_only",
+              "knowledge_reasons": [
+                "saved_context_read_only"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": false,
+              "general_knowledge_allowed": true,
+              "knowledge_types": [],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": true,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "mixed",
+              "requested_fact_topics": [
+                "history_general"
+              ]
+            },
+            "information_gaps": [],
+            "planning_handoff": null,
+            "conversation_destination": "南京",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": null,
+            "grounding_status": "unverified_proposal",
+            "grounding_limitations": [
+              "model_general_knowledge_unverified"
+            ],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        }
+      ],
+      "goal": {
+        "goal_type": "comparison",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_comparison"
+        ]
+      },
+      "output": {
+        "response_text": "就你这种慢节奏、爱安静街巷和历史文化的旅行方式来说，我的判断是：南京略胜一筹，但要看你看重哪种\"慢\"。\n\n南京：历史是\"厚重叠加\"的——六朝、明代、民国层叠在同一座城里。它的优势在于大量历史文化体验本来就不依赖热门景点：颐和路的梧桐公馆区、老门东边上的边营巷、甘熙故居、台城墙根绿道，都可以不排队地慢慢走。城市尺度大一些，节奏偏沉，适合按街区慢慢消磨。\n\n苏州：历史是\"精巧日常\"的——园林、水巷、评弹、苏式生活美学。它的优势在于老城（平江路、山塘街周边、耦园一带）密度高，走几步就是一个有故事的地方，节奏天然就慢。但热门园林（拙政园等）排队明显，主街商业化和人流比南京的安静街区重。好在苏州也有避开人流的路径：艺圃、沧浪亭这类小园林游客少，平江路的支巷如大儒巷、钮家巷更本地化。\n\n简要对比：\n- 历史厚重感与多样性：南京胜（六朝+明+民国）\n- 街巷美学与生活雅致度：苏州胜（水巷、园林、手作文化）\n- 避开人流做安静慢游：南京整体更容易；苏州需选对点位（艺圃、小园林、支巷）\n- 不排队就能看的历史：南京的城墙根、街区公馆占优\n\n如果你更被\"王朝更迭的层叠历史感\"打动，选南京；如果更爱\"园林水巷的雅致日常\"，苏州也很合适——只是要刻意避开头部园林的高峰。",
+        "goal_type": "comparison",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_c61abb5eb19e5433a3aa2489630cf9cb",
+            "suggestion_type": "destination",
+            "title": "南京：街区型慢游更易避开人流",
+            "summary": "颐和路、边营巷、甘熙故居、台城墙根等历史文化体验不依赖热门景点，适合安静慢走。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "南京：街区型慢游更易避开人流"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "历史层叠感强，六朝、明、民国印记丰富",
+              "安静街巷密度高，无需排队",
+              "与你已了解的南京文化脉络衔接"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:07:50.971327Z",
+            "conversation_turn_id": "dialogue-2",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_34b7d944dd68584f85751d5f786acced",
+            "suggestion_type": "destination",
+            "title": "苏州：园林水巷的雅致日常",
+            "summary": "老城密度高、节奏天然慢，但需避开拙政园等头部园林高峰。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "苏州：园林水巷的雅致日常"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "水巷与园林美学契合慢体验",
+              "评弹、苏式生活气息浓厚",
+              "安静点位需选艺圃、沧浪亭等小众园林"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:07:50.971327Z",
+            "conversation_turn_id": "dialogue-2",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_3beb2dbc9d6658c0b4849a06426116ae",
+            "suggestion_type": "place",
+            "title": "苏州艺圃",
+            "summary": "小而精的明代园林，游客远少于拙政园，适合静坐品茶看园。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "苏州艺圃"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "人流少，适合慢节奏园林体验",
+              "保存明式园林格局",
+              "适合拍摄清幽的园景细节"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:07:50.971327Z",
+            "conversation_turn_id": "dialogue-2",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_3a3b6f8f1bf754dabcae44678f0d63b5",
+            "suggestion_type": "place",
+            "title": "平江路支巷（大儒巷、钮家巷一带）",
+            "summary": "避开主街人流，感受本地水巷生活与老宅门庭。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "平江路支巷（大儒巷、钮家巷一带）"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "本地生活气息浓",
+              "安静，适合街拍慢逛",
+              "紧邻平江路，交通便利"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:07:50.971327Z",
+            "conversation_turn_id": "dialogue-2",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": {
+          "options": [
+            "南京",
+            "苏州"
+          ],
+          "dimensions": [
+            "历史厚重感与多样性",
+            "街巷美学与生活雅致度",
+            "避开人流的难易",
+            "慢游资源密度",
+            "热门景点排队情况"
+          ],
+          "summary": "南京的安静历史文化体验更多不依赖热门景点，慢游更容易；苏州美学更精巧雅致，但头部园林排队明显，需选小众点位。整体上更契合你偏好的是南京。"
+        },
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "context_required",
+          "knowledge_strategy": "general_only",
+          "knowledge_reasons": [
+            "saved_context_read_only"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "checks": {
+        "companion_routed": true,
+        "no_handoff": true
+      },
+      "latency_seconds": 18.30862560000014,
+      "rag_calls": 0,
+      "observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 864,
+            "prompt_tokens": 2658,
+            "total_tokens": 3522,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 10,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 768
+            }
+          },
+          "duration_seconds": 18.039731700000175,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "mode": "A",
+      "turn": 3,
+      "input": "帮我规划南京三天行程，优先历史文化和安静街巷。",
+      "history": [
+        {
+          "id": "dialogue-0",
+          "user": "我想先了解南京的文化特色，暂时不做行程。",
+          "assistant": "南京的文化特色可以用几个关键词概括：\n\n1. 六朝古都：东吴、东晋和南朝宋齐梁陈均建都于此，另有南唐、明初、太平天国和民国，留下深厚的历史层叠感。明孝陵、明城墙、中山陵都是不同时代的印记。\n\n2. 秦淮文化：夫子庙—秦淮河一带是古代科举与市井生活的中心，江南贡院曾是全国最大科场，画舫夜游至今仍是经典体验。\n\n3. 民国风情：颐和路公馆区、总统府、中山大道的梧桐树荫，构成独特的民国气质。\n\n4. 文学与科举传统：江南贡院、鸡鸣寺、乌衣巷等处处有诗词典故，《桃花扇》《儒林外史》都以南京为背景。\n\n5. 市井味道：鸭血粉丝汤、盐水鸭、汤包，以及评事街、老门东一带的街巷生活气息。\n\n如果想深游，老门东和颐和路比热门景区更能感受本地文化氛围。",
+          "goal_routing": {
+            "goal_type": "explanation",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_explanation"
+            ]
+          },
+          "companion_result": {
+            "response_text": "南京的文化特色可以用几个关键词概括：\n\n1. 六朝古都：东吴、东晋和南朝宋齐梁陈均建都于此，另有南唐、明初、太平天国和民国，留下深厚的历史层叠感。明孝陵、明城墙、中山陵都是不同时代的印记。\n\n2. 秦淮文化：夫子庙—秦淮河一带是古代科举与市井生活的中心，江南贡院曾是全国最大科场，画舫夜游至今仍是经典体验。\n\n3. 民国风情：颐和路公馆区、总统府、中山大道的梧桐树荫，构成独特的民国气质。\n\n4. 文学与科举传统：江南贡院、鸡鸣寺、乌衣巷等处处有诗词典故，《桃花扇》《儒林外史》都以南京为背景。\n\n5. 市井味道：鸭血粉丝汤、盐水鸭、汤包，以及评事街、老门东一带的街巷生活气息。\n\n如果想深游，老门东和颐和路比热门景区更能感受本地文化氛围。",
+            "goal_type": "explanation",
+            "status": "completed",
+            "suggestions": [
+              {
+                "suggestion_id": "suggestion_a786bd2fad44505e9247bbb0176bb61b",
+                "suggestion_type": "place",
+                "title": "老门东历史文化街区",
+                "summary": "明清街巷格局与传统民居改造街区，能感受南京本地市井文化。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "老门东历史文化街区"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "比夫子庙更贴近本地生活",
+                  "传统建筑与小吃集中",
+                  "适合慢逛和人文摄影"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:17.324975Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_58550f40631156c697c2f74ae1efbf44",
+                "suggestion_type": "place",
+                "title": "颐和路民国公馆区",
+                "summary": "民国时期高级住宅区，梧桐掩映下的老洋房建筑群。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "颐和路民国公馆区"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "南京民国文化的代表",
+                  "人少安静适合散步",
+                  "建筑摄影题材丰富"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:17.324975Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_ffd96a010e3e512188442cec91e5f8eb",
+                "suggestion_type": "experience",
+                "title": "秦淮河画舫夜游",
+                "summary": "乘画舫夜游秦淮河，体验夫子庙—白鹭洲一带的灯影水色。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "秦淮河画舫夜游"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "秦淮文化的经典体验方式",
+                  "夜景氛围独特",
+                  "感受古诗词中的秦淮意境"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:17.324975Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              }
+            ],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "general_knowledge",
+              "knowledge_strategy": "general_only",
+              "knowledge_reasons": [
+                "stable_model_knowledge_no_retrieval"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": false,
+              "general_knowledge_allowed": true,
+              "knowledge_types": [],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": false,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "factual",
+              "requested_fact_topics": [
+                "history_general"
+              ]
+            },
+            "information_gaps": [],
+            "planning_handoff": null,
+            "conversation_destination": "南京",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": null,
+            "grounding_status": "unverified_proposal",
+            "grounding_limitations": [
+              "model_general_knowledge_unverified"
+            ],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        },
+        {
+          "id": "dialogue-1",
+          "user": "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+          "assistant": "根据你的偏好——安静街巷、历史文化、避开人流、慢慢体验——在之前提到的老门东和颐和路之外，再补充两个特别契合的地方：\n\n1. 颐和路—宁海路一带的民国街区漫步：梧桐树影下的老洋房与围墙小院，几乎没有商业气息，随意拐进一条支巷都是景。适合清晨或傍晚去，光线斜打在黄墙上最好拍；建议手机调低饱和度、保留暖色调，能拍出老南京的沉静感。\n\n2. 门东边缘的边营巷、三条营一带：多数游客集中在老门东主街，往南边的窄巷走几步人立刻少下来，老砖墙、老门牌和晒衣杆的市井细节都在这里。\n\n3. 评事街—熙南里一带：甘熙故居（南京现存规模较大的清代私宅群）人不多，能安静看传统民居布局和金陵文化展示；周边街巷有老城南的生活气息。\n\n4. 鸡鸣寺周边的城墙根慢走：不必进寺排香，沿台城段明城墙下的绿道慢慢走，一侧是古寺黄墙、一侧是玄武湖，历史感与安静兼具。清晨最佳。\n\n小建议：热门点（中山陵、总统府、夫子庙主街）人流高峰多在上午十点到下午三点，若想顺路看，尽量赶早或傍晚；慢体验优先选街巷而非景点入口。",
+          "goal_routing": {
+            "goal_type": "explanation",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_explanation"
+            ]
+          },
+          "companion_result": {
+            "response_text": "根据你的偏好——安静街巷、历史文化、避开人流、慢慢体验——在之前提到的老门东和颐和路之外，再补充两个特别契合的地方：\n\n1. 颐和路—宁海路一带的民国街区漫步：梧桐树影下的老洋房与围墙小院，几乎没有商业气息，随意拐进一条支巷都是景。适合清晨或傍晚去，光线斜打在黄墙上最好拍；建议手机调低饱和度、保留暖色调，能拍出老南京的沉静感。\n\n2. 门东边缘的边营巷、三条营一带：多数游客集中在老门东主街，往南边的窄巷走几步人立刻少下来，老砖墙、老门牌和晒衣杆的市井细节都在这里。\n\n3. 评事街—熙南里一带：甘熙故居（南京现存规模较大的清代私宅群）人不多，能安静看传统民居布局和金陵文化展示；周边街巷有老城南的生活气息。\n\n4. 鸡鸣寺周边的城墙根慢走：不必进寺排香，沿台城段明城墙下的绿道慢慢走，一侧是古寺黄墙、一侧是玄武湖，历史感与安静兼具。清晨最佳。\n\n小建议：热门点（中山陵、总统府、夫子庙主街）人流高峰多在上午十点到下午三点，若想顺路看，尽量赶早或傍晚；慢体验优先选街巷而非景点入口。",
+            "goal_type": "explanation",
+            "status": "completed",
+            "suggestions": [
+              {
+                "suggestion_id": "suggestion_18eafa6ce4ef529ca73db6cbe125f4e8",
+                "suggestion_type": "place",
+                "title": "颐和路—宁海路民国街区慢逛",
+                "summary": "梧桐掩映的民国公馆区，安静少人，适合清晨或傍晚慢慢走。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "颐和路—宁海路民国街区慢逛"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "契合喜欢安静街巷与民国历史的偏好",
+                  "无需门票、不排队",
+                  "光线柔和时人文摄影效果好"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:32.659396Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_cd17b4f29eb6525ba7c3d06f2abf94ea",
+                "suggestion_type": "place",
+                "title": "门东边营巷与三条营窄巷",
+                "summary": "老门东主街南侧的安静支巷，市井细节与老建筑保存完好。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "门东边营巷与三条营窄巷"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "避开老门东主街人流",
+                  "本地生活气息浓",
+                  "适合慢逛和街拍"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:32.659396Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_cef55e8a00dd57b89ac30df953dc7fc0",
+                "suggestion_type": "place",
+                "title": "熙南里—甘熙故居",
+                "summary": "清代私宅建筑群与老城南街巷，游客较少，可安静看传统民居文化。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "熙南里—甘熙故居"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "清代建筑与金陵民俗展示",
+                  "人流远少于总统府",
+                  "周边街巷生活气息浓"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:32.659396Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_721aa4169d515a908a8707084457233f",
+                "suggestion_type": "experience",
+                "title": "台城段明城墙根慢走",
+                "summary": "沿鸡鸣寺旁城墙下的绿道散步，古寺、城墙与玄武湖景致相连。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "台城段明城墙根慢走"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "不进寺不排队也能感受历史氛围",
+                  "清晨安静",
+                  "黄墙与城墙摄影题材佳"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:32.659396Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              }
+            ],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "context_required",
+              "knowledge_strategy": "general_only",
+              "knowledge_reasons": [
+                "saved_context_read_only"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": false,
+              "general_knowledge_allowed": true,
+              "knowledge_types": [],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": true,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "mixed",
+              "requested_fact_topics": [
+                "history_general"
+              ]
+            },
+            "information_gaps": [],
+            "planning_handoff": null,
+            "conversation_destination": "南京",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": null,
+            "grounding_status": "unverified_proposal",
+            "grounding_limitations": [
+              "model_general_knowledge_unverified"
+            ],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        },
+        {
+          "id": "dialogue-2",
+          "user": "苏州和南京哪个更适合我这种慢节奏旅行？先比较，不要规划。",
+          "assistant": "就你这种慢节奏、爱安静街巷和历史文化的旅行方式来说，我的判断是：南京略胜一筹，但要看你看重哪种\"慢\"。\n\n南京：历史是\"厚重叠加\"的——六朝、明代、民国层叠在同一座城里。它的优势在于大量历史文化体验本来就不依赖热门景点：颐和路的梧桐公馆区、老门东边上的边营巷、甘熙故居、台城墙根绿道，都可以不排队地慢慢走。城市尺度大一些，节奏偏沉，适合按街区慢慢消磨。\n\n苏州：历史是\"精巧日常\"的——园林、水巷、评弹、苏式生活美学。它的优势在于老城（平江路、山塘街周边、耦园一带）密度高，走几步就是一个有故事的地方，节奏天然就慢。但热门园林（拙政园等）排队明显，主街商业化和人流比南京的安静街区重。好在苏州也有避开人流的路径：艺圃、沧浪亭这类小园林游客少，平江路的支巷如大儒巷、钮家巷更本地化。\n\n简要对比：\n- 历史厚重感与多样性：南京胜（六朝+明+民国）\n- 街巷美学与生活雅致度：苏州胜（水巷、园林、手作文化）\n- 避开人流做安静慢游：南京整体更容易；苏州需选对点位（艺圃、小园林、支巷）\n- 不排队就能看的历史：南京的城墙根、街区公馆占优\n\n如果你更被\"王朝更迭的层叠历史感\"打动，选南京；如果更爱\"园林水巷的雅致日常\"，苏州也很合适——只是要刻意避开头部园林的高峰。",
+          "goal_routing": {
+            "goal_type": "comparison",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_comparison"
+            ]
+          },
+          "companion_result": {
+            "response_text": "就你这种慢节奏、爱安静街巷和历史文化的旅行方式来说，我的判断是：南京略胜一筹，但要看你看重哪种\"慢\"。\n\n南京：历史是\"厚重叠加\"的——六朝、明代、民国层叠在同一座城里。它的优势在于大量历史文化体验本来就不依赖热门景点：颐和路的梧桐公馆区、老门东边上的边营巷、甘熙故居、台城墙根绿道，都可以不排队地慢慢走。城市尺度大一些，节奏偏沉，适合按街区慢慢消磨。\n\n苏州：历史是\"精巧日常\"的——园林、水巷、评弹、苏式生活美学。它的优势在于老城（平江路、山塘街周边、耦园一带）密度高，走几步就是一个有故事的地方，节奏天然就慢。但热门园林（拙政园等）排队明显，主街商业化和人流比南京的安静街区重。好在苏州也有避开人流的路径：艺圃、沧浪亭这类小园林游客少，平江路的支巷如大儒巷、钮家巷更本地化。\n\n简要对比：\n- 历史厚重感与多样性：南京胜（六朝+明+民国）\n- 街巷美学与生活雅致度：苏州胜（水巷、园林、手作文化）\n- 避开人流做安静慢游：南京整体更容易；苏州需选对点位（艺圃、小园林、支巷）\n- 不排队就能看的历史：南京的城墙根、街区公馆占优\n\n如果你更被\"王朝更迭的层叠历史感\"打动，选南京；如果更爱\"园林水巷的雅致日常\"，苏州也很合适——只是要刻意避开头部园林的高峰。",
+            "goal_type": "comparison",
+            "status": "completed",
+            "suggestions": [
+              {
+                "suggestion_id": "suggestion_c61abb5eb19e5433a3aa2489630cf9cb",
+                "suggestion_type": "destination",
+                "title": "南京：街区型慢游更易避开人流",
+                "summary": "颐和路、边营巷、甘熙故居、台城墙根等历史文化体验不依赖热门景点，适合安静慢走。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "南京：街区型慢游更易避开人流"
+                  }
+                ],
+                "destination": "苏州",
+                "reasons": [
+                  "历史层叠感强，六朝、明、民国印记丰富",
+                  "安静街巷密度高，无需排队",
+                  "与你已了解的南京文化脉络衔接"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:50.971327Z",
+                "conversation_turn_id": "dialogue-2",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_34b7d944dd68584f85751d5f786acced",
+                "suggestion_type": "destination",
+                "title": "苏州：园林水巷的雅致日常",
+                "summary": "老城密度高、节奏天然慢，但需避开拙政园等头部园林高峰。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "苏州：园林水巷的雅致日常"
+                  }
+                ],
+                "destination": "苏州",
+                "reasons": [
+                  "水巷与园林美学契合慢体验",
+                  "评弹、苏式生活气息浓厚",
+                  "安静点位需选艺圃、沧浪亭等小众园林"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:50.971327Z",
+                "conversation_turn_id": "dialogue-2",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_3beb2dbc9d6658c0b4849a06426116ae",
+                "suggestion_type": "place",
+                "title": "苏州艺圃",
+                "summary": "小而精的明代园林，游客远少于拙政园，适合静坐品茶看园。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "苏州艺圃"
+                  }
+                ],
+                "destination": "苏州",
+                "reasons": [
+                  "人流少，适合慢节奏园林体验",
+                  "保存明式园林格局",
+                  "适合拍摄清幽的园景细节"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:50.971327Z",
+                "conversation_turn_id": "dialogue-2",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_3a3b6f8f1bf754dabcae44678f0d63b5",
+                "suggestion_type": "place",
+                "title": "平江路支巷（大儒巷、钮家巷一带）",
+                "summary": "避开主街人流，感受本地水巷生活与老宅门庭。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "平江路支巷（大儒巷、钮家巷一带）"
+                  }
+                ],
+                "destination": "苏州",
+                "reasons": [
+                  "本地生活气息浓",
+                  "安静，适合街拍慢逛",
+                  "紧邻平江路，交通便利"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:07:50.971327Z",
+                "conversation_turn_id": "dialogue-2",
+                "status": "suggested"
+              }
+            ],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": {
+              "options": [
+                "南京",
+                "苏州"
+              ],
+              "dimensions": [
+                "历史厚重感与多样性",
+                "街巷美学与生活雅致度",
+                "避开人流的难易",
+                "慢游资源密度",
+                "热门景点排队情况"
+              ],
+              "summary": "南京的安静历史文化体验更多不依赖热门景点，慢游更容易；苏州美学更精巧雅致，但头部园林排队明显，需选小众点位。整体上更契合你偏好的是南京。"
+            },
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "context_required",
+              "knowledge_strategy": "general_only",
+              "knowledge_reasons": [
+                "saved_context_read_only"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": false,
+              "general_knowledge_allowed": true,
+              "knowledge_types": [],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": true,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "advisory",
+              "requested_fact_topics": []
+            },
+            "information_gaps": [],
+            "planning_handoff": null,
+            "conversation_destination": "苏州",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": null,
+            "grounding_status": "unverified_proposal",
+            "grounding_limitations": [
+              "model_general_knowledge_unverified"
+            ],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        }
+      ],
+      "goal": {
+        "goal_type": "trip_planning",
+        "confidence": 0.96,
+        "target_runtime": "planning",
+        "mutation_requested": true,
+        "trip_context_required": false,
+        "knowledge_required": false,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "explicit_user_planning_request"
+        ]
+      },
+      "planning_brief": {
+        "brief_id": "brief_85fe9901a50359cba21265afffaf5927",
+        "status": "prepared",
+        "authorization_turn_id": "dialogue-3",
+        "user_request": "帮我规划南京三天行程，优先历史文化和安静街巷。",
+        "destination": "苏州",
+        "date_request": null,
+        "duration_days": 3,
+        "party_statement": null,
+        "budget_statement": null,
+        "confirmed_preferences": [
+          {
+            "text": "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+            "source_turn_id": "dialogue-1",
+            "scope": "conversation"
+          }
+        ],
+        "avoidances": [
+          {
+            "text": "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+            "source_turn_id": "dialogue-1",
+            "scope": "conversation"
+          }
+        ],
+        "candidate_interests": [],
+        "must_do": [],
+        "user_decisions": [
+          {
+            "text": "帮我规划南京三天行程，优先历史文化和安静街巷。",
+            "source_turn_id": "dialogue-3",
+            "scope": "conversation"
+          }
+        ],
+        "open_questions": [],
+        "source_turn_refs": [
+          "dialogue-1",
+          "dialogue-3"
+        ],
+        "suggestion_refs": []
+      },
+      "checks": {
+        "planning_routed": true,
+        "brief_prepared": true,
+        "destination": false,
+        "preference_preserved": true,
+        "no_companion_model": true
+      },
+      "latency_seconds": 0.010149499999897671,
+      "rag_calls": 0,
+      "observations": []
+    },
+    {
+      "mode": "B",
+      "turn": 0,
+      "input": "我想先了解南京的文化特色，暂时不做行程。",
+      "history": [],
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "现有来源不足以核实这个问题。可以补充具体出处，或改为一般介绍。",
+        "goal_type": "explanation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "rag_candidate",
+          "knowledge_strategy": "forced_rag",
+          "knowledge_reasons": [
+            "forced_rag_baseline"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "destination_profile",
+            "history_culture",
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "factual",
+          "requested_fact_topics": [
+            "history_general"
+          ]
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unsupported_query",
+            "message": "当前小型知识库不覆盖这个目的地或主题。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "南京",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "unavailable",
+          "outcome": "unsupported_query",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "checks": {
+        "companion_routed": true,
+        "no_handoff": true
+      },
+      "latency_seconds": 0.21974180000006527,
+      "rag_calls": 1,
+      "observations": []
+    },
+    {
+      "mode": "B",
+      "turn": 1,
+      "input": "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+      "history": [
+        {
+          "id": "dialogue-0",
+          "user": "我想先了解南京的文化特色，暂时不做行程。",
+          "assistant": "现有来源不足以核实这个问题。可以补充具体出处，或改为一般介绍。",
+          "goal_routing": {
+            "goal_type": "explanation",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_explanation"
+            ]
+          },
+          "companion_result": {
+            "response_text": "现有来源不足以核实这个问题。可以补充具体出处，或改为一般介绍。",
+            "goal_type": "explanation",
+            "status": "needs_information",
+            "suggestions": [],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "rag_candidate",
+              "knowledge_strategy": "forced_rag",
+              "knowledge_reasons": [
+                "forced_rag_baseline"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": true,
+              "general_knowledge_allowed": false,
+              "knowledge_types": [
+                "destination_profile",
+                "history_culture",
+                "travel_strategy"
+              ],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": false,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "factual",
+              "requested_fact_topics": [
+                "history_general"
+              ]
+            },
+            "information_gaps": [
+              {
+                "code": "knowledge_unsupported_query",
+                "message": "当前小型知识库不覆盖这个目的地或主题。"
+              }
+            ],
+            "planning_handoff": null,
+            "conversation_destination": "南京",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": {
+              "quality_rejections": [],
+              "accepted_evidence_count": 0,
+              "status": "unavailable",
+              "outcome": "unsupported_query",
+              "advisory": null,
+              "retrieval_mode": null,
+              "retrieved_at": null,
+              "retrieved_document_refs": [],
+              "retrieved_chunk_refs": []
+            },
+            "grounding_status": "insufficient_evidence",
+            "grounding_limitations": [],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        }
+      ],
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+        "goal_type": "explanation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "mixed",
+          "knowledge_strategy": "forced_rag",
+          "knowledge_reasons": [
+            "saved_context_read_only",
+            "forced_rag_baseline"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "destination_profile",
+            "history_culture",
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "mixed",
+          "requested_fact_topics": [
+            "history_general"
+          ]
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unsupported_query",
+            "message": "当前小型知识库不覆盖这个目的地或主题。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "南京",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "unavailable",
+          "outcome": "unsupported_query",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "checks": {
+        "companion_routed": true,
+        "no_handoff": true
+      },
+      "latency_seconds": 0.1749230999998872,
+      "rag_calls": 1,
+      "observations": []
+    },
+    {
+      "mode": "B",
+      "turn": 2,
+      "input": "苏州和南京哪个更适合我这种慢节奏旅行？先比较，不要规划。",
+      "history": [
+        {
+          "id": "dialogue-0",
+          "user": "我想先了解南京的文化特色，暂时不做行程。",
+          "assistant": "现有来源不足以核实这个问题。可以补充具体出处，或改为一般介绍。",
+          "goal_routing": {
+            "goal_type": "explanation",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_explanation"
+            ]
+          },
+          "companion_result": {
+            "response_text": "现有来源不足以核实这个问题。可以补充具体出处，或改为一般介绍。",
+            "goal_type": "explanation",
+            "status": "needs_information",
+            "suggestions": [],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "rag_candidate",
+              "knowledge_strategy": "forced_rag",
+              "knowledge_reasons": [
+                "forced_rag_baseline"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": true,
+              "general_knowledge_allowed": false,
+              "knowledge_types": [
+                "destination_profile",
+                "history_culture",
+                "travel_strategy"
+              ],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": false,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "factual",
+              "requested_fact_topics": [
+                "history_general"
+              ]
+            },
+            "information_gaps": [
+              {
+                "code": "knowledge_unsupported_query",
+                "message": "当前小型知识库不覆盖这个目的地或主题。"
+              }
+            ],
+            "planning_handoff": null,
+            "conversation_destination": "南京",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": {
+              "quality_rejections": [],
+              "accepted_evidence_count": 0,
+              "status": "unavailable",
+              "outcome": "unsupported_query",
+              "advisory": null,
+              "retrieval_mode": null,
+              "retrieved_at": null,
+              "retrieved_document_refs": [],
+              "retrieved_chunk_refs": []
+            },
+            "grounding_status": "insufficient_evidence",
+            "grounding_limitations": [],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        },
+        {
+          "id": "dialogue-1",
+          "user": "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+          "assistant": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+          "goal_routing": {
+            "goal_type": "explanation",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_explanation"
+            ]
+          },
+          "companion_result": {
+            "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+            "goal_type": "explanation",
+            "status": "needs_information",
+            "suggestions": [],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "mixed",
+              "knowledge_strategy": "forced_rag",
+              "knowledge_reasons": [
+                "saved_context_read_only",
+                "forced_rag_baseline"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": true,
+              "general_knowledge_allowed": false,
+              "knowledge_types": [
+                "destination_profile",
+                "history_culture",
+                "travel_strategy"
+              ],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": true,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "mixed",
+              "requested_fact_topics": [
+                "history_general"
+              ]
+            },
+            "information_gaps": [
+              {
+                "code": "knowledge_unsupported_query",
+                "message": "当前小型知识库不覆盖这个目的地或主题。"
+              }
+            ],
+            "planning_handoff": null,
+            "conversation_destination": "南京",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": {
+              "quality_rejections": [],
+              "accepted_evidence_count": 0,
+              "status": "unavailable",
+              "outcome": "unsupported_query",
+              "advisory": null,
+              "retrieval_mode": null,
+              "retrieved_at": null,
+              "retrieved_document_refs": [],
+              "retrieved_chunk_refs": []
+            },
+            "grounding_status": "insufficient_evidence",
+            "grounding_limitations": [],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        }
+      ],
+      "goal": {
+        "goal_type": "comparison",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_comparison"
+        ]
+      },
+      "output": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+        "goal_type": "comparison",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "mixed",
+          "knowledge_strategy": "forced_rag",
+          "knowledge_reasons": [
+            "saved_context_read_only",
+            "forced_rag_baseline"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "destination_profile",
+            "history_culture",
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unsupported_query",
+            "message": "当前小型知识库不覆盖这个目的地或主题。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "unavailable",
+          "outcome": "unsupported_query",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "checks": {
+        "companion_routed": true,
+        "no_handoff": true
+      },
+      "latency_seconds": 0.20053359999974418,
+      "rag_calls": 1,
+      "observations": []
+    },
+    {
+      "mode": "B",
+      "turn": 3,
+      "input": "帮我规划南京三天行程，优先历史文化和安静街巷。",
+      "history": [
+        {
+          "id": "dialogue-0",
+          "user": "我想先了解南京的文化特色，暂时不做行程。",
+          "assistant": "现有来源不足以核实这个问题。可以补充具体出处，或改为一般介绍。",
+          "goal_routing": {
+            "goal_type": "explanation",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_explanation"
+            ]
+          },
+          "companion_result": {
+            "response_text": "现有来源不足以核实这个问题。可以补充具体出处，或改为一般介绍。",
+            "goal_type": "explanation",
+            "status": "needs_information",
+            "suggestions": [],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "rag_candidate",
+              "knowledge_strategy": "forced_rag",
+              "knowledge_reasons": [
+                "forced_rag_baseline"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": true,
+              "general_knowledge_allowed": false,
+              "knowledge_types": [
+                "destination_profile",
+                "history_culture",
+                "travel_strategy"
+              ],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": false,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "factual",
+              "requested_fact_topics": [
+                "history_general"
+              ]
+            },
+            "information_gaps": [
+              {
+                "code": "knowledge_unsupported_query",
+                "message": "当前小型知识库不覆盖这个目的地或主题。"
+              }
+            ],
+            "planning_handoff": null,
+            "conversation_destination": "南京",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": {
+              "quality_rejections": [],
+              "accepted_evidence_count": 0,
+              "status": "unavailable",
+              "outcome": "unsupported_query",
+              "advisory": null,
+              "retrieval_mode": null,
+              "retrieved_at": null,
+              "retrieved_document_refs": [],
+              "retrieved_chunk_refs": []
+            },
+            "grounding_status": "insufficient_evidence",
+            "grounding_limitations": [],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        },
+        {
+          "id": "dialogue-1",
+          "user": "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+          "assistant": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+          "goal_routing": {
+            "goal_type": "explanation",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_explanation"
+            ]
+          },
+          "companion_result": {
+            "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+            "goal_type": "explanation",
+            "status": "needs_information",
+            "suggestions": [],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "mixed",
+              "knowledge_strategy": "forced_rag",
+              "knowledge_reasons": [
+                "saved_context_read_only",
+                "forced_rag_baseline"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": true,
+              "general_knowledge_allowed": false,
+              "knowledge_types": [
+                "destination_profile",
+                "history_culture",
+                "travel_strategy"
+              ],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": true,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "mixed",
+              "requested_fact_topics": [
+                "history_general"
+              ]
+            },
+            "information_gaps": [
+              {
+                "code": "knowledge_unsupported_query",
+                "message": "当前小型知识库不覆盖这个目的地或主题。"
+              }
+            ],
+            "planning_handoff": null,
+            "conversation_destination": "南京",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": {
+              "quality_rejections": [],
+              "accepted_evidence_count": 0,
+              "status": "unavailable",
+              "outcome": "unsupported_query",
+              "advisory": null,
+              "retrieval_mode": null,
+              "retrieved_at": null,
+              "retrieved_document_refs": [],
+              "retrieved_chunk_refs": []
+            },
+            "grounding_status": "insufficient_evidence",
+            "grounding_limitations": [],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        },
+        {
+          "id": "dialogue-2",
+          "user": "苏州和南京哪个更适合我这种慢节奏旅行？先比较，不要规划。",
+          "assistant": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+          "goal_routing": {
+            "goal_type": "comparison",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_comparison"
+            ]
+          },
+          "companion_result": {
+            "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+            "goal_type": "comparison",
+            "status": "needs_information",
+            "suggestions": [],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "mixed",
+              "knowledge_strategy": "forced_rag",
+              "knowledge_reasons": [
+                "saved_context_read_only",
+                "forced_rag_baseline"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": true,
+              "general_knowledge_allowed": false,
+              "knowledge_types": [
+                "destination_profile",
+                "history_culture",
+                "travel_strategy"
+              ],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": true,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "advisory",
+              "requested_fact_topics": []
+            },
+            "information_gaps": [
+              {
+                "code": "knowledge_unsupported_query",
+                "message": "当前小型知识库不覆盖这个目的地或主题。"
+              }
+            ],
+            "planning_handoff": null,
+            "conversation_destination": "苏州",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": {
+              "quality_rejections": [],
+              "accepted_evidence_count": 0,
+              "status": "unavailable",
+              "outcome": "unsupported_query",
+              "advisory": null,
+              "retrieval_mode": null,
+              "retrieved_at": null,
+              "retrieved_document_refs": [],
+              "retrieved_chunk_refs": []
+            },
+            "grounding_status": "insufficient_evidence",
+            "grounding_limitations": [],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        }
+      ],
+      "goal": {
+        "goal_type": "trip_planning",
+        "confidence": 0.96,
+        "target_runtime": "planning",
+        "mutation_requested": true,
+        "trip_context_required": false,
+        "knowledge_required": false,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "explicit_user_planning_request"
+        ]
+      },
+      "planning_brief": {
+        "brief_id": "brief_85fe9901a50359cba21265afffaf5927",
+        "status": "prepared",
+        "authorization_turn_id": "dialogue-3",
+        "user_request": "帮我规划南京三天行程，优先历史文化和安静街巷。",
+        "destination": "苏州",
+        "date_request": null,
+        "duration_days": 3,
+        "party_statement": null,
+        "budget_statement": null,
+        "confirmed_preferences": [
+          {
+            "text": "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+            "source_turn_id": "dialogue-1",
+            "scope": "conversation"
+          }
+        ],
+        "avoidances": [
+          {
+            "text": "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+            "source_turn_id": "dialogue-1",
+            "scope": "conversation"
+          }
+        ],
+        "candidate_interests": [],
+        "must_do": [],
+        "user_decisions": [
+          {
+            "text": "帮我规划南京三天行程，优先历史文化和安静街巷。",
+            "source_turn_id": "dialogue-3",
+            "scope": "conversation"
+          }
+        ],
+        "open_questions": [],
+        "source_turn_refs": [
+          "dialogue-1",
+          "dialogue-3"
+        ],
+        "suggestion_refs": []
+      },
+      "checks": {
+        "planning_routed": true,
+        "brief_prepared": true,
+        "destination": false,
+        "preference_preserved": true,
+        "no_companion_model": true
+      },
+      "latency_seconds": 0.0069969000001037784,
+      "rag_calls": 0,
+      "observations": []
+    },
+    {
+      "mode": "C",
+      "turn": 0,
+      "input": "我想先了解南京的文化特色，暂时不做行程。",
+      "history": [],
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "南京的文化特色可以概括为几个关键词：\n\n**六朝古都与历史底蕴**：南京曾是东吴、东晋、宋、齐、梁、陈六个朝代的都城，后来还有明初和民国时期，因此有\"六朝古都、十朝都会\"之称。明城墙、明孝陵、中山陵、总统府都是这段层层叠叠历史的见证。\n\n**民国风情**：梧桐树遮荫的街道、颐和路一带的民国公馆区、1912街区，构成了独特的\"民国范儿\"，这在其他城市很难复制。\n\n**秦淮河与市井文化**：夫子庙—秦淮河一带自古就是文人雅士聚集之地，\"桨声灯影里的秦淮河\"说的就是这里。贡院、乌衣巷都承载着科举与六朝的文脉。\n\n**饮食**：鸭文化是南京的标志——盐水鸭、鸭血粉丝汤是必尝的街头经典；汤包和小笼也很出名，属于淮扬风味与江南口味的交汇。\n\n**文人气息**：南京是《红楼梦》《儒林外史》等名著的背景地，先锋书店、颐和路等也延续着这座城市的书香气质。\n\n总体来说，南京的文化气质厚重而内敛，既有江南的温婉，又有古都的沧桑，适合慢慢走、慢慢看。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_a786bd2fad44505e9247bbb0176bb61b",
+            "suggestion_type": "place",
+            "title": "颐和路民国公馆区",
+            "summary": "梧桐树与民国建筑交融的街区，最能感受南京的民国风情。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "颐和路民国公馆区"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "体现南京独特的民国文化底色",
+              "适合闲逛和拍照"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:08:04.904500Z",
+            "conversation_turn_id": "dialogue-0",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_58550f40631156c697c2f74ae1efbf44",
+            "suggestion_type": "place",
+            "title": "夫子庙—秦淮河",
+            "summary": "南京文脉与市井文化的核心地带，夜景尤其有代表性。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "夫子庙—秦淮河"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "\"桨声灯影\"的秦淮河意象源出于此",
+              "能同时体验科举文化、老南京小吃与市井氛围"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:08:04.904500Z",
+            "conversation_turn_id": "dialogue-0",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_ffd96a010e3e512188442cec91e5f8eb",
+            "suggestion_type": "place",
+            "title": "明城墙（如台城段）",
+            "summary": "明代都城遗存的代表，登城可俯瞰玄武湖与鸡鸣寺一线。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "明城墙（如台城段）"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "六朝古都历史的最直观体现",
+              "城墙本身是摄影的天然前景框架"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:08:04.904500Z",
+            "conversation_turn_id": "dialogue-0",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "general_knowledge",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "stable_model_knowledge_no_retrieval"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "factual",
+          "requested_fact_topics": [
+            "history_general"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "南京",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "checks": {
+        "companion_routed": true,
+        "no_handoff": true
+      },
+      "latency_seconds": 13.293009399999846,
+      "rag_calls": 0,
+      "observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 504,
+            "prompt_tokens": 1203,
+            "total_tokens": 1707,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 768
+            }
+          },
+          "duration_seconds": 13.00628770000003,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "mode": "C",
+      "turn": 1,
+      "input": "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+      "history": [
+        {
+          "id": "dialogue-0",
+          "user": "我想先了解南京的文化特色，暂时不做行程。",
+          "assistant": "南京的文化特色可以概括为几个关键词：\n\n**六朝古都与历史底蕴**：南京曾是东吴、东晋、宋、齐、梁、陈六个朝代的都城，后来还有明初和民国时期，因此有\"六朝古都、十朝都会\"之称。明城墙、明孝陵、中山陵、总统府都是这段层层叠叠历史的见证。\n\n**民国风情**：梧桐树遮荫的街道、颐和路一带的民国公馆区、1912街区，构成了独特的\"民国范儿\"，这在其他城市很难复制。\n\n**秦淮河与市井文化**：夫子庙—秦淮河一带自古就是文人雅士聚集之地，\"桨声灯影里的秦淮河\"说的就是这里。贡院、乌衣巷都承载着科举与六朝的文脉。\n\n**饮食**：鸭文化是南京的标志——盐水鸭、鸭血粉丝汤是必尝的街头经典；汤包和小笼也很出名，属于淮扬风味与江南口味的交汇。\n\n**文人气息**：南京是《红楼梦》《儒林外史》等名著的背景地，先锋书店、颐和路等也延续着这座城市的书香气质。\n\n总体来说，南京的文化气质厚重而内敛，既有江南的温婉，又有古都的沧桑，适合慢慢走、慢慢看。",
+          "goal_routing": {
+            "goal_type": "explanation",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_explanation"
+            ]
+          },
+          "companion_result": {
+            "response_text": "南京的文化特色可以概括为几个关键词：\n\n**六朝古都与历史底蕴**：南京曾是东吴、东晋、宋、齐、梁、陈六个朝代的都城，后来还有明初和民国时期，因此有\"六朝古都、十朝都会\"之称。明城墙、明孝陵、中山陵、总统府都是这段层层叠叠历史的见证。\n\n**民国风情**：梧桐树遮荫的街道、颐和路一带的民国公馆区、1912街区，构成了独特的\"民国范儿\"，这在其他城市很难复制。\n\n**秦淮河与市井文化**：夫子庙—秦淮河一带自古就是文人雅士聚集之地，\"桨声灯影里的秦淮河\"说的就是这里。贡院、乌衣巷都承载着科举与六朝的文脉。\n\n**饮食**：鸭文化是南京的标志——盐水鸭、鸭血粉丝汤是必尝的街头经典；汤包和小笼也很出名，属于淮扬风味与江南口味的交汇。\n\n**文人气息**：南京是《红楼梦》《儒林外史》等名著的背景地，先锋书店、颐和路等也延续着这座城市的书香气质。\n\n总体来说，南京的文化气质厚重而内敛，既有江南的温婉，又有古都的沧桑，适合慢慢走、慢慢看。",
+            "goal_type": "explanation",
+            "status": "completed",
+            "suggestions": [
+              {
+                "suggestion_id": "suggestion_a786bd2fad44505e9247bbb0176bb61b",
+                "suggestion_type": "place",
+                "title": "颐和路民国公馆区",
+                "summary": "梧桐树与民国建筑交融的街区，最能感受南京的民国风情。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "颐和路民国公馆区"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "体现南京独特的民国文化底色",
+                  "适合闲逛和拍照"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:04.904500Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_58550f40631156c697c2f74ae1efbf44",
+                "suggestion_type": "place",
+                "title": "夫子庙—秦淮河",
+                "summary": "南京文脉与市井文化的核心地带，夜景尤其有代表性。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "夫子庙—秦淮河"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "\"桨声灯影\"的秦淮河意象源出于此",
+                  "能同时体验科举文化、老南京小吃与市井氛围"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:04.904500Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_ffd96a010e3e512188442cec91e5f8eb",
+                "suggestion_type": "place",
+                "title": "明城墙（如台城段）",
+                "summary": "明代都城遗存的代表，登城可俯瞰玄武湖与鸡鸣寺一线。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "明城墙（如台城段）"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "六朝古都历史的最直观体现",
+                  "城墙本身是摄影的天然前景框架"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:04.904500Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              }
+            ],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "general_knowledge",
+              "knowledge_strategy": "selective",
+              "knowledge_reasons": [
+                "stable_model_knowledge_no_retrieval"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": false,
+              "general_knowledge_allowed": true,
+              "knowledge_types": [],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": false,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "factual",
+              "requested_fact_topics": [
+                "history_general"
+              ]
+            },
+            "information_gaps": [],
+            "planning_handoff": null,
+            "conversation_destination": "南京",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": null,
+            "grounding_status": "unverified_proposal",
+            "grounding_limitations": [
+              "model_general_knowledge_unverified"
+            ],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        }
+      ],
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "按你的偏好——安静、有历史感、不赶不排——南京有几个地方特别合适：\n\n**颐和路民国公馆区**：梧桐掩映下的黄墙老洋房，几乎不见旅行团，适合慢慢走。清晨光线穿过梧桐叶打在墙面上，是拍民国风最好的时刻。\n\n**老门东的背巷**：避开主街人流，钻进三条营、边营一带的小巷，青砖马头墙、老宅门楣都值得细看，还有不少安静的小院咖啡馆。\n\n**颐和路附近的宁海路、江苏路一带**：同样是公馆区延伸，游人更少，节奏更松弛。\n\n**明城墙台城段**：比玄武门段人少，登城后可以长时间坐着看鸡鸣寺与玄武湖，早晚光线柔和，适合用城砖纹理做前景。\n\n**乌龙潭、甘熙故居一带**：甘熙宅第（民俗博物馆）通常人流不多，能安静感受金陵民居的\"九十九间半\"格局。\n\n建议避开节假日中午高峰，选清晨或傍晚出行，既躲开排队，光线也最适合拍照。这几处都可以单独花上半天慢慢逛。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_18eafa6ce4ef529ca73db6cbe125f4e8",
+            "suggestion_type": "place",
+            "title": "颐和路民国公馆区及宁海路一带",
+            "summary": "梧桐与民国洋房交织的安静街区，游客少，适合慢逛。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "颐和路民国公馆区及宁海路一带"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "符合喜欢安静街巷与历史文化的偏好",
+              "清晨拍照光线极佳"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:08:18.309927Z",
+            "conversation_turn_id": "dialogue-1",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_cd17b4f29eb6525ba7c3d06f2abf94ea",
+            "suggestion_type": "place",
+            "title": "老门东背巷（三条营、边营）",
+            "summary": "避开主街人流，在小巷中感受老南京民居与市井气息。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "老门东背巷（三条营、边营）"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "巷子安静、不排队",
+              "青砖马头墙出片"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:08:18.309927Z",
+            "conversation_turn_id": "dialogue-1",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_cef55e8a00dd57b89ac30df953dc7fc0",
+            "suggestion_type": "place",
+            "title": "明城墙台城段",
+            "summary": "人流较少的城墙段，可远眺鸡鸣寺与玄武湖。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "明城墙台城段"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "历史感强且可静坐观景",
+              "早晚光线适合摄影"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:08:18.309927Z",
+            "conversation_turn_id": "dialogue-1",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_721aa4169d515a908a8707084457233f",
+            "suggestion_type": "place",
+            "title": "甘熙故居（民俗博物馆）",
+            "summary": "金陵民居代表\"九十九间半\"，通常游客不多。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "甘熙故居（民俗博物馆）"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "能安静了解南京民俗与建筑格局",
+              "室内光线有古意，适合人文摄影"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:08:18.309927Z",
+            "conversation_turn_id": "dialogue-1",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "context_required",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "saved_context_read_only"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "mixed",
+          "requested_fact_topics": [
+            "history_general"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "南京",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "checks": {
+        "companion_routed": true,
+        "no_handoff": true
+      },
+      "latency_seconds": 13.404060899999877,
+      "rag_calls": 0,
+      "observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 605,
+            "prompt_tokens": 2122,
+            "total_tokens": 2727,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 22,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 768
+            }
+          },
+          "duration_seconds": 13.235434500000338,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "mode": "C",
+      "turn": 2,
+      "input": "苏州和南京哪个更适合我这种慢节奏旅行？先比较，不要规划。",
+      "history": [
+        {
+          "id": "dialogue-0",
+          "user": "我想先了解南京的文化特色，暂时不做行程。",
+          "assistant": "南京的文化特色可以概括为几个关键词：\n\n**六朝古都与历史底蕴**：南京曾是东吴、东晋、宋、齐、梁、陈六个朝代的都城，后来还有明初和民国时期，因此有\"六朝古都、十朝都会\"之称。明城墙、明孝陵、中山陵、总统府都是这段层层叠叠历史的见证。\n\n**民国风情**：梧桐树遮荫的街道、颐和路一带的民国公馆区、1912街区，构成了独特的\"民国范儿\"，这在其他城市很难复制。\n\n**秦淮河与市井文化**：夫子庙—秦淮河一带自古就是文人雅士聚集之地，\"桨声灯影里的秦淮河\"说的就是这里。贡院、乌衣巷都承载着科举与六朝的文脉。\n\n**饮食**：鸭文化是南京的标志——盐水鸭、鸭血粉丝汤是必尝的街头经典；汤包和小笼也很出名，属于淮扬风味与江南口味的交汇。\n\n**文人气息**：南京是《红楼梦》《儒林外史》等名著的背景地，先锋书店、颐和路等也延续着这座城市的书香气质。\n\n总体来说，南京的文化气质厚重而内敛，既有江南的温婉，又有古都的沧桑，适合慢慢走、慢慢看。",
+          "goal_routing": {
+            "goal_type": "explanation",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_explanation"
+            ]
+          },
+          "companion_result": {
+            "response_text": "南京的文化特色可以概括为几个关键词：\n\n**六朝古都与历史底蕴**：南京曾是东吴、东晋、宋、齐、梁、陈六个朝代的都城，后来还有明初和民国时期，因此有\"六朝古都、十朝都会\"之称。明城墙、明孝陵、中山陵、总统府都是这段层层叠叠历史的见证。\n\n**民国风情**：梧桐树遮荫的街道、颐和路一带的民国公馆区、1912街区，构成了独特的\"民国范儿\"，这在其他城市很难复制。\n\n**秦淮河与市井文化**：夫子庙—秦淮河一带自古就是文人雅士聚集之地，\"桨声灯影里的秦淮河\"说的就是这里。贡院、乌衣巷都承载着科举与六朝的文脉。\n\n**饮食**：鸭文化是南京的标志——盐水鸭、鸭血粉丝汤是必尝的街头经典；汤包和小笼也很出名，属于淮扬风味与江南口味的交汇。\n\n**文人气息**：南京是《红楼梦》《儒林外史》等名著的背景地，先锋书店、颐和路等也延续着这座城市的书香气质。\n\n总体来说，南京的文化气质厚重而内敛，既有江南的温婉，又有古都的沧桑，适合慢慢走、慢慢看。",
+            "goal_type": "explanation",
+            "status": "completed",
+            "suggestions": [
+              {
+                "suggestion_id": "suggestion_a786bd2fad44505e9247bbb0176bb61b",
+                "suggestion_type": "place",
+                "title": "颐和路民国公馆区",
+                "summary": "梧桐树与民国建筑交融的街区，最能感受南京的民国风情。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "颐和路民国公馆区"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "体现南京独特的民国文化底色",
+                  "适合闲逛和拍照"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:04.904500Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_58550f40631156c697c2f74ae1efbf44",
+                "suggestion_type": "place",
+                "title": "夫子庙—秦淮河",
+                "summary": "南京文脉与市井文化的核心地带，夜景尤其有代表性。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "夫子庙—秦淮河"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "\"桨声灯影\"的秦淮河意象源出于此",
+                  "能同时体验科举文化、老南京小吃与市井氛围"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:04.904500Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_ffd96a010e3e512188442cec91e5f8eb",
+                "suggestion_type": "place",
+                "title": "明城墙（如台城段）",
+                "summary": "明代都城遗存的代表，登城可俯瞰玄武湖与鸡鸣寺一线。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "明城墙（如台城段）"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "六朝古都历史的最直观体现",
+                  "城墙本身是摄影的天然前景框架"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:04.904500Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              }
+            ],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "general_knowledge",
+              "knowledge_strategy": "selective",
+              "knowledge_reasons": [
+                "stable_model_knowledge_no_retrieval"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": false,
+              "general_knowledge_allowed": true,
+              "knowledge_types": [],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": false,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "factual",
+              "requested_fact_topics": [
+                "history_general"
+              ]
+            },
+            "information_gaps": [],
+            "planning_handoff": null,
+            "conversation_destination": "南京",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": null,
+            "grounding_status": "unverified_proposal",
+            "grounding_limitations": [
+              "model_general_knowledge_unverified"
+            ],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        },
+        {
+          "id": "dialogue-1",
+          "user": "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+          "assistant": "按你的偏好——安静、有历史感、不赶不排——南京有几个地方特别合适：\n\n**颐和路民国公馆区**：梧桐掩映下的黄墙老洋房，几乎不见旅行团，适合慢慢走。清晨光线穿过梧桐叶打在墙面上，是拍民国风最好的时刻。\n\n**老门东的背巷**：避开主街人流，钻进三条营、边营一带的小巷，青砖马头墙、老宅门楣都值得细看，还有不少安静的小院咖啡馆。\n\n**颐和路附近的宁海路、江苏路一带**：同样是公馆区延伸，游人更少，节奏更松弛。\n\n**明城墙台城段**：比玄武门段人少，登城后可以长时间坐着看鸡鸣寺与玄武湖，早晚光线柔和，适合用城砖纹理做前景。\n\n**乌龙潭、甘熙故居一带**：甘熙宅第（民俗博物馆）通常人流不多，能安静感受金陵民居的\"九十九间半\"格局。\n\n建议避开节假日中午高峰，选清晨或傍晚出行，既躲开排队，光线也最适合拍照。这几处都可以单独花上半天慢慢逛。",
+          "goal_routing": {
+            "goal_type": "explanation",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_explanation"
+            ]
+          },
+          "companion_result": {
+            "response_text": "按你的偏好——安静、有历史感、不赶不排——南京有几个地方特别合适：\n\n**颐和路民国公馆区**：梧桐掩映下的黄墙老洋房，几乎不见旅行团，适合慢慢走。清晨光线穿过梧桐叶打在墙面上，是拍民国风最好的时刻。\n\n**老门东的背巷**：避开主街人流，钻进三条营、边营一带的小巷，青砖马头墙、老宅门楣都值得细看，还有不少安静的小院咖啡馆。\n\n**颐和路附近的宁海路、江苏路一带**：同样是公馆区延伸，游人更少，节奏更松弛。\n\n**明城墙台城段**：比玄武门段人少，登城后可以长时间坐着看鸡鸣寺与玄武湖，早晚光线柔和，适合用城砖纹理做前景。\n\n**乌龙潭、甘熙故居一带**：甘熙宅第（民俗博物馆）通常人流不多，能安静感受金陵民居的\"九十九间半\"格局。\n\n建议避开节假日中午高峰，选清晨或傍晚出行，既躲开排队，光线也最适合拍照。这几处都可以单独花上半天慢慢逛。",
+            "goal_type": "explanation",
+            "status": "completed",
+            "suggestions": [
+              {
+                "suggestion_id": "suggestion_18eafa6ce4ef529ca73db6cbe125f4e8",
+                "suggestion_type": "place",
+                "title": "颐和路民国公馆区及宁海路一带",
+                "summary": "梧桐与民国洋房交织的安静街区，游客少，适合慢逛。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "颐和路民国公馆区及宁海路一带"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "符合喜欢安静街巷与历史文化的偏好",
+                  "清晨拍照光线极佳"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:18.309927Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_cd17b4f29eb6525ba7c3d06f2abf94ea",
+                "suggestion_type": "place",
+                "title": "老门东背巷（三条营、边营）",
+                "summary": "避开主街人流，在小巷中感受老南京民居与市井气息。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "老门东背巷（三条营、边营）"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "巷子安静、不排队",
+                  "青砖马头墙出片"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:18.309927Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_cef55e8a00dd57b89ac30df953dc7fc0",
+                "suggestion_type": "place",
+                "title": "明城墙台城段",
+                "summary": "人流较少的城墙段，可远眺鸡鸣寺与玄武湖。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "明城墙台城段"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "历史感强且可静坐观景",
+                  "早晚光线适合摄影"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:18.309927Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_721aa4169d515a908a8707084457233f",
+                "suggestion_type": "place",
+                "title": "甘熙故居（民俗博物馆）",
+                "summary": "金陵民居代表\"九十九间半\"，通常游客不多。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "甘熙故居（民俗博物馆）"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "能安静了解南京民俗与建筑格局",
+                  "室内光线有古意，适合人文摄影"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:18.309927Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              }
+            ],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "context_required",
+              "knowledge_strategy": "selective",
+              "knowledge_reasons": [
+                "saved_context_read_only"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": false,
+              "general_knowledge_allowed": true,
+              "knowledge_types": [],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": true,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "mixed",
+              "requested_fact_topics": [
+                "history_general"
+              ]
+            },
+            "information_gaps": [],
+            "planning_handoff": null,
+            "conversation_destination": "南京",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": null,
+            "grounding_status": "unverified_proposal",
+            "grounding_limitations": [
+              "model_general_knowledge_unverified"
+            ],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        }
+      ],
+      "goal": {
+        "goal_type": "comparison",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_comparison"
+        ]
+      },
+      "output": {
+        "response_text": "单论你这种慢节奏、爱安静街巷和历史文化的玩法，我的倾向是：**苏州略胜一筹，但差距不大**。两者气质不同，可按维度比较：\n\n**历史文化气质**\n- 南京：六朝古都+民国风，历史厚重、有沧桑感，遗址尺度大（城墙、陵寝、公馆区）。\n- 苏州：2500年古城+园林文化，历史更精致内敛，体现在巷弄、园林、水巷之中。\n\n**安静街巷与\"慢\"的契合度**\n- 苏州：平江路、山塘街的主街人流多，但支巷（如丁香巷、悬桥巷一带）非常安静，小巷密度高，几乎每条巷子都有历史可讲，天然适合无目的地闲逛。\n- 南京：安静感集中在颐和路公馆区、老门东背巷，需要跳点式探访，街区之间的移动距离更长。\n\n**排队与人群**\n- 南京的总统府、中山陵高峰期排队明显；苏州的拙政园、留园也是如此。但苏州的\"替代品\"更丰富——艺圃、耦园、沧浪亭人流少得多，小众园林依然是一流体验，避开人群更容易。\n\n**慢节奏体验方式**\n- 苏州：听评弹、喝茶（吴趋坊、十全街一带的老茶馆）、园林里坐半下午，节奏天然慢。\n- 南京：更适合\"走读\"式体验，走路量大，静坐的场所相对少。\n\n**拍照出片**\n- 苏州：水巷、白墙黛瓦、园林框景构图，阴天雾天都出片；清晨的平江路支巷尤佳。\n- 南京：梧桐大道、明城墙、民国黄墙，色彩更浓烈大气。\n\n**结论**：如果只选一个慢节奏目的地，选苏州——小众园林+支巷+茶馆的组合，更能满足你\"不排队、慢慢泡\"的需求；南京的厚重感更适合另安排一次走读式旅行。",
+        "goal_type": "comparison",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_c61abb5eb19e5433a3aa2489630cf9cb",
+            "suggestion_type": "place",
+            "title": "苏州艺圃",
+            "summary": "小众园林，规模不大但精雅，游客远少于拙政园，适合久坐品茶赏景。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "苏州艺圃"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "避开人流",
+              "园林摄影佳地",
+              "契合慢节奏偏好"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:08:35.624843Z",
+            "conversation_turn_id": "dialogue-2",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_34b7d944dd68584f85751d5f786acced",
+            "suggestion_type": "place",
+            "title": "平江路支巷（丁香巷、悬桥巷一带）",
+            "summary": "避开主街人流，在水巷与小桥间安静闲逛，感受姑苏市井生活。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "平江路支巷（丁香巷、悬桥巷一带）"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "街巷安静、历史感强",
+              "清晨光线适合拍摄白墙黛瓦"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:08:35.624843Z",
+            "conversation_turn_id": "dialogue-2",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_3beb2dbc9d6658c0b4849a06426116ae",
+            "suggestion_type": "experience",
+            "title": "苏州老茶馆听评弹",
+            "summary": "在茶馆里泡半天，边喝茶边听评弹，是苏州最典型的慢节奏体验。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "苏州老茶馆听评弹"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "天然契合慢节奏",
+              "深度文化体验"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:08:35.624843Z",
+            "conversation_turn_id": "dialogue-2",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": {
+          "options": [
+            "苏州",
+            "南京"
+          ],
+          "dimensions": [
+            "历史文化气质",
+            "安静街巷密度",
+            "避开人群难度",
+            "慢节奏体验方式",
+            "摄影出片"
+          ],
+          "summary": "南京历史厚重、走读式体验强，但安静点位分散、热门景点排队多；苏州园林与街巷更精致内敛，小众园林（艺圃、耦园、沧浪亭）和支巷让游客更容易避开人流，茶馆评弹等慢体验也更密集。就用户的慢节奏、安静偏好而言，苏州略占优。"
+        },
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "context_required",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "saved_context_read_only"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "checks": {
+        "companion_routed": true,
+        "no_handoff": true
+      },
+      "latency_seconds": 17.313335499999994,
+      "rag_calls": 0,
+      "observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 808,
+            "prompt_tokens": 2611,
+            "total_tokens": 3419,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 768
+            }
+          },
+          "duration_seconds": 16.928003399999852,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "mode": "C",
+      "turn": 3,
+      "input": "帮我规划南京三天行程，优先历史文化和安静街巷。",
+      "history": [
+        {
+          "id": "dialogue-0",
+          "user": "我想先了解南京的文化特色，暂时不做行程。",
+          "assistant": "南京的文化特色可以概括为几个关键词：\n\n**六朝古都与历史底蕴**：南京曾是东吴、东晋、宋、齐、梁、陈六个朝代的都城，后来还有明初和民国时期，因此有\"六朝古都、十朝都会\"之称。明城墙、明孝陵、中山陵、总统府都是这段层层叠叠历史的见证。\n\n**民国风情**：梧桐树遮荫的街道、颐和路一带的民国公馆区、1912街区，构成了独特的\"民国范儿\"，这在其他城市很难复制。\n\n**秦淮河与市井文化**：夫子庙—秦淮河一带自古就是文人雅士聚集之地，\"桨声灯影里的秦淮河\"说的就是这里。贡院、乌衣巷都承载着科举与六朝的文脉。\n\n**饮食**：鸭文化是南京的标志——盐水鸭、鸭血粉丝汤是必尝的街头经典；汤包和小笼也很出名，属于淮扬风味与江南口味的交汇。\n\n**文人气息**：南京是《红楼梦》《儒林外史》等名著的背景地，先锋书店、颐和路等也延续着这座城市的书香气质。\n\n总体来说，南京的文化气质厚重而内敛，既有江南的温婉，又有古都的沧桑，适合慢慢走、慢慢看。",
+          "goal_routing": {
+            "goal_type": "explanation",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_explanation"
+            ]
+          },
+          "companion_result": {
+            "response_text": "南京的文化特色可以概括为几个关键词：\n\n**六朝古都与历史底蕴**：南京曾是东吴、东晋、宋、齐、梁、陈六个朝代的都城，后来还有明初和民国时期，因此有\"六朝古都、十朝都会\"之称。明城墙、明孝陵、中山陵、总统府都是这段层层叠叠历史的见证。\n\n**民国风情**：梧桐树遮荫的街道、颐和路一带的民国公馆区、1912街区，构成了独特的\"民国范儿\"，这在其他城市很难复制。\n\n**秦淮河与市井文化**：夫子庙—秦淮河一带自古就是文人雅士聚集之地，\"桨声灯影里的秦淮河\"说的就是这里。贡院、乌衣巷都承载着科举与六朝的文脉。\n\n**饮食**：鸭文化是南京的标志——盐水鸭、鸭血粉丝汤是必尝的街头经典；汤包和小笼也很出名，属于淮扬风味与江南口味的交汇。\n\n**文人气息**：南京是《红楼梦》《儒林外史》等名著的背景地，先锋书店、颐和路等也延续着这座城市的书香气质。\n\n总体来说，南京的文化气质厚重而内敛，既有江南的温婉，又有古都的沧桑，适合慢慢走、慢慢看。",
+            "goal_type": "explanation",
+            "status": "completed",
+            "suggestions": [
+              {
+                "suggestion_id": "suggestion_a786bd2fad44505e9247bbb0176bb61b",
+                "suggestion_type": "place",
+                "title": "颐和路民国公馆区",
+                "summary": "梧桐树与民国建筑交融的街区，最能感受南京的民国风情。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "颐和路民国公馆区"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "体现南京独特的民国文化底色",
+                  "适合闲逛和拍照"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:04.904500Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_58550f40631156c697c2f74ae1efbf44",
+                "suggestion_type": "place",
+                "title": "夫子庙—秦淮河",
+                "summary": "南京文脉与市井文化的核心地带，夜景尤其有代表性。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "夫子庙—秦淮河"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "\"桨声灯影\"的秦淮河意象源出于此",
+                  "能同时体验科举文化、老南京小吃与市井氛围"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:04.904500Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_ffd96a010e3e512188442cec91e5f8eb",
+                "suggestion_type": "place",
+                "title": "明城墙（如台城段）",
+                "summary": "明代都城遗存的代表，登城可俯瞰玄武湖与鸡鸣寺一线。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "明城墙（如台城段）"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "六朝古都历史的最直观体现",
+                  "城墙本身是摄影的天然前景框架"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:04.904500Z",
+                "conversation_turn_id": "dialogue-0",
+                "status": "suggested"
+              }
+            ],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "general_knowledge",
+              "knowledge_strategy": "selective",
+              "knowledge_reasons": [
+                "stable_model_knowledge_no_retrieval"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": false,
+              "general_knowledge_allowed": true,
+              "knowledge_types": [],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": false,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "factual",
+              "requested_fact_topics": [
+                "history_general"
+              ]
+            },
+            "information_gaps": [],
+            "planning_handoff": null,
+            "conversation_destination": "南京",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": null,
+            "grounding_status": "unverified_proposal",
+            "grounding_limitations": [
+              "model_general_knowledge_unverified"
+            ],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        },
+        {
+          "id": "dialogue-1",
+          "user": "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+          "assistant": "按你的偏好——安静、有历史感、不赶不排——南京有几个地方特别合适：\n\n**颐和路民国公馆区**：梧桐掩映下的黄墙老洋房，几乎不见旅行团，适合慢慢走。清晨光线穿过梧桐叶打在墙面上，是拍民国风最好的时刻。\n\n**老门东的背巷**：避开主街人流，钻进三条营、边营一带的小巷，青砖马头墙、老宅门楣都值得细看，还有不少安静的小院咖啡馆。\n\n**颐和路附近的宁海路、江苏路一带**：同样是公馆区延伸，游人更少，节奏更松弛。\n\n**明城墙台城段**：比玄武门段人少，登城后可以长时间坐着看鸡鸣寺与玄武湖，早晚光线柔和，适合用城砖纹理做前景。\n\n**乌龙潭、甘熙故居一带**：甘熙宅第（民俗博物馆）通常人流不多，能安静感受金陵民居的\"九十九间半\"格局。\n\n建议避开节假日中午高峰，选清晨或傍晚出行，既躲开排队，光线也最适合拍照。这几处都可以单独花上半天慢慢逛。",
+          "goal_routing": {
+            "goal_type": "explanation",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_explanation"
+            ]
+          },
+          "companion_result": {
+            "response_text": "按你的偏好——安静、有历史感、不赶不排——南京有几个地方特别合适：\n\n**颐和路民国公馆区**：梧桐掩映下的黄墙老洋房，几乎不见旅行团，适合慢慢走。清晨光线穿过梧桐叶打在墙面上，是拍民国风最好的时刻。\n\n**老门东的背巷**：避开主街人流，钻进三条营、边营一带的小巷，青砖马头墙、老宅门楣都值得细看，还有不少安静的小院咖啡馆。\n\n**颐和路附近的宁海路、江苏路一带**：同样是公馆区延伸，游人更少，节奏更松弛。\n\n**明城墙台城段**：比玄武门段人少，登城后可以长时间坐着看鸡鸣寺与玄武湖，早晚光线柔和，适合用城砖纹理做前景。\n\n**乌龙潭、甘熙故居一带**：甘熙宅第（民俗博物馆）通常人流不多，能安静感受金陵民居的\"九十九间半\"格局。\n\n建议避开节假日中午高峰，选清晨或傍晚出行，既躲开排队，光线也最适合拍照。这几处都可以单独花上半天慢慢逛。",
+            "goal_type": "explanation",
+            "status": "completed",
+            "suggestions": [
+              {
+                "suggestion_id": "suggestion_18eafa6ce4ef529ca73db6cbe125f4e8",
+                "suggestion_type": "place",
+                "title": "颐和路民国公馆区及宁海路一带",
+                "summary": "梧桐与民国洋房交织的安静街区，游客少，适合慢逛。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "颐和路民国公馆区及宁海路一带"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "符合喜欢安静街巷与历史文化的偏好",
+                  "清晨拍照光线极佳"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:18.309927Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_cd17b4f29eb6525ba7c3d06f2abf94ea",
+                "suggestion_type": "place",
+                "title": "老门东背巷（三条营、边营）",
+                "summary": "避开主街人流，在小巷中感受老南京民居与市井气息。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "老门东背巷（三条营、边营）"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "巷子安静、不排队",
+                  "青砖马头墙出片"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:18.309927Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_cef55e8a00dd57b89ac30df953dc7fc0",
+                "suggestion_type": "place",
+                "title": "明城墙台城段",
+                "summary": "人流较少的城墙段，可远眺鸡鸣寺与玄武湖。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "明城墙台城段"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "历史感强且可静坐观景",
+                  "早晚光线适合摄影"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:18.309927Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_721aa4169d515a908a8707084457233f",
+                "suggestion_type": "place",
+                "title": "甘熙故居（民俗博物馆）",
+                "summary": "金陵民居代表\"九十九间半\"，通常游客不多。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "甘熙故居（民俗博物馆）"
+                  }
+                ],
+                "destination": "南京",
+                "reasons": [
+                  "能安静了解南京民俗与建筑格局",
+                  "室内光线有古意，适合人文摄影"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:18.309927Z",
+                "conversation_turn_id": "dialogue-1",
+                "status": "suggested"
+              }
+            ],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": null,
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "context_required",
+              "knowledge_strategy": "selective",
+              "knowledge_reasons": [
+                "saved_context_read_only"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": false,
+              "general_knowledge_allowed": true,
+              "knowledge_types": [],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": true,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "mixed",
+              "requested_fact_topics": [
+                "history_general"
+              ]
+            },
+            "information_gaps": [],
+            "planning_handoff": null,
+            "conversation_destination": "南京",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": null,
+            "grounding_status": "unverified_proposal",
+            "grounding_limitations": [
+              "model_general_knowledge_unverified"
+            ],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        },
+        {
+          "id": "dialogue-2",
+          "user": "苏州和南京哪个更适合我这种慢节奏旅行？先比较，不要规划。",
+          "assistant": "单论你这种慢节奏、爱安静街巷和历史文化的玩法，我的倾向是：**苏州略胜一筹，但差距不大**。两者气质不同，可按维度比较：\n\n**历史文化气质**\n- 南京：六朝古都+民国风，历史厚重、有沧桑感，遗址尺度大（城墙、陵寝、公馆区）。\n- 苏州：2500年古城+园林文化，历史更精致内敛，体现在巷弄、园林、水巷之中。\n\n**安静街巷与\"慢\"的契合度**\n- 苏州：平江路、山塘街的主街人流多，但支巷（如丁香巷、悬桥巷一带）非常安静，小巷密度高，几乎每条巷子都有历史可讲，天然适合无目的地闲逛。\n- 南京：安静感集中在颐和路公馆区、老门东背巷，需要跳点式探访，街区之间的移动距离更长。\n\n**排队与人群**\n- 南京的总统府、中山陵高峰期排队明显；苏州的拙政园、留园也是如此。但苏州的\"替代品\"更丰富——艺圃、耦园、沧浪亭人流少得多，小众园林依然是一流体验，避开人群更容易。\n\n**慢节奏体验方式**\n- 苏州：听评弹、喝茶（吴趋坊、十全街一带的老茶馆）、园林里坐半下午，节奏天然慢。\n- 南京：更适合\"走读\"式体验，走路量大，静坐的场所相对少。\n\n**拍照出片**\n- 苏州：水巷、白墙黛瓦、园林框景构图，阴天雾天都出片；清晨的平江路支巷尤佳。\n- 南京：梧桐大道、明城墙、民国黄墙，色彩更浓烈大气。\n\n**结论**：如果只选一个慢节奏目的地，选苏州——小众园林+支巷+茶馆的组合，更能满足你\"不排队、慢慢泡\"的需求；南京的厚重感更适合另安排一次走读式旅行。",
+          "goal_routing": {
+            "goal_type": "comparison",
+            "confidence": 0.94,
+            "target_runtime": "companion",
+            "mutation_requested": false,
+            "trip_context_required": false,
+            "knowledge_required": true,
+            "live_fact_likely_required": false,
+            "referenced_entities": [],
+            "referenced_previous_decision": false,
+            "clarification_needed": false,
+            "signals": [
+              "companion_comparison"
+            ]
+          },
+          "companion_result": {
+            "response_text": "单论你这种慢节奏、爱安静街巷和历史文化的玩法，我的倾向是：**苏州略胜一筹，但差距不大**。两者气质不同，可按维度比较：\n\n**历史文化气质**\n- 南京：六朝古都+民国风，历史厚重、有沧桑感，遗址尺度大（城墙、陵寝、公馆区）。\n- 苏州：2500年古城+园林文化，历史更精致内敛，体现在巷弄、园林、水巷之中。\n\n**安静街巷与\"慢\"的契合度**\n- 苏州：平江路、山塘街的主街人流多，但支巷（如丁香巷、悬桥巷一带）非常安静，小巷密度高，几乎每条巷子都有历史可讲，天然适合无目的地闲逛。\n- 南京：安静感集中在颐和路公馆区、老门东背巷，需要跳点式探访，街区之间的移动距离更长。\n\n**排队与人群**\n- 南京的总统府、中山陵高峰期排队明显；苏州的拙政园、留园也是如此。但苏州的\"替代品\"更丰富——艺圃、耦园、沧浪亭人流少得多，小众园林依然是一流体验，避开人群更容易。\n\n**慢节奏体验方式**\n- 苏州：听评弹、喝茶（吴趋坊、十全街一带的老茶馆）、园林里坐半下午，节奏天然慢。\n- 南京：更适合\"走读\"式体验，走路量大，静坐的场所相对少。\n\n**拍照出片**\n- 苏州：水巷、白墙黛瓦、园林框景构图，阴天雾天都出片；清晨的平江路支巷尤佳。\n- 南京：梧桐大道、明城墙、民国黄墙，色彩更浓烈大气。\n\n**结论**：如果只选一个慢节奏目的地，选苏州——小众园林+支巷+茶馆的组合，更能满足你\"不排队、慢慢泡\"的需求；南京的厚重感更适合另安排一次走读式旅行。",
+            "goal_type": "comparison",
+            "status": "completed",
+            "suggestions": [
+              {
+                "suggestion_id": "suggestion_c61abb5eb19e5433a3aa2489630cf9cb",
+                "suggestion_type": "place",
+                "title": "苏州艺圃",
+                "summary": "小众园林，规模不大但精雅，游客远少于拙政园，适合久坐品茶赏景。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "苏州艺圃"
+                  }
+                ],
+                "destination": "苏州",
+                "reasons": [
+                  "避开人流",
+                  "园林摄影佳地",
+                  "契合慢节奏偏好"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:35.624843Z",
+                "conversation_turn_id": "dialogue-2",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_34b7d944dd68584f85751d5f786acced",
+                "suggestion_type": "place",
+                "title": "平江路支巷（丁香巷、悬桥巷一带）",
+                "summary": "避开主街人流，在水巷与小桥间安静闲逛，感受姑苏市井生活。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "平江路支巷（丁香巷、悬桥巷一带）"
+                  }
+                ],
+                "destination": "苏州",
+                "reasons": [
+                  "街巷安静、历史感强",
+                  "清晨光线适合拍摄白墙黛瓦"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:35.624843Z",
+                "conversation_turn_id": "dialogue-2",
+                "status": "suggested"
+              },
+              {
+                "suggestion_id": "suggestion_3beb2dbc9d6658c0b4849a06426116ae",
+                "suggestion_type": "experience",
+                "title": "苏州老茶馆听评弹",
+                "summary": "在茶馆里泡半天，边喝茶边听评弹，是苏州最典型的慢节奏体验。",
+                "entity_refs": [
+                  {
+                    "kind": "raw_mention",
+                    "value": "苏州老茶馆听评弹"
+                  }
+                ],
+                "destination": "苏州",
+                "reasons": [
+                  "天然契合慢节奏",
+                  "深度文化体验"
+                ],
+                "evidence_refs": [],
+                "grounding": "unverified_proposal",
+                "created_at": "2026-10-11T01:08:35.624843Z",
+                "conversation_turn_id": "dialogue-2",
+                "status": "suggested"
+              }
+            ],
+            "resolved_suggestion_refs": [],
+            "interactions": [],
+            "comparison": {
+              "options": [
+                "苏州",
+                "南京"
+              ],
+              "dimensions": [
+                "历史文化气质",
+                "安静街巷密度",
+                "避开人群难度",
+                "慢节奏体验方式",
+                "摄影出片"
+              ],
+              "summary": "南京历史厚重、走读式体验强，但安静点位分散、热门景点排队多；苏州园林与街巷更精致内敛，小众园林（艺圃、耦园、沧浪亭）和支巷让游客更容易避开人流，茶馆评弹等慢体验也更密集。就用户的慢节奏、安静偏好而言，苏州略占优。"
+            },
+            "explanation": null,
+            "information_need": {
+              "knowledge_decision": "context_required",
+              "knowledge_strategy": "selective",
+              "knowledge_reasons": [
+                "saved_context_read_only"
+              ],
+              "source_required": false,
+              "optional_rag": false,
+              "knowledge_required": false,
+              "general_knowledge_allowed": true,
+              "knowledge_types": [],
+              "live_fact_required": false,
+              "forecast_required": false,
+              "opening_hours_required": false,
+              "fact_requirements": [],
+              "fact_types": [],
+              "search_required": false,
+              "decision_history_required": false,
+              "trip_context_required": false,
+              "preferences_required": true,
+              "itinerary_required": false,
+              "audience_tags": [],
+              "season_tags": [],
+              "experience_tags": [],
+              "filter_signals": [],
+              "answer_mode": "advisory",
+              "requested_fact_topics": []
+            },
+            "information_gaps": [],
+            "planning_handoff": null,
+            "conversation_destination": "苏州",
+            "runtime_trace": [
+              "interpret_goal",
+              "resolve_conversation",
+              "determine_information_need",
+              "gather_read_only_context",
+              "generate_interaction",
+              "extract_interaction_outcome",
+              "planning_handoff_not_authorized",
+              "prepare_conversation_persistence"
+            ],
+            "knowledge_evidence": [],
+            "answer_evidence_refs": [],
+            "knowledge_retrieval": null,
+            "grounding_status": "unverified_proposal",
+            "grounding_limitations": [
+              "model_general_knowledge_unverified"
+            ],
+            "claims": [],
+            "claim_validation_issues": [],
+            "forecast_plan": null,
+            "opening_hours_plan": null,
+            "resolved_facts": []
+          }
+        }
+      ],
+      "goal": {
+        "goal_type": "trip_planning",
+        "confidence": 0.96,
+        "target_runtime": "planning",
+        "mutation_requested": true,
+        "trip_context_required": false,
+        "knowledge_required": false,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "explicit_user_planning_request"
+        ]
+      },
+      "planning_brief": {
+        "brief_id": "brief_85fe9901a50359cba21265afffaf5927",
+        "status": "prepared",
+        "authorization_turn_id": "dialogue-3",
+        "user_request": "帮我规划南京三天行程，优先历史文化和安静街巷。",
+        "destination": "苏州",
+        "date_request": null,
+        "duration_days": 3,
+        "party_statement": null,
+        "budget_statement": null,
+        "confirmed_preferences": [
+          {
+            "text": "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+            "source_turn_id": "dialogue-1",
+            "scope": "conversation"
+          }
+        ],
+        "avoidances": [
+          {
+            "text": "我喜欢安静的街巷和历史文化，不喜欢排队，想慢慢体验。",
+            "source_turn_id": "dialogue-1",
+            "scope": "conversation"
+          }
+        ],
+        "candidate_interests": [],
+        "must_do": [],
+        "user_decisions": [
+          {
+            "text": "帮我规划南京三天行程，优先历史文化和安静街巷。",
+            "source_turn_id": "dialogue-3",
+            "scope": "conversation"
+          }
+        ],
+        "open_questions": [],
+        "source_turn_refs": [
+          "dialogue-1",
+          "dialogue-3"
+        ],
+        "suggestion_refs": []
+      },
+      "checks": {
+        "planning_routed": true,
+        "brief_prepared": true,
+        "destination": false,
+        "preference_preserved": true,
+        "no_companion_model": true
+      },
+      "latency_seconds": 0.004232700000102341,
+      "rag_calls": 0,
+      "observations": []
+    }
+  ],
+  "complete": true
+}

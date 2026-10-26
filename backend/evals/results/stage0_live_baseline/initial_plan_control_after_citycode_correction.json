@@ -1,0 +1,51 @@
+{
+  "schema_version": "travel-agent-evaluation-result-v1",
+  "benchmark_version": "travel-agent-v1",
+  "scenario_id": "initial_plan_control",
+  "mode": "live",
+  "production_metadata": {
+    "planning_run_id": "90fb948c-9d89-4738-8881-994884008909",
+    "provider": "deepseek",
+    "model": "deepseek-flash",
+    "token_usage": 52616
+  },
+  "artifact": {
+    "resolved_intent": "create_plan",
+    "resolved_run_type": "initial_plan",
+    "reachability": {
+      "intent_resolver": "reached",
+      "context_builder": "reached",
+      "destination_research": "reached",
+      "external_tools": "reached",
+      "planner": "reached",
+      "route_enrichment": "reached",
+      "validator": "reached",
+      "critic": "not_applicable",
+      "revision": "reached",
+      "persistence": "reached",
+      "user_decision": "reached"
+    },
+    "final_outcome": "awaiting_confirmation",
+    "validation": {"valid": true, "errors": []},
+    "candidate": {"activity_count": 1, "route_leg_count": 1},
+    "revision_produced": true
+  },
+  "metrics": {
+    "intent_routing_accuracy": 1.0,
+    "planner_metrics": "baseline_observed"
+  },
+  "trace": {
+    "scenario": "initial_plan_control",
+    "steps": [
+      "PlanningRun created",
+      "resolve_intent: create_plan",
+      "destination research reached",
+      "DeepSeek Planner reached",
+      "AMap route enrichment reached",
+      "validator reached: valid",
+      "PlanRevision produced",
+      "awaiting confirmation"
+    ],
+    "private_reasoning_recorded": false
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "scenario": "must_do_show_conflict_generic_refs",
+  "run_id": "8654298a-a860-4077-bacf-e8b0a3a8de8d",
+  "input": "博物馆和晚上19点的演出都必须保留，帮我调整今天下午的行程。",
+  "retry_of": "b3ef0f11-1fb0-423c-86fc-2596513ea4ed",
+  "fixture_precondition": {
+    "status": "PASS",
+    "museum_schedule": "15:00-18:10",
+    "show_schedule": "19:00-20:30",
+    "available_transfer_minutes": 50,
+    "amap_transit_minutes": 77,
+    "route_conflict_exists": true
+  },
+  "intent_resolution_observed": {
+    "intent_type": "modify_day",
+    "time_scope": "afternoon",
+    "missing_field": "target_day",
+    "ambiguity": "relative_date_reference_missing",
+    "clarification_question_produced": "你想调整旅行中的哪一天？"
+  },
+  "pipeline": {
+    "intent": "success",
+    "context": "reached",
+    "destination_research": "failed",
+    "tavily": "not_reached",
+    "amap_poi": "not_reached",
+    "clarification": "not_reached",
+    "resume": "not_reached",
+    "deepseek": "not_reached",
+    "candidate": "not_reached",
+    "route_enrichment": "not_reached",
+    "validator": "not_reached",
+    "plan_revision": "not_produced"
+  },
+  "failure": {
+    "error_code": "planner_requested_place_unresolved",
+    "message": "未唯一匹配到你指定的地点：博物馆、晚上19点的演出。请补充准确名称或所在区域后重新规划。",
+    "classification": "preplanning_request_entity_resolution_or_pipeline_ordering_failure",
+    "token_usage": 0
+  },
+  "stage0_interpretation": "A target-day clarification was constructed by intent resolution but was not surfaced because preplanning requested-place resolution failed first. No planner-visible context, candidate, validation, or must-do trade-off behavior was observed."
+}

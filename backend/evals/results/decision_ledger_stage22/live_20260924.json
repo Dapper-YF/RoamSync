@@ -1,0 +1,77 @@
+{
+  "stage": "2.2",
+  "scenario": "decision_ledger_activity_semantics_tradeoff",
+  "status": "remains_open",
+  "historical_artifacts_modified": false,
+  "isolated_trip_id": "46dbb354-78a8-4d93-bb4c-2dcae0903118",
+  "source_trip_id": "7fc0911f-9d66-4e27-8109-9a497de5d7f4",
+  "runs": [
+    {
+      "run_id": "15b99a1b-21fd-4901-b629-6a1c87b92b73",
+      "trip_id": "46dbb354-78a8-4d93-bb4c-2dcae0903118",
+      "classification": "decision_ledger_validation_failure",
+      "status": "failed",
+      "planner_reached": true,
+      "candidate_reached": true,
+      "route_enrichment_reached": true,
+      "validator_reached": true,
+      "ledger_entries": 6,
+      "walking_before_minutes": 174,
+      "walking_after_minutes": 174,
+      "unsupported_claim": "reduce_walking",
+      "ledger_errors": ["decision_route_claim_unsupported", "decision_route_evidence_missing", "decision_explanation_unsupported", "decision_action_mismatch", "decision_evidence_unresolved"],
+      "plan_revision_produced": false,
+      "note": "Run predates later contract corrections; retained as an honest failure baseline. Route/explanation contradiction is real."
+    },
+    {
+      "run_id": "44dd419b-c610-46ec-ba02-a586f225ac94",
+      "trip_id": "46dbb354-78a8-4d93-bb4c-2dcae0903118",
+      "classification": "intent_routing_clarification",
+      "status": "awaiting_clarification",
+      "planner_reached": false,
+      "note": "Negative wording '不新增或删除活动' was interpreted as remove_activity; no intent code changed."
+    },
+    {
+      "run_id": "bbebee74-f8d0-4223-b9c2-67cea51c0858",
+      "trip_id": "46dbb354-78a8-4d93-bb4c-2dcae0903118",
+      "classification": "decision_ledger_validation_failure",
+      "status": "failed",
+      "planner_reached": true,
+      "candidate_reached": true,
+      "route_enrichment_reached": true,
+      "validator_reached": true,
+      "ledger_entries": 5,
+      "ledger_errors": ["decision_evidence_unresolved", "decision_provenance_duplicate"],
+      "plan_revision_produced": false,
+      "note": "Five preserve records included missing Goal/Semantic refs and a duplicate preserve record. Invalid entries were not exposed as validated facts."
+    },
+    {
+      "run_id": "5d69f075-ab19-4f64-ae96-1a49311b60a9",
+      "trip_id": "7fc0911f-9d66-4e27-8109-9a497de5d7f4",
+      "classification": "planner_structured_output_failure",
+      "status": "failed",
+      "memory_count": 1,
+      "planner_reached": true,
+      "error_code": "planner_invalid_output",
+      "error_summary": "place_candidate_id outside allowed set",
+      "plan_revision_produced": false
+    },
+    {
+      "run_id": "e13e0a61-56aa-4649-bb31-63646926562e",
+      "trip_id": "7fc0911f-9d66-4e27-8109-9a497de5d7f4",
+      "classification": "planner_structured_output_failure",
+      "status": "failed",
+      "memory_count": 1,
+      "planner_reached": true,
+      "error_code": "planner_invalid_output",
+      "error_summary": "required decision_ledger field omitted",
+      "plan_revision_produced": false
+    }
+  ],
+  "recovery_smoke": {
+    "kind": "deterministic_test_only",
+    "test": "test_recovery_addition_without_basis_cannot_become_revision",
+    "unsupported_addition_detected": true,
+    "live_recovery_run_completed": false
+  }
+}

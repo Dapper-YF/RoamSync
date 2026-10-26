@@ -1,0 +1,78 @@
+{
+  "snapshot_sha256": "9c73bb878924d5f6d59e4e6f13f35e945cfe41ac3fcca1540dee3b0351849887",
+  "live": {
+    "cases": 16,
+    "errors": 0,
+    "real_provider_generations": 8,
+    "format_repairs": 0,
+    "goal_correct": 15,
+    "runtime_correct": 16,
+    "premature_planning_authorizations": 0,
+    "exploration_turns": 6,
+    "unnecessary_slot_questions": 0,
+    "repeated_planning_ctas": 0,
+    "completed_responses": 16,
+    "substantive_responses": 10,
+    "partial_or_limitation_responses": 5,
+    "planning_transitions": 1,
+    "tool_tp": 6,
+    "tool_fp": 0,
+    "tool_fn": 0,
+    "knowledge_precision": 1.0,
+    "knowledge_recall": 1.0,
+    "source_factual_claims": 14,
+    "source_factual_review": {
+      "supported": 14
+    },
+    "all_structured_claim_review": {
+      "supported": 14,
+      "recommendation_not_fact": 4,
+      "not_applicable": 7
+    },
+    "general_unverified_answers": 7
+  },
+  "holdout": {
+    "cases": 50,
+    "pending_reviews": 0,
+    "errors": 0,
+    "real_provider_generations": 13,
+    "format_repairs": 0,
+    "original_fixture_metrics": {
+      "cases": 50,
+      "pending": 0,
+      "routing_correct": 50,
+      "planning_authorization_correct": 50,
+      "need_correct": 39,
+      "expected_assertions_covered": 34,
+      "unsupported_factual_claim": 0,
+      "recommendation_separation": 50
+    },
+    "retrieval_related_cases": 43,
+    "retrieval_calls": 44,
+    "usefulness": {
+      "useful_substantive_answer": 28,
+      "partial_or_honest_limited_answer": 14,
+      "missed_or_irrelevant": 2,
+      "useful_safe_live_limitation": 6
+    },
+    "source_factual_review": {
+      "supported": 57
+    },
+    "all_structured_claim_review": {
+      "supported": 57,
+      "not_applicable": 32,
+      "recommendation_not_fact": 26
+    },
+    "manual_embedded_factual_cautions": [
+      {
+        "case_id": "rec_02",
+        "label": "unsupported",
+        "text": "苏堤或白堤",
+        "note": "Named route detail inside advice is not present in provided assertions; not verified source knowledge."
+      }
+    ],
+    "optional_date_invitation_cases": [],
+    "blind": false,
+    "label_changes": 0
+  }
+}

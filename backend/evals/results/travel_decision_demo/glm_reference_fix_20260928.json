@@ -1,0 +1,35 @@
+{
+  "date": "2026-09-28",
+  "model": "glm-5.3-flash",
+  "final_config": {"stream": true, "reasoning_effort": "high", "timeout_seconds": 180},
+  "trip_id": "00000000-0000-4000-8000-000000000003",
+  "user_request": "请帮我调整 2026-10-20 当天的行程。我希望轻松一点，尽量少走路，18:00 前结束，现有活动尽量不要大改",
+  "attempts": [
+    {"run_id": "472bb000-22c2-4605-81d2-5f766b3957f8", "stream": false, "effort": "max", "timeout_seconds": 60, "result": "planner_timeout"},
+    {"run_id": "1844c2c6-11d2-4e43-978e-82e571ab7b8a", "stream": false, "effort": "max", "timeout_seconds": 180, "result": "planner_timeout"},
+    {"run_id": "1c856d37-da54-4c3c-b5a5-733c994627f3", "stream": true, "effort": "max", "result": "planner_invalid_output", "underlying_error_type": "not_recorded_unknown"},
+    {"run_id": "e2a4137e-cc22-4861-abf2-8143e8ec370a", "stream": true, "effort": "high", "result": "awaiting_confirmation"}
+  ],
+  "success": {
+    "revision_id": "a5e96be3-572d-4c75-b1ed-08419043c5bf",
+    "revision_status": "pending",
+    "validator_valid": true,
+    "validator_errors": [],
+    "route_schedule_adjusted_count": 2,
+    "candidate_end": "17:45",
+    "end_before": {"required": "18:00", "status": "satisfied"},
+    "walking_limit": {"limit_minutes": 80, "status": "satisfied"},
+    "walking_minutes": {"before": 174, "after": 61},
+    "activities": {"before": 5, "after": 5, "preserved": 5, "removed": 0, "added": 0, "changed": 5},
+    "soft_goal_status": "not_evaluable_observations_only",
+    "token_usage_total": 11190,
+    "memory": {"retrieved_count": 1, "reason_code": "too_rushed", "context_propagated": true, "visible_to_planner": true},
+    "decision_ledger": {"mode": "shadow", "status": "invalid", "violations": ["decision_evidence_missing", "decision_provenance_missing", "decision_route_evidence_mismatch"]},
+    "accepted": false,
+    "formal_itinerary_changed": false
+  },
+  "browser_verified": ["goal_card", "candidate_itinerary", "walking_comparison", "preserved_5_of_5", "unverified_reasons_hidden", "accept_reject_buttons_visible"],
+  "request_entry": "production_planning_api",
+  "regression": {"environment": "isolated_linux_postgresql", "passed": 368, "warnings": 2, "seconds": 47.08},
+  "limitations": ["One successful final-configuration run does not prove repeated stability", "Decision Ledger remains open", "No automatic acceptance", "Historical artifacts preserved"]
+}

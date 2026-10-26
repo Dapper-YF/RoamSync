@@ -1,0 +1,54 @@
+{
+  "previous_original_response": "NOT_RETAINED; original cause UNLOCATED",
+  "new_model_research_request": {
+    "host": "open.bigmodel.cn",
+    "path": "/api/paas/v4/chat/completions",
+    "method": "POST",
+    "json_body_sha256": "97e33ca84c9b122f1df0583f391cb38d38c57ffa791f6c751640ab8679c5fe02",
+    "body_bytes": 17133,
+    "message_sizes": [
+      {
+        "role": "system",
+        "chars": 2277,
+        "utf8_bytes": 3561
+      },
+      {
+        "role": "user",
+        "chars": 6265,
+        "utf8_bytes": 12651
+      }
+    ],
+    "model": "glm-5.3-flash",
+    "response_format": {
+      "type": "json_object"
+    },
+    "stream": true,
+    "reasoning_effort": "low",
+    "thinking_enabled": "enabled",
+    "max_tokens": 20000
+  },
+  "input_context": {
+    "sources": 8,
+    "days": 3,
+    "input_chars": 6265
+  },
+  "schema": "ResearchOutput extra=forbid; places1..40; bounded strings/source_indices; no schema change",
+  "actual_protocol": "GLM Chat Completions streaming; response_format=json_object; schema guidance embedded in system instruction; strict Pydantic validation locally",
+  "normalization": "full-match optional JSON code fence only, no prefix salvage/field dropping",
+  "research_model_format_repair": "None in release Research; no failed output was salvaged",
+  "strict_current_results": [
+    {
+      "call": 3,
+      "finish_reason": "stop",
+      "chars": 1575,
+      "strict_valid": true
+    },
+    {
+      "call": 4,
+      "finish_reason": "stop",
+      "chars": 2517,
+      "strict_valid": true
+    }
+  ],
+  "independence": "Research original produced json_invalid after completed response check; transport failures are exceptions before parse. Historical original raw does not support deeper root attribution."
+}

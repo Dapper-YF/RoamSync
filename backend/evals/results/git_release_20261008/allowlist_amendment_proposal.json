@@ -1,0 +1,33 @@
+{
+  "status": "proposal_only_no_source_changes_no_staging",
+  "original_allowlisted_paths": 363,
+  "proposed_allowlisted_paths": 366,
+  "new_files": {
+    "backend/evals/fixtures/knowledge_coverage_frozen_v1.json": {
+      "source": "backend/evals/results/knowledge_coverage/frozen_v1.json",
+      "sha256": "f19b8c0b9b823a070d3295918bca2357bb5f4529f456f482f8fcdc9c27d3c5c1",
+      "labels_unchanged": true
+    },
+    "backend/evals/fixtures/phase25_holdout_v1.json": {
+      "source": "backend/evals/results/companion_phase25/holdout_v1.json",
+      "sha256": "07505a83aa6921639f70f82af4670a1a6624b038000cf5a849757e718ddeec22",
+      "labels_unchanged": true
+    },
+    "backend/evals/fixtures/knowledge_coverage_manifest.json": {
+      "source": "minimal reproducible fixture metadata; excludes original git status/raw working-tree inventory",
+      "sha256": "0427c5067f7b23653ad4a062485db61d71026a88d8fbf63ee1ffa298dbe45246",
+      "labels_unchanged": true
+    }
+  },
+  "existing_file_changes": [
+    "scripts/start-travel-decision-demo.ps1",
+    "backend/evals/knowledge_coverage.py",
+    "backend/evals/phase25_final.py"
+  ],
+  "unchanged_explicit_deletions": [
+    "web/.env.test",
+    "web/src/components/TripBriefingDrawer.tsx"
+  ],
+  "reason": "Missing operator helper and excluded frozen inputs break release tool reproducibility; do not add resetting helper or raw results",
+  "authorization_required": true
+}

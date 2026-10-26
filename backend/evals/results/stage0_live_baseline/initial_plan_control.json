@@ -1,0 +1,10 @@
+{
+  "schema_version": "travel-agent-evaluation-result-v1",
+  "benchmark_version": "travel-agent-v1",
+  "scenario_id": "initial_plan_control",
+  "mode": "live",
+  "production_metadata": {"provider": "deepseek", "model": "deepseek-v4-flash", "reasoning_effort": "none", "planning_run_id": "5fbb98dc-c5ba-45c8-aa53-58a626569b54", "trip_id_redacted": "84ab…d9eb", "token_usage": 0},
+  "artifact": {"resolved_intent": "create_plan", "resolved_run_type": "initial_plan", "early_exit_stage": "destination_research", "reachability": {"intent_resolver":"reached", "context_builder":"reached", "destination_research":"failed", "external_tools":"failed", "planner":"not_reached", "route_enrichment":"not_reached", "validator":"not_reached", "critic":"not_applicable", "revision":"not_reached", "persistence":"not_reached", "user_decision":"not_applicable"}, "tool_calls": ["tavily_search"], "validation": {}, "candidate": {}, "provider_error_code":"planner_search_authentication_failed"},
+  "metrics": {"intent_routing_accuracy": 1.0, "planner_metrics": "not_applicable"},
+  "trace": {"scenario":"initial_plan_control", "steps":["PlanningRun created", "resolve_intent", "destination search", "search authentication failure", "early exit"], "private_reasoning_recorded": false}
+}

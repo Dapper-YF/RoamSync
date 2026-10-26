@@ -1,0 +1,15 @@
+{
+  "reason": "New clean candidate first greeting failed HTTP502 with planner provider could not be reached; no Trip or Run created",
+  "application_commit": "322f55334d16e8cacec60e5e6c126d61cfcca122",
+  "fixed_model_call_count": 3,
+  "sdk_retries": 0,
+  "concurrency": 1,
+  "roles": [
+    "API simple fresh",
+    "Worker strict structured fresh",
+    "Worker exact measured Research fresh"
+  ],
+  "timeout_seconds": 90,
+  "failure_policy": "Any failed call stops real E2E as EXTERNAL_PROVIDER_BLOCKED; no further probe batch",
+  "success_policy": "Permit one fresh unchanged browser rehearsal, preserve first failure; no availability SLO claim"
+}

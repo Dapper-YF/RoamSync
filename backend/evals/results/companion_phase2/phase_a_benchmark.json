@@ -1,0 +1,3020 @@
+[
+  {
+    "mode": "lexical",
+    "measured_at": "2026-09-29T03:43:43.596372+00:00",
+    "fixture_clock": "2026-09-29T00:00:00+00:00",
+    "corpus": "synthetic_fixture_not_production_knowledge",
+    "provider_calls": 0,
+    "embedding": "none",
+    "case_count": 27,
+    "recall_at_3": {
+      "numerator": 12.0,
+      "denominator": 12,
+      "rate": 1.0
+    },
+    "category_match_at_1": {
+      "numerator": 12,
+      "denominator": 12,
+      "rate": 1.0
+    },
+    "metadata_filter_accuracy_per_hit": {
+      "numerator": 35,
+      "denominator": 35,
+      "rate": 1.0
+    },
+    "source_preservation_per_hit": {
+      "numerator": 35,
+      "denominator": 35,
+      "rate": 1.0
+    },
+    "live_fact_boundary_accuracy": {
+      "numerator": 27,
+      "denominator": 27,
+      "rate": 1.0
+    },
+    "empty_result_accuracy": {
+      "numerator": 2,
+      "denominator": 2,
+      "rate": 1.0
+    },
+    "results": [
+      {
+        "id": "history",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "西湖有什么历史背景？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-history",
+          "fixture-autumn",
+          "fixture-lifestyle"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "culture",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "杭州茶文化和良渚文化有什么特点？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-culture",
+          "fixture-autumn",
+          "fixture-lifestyle"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "profile",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "杭州整体特点和城市空间是什么旅游风格？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-profile",
+          "fixture-strategy",
+          "fixture-place"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "place",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "灵隐景区体验有什么体验差异？",
+          "destination": "杭州",
+          "place_id": "fixture:lingyin",
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-place"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "strategy",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "博物馆游览策略与城市步行策略怎么安排？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-strategy",
+          "fixture-family",
+          "fixture-profile"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "audience",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "带父母去杭州怎么玩比较轻松？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [
+            "audience_strategy"
+          ],
+          "audience_tags": [
+            "senior"
+          ],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-senior"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "season",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "秋天杭州有什么值得体验的？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [
+            "seasonal_experience"
+          ],
+          "audience_tags": [],
+          "season_tags": [
+            "autumn"
+          ],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-autumn"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "lifestyle",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "杭州有什么比较当地生活化的体验？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-lifestyle",
+          "fixture-autumn",
+          "fixture-senior"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "family",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "亲子家庭游览策略",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [
+            "family"
+          ],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-family"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "cross_city",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "西湖历史",
+          "destination": "其他城市",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-other-city"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "multi_tags",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "秋天杭州生活化摄影",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [
+            "autumn"
+          ],
+          "experience_tags": [
+            "photography",
+            "walking"
+          ],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-lifestyle"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "english",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "West Lake history",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "en",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-english"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "no_match",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "qzxv987654",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": true,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "no_audience",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "西湖历史",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [
+            "unindexed-audience"
+          ],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": true,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "closing",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "西湖今天几点关门？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-history"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "hours",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "灵隐寺开放时间是什么？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-place",
+          "fixture-autumn",
+          "fixture-lifestyle"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "closed",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "博物馆临时闭馆了吗？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-strategy"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "tickets",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "现在门票还有库存吗？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "price",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "当前票价多少钱？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "weather",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "明天杭州会下雨吗？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-autumn",
+          "fixture-culture",
+          "fixture-profile"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "eta",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "西湖当前 ETA 是多久？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-history"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "traffic",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "实时交通堵车吗？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "gps",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "我的 GPS 定位在哪里？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "elapsed",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "我在这里已经玩了多久？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "decision",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "为什么你建议我18点去西湖？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-history",
+          "fixture-autumn",
+          "fixture-lifestyle"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": true,
+          "reasons": [
+            "recommendation_timing_requires_planning_decision_context_and_live_conditions"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "sunset",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "今天西湖日落几点？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-history"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "english_live",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "Is West Lake open today?",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "lexical",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      }
+    ]
+  },
+  {
+    "mode": "semantic",
+    "measured_at": "2026-09-29T03:43:43.618640+00:00",
+    "fixture_clock": "2026-09-29T00:00:00+00:00",
+    "corpus": "synthetic_fixture_not_production_knowledge",
+    "provider_calls": 0,
+    "embedding": "deterministic_fake_not_real_semantic_quality",
+    "case_count": 27,
+    "recall_at_3": {
+      "numerator": 13.0,
+      "denominator": 13,
+      "rate": 1.0
+    },
+    "category_match_at_1": {
+      "numerator": 13,
+      "denominator": 13,
+      "rate": 1.0
+    },
+    "metadata_filter_accuracy_per_hit": {
+      "numerator": 17,
+      "denominator": 17,
+      "rate": 1.0
+    },
+    "source_preservation_per_hit": {
+      "numerator": 17,
+      "denominator": 17,
+      "rate": 1.0
+    },
+    "live_fact_boundary_accuracy": {
+      "numerator": 27,
+      "denominator": 27,
+      "rate": 1.0
+    },
+    "empty_result_accuracy": {
+      "numerator": 1,
+      "denominator": 1,
+      "rate": 1.0
+    },
+    "results": [
+      {
+        "id": "history",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "西湖有什么历史背景？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-history"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "culture",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "杭州茶文化和良渚文化有什么特点？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-culture"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "profile",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "杭州整体特点和城市空间是什么旅游风格？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-profile"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "place",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "灵隐景区体验有什么体验差异？",
+          "destination": "杭州",
+          "place_id": "fixture:lingyin",
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-place"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "strategy",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "博物馆游览策略与城市步行策略怎么安排？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-strategy",
+          "fixture-family"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "audience",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "带父母去杭州怎么玩比较轻松？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [
+            "audience_strategy"
+          ],
+          "audience_tags": [
+            "senior"
+          ],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-senior"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "season",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "秋天杭州有什么值得体验的？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [
+            "seasonal_experience"
+          ],
+          "audience_tags": [],
+          "season_tags": [
+            "autumn"
+          ],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-autumn"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "lifestyle",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "杭州有什么比较当地生活化的体验？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-lifestyle"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "family",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "亲子家庭游览策略",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [
+            "family"
+          ],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-family"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "cross_city",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "西湖历史",
+          "destination": "其他城市",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-other-city"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "multi_tags",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "秋天杭州生活化摄影",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [
+            "autumn"
+          ],
+          "experience_tags": [
+            "photography",
+            "walking"
+          ],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-lifestyle"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "english",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "West Lake history",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "en",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-english"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "semantic_alias",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "长辈省体力",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-senior"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "no_audience",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "西湖历史",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [
+            "unindexed-audience"
+          ],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": true,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "closing",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "西湖今天几点关门？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "hours",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "灵隐寺开放时间是什么？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-place"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "closed",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "博物馆临时闭馆了吗？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-strategy",
+          "fixture-family"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "tickets",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "现在门票还有库存吗？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "price",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "当前票价多少钱？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "weather",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "明天杭州会下雨吗？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "eta",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "西湖当前 ETA 是多久？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "traffic",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "实时交通堵车吗？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "gps",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "我的 GPS 定位在哪里？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "elapsed",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "我在这里已经玩了多久？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "decision",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "为什么你建议我18点去西湖？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": true,
+          "reasons": [
+            "recommendation_timing_requires_planning_decision_context_and_live_conditions",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "sunset",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "今天西湖日落几点？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "english_live",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "Is West Lake open today?",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "semantic",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      }
+    ]
+  },
+  {
+    "mode": "hybrid",
+    "measured_at": "2026-09-29T03:43:43.660112+00:00",
+    "fixture_clock": "2026-09-29T00:00:00+00:00",
+    "corpus": "synthetic_fixture_not_production_knowledge",
+    "provider_calls": 0,
+    "embedding": "deterministic_fake_not_real_semantic_quality",
+    "case_count": 27,
+    "recall_at_3": {
+      "numerator": 13.0,
+      "denominator": 13,
+      "rate": 1.0
+    },
+    "category_match_at_1": {
+      "numerator": 13,
+      "denominator": 13,
+      "rate": 1.0
+    },
+    "metadata_filter_accuracy_per_hit": {
+      "numerator": 37,
+      "denominator": 37,
+      "rate": 1.0
+    },
+    "source_preservation_per_hit": {
+      "numerator": 37,
+      "denominator": 37,
+      "rate": 1.0
+    },
+    "live_fact_boundary_accuracy": {
+      "numerator": 27,
+      "denominator": 27,
+      "rate": 1.0
+    },
+    "empty_result_accuracy": {
+      "numerator": 1,
+      "denominator": 1,
+      "rate": 1.0
+    },
+    "results": [
+      {
+        "id": "history",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "西湖有什么历史背景？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-history",
+          "fixture-autumn",
+          "fixture-lifestyle"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "culture",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "杭州茶文化和良渚文化有什么特点？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-culture",
+          "fixture-autumn",
+          "fixture-lifestyle"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "profile",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "杭州整体特点和城市空间是什么旅游风格？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-profile",
+          "fixture-strategy",
+          "fixture-place"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "place",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "灵隐景区体验有什么体验差异？",
+          "destination": "杭州",
+          "place_id": "fixture:lingyin",
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-place"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "strategy",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "博物馆游览策略与城市步行策略怎么安排？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-strategy",
+          "fixture-family",
+          "fixture-profile"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "audience",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "带父母去杭州怎么玩比较轻松？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [
+            "audience_strategy"
+          ],
+          "audience_tags": [
+            "senior"
+          ],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-senior"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "season",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "秋天杭州有什么值得体验的？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [
+            "seasonal_experience"
+          ],
+          "audience_tags": [],
+          "season_tags": [
+            "autumn"
+          ],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-autumn"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "lifestyle",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "杭州有什么比较当地生活化的体验？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-lifestyle",
+          "fixture-autumn",
+          "fixture-senior"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "family",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "亲子家庭游览策略",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [
+            "family"
+          ],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-family"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "cross_city",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "西湖历史",
+          "destination": "其他城市",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-other-city"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "multi_tags",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "秋天杭州生活化摄影",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [
+            "autumn"
+          ],
+          "experience_tags": [
+            "photography",
+            "walking"
+          ],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-lifestyle"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "english",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "West Lake history",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "en",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-english"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "semantic_alias",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "长辈省体力",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-senior"
+        ],
+        "recall_at_3": 1.0,
+        "category_match": true,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": true,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "no_audience",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "西湖历史",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [
+            "unindexed-audience"
+          ],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": true,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": false,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "closing",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "西湖今天几点关门？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-history"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "hours",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "灵隐寺开放时间是什么？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-place",
+          "fixture-autumn",
+          "fixture-lifestyle"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "closed",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "博物馆临时闭馆了吗？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-strategy",
+          "fixture-family"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "tickets",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "现在门票还有库存吗？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "price",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "当前票价多少钱？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "weather",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "明天杭州会下雨吗？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-autumn",
+          "fixture-culture",
+          "fixture-profile"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "eta",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "西湖当前 ETA 是多久？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-history"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "traffic",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "实时交通堵车吗？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "gps",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "我的 GPS 定位在哪里？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "elapsed",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "我在这里已经玩了多久？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "decision",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "为什么你建议我18点去西湖？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-history",
+          "fixture-autumn",
+          "fixture-lifestyle"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": true,
+          "reasons": [
+            "recommendation_timing_requires_planning_decision_context_and_live_conditions"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "sunset",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "今天西湖日落几点？",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [
+          "fixture-history"
+        ],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      },
+      {
+        "id": "english_live",
+        "request": {
+          "contract_version": "tourism-knowledge-v1",
+          "query": "Is West Lake open today?",
+          "destination": "杭州",
+          "place_id": null,
+          "knowledge_types": [],
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "language": "zh-CN",
+          "top_k": 3,
+          "retrieval_mode": "hybrid",
+          "include_fixtures": true
+        },
+        "document_ids": [],
+        "recall_at_3": null,
+        "category_match": null,
+        "boundary_correct": true,
+        "expected_empty_correct": null,
+        "filter_correct": true,
+        "source_preserved": true,
+        "advisory": {
+          "knowledge_sufficient": false,
+          "live_fact_verification_required": true,
+          "planning_decision_context_required": false,
+          "reasons": [
+            "operational_or_time_sensitive_question_requires_live_evidence",
+            "no_matching_knowledge"
+          ],
+          "warnings": [],
+          "evidence_kind": "tourism_knowledge_not_live_verified"
+        }
+      }
+    ]
+  }
+]

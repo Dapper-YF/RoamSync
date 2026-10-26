@@ -1,0 +1,119 @@
+{
+  "scenario_id": "must-do-show-conflict",
+  "artifact": {
+    "validation": {
+      "valid": true,
+      "errors": []
+    },
+    "candidate": {
+      "activities": [],
+      "explanation": ""
+    },
+    "tool_calls": [],
+    "changed_activity_ids": [],
+    "preserved_activity_ids": [],
+    "explanation_claims": [],
+    "explanation_evidence": [],
+    "final_outcome": "requires_live_provider_run"
+  },
+  "metrics": {
+    "intent_routing_accuracy": null,
+    "constraint_violation_rate": 0.0,
+    "goal_satisfaction": null,
+    "preference_preservation": 1.0,
+    "unnecessary_change_rate": 0.0,
+    "tool_precision": 1.0,
+    "tool_recall": 0.0,
+    "forbidden_tool_calls": [],
+    "explanation_faithfulness": null,
+    "repeat_error": false,
+    "bad_but_valid_detected": false,
+    "validation_error_codes": []
+  },
+  "trace": {
+    "schema_version": "travel-agent-trace-v1",
+    "scenario_id": "must-do-show-conflict",
+    "run_id": "offline:must-do-show-conflict",
+    "started_at": "2026-09-23T01:40:18.162471+00:00",
+    "completed_at": "2026-09-23T01:40:18.162483+00:00",
+    "events": [
+      {
+        "graph_step": "fixture_baseline",
+        "kind": "context",
+        "input_fact_refs": [
+          "fixed_appointment",
+          "route",
+          "daily_window"
+        ],
+        "data": {
+          "mode": "offline"
+        },
+        "elapsed_ms": null
+      },
+      {
+        "graph_step": "final_outcome",
+        "kind": "decision",
+        "input_fact_refs": [],
+        "data": {
+          "outcome": "requires_live_provider_run"
+        },
+        "elapsed_ms": null
+      }
+    ]
+  },
+  "semantic_review": {
+    "schema_version": "travel-agent-semantic-rubric-v1",
+    "scenario": {
+      "id": "must-do-show-conflict",
+      "kind": "must_do_conflict",
+      "title": "博物馆与19点演出冲突",
+      "input": {
+        "request": "必须去博物馆，19:00必须参加演出，还想安排完整下午游览",
+        "facts": [
+          "fixed_appointment",
+          "route",
+          "daily_window"
+        ]
+      },
+      "expected": {
+        "must_preserve_activity_ids": [
+          "show-1900"
+        ]
+      },
+      "required_tools": [
+        "route"
+      ],
+      "forbidden_tools": []
+    },
+    "artifact": {
+      "validation": {
+        "valid": true,
+        "errors": []
+      },
+      "candidate": {
+        "activities": [],
+        "explanation": ""
+      },
+      "tool_calls": [],
+      "changed_activity_ids": [],
+      "preserved_activity_ids": [],
+      "explanation_claims": [],
+      "explanation_evidence": [],
+      "final_outcome": "requires_live_provider_run"
+    },
+    "rubric": {
+      "relaxed_pace": "Does the proposal avoid implausibly short meals/visits and excessive consecutive stops?",
+      "tradeoff_grounding": "Does it link each major compromise to a supplied fact, constraint, or explicit preference?",
+      "uncertainty_honesty": "Does it avoid presenting unavailable provider facts as known?"
+    },
+    "required_output": {
+      "scores": {
+        "relaxed_pace": "0..2",
+        "tradeoff_grounding": "0..2",
+        "uncertainty_honesty": "0..2"
+      },
+      "evidence": "fact references and concise explanation",
+      "verdict": "pass|fail|unknown"
+    }
+  }
+}

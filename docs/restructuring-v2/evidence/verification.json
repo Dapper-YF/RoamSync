@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-15",
+  "timezone": "Asia/Shanghai",
+  "scope": "first-round audit; no implementation; no production data writes or deployment",
+  "backend": {
+    "command": "docker compose -p roamsync-v2-audit-20261015 -f compose.test.yaml up --build --abort-on-container-exit --exit-code-from api-test",
+    "passed": 1002,
+    "warnings": 2,
+    "seconds": 50.9,
+    "isolation": "separate Compose network; PostgreSQL tmpfs; old migrations applied only to empty test DB",
+    "log": "backend-test.log"
+  },
+  "web": {
+    "commands": [
+      "pnpm test",
+      "pnpm typecheck",
+      "pnpm build"
+    ],
+    "test_files": 21,
+    "passed": 132,
+    "typecheck": "passed",
+    "build": "passed",
+    "warnings": "React act(...) warnings",
+    "evidence": "tool command transcript; summary recorded here, no full original stdout file"
+  },
+  "android": {
+    "command": ".\\gradlew.bat :app:testDebugUnitTest --rerun --offline --console=plain",
+    "tests": 35,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "note": "first invocation was UP-TO-DATE; second executed unit test task with --rerun",
+    "xml": "android-unit-results"
+  },
+  "new_real_model_calls": 0,
+  "real_gps_navigation": "not verified",
+  "real_user_value_metrics": "not measured",
+  "baseline_code_drift": [],
+  "image_scope": {
+    "test-image": {
+      "files_compared": 209,
+      "different_or_missing": [],
+      "local_files_missing_from_image": []
+    },
+    "roamsync-api": {
+      "files_compared": 138,
+      "different_or_missing": [],
+      "local_files_missing_from_image": []
+    },
+    "roamsync-agent-worker-1": {
+      "files_compared": 138,
+      "different_or_missing": [],
+      "local_files_missing_from_image": []
+    }
+  },
+  "temporary_test_resources": "Removed only roamsync-v2-audit-20261015 containers and network after saving logs; production project untouched."
+}

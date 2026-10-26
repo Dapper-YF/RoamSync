@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="1.519" timestamp="2026-10-07T14:08:10.238803+00:00" hostname="75af7b1145cc"><testcase classname="" name="tests.test_planning_setting_references" time="0.000"><error message="collection failure">ImportError while importing test module '/app/tests/test_planning_setting_references.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/local/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_planning_setting_references.py:2: in &lt;module&gt;
+    from app.planning_intent_service import _resolve_protected_activities, _trip_setting_kind, _rules_semantic_draft
+E   ImportError: cannot import name '_rules_semantic_draft' from 'app.planning_intent_service' (/app/app/planning_intent_service.py)</error></testcase></testsuite></testsuites>

@@ -1,0 +1,4702 @@
+diff --git a/backend/app/tourism_knowledge/__init__.py b/backend/app/tourism_knowledge/__init__.py
+new file mode 100644
+index 0000000..6e9fe9c
+--- /dev/null
++++ b/backend/app/tourism_knowledge/__init__.py
+@@ -0,0 +1,6 @@
++"""Independent tourism knowledge tool foundation; no planning/runtime imports."""
++
++from .models import KnowledgeDocument, TourismKnowledgeRequest, TourismKnowledgeResult
++from .service import TourismKnowledgeService
++
++__all__ = ["KnowledgeDocument", "TourismKnowledgeRequest", "TourismKnowledgeResult", "TourismKnowledgeService"]
+diff --git a/backend/app/tourism_knowledge/boundary.py b/backend/app/tourism_knowledge/boundary.py
+new file mode 100644
+index 0000000..e0d4bbc
+--- /dev/null
++++ b/backend/app/tourism_knowledge/boundary.py
+@@ -0,0 +1,36 @@
++"""Conservative advisory, never an authoritative intent router or fact resolver.
++
++Rules are a backstop with known recall limits. Consumers must also enforce the
++unconditional evidence_kind and verify any operational claim independently.
++"""
++import re
++import unicodedata
++
++from .models import RetrievalAdvisory
++
++_OPERATIONAL = re.compile(
++    r"营业|开放时间|开门|关门|闭馆|闭园|开到|几点开|几点关|(?:何时|什么时候).*开放|开放吗|能进去|可以进去|门票|票价|票库存|余票|价格|多少钱|"
++    r"天气|气温|下雨|降雨|路况|交通状况|实时交通|堵车|拥堵|ETA|GPS|定位|日落|日出|"
++    r"玩了多久|待了多久|停留了多久|走了多久|到达时间|多久能到|要走多久|要开多久|车次|班次|预约|"
++    r"opening\s+hours?|open\s+(?:today|now)|clos(?:ed|es?|ing)|tickets?|prices?|costs?|weather|"
++    r"rain(?:ing)?|traffic|congestion|\beta\b|\bgps\b|sunset|sunrise|availability|sold\s+out|"
++    r"how\s+long.*(?:get|reach|been|spent)|current\s+location",
++    re.IGNORECASE,
++)
++_TEMPORAL = re.compile(r"今天|今日|明天|现在|当前|实时|此刻|临时|最新|今晚|today|tomorrow|tonight|currently|right now", re.I)
++_DECISION = re.compile(r"为什么.*(?:建议|推荐|安排)|为何.*(?:建议|推荐|安排)|why.*(?:recommend|suggest|schedule)", re.I)
++_SCHEDULE = re.compile(r"\d{1,2}\s*(?:点|[:：]\d{2}|[ap]m)|前后活动|行程约束|schedule|itinerary", re.I)
++
++
++def assess_suitability(query: str) -> RetrievalAdvisory:
++    text = unicodedata.normalize("NFKC", query)
++    live = bool(_OPERATIONAL.search(text) or _TEMPORAL.search(text))
++    decision = bool(_DECISION.search(text) and _SCHEDULE.search(text))
++    reasons = []
++    if live:
++        reasons.append("operational_or_time_sensitive_question_requires_live_evidence")
++    if decision:
++        reasons.append("recommendation_timing_requires_planning_decision_context_and_live_conditions")
++        live = True
++    return RetrievalAdvisory(live_fact_verification_required=live,
++                             planning_decision_context_required=decision, reasons=tuple(reasons))
+diff --git a/backend/app/tourism_knowledge/ingestion.py b/backend/app/tourism_knowledge/ingestion.py
+new file mode 100644
+index 0000000..0c6cd8b
+--- /dev/null
++++ b/backend/app/tourism_knowledge/ingestion.py
+@@ -0,0 +1,71 @@
++"""Explicit curated ingest; no crawling, provider selection or network fetching."""
++import hashlib
++import re
++from typing import Sequence
++
++from .interfaces import EmbeddingProvider, IndexedChunk, KnowledgeRepository
++from .models import KnowledgeChunk, KnowledgeDocument
++from .ranking import validate_vectors
++
++
++def chunk_document(document: KnowledgeDocument, *, max_characters: int = 700) -> tuple[KnowledgeChunk, ...]:
++    if max_characters < 32:
++        raise ValueError("chunk size must be at least 32 characters")
++    metadata = document.model_dump(exclude={"id", "title", "content"})
++    chunks = []
++    headings: list[str] = []
++    buffer = ""
++    current_path: tuple[str, ...] = ()
++
++    def flush():
++        nonlocal buffer
++        if not buffer.strip():
++            buffer = ""
++            return
++        content = buffer.strip()
++        digest = hashlib.sha256(content.encode("utf-8")).hexdigest()
++        index = len(chunks)
++        identity = hashlib.sha256(f"{document.id}\0{index}\0{digest}".encode()).hexdigest()
++        chunks.append(KnowledgeChunk(**metadata, id=identity, document_id=document.id,
++            title=document.title, chunk_index=index, content=content, approximate_size=len(content),
++            heading_path=current_path, content_sha256=digest))
++        buffer = ""
++
++    for line in document.content.splitlines():
++        heading = re.match(r"^(#{1,6})\s+(.+)$", line)
++        if heading:
++            flush()
++            level = len(heading.group(1))
++            headings = headings[:level - 1] + [heading.group(2)]
++            current_path = tuple(headings)
++        # Hard upper bound even for a long single paragraph, without dropping text.
++        remainder = line + "\n"
++        while remainder:
++            room = max_characters - len(buffer)
++            buffer += remainder[:room]
++            remainder = remainder[room:]
++            if len(buffer) == max_characters:
++                flush()
++    flush()
++    return tuple(chunks)
++
++
++class CuratedKnowledgeIngestor:
++    def __init__(self, repository: KnowledgeRepository, embedding_provider: EmbeddingProvider | None = None,
++                 *, max_characters: int = 700):
++        self.repository = repository
++        self.embedding_provider = embedding_provider
++        self.max_characters = max_characters
++
++    async def ingest(self, document: KnowledgeDocument) -> Sequence[KnowledgeChunk]:
++        chunks = chunk_document(document, max_characters=self.max_characters)
++        vectors = None
++        if self.embedding_provider is not None:
++            descriptor = self.embedding_provider.descriptor
++            vectors = validate_vectors(await self.embedding_provider.embed([chunk.content for chunk in chunks]),
++                                       count=len(chunks), dimensions=descriptor.dimensions)
++            chunks = tuple(chunk.model_copy(update={"embedding": descriptor}) for chunk in chunks)
++        # Embedding failures leave the previous version intact.
++        await self.repository.replace_document(document, [IndexedChunk(chunk, vectors[index] if vectors else None)
++                                                          for index, chunk in enumerate(chunks)])
++        return chunks
+diff --git a/backend/app/tourism_knowledge/interfaces.py b/backend/app/tourism_knowledge/interfaces.py
+new file mode 100644
+index 0000000..513050c
+--- /dev/null
++++ b/backend/app/tourism_knowledge/interfaces.py
+@@ -0,0 +1,37 @@
++"""Ports for persistence, ingestion, embedding and future Companion tool adapters."""
++from dataclasses import dataclass
++from datetime import datetime
++from typing import Protocol, Sequence
++
++from .models import EmbeddingMetadata, KnowledgeChunk, KnowledgeDocument, TourismKnowledgeRequest, TourismKnowledgeResult
++
++
++@dataclass(frozen=True)
++class IndexedChunk:
++    chunk: KnowledgeChunk
++    vector: tuple[float, ...] | None = None
++
++
++class EmbeddingProvider(Protocol):
++    @property
++    def descriptor(self) -> EmbeddingMetadata: ...
++
++    async def embed(self, texts: Sequence[str]) -> Sequence[Sequence[float]]: ...
++
++
++class KnowledgeRepository(Protocol):
++    async def replace_document(self, document: KnowledgeDocument, chunks: Sequence[IndexedChunk]) -> None:
++        """Atomically replace all versions of a document and its chunks."""
++        ...
++
++    async def candidates(self, request: TourismKnowledgeRequest, *, now: datetime) -> Sequence[IndexedChunk]:
++        """Apply hard metadata, expiry and fixture filters BEFORE ranking."""
++        ...
++
++
++class KnowledgeIngestor(Protocol):
++    async def ingest(self, document: KnowledgeDocument) -> Sequence[KnowledgeChunk]: ...
++
++
++class TourismKnowledgeRetriever(Protocol):
++    async def retrieve_tourism_knowledge(self, request: TourismKnowledgeRequest) -> TourismKnowledgeResult: ...
+diff --git a/backend/app/tourism_knowledge/models.py b/backend/app/tourism_knowledge/models.py
+new file mode 100644
+index 0000000..be62f3e
+--- /dev/null
++++ b/backend/app/tourism_knowledge/models.py
+@@ -0,0 +1,136 @@
++"""Versioned public contracts. Source authority describes provenance, not truth."""
++from enum import Enum
++from typing import Literal
++
++from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, JsonValue, model_validator
++
++
++class Contract(BaseModel):
++    model_config = ConfigDict(extra="forbid", frozen=True, str_strip_whitespace=True)
++
++
++class KnowledgeType(str, Enum):
++    DESTINATION_PROFILE = "destination_profile"
++    HISTORY_CULTURE = "history_culture"
++    PLACE_EXPERIENCE = "place_experience"
++    TRAVEL_STRATEGY = "travel_strategy"
++    AUDIENCE_STRATEGY = "audience_strategy"
++    SEASONAL_EXPERIENCE = "seasonal_experience"
++    LOCAL_LIFESTYLE = "local_lifestyle"
++
++
++class SourceAuthority(str, Enum):
++    OFFICIAL_GOVERNMENT = "official_government"
++    OFFICIAL_DESTINATION = "official_destination"
++    OFFICIAL_MUSEUM = "official_museum"
++    OFFICIAL_ATTRACTION = "official_attraction"
++    INSTITUTIONAL = "institutional"
++    HIGH_QUALITY_EDITORIAL = "high_quality_editorial"
++    COMMERCIAL_TRAVEL = "commercial_travel"
++    UGC = "ugc"
++    INTERNAL_CURATED = "internal_curated"
++
++
++class KnowledgeSource(Contract):
++    source_type: Literal["web", "publication", "internal", "fixture"]
++    source_name: str = Field(min_length=1, max_length=240)
++    source_reference: str = Field(min_length=1, max_length=2000)
++    source_authority: SourceAuthority
++    published_at: AwareDatetime | None = None
++    updated_at: AwareDatetime | None = None
++
++
++class KnowledgeMetadata(Contract):
++    destination: str = Field(min_length=1, max_length=120)
++    # Corpus identity, optionally namespaced (amap:...); never a trip-owned POI FK.
++    place_id: str | None = Field(default=None, min_length=1, max_length=240)
++    place_name: str | None = Field(default=None, min_length=1, max_length=240)
++    knowledge_type: KnowledgeType
++    audience_tags: tuple[str, ...] = ()
++    season_tags: tuple[str, ...] = ()
++    experience_tags: tuple[str, ...] = ()
++    source: KnowledgeSource
++    ingested_at: AwareDatetime
++    reviewed_at: AwareDatetime | None = None
++    valid_until: AwareDatetime | None = None
++    knowledge_scope: Literal["stable", "semi_stable"] = "stable"
++    language: str = Field(default="zh-CN", min_length=2, max_length=35)
++    metadata: dict[str, JsonValue] = Field(default_factory=dict)
++
++    @model_validator(mode="after")
++    def valid_review_window(self):
++        if self.valid_until is not None:
++            start = self.reviewed_at or self.ingested_at
++            if self.valid_until <= start:
++                raise ValueError("valid_until must follow reviewed_at/ingested_at")
++        if self.knowledge_scope == "semi_stable" and self.valid_until is None:
++            raise ValueError("semi_stable knowledge requires an explicit review expiry")
++        return self
++
++
++class KnowledgeDocument(KnowledgeMetadata):
++    id: str = Field(min_length=1, max_length=240)
++    title: str = Field(min_length=1, max_length=240)
++    content: str = Field(min_length=1, max_length=200000)
++
++
++class EmbeddingMetadata(Contract):
++    provider: str = Field(min_length=1)
++    model: str = Field(min_length=1)
++    dimensions: int = Field(ge=1)
++    version: str = Field(min_length=1)
++
++
++class KnowledgeChunk(KnowledgeMetadata):
++    id: str = Field(min_length=1)
++    document_id: str = Field(min_length=1)
++    title: str = Field(min_length=1)
++    chunk_index: int = Field(ge=0)
++    content: str = Field(min_length=1)
++    approximate_size: int = Field(ge=1, description="Unicode characters, not model tokens")
++    heading_path: tuple[str, ...] = ()
++    content_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
++    embedding: EmbeddingMetadata | None = None
++
++
++class TourismKnowledgeRequest(Contract):
++    contract_version: Literal["tourism-knowledge-v1"] = "tourism-knowledge-v1"
++    query: str = Field(min_length=1, max_length=4000)
++    destination: str | None = Field(default=None, min_length=1, max_length=120)
++    place_id: str | None = Field(default=None, min_length=1, max_length=240)
++    knowledge_types: tuple[KnowledgeType, ...] = ()
++    audience_tags: tuple[str, ...] = ()
++    season_tags: tuple[str, ...] = ()
++    experience_tags: tuple[str, ...] = ()
++    language: str = Field(default="zh-CN", min_length=2, max_length=35)
++    top_k: int = Field(default=5, ge=1, le=50)
++    retrieval_mode: Literal["lexical", "semantic", "hybrid"] = "hybrid"
++    include_fixtures: bool = False
++
++
++class RetrievalAdvisory(Contract):
++    knowledge_sufficient: bool = Field(default=False, description="Scope advisory: relevant knowledge exists and no live/decision signal was detected; not a factual correctness guarantee")
++    live_fact_verification_required: bool = False
++    planning_decision_context_required: bool = False
++    reasons: tuple[str, ...] = ()
++    warnings: tuple[str, ...] = ()
++    # Never upgraded by a high similarity score, source authority or recent ingestion.
++    evidence_kind: Literal["tourism_knowledge_not_live_verified"] = "tourism_knowledge_not_live_verified"
++
++
++class KnowledgeHit(Contract):
++    chunk: KnowledgeChunk
++    score: float = Field(ge=0)
++    retrieval_method: Literal["lexical", "semantic", "hybrid"]
++    lexical_score: float | None = None
++    semantic_score: float | None = None
++
++
++class TourismKnowledgeResult(Contract):
++    contract_version: Literal["tourism-knowledge-v1"] = "tourism-knowledge-v1"
++    query: str
++    retrieved_at: AwareDatetime
++    hits: tuple[KnowledgeHit, ...] = ()
++    advisory: RetrievalAdvisory
++    effective_mode: Literal["lexical", "semantic", "hybrid"]
++    score_kind: Literal["bm25", "cosine", "reciprocal_rank_fusion"]
+diff --git a/backend/app/tourism_knowledge/ranking.py b/backend/app/tourism_knowledge/ranking.py
+new file mode 100644
+index 0000000..bed65ff
+--- /dev/null
++++ b/backend/app/tourism_knowledge/ranking.py
+@@ -0,0 +1,85 @@
++"""Deterministic Chinese-aware lexical baseline and optional semantic ranking."""
++import math
++import re
++import unicodedata
++from collections import Counter
++from typing import Sequence
++
++from .interfaces import IndexedChunk
++
++
++def tokenize(text: str) -> list[str]:
++    text = unicodedata.normalize("NFKC", text).casefold()
++    tokens = re.findall(r"[a-z0-9]+", text)
++    for run in re.findall(r"[\u3400-\u9fff]+", text):
++        tokens.extend(run)
++        tokens.extend(run[i:i + 2] for i in range(len(run) - 1))
++    return tokens
++
++
++def lexical_rank(query: str, candidates: Sequence[IndexedChunk]) -> dict[str, float]:
++    # Title appears twice; tags are filters, not artificial query expansion.
++    counts = [Counter(tokenize(f"{item.chunk.title} {item.chunk.title} {item.chunk.content}")) for item in candidates]
++    if not counts:
++        return {}
++    sizes = [sum(c.values()) for c in counts]
++    average = sum(sizes) / len(sizes) or 1
++    frequencies = Counter(term for c in counts for term in c)
++    query_terms = set(tokenize(query))
++    # Multi-character Chinese queries use bigrams to avoid accidental matches
++    # on generic single characters (e.g. 体 in both 省体力 and 体验).
++    if any(re.fullmatch(r"[\u3400-\u9fff]{2}", term) for term in query_terms):
++        query_terms = {term for term in query_terms if not re.fullmatch(r"[\u3400-\u9fff]", term)}
++    scores = {}
++    for item, count, size in zip(candidates, counts, sizes):
++        score = 0.0
++        for term in query_terms:
++            tf = count[term]
++            if not tf:
++                continue
++            df = frequencies[term]
++            idf = math.log(1 + (len(counts) - df + 0.5) / (df + 0.5))
++            score += idf * tf * 2.2 / (tf + 1.2 * (0.25 + 0.75 * size / average))
++        if score > 0:
++            scores[item.chunk.id] = score
++    return scores
++
++
++def validate_vectors(vectors: Sequence[Sequence[float]], *, count: int, dimensions: int) -> tuple[tuple[float, ...], ...]:
++    if len(vectors) != count:
++        raise ValueError("embedding batch cardinality mismatch")
++    validated = []
++    for vector in vectors:
++        values = tuple(float(value) for value in vector)
++        if len(values) != dimensions or not all(math.isfinite(v) for v in values):
++            raise ValueError("embedding dimension/non-finite value mismatch")
++        # Stable norm avoids overflow in finite vectors with large coordinates.
++        norm = math.hypot(*values)
++        if not norm or not math.isfinite(norm):
++            raise ValueError("embedding vector must have a finite non-zero norm")
++        validated.append(values)
++    return tuple(validated)
++
++
++def semantic_rank(query_vector: tuple[float, ...], candidates: Sequence[IndexedChunk]) -> dict[str, float]:
++    validate_vectors([query_vector], count=1, dimensions=len(query_vector))
++    query_norm = math.hypot(*query_vector)
++    scores = {}
++    for item in candidates:
++        if item.vector is None:
++            continue
++        validate_vectors([item.vector], count=1, dimensions=len(query_vector))
++        norm = math.hypot(*item.vector)
++        score = sum((a / query_norm) * (b / norm) for a, b in zip(query_vector, item.vector))
++        if score > 0:
++            scores[item.chunk.id] = min(score, 1.0)
++    return scores
++
++
++def reciprocal_rank_fusion(*rankings: dict[str, float], limit: int = 100, rank_constant: int = 60) -> dict[str, float]:
++    scores: dict[str, float] = {}
++    for ranking in rankings:
++        ordered = sorted(ranking, key=lambda key: (-ranking[key], key))[:limit]
++        for position, key in enumerate(ordered, 1):
++            scores[key] = scores.get(key, 0) + 1 / (rank_constant + position)
++    return scores
+diff --git a/backend/app/tourism_knowledge/repository.py b/backend/app/tourism_knowledge/repository.py
+new file mode 100644
+index 0000000..9b5ba11
+--- /dev/null
++++ b/backend/app/tourism_knowledge/repository.py
+@@ -0,0 +1,55 @@
++"""Small-corpus reference adapter. Not a persistent production database."""
++from datetime import datetime
++from typing import Sequence
++
++from .interfaces import IndexedChunk
++from .models import KnowledgeDocument, TourismKnowledgeRequest
++
++
++def matches_filters(item: IndexedChunk, request: TourismKnowledgeRequest, *, now: datetime) -> bool:
++    chunk = item.chunk
++    return (
++        (request.destination is None or chunk.destination == request.destination)
++        and (request.place_id is None or chunk.place_id == request.place_id)
++        and (not request.knowledge_types or chunk.knowledge_type in request.knowledge_types)
++        and set(request.audience_tags).issubset(chunk.audience_tags)
++        and set(request.season_tags).issubset(chunk.season_tags)
++        and set(request.experience_tags).issubset(chunk.experience_tags)
++        and chunk.language == request.language
++        and (request.include_fixtures or chunk.source.source_type != "fixture")
++        and (chunk.valid_until is None or chunk.valid_until > now)
++    )
++
++
++class InMemoryKnowledgeRepository:
++    def __init__(self):
++        self._documents: dict[str, KnowledgeDocument] = {}
++        self._chunks: dict[str, tuple[IndexedChunk, ...]] = {}
++
++    async def replace_document(self, document: KnowledgeDocument, chunks: Sequence[IndexedChunk]) -> None:
++        if not chunks:
++            raise ValueError("document must have at least one chunk")
++        if len({item.chunk.id for item in chunks}) != len(chunks):
++            raise ValueError("duplicate chunk identities")
++        expected = document.model_dump(exclude={"id", "title", "content"})
++        for index, item in enumerate(chunks):
++            chunk = item.chunk
++            if chunk.document_id != document.id or chunk.title != document.title or chunk.chunk_index != index:
++                raise ValueError("document/chunk identity mismatch")
++            actual = chunk.model_dump(include=set(expected))
++            if actual != expected:
++                raise ValueError("chunk provenance differs from document")
++            if (item.vector is None) != (chunk.embedding is None):
++                raise ValueError("vector and embedding descriptor must be provided together")
++            if item.vector is not None:
++                from .ranking import validate_vectors
++                validate_vectors([item.vector], count=1, dimensions=chunk.embedding.dimensions)
++        # No await between validation and replacement: a reader observes either version.
++        self._documents[document.id] = document.model_copy(deep=True)
++        self._chunks[document.id] = tuple(IndexedChunk(item.chunk.model_copy(deep=True),
++                                                     tuple(item.vector) if item.vector is not None else None) for item in chunks)
++
++    async def candidates(self, request: TourismKnowledgeRequest, *, now: datetime) -> tuple[IndexedChunk, ...]:
++        return tuple(IndexedChunk(item.chunk.model_copy(deep=True), item.vector)
++                     for key in sorted(self._chunks) for item in self._chunks[key]
++                     if matches_filters(item, request, now=now))
+diff --git a/backend/app/tourism_knowledge/service.py b/backend/app/tourism_knowledge/service.py
+new file mode 100644
+index 0000000..2f95b1c
+--- /dev/null
++++ b/backend/app/tourism_knowledge/service.py
+@@ -0,0 +1,71 @@
++"""Stable async tool contract; no database/embedding details exposed to Agents."""
++from datetime import UTC, datetime
++from typing import Callable
++
++from .boundary import assess_suitability
++from .interfaces import EmbeddingProvider, KnowledgeRepository
++from .models import KnowledgeHit, TourismKnowledgeRequest, TourismKnowledgeResult
++from .ranking import lexical_rank, reciprocal_rank_fusion, semantic_rank, validate_vectors
++from .repository import matches_filters
++
++
++class SemanticRetrievalUnavailable(RuntimeError):
++    pass
++
++
++class TourismKnowledgeService:
++    def __init__(self, repository: KnowledgeRepository, embedding_provider: EmbeddingProvider | None = None,
++                 *, clock: Callable[[], datetime] = lambda: datetime.now(UTC)):
++        self.repository = repository
++        self.embedding_provider = embedding_provider
++        self.clock = clock
++
++    async def retrieve_tourism_knowledge(self, request: TourismKnowledgeRequest) -> TourismKnowledgeResult:
++        now = self.clock()
++        if now.tzinfo is None or now.utcoffset() is None:
++            raise ValueError("retrieval clock must be timezone-aware")
++        advisory = assess_suitability(request.query)
++        # Defensive validation protects the tool contract from a future faulty adapter.
++        candidates = [item for item in await self.repository.candidates(request, now=now)
++                      if matches_filters(item, request, now=now)]
++        lexical = lexical_rank(request.query, candidates) if request.retrieval_mode != "semantic" else {}
++        semantic = {}
++        warnings = []
++        mode = request.retrieval_mode
++        if mode != "lexical":
++            if self.embedding_provider is None:
++                if mode == "semantic":
++                    raise SemanticRetrievalUnavailable("semantic retrieval requires an embedding provider")
++                mode = "lexical"
++                warnings.append("semantic_provider_not_configured_using_lexical")
++            else:
++                descriptor = self.embedding_provider.descriptor
++                eligible = [item for item in candidates if item.vector is not None and item.chunk.embedding == descriptor]
++                if len(eligible) != len(candidates):
++                    warnings.append("some_chunks_missing_matching_embedding_index")
++                if candidates and not eligible:
++                    if mode == "semantic":
++                        raise SemanticRetrievalUnavailable("corpus must be indexed with the configured embedding descriptor")
++                    mode = "lexical"
++                    warnings.append("semantic_index_unavailable_using_lexical")
++                elif eligible:
++                    query_vector = validate_vectors(await self.embedding_provider.embed([request.query]),
++                                                    count=1, dimensions=descriptor.dimensions)[0]
++                    semantic = semantic_rank(query_vector, eligible)
++        if mode == "hybrid":
++            scores = reciprocal_rank_fusion(lexical, semantic, limit=max(100, request.top_k * 4))
++            kind = "reciprocal_rank_fusion"
++        elif mode == "semantic":
++            scores, kind = semantic, "cosine"
++        else:
++            scores, kind = lexical, "bm25"
++        by_id = {item.chunk.id: item.chunk for item in candidates}
++        ordered = sorted(scores, key=lambda key: (-scores[key], key))[:request.top_k]
++        hits = tuple(KnowledgeHit(chunk=by_id[key], score=scores[key], retrieval_method=mode,
++                                 lexical_score=lexical.get(key), semantic_score=semantic.get(key)) for key in ordered)
++        sufficient = bool(hits) and not advisory.live_fact_verification_required and not advisory.planning_decision_context_required
++        reasons = advisory.reasons + (("no_matching_knowledge",) if not hits else ())
++        advisory = advisory.model_copy(update={"knowledge_sufficient": sufficient, "reasons": reasons,
++                                                "warnings": tuple(warnings)})
++        return TourismKnowledgeResult(query=request.query, retrieved_at=now, hits=hits, advisory=advisory,
++                                      effective_mode=mode, score_kind=kind)
+diff --git a/backend/evals/tourism_knowledge/__init__.py b/backend/evals/tourism_knowledge/__init__.py
+new file mode 100644
+index 0000000..13f637e
+--- /dev/null
++++ b/backend/evals/tourism_knowledge/__init__.py
+@@ -0,0 +1 @@
++"""Offline synthetic retrieval benchmark. Never production knowledge."""
+diff --git a/backend/evals/tourism_knowledge/cases.json b/backend/evals/tourism_knowledge/cases.json
+new file mode 100644
+index 0000000..ec2a8fa
+--- /dev/null
++++ b/backend/evals/tourism_knowledge/cases.json
+@@ -0,0 +1,30 @@
++[
++  {"id":"history", "query":"西湖有什么历史背景？", "relevant":["fixture-history"], "category":"history_culture"},
++  {"id":"culture", "query":"杭州茶文化和良渚文化有什么特点？", "relevant":["fixture-culture"], "category":"history_culture"},
++  {"id":"profile", "query":"杭州整体特点和城市空间是什么旅游风格？", "relevant":["fixture-profile"], "category":"destination_profile"},
++  {"id":"place", "query":"灵隐景区体验有什么体验差异？", "relevant":["fixture-place"], "category":"place_experience", "filters":{"place_id":"fixture:lingyin"}},
++  {"id":"strategy", "query":"博物馆游览策略与城市步行策略怎么安排？", "relevant":["fixture-strategy"], "category":"travel_strategy"},
++  {"id":"audience", "query":"带父母去杭州怎么玩比较轻松？", "relevant":["fixture-senior"], "category":"audience_strategy", "filters":{"knowledge_types":["audience_strategy"],"audience_tags":["senior"]}},
++  {"id":"season", "query":"秋天杭州有什么值得体验的？", "relevant":["fixture-autumn"], "category":"seasonal_experience", "filters":{"season_tags":["autumn"],"knowledge_types":["seasonal_experience"]}},
++  {"id":"lifestyle", "query":"杭州有什么比较当地生活化的体验？", "relevant":["fixture-lifestyle"], "category":"local_lifestyle"},
++  {"id":"family", "query":"亲子家庭游览策略", "relevant":["fixture-family"], "category":"audience_strategy", "filters":{"audience_tags":["family"]}},
++  {"id":"cross_city", "query":"西湖历史", "relevant":["fixture-other-city"], "category":"history_culture", "filters":{"destination":"其他城市"}},
++  {"id":"multi_tags", "query":"秋天杭州生活化摄影", "relevant":["fixture-lifestyle"], "category":"local_lifestyle", "filters":{"season_tags":["autumn"],"experience_tags":["photography","walking"]}},
++  {"id":"english", "query":"West Lake history", "relevant":["fixture-english"], "category":"history_culture", "filters":{"language":"en"}},
++  {"id":"semantic_alias", "query":"长辈省体力", "relevant":["fixture-senior"], "category":"audience_strategy", "modes":["semantic","hybrid"]},
++  {"id":"no_match", "query":"qzxv987654", "relevant":[], "modes":["lexical"], "expected_empty":true},
++  {"id":"no_audience", "query":"西湖历史", "relevant":[], "filters":{"audience_tags":["unindexed-audience"]}, "expected_empty":true},
++  {"id":"closing", "query":"西湖今天几点关门？", "relevant":[], "live":true},
++  {"id":"hours", "query":"灵隐寺开放时间是什么？", "relevant":[], "live":true},
++  {"id":"closed", "query":"博物馆临时闭馆了吗？", "relevant":[], "live":true},
++  {"id":"tickets", "query":"现在门票还有库存吗？", "relevant":[], "live":true},
++  {"id":"price", "query":"当前票价多少钱？", "relevant":[], "live":true},
++  {"id":"weather", "query":"明天杭州会下雨吗？", "relevant":[], "live":true},
++  {"id":"eta", "query":"西湖当前 ETA 是多久？", "relevant":[], "live":true},
++  {"id":"traffic", "query":"实时交通堵车吗？", "relevant":[], "live":true},
++  {"id":"gps", "query":"我的 GPS 定位在哪里？", "relevant":[], "live":true},
++  {"id":"elapsed", "query":"我在这里已经玩了多久？", "relevant":[], "live":true},
++  {"id":"decision", "query":"为什么你建议我18点去西湖？", "relevant":[], "live":true,"decision":true},
++  {"id":"sunset", "query":"今天西湖日落几点？", "relevant":[], "live":true},
++  {"id":"english_live", "query":"Is West Lake open today?", "relevant":[], "live":true}
++]
+diff --git a/backend/evals/tourism_knowledge/corpus.json b/backend/evals/tourism_knowledge/corpus.json
+new file mode 100644
+index 0000000..aa319e4
+--- /dev/null
++++ b/backend/evals/tourism_knowledge/corpus.json
+@@ -0,0 +1,309 @@
++[
++  {
++    "id": "fixture-history",
++    "title": "西湖历史背景",
++    "content": "# 人工构造测试文本 / synthetic fixture\n西湖历史背景是此测试的主题。苏轼与杭州往昔、南宋历史线索仅用于测试历史类别召回。\n所有内容仅测试 Retrieval，不证明任何旅游事实。",
++    "destination": "杭州",
++    "place_id": "fixture:west-lake",
++    "knowledge_type": "history_culture",
++    "audience_tags": [],
++    "season_tags": [],
++    "experience_tags": [],
++    "source": {
++      "source_type": "fixture",
++      "source_name": "Synthetic retrieval fixture",
++      "source_reference": "fixture://tourism-knowledge/history",
++      "source_authority": "internal_curated",
++      "updated_at": "2026-01-01T00:00:00Z"
++    },
++    "ingested_at": "2026-01-02T00:00:00Z",
++    "language": "zh-CN",
++    "metadata": {
++      "synthetic": true,
++      "not_production_knowledge": true
++    }
++  },
++  {
++    "id": "fixture-culture",
++    "title": "杭州茶文化和良渚文化",
++    "content": "# 人工构造测试文本 / synthetic fixture\n杭州茶文化、良渚文化是此测试的文化主题，关注文化解释与文化体验。\n所有内容仅测试 Retrieval，不证明任何旅游事实。",
++    "destination": "杭州",
++    "place_id": null,
++    "knowledge_type": "history_culture",
++    "audience_tags": [],
++    "season_tags": [],
++    "experience_tags": [],
++    "source": {
++      "source_type": "fixture",
++      "source_name": "Synthetic retrieval fixture",
++      "source_reference": "fixture://tourism-knowledge/culture",
++      "source_authority": "internal_curated",
++      "updated_at": "2026-01-01T00:00:00Z"
++    },
++    "ingested_at": "2026-01-02T00:00:00Z",
++    "language": "zh-CN",
++    "metadata": {
++      "synthetic": true,
++      "not_production_knowledge": true
++    }
++  },
++  {
++    "id": "fixture-profile",
++    "title": "杭州整体特点与城市空间",
++    "content": "# 人工构造测试文本 / synthetic fixture\n杭州整体特点、城市空间与旅游风格：本测试用城市旅游风格描述目的地轮廓。\n所有内容仅测试 Retrieval，不证明任何旅游事实。",
++    "destination": "杭州",
++    "place_id": null,
++    "knowledge_type": "destination_profile",
++    "audience_tags": [],
++    "season_tags": [],
++    "experience_tags": [],
++    "source": {
++      "source_type": "fixture",
++      "source_name": "Synthetic retrieval fixture",
++      "source_reference": "fixture://tourism-knowledge/profile",
++      "source_authority": "internal_curated",
++      "updated_at": "2026-01-01T00:00:00Z"
++    },
++    "ingested_at": "2026-01-02T00:00:00Z",
++    "language": "zh-CN",
++    "metadata": {
++      "synthetic": true,
++      "not_production_knowledge": true
++    }
++  },
++  {
++    "id": "fixture-place",
++    "title": "灵隐景区体验",
++    "content": "# 人工构造测试文本 / synthetic fixture\n灵隐景区体验与体验差异：本测试描述景区体验特点和适合游客的活动类型。\n所有内容仅测试 Retrieval，不证明任何旅游事实。",
++    "destination": "杭州",
++    "place_id": "fixture:lingyin",
++    "knowledge_type": "place_experience",
++    "audience_tags": [],
++    "season_tags": [],
++    "experience_tags": [],
++    "source": {
++      "source_type": "fixture",
++      "source_name": "Synthetic retrieval fixture",
++      "source_reference": "fixture://tourism-knowledge/place",
++      "source_authority": "internal_curated",
++      "updated_at": "2026-01-01T00:00:00Z"
++    },
++    "ingested_at": "2026-01-02T00:00:00Z",
++    "language": "zh-CN",
++    "metadata": {
++      "synthetic": true,
++      "not_production_knowledge": true
++    }
++  },
++  {
++    "id": "fixture-strategy",
++    "title": "博物馆游览策略和城市步行策略",
++    "content": "# 人工构造测试文本 / synthetic fixture\n博物馆游览策略与城市步行策略：本测试讨论主题选择、休息节奏和步行策略。\n所有内容仅测试 Retrieval，不证明任何旅游事实。",
++    "destination": "杭州",
++    "place_id": null,
++    "knowledge_type": "travel_strategy",
++    "audience_tags": [],
++    "season_tags": [],
++    "experience_tags": [
++      "walking"
++    ],
++    "source": {
++      "source_type": "fixture",
++      "source_name": "Synthetic retrieval fixture",
++      "source_reference": "fixture://tourism-knowledge/strategy",
++      "source_authority": "internal_curated",
++      "updated_at": "2026-01-01T00:00:00Z"
++    },
++    "ingested_at": "2026-01-02T00:00:00Z",
++    "language": "zh-CN",
++    "metadata": {
++      "synthetic": true,
++      "not_production_knowledge": true
++    }
++  },
++  {
++    "id": "fixture-senior",
++    "title": "带父母轻松旅行",
++    "content": "# 人工构造测试文本 / synthetic fixture\n带父母去杭州怎么玩比较轻松：老人旅行节奏、短距离活动和休息安排是本测试的老人旅行主题。\n所有内容仅测试 Retrieval，不证明任何旅游事实。",
++    "destination": "杭州",
++    "place_id": null,
++    "knowledge_type": "audience_strategy",
++    "audience_tags": [
++      "senior"
++    ],
++    "season_tags": [],
++    "experience_tags": [],
++    "source": {
++      "source_type": "fixture",
++      "source_name": "Synthetic retrieval fixture",
++      "source_reference": "fixture://tourism-knowledge/senior",
++      "source_authority": "internal_curated",
++      "updated_at": "2026-01-01T00:00:00Z"
++    },
++    "ingested_at": "2026-01-02T00:00:00Z",
++    "language": "zh-CN",
++    "metadata": {
++      "synthetic": true,
++      "not_production_knowledge": true
++    }
++  },
++  {
++    "id": "fixture-family",
++    "title": "亲子家庭游览策略",
++    "content": "# 人工构造测试文本 / synthetic fixture\n亲子家庭游览策略：本测试使用家庭休息、亲子互动、少量主题活动等示意内容。\n所有内容仅测试 Retrieval，不证明任何旅游事实。",
++    "destination": "杭州",
++    "place_id": null,
++    "knowledge_type": "audience_strategy",
++    "audience_tags": [
++      "family"
++    ],
++    "season_tags": [],
++    "experience_tags": [],
++    "source": {
++      "source_type": "fixture",
++      "source_name": "Synthetic retrieval fixture",
++      "source_reference": "fixture://tourism-knowledge/family",
++      "source_authority": "internal_curated",
++      "updated_at": "2026-01-01T00:00:00Z"
++    },
++    "ingested_at": "2026-01-02T00:00:00Z",
++    "language": "zh-CN",
++    "metadata": {
++      "synthetic": true,
++      "not_production_knowledge": true
++    }
++  },
++  {
++    "id": "fixture-autumn",
++    "title": "秋天杭州体验",
++    "content": "# 人工构造测试文本 / synthetic fixture\n秋天杭州有什么值得体验：秋季体验、秋意摄影与季节体验是本测试主题，不预测当天天气。\n所有内容仅测试 Retrieval，不证明任何旅游事实。",
++    "destination": "杭州",
++    "place_id": null,
++    "knowledge_type": "seasonal_experience",
++    "audience_tags": [],
++    "season_tags": [
++      "autumn"
++    ],
++    "experience_tags": [
++      "photography"
++    ],
++    "source": {
++      "source_type": "fixture",
++      "source_name": "Synthetic retrieval fixture",
++      "source_reference": "fixture://tourism-knowledge/autumn",
++      "source_authority": "internal_curated",
++      "updated_at": "2026-01-01T00:00:00Z"
++    },
++    "ingested_at": "2026-01-02T00:00:00Z",
++    "language": "zh-CN",
++    "metadata": {
++      "synthetic": true,
++      "not_production_knowledge": true
++    }
++  },
++  {
++    "id": "fixture-lifestyle",
++    "title": "杭州当地生活化体验",
++    "content": "# 人工构造测试文本 / synthetic fixture\n杭州有什么比较当地生活化的体验：市井散步、当地生活节奏、生活化摄影是本测试的当地生活主题。\n所有内容仅测试 Retrieval，不证明任何旅游事实。",
++    "destination": "杭州",
++    "place_id": null,
++    "knowledge_type": "local_lifestyle",
++    "audience_tags": [],
++    "season_tags": [
++      "autumn"
++    ],
++    "experience_tags": [
++      "photography",
++      "walking"
++    ],
++    "source": {
++      "source_type": "fixture",
++      "source_name": "Synthetic retrieval fixture",
++      "source_reference": "fixture://tourism-knowledge/lifestyle",
++      "source_authority": "internal_curated",
++      "updated_at": "2026-01-01T00:00:00Z"
++    },
++    "ingested_at": "2026-01-02T00:00:00Z",
++    "language": "zh-CN",
++    "metadata": {
++      "synthetic": true,
++      "not_production_knowledge": true
++    }
++  },
++  {
++    "id": "fixture-other-city",
++    "title": "西湖历史背景",
++    "content": "# 人工构造测试文本 / synthetic fixture\n西湖历史背景苏轼南宋杭州历史。此文专门用于跨目的地过滤，所属目的地为其他城市。\n所有内容仅测试 Retrieval，不证明任何旅游事实。",
++    "destination": "其他城市",
++    "place_id": "fixture:west-lake",
++    "knowledge_type": "history_culture",
++    "audience_tags": [],
++    "season_tags": [],
++    "experience_tags": [],
++    "source": {
++      "source_type": "fixture",
++      "source_name": "Synthetic retrieval fixture",
++      "source_reference": "fixture://tourism-knowledge/other-city",
++      "source_authority": "internal_curated",
++      "updated_at": "2026-01-01T00:00:00Z"
++    },
++    "ingested_at": "2026-01-02T00:00:00Z",
++    "language": "zh-CN",
++    "metadata": {
++      "synthetic": true,
++      "not_production_knowledge": true
++    }
++  },
++  {
++    "id": "fixture-english",
++    "title": "West Lake history",
++    "content": "# 人工构造测试文本 / synthetic fixture\nWest Lake history is an artificial history and culture retrieval fixture.\n所有内容仅测试 Retrieval，不证明任何旅游事实。",
++    "destination": "杭州",
++    "place_id": "fixture:west-lake",
++    "knowledge_type": "history_culture",
++    "audience_tags": [],
++    "season_tags": [],
++    "experience_tags": [],
++    "source": {
++      "source_type": "fixture",
++      "source_name": "Synthetic retrieval fixture",
++      "source_reference": "fixture://tourism-knowledge/english",
++      "source_authority": "internal_curated",
++      "updated_at": "2026-01-01T00:00:00Z"
++    },
++    "ingested_at": "2026-01-02T00:00:00Z",
++    "language": "en",
++    "metadata": {
++      "synthetic": true,
++      "not_production_knowledge": true
++    }
++  },
++  {
++    "id": "fixture-expired",
++    "title": "秋天杭州体验",
++    "content": "# 人工构造测试文本 / synthetic fixture\n秋天杭州体验。过期的半稳定知识用于确认检索不会返回失效版本。\n所有内容仅测试 Retrieval，不证明任何旅游事实。",
++    "destination": "杭州",
++    "place_id": null,
++    "knowledge_type": "seasonal_experience",
++    "audience_tags": [],
++    "season_tags": [
++      "autumn"
++    ],
++    "experience_tags": [],
++    "source": {
++      "source_type": "fixture",
++      "source_name": "Synthetic retrieval fixture",
++      "source_reference": "fixture://tourism-knowledge/expired",
++      "source_authority": "internal_curated",
++      "updated_at": "2026-01-01T00:00:00Z"
++    },
++    "ingested_at": "2026-01-02T00:00:00Z",
++    "language": "zh-CN",
++    "metadata": {
++      "synthetic": true,
++      "not_production_knowledge": true
++    },
++    "knowledge_scope": "semi_stable",
++    "valid_until": "2026-03-01T00:00:00Z"
++  }
++]
+diff --git a/backend/evals/tourism_knowledge/fixtures.py b/backend/evals/tourism_knowledge/fixtures.py
+new file mode 100644
+index 0000000..282bb08
+--- /dev/null
++++ b/backend/evals/tourism_knowledge/fixtures.py
+@@ -0,0 +1,46 @@
++"""Artificial texts test retrieval, not historical or travel factual accuracy."""
++import json
++from datetime import UTC, datetime
++from pathlib import Path
++from typing import Sequence
++
++from app.tourism_knowledge.ingestion import CuratedKnowledgeIngestor
++from app.tourism_knowledge.models import EmbeddingMetadata, KnowledgeDocument
++from app.tourism_knowledge.repository import InMemoryKnowledgeRepository
++
++NOW = datetime(2026, 9, 29, tzinfo=UTC)
++ROOT = Path(__file__).parent
++
++
++def load_documents() -> list[KnowledgeDocument]:
++    return [KnowledgeDocument.model_validate(item) for item in json.loads((ROOT / "corpus.json").read_text(encoding="utf-8"))]
++
++
++class DeterministicFixtureEmbedding:
++    """Hand-authored semantic concepts, no API calls and no production quality claim."""
++    descriptor = EmbeddingMetadata(provider="fixture", model="hand-authored-concepts", dimensions=9, version="v1")
++    concepts = (
++        ("历史", "苏轼", "南宋", "往昔", "history"),
++        ("茶文化", "良渚", "文化", "culture"),
++        ("城市空间", "旅游风格", "整体特点", "profile"),
++        ("景区体验", "灵隐", "体验差异", "place experience"),
++        ("游览策略", "步行策略", "博物馆", "strategy"),
++        ("父母", "老人", "轻松", "长辈", "省体力", "senior"),
++        ("秋天", "秋季", "秋意", "autumn"),
++        ("生活化", "市井", "当地生活", "日常烟火", "lifestyle"),
++    )
++
++    async def embed(self, texts: Sequence[str]) -> list[tuple[float, ...]]:
++        vectors = []
++        for text in texts:
++            concepts = tuple(float(any(term in text.casefold() for term in terms)) for terms in self.concepts)
++            vectors.append(concepts + (float(not any(concepts)),))
++        return vectors
++
++
++async def fixture_repository(provider=None) -> InMemoryKnowledgeRepository:
++    repo = InMemoryKnowledgeRepository()
++    ingestor = CuratedKnowledgeIngestor(repo, provider)
++    for document in load_documents():
++        await ingestor.ingest(document)
++    return repo
+diff --git a/backend/evals/tourism_knowledge/results.json b/backend/evals/tourism_knowledge/results.json
+new file mode 100644
+index 0000000..38f191f
+--- /dev/null
++++ b/backend/evals/tourism_knowledge/results.json
+@@ -0,0 +1,3020 @@
++[
++  {
++    "mode": "lexical",
++    "measured_at": "2026-09-29T02:34:28.366801+00:00",
++    "fixture_clock": "2026-09-29T00:00:00+00:00",
++    "corpus": "synthetic_fixture_not_production_knowledge",
++    "provider_calls": 0,
++    "embedding": "none",
++    "case_count": 27,
++    "recall_at_3": {
++      "numerator": 12.0,
++      "denominator": 12,
++      "rate": 1.0
++    },
++    "category_match_at_1": {
++      "numerator": 12,
++      "denominator": 12,
++      "rate": 1.0
++    },
++    "metadata_filter_accuracy_per_hit": {
++      "numerator": 35,
++      "denominator": 35,
++      "rate": 1.0
++    },
++    "source_preservation_per_hit": {
++      "numerator": 35,
++      "denominator": 35,
++      "rate": 1.0
++    },
++    "live_fact_boundary_accuracy": {
++      "numerator": 27,
++      "denominator": 27,
++      "rate": 1.0
++    },
++    "empty_result_accuracy": {
++      "numerator": 2,
++      "denominator": 2,
++      "rate": 1.0
++    },
++    "results": [
++      {
++        "id": "history",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "西湖有什么历史背景？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-history",
++          "fixture-autumn",
++          "fixture-lifestyle"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "culture",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "杭州茶文化和良渚文化有什么特点？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-culture",
++          "fixture-autumn",
++          "fixture-lifestyle"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "profile",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "杭州整体特点和城市空间是什么旅游风格？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-profile",
++          "fixture-strategy",
++          "fixture-place"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "place",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "灵隐景区体验有什么体验差异？",
++          "destination": "杭州",
++          "place_id": "fixture:lingyin",
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-place"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "strategy",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "博物馆游览策略与城市步行策略怎么安排？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-strategy",
++          "fixture-family",
++          "fixture-profile"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "audience",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "带父母去杭州怎么玩比较轻松？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [
++            "audience_strategy"
++          ],
++          "audience_tags": [
++            "senior"
++          ],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-senior"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "season",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "秋天杭州有什么值得体验的？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [
++            "seasonal_experience"
++          ],
++          "audience_tags": [],
++          "season_tags": [
++            "autumn"
++          ],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-autumn"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "lifestyle",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "杭州有什么比较当地生活化的体验？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-lifestyle",
++          "fixture-autumn",
++          "fixture-senior"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "family",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "亲子家庭游览策略",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [
++            "family"
++          ],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-family"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "cross_city",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "西湖历史",
++          "destination": "其他城市",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-other-city"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "multi_tags",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "秋天杭州生活化摄影",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [
++            "autumn"
++          ],
++          "experience_tags": [
++            "photography",
++            "walking"
++          ],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-lifestyle"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "english",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "West Lake history",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "en",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-english"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "no_match",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "qzxv987654",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": true,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "no_audience",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "西湖历史",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [
++            "unindexed-audience"
++          ],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": true,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "closing",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "西湖今天几点关门？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-history"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "hours",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "灵隐寺开放时间是什么？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-place",
++          "fixture-autumn",
++          "fixture-lifestyle"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "closed",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "博物馆临时闭馆了吗？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-strategy"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "tickets",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "现在门票还有库存吗？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "price",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "当前票价多少钱？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "weather",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "明天杭州会下雨吗？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-autumn",
++          "fixture-culture",
++          "fixture-profile"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "eta",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "西湖当前 ETA 是多久？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-history"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "traffic",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "实时交通堵车吗？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "gps",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "我的 GPS 定位在哪里？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "elapsed",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "我在这里已经玩了多久？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "decision",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "为什么你建议我18点去西湖？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-history",
++          "fixture-autumn",
++          "fixture-lifestyle"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": true,
++          "reasons": [
++            "recommendation_timing_requires_planning_decision_context_and_live_conditions"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "sunset",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "今天西湖日落几点？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-history"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "english_live",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "Is West Lake open today?",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "lexical",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      }
++    ]
++  },
++  {
++    "mode": "semantic",
++    "measured_at": "2026-09-29T02:34:28.389714+00:00",
++    "fixture_clock": "2026-09-29T00:00:00+00:00",
++    "corpus": "synthetic_fixture_not_production_knowledge",
++    "provider_calls": 0,
++    "embedding": "deterministic_fake_not_real_semantic_quality",
++    "case_count": 27,
++    "recall_at_3": {
++      "numerator": 13.0,
++      "denominator": 13,
++      "rate": 1.0
++    },
++    "category_match_at_1": {
++      "numerator": 13,
++      "denominator": 13,
++      "rate": 1.0
++    },
++    "metadata_filter_accuracy_per_hit": {
++      "numerator": 17,
++      "denominator": 17,
++      "rate": 1.0
++    },
++    "source_preservation_per_hit": {
++      "numerator": 17,
++      "denominator": 17,
++      "rate": 1.0
++    },
++    "live_fact_boundary_accuracy": {
++      "numerator": 27,
++      "denominator": 27,
++      "rate": 1.0
++    },
++    "empty_result_accuracy": {
++      "numerator": 1,
++      "denominator": 1,
++      "rate": 1.0
++    },
++    "results": [
++      {
++        "id": "history",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "西湖有什么历史背景？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-history"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "culture",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "杭州茶文化和良渚文化有什么特点？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-culture"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "profile",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "杭州整体特点和城市空间是什么旅游风格？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-profile"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "place",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "灵隐景区体验有什么体验差异？",
++          "destination": "杭州",
++          "place_id": "fixture:lingyin",
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-place"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "strategy",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "博物馆游览策略与城市步行策略怎么安排？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-strategy",
++          "fixture-family"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "audience",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "带父母去杭州怎么玩比较轻松？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [
++            "audience_strategy"
++          ],
++          "audience_tags": [
++            "senior"
++          ],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-senior"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "season",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "秋天杭州有什么值得体验的？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [
++            "seasonal_experience"
++          ],
++          "audience_tags": [],
++          "season_tags": [
++            "autumn"
++          ],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-autumn"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "lifestyle",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "杭州有什么比较当地生活化的体验？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-lifestyle"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "family",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "亲子家庭游览策略",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [
++            "family"
++          ],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-family"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "cross_city",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "西湖历史",
++          "destination": "其他城市",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-other-city"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "multi_tags",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "秋天杭州生活化摄影",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [
++            "autumn"
++          ],
++          "experience_tags": [
++            "photography",
++            "walking"
++          ],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-lifestyle"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "english",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "West Lake history",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "en",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-english"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "semantic_alias",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "长辈省体力",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-senior"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "no_audience",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "西湖历史",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [
++            "unindexed-audience"
++          ],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": true,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "closing",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "西湖今天几点关门？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "hours",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "灵隐寺开放时间是什么？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-place"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "closed",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "博物馆临时闭馆了吗？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-strategy",
++          "fixture-family"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "tickets",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "现在门票还有库存吗？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "price",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "当前票价多少钱？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "weather",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "明天杭州会下雨吗？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "eta",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "西湖当前 ETA 是多久？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "traffic",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "实时交通堵车吗？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "gps",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "我的 GPS 定位在哪里？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "elapsed",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "我在这里已经玩了多久？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "decision",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "为什么你建议我18点去西湖？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": true,
++          "reasons": [
++            "recommendation_timing_requires_planning_decision_context_and_live_conditions",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "sunset",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "今天西湖日落几点？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "english_live",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "Is West Lake open today?",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "semantic",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      }
++    ]
++  },
++  {
++    "mode": "hybrid",
++    "measured_at": "2026-09-29T02:34:28.428882+00:00",
++    "fixture_clock": "2026-09-29T00:00:00+00:00",
++    "corpus": "synthetic_fixture_not_production_knowledge",
++    "provider_calls": 0,
++    "embedding": "deterministic_fake_not_real_semantic_quality",
++    "case_count": 27,
++    "recall_at_3": {
++      "numerator": 13.0,
++      "denominator": 13,
++      "rate": 1.0
++    },
++    "category_match_at_1": {
++      "numerator": 13,
++      "denominator": 13,
++      "rate": 1.0
++    },
++    "metadata_filter_accuracy_per_hit": {
++      "numerator": 37,
++      "denominator": 37,
++      "rate": 1.0
++    },
++    "source_preservation_per_hit": {
++      "numerator": 37,
++      "denominator": 37,
++      "rate": 1.0
++    },
++    "live_fact_boundary_accuracy": {
++      "numerator": 27,
++      "denominator": 27,
++      "rate": 1.0
++    },
++    "empty_result_accuracy": {
++      "numerator": 1,
++      "denominator": 1,
++      "rate": 1.0
++    },
++    "results": [
++      {
++        "id": "history",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "西湖有什么历史背景？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-history",
++          "fixture-autumn",
++          "fixture-lifestyle"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "culture",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "杭州茶文化和良渚文化有什么特点？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-culture",
++          "fixture-autumn",
++          "fixture-lifestyle"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "profile",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "杭州整体特点和城市空间是什么旅游风格？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-profile",
++          "fixture-strategy",
++          "fixture-place"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "place",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "灵隐景区体验有什么体验差异？",
++          "destination": "杭州",
++          "place_id": "fixture:lingyin",
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-place"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "strategy",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "博物馆游览策略与城市步行策略怎么安排？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-strategy",
++          "fixture-family",
++          "fixture-profile"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "audience",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "带父母去杭州怎么玩比较轻松？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [
++            "audience_strategy"
++          ],
++          "audience_tags": [
++            "senior"
++          ],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-senior"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "season",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "秋天杭州有什么值得体验的？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [
++            "seasonal_experience"
++          ],
++          "audience_tags": [],
++          "season_tags": [
++            "autumn"
++          ],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-autumn"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "lifestyle",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "杭州有什么比较当地生活化的体验？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-lifestyle",
++          "fixture-autumn",
++          "fixture-senior"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "family",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "亲子家庭游览策略",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [
++            "family"
++          ],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-family"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "cross_city",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "西湖历史",
++          "destination": "其他城市",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-other-city"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "multi_tags",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "秋天杭州生活化摄影",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [
++            "autumn"
++          ],
++          "experience_tags": [
++            "photography",
++            "walking"
++          ],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-lifestyle"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "english",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "West Lake history",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "en",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-english"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "semantic_alias",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "长辈省体力",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-senior"
++        ],
++        "recall_at_3": 1.0,
++        "category_match": true,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": true,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "no_audience",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "西湖历史",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [
++            "unindexed-audience"
++          ],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": true,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": false,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "closing",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "西湖今天几点关门？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-history"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "hours",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "灵隐寺开放时间是什么？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-place",
++          "fixture-autumn",
++          "fixture-lifestyle"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "closed",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "博物馆临时闭馆了吗？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-strategy",
++          "fixture-family"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "tickets",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "现在门票还有库存吗？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "price",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "当前票价多少钱？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "weather",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "明天杭州会下雨吗？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-autumn",
++          "fixture-culture",
++          "fixture-profile"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "eta",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "西湖当前 ETA 是多久？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-history"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "traffic",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "实时交通堵车吗？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "gps",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "我的 GPS 定位在哪里？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "elapsed",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "我在这里已经玩了多久？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "decision",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "为什么你建议我18点去西湖？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-history",
++          "fixture-autumn",
++          "fixture-lifestyle"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": true,
++          "reasons": [
++            "recommendation_timing_requires_planning_decision_context_and_live_conditions"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "sunset",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "今天西湖日落几点？",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [
++          "fixture-history"
++        ],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      },
++      {
++        "id": "english_live",
++        "request": {
++          "contract_version": "tourism-knowledge-v1",
++          "query": "Is West Lake open today?",
++          "destination": "杭州",
++          "place_id": null,
++          "knowledge_types": [],
++          "audience_tags": [],
++          "season_tags": [],
++          "experience_tags": [],
++          "language": "zh-CN",
++          "top_k": 3,
++          "retrieval_mode": "hybrid",
++          "include_fixtures": true
++        },
++        "document_ids": [],
++        "recall_at_3": null,
++        "category_match": null,
++        "boundary_correct": true,
++        "expected_empty_correct": null,
++        "filter_correct": true,
++        "source_preserved": true,
++        "advisory": {
++          "knowledge_sufficient": false,
++          "live_fact_verification_required": true,
++          "planning_decision_context_required": false,
++          "reasons": [
++            "operational_or_time_sensitive_question_requires_live_evidence",
++            "no_matching_knowledge"
++          ],
++          "warnings": [],
++          "evidence_kind": "tourism_knowledge_not_live_verified"
++        }
++      }
++    ]
++  }
++]
+diff --git a/backend/evals/tourism_knowledge/run.py b/backend/evals/tourism_knowledge/run.py
+new file mode 100644
+index 0000000..1bd17a4
+--- /dev/null
++++ b/backend/evals/tourism_knowledge/run.py
+@@ -0,0 +1,85 @@
++"""python -m evals.tourism_knowledge.run --output PATH (offline synthetic only)."""
++import argparse
++import asyncio
++import json
++from datetime import UTC, datetime
++from pathlib import Path
++
++from app.tourism_knowledge.models import TourismKnowledgeRequest
++from app.tourism_knowledge.repository import matches_filters
++from app.tourism_knowledge.interfaces import IndexedChunk
++from app.tourism_knowledge.service import TourismKnowledgeService
++from .fixtures import DeterministicFixtureEmbedding, NOW, ROOT, fixture_repository, load_documents
++
++
++async def evaluate(mode: str = "lexical") -> dict:
++    provider = None if mode == "lexical" else DeterministicFixtureEmbedding()
++    repo = await fixture_repository(provider)
++    service = TourismKnowledgeService(repo, provider, clock=lambda: NOW)
++    documents = {doc.id: doc for doc in load_documents()}
++    cases = json.loads((ROOT / "cases.json").read_text(encoding="utf-8"))
++    rows = []
++    recall, categories, boundaries, filters, sources, empty = [], [], [], [], [], []
++    for case in cases:
++        if mode not in case.get("modes", ["lexical", "semantic", "hybrid"]):
++            continue
++        request = TourismKnowledgeRequest(query=case["query"], destination="杭州", top_k=3,
++            include_fixtures=True, retrieval_mode=mode, **{k:v for k,v in case.get("filters", {}).items() if k != "destination"})
++        if "destination" in case.get("filters", {}):
++            request = request.model_copy(update={"destination": case["filters"]["destination"]})
++        result = await service.retrieve_tourism_knowledge(request)
++        identities = {hit.chunk.document_id for hit in result.hits}
++        relevant = set(case["relevant"])
++        case_recall = len(identities & relevant) / len(relevant) if relevant else None
++        if case_recall is not None:
++            recall.append(case_recall)
++        category = bool(result.hits and result.hits[0].chunk.knowledge_type == case["category"]) if "category" in case else None
++        if category is not None:
++            categories.append(category)
++        boundary = (result.advisory.live_fact_verification_required == case.get("live", False)
++                    and result.advisory.planning_decision_context_required == case.get("decision", False)
++                    and (not case.get("live", False) or not result.advisory.knowledge_sufficient))
++        boundaries.append(boundary)
++        row_filters = [matches_filters(IndexedChunk(hit.chunk), request, now=NOW) for hit in result.hits]
++        row_sources = [hit.chunk.source == documents[hit.chunk.document_id].source for hit in result.hits]
++        filters.extend(row_filters)
++        sources.extend(row_sources)
++        empty_ok = not result.hits if case.get("expected_empty") else None
++        if empty_ok is not None:
++            empty.append(empty_ok)
++        rows.append({"id":case["id"], "request":request.model_dump(mode="json"),
++            "document_ids":[hit.chunk.document_id for hit in result.hits], "recall_at_3":case_recall,
++            "category_match":category, "boundary_correct":boundary, "expected_empty_correct":empty_ok,
++            "filter_correct":all(row_filters), "source_preserved":all(row_sources),
++            "advisory":result.advisory.model_dump(mode="json")})
++
++    def metric(values):
++        return {"numerator":sum(values), "denominator":len(values), "rate":sum(values)/len(values) if values else None}
++
++    return {"mode":mode, "measured_at":datetime.now(UTC).isoformat(), "fixture_clock":NOW.isoformat(),
++        "corpus":"synthetic_fixture_not_production_knowledge", "provider_calls":0,
++        "embedding":"none" if provider is None else "deterministic_fake_not_real_semantic_quality",
++        "case_count":len(rows), "recall_at_3":metric(recall), "category_match_at_1":metric(categories),
++        "metadata_filter_accuracy_per_hit":metric(filters), "source_preservation_per_hit":metric(sources),
++        "live_fact_boundary_accuracy":metric(boundaries), "empty_result_accuracy":metric(empty), "results":rows}
++
++
++def main():
++    parser = argparse.ArgumentParser(__doc__)
++    parser.add_argument("--output", required=True, type=Path)
++    args = parser.parse_args()
++    reports = asyncio.run(_all_modes())
++    args.output.parent.mkdir(parents=True, exist_ok=True)
++    args.output.write_text(json.dumps(reports, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
++    print(json.dumps([{k:v for k,v in report.items() if k != "results"} for report in reports], ensure_ascii=False))
++    metrics = ("recall_at_3", "category_match_at_1", "metadata_filter_accuracy_per_hit", "source_preservation_per_hit",
++               "live_fact_boundary_accuracy", "empty_result_accuracy")
++    raise SystemExit(0 if all(report[key]["rate"] == 1 for report in reports for key in metrics) else 1)
++
++
++async def _all_modes():
++    return [await evaluate(mode) for mode in ("lexical", "semantic", "hybrid")]
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/backend/evals/tourism_knowledge/verification.json b/backend/evals/tourism_knowledge/verification.json
+new file mode 100644
+index 0000000..1293407
+--- /dev/null
++++ b/backend/evals/tourism_knowledge/verification.json
+@@ -0,0 +1,64 @@
++{
++  "recorded_at": "2026-09-29T02:38:01.256432+00:00",
++  "source_snapshot": "0fab28819abb48a177fbff3d3da5d2e806a487f1",
++  "branch": "codex/tourism-knowledge-phase-a",
++  "worktree": "E:\\Study\\RoamSync-tourism-knowledge",
++  "compose_project": "roamsync-tourism-knowledge-test",
++  "module_tests": {
++    "passed": 82,
++    "failed": 0,
++    "seconds": 0.75,
++    "command": "uv run --no-sync pytest tests/test_tourism_knowledge.py -ra",
++    "evidence": "observed Linux tool output"
++  },
++  "baseline_regression": {
++    "passed": 402,
++    "failed": 2,
++    "warnings": 2,
++    "seconds": 49.76,
++    "command": "uv run --no-sync pytest --ignore=tests/test_tourism_knowledge.py",
++    "evidence": "observed Linux tool output",
++    "failure_tests": [
++      "tests/test_assistant_tools.py::test_shrinking_populated_days_requires_resolution_and_cancel_is_read_only",
++      "tests/test_destination_research.py::test_rejection_clears_approval_and_next_request_uses_empty_formal_plan"
++    ]
++  },
++  "final_regression": {
++    "passed": 484,
++    "failed": 2,
++    "warnings": 2,
++    "seconds": 49.59,
++    "exit_code": 1,
++    "started_at": "2026-09-29T02:35:47.618633579Z",
++    "finished_at": "2026-09-29T02:36:46.421860745Z",
++    "image_id": "sha256:eab3e694afb9fd14a7e9a0ed2523c97871389a2ea47a200a2dc3804c5367fff3",
++    "command": "uv run --no-sync alembic upgrade head && uv run --no-sync pytest",
++    "failure_tests": [
++      "tests/test_assistant_tools.py::test_shrinking_populated_days_requires_resolution_and_cancel_is_read_only",
++      "tests/test_destination_research.py::test_rejection_clears_approval_and_next_request_uses_empty_formal_plan"
++    ],
++    "evidence": "parsed completed api-test container logs"
++  },
++  "new_regression_failures": [],
++  "baseline_files_modified": [],
++  "dependencies_added": [],
++  "web_android_tests_run": false,
++  "scope": "isolated foundation; no production corpus, persistence or real embedding integration",
++  "benchmarks": "results.json; synthetic only; semantic/hybrid use deterministic fake",
++  "tested_source_sha256": {
++    "backend/app/tourism_knowledge/boundary.py": "cec284c7881b6fc9e5d3616bf8ba05ff65577b62fc5692bb46a49b5b0486786c",
++    "backend/app/tourism_knowledge/ingestion.py": "77af79ec56b959a1bb39bdcd5c6cbd4f40f0c20ac5ef5b3610193a3cc7325af5",
++    "backend/app/tourism_knowledge/interfaces.py": "25c19b2c67165b2177b153630653048ac4036e084ef5fe8ecc4e2754472c6299",
++    "backend/app/tourism_knowledge/models.py": "f0e5e8b930dbb72f5a4890140267fed522c2102e1eb9f03e2aef239af513db86",
++    "backend/app/tourism_knowledge/ranking.py": "9223643f069724ba6895bcc6747e3476e688c5468bf7f070957d8b63976153fb",
++    "backend/app/tourism_knowledge/repository.py": "53ecf07a515ad2c18063174eb4821cbb85fa10060efc351b00632c204827a44a",
++    "backend/app/tourism_knowledge/service.py": "25c8e3a16ae94fa28553518bd70b4e186674209309724ac2cbf9e797cfc2d24d",
++    "backend/app/tourism_knowledge/__init__.py": "a0ce0c278a074b7daae0ddfccced296c5d276e04249b8db5fd552d23a2702120",
++    "backend/evals/tourism_knowledge/fixtures.py": "ec802854d2d6ff0c11148e2df7360f9f098bdaa4f8f048bf8e213af7c5c854d6",
++    "backend/evals/tourism_knowledge/run.py": "67ce960f934da1acaa79814e330b609952f9c9889ebf534ae79a08dfe7e6b1f2",
++    "backend/evals/tourism_knowledge/__init__.py": "59f325d91eebbc13296a061aab200a8e2494cf7fe003731d0a338de109f19954",
++    "backend/evals/tourism_knowledge/corpus.json": "ae9cf2d934f79c4c5e99eed35684b7a8bd4e10bfafc900af6e8fa11a9ee56ad3",
++    "backend/evals/tourism_knowledge/cases.json": "f4e83fdab62f8da6ba65d1596b7e6880c1600f0c6f3154e7589b54d876f5caf7",
++    "backend/tests/test_tourism_knowledge.py": "f3d5186d3df81c081bdb8411c0a54caf6763e5f72de88689ab8c81a41c9a7031"
++  }
++}
+diff --git a/backend/tests/test_tourism_knowledge.py b/backend/tests/test_tourism_knowledge.py
+new file mode 100644
+index 0000000..89d92f3
+--- /dev/null
++++ b/backend/tests/test_tourism_knowledge.py
+@@ -0,0 +1,328 @@
++"""Isolated retrieval, provenance and boundary tests; no network or database."""
++import asyncio
++import math
++from datetime import timedelta
++
++import pytest
++from pydantic import ValidationError
++
++from app.tourism_knowledge.boundary import assess_suitability
++from app.tourism_knowledge.ingestion import CuratedKnowledgeIngestor, chunk_document
++from app.tourism_knowledge.interfaces import IndexedChunk
++from app.tourism_knowledge.models import EmbeddingMetadata, KnowledgeDocument, TourismKnowledgeRequest, TourismKnowledgeResult
++from app.tourism_knowledge.ranking import reciprocal_rank_fusion, tokenize
++from app.tourism_knowledge.repository import InMemoryKnowledgeRepository
++from app.tourism_knowledge.service import SemanticRetrievalUnavailable, TourismKnowledgeService
++from evals.tourism_knowledge.fixtures import DeterministicFixtureEmbedding, NOW, fixture_repository, load_documents
++from evals.tourism_knowledge.run import evaluate
++
++
++def run(coro):
++    return asyncio.run(coro)
++
++
++def document(**updates):
++    base = load_documents()[0].model_dump()
++    base.update(updates)
++    return KnowledgeDocument.model_validate(base)
++
++
++def retrieve(query, *, mode="lexical", provider=None, **filters):
++    async def scenario():
++        repo = await fixture_repository(provider)
++        service = TourismKnowledgeService(repo, provider, clock=lambda: NOW)
++        return await service.retrieve_tourism_knowledge(TourismKnowledgeRequest(
++            query=query, destination=filters.pop("destination", "杭州"), include_fixtures=True,
++            retrieval_mode=mode, **filters))
++    return run(scenario())
++
++
++@pytest.mark.parametrize("query,expected,filters", [
++    ("西湖有什么历史背景？", "fixture-history", {}),
++    ("带父母去杭州怎么玩比较轻松？", "fixture-senior", {"knowledge_types":["audience_strategy"],"audience_tags":["senior"]}),
++    ("秋天杭州有什么值得体验的？", "fixture-autumn", {"knowledge_types":["seasonal_experience"],"season_tags":["autumn"]}),
++    ("杭州有什么比较当地生活化的体验？", "fixture-lifestyle", {}),
++])
++def test_required_retrieval_cases(query, expected, filters):
++    result = retrieve(query, **filters)
++    assert result.hits[0].chunk.document_id == expected
++    assert result.advisory.knowledge_sufficient
++    assert not result.advisory.live_fact_verification_required
++
++
++@pytest.mark.parametrize("query", [
++    "西湖今天几点关门？", "西湖今天开到几点？", "现在临时闭馆吗？", "杭州当前天气", "明天下雨吗？",
++    "当前票价多少？", "门票库存还有吗？", "GPS定位", "ETA是多少？", "实时交通路况", "我已经玩了多久？",
++    "灵隐寺开放时间", "How long have I spent here?", "opening hours", "ticket availability", "current weather",
++    "实时日落", "How long to reach the museum?", "今天西湖历史介绍活动有哪些？", "公交班次", "西湖什么时候开放？",
++])
++def test_live_boundary(query):
++    result = retrieve(query)
++    assert result.advisory.live_fact_verification_required
++    assert not result.advisory.knowledge_sufficient
++    assert result.advisory.evidence_kind == "tourism_knowledge_not_live_verified"
++
++
++@pytest.mark.parametrize("query", ["西湖的历史？", "杭州茶文化", "秋季体验通常有哪些", "父母旅行的一般节奏", "当地生活方式"])
++def test_stable_boundary(query):
++    assert not assess_suitability(query).live_fact_verification_required
++
++
++@pytest.mark.parametrize("query", ["为什么你建议我18点去西湖？", "为什么安排１８：００游西湖？", "Why suggest West Lake at 6pm?"])
++def test_timing_explanation_needs_decision_and_live_context(query):
++    advisory = assess_suitability(query)
++    assert advisory.planning_decision_context_required
++    assert advisory.live_fact_verification_required
++    assert not advisory.knowledge_sufficient
++
++
++@pytest.mark.parametrize("filters,expected", [
++    ({"place_id":"fixture:lingyin"}, {"fixture-place"}),
++    ({"audience_tags":["family"]}, {"fixture-family"}),
++    ({"season_tags":["autumn"], "experience_tags":["photography","walking"]}, {"fixture-lifestyle"}),
++    ({"destination":"其他城市"}, {"fixture-other-city"}),
++    ({"language":"en"}, {"fixture-english"}),
++    ({"knowledge_types":["destination_profile","place_experience"]}, {"fixture-profile","fixture-place"}),
++    ({"audience_tags":["senior","family"]}, set()),
++    ({"destination":"不存在"}, set()),
++    ({"season_tags":["winter"]}, set()),
++    ({"place_id":"unknown"}, set()),
++])
++def test_hard_filters(filters, expected):
++    query = "West Lake history" if filters.get("language") == "en" else "西湖杭州历史城市空间灵隐景区体验亲子家庭当地生活化摄影"
++    result = retrieve(query, top_k=50, **filters)
++    assert {hit.chunk.document_id for hit in result.hits} == expected
++
++
++def test_fixtures_excluded_by_default_and_no_match_is_insufficient():
++    async def scenario():
++        service = TourismKnowledgeService(await fixture_repository(), clock=lambda: NOW)
++        result = await service.retrieve_tourism_knowledge(TourismKnowledgeRequest(query="西湖历史"))
++        assert not result.hits
++        assert not result.advisory.knowledge_sufficient
++        assert "no_matching_knowledge" in result.advisory.reasons
++    run(scenario())
++    assert not retrieve("qzxv987654").hits
++
++
++def test_expiry_is_hard_filter_at_exact_boundary():
++    async def scenario():
++        repo = InMemoryKnowledgeRepository()
++        doc = document(knowledge_scope="semi_stable", valid_until=NOW)
++        await CuratedKnowledgeIngestor(repo).ingest(doc)
++        request = TourismKnowledgeRequest(query="历史", include_fixtures=True)
++        assert await repo.candidates(request, now=NOW - timedelta(seconds=1))
++        assert not await repo.candidates(request, now=NOW)
++    run(scenario())
++    assert all(hit.chunk.document_id != "fixture-expired" for hit in retrieve("秋天杭州", top_k=50).hits)
++
++
++@pytest.mark.parametrize("updates", [
++    {"knowledge_scope":"live_fact"}, {"knowledge_scope":"semi_stable"},
++    {"valid_until":"2025-01-01T00:00:00Z"}, {"ingested_at":"2026-01-01T00:00:00"},
++    {"knowledge_type":"weather"}, {"language":""}, {"content":"  "}, {"id":""},
++])
++def test_invalid_documents(updates):
++    with pytest.raises(ValidationError):
++        document(**updates)
++
++
++@pytest.mark.parametrize("updates", [{"query":" "}, {"top_k":0}, {"top_k":51}, {"unexpected":True},
++                                           {"retrieval_mode":"vector_sql"}, {"knowledge_types":["live_weather"]}])
++def test_invalid_requests(updates):
++    with pytest.raises(ValidationError):
++        TourismKnowledgeRequest.model_validate({"query":"历史", **updates})
++
++
++def test_chunking_provenance_heading_size_content_and_stable_identity():
++    doc = document(content="# 主标题\n" + "历史背景" * 45 + "\n## 子标题\n茶文化测试", audience_tags=["senior"], season_tags=["autumn"])
++    chunks = chunk_document(doc, max_characters=64)
++    assert len(chunks) > 2
++    assert chunks == chunk_document(doc, max_characters=64)
++    assert len({chunk.id for chunk in chunks}) == len(chunks)
++    assert "历史背景" * 45 in "".join(chunk.content for chunk in chunks)
++    assert chunks[-1].heading_path == ("主标题", "子标题")
++    for index, chunk in enumerate(chunks):
++        assert chunk.chunk_index == index
++        assert chunk.approximate_size == len(chunk.content) <= 64
++        assert chunk.source == doc.source
++        assert chunk.document_id == doc.id
++        assert chunk.audience_tags == doc.audience_tags
++        assert chunk.season_tags == doc.season_tags
++        assert chunk.metadata == doc.metadata
++    with pytest.raises(ValueError):
++        chunk_document(doc, max_characters=1)
++
++
++def test_ingestion_replacement_removes_old_chunks_and_results_are_detached():
++    async def scenario():
++        repo = InMemoryKnowledgeRepository()
++        ingest = CuratedKnowledgeIngestor(repo, max_characters=64)
++        doc = document(content="历史背景" * 100)
++        old = await ingest.ingest(doc)
++        doc.metadata["caller_mutation"] = True
++        request = TourismKnowledgeRequest(query="历史", include_fixtures=True)
++        stored = await repo.candidates(request, now=NOW)
++        assert "caller_mutation" not in stored[0].chunk.metadata
++        stored[0].chunk.metadata["reader_mutation"] = True
++        assert "reader_mutation" not in (await repo.candidates(request, now=NOW))[0].chunk.metadata
++        updated = document(content="新的文化内容")
++        new = await ingest.ingest(updated)
++        assert len(new) == 1
++        assert not {chunk.id for chunk in old} & {chunk.id for chunk in new}
++        assert len(await repo.candidates(request, now=NOW)) == 1
++        await ingest.ingest(updated)
++        assert len(await repo.candidates(request, now=NOW)) == 1
++    run(scenario())
++
++
++def test_repository_rejects_provenance_mismatch():
++    async def scenario():
++        repo = InMemoryKnowledgeRepository()
++        doc = document()
++        chunk = chunk_document(doc)[0].model_copy(update={"destination":"不同城市"})
++        with pytest.raises(ValueError, match="provenance"):
++            await repo.replace_document(doc, [IndexedChunk(chunk)])
++        assert not await repo.candidates(TourismKnowledgeRequest(query="历史", include_fixtures=True), now=NOW)
++    run(scenario())
++
++
++def test_result_round_trip_preserves_all_sources_without_vectors():
++    result = retrieve("西湖历史背景", top_k=2)
++    parsed = TourismKnowledgeResult.model_validate_json(result.model_dump_json())
++    assert parsed == result
++    source = load_documents()[0].source
++    assert parsed.hits[0].chunk.source == source
++    assert parsed.hits[0].chunk.source.updated_at == source.updated_at
++    assert "vector" not in result.model_dump_json()
++
++
++def test_lexical_default_hybrid_fallback_is_explicit():
++    result = retrieve("西湖历史", mode="hybrid")
++    assert result.effective_mode == "lexical"
++    assert result.score_kind == "bm25"
++    assert "semantic_provider_not_configured_using_lexical" in result.advisory.warnings
++    with pytest.raises(SemanticRetrievalUnavailable):
++        retrieve("西湖历史", mode="semantic")
++
++
++@pytest.mark.parametrize("mode", ["semantic", "hybrid"])
++def test_semantic_paraphrase_without_lexical_overlap(mode):
++    assert not retrieve("长辈省体力").hits
++    result = retrieve("长辈省体力", mode=mode, provider=DeterministicFixtureEmbedding())
++    assert result.hits[0].chunk.document_id == "fixture-senior"
++    assert result.hits[0].semantic_score > 0
++    assert result.hits[0].lexical_score is None
++    assert result.effective_mode == mode
++
++
++def test_embedding_model_version_mismatch_cannot_be_compared():
++    async def scenario():
++        provider = DeterministicFixtureEmbedding()
++        repo = await fixture_repository(provider)
++        provider.descriptor = provider.descriptor.model_copy(update={"version":"v2"})
++        service = TourismKnowledgeService(repo, provider, clock=lambda: NOW)
++        request = TourismKnowledgeRequest(query="西湖历史", include_fixtures=True)
++        result = await service.retrieve_tourism_knowledge(request)
++        assert result.effective_mode == "lexical"
++        assert "semantic_index_unavailable_using_lexical" in result.advisory.warnings
++        with pytest.raises(SemanticRetrievalUnavailable):
++            await service.retrieve_tourism_knowledge(request.model_copy(update={"retrieval_mode":"semantic"}))
++    run(scenario())
++
++
++@pytest.mark.parametrize("vectors", [[], [[1]], [[0]*9], [[math.nan]*9], [[math.inf]*9], [[1]*9,[1]*9]])
++def test_invalid_embedding_does_not_replace_document(vectors):
++    class Broken(DeterministicFixtureEmbedding):
++        async def embed(self, texts):
++            return vectors
++    async def scenario():
++        repo = InMemoryKnowledgeRepository()
++        await CuratedKnowledgeIngestor(repo).ingest(document())
++        request = TourismKnowledgeRequest(query="历史", include_fixtures=True)
++        before = await repo.candidates(request, now=NOW)
++        with pytest.raises(ValueError):
++            await CuratedKnowledgeIngestor(repo, Broken()).ingest(document(content="新版内容"))
++        assert await repo.candidates(request, now=NOW) == before
++    run(scenario())
++
++
++def test_query_embedding_invalid_is_not_silently_used():
++    class Broken(DeterministicFixtureEmbedding):
++        async def embed(self, texts):
++            return [[1]]
++    async def scenario():
++        repo = await fixture_repository(DeterministicFixtureEmbedding())
++        service = TourismKnowledgeService(repo, Broken(), clock=lambda: NOW)
++        with pytest.raises(ValueError):
++            await service.retrieve_tourism_knowledge(TourismKnowledgeRequest(query="历史", include_fixtures=True))
++    run(scenario())
++
++
++def test_recent_official_source_does_not_turn_knowledge_into_live_fact():
++    async def scenario():
++        doc = document(source={"source_type":"internal", "source_name":"Curated test", "source_reference":"internal:test",
++                              "source_authority":"official_attraction", "updated_at":NOW}, ingested_at=NOW)
++        repo = InMemoryKnowledgeRepository()
++        await CuratedKnowledgeIngestor(repo).ingest(doc)
++        result = await TourismKnowledgeService(repo, clock=lambda: NOW).retrieve_tourism_knowledge(
++            TourismKnowledgeRequest(query="西湖历史与今天关门时间"))
++        assert result.hits
++        assert result.advisory.live_fact_verification_required
++        assert not result.advisory.knowledge_sufficient
++    run(scenario())
++
++
++def test_provider_failure_preserves_prior_ingestion():
++    class Failing(DeterministicFixtureEmbedding):
++        async def embed(self, texts):
++            raise RuntimeError("fixture_provider_unavailable")
++    async def scenario():
++        repo = InMemoryKnowledgeRepository()
++        await CuratedKnowledgeIngestor(repo).ingest(document())
++        request = TourismKnowledgeRequest(query="历史", include_fixtures=True)
++        before = await repo.candidates(request, now=NOW)
++        with pytest.raises(RuntimeError, match="fixture_provider_unavailable"):
++            await CuratedKnowledgeIngestor(repo, Failing()).ingest(document(content="replacement"))
++        assert await repo.candidates(request, now=NOW) == before
++    run(scenario())
++
++
++def test_partial_embedding_index_is_visible_and_hard_filters_apply_to_semantics():
++    async def scenario():
++        provider = DeterministicFixtureEmbedding()
++        repo = await fixture_repository(provider)
++        await CuratedKnowledgeIngestor(repo).ingest(load_documents()[0])
++        service = TourismKnowledgeService(repo, provider, clock=lambda: NOW)
++        result = await service.retrieve_tourism_knowledge(TourismKnowledgeRequest(query="西湖历史", destination="杭州", include_fixtures=True))
++        assert "some_chunks_missing_matching_embedding_index" in result.advisory.warnings
++        result = await service.retrieve_tourism_knowledge(TourismKnowledgeRequest(query="长辈省体力", destination="杭州",
++            audience_tags=["family"], include_fixtures=True, retrieval_mode="semantic"))
++        assert not result.hits
++    run(scenario())
++
++
++def test_defensive_filters_even_if_repository_adapter_ignores_contract():
++    class Unfiltered:
++        async def candidates(self, request, *, now):
++            return [IndexedChunk(chunk_document(doc)[0]) for doc in load_documents()]
++    service = TourismKnowledgeService(Unfiltered(), clock=lambda: NOW)
++    result = run(service.retrieve_tourism_knowledge(TourismKnowledgeRequest(query="西湖历史")))
++    assert not result.hits
++
++
++def test_rrf_is_rank_based_and_deterministic():
++    result = reciprocal_rank_fusion({"a":1000,"b":3}, {"b":0.9,"c":0.8})
++    assert max(result, key=result.get) == "b"
++    assert result["a"] == pytest.approx(1/61)
++    assert result["b"] == pytest.approx(1/62 + 1/61)
++    assert tokenize("ＷＥＳＴ 西湖") == tokenize("west 西湖")
++
++
++@pytest.mark.parametrize("mode", ["lexical","semantic","hybrid"])
++def test_offline_benchmark(mode):
++    report = run(evaluate(mode))
++    for key in ("recall_at_3", "category_match_at_1", "metadata_filter_accuracy_per_hit", "source_preservation_per_hit",
++                "live_fact_boundary_accuracy", "empty_result_accuracy"):
++        assert report[key]["rate"] == 1, (key, report[key])
++    assert report["provider_calls"] == 0
+diff --git a/docs/agent/TOURISM_KNOWLEDGE_PHASE_A_20260929.md b/docs/agent/TOURISM_KNOWLEDGE_PHASE_A_20260929.md
+new file mode 100644
+index 0000000..88cce86
+--- /dev/null
++++ b/docs/agent/TOURISM_KNOWLEDGE_PHASE_A_20260929.md
+@@ -0,0 +1,185 @@
++# Tourism Knowledge RAG — Phase A
++
++日期：2026-09-29。状态：独立 Contract / Retrieval Foundation 已实现；生产语料、持久化与真实 embedding integration 尚未实现。本报告只依据隔离源码快照、实际 SQL 探测和本轮执行结果，不把历史 README 当验收证据。
++
++## 1. Repository Audit
++
++当前用户工作目录是仅含历史交付片段的文档仓库；真实应用位于 `E:/Study/RoamSync`，分支 main，HEAD `5572849`。审计和实施基于其当前未提交后端源码，隔离快照为 `0fab28819abb48a177fbff3d3da5d2e806a487f1`。
++
++| 项目 | VERIFIED 现状 | 证据 |
++|---|---|---|
++| embedding / vector / RAG | 无 embedding provider、向量库、pgvector 或通用 Document/Chunk/Retriever | backend/app、migrations、pyproject.toml 全文检查 |
++| PostgreSQL | SQLAlchemy async + psycopg；开发、测试均为 postgres:17-alpine | database.py、compose.yaml、compose.test.yaml |
++| FTS / BM25 | 无应用 FTS/BM25；数据库有内建 FTS 能力 | 源码检查、实际 SQL |
++| extension | 测试容器 pg_available_extensions 可见 pg_trgm，未列出 vector；本轮没有启用任何扩展 | 只读 `SELECT name FROM pg_available_extensions WHERE name IN ('vector','pg_trgm')` |
++| 中文 FTS | `to_tsvector('simple', '西湖历史杭州茶文化')` 返回一个完整词 | 实际 PostgreSQL 17 探测 |
++| research | SearchFact(provider, queried_at, query, payload)，原始 Tavily results 保留在 payload | external_facts.py: SearchFact / search_tavily |
++| source | SourceRecord 含 title/url/provider/queried_at/confidence，但必需 trip_id，生命周期随旅行 | database.py: SourceRecord；schemas.py: SourceRecordResponse |
++| 模型抽象 | build_model_client / create_model_response 是生成模型抽象，无 embedding 方法 | model_client.py；destination_research.py |
++| 测试 / eval | pytest；独立 PostgreSQL tmpfs Compose；Alembic；离线 cases + runner + JSON artifacts | backend/pyproject.toml、Dockerfile、evals/run_travel_goal_eval.py |
++
++现有 destination research 调用链：planning_graph.resolve → `_collect_external_facts`（宽泛/指定地点 Tavily 检索，可独立收集天气）→ `research_destination` → schema-bounded ResearchOutput → 来源下标与名称支持检查 → AMap 唯一地点匹配 → trip-owned POI snapshot → research.places / external_facts 写入图上下文 → Planner。网页提炼只保留 title/url/content，最多 8 条；包含请求地点、别名、推荐理由与 prominence，并非共享旅游知识索引。源码比冻结旧架构文档更新，不能依据后者断言 Search 尚未接入。
++
++## 2. Architecture Decision
++
++选择：provider/repository abstraction + 小语料内存参考适配器 + 中文 BM25 + 可注入 semantic + RRF hybrid；不增加数据库、迁移或依赖。
++
++原假设“已有 PostgreSQL 就可直接上 FTS/pgvector”：真实部署缺 vector 扩展，默认 FTS 无中文分词，现有模型 SDK 接入仅用于生成。调整为先提供可测契约和真实可执行的 lexical 路径，保留未来替换存储和 embedding 的边界。支持库具备 embedding API 并不证明项目已有 embedding provider。
++
++INFERRED：生产持久化值得继续复用 PostgreSQL，知识可独立表存储，不绑定 Trip；先根据中文检索质量与规模决定预分词 FTS/pg_trgm 候选，之后如需向量检索再启用 pgvector。pgvector 要先安装扩展文件并在目标数据库启用；须同时处理开发/测试镜像、版本、migration、索引与回滚，目前部署不是即插即用。[pgvector 官方安装说明](https://github.com/pgvector/pgvector)。FTS 的 parser/dictionary 决定分词行为，不能把内建功能等同于中文质量已经验证。[PostgreSQL 文本检索配置](https://www.postgresql.org/docs/18/sql-createtsconfig.html)。
++
++本轮内存扫描的 CPU/内存开销随候选数量增长，不作为大规模 production adapter。Semantic 为 cosine 扫描，可实际注入 provider，但没有配置真实供应商；fake 仅位于 evals，不进入 app。未宣称 pgvector 或真实语义检索已上线。
++
++## 3. Knowledge Boundary
++
++- Knowledge：稳定/半稳定的目的地轮廓、历史文化、地点体验、旅行/人群策略、季节体验、当地生活；七种类别与本轮 taxonomy 一致。
++- Search：当前网上可找到的材料；不是自动验证过的事实。Tavily 可用于现有实时 research，也可能作为未来候选 corpus discovery，必须经过权利/内容审核、稳定性分类、来源与版本记录后才 ingest；不自动把搜索结果灌入 corpus。
++- Travel Fact/Evidence：今天营业、临时闭馆、库存、价格、天气、交通、ETA、GPS、用户实际停留；本模块不调用任何实时 API。
++- Planner：具体排程、正式活动身份、前后约束、版本与候选接受；本轮不改其流程。
++
++SourceAuthority 属于来源 provenance，在 Knowledge 中保留是必要的；未来 Evidence 可共享这些值，但不复用 trip-bound SourceRecord 或把 authority 当事实正确率/新鲜度。未因“官方”自动提高 relevance 分数，也未把 official label 当真实性认证。
++
++## 4. New Contracts
++
++所有公共模型使用 Pydantic、extra=forbid，contract version 为 tourism-knowledge-v1。
++
++- KnowledgeDocument：id/title/content，destination，可选 corpus-scoped place_id/place_name，knowledge_type，audience/season/experience tags，language，source，ingested_at/reviewed_at/valid_until，stable/semi_stable scope，扩展 JSON metadata。
++- KnowledgeSource：source_type/name/reference/authority，published_at/updated_at；authority 有九种既定层级；fixture 是独立 source_type，不伪装成生产来源。
++- KnowledgeChunk：继承完整 KnowledgeMetadata/source，document_id/title/index，content，字符近似长度，heading_path，content_sha256，embedding descriptor。Vector 只在 IndexedChunk 存储内部，结果不暴露。
++- EmbeddingMetadata：provider/model/dimensions/version；模型或版本不同不能混比。
++- TourismKnowledgeRequest：query、destination/place/type/tag/language filters、top_k 1..50，lexical/semantic/hybrid；fixture 默认为排除。Destination/place/language 精确匹配，类别列表 OR，同类 tags 为全部满足，不同过滤维度 AND；空列表表示该维度不限制。不隐式推断地点、人群、季节或放宽过滤。
++- KnowledgeHit/Result：完整 chunk（含标题、目的地、地点和所有时间/source），score/method，lexical/semantic components，retrieved_at、effective_mode、score_kind、advisory。BM25、cosine、RRF 分数不可跨方法直接比较，均非可信度概率。
++- KnowledgeRepository：原子 replace_document + 过滤后的 candidates；KnowledgeIngestor：显式 ingest；EmbeddingProvider：descriptor + async batch embed；TourismKnowledgeRetriever：async retrieve_tourism_knowledge(request)。
++
++扩展 metadata 和模型内部字典不是深度不可变；内存适配器在读写边界深拷贝，防止调用者修改已存 provenance。
++
++## 5. Retrieval Flow
++
++```text
++审核者提供 KnowledgeDocument
++ → CuratedKnowledgeIngestor
++ → deterministic heading-aware chunk_document
++ → optional batch EmbeddingProvider + shape/finite/nonzero validation
++ → KnowledgeRepository.replace_document（同文档整版替换）
++
++未来 Companion Tool adapter
++ → TourismKnowledgeService.retrieve_tourism_knowledge(request)
++ → boundary.assess_suitability
++ → repository.candidates（hard filters / expiry / fixture exclusion）
++ → service defensive filter check
++ → Chinese-aware BM25 / optional same-descriptor cosine
++ → hybrid reciprocal-rank fusion
++ → deterministic top_k + provenance + advisory
++```
++
++BM25 使用 Unicode normalization、英文词、中文字符与双字索引；多字中文查询抑制单字噪声，单字查询仍支持。无同义词词典或自动 query rewrite，不声称等同于成熟中文分词器。RRF 使用 rank_constant=60，每路最多 max(100,4*top_k) 候选；并列按 chunk_id 确定顺序。
++
++默认 hybrid 没有 provider 时显式返回 lexical 和 warning；显式 semantic 缺 provider/index 时抛 SemanticRetrievalUnavailable。缺少同模型索引的 chunk 会被说明；不同 descriptor 不比较。配置 provider 的调用/向量校验失败不会伪装成 semantic success，也不会破坏已 ingest 的旧版本。
++
++未来最小使用方式（由调用方做依赖注入，无全局自动加载 corpus）：
++
++```python
++from app.tourism_knowledge import TourismKnowledgeRequest, TourismKnowledgeService
++from app.tourism_knowledge.repository import InMemoryKnowledgeRepository
++from app.tourism_knowledge.ingestion import CuratedKnowledgeIngestor
++
++repository = InMemoryKnowledgeRepository()
++ingestor = CuratedKnowledgeIngestor(repository)
++# await ingestor.ingest(reviewed_document)  # 真实审核文档，不是 fixture
++service = TourismKnowledgeService(repository)
++result = await service.retrieve_tourism_knowledge(TourismKnowledgeRequest(
++    query="西湖的历史？", destination="杭州", top_k=3,
++))
++```
++
++## 6. Live Fact Guard
++
++Result 永远带 evidence_kind=tourism_knowledge_not_live_verified。规则对营业/票价/库存/天气/交通/ETA/GPS/已玩多久以及今天/现在等信号设置 live_fact_verification_required；即使来源官方、刚入库、相似度高，也不变成 live fact。
++
++“西湖历史”：有相关命中且没有 live/decision signal 时，knowledge_sufficient=true，表示检索范围可用，不是事实正确性保证；无命中为 false。“今天几点关门”：可返回背景，但 sufficient=false，live verification=true。“为什么建议18点去西湖”：额外 planning_decision_context_required=true，须由 Companion 合并一般体验、当天条件和实际决策依据；本层不推导今天18点最佳。
++
++半稳定知识必须有明确 valid_until；到期包括等于检索时间均排除。入库时间不能替代来源更新时间。fixture 默认不参与检索，fixture URL/metadata 明确其人工构造性质。
++
++HYPOTHESIS/限制：规则不覆盖任意语言、隐喻或省略表达，可能保守误报；它是 tool-local advisory 而非新 Router。未来 InformationNeed 应提供结构化时效需求，并由上层对所有 operational assertions 强制 live evidence 校验。Ingest 是受审核输入边界，不自动识别所有被误标为 stable 的实时句子。Source 内容是待分析数据，未来 Companion 必须防止其中的指令影响工具权限。
++
++## 7. Files Changed
++
++只新增以下独立文件，未修改任何 baseline 文件：
++
++| 文件 | 职责 |
++|---|---|
++| backend/app/tourism_knowledge/__init__.py | public service/request/result/document exports |
++| backend/app/tourism_knowledge/models.py | versioned contracts、taxonomy、source、review expiry |
++| backend/app/tourism_knowledge/interfaces.py | repository/ingestor/embedding/retriever ports |
++| backend/app/tourism_knowledge/boundary.py | live/decision advisory |
++| backend/app/tourism_knowledge/repository.py | 原子替换、hard filters、detached provenance |
++| backend/app/tourism_knowledge/ingestion.py | deterministic chunking、可选 embedding ingest |
++| backend/app/tourism_knowledge/ranking.py | 中文 BM25、cosine、RRF、vector validation |
++| backend/app/tourism_knowledge/service.py | async tool facade、模式与索引状态 |
++| backend/tests/test_tourism_knowledge.py | isolated contract/retrieval/filter/boundary/error tests |
++| backend/evals/tourism_knowledge/__init__.py | benchmark package |
++| backend/evals/tourism_knowledge/corpus.json | 12 个明确人工构造的 fixture documents，含其他城市、英文、过期 decoys |
++| backend/evals/tourism_knowledge/cases.json | 28 个评测案例，逐模式适用标记 |
++| backend/evals/tourism_knowledge/fixtures.py | fixture loader、deterministic fake provider |
++| backend/evals/tourism_knowledge/run.py | 独立离线 runner，复用既有 cases/artifact 模式 |
++| backend/evals/tourism_knowledge/results.json | 真实执行的逐案例测量 artifact |
++| backend/evals/tourism_knowledge/verification.json | 模块/回归与基线的紧凑验证证据 |
++| docs/agent/TOURISM_KNOWLEDGE_PHASE_A_20260929.md | 本轮 Audit / ADR / evidence / merge report |
++| docs/handoff/TOURISM_KNOWLEDGE_PHASE_A_20260929.md | 独立分支交接，避免覆盖并行全局 handoff |
++
++## 8. Tests
++
++VERIFIED：最终 Linux/Python 3.11、冻结依赖环境，模块 **82 passed in 0.75s**。覆盖四个必需 retrieval 场景、全部 taxonomy、destination/place/category/language/tag 过滤、tag AND 语义、来源继承与 JSON round-trip、heading/chunk identity、fixture 默认排除、expiry 精确边界、幂等文档替换、深拷贝、向量 batch/dimension/finite/nonzero 校验、provider 失败原子性、descriptor/version mismatch、缺索引降级、无 lexical overlap 的 semantic paraphrase、live traps、官方来源不会升级为 live fact、18点规划解释边界。
++
++MEASURED：28 个独立案例；按模式排除不适用的单路案例，每种模式执行 27 条。固定小 corpus 上结果如下，全部是 fixture 测量，不是生产泛化率：
++
++| 指标 | lexical | semantic fake | hybrid fake |
++|---|---|---|---|
++| Recall@3（有标注 relevant 文档的 query） | 12/12 | 13/13 | 13/13 |
++| Category match@1 | 12/12 | 13/13 | 13/13 |
++| Metadata filter accuracy（每个返回 hit） | 35/35 | 17/17 | 37/37 |
++| Source preservation（每个返回 hit） | 35/35 | 17/17 | 37/37 |
++| Live/decision boundary accuracy（含 stable negatives） | 27/27 | 27/27 | 27/27 |
++| Expected-empty accuracy | 2/2 | 1/1 | 1/1 |
++
++没有 relevant 标签的 live trap 不计入 Recall/category 分母；零命中不靠“全部过滤正确”的 vacuous truth 算成 hit-level 成功，另有 expected-empty 指标。伪语义概念是人工编写，Corpus 也为人工文本，本轮不测真实旅游事实正确率、真实 provider 质量或 held-out 泛化。无网络 corpus 抓取或 live provider 请求。fixture_clock 用于固定 expiry；measured_at 为实际 Linux 执行时间。
++
++基线复跑（不收集新增模块测试）：**402 passed / 2 failed / 2 warnings，49.76s**。复现同两个原有失败：
++
++1. test_assistant_tools.py::test_shrinking_populated_days_requires_resolution_and_cancel_is_read_only：`row.pending_action` 为 None，测试索引时 TypeError。
++2. test_destination_research.py::test_rejection_clears_approval_and_next_request_uses_empty_formal_plan：`router.contexts` 为空，测试索引时 IndexError。
++
++两者位于并行 Router/Assistant 工作边界；核心源码与快照相同，且现有 app 模块没有任何新模块引用。本轮不改这些测试或放宽断言。最终完整回归：**484 passed / 2 failed / 2 warnings，49.59s**；与基线相比增加 82 个 passing tests，无新增失败。紧凑 evidence 见 verification.json，其中最终计数由已完成容器日志解析，并保留被测源码 SHA256；非零退出不能宣称全项目 regression 全绿。两次既有 warnings 均为 Starlette HTTP_422_UNPROCESSABLE_ENTITY 弃用提醒。
++
++复现命令（worktree 根目录；完整回归时不要在同项目并发创建 one-off Compose 容器）：
++
++```powershell
++docker compose -p roamsync-tourism-knowledge-test -f compose.test.yaml up --build --abort-on-container-exit --exit-code-from api-test
++# 完整回归退出后再执行以下独立验证
++docker compose -p roamsync-tourism-knowledge-test -f compose.test.yaml run --rm --no-deps api-test uv run --no-sync pytest tests/test_tourism_knowledge.py -ra
++docker compose -p roamsync-tourism-knowledge-test -f compose.test.yaml run --rm --no-deps api-test uv run --no-sync python -m evals.tourism_knowledge.run --output /tmp/tourism-knowledge-results.json
++# 最后只清理本任务自己的 Compose 项目
++docker compose -p roamsync-tourism-knowledge-test -f compose.test.yaml down -v
++```
++
++使用独立 project name、网络、tmpfs PostgreSQL；不复用/重启默认 roamsync-test 或开发数据库。未运行 Web/Android 回归：本轮完全独立 Python 模块且没有 API 注册、客户端、共享模型、配置、dependency 或 migration 变化。
++
++## 9. Dependencies
++
++零新增 dependency；复用 Pydantic + pytest，其他算法均 Python standard library。pyproject.toml、uv.lock、Compose、共享 config、数据库模型与 migrations 均未修改。
++
++## 10. Merge Safety
++
++独立分支：codex/tourism-knowledge-phase-a；worktree：E:/Study/RoamSync-tourism-knowledge。用临时 GIT_INDEX_FILE 和 commit-tree 创建当前后端快照，不触碰原仓库 index/working files；快照 parent 是原 HEAD，包含原先未提交源码，绝不可把整个快照分支直接 merge 到原 main。
++
++仅 cherry-pick 本轮实现提交（其 parent 为 0fab288），或将该提交相对 parent 的新增文件 diff 应用到 Router 集成后的干净分支。可以在完成 Router 集成的干净分支执行 `git cherry-pick codex/tourism-knowledge-phase-a`（只应用 branch tip 的本轮实现）。Router、assistant routes/service、planning intent/graph/runtime、PlanningRun/Revision、研究链路以及它们的 tests 均零改动、零文件重叠。不要 cherry-pick snapshot commit，不清理/覆盖其他会话未提交修改。
++
++本轮遵循用户“独立、低冲突”的要求，专门新增分支 handoff，未覆盖 AGENTS.md 默认要求的全局 PROJECT_STATE/LATEST_HANDOFF；建议集成人在合并后汇总这份交接。
++
++## 11. Open Questions
++
++真实知识来源/使用权与人工 review 标准；目的地行政编码与 corpus place_id canonicalization；真实 embedding provider、成本/维度/版本及重建策略；中文检索 held-out 数据；生产 PostgreSQL adapter 的 schema/index/分页策略；半稳定类别的有效期 policy；Companion 消费 unknown scope、空命中、provider error 和 source conflict 的行为；来源权威 taxonomy 在未来 Evidence 的共享方式。
++
++## 12. Recommended Next Step
++
++Router Phase 0 合并后，为 Companion 新增 tourism_knowledge_retrieval 工具 adapter，输入 InformationNeed 的显式 metadata filters，输出本契约并执行 knowledge/live/decision 约束。先用少量经审核的真实来源验证引用与回答边界，再决定持久化、中文索引和真实 embedding；不把 fake benchmark 的 100% 当生产质量证据，不提前实现 Weather/AMap Fact Resolver 或 Knowledge Agent。
+diff --git a/docs/handoff/TOURISM_KNOWLEDGE_PHASE_A_20260929.md b/docs/handoff/TOURISM_KNOWLEDGE_PHASE_A_20260929.md
+new file mode 100644
+index 0000000..191146e
+--- /dev/null
++++ b/docs/handoff/TOURISM_KNOWLEDGE_PHASE_A_20260929.md
+@@ -0,0 +1,29 @@
++# RoamSync Handoff — Tourism Knowledge Phase A (isolated)
++
++## Snapshot
++
++Date: 2026-09-29。独立 Tourism Knowledge Contract / Retrieval Foundation 已实现；不接 Router/Companion/Planner。Branch codex/tourism-knowledge-phase-a；worktree E:/Study/RoamSync-tourism-knowledge；baseline snapshot 0fab288（来源为原 main 5572849 及当前未提交后端）。
++
++## Current Freeze / Rehearsal Status
++
++此任务不更改 Demo Freeze 状态或其他会话的 milestone。只新增独立模块、fixtures、tests、benchmark、报告；未修改现有文件。全局 PROJECT_STATE/LATEST_HANDOFF 不覆盖，避免并行冲突。
++
++## Latest shadow-mode evidence
++
++不涉及 Decision Ledger/shadow。VERIFIED：当前无 embedding/vector/RAG；PostgreSQL 测试镜像缺 vector，默认 simple FTS 不对连续中文分词。新增 BM25 + metadata filters + optional semantic/cosine + RRF。Source 与 document metadata 全保留；fixture 默认排除，半稳定知识有强制 expiry。
++
++## Prior milestone baseline (before shadow split)
++
++原 Agent milestone 保持；参见全局 handoff。本轮 guard 永远返回 knowledge-not-live-verified 标记；营业/天气/ETA 等需要 live verification，18点推荐解释需要 planning context。
++
++## Prior verification
++
++VERIFIED：Linux 模块 82 passed；完整 PostgreSQL regression 484 passed / 2 failed / 2 warnings（49.59s）；排除新增模块的 baseline 402 passed / 相同 2 failed / 2 warnings（49.76s）。无新增失败，不能宣称全绿。两处是旧 Assistant 改期确认、拒绝候选后 Router context 测试。MEASURED：28 fixture cases，每模式 27 条，Recall/category/filter/source/boundary 均 100%，仅人工 fixture。证据见工程报告、results.json、verification.json；Fake embedding 仅测接口，非生产能力。
++
++## Prior blockers (historical)
++
++仍无真实 corpus/persistent adapter/provider。中文 quality、source review 与 canonical place identity 待定。仅 cherry-pick 本轮实现提交，禁止 merge 全部 snapshot。
++
++## Interview framing
++
++这是独立检索工具基础，支持未来 Companion 的 stable contract；不是新增 Agent 或 Planner prompt。下一步 Router 合并后做 Companion Tool adapter，强制知识/事实/决策边界。

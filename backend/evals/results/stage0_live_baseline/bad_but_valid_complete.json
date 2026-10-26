@@ -1,0 +1,110 @@
+{
+  "scenario": "bad-but-valid-rush",
+  "trip_id": "cfd14fb4-b6e6-4801-b39a-72911e01ac41",
+  "run_id": "ba3a3c59-e68f-4149-b2ff-47f3869f3b8d",
+  "revision_id": "a52f2ab9-8315-43c2-885a-004a9c72db30",
+  "user_request": "请重新调整 2026-10-13 当天的行程，尽量保持现有活动不变，并确保18:00前结束。",
+  "fixture_precondition": {
+    "status": "PASS",
+    "all_activities_persisted": true,
+    "coordinates_complete": true,
+    "citycode_adcode_complete": true,
+    "route_facts_available": true,
+    "route_provider": "AMap Route 2.0",
+    "route_facts_estimated": false,
+    "no_schedule_overlap": true,
+    "all_transfer_windows_cover_route_duration": true,
+    "budget_valid": true,
+    "production_validator_valid": true,
+    "production_validator_errors": []
+  },
+  "semantic_rubric": {
+    "dimensions": ["activity_duration_quality", "meal_quality", "pace", "day_density", "experience_coherence"],
+    "metric_type": "semantic_human_review_compatible"
+  },
+  "before": {
+    "activity_count": 6,
+    "culture_activity_durations_minutes": [30, 30, 30, 30, 30],
+    "meal": {"start": "10:15", "duration_minutes": 20},
+    "walking_minutes": 145,
+    "walking_distance_meters": 10688,
+    "explicit_buffer_minutes": 0,
+    "day_start": "09:00",
+    "day_end": "14:15",
+    "semantic_quality_issue": true,
+    "issues": [
+      "five culture activities are only 30 minutes each",
+      "the food activity is only 20 minutes and begins at 10:15",
+      "six activities and five walking transfers have no explicit recovery buffer",
+      "walking burden is 10.688 km and 145 minutes"
+    ]
+  },
+  "production_trace": {
+    "intent": "success",
+    "context": "success",
+    "destination_research": "success",
+    "tavily": "success",
+    "amap_poi": "success",
+    "deepseek": "success",
+    "candidate": "success",
+    "route_enrichment": "success",
+    "validator": "success",
+    "plan_revision": "produced",
+    "final_status": "awaiting_confirmation"
+  },
+  "planner_visible_context": {
+    "user_request": true,
+    "formal_activity_names_times_durations": true,
+    "preferences_max_walking_minutes": 60,
+    "formal_route_legs_before_planner": false,
+    "route_facts_added_after_planner": true
+  },
+  "after": {
+    "activity_count": 7,
+    "retained_culture_activity_durations_minutes": [30, 30, 45],
+    "meal": {"start": "10:20", "duration_minutes": 45},
+    "walking_minutes": 197,
+    "walking_distance_meters": 14567,
+    "explicit_buffer_minutes": 5,
+    "day_start": "09:00",
+    "day_end": "18:37",
+    "removed": ["中国丝绸博物馆", "南宋官窑博物馆"],
+    "added": ["杭州西湖风景名胜区-断桥残雪", "杭州西湖风景名胜区-苏堤春晓", "雷峰塔景区雷峰塔"],
+    "semantic_quality_issue": true,
+    "issues": [
+      "activity count increased from 6 to 7",
+      "two museum visits remain only 30 minutes",
+      "walking burden increased to 14.567 km and 197 minutes",
+      "only 5 minutes of explicit buffer remain across six transfers",
+      "the candidate ends at 18:37 despite the explicit 18:00 requirement"
+    ]
+  },
+  "validator": {"valid": true, "errors": [], "warnings": ["route_schedule_adjusted"]},
+  "semantic_result": {
+    "deterministic_valid": true,
+    "semantic_quality_issue_before": true,
+    "semantic_quality_issue_after": true,
+    "planner_self_corrected": "partial",
+    "semantic_issue_recognized": true,
+    "semantic_issue_resolved": false,
+    "bad_but_valid_detected": false,
+    "critic_present": false,
+    "semantic_quality_check_after_validator": "absent",
+    "explanation_classification": "recognized_but_not_fixed",
+    "user_goal_satisfied": false
+  },
+  "explanation_evidence": {
+    "claims": ["avoid continuous rushing", "control total walking", "finish before evening"],
+    "contradictions": ["walking increased by 3879 meters and 52 minutes", "activity count increased by one", "the final activity ends at 18:37"],
+    "faithfulness": "unsupported"
+  },
+  "token_usage": {
+    "provider": "deepseek",
+    "planner_model": "deepseek-flash",
+    "destination_research_model": "deepseek-v4-flash",
+    "destination_research_tokens": 16665,
+    "planner_tokens": 31581,
+    "total_tokens": 48246
+  },
+  "production_code_changed": false
+}

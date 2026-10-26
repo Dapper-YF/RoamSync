@@ -1,0 +1,125 @@
+{
+  "id": "e35b85a6-5115-4930-af23-084d90ada778",
+  "trip_id": "23ac3c24-e9f5-45e1-8d9f-841584990886",
+  "run_type": "replan",
+  "status": "failed",
+  "user_request": "请调整：香格里拉3日行程（9.11-9.13），希望每天安排2-3个景点游览。9.11普达措国家公园空间大，可在此基础上增加1个景点；9.13无底湖观赏时间短，可在此基础上增加2个景点；其它日期也按每天2-3个景点合理补充。",
+  "response_text": null,
+  "progress": {
+    "stage": "routes",
+    "message": "候选活动已生成，正在查询实际交通路线…",
+    "updated_at": "2026-09-10T08:49:37.66651+08:00"
+  },
+  "heartbeat_at": "2026-09-10T00:49:37.66651Z",
+  "entry_point": "trip_planner",
+  "selected_day_id": null,
+  "selected_activity_id": null,
+  "intent_resolution": {
+    "request": {
+      "trip_id": "23ac3c24-e9f5-45e1-8d9f-841584990886",
+      "user_request": "请调整：香格里拉3日行程（9.11-9.13），希望每天安排2-3个景点游览。9.11普达措国家公园空间大，可在此基础上增加1个景点；9.13无底湖观赏时间短，可在此基础上增加2个景点；其它日期也按每天2-3个景点合理补充。",
+      "intent": {
+        "intent_type": "replan_trip",
+        "source_text": "请调整：香格里拉3日行程（9.11-9.13），希望每天安排2-3个景点游览。9.11普达措国家公园空间大，可在此基础上增加1个景点；9.13无底湖观赏时间短，可在此基础上增加2个景点；其它日期也按每天2-3个景点合理补充。",
+        "time_scope": null,
+        "protected_activity_ids": [],
+        "requested_place_queries": [],
+        "requested_pace": null,
+        "missing_fields": [],
+        "ambiguities": []
+      },
+      "entry_point": "trip_planner",
+      "selected_day_id": null,
+      "selected_activity_id": null,
+      "target_day_id": null
+    },
+    "requires_clarification": false,
+    "clarification_questions": [],
+    "parser_version": "rules-v1",
+    "semantic_draft": {
+      "primary_intent": "replan_trip",
+      "operations": [
+        {
+          "operation": "replan_trip",
+          "raw_text": "请调整：香格里拉3日行程（9.11-9.13），希望每天安排2-3个景点游览。9.11普达措国家公园空间大，可在此基础上增加1个景点；9.13无底湖观赏时间短，可在此基础上增加2个景点；其它日期也按每天2-3个景点合理补充。",
+          "date_expression": null,
+          "period": null,
+          "activity_mentions": [],
+          "place_mentions": [],
+          "constraints": {
+            "budget_must_not_increase": false,
+            "max_additional_cost_fen": null,
+            "preferred_environment": null,
+            "max_walking_minutes": null,
+            "requested_pace": null,
+            "weather_sensitive": false,
+            "preserve_completed": true
+          }
+        }
+      ],
+      "confidence": 0.98,
+      "missing_fields": [],
+      "ambiguities": [],
+      "parser": "rules",
+      "parser_version": "rules-envelope-v1"
+    },
+    "grounded_intent": {
+      "trip_id": "23ac3c24-e9f5-45e1-8d9f-841584990886",
+      "primary_intent": "replan_trip",
+      "operation_types": [
+        "replan_trip"
+      ],
+      "target_day_ids": [],
+      "target_activity_ids": [],
+      "candidate_place_ids": [],
+      "unresolved_activity_mentions": [],
+      "unresolved_place_mentions": [],
+      "constraints": {
+        "budget_must_not_increase": false,
+        "max_additional_cost_fen": null,
+        "preferred_environment": null,
+        "max_walking_minutes": null,
+        "requested_pace": null,
+        "weather_sensitive": false,
+        "preserve_completed": true
+      },
+      "missing_fields": [],
+      "ambiguities": []
+    },
+    "policy_decision": {
+      "operation_mode": "preview_change",
+      "risk_level": "medium",
+      "requires_confirmation": true,
+      "reasons": [
+        "formal_plan_change"
+      ],
+      "route": "plan_preview"
+    }
+  },
+  "base_trip_version": 3,
+  "model_provider": "deepseek",
+  "model_name": "deepseek-flash",
+  "token_usage": 98288,
+  "error_code": "planner_constraints_unsatisfied",
+  "error_message": "candidate plan still violates constraints: route_unavailable",
+  "error_details": {
+    "validation_errors": [
+      {
+        "code": "route_unavailable",
+        "message": "2026-09-11：普达措国家公园 → 噶丹松赞林寺，高德未返回可用的公共交通路线。需要更换可达地点或确认其他交通方式。",
+        "details": {
+          "day_date": "2026-09-11",
+          "from_place": "普达措国家公园",
+          "to_place": "噶丹松赞林寺",
+          "from_activity_ref": "candidate:1:5c9eff55-f49c-4e9b-90bf-784bb017ab14",
+          "to_activity_ref": "candidate:2:f927dd82-43e7-4756-9d58-2eb43829e06c",
+          "mode": "transit"
+        }
+      }
+    ]
+  },
+  "pending_interrupt": null,
+  "created_at": "2026-09-10T00:34:05.445053Z",
+  "started_at": "2026-09-10T00:43:18.162924Z",
+  "completed_at": "2026-09-10T00:49:38.235924Z"
+}

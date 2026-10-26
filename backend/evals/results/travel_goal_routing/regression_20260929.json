@@ -1,0 +1,53 @@
+{
+  "date": "2026-09-29",
+  "repository": "E:\\Study\\RoamSync",
+  "starting_head": "5572849",
+  "working_tree": "preexisting uncommitted implementation, incremental Phase 0 edits; no commit or reset",
+  "backend_environment": "isolated Docker Linux Python 3.11 / PostgreSQL 17 / current alembic head",
+  "baseline": {
+    "evidence": "actual current-tree pre-edit Docker pytest invocation, recorded in task tool output",
+    "passed": 395, "failed": 0, "warnings": 2, "duration_seconds": 46.8
+  },
+  "first_valid_post_edit_run": {
+    "passed": 400, "failed": 2, "warnings": 2, "duration_seconds": 58.06,
+    "failures": [
+      "test_shrinking_populated_days_requires_resolution_and_cancel_is_read_only",
+      "test_rejection_clears_approval_and_next_request_uses_empty_formal_plan"
+    ],
+    "resolution": "preserved tests; restored explicit itinerary requirement and duration-correction routing"
+  },
+  "final_backend": {
+    "command": "uv run --no-sync alembic upgrade head && uv run --no-sync pytest",
+    "compose_file": "compose.test.yaml",
+    "passed": 405, "failed": 0, "warnings": 2, "duration_seconds": 45.83,
+    "new_collected_tests": 10,
+    "log": "linux_postgresql_final.log",
+    "warning": "existing Starlette HTTP_422_UNPROCESSABLE_ENTITY deprecation in two test_planner tests"
+  },
+  "web": {
+    "commands": ["pnpm test", "pnpm typecheck", "pnpm build"],
+    "test_files": 18, "passed": 101, "failed": 0, "new_tests": 1,
+    "duration_seconds": 18.58, "typecheck": "PASS", "production_build": "PASS",
+    "stderr": "three existing ActivityExperienceCard React act warnings"
+  },
+  "android": {
+    "command": "gradlew.bat :app:testDebugUnitTest --console=plain",
+    "result": "BUILD SUCCESSFUL", "duration_seconds": 58,
+    "passed": 35, "failed": 0, "skipped": 0,
+    "evidence": "app/build/test-results/testDebugUnitTest XML (11 + 8 + 2 + 14 tests)"
+  },
+  "routing_eval": {
+    "command": "python -m evals.run_travel_goal_eval --output evals/results/travel_goal_routing/phase0_20260929.json",
+    "mode": "offline_deterministic_rules", "provider_calls": 0,
+    "cases": 60, "runtime_correct": 60, "goal_correct": 60,
+    "companion": 35, "planning": 20, "execution": 5,
+    "error_a_companion_to_planning": 0, "error_b_planning_to_companion": 0,
+    "artifact": "phase0_20260929.json"
+  },
+  "limitations": [
+    "development corpus, not blind holdout or live-provider quality evaluation",
+    "no deployment, real device, APK or production database reset",
+    "no schema migration; question creation through direct planning API intentionally returns 422",
+    "historical runs/checkpoints, deterministic recovery, existing planning graph retained"
+  ]
+}

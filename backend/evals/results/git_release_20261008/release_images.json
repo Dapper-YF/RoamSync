@@ -1,0 +1,35 @@
+{
+  "roamsync-release-api": {
+    "image_id": "sha256:bf21dad73910711ed58ae7557b958409a300d567706048362c19e5d8aa5b1e9b",
+    "configured_image": "roamsync-release-api:8ee7dbf",
+    "source_mounts": false,
+    "running": true,
+    "command": [
+      "sh",
+      "-c",
+      "uv run --no-sync alembic upgrade head && uv run --no-sync uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    ]
+  },
+  "roamsync-release-worker": {
+    "image_id": "sha256:bf21dad73910711ed58ae7557b958409a300d567706048362c19e5d8aa5b1e9b",
+    "configured_image": "roamsync-release-worker:8ee7dbf",
+    "source_mounts": false,
+    "running": true,
+    "command": [
+      "python",
+      "-m",
+      "app.agent_worker"
+    ]
+  },
+  "roamsync-release-web": {
+    "image_id": "sha256:99b6d495ad589e39293b6af2f41afd3a1d6c2333e066917057e39db94cd6c4fa",
+    "configured_image": "roamsync-release-web:8ee7dbf",
+    "source_mounts": false,
+    "running": true,
+    "command": [
+      "nginx",
+      "-g",
+      "daemon off;"
+    ]
+  }
+}

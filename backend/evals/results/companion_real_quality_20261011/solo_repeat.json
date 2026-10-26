@@ -1,0 +1,445 @@
+{
+  "version": "companion-knowledge-strategy-v1",
+  "fixture_sha256": "50a640606966e6dbc48385502b0e34d1fadec8dd1e7e8cc597a81be0222cfab7",
+  "fixture": "E:\\Study\\RoamSync\\backend\\evals\\fixtures\\companion_knowledge_strategy_v1.json",
+  "selected_case_ids": [
+    "solo"
+  ],
+  "endpoint": {
+    "scheme": "https",
+    "host": "open.bigmodel.cn",
+    "port": null,
+    "path": "/api/paas/v4"
+  },
+  "proxy": {
+    "scheme": "http",
+    "host": "127.0.0.1",
+    "port": 7897,
+    "path": ""
+  },
+  "real_model": true,
+  "model": "glm-5.3-flash",
+  "provider": "glm",
+  "reasoning_effort": "low",
+  "max_output_tokens": 8000,
+  "format_repair_limit": 1,
+  "provider_retries": 0,
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "fact_tool": "absent; deliberately measures unavailable-information degradation",
+  "rules": {
+    "accuracy": "0 incorrect / 1 partial or uncertain / 2 correct; check stable historical statements against independent sources",
+    "completeness": "0 missed / 1 partial / 2 covers requested aspects",
+    "relevance": "0 off-topic / 1 partly / 2 directly answers",
+    "naturalness": "0 rigid / 1 usable / 2 fluent and context-aware",
+    "citation_authenticity": "every attributed fact must use supplied canonical source and supported assertion; model knowledge is not retrieved evidence",
+    "hallucination": "record unsupported factual statements and unverified dynamic assertions separately",
+    "review": "scores remain null until a human reviews saved output; controlled responses never establish answer quality"
+  },
+  "rows": [
+    {
+      "case_id": "solo",
+      "mode": "A",
+      "input": "一个人旅游有什么建议？",
+      "goal": {
+        "goal_type": "recommendation",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_recommendation"
+        ]
+      },
+      "output": {
+        "response_text": "一个人旅行可以很自由，几条实用建议：1) 安全第一：把住宿选在交通方便、评价好的区域，晚上避免偏僻路段，把行程大致告诉家人朋友。2) 轻装上阵：一个能单手搞定的背包或小行李箱，移动更灵活。3) 行动安排有松有紧：白天可以参加免费徒步、当地小团等活动认识人，留一些时间自己闲逛。4) 记录旅程：随身相机或手机拍些人文名片式照片，比如清晨无人的街景、当地市集。5) 用餐不尴尬：选择吧台位、大众食堂，既方便又能和当地人搭话。如果你告诉我感兴趣的方向，比如自然、美食或人文，我可以再具体推荐目的地。",
+        "goal_type": "recommendation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_d9961c1ba4de5b6b8e28abe3dfe457ab",
+            "suggestion_type": "strategy",
+            "title": "轻装+灵活行程",
+            "summary": "独自旅行建议轻装、白天参加当地小团或徒步认识人、住宿选安全便利区域、独自用餐选吧台位。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "轻装+灵活行程"
+              }
+            ],
+            "destination": "一个人旅游",
+            "reasons": [
+              "降低独自移动负担",
+              "兼顾安全与社交机会"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:09:59.785635Z",
+            "conversation_turn_id": "solo",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "context_required",
+          "knowledge_strategy": "general_only",
+          "knowledge_reasons": [
+            "saved_context_read_only"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "一个人旅游",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 9.066163699999834,
+      "model_calls": 1,
+      "usage": [
+        {
+          "completion_tokens": 240,
+          "prompt_tokens": 1191,
+          "total_tokens": 1431,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 768
+          }
+        }
+      ],
+      "total_tokens": 1431,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 240,
+            "prompt_tokens": 1191,
+            "total_tokens": 1431,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 768
+            }
+          },
+          "duration_seconds": 8.722874600000068,
+          "finish_reason": "stop"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "solo",
+      "mode": "B",
+      "input": "一个人旅游有什么建议？",
+      "goal": {
+        "goal_type": "recommendation",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_recommendation"
+        ]
+      },
+      "output": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+        "goal_type": "recommendation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "mixed",
+          "knowledge_strategy": "forced_rag",
+          "knowledge_reasons": [
+            "saved_context_read_only",
+            "forced_rag_baseline"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "destination_profile",
+            "history_culture",
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unsupported_query",
+            "message": "当前小型知识库不覆盖这个目的地或主题。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "一个人旅游",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "unavailable",
+          "outcome": "unsupported_query",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 1,
+      "retrieval_seconds": 3.879999985656468e-05,
+      "latency_seconds": 0.21743349999997008,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "solo",
+      "mode": "C",
+      "input": "一个人旅游有什么建议？",
+      "goal": {
+        "goal_type": "recommendation",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_recommendation"
+        ]
+      },
+      "output": null,
+      "error": "CompanionProviderError",
+      "error_code": "planner_incomplete_output",
+      "failure": {
+        "application_code": "planner_incomplete_output",
+        "exception_chain": [
+          {
+            "type": "CompanionProviderError"
+          }
+        ]
+      },
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 2.533127400000012,
+      "model_calls": 1,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "incomplete",
+          "format_attempt": 1,
+          "usage": null,
+          "duration_seconds": 2.1052098000000115,
+          "finish_reason": "sensitive"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "runtime_expected": false,
+        "no_runtime_mutation": true
+      }
+    }
+  ],
+  "complete": true,
+  "summary": {
+    "A": {
+      "cases": 1,
+      "companion_cases": 1,
+      "rag_calls": 0,
+      "rag_rate": 0.0,
+      "model_calls": 1,
+      "provider_reported_tokens": 1431,
+      "usage_missing_model_rows": 0,
+      "mean_latency_seconds": 9.066163699999834,
+      "retrieval_seconds": 0.0,
+      "automatic_checks_passed": 1,
+      "quality_scores": "manual review pending; no synthetic quality ranking"
+    },
+    "B": {
+      "cases": 1,
+      "companion_cases": 1,
+      "rag_calls": 1,
+      "rag_rate": 1.0,
+      "model_calls": 0,
+      "provider_reported_tokens": null,
+      "usage_missing_model_rows": 0,
+      "mean_latency_seconds": 0.21743349999997008,
+      "retrieval_seconds": 3.879999985656468e-05,
+      "automatic_checks_passed": 1,
+      "quality_scores": "manual review pending; no synthetic quality ranking"
+    },
+    "C": {
+      "cases": 1,
+      "companion_cases": 1,
+      "rag_calls": 0,
+      "rag_rate": 0.0,
+      "model_calls": 1,
+      "provider_reported_tokens": null,
+      "usage_missing_model_rows": 1,
+      "mean_latency_seconds": 2.533127400000012,
+      "retrieval_seconds": 0.0,
+      "automatic_checks_passed": 0,
+      "quality_scores": "manual review pending; no synthetic quality ranking"
+    }
+  }
+}

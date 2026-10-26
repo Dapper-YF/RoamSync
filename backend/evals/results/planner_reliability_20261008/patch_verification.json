@@ -1,0 +1,33 @@
+{
+  "base_release": "0b5010fe5a7b06dcec1ab7b159b5b337244247ae",
+  "base_application": "8ee7dbf0ddc27fdb8fd55bc20fad9777ec4bf209",
+  "proposed_source_sha256": "6d0257506c8ae65cbfc640cbdbfd3376b23bac2cf9623306432513f48ddca1eb",
+  "red_regression": {
+    "tests": 4,
+    "failures": 4
+  },
+  "corrected_full_regression": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "858",
+    "time": "36.304",
+    "timestamp": "2026-10-08T01:09:46.466357+00:00",
+    "hostname": "4375b21a1f44"
+  },
+  "earlier_wrong_test_launch": {
+    "failures": 97,
+    "cause": "omitted existing compose.test.yaml APP_ENV/ALLOW_MAP_ESTIMATES configuration; MapProviderError missing AMap key",
+    "preserved": "fix_full.xml/fix_full_regression.log"
+  },
+  "test_configuration": "existing compose.test.yaml test configuration on new isolated PG17; real E2E config untouched",
+  "patch_sha256": "5fe45833dda0f036282a3637a6dd791b0734a60337c8971408b4ecab2ee178fc",
+  "code_paths": [
+    "backend/app/planning_intent_service.py",
+    "backend/tests/test_planning_intents.py"
+  ],
+  "additional_git_history_authorized": false,
+  "release_application_source_unchanged": true,
+  "patch_preserves_original_context_line_endings": true
+}

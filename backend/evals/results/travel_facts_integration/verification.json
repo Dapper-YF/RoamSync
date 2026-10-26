@@ -1,0 +1,153 @@
+{
+  "measured_at": "2026-09-30T10:16:41.793928+00:00",
+  "status": "COMPLETE",
+  "source_sha256": "7e01c9cee0537824e94e931e009fdfb552184d8110d5870819c7ce67dd948d3d",
+  "source_files_match": true,
+  "head": "5572849209c943c5f5ad1579db4cef0ba2fb5b25",
+  "foundation_commit": "5f9f5e5",
+  "foundation_import_exact": true,
+  "protected_existing_app_files_unchanged": true,
+  "existing_app_files_changed": [
+    "backend/app/assistant_service.py",
+    "backend/app/companion_contracts.py",
+    "backend/app/companion_graph.py",
+    "backend/app/companion_information.py",
+    "backend/app/companion_runtime.py"
+  ],
+  "tests": {
+    "foundation": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "87",
+      "time": "10.091",
+      "timestamp": "2026-09-30T08:41:24.478491+00:00",
+      "hostname": "464ef156dcb6"
+    },
+    "focused": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "245",
+      "time": "24.651",
+      "timestamp": "2026-09-30T09:49:34.419097+00:00",
+      "hostname": "0aaf947276df"
+    },
+    "backend_final": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "768",
+      "time": "71.937",
+      "timestamp": "2026-09-30T09:47:43.292348+00:00",
+      "hostname": "baadacc03bb7"
+    }
+  },
+  "offline_eval": {
+    "cases": 20,
+    "errors": 0,
+    "fact_tool_precision": "13/13",
+    "fact_tool_recall": "13/14",
+    "unnecessary_fact_calls": 0,
+    "planning_authorization_errors": 0,
+    "stale_fact_usage": 0,
+    "unsupported_dynamic_claim_count": 0,
+    "natural_answers": 19,
+    "actual_model_calls": 0,
+    "resolved_statuses": {
+      "resolved": 66,
+      "unavailable": 24,
+      "stale": 6
+    }
+  },
+  "live_eval": {
+    "cases": 14,
+    "errors": 0,
+    "fact_tool_precision": "8/8",
+    "fact_tool_recall": "8/8",
+    "unnecessary_fact_calls": 0,
+    "planning_authorization_errors": 0,
+    "stale_fact_usage": 0,
+    "unsupported_dynamic_claim_count": 0,
+    "natural_answers": 13,
+    "actual_model_calls": 0,
+    "resolved_statuses": {
+      "resolved": 66
+    }
+  },
+  "live_gate": true,
+  "production_gate": true,
+  "knowledge_regression": {
+    "cases": 60,
+    "errors": 0,
+    "runtime_correct": 60,
+    "authority_correct": 60,
+    "need_correct": 34,
+    "type_correct": 48,
+    "assertion_covered": 35,
+    "assertion_cases": 44,
+    "retrieval": {
+      "relevant": 35,
+      "related_but_detail_unanswerable": 9,
+      "irrelevant_or_insufficient": 7,
+      "missing": 5,
+      "not_applicable": 4
+    },
+    "mixed_covered": 7,
+    "mixed_cases": 10,
+    "utility": {
+      "substantive_answer": 30,
+      "missed_answer": 9,
+      "partial_answer": 14,
+      "honest_limitation": 2,
+      "advice_or_unverified_general": 1,
+      "not_measured_general": 4
+    },
+    "over_refusal": 8,
+    "natural_prose": 60,
+    "source_facts": 85,
+    "factual_support": {
+      "supported": 85
+    }
+  },
+  "previous_knowledge_outputs_unchanged": true,
+  "blocking_condition": null,
+  "artifacts": {
+    "backend_final.log": "f79b9d7e6ccea82b36133caf1ed5f58e288ac2f66024dd43dd41f945a36ad869",
+    "backend_final.xml": "f359bccddb70e7a138aafe631e01d706b25f231114b24a8da846c16b63b3f25b",
+    "companion_eval.json": "54035b3bb5abfa62bbd42972a032e95be8cc977acd02770891f2328aba06dd59",
+    "companion_eval.log": "c4a1ad1a965aa73924afbc739f8d6638941a13b7c04f2393ec2f49539697d5c8",
+    "focused.log": "77da77dfac46e937193d367f17c15615a87b5ff7616267b9f9caf91274b87eea",
+    "focused.xml": "b117ec4017b2c9d7226568157e1b6b0505e0d47bca7f187193399f953b289ff3",
+    "focused_before_session_key_fix.log": "3a148bd56f445c9dd8323cb2d8dfe6a74a31d93938a625030ce487687ae9a0c1",
+    "foundation.log": "ca8be5cfebd0761de6d3a257b5c87f3ddf2c1222c536a8e63581d3bd8d7a480f",
+    "foundation.xml": "16ba887e688be83d4e54bf44bdb7df5e9a9be1c18c21f131fc38e8645a31a24f",
+    "foundation_before_clean_db.log": "c5c2853a5afc8ad07fc23812db932af350af44438de74b05c07fd82663d3672d",
+    "foundation_benchmark.json": "6f9aa17e4cd13264a13c7c9865cc424a21cc659db18c86c2df3cffcc49163c76",
+    "foundation_full.diff": "f9f1a4ef0e0572518a425fb7270e82c5b84aadecce30692e2621f689f8d08193",
+    "import_manifest.json": "29ec6d79db3f81955cbbbdd8fcdf6add73bcbc10375a1512fbc07c77cb0444c2",
+    "knowledge_regression.log": "cf48c44fd98bcdd84c27f2d523c58e8ce541dfe63b2163fa9b405f29ef0ff922",
+    "live_provider.json": "112316e039d47daa28495de460f803ca7a368891ef0b390cabdcef652e7e7c3a",
+    "live_provider.log": "8920018e04e6fcc53476c43d40431445d32dfe9969b55dc4e6670655e42db8bd",
+    "live_provider_validated.json": "5518535da98216dd4f9513f55ab2bc71b1213184835c28528fbff88f96614cb4",
+    "production_before.json": "3ea86b522aabdc4b80ca2d43f592ce41cfb0ba53cb53db8a1b8e73f1094144c0",
+    "production_binding.json": "9348068292716ef294dbef3c53eca7a294687999fe4547eaabda9fda08428f76",
+    "production_build.log": "915f4398f1a3b15fb8301a9125622fb1a39fdc8681a1690315c4ffc00d99d6be",
+    "production_migrations.log": "05f0bf35f6d52785769968d251d1753d60a7600a49fdd022723dd62ac8ef7854",
+    "production_smoke.json": "e302af16f3db44324e266fa9ace913d6a345b943c70d3e2a0f30574242bdefea",
+    "production_smoke.log": "33ecdbad18d1b53d3c3f3b54f3e4e87c6aca0f30524b930c0f0af9e5bf516d37",
+    "production_verification.json": "c3d63610f733a3ea34000ea798d89cbb94872c26c5cd370fc057307489f86f69",
+    "real_companion.json": "f1acd752f4879e3fbf95e8a8cc56169fbf7a66a684e195080bc4f0535527b5a4",
+    "real_companion_before_final_context.json": "66df5b1e2f6f89c0f7723977fe5c4f53d6ad72d61fd8b37a9e74f245c1f5e1b0",
+    "real_companion_final.log": "ac3a501ee62a14395a3af213b820a0134db61eb8063e00a1197bafd7ab2353af",
+    "regression_evals.log": "3c409c0e10462788bdf300b4cc4db27911d0443691e2da7e63cb2cd65a9826e6",
+    "source_snapshot.json": "5c883bb98c3a4dd1a31d6ac153eb850fd51f83a89921d09ee18f888da20102ec",
+    "starting_manifest.json": "3609b4b988e461377cffa44e79b4eda2e5c95db5b408e313f304a4017acbbfed",
+    "knowledge_regression/final_results.json": "a0cd54053467bdb57da43390e60cac5390a975ff2afb0ffb66515bb935d424f4",
+    "knowledge_regression/freeze_manifest.json": "40d94946840e63871a1bedce0534ceea0ebf65653e7df627ff0bd9819567d2e1",
+    "knowledge_regression/frozen_v1.json": "f19b8c0b9b823a070d3295918bca2357bb5f4529f456f482f8fcdc9c27d3c5c1"
+  }
+}

@@ -1,0 +1,416 @@
+[
+  {
+    "case": "explicit-relative",
+    "passed": true,
+    "saved_count": 1,
+    "response": "已记下：2026-10-23 下午 · 人民公园。具体地点尚待核对；没有创建旅行或调整其他活动。可在我的安排查看或撤销。",
+    "execution_summary": {
+      "version": 1,
+      "correlation_id": "67952753-2375-443c-9145-46bfdc9c0ae7",
+      "answer_status": "complete",
+      "answer_attempts": 0,
+      "duration_ms": 3594,
+      "selection": {
+        "intent": "direct",
+        "capabilities": [],
+        "reason_code": "stable_knowledge",
+        "argument_source": "current_user_scoped_history_or_selected_place"
+      },
+      "events": [
+        {
+          "stage": "selection",
+          "status": "running",
+          "elapsed_ms": 210
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 3589,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 3374
+        },
+        {
+          "stage": "selection",
+          "status": "completed",
+          "elapsed_ms": 3590
+        }
+      ]
+    },
+    "session_id": "88a4091f-80df-4d53-9b44-78b6a1d675cb"
+  },
+  {
+    "case": "undated",
+    "passed": true,
+    "saved_count": 1,
+    "response": "已记下：日期未定 时间未定 · 宽窄巷子。具体地点尚待核对；没有创建旅行或调整其他活动。可在我的安排查看或撤销。",
+    "execution_summary": {
+      "version": 1,
+      "correlation_id": "8f09ecdf-021f-46cf-a98f-5acaa47aa56a",
+      "answer_status": "complete",
+      "answer_attempts": 0,
+      "duration_ms": 1614,
+      "selection": {
+        "intent": "direct",
+        "capabilities": [],
+        "reason_code": "stable_knowledge",
+        "argument_source": "current_user_scoped_history_or_selected_place"
+      },
+      "events": [
+        {
+          "stage": "selection",
+          "status": "running",
+          "elapsed_ms": 64
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 1613,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 1544
+        },
+        {
+          "stage": "selection",
+          "status": "completed",
+          "elapsed_ms": 1614
+        }
+      ]
+    },
+    "session_id": "4ccdd88a-149c-498a-9bd2-c8b56213c3c6"
+  },
+  {
+    "case": "hypothetical",
+    "passed": true,
+    "saved_count": 0,
+    "response": "不会太赶，除非你明天还排了很多别的事。人民公园本身就是一个可以快也可以慢的地方：喝个茶（鹤鸣茶社）、看看湖、逛一圈最多两三个小时，如果只是去坐坐发呆，半天绰绰有余。容易让人觉得赶的 usually 不是公园本身，而是同一天还想塞进宽窄巷子、武侯祠这类地方。如果你明天就打算去这一个地方，或者最多再加一个近的，完全没问题。",
+    "execution_summary": {
+      "version": 1,
+      "correlation_id": "74041e70-000c-4866-a4b5-7db0da2fbf35",
+      "answer_status": "complete",
+      "answer_attempts": 1,
+      "duration_ms": 8489,
+      "selection": {
+        "intent": "direct",
+        "capabilities": [],
+        "reason_code": "stable_knowledge",
+        "argument_source": "current_user_scoped_history_or_selected_place"
+      },
+      "events": [
+        {
+          "stage": "selection",
+          "status": "running",
+          "elapsed_ms": 59
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 2785,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 2722
+        },
+        {
+          "stage": "selection",
+          "status": "completed",
+          "elapsed_ms": 2785
+        },
+        {
+          "stage": "companion",
+          "status": "running",
+          "elapsed_ms": 2890
+        },
+        {
+          "stage": "answer",
+          "status": "running",
+          "elapsed_ms": 3001
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 8454,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 5453
+        },
+        {
+          "stage": "answer",
+          "status": "completed",
+          "elapsed_ms": 8454
+        },
+        {
+          "stage": "companion",
+          "status": "completed",
+          "elapsed_ms": 8489
+        }
+      ]
+    },
+    "session_id": "c0eae056-cd29-46e3-a950-a978c9763901"
+  },
+  {
+    "case": "third-party",
+    "passed": true,
+    "saved_count": 0,
+    "response": "人民公园值得去一趟，尤其是你朋友点名想去的情况。它最大特点是本地人真实在用：鹤鸣茶社里一整天都有人喝盖碗茶、掏耳朵，湖边有划船，抗战纪念的川军阵亡将士纪念碑也在园内，逛起来不累，一两个小时足够。代价是周末和晴天下午人多，茶社找座要等。如果你只是不想干坐着喝茶，可以先陪朋友逛一圈，自己转到旁边的祠堂街、小南街一带走走，离得很近。\n要是实在提不起兴趣，也可以跟朋友分开行动，约个碰头时间：你去看成都博物馆（在天府广场旁，常设展讲成都历史，室内凉快），之后汇合，两边相隔不远。",
+    "execution_summary": {
+      "version": 1,
+      "correlation_id": "5ca0e738-8485-4a78-96d0-af6603b09a00",
+      "answer_status": "complete",
+      "answer_attempts": 1,
+      "duration_ms": 24879,
+      "selection": {
+        "intent": "direct",
+        "capabilities": [],
+        "reason_code": "stable_knowledge",
+        "argument_source": "current_user_scoped_history_or_selected_place"
+      },
+      "events": [
+        {
+          "stage": "selection",
+          "status": "running",
+          "elapsed_ms": 75
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 14438,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 14357
+        },
+        {
+          "stage": "selection",
+          "status": "completed",
+          "elapsed_ms": 14438
+        },
+        {
+          "stage": "companion",
+          "status": "running",
+          "elapsed_ms": 14523
+        },
+        {
+          "stage": "answer",
+          "status": "running",
+          "elapsed_ms": 14595
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 24868,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 10273
+        },
+        {
+          "stage": "answer",
+          "status": "completed",
+          "elapsed_ms": 24868
+        },
+        {
+          "stage": "companion",
+          "status": "completed",
+          "elapsed_ms": 24879
+        }
+      ]
+    },
+    "session_id": "efc10188-3fe8-424a-bc88-d7110baa69f4"
+  },
+  {
+    "case": "no-save",
+    "passed": true,
+    "saved_count": 0,
+    "response": "人民公园在成都市区，资料里只有位置这一条（高德标注），没有查到具体的游玩内容、开放时间或现场体验描述，所以能告诉你的很有限。如果你想了解适合待多久、里面有哪些可看的东西，这部分目前还判断不了。 [1]",
+    "execution_summary": {
+      "version": 1,
+      "correlation_id": "12529029-5151-48cb-8916-46215a9b9fff",
+      "answer_status": "complete",
+      "answer_attempts": 1,
+      "duration_ms": 7542,
+      "selection": {
+        "intent": "lookup",
+        "capabilities": [
+          "poi"
+        ],
+        "reason_code": "place_identity",
+        "argument_source": "current_user_scoped_history_or_selected_place"
+      },
+      "events": [
+        {
+          "stage": "selection",
+          "status": "running",
+          "elapsed_ms": 89
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 4528,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 4428
+        },
+        {
+          "stage": "selection",
+          "status": "completed",
+          "elapsed_ms": 4528
+        },
+        {
+          "stage": "poi_research",
+          "status": "running",
+          "elapsed_ms": 4528
+        },
+        {
+          "stage": "poi",
+          "status": "running",
+          "elapsed_ms": 4530
+        },
+        {
+          "stage": "poi",
+          "status": "completed",
+          "elapsed_ms": 4961
+        },
+        {
+          "stage": "answer",
+          "status": "running",
+          "elapsed_ms": 5034
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 7538,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 2502
+        },
+        {
+          "stage": "answer",
+          "status": "completed",
+          "elapsed_ms": 7538
+        },
+        {
+          "stage": "poi_research",
+          "status": "completed",
+          "elapsed_ms": 7542
+        }
+      ]
+    },
+    "session_id": "95f87c48-1058-41c2-86f5-14dbcfb3855c"
+  },
+  {
+    "case": "knowledge",
+    "passed": true,
+    "saved_count": 0,
+    "response": "成都人爱喝茶，原因大致有这么几层。一是物产和气候：四川本就是产茶区，蒙顶茶、碧潭飘雪等都有历史，茶便宜易得，自然成了日常饮品。二是生活节奏：成都平原自古农耕安稳，形成了“慢慢来”的生活方式，坐茶馆一坐就是半天，晒太阳、摆龙门阵、打长牌。三是社交功能：老成都的茶馆不只是喝茶的地方，还是谈生意、调解纠纷、听说书、掏耳朵的公共客厅，很多事“茶馆里说”比在家里说方便。四是有历史传承：茶馆在成都至少延续了上百年，从清末的街巷茶铺到今天人民公园鹤鸣茶社这样的老店，喝茶已经是一种代代相传的日常习惯，不算是刻意为之的“文化体验”。",
+    "execution_summary": {
+      "version": 1,
+      "correlation_id": "2266dd49-a815-4d97-982a-1dffc62dc048",
+      "answer_status": "complete",
+      "answer_attempts": 2,
+      "duration_ms": 14221,
+      "selection": {
+        "intent": "direct",
+        "capabilities": [],
+        "reason_code": "stable_knowledge",
+        "argument_source": "current_user_scoped_history_or_selected_place"
+      },
+      "events": [
+        {
+          "stage": "selection",
+          "status": "running",
+          "elapsed_ms": 53
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 1922,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 1865
+        },
+        {
+          "stage": "selection",
+          "status": "completed",
+          "elapsed_ms": 1922
+        },
+        {
+          "stage": "companion",
+          "status": "running",
+          "elapsed_ms": 2023
+        },
+        {
+          "stage": "answer",
+          "status": "running",
+          "elapsed_ms": 2107
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 10266,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 8159
+        },
+        {
+          "stage": "answer",
+          "status": "completed",
+          "elapsed_ms": 10266
+        },
+        {
+          "stage": "answer_validation",
+          "status": "repair_requested",
+          "elapsed_ms": 10267,
+          "codes": [
+            "output_unverified_route_or_effort"
+          ]
+        },
+        {
+          "stage": "answer",
+          "status": "failed",
+          "elapsed_ms": 10267,
+          "code": "unverified_advice",
+          "category": "contract_failure",
+          "exception_chain": [
+            "AdviceContractError"
+          ],
+          "http_status": null,
+          "finish_reason": null,
+          "validation": []
+        },
+        {
+          "stage": "answer",
+          "status": "running",
+          "elapsed_ms": 10267
+        },
+        {
+          "stage": "model",
+          "status": "completed",
+          "elapsed_ms": 14210,
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "finish_reason": "stop",
+          "duration_ms": 3942
+        },
+        {
+          "stage": "answer",
+          "status": "completed",
+          "elapsed_ms": 14210
+        },
+        {
+          "stage": "companion",
+          "status": "completed",
+          "elapsed_ms": 14216
+        }
+      ]
+    },
+    "session_id": "d8493740-bfb4-4866-876b-0bd79b5fd982"
+  }
+]

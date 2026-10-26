@@ -1,0 +1,2129 @@
+{
+  "version": "companion-knowledge-strategy-v1",
+  "fixture_sha256": "50a640606966e6dbc48385502b0e34d1fadec8dd1e7e8cc597a81be0222cfab7",
+  "fixture": "E:\\Study\\RoamSync\\backend\\evals\\fixtures\\companion_knowledge_strategy_v1.json",
+  "selected_case_ids": [
+    "history",
+    "followup",
+    "source_valid",
+    "forecast",
+    "planning"
+  ],
+  "endpoint": {
+    "scheme": "https",
+    "host": "open.bigmodel.cn",
+    "port": null,
+    "path": "/api/paas/v4"
+  },
+  "proxy": {
+    "scheme": "http",
+    "host": "127.0.0.1",
+    "port": 7897,
+    "path": ""
+  },
+  "real_model": true,
+  "model": "glm-5.3-flash",
+  "provider": "glm",
+  "reasoning_effort": "low",
+  "max_output_tokens": 8000,
+  "format_repair_limit": 1,
+  "provider_retries": 0,
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "fact_tool": "absent; deliberately measures unavailable-information degradation",
+  "rules": {
+    "accuracy": "0 incorrect / 1 partial or uncertain / 2 correct; check stable historical statements against independent sources",
+    "completeness": "0 missed / 1 partial / 2 covers requested aspects",
+    "relevance": "0 off-topic / 1 partly / 2 directly answers",
+    "naturalness": "0 rigid / 1 usable / 2 fluent and context-aware",
+    "citation_authenticity": "every attributed fact must use supplied canonical source and supported assertion; model knowledge is not retrieved evidence",
+    "hallucination": "record unsupported factual statements and unverified dynamic assertions separately",
+    "review": "scores remain null until a human reviews saved output; controlled responses never establish answer quality"
+  },
+  "rows": [
+    {
+      "case_id": "history",
+      "mode": "A",
+      "input": "南京为什么叫六朝古都？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "南京被称为“六朝古都”，是因为从三国到南北朝时期，先后有六个王朝在此建都：东吴（孙权定都建业）、东晋，以及南朝的宋、齐、梁、陈。这段时期从公元3世纪初延续到6世纪末，约三百六十年，南京（当时称建业、建康）一直是南方政权的政治文化中心。此后南唐、明初、太平天国和中华民国也定都于此，所以南京又有“十朝都会”之说。想感受这段历史，可以去六朝博物馆、鸡鸣寺一带的台城遗址，以及紫金山下的南朝石刻遗迹。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_c05afc50d1555fa78ed470243e8feaa7",
+            "suggestion_type": "place",
+            "title": "六朝博物馆",
+            "summary": "位于长江路的专题博物馆，展示六朝时期建康城的文物与城市遗迹。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "六朝博物馆"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "直接对应六朝历史主题",
+              "建筑本身由贝聿铭团队设计，展陈氛围好"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T00:58:16.101252Z",
+            "conversation_turn_id": "history",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_a889efe4ada659c19fcf9a1fb5475e37",
+            "suggestion_type": "place",
+            "title": "鸡鸣寺与台城段明城墙",
+            "summary": "可俯瞰玄武湖和紫金山，周边与六朝台城遗址相关联。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "鸡鸣寺与台城段明城墙"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "历史层次丰富，六朝遗韵与明代城墙叠合",
+              "春季樱花道是南京著名拍摄点"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T00:58:16.101252Z",
+            "conversation_turn_id": "history",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "general_knowledge",
+          "knowledge_strategy": "general_only",
+          "knowledge_reasons": [
+            "stable_model_knowledge_no_retrieval"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "南京",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 9.445832500000051,
+      "model_calls": 1,
+      "usage": [
+        {
+          "completion_tokens": 299,
+          "prompt_tokens": 1198,
+          "total_tokens": 1497,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      ],
+      "total_tokens": 1497,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 299,
+            "prompt_tokens": 1198,
+            "total_tokens": 1497,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0
+            }
+          },
+          "duration_seconds": 9.098789000000124,
+          "finish_reason": "stop"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "history",
+      "mode": "B",
+      "input": "南京为什么叫六朝古都？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+        "goal_type": "explanation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "rag_candidate",
+          "knowledge_strategy": "forced_rag",
+          "knowledge_reasons": [
+            "forced_rag_baseline"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "destination_profile",
+            "history_culture",
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unsupported_query",
+            "message": "当前小型知识库不覆盖这个目的地或主题。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "南京",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "unavailable",
+          "outcome": "unsupported_query",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 1,
+      "retrieval_seconds": 1.970000039364095e-05,
+      "latency_seconds": 0.055968399999983376,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "history",
+      "mode": "C",
+      "input": "南京为什么叫六朝古都？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "“六朝古都”指的是历史上先后有六个朝代把都城建在南京：三国时的东吴，以及东晋和南朝的宋、齐、梁、陈（合称“六朝”，约公元3—6世纪）。这几个政权都以建康（今南京）为都城，因此南京得了“六朝古都”的名号。如果算上后来的南唐、明初、太平天国和中华民国，“十朝都会”的说法也常被使用。想感受这段历史，可以去六朝博物馆、石头城遗址或鸡鸣寺一带走走。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_c05afc50d1555fa78ed470243e8feaa7",
+            "suggestion_type": "place",
+            "title": "六朝博物馆",
+            "summary": "南京地标性历史类博物馆",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "六朝博物馆"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "直接展示六朝时期文物与城市考古成果，是理解“六朝古都”最直观的地方",
+              "建筑本身由贝聿铭团队设计，光影空间也很适合摄影"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T00:58:22.420437Z",
+            "conversation_turn_id": "history",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "general_knowledge",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "stable_model_knowledge_no_retrieval"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "南京",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 6.256210200000169,
+      "model_calls": 1,
+      "usage": [
+        {
+          "completion_tokens": 211,
+          "prompt_tokens": 1198,
+          "total_tokens": 1409,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      ],
+      "total_tokens": 1409,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 211,
+            "prompt_tokens": 1198,
+            "total_tokens": 1409,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0
+            }
+          },
+          "duration_seconds": 6.16608320000023,
+          "finish_reason": "stop"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "followup",
+      "mode": "A",
+      "input": "那有什么适合我的体验？",
+      "goal": {
+        "goal_type": "recommendation",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": true,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": true,
+        "clarification_needed": false,
+        "signals": [
+          "companion_recommendation"
+        ]
+      },
+      "output": {
+        "response_text": "结合你偏爱安静街巷、不爱排队的偏好，苏州有几个很适合的体验：一是清晨去平江路周边的小巷，比如大儒巷、钮家巷，早高峰前的石板路几乎没人，可以慢慢感受水巷生活和老宅门头；二是走走五峰园、艺圃一带的小众园林线路，艺圃规模小、氛围静，比拙政园清幽得多。拍照建议用竖构图收进白墙黛瓦与巷弄纵深，清晨柔和侧光最适合表现石板路的质感。开放情况请以现场信息为准。",
+        "goal_type": "recommendation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_75387f65044657979862517d8f0e0cfb",
+            "suggestion_type": "experience",
+            "title": "清晨漫步平江路周边小巷（大儒巷、钮家巷）",
+            "summary": "避开人流，在安静石板巷里感受老苏州水巷生活。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "清晨漫步平江路周边小巷（大儒巷、钮家巷）"
+              }
+            ],
+            "destination": "有什么",
+            "reasons": [
+              "符合偏好安静的街巷",
+              "清晨几乎无排队与人群",
+              "适合慢节奏摄影"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T00:58:30.167541Z",
+            "conversation_turn_id": "followup",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_d491fbe4f4ea5f07bef6863a09358292",
+            "suggestion_type": "place",
+            "title": "艺圃小众园林",
+            "summary": "规模小巧、游人较少的明代园林，氛围清幽。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "艺圃小众园林"
+              }
+            ],
+            "destination": "有什么",
+            "reasons": [
+              "比热门园林安静许多",
+              "适合慢慢观赏与拍照",
+              "贴近本地生活气息"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T00:58:30.167541Z",
+            "conversation_turn_id": "followup",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "context_required",
+          "knowledge_strategy": "general_only",
+          "knowledge_reasons": [
+            "saved_context_read_only"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "有什么",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [
+        {
+          "id": "prior",
+          "user": "我喜欢安静的街巷，不喜欢排队。准备去苏州。",
+          "assistant": "可以从慢节奏的街巷体验开始。"
+        }
+      ],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 7.741563800000222,
+      "model_calls": 1,
+      "usage": [
+        {
+          "completion_tokens": 264,
+          "prompt_tokens": 1259,
+          "total_tokens": 1523,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      ],
+      "total_tokens": 1523,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 264,
+            "prompt_tokens": 1259,
+            "total_tokens": 1523,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0
+            }
+          },
+          "duration_seconds": 7.602299600000151,
+          "finish_reason": "stop"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "followup",
+      "mode": "B",
+      "input": "那有什么适合我的体验？",
+      "goal": {
+        "goal_type": "recommendation",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": true,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": true,
+        "clarification_needed": false,
+        "signals": [
+          "companion_recommendation"
+        ]
+      },
+      "output": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+        "goal_type": "recommendation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "mixed",
+          "knowledge_strategy": "forced_rag",
+          "knowledge_reasons": [
+            "saved_context_read_only",
+            "forced_rag_baseline"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "destination_profile",
+            "history_culture",
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unsupported_query",
+            "message": "当前小型知识库不覆盖这个目的地或主题。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "有什么",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "unavailable",
+          "outcome": "unsupported_query",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [
+        {
+          "id": "prior",
+          "user": "我喜欢安静的街巷，不喜欢排队。准备去苏州。",
+          "assistant": "可以从慢节奏的街巷体验开始。"
+        }
+      ],
+      "rag_calls": 1,
+      "retrieval_seconds": 2.4700000267330324e-05,
+      "latency_seconds": 0.06172890000016196,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "followup",
+      "mode": "C",
+      "input": "那有什么适合我的体验？",
+      "goal": {
+        "goal_type": "recommendation",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": true,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": true,
+        "clarification_needed": false,
+        "signals": [
+          "companion_recommendation"
+        ]
+      },
+      "output": {
+        "response_text": "结合你喜欢的安静街巷和不想排队的偏好，推荐两个苏州体验：\n\n1. 平江路周边的小巷深游：不去主街，往两侧支巷如大儒巷、钮家巷、悬桥巷走，看老宅、古井和评弹声，人少安静。摄影上适合清晨去，柔和侧光打在白墙黛瓦上，窄巷用竖构图更有纵深感。\n\n2. 葑门横街＋十全街一带慢逛：横街是本地人的市集烟火，十全街的支巷更清静，可以边走边看苏式生活。适合人文抓拍，注意尊重摊主，长焦或自然抓拍更自然。\n\n两个都是随走随停、无需排队的玩法。",
+        "goal_type": "recommendation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_75387f65044657979862517d8f0e0cfb",
+            "suggestion_type": "experience",
+            "title": "平江路支巷深游",
+            "summary": "避开主街人流，走大儒巷、钮家巷、悬桥巷等安静小巷，清晨光线适合拍摄白墙黛瓦。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "平江路支巷深游"
+              }
+            ],
+            "destination": "有什么",
+            "reasons": [
+              "符合安静街巷偏好",
+              "无需排队",
+              "清晨竖构图出片"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T00:58:38.885434Z",
+            "conversation_turn_id": "followup",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_d491fbe4f4ea5f07bef6863a09358292",
+            "suggestion_type": "experience",
+            "title": "葑门横街与十全街慢逛",
+            "summary": "本地市集烟火加清静支巷，适合人文抓拍，节奏自由。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "葑门横街与十全街慢逛"
+              }
+            ],
+            "destination": "有什么",
+            "reasons": [
+              "体验苏州本地生活",
+              "人少不排队",
+              "人文摄影素材丰富"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T00:58:38.885434Z",
+            "conversation_turn_id": "followup",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "context_required",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "saved_context_read_only"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "有什么",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [
+        {
+          "id": "prior",
+          "user": "我喜欢安静的街巷，不喜欢排队。准备去苏州。",
+          "assistant": "可以从慢节奏的街巷体验开始。"
+        }
+      ],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 8.653466300000218,
+      "model_calls": 1,
+      "usage": [
+        {
+          "completion_tokens": 325,
+          "prompt_tokens": 1259,
+          "total_tokens": 1584,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 768
+          }
+        }
+      ],
+      "total_tokens": 1584,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 325,
+            "prompt_tokens": 1259,
+            "total_tokens": 1584,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 768
+            }
+          },
+          "duration_seconds": 8.553304800000205,
+          "finish_reason": "stop"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "source_valid",
+      "mode": "A",
+      "input": "西湖列入世界遗产是哪年？请给出来源。",
+      "goal": {
+        "goal_type": "travel_chat",
+        "confidence": 0.55,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": false,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "uncertain_no_mutation_authorization"
+        ]
+      },
+      "output": {
+        "response_text": "现有来源不足以核实这个问题。可以补充具体出处，或改为一般介绍。",
+        "goal_type": "travel_chat",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "rag_candidate",
+          "knowledge_strategy": "general_only",
+          "knowledge_reasons": [
+            "explicit_source_request",
+            "general_only_cannot_supply_sources"
+          ],
+          "source_required": true,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "history_culture"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "factual",
+          "requested_fact_topics": [
+            "heritage_inscription_year"
+          ]
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unavailable",
+            "message": "当前没有可用的知识检索证据，检索服务不可用。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "unavailable",
+          "outcome": "retriever_unavailable",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 0.0732466000004024,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "source_valid",
+      "mode": "B",
+      "input": "西湖列入世界遗产是哪年？请给出来源。",
+      "goal": {
+        "goal_type": "travel_chat",
+        "confidence": 0.55,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": false,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "uncertain_no_mutation_authorization"
+        ]
+      },
+      "output": {
+        "response_text": "UNESCO 页面记载，杭州西湖文化景观于2011年列入《世界遗产名录》。",
+        "goal_type": "travel_chat",
+        "status": "completed",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "rag_candidate",
+          "knowledge_strategy": "forced_rag",
+          "knowledge_reasons": [
+            "explicit_source_request"
+          ],
+          "source_required": true,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "history_culture"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "factual",
+          "requested_fact_topics": [
+            "heritage_inscription_year"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [
+          {
+            "evidence_ref": "knowledge_03f9fdbb3bc55d3c_0b61323f4381a254bd5ea3406cc0ca15",
+            "text": "西湖及三面环山的景观自九世纪以来启发了诗人、学者与艺术家。堤、岛及寺塔园林等人工要素体现了中国传统山水审美。杭州西湖文化景观于2011年列入世界遗产。 UNESCO 页面还记载，两条堤道与三座岛屿等主要人工要素是在九至十二世纪的反复疏浚中形成。",
+            "source_reference": "https://whc.unesco.org/en/list/1334",
+            "knowledge_type": "history_culture",
+            "scope": "stable",
+            "document_id": "hz-westlake-history",
+            "chunk_id": "0b61323f4381a254bd5ea3406cc0ca15ece3cb2752cda34ca480da34d53347d8",
+            "document_title": "西湖历史与文化景观",
+            "source_name": "UNESCO World Heritage Centre",
+            "source_type": "web",
+            "source_authority": "institutional",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": "tourism_corpus:curated:hz-westlake-history",
+            "place_name": "西湖",
+            "applicability": "place",
+            "applicability_target": "西湖",
+            "content_origin": "source_paraphrase",
+            "source_page_title": "West Lake Cultural Landscape of Hangzhou",
+            "curator_title": "西湖历史与文化景观",
+            "answerable_assertions": [
+              {
+                "assertion_id": "west_lake.heritage_inscription_year",
+                "text": "UNESCO 页面记载，杭州西湖文化景观于2011年列入《世界遗产名录》。",
+                "claim_type": "retrieved_fact",
+                "topics": [
+                  "heritage_inscription_year"
+                ],
+                "applicability": {
+                  "scope": "place",
+                  "target": "西湖"
+                }
+              }
+            ]
+          }
+        ],
+        "answer_evidence_refs": [
+          "knowledge_03f9fdbb3bc55d3c_0b61323f4381a254bd5ea3406cc0ca15"
+        ],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "available",
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-10-11T00:58:39.046063Z",
+          "retrieved_document_refs": [
+            "hz-westlake-history"
+          ],
+          "retrieved_chunk_refs": [
+            "0b61323f4381a254bd5ea3406cc0ca15ece3cb2752cda34ca480da34d53347d8"
+          ]
+        },
+        "grounding_status": "citations_validated",
+        "grounding_limitations": [
+          "claim_entailment_not_verified",
+          "tourism_knowledge_not_live_verified"
+        ],
+        "claims": [
+          {
+            "claim_id": "claim_75e7af8c633b513282c268dbbb9231ad",
+            "text": "UNESCO 页面记载，杭州西湖文化景观于2011年列入《世界遗产名录》。",
+            "claim_type": "retrieved_fact",
+            "evidence_refs": [
+              "knowledge_03f9fdbb3bc55d3c_0b61323f4381a254bd5ea3406cc0ca15"
+            ],
+            "assertion_ids": [
+              "west_lake.heritage_inscription_year"
+            ],
+            "applicability": {
+              "scope": "place",
+              "target": "西湖"
+            },
+            "support_status": "supported",
+            "applicability_status": "compatible",
+            "attribution_status": "accurate",
+            "source_attributions": [
+              {
+                "source_organization": "UNESCO World Heritage Centre",
+                "source_page_title": "West Lake Cultural Landscape of Hangzhou",
+                "source_url": "https://whc.unesco.org/en/list/1334",
+                "document_id": "hz-westlake-history"
+              }
+            ]
+          }
+        ],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 1,
+      "retrieval_seconds": 0.008620899999641551,
+      "latency_seconds": 0.0969532999997682,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "source_valid",
+      "mode": "C",
+      "input": "西湖列入世界遗产是哪年？请给出来源。",
+      "goal": {
+        "goal_type": "travel_chat",
+        "confidence": 0.55,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": false,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "uncertain_no_mutation_authorization"
+        ]
+      },
+      "output": {
+        "response_text": "UNESCO 页面记载，杭州西湖文化景观于2011年列入《世界遗产名录》。",
+        "goal_type": "travel_chat",
+        "status": "completed",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "rag_candidate",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "explicit_source_request"
+          ],
+          "source_required": true,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "history_culture"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "factual",
+          "requested_fact_topics": [
+            "heritage_inscription_year"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [
+          {
+            "evidence_ref": "knowledge_03f9fdbb3bc55d3c_0b61323f4381a254bd5ea3406cc0ca15",
+            "text": "西湖及三面环山的景观自九世纪以来启发了诗人、学者与艺术家。堤、岛及寺塔园林等人工要素体现了中国传统山水审美。杭州西湖文化景观于2011年列入世界遗产。 UNESCO 页面还记载，两条堤道与三座岛屿等主要人工要素是在九至十二世纪的反复疏浚中形成。",
+            "source_reference": "https://whc.unesco.org/en/list/1334",
+            "knowledge_type": "history_culture",
+            "scope": "stable",
+            "document_id": "hz-westlake-history",
+            "chunk_id": "0b61323f4381a254bd5ea3406cc0ca15ece3cb2752cda34ca480da34d53347d8",
+            "document_title": "西湖历史与文化景观",
+            "source_name": "UNESCO World Heritage Centre",
+            "source_type": "web",
+            "source_authority": "institutional",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": "tourism_corpus:curated:hz-westlake-history",
+            "place_name": "西湖",
+            "applicability": "place",
+            "applicability_target": "西湖",
+            "content_origin": "source_paraphrase",
+            "source_page_title": "West Lake Cultural Landscape of Hangzhou",
+            "curator_title": "西湖历史与文化景观",
+            "answerable_assertions": [
+              {
+                "assertion_id": "west_lake.heritage_inscription_year",
+                "text": "UNESCO 页面记载，杭州西湖文化景观于2011年列入《世界遗产名录》。",
+                "claim_type": "retrieved_fact",
+                "topics": [
+                  "heritage_inscription_year"
+                ],
+                "applicability": {
+                  "scope": "place",
+                  "target": "西湖"
+                }
+              }
+            ]
+          }
+        ],
+        "answer_evidence_refs": [
+          "knowledge_03f9fdbb3bc55d3c_0b61323f4381a254bd5ea3406cc0ca15"
+        ],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 1,
+          "status": "available",
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-10-11T00:58:39.120760Z",
+          "retrieved_document_refs": [
+            "hz-westlake-history"
+          ],
+          "retrieved_chunk_refs": [
+            "0b61323f4381a254bd5ea3406cc0ca15ece3cb2752cda34ca480da34d53347d8"
+          ]
+        },
+        "grounding_status": "citations_validated",
+        "grounding_limitations": [
+          "claim_entailment_not_verified",
+          "tourism_knowledge_not_live_verified"
+        ],
+        "claims": [
+          {
+            "claim_id": "claim_75e7af8c633b513282c268dbbb9231ad",
+            "text": "UNESCO 页面记载，杭州西湖文化景观于2011年列入《世界遗产名录》。",
+            "claim_type": "retrieved_fact",
+            "evidence_refs": [
+              "knowledge_03f9fdbb3bc55d3c_0b61323f4381a254bd5ea3406cc0ca15"
+            ],
+            "assertion_ids": [
+              "west_lake.heritage_inscription_year"
+            ],
+            "applicability": {
+              "scope": "place",
+              "target": "西湖"
+            },
+            "support_status": "supported",
+            "applicability_status": "compatible",
+            "attribution_status": "accurate",
+            "source_attributions": [
+              {
+                "source_organization": "UNESCO World Heritage Centre",
+                "source_page_title": "West Lake Cultural Landscape of Hangzhou",
+                "source_url": "https://whc.unesco.org/en/list/1334",
+                "document_id": "hz-westlake-history"
+              }
+            ]
+          }
+        ],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 1,
+      "retrieval_seconds": 0.000881400000253052,
+      "latency_seconds": 0.06273299999975279,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "forecast",
+      "mode": "A",
+      "input": "杭州明天下午天气怎么样？",
+      "goal": {
+        "goal_type": "destination_exploration",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": true,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_destination_exploration"
+        ]
+      },
+      "output": {
+        "response_text": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+        "goal_type": "destination_exploration",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "live_fact_required",
+          "knowledge_strategy": "general_only",
+          "knowledge_reasons": [
+            "dynamic_fact_requires_provider"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [],
+          "live_fact_required": true,
+          "forecast_required": true,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [
+            "weather"
+          ],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "live_fact_unavailable",
+            "message": "实时部分目前无法核实；当天开放、天气、花况、价格或交通请以官方最新信息为准。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "live_verification_required",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 0.08329460000004474,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "forecast",
+      "mode": "B",
+      "input": "杭州明天下午天气怎么样？",
+      "goal": {
+        "goal_type": "destination_exploration",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": true,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_destination_exploration"
+        ]
+      },
+      "output": {
+        "response_text": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+        "goal_type": "destination_exploration",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "live_fact_required",
+          "knowledge_strategy": "forced_rag",
+          "knowledge_reasons": [
+            "dynamic_fact_requires_provider"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [],
+          "live_fact_required": true,
+          "forecast_required": true,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [
+            "weather"
+          ],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "live_fact_unavailable",
+            "message": "实时部分目前无法核实；当天开放、天气、花况、价格或交通请以官方最新信息为准。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "live_verification_required",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 0.14167049999969095,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "forecast",
+      "mode": "C",
+      "input": "杭州明天下午天气怎么样？",
+      "goal": {
+        "goal_type": "destination_exploration",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": true,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_destination_exploration"
+        ]
+      },
+      "output": {
+        "response_text": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+        "goal_type": "destination_exploration",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "live_fact_required",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "dynamic_fact_requires_provider"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [],
+          "live_fact_required": true,
+          "forecast_required": true,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [
+            "weather"
+          ],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "live_fact_unavailable",
+            "message": "实时部分目前无法核实；当天开放、天气、花况、价格或交通请以官方最新信息为准。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "live_verification_required",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 0.062152900000000955,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "planning",
+      "mode": "A",
+      "input": "帮我规划南京三天行程",
+      "goal": {
+        "goal_type": "trip_planning",
+        "confidence": 0.96,
+        "target_runtime": "planning",
+        "mutation_requested": true,
+        "trip_context_required": false,
+        "knowledge_required": false,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "explicit_user_planning_request"
+        ]
+      },
+      "output": null,
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 3.59000000571541e-05,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "runtime_expected": true,
+        "no_runtime_mutation": true
+      }
+    },
+    {
+      "case_id": "planning",
+      "mode": "B",
+      "input": "帮我规划南京三天行程",
+      "goal": {
+        "goal_type": "trip_planning",
+        "confidence": 0.96,
+        "target_runtime": "planning",
+        "mutation_requested": true,
+        "trip_context_required": false,
+        "knowledge_required": false,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "explicit_user_planning_request"
+        ]
+      },
+      "output": null,
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 3.3799999982875306e-05,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "runtime_expected": true,
+        "no_runtime_mutation": true
+      }
+    },
+    {
+      "case_id": "planning",
+      "mode": "C",
+      "input": "帮我规划南京三天行程",
+      "goal": {
+        "goal_type": "trip_planning",
+        "confidence": 0.96,
+        "target_runtime": "planning",
+        "mutation_requested": true,
+        "trip_context_required": false,
+        "knowledge_required": false,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "explicit_user_planning_request"
+        ]
+      },
+      "output": null,
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 3.080000033151009e-05,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "runtime_expected": true,
+        "no_runtime_mutation": true
+      }
+    }
+  ],
+  "complete": true,
+  "summary": {
+    "A": {
+      "cases": 5,
+      "companion_cases": 4,
+      "rag_calls": 0,
+      "rag_rate": 0.0,
+      "model_calls": 2,
+      "provider_reported_tokens": 3020,
+      "usage_missing_model_rows": 0,
+      "mean_latency_seconds": 4.33598437500018,
+      "retrieval_seconds": 0.0,
+      "automatic_checks_passed": 5,
+      "quality_scores": "manual review pending; no synthetic quality ranking"
+    },
+    "B": {
+      "cases": 5,
+      "companion_cases": 4,
+      "rag_calls": 3,
+      "rag_rate": 0.75,
+      "model_calls": 0,
+      "provider_reported_tokens": null,
+      "usage_missing_model_rows": 0,
+      "mean_latency_seconds": 0.08908027499990112,
+      "retrieval_seconds": 0.008665300000302523,
+      "automatic_checks_passed": 5,
+      "quality_scores": "manual review pending; no synthetic quality ranking"
+    },
+    "C": {
+      "cases": 5,
+      "companion_cases": 4,
+      "rag_calls": 1,
+      "rag_rate": 0.25,
+      "model_calls": 2,
+      "provider_reported_tokens": 2993,
+      "usage_missing_model_rows": 0,
+      "mean_latency_seconds": 3.758640600000035,
+      "retrieval_seconds": 0.000881400000253052,
+      "automatic_checks_passed": 5,
+      "quality_scores": "manual review pending; no synthetic quality ranking"
+    }
+  }
+}

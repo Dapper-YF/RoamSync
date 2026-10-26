@@ -1,0 +1,142 @@
+diff --git a/backend/app/planning_intent_service.py b/backend/app/planning_intent_service.py
+index 36a3ed8..ed2aa93 100644
+--- a/backend/app/planning_intent_service.py
++++ b/backend/app/planning_intent_service.py
+@@ -666,7 +666,7 @@ def _is_plan_meta_activity_reference(value: str) -> bool:
+         return True
+     # Whole plan properties are not venue names. This runs only after real
+     # activity aliases have been matched; unknown named venues still clarify.
+-    if value == "其他日期不变":
++    if re.fullmatch(r"其他日期(?:安排)?不变", value):
+         return True
+     if re.fullmatch(
+         r"整体[一二三四五六七八九十两\d]+天[（(]\d{4}-\d{2}-\d{2}(?:至|到)\d{4}-\d{2}-\d{2}[）)]框架",
+diff --git a/backend/tests/test_planning_intents.py b/backend/tests/test_planning_intents.py
+index 846ea9f..a246223 100644
+--- a/backend/tests/test_planning_intents.py
++++ b/backend/tests/test_planning_intents.py
+@@ -592,6 +592,7 @@ def test_place_mention_prefers_unique_scoped_formal_activity_and_clarifies_ambig
+     "保留整体三天（2026-10-09至2026-10-11）框架与其他日期不变",
+     "保留整体三天(2026-10-09至2026-10-11)框架与其他日期不变",
+     "保留其他日期不变",
++    "保留其他日期安排不变",
+ ])
+ def test_day_candidate_edit_plan_frame_is_not_a_missing_activity(preservation):
+     with TestClient(app) as client:
+@@ -619,3 +620,8 @@ def test_plan_frame_meta_does_not_hide_known_or_unknown_venue_references():
+     protected = _resolve_protected_activities("请调整第二天，保留框架博物馆与不存在的三天博物馆与其他日期不变", entities, None, ambiguities, target_day_id=day)
+     assert protected == [activity]
+     assert ambiguities == ["activity_not_found:不存在的三天博物馆"]
++
++    # A real alias wins before plan-meta filtering, even when it equals a label.
++    assert _resolve_protected_activities("保留其他日期安排不变", [_ActivityEntity(activity, day, date(2026, 10, 10), ("其他日期安排不变",))], None, [], target_day_id=day) == [activity]
++    from app.planning_intent_service import _is_plan_meta_activity_reference
++    assert not _is_plan_meta_activity_reference("其他日期安排不变博物馆")
+diff --git a/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md b/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md
+index e256459..57b62df 100644
+--- a/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md
++++ b/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md
+@@ -1,4 +1,16 @@
+-> Current checkpoint2026-10-08: Provider fixed6/6 health and unchanged-release initial Candidate8activities passed. Full clean E2E is blocked by confirmed plan-property/activity misclassification during day2 edit; one normal clarification did not clear it. Proposed2path minimal patch passed858 Linux/PG17 tests in an independent archive; not committed/applied. Human approved the exact six-path candidate scope; clean-ref lifecycle verification is next. See backend/evals/results/planner_reliability_20261008/PLANNER_RELIABILITY_GATE_20261008.md. Prior contents below are historical checkpoints. Production unchanged; no online authorization.
++# Current reliability checkpoint — 2026-10-08
++
++Status: NOT READY. Original application8ee7dbf/documentation0b5010fe preserved. The human-approved six-path candidate is 26e33f7ecec848403c0992953c61216ddb305fec, branch codex/roamsync-planner-reliability-20261008; clean checkout E:/Study/RoamSync-planner-reliability-clean-20261008. Source6d0257506c8ae65cbfc640cbdbfd3376b23bac2cf9623306432513f48ddca1eb. Initial checkout was Git clean; later untracked browser evidence under backend/evals/results does not alter tracked source. API/Worker175 shipped files exactly match, no mounts; external provider configuration unchanged. Nginx3001/API8001 share isolated PG17; old failed Runs and Trips remain exactly preserved.
++
++MEASURED: clean Git locked Backend/Worker/Web builds; empty PG17 migrations0→0034;858 passed/0fail/error/skip/2existing warnings. Web typecheck,125tests and build freshly passed. Bounded predefined real GLM6/6 completed/stop,0retries; strict Research2/2. This is a small sample, not an availability guarantee. Historical Research JSON raw completion/parse position and deeper transport origin remain UNLOCATED; separate categories, no guessed fix or provider replacement.
++
++The new-ref normal browser exploration/facts/create preview/confirmation generated a valid nonempty8-activity Candidate: Trip58239cd8-b097-4898-870f-f49f1a98719d, Run5981caad-00b9-40ca-8d2f-671b4a92717b, Revision1e0c5bab-5d7d-45fc-bafe-6f7761112739. Validator valid=true/errors=[]; route schedule warning transparently recorded. UI visible, pending, formalactivities0/version1. Day2 edit Runbbea2a1a-e7f1-4bf6-bd6f-cc12ab8200a4 remains awaiting_clarification: generated “其他日期安排不变” is incorrectly treated as a missing activity. One normal UI supplement returns200 but retains the same ambiguity. This is a confirmed internal parser defect, independent of historical JSON/transport categories. Candidate Accept and Execution/Disruption/Recovery/Reject/Explanation have NOT passed on this candidate.
++
++Independent follow-up proposal, NOT applied or committed: replace the exact equality with re.fullmatch(r"其他日期(?:安排)?不变", value), after real alias matching; add the observed form regression plus exact real-alias precedence and unknown venue negative checks. Five focused cases: old candidate1failed/4passed; patched5passed. Validator, Graph, route/time/budget, settings and explicit confirmation unchanged. Proposed source 3ae41a2daf9229933d1429fd9b2c58ff34a3564fb802f26a337b8c9d9faee52c; further source commit needs exact human authorization. Raw evidence/patch/manifests are excluded from Git in backend/evals/results/planner_reliability_20261008.
++
++Production remains unchanged on8000/3000; no deployment/main merge/production migration/reset/Trip deletion. No RELEASE CANDIDATE READY claim. Next: approve the measured follow-up patch, create a new source identity and repeat affected clean locked regression/build/runtime binding and full real browser chain. After complete success only, request online approval. Future deployment plan: preserve current image IDs and external configuration; after explicit authorization take and verify DB backup, confirm production schema/readiness, resolve the automatic migration entrypoint separately, deploy API/Worker/Web together and perform read-only bindings. Rollback restores prior images/configuration while retaining PG volume and newer user records; no down migration/reset/restoration over newer data without separate authorization.
++
++## Historical checkpoint preserved below
+ 
+ # Repository Reproducibility Acceptance — 2026-10-08
+ 
+diff --git a/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md b/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md
+index ecfb873..5f8e321 100644
+--- a/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md
++++ b/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md
+@@ -1,4 +1,16 @@
+-> Current checkpoint2026-10-08: Provider fixed6/6 health and unchanged-release initial Candidate8activities passed. Full clean E2E is blocked by confirmed plan-property/activity misclassification during day2 edit; one normal clarification did not clear it. Proposed2path minimal patch passed858 Linux/PG17 tests in an independent archive; not committed/applied. Human approved the exact six-path candidate scope; clean-ref lifecycle verification is next. See backend/evals/results/planner_reliability_20261008/PLANNER_RELIABILITY_GATE_20261008.md. Prior contents below are historical checkpoints. Production unchanged; no online authorization.
++# Current reliability checkpoint — 2026-10-08
++
++Status: NOT READY. Original application8ee7dbf/documentation0b5010fe preserved. The human-approved six-path candidate is 26e33f7ecec848403c0992953c61216ddb305fec, branch codex/roamsync-planner-reliability-20261008; clean checkout E:/Study/RoamSync-planner-reliability-clean-20261008. Source6d0257506c8ae65cbfc640cbdbfd3376b23bac2cf9623306432513f48ddca1eb. Initial checkout was Git clean; later untracked browser evidence under backend/evals/results does not alter tracked source. API/Worker175 shipped files exactly match, no mounts; external provider configuration unchanged. Nginx3001/API8001 share isolated PG17; old failed Runs and Trips remain exactly preserved.
++
++MEASURED: clean Git locked Backend/Worker/Web builds; empty PG17 migrations0→0034;858 passed/0fail/error/skip/2existing warnings. Web typecheck,125tests and build freshly passed. Bounded predefined real GLM6/6 completed/stop,0retries; strict Research2/2. This is a small sample, not an availability guarantee. Historical Research JSON raw completion/parse position and deeper transport origin remain UNLOCATED; separate categories, no guessed fix or provider replacement.
++
++The new-ref normal browser exploration/facts/create preview/confirmation generated a valid nonempty8-activity Candidate: Trip58239cd8-b097-4898-870f-f49f1a98719d, Run5981caad-00b9-40ca-8d2f-671b4a92717b, Revision1e0c5bab-5d7d-45fc-bafe-6f7761112739. Validator valid=true/errors=[]; route schedule warning transparently recorded. UI visible, pending, formalactivities0/version1. Day2 edit Runbbea2a1a-e7f1-4bf6-bd6f-cc12ab8200a4 remains awaiting_clarification: generated “其他日期安排不变” is incorrectly treated as a missing activity. One normal UI supplement returns200 but retains the same ambiguity. This is a confirmed internal parser defect, independent of historical JSON/transport categories. Candidate Accept and Execution/Disruption/Recovery/Reject/Explanation have NOT passed on this candidate.
++
++Independent follow-up proposal, NOT applied or committed: replace the exact equality with re.fullmatch(r"其他日期(?:安排)?不变", value), after real alias matching; add the observed form regression plus exact real-alias precedence and unknown venue negative checks. Five focused cases: old candidate1failed/4passed; patched5passed. Validator, Graph, route/time/budget, settings and explicit confirmation unchanged. Proposed source 3ae41a2daf9229933d1429fd9b2c58ff34a3564fb802f26a337b8c9d9faee52c; further source commit needs exact human authorization. Raw evidence/patch/manifests are excluded from Git in backend/evals/results/planner_reliability_20261008.
++
++Production remains unchanged on8000/3000; no deployment/main merge/production migration/reset/Trip deletion. No RELEASE CANDIDATE READY claim. Next: approve the measured follow-up patch, create a new source identity and repeat affected clean locked regression/build/runtime binding and full real browser chain. After complete success only, request online approval. Future deployment plan: preserve current image IDs and external configuration; after explicit authorization take and verify DB backup, confirm production schema/readiness, resolve the automatic migration entrypoint separately, deploy API/Worker/Web together and perform read-only bindings. Rollback restores prior images/configuration while retaining PG volume and newer user records; no down migration/reset/restoration over newer data without separate authorization.
++
++## Historical checkpoint preserved below
+ 
+ # RoamSync Demo Acceptance — 2026-10-08
+ 
+diff --git a/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md b/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md
+index c04413d..faa194d 100644
+--- a/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md
++++ b/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md
+@@ -1,4 +1,16 @@
+-> Current checkpoint2026-10-08: Provider fixed6/6 health and unchanged-release initial Candidate8activities passed. Full clean E2E is blocked by confirmed plan-property/activity misclassification during day2 edit; one normal clarification did not clear it. Proposed2path minimal patch passed858 Linux/PG17 tests in an independent archive; not committed/applied. Human approved the exact six-path candidate scope; clean-ref lifecycle verification is next. See backend/evals/results/planner_reliability_20261008/PLANNER_RELIABILITY_GATE_20261008.md. Prior contents below are historical checkpoints. Production unchanged; no online authorization.
++# Current reliability checkpoint — 2026-10-08
++
++Status: NOT READY. Original application8ee7dbf/documentation0b5010fe preserved. The human-approved six-path candidate is 26e33f7ecec848403c0992953c61216ddb305fec, branch codex/roamsync-planner-reliability-20261008; clean checkout E:/Study/RoamSync-planner-reliability-clean-20261008. Source6d0257506c8ae65cbfc640cbdbfd3376b23bac2cf9623306432513f48ddca1eb. Initial checkout was Git clean; later untracked browser evidence under backend/evals/results does not alter tracked source. API/Worker175 shipped files exactly match, no mounts; external provider configuration unchanged. Nginx3001/API8001 share isolated PG17; old failed Runs and Trips remain exactly preserved.
++
++MEASURED: clean Git locked Backend/Worker/Web builds; empty PG17 migrations0→0034;858 passed/0fail/error/skip/2existing warnings. Web typecheck,125tests and build freshly passed. Bounded predefined real GLM6/6 completed/stop,0retries; strict Research2/2. This is a small sample, not an availability guarantee. Historical Research JSON raw completion/parse position and deeper transport origin remain UNLOCATED; separate categories, no guessed fix or provider replacement.
++
++The new-ref normal browser exploration/facts/create preview/confirmation generated a valid nonempty8-activity Candidate: Trip58239cd8-b097-4898-870f-f49f1a98719d, Run5981caad-00b9-40ca-8d2f-671b4a92717b, Revision1e0c5bab-5d7d-45fc-bafe-6f7761112739. Validator valid=true/errors=[]; route schedule warning transparently recorded. UI visible, pending, formalactivities0/version1. Day2 edit Runbbea2a1a-e7f1-4bf6-bd6f-cc12ab8200a4 remains awaiting_clarification: generated “其他日期安排不变” is incorrectly treated as a missing activity. One normal UI supplement returns200 but retains the same ambiguity. This is a confirmed internal parser defect, independent of historical JSON/transport categories. Candidate Accept and Execution/Disruption/Recovery/Reject/Explanation have NOT passed on this candidate.
++
++Independent follow-up proposal, NOT applied or committed: replace the exact equality with re.fullmatch(r"其他日期(?:安排)?不变", value), after real alias matching; add the observed form regression plus exact real-alias precedence and unknown venue negative checks. Five focused cases: old candidate1failed/4passed; patched5passed. Validator, Graph, route/time/budget, settings and explicit confirmation unchanged. Proposed source 3ae41a2daf9229933d1429fd9b2c58ff34a3564fb802f26a337b8c9d9faee52c; further source commit needs exact human authorization. Raw evidence/patch/manifests are excluded from Git in backend/evals/results/planner_reliability_20261008.
++
++Production remains unchanged on8000/3000; no deployment/main merge/production migration/reset/Trip deletion. No RELEASE CANDIDATE READY claim. Next: approve the measured follow-up patch, create a new source identity and repeat affected clean locked regression/build/runtime binding and full real browser chain. After complete success only, request online approval. Future deployment plan: preserve current image IDs and external configuration; after explicit authorization take and verify DB backup, confirm production schema/readiness, resolve the automatic migration entrypoint separately, deploy API/Worker/Web together and perform read-only bindings. Rollback restores prior images/configuration while retaining PG volume and newer user records; no down migration/reset/restoration over newer data without separate authorization.
++
++## Historical checkpoint preserved below
+ 
+ # RoamSync Long-Term Progress
+ 
+diff --git a/docs/handoff/LATEST_HANDOFF.md b/docs/handoff/LATEST_HANDOFF.md
+index 3e7009b..a8d2026 100644
+--- a/docs/handoff/LATEST_HANDOFF.md
++++ b/docs/handoff/LATEST_HANDOFF.md
+@@ -1,29 +1,29 @@
+-# RoamSync Handoff
++# Latest Handoff
+ 
+ ## Snapshot
+ 
+-2026-10-08. Goal ACTIVE. Provider health and unchanged-release initial Candidate PASSED; full lifecycle BLOCKED by confirmed day2 intent parser defect. Human approved the exact six-path candidate branch/commit scope; production not authorized.
++2026-10-08. Goal ACTIVE / NOT READY. Approved six-path candidate26e33f7 clean builds and initial Candidate passed. Day2 edit still blocked by a newly measured phrase variant. Follow-up patch tested independently; not applied/committed, exact authorization needed. Production not authorized.
+ 
+ ## Current Freeze / Rehearsal Status
+ 
+-Application8ee7dbf/documentation0b5010fe unchanged. Clean source e7e22849869443bb73f96bce736fb86a1c4b3745f2a48f6f32da3273176622a6;366 hashes/175 API+Worker source files exact; built Nginx3001/API8001/isolatedPG17, no source mounts. Independent approved candidate branch records only six reviewed existing paths; original release retained.
++Candidate 26e33f7ecec848403c0992953c61216ddb305fec; branch codex/roamsync-planner-reliability-20261008 from0b5010fe. Original8ee7dbf/0b5010fe intact. Clean source6d0257506c8ae65cbfc640cbdbfd3376b23bac2cf9623306432513f48ddca1eb;175 API/Worker files exact/no mounts; built Nginx3001/API8001/isolatedPG17. Only untracked raw browser evidence generated later, tracked source exact.
+ 
+ ## Latest shadow-mode evidence
+ 
+-MEASURED fixed6 real GLM calls,0retry,serial:6/6completed/stop, two strict Research calls17.313/23.214s, connection reuse passes. JSON and transport are separate categories; historical raw/finish reason missing, exact original roots UNLOCATED. No guessed source/config fix. Real timeout probe maps ConnectTimeout→planner_timeout.
++MEASURED GLM fixed6/6 completed/stop,0retry; strictResearch2/2; bounded sample only. New-ref Candidate8activities valid/pending/UIvisible; formal0/version1. Day2 Run bbea2a1a… awaiting_clarification for “其他日期安排不变”; one normal supplement does not clear it. Downstream not passed.
+ 
+ ## Prior milestone baseline (before shadow split)
+ 
+-New normal browser Nanjing3days candidate has8activities, valid=true,pending Revision; formalactivities0/version1. Three older failed Runs retained. Productionfc3 remains; no production/database/main/image replacement. Earlier dirty-tree full lifecycle is historical, not new clean-ref proof.
++Production fc3a06ba… unchanged. Earlier dirty-tree full lifecycle and old8ee7 initial Candidate remain historical, not new-ref proof. Three old failed Runs and all preexisting isolated Trip/days/Runs preserved. Source Repair PARTIAL; published-date-only facts. Ledger2.2 OPEN.
+ 
+ ## Prior verification
+ 
+-Release locked Linux full854/Web125/typecheck/build remains. New independent patch changes only planning_intent_service.py and test_planning_intents.py: nine source lines classify exact plan-property forms after real activity matches, unknown named venues still clarify. Four regressions red→green; patched full858/0fail/error/skip,2warnings on emptyPG17. Initial wrong test launch flags97missing-map-key failures retained; corrected run uses existing compose.test.yaml flags. Real E2E config unchanged. Proposed source6d0257506c8ae65cbfc640cbdbfd3376b23bac2cf9623306432513f48ddca1eb.
++Candidate26e33f7 locked clean Linux/Python3.11/emptyPG17 migrations0→0034:858passed/0fail/error/skip/2warnings. Web125/typecheck/build passed. First9-line patch had4red→green regressions. Follow-up one-line optional-word patch:5focused cases old1fail/4pass → proposed5pass; real aliases take precedence, unknown venue still not meta. Proposed source 3ae41a2daf9229933d1429fd9b2c58ff34a3564fb802f26a337b8c9d9faee52c.
+ 
+ ## Prior blockers (historical)
+ 
+-Current concrete blocker: day2 request's “整体三天…框架”/“其他日期不变” misread as activities; same Run remains awaiting_clarification after a normal supplemental answer. Candidate not accepted. Execution/Disruption/Recovery/reject/Explanation downstream unverified. Graph/Validator/time/budget/route/approval unchanged. No Mock/cleared failures/lowered assertion.
++Research original malformed raw/finishreason/parseposition unavailable; exact root UNLOCATED. RemoteProtocolError is transport/protocol category; deeper gateway/proxy/provider cause UNLOCATED. Current health recovered without provider/config changes. Confirmed internal meta/activity misclassification persists for measured “安排” variant. No mock/salvage/relaxed Validator.
+ 
+ ## Interview framing
+ 
+-Patch: backend/evals/results/planner_reliability_20261008/proposed_intent_meta_fix.patch; report and XML/manifests alongside. New proposed branch codex/roamsync-planner-reliability-20261008 from0b5010fe; exact2code/test+4existing report paths. Current human explicitly approved this six-path candidate branch and commits. Form approved new clean candidate; repeat required provider/full real lifecycle/runtime bindings. Original Release preserved. No production deployment or DB changes; final online approval only after all gates pass. Goal ACTIVE/NOT READY.
++Evidence backend/evals/results/planner_reliability_20261008, candidate_clean_binding.json/candidate_clean_full.xml/candidate_rehearsal_initial/candidate_rehearsal_clarification/proposed_intent_meta_followup.patch/followup_green.xml. Exact further two-source/test patch and four existing reports prepared for review; await authorization for new source commit. Then new clean Git acceptance through Candidate/Accept/Reject/Execution/Disruption/Recovery/Explanation; no old pass substitution. Production/main/DB unchanged; final online approval after all gates pass.

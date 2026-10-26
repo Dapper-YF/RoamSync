@@ -1,0 +1,587 @@
+{
+  "status": "failed",
+  "mock": false,
+  "isolated": true,
+  "turns": [
+    {
+      "text": "你好",
+      "http_status": 200,
+      "session_id": "cca66dc3-45ec-4c59-83d3-ba9248d73298",
+      "last": {
+        "id": "0e66be04-8add-4485-9cce-0111fe4d4520",
+        "user": "你好",
+        "assistant": "你好！我是你的旅行伙伴，无论是想聊聊目的地、找灵感，还是比较几个地方的玩法，都可以直接跟我说～最近有想去哪儿转转吗？",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.95,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "companion_travel_chat"
+          ]
+        },
+        "companion_result": {
+          "response_text": "你好！我是你的旅行伙伴，无论是想聊聊目的地、找灵感，还是比较几个地方的玩法，都可以直接跟我说～最近有想去哪儿转转吗？",
+          "goal_type": "travel_chat",
+          "status": "completed",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_required": false,
+            "general_knowledge_allowed": true,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": null,
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "not_applicable",
+          "grounding_limitations": [
+            "model_general_knowledge_unverified"
+          ],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        }
+      },
+      "pending_action": null
+    },
+    {
+      "text": "最近想出去玩，一个人有点怕无聊，先聊聊，不要创建旅行。",
+      "http_status": 200,
+      "session_id": "cca66dc3-45ec-4c59-83d3-ba9248d73298",
+      "last": {
+        "id": "817c951b-30fe-47a6-945c-46f529b2049d",
+        "user": "最近想出去玩，一个人有点怕无聊，先聊聊，不要创建旅行。",
+        "assistant": "一个人出行其实没你想的那么容易无聊！像逛博物馆、参加当地的一日徒步或美食小团、找咖啡馆坐坐写写游记，都是独旅里很容易“玩进去”的事，还能顺手认识人。节奏也全由自己定：想早起看日出就早起，想赖床泡书店也完全可以。你平时更喜欢城市里的烟火气，还是自然风光那种安静感？可以顺着这个聊聊方向。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "travel_chat",
+          "confidence": 0.55,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": false,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "uncertain_no_mutation_authorization"
+          ]
+        },
+        "companion_result": {
+          "response_text": "一个人出行其实没你想的那么容易无聊！像逛博物馆、参加当地的一日徒步或美食小团、找咖啡馆坐坐写写游记，都是独旅里很容易“玩进去”的事，还能顺手认识人。节奏也全由自己定：想早起看日出就早起，想赖床泡书店也完全可以。你平时更喜欢城市里的烟火气，还是自然风光那种安静感？可以顺着这个聊聊方向。",
+          "goal_type": "travel_chat",
+          "status": "completed",
+          "suggestions": [
+            {
+              "suggestion_id": "suggestion_edd1f620717057f9a0ff1bbbdb235322",
+              "suggestion_type": "experience",
+              "title": "参加当地一日徒步或美食小团",
+              "summary": "跟小团半日或一日出行，有讲解有同伴，一个人也不会冷场。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "参加当地一日徒步或美食小团"
+                }
+              ],
+              "destination": null,
+              "reasons": [
+                "自带社交属性，容易认识旅伴",
+                "有人带路，省心"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-08T00:29:36.095065Z",
+              "conversation_turn_id": "817c951b-30fe-47a6-945c-46f529b2049d",
+              "status": "suggested"
+            }
+          ],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_required": false,
+            "general_knowledge_allowed": true,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": null,
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "unverified_proposal",
+          "grounding_limitations": [
+            "model_general_knowledge_unverified"
+          ],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        }
+      },
+      "pending_action": null
+    },
+    {
+      "text": "南京怎么样？我喜欢历史文化和老街巷，想轻松一点。",
+      "http_status": 200,
+      "session_id": "cca66dc3-45ec-4c59-83d3-ba9248d73298",
+      "last": {
+        "id": "2efaf517-51d2-4927-ba95-1ab5483e469c",
+        "user": "南京怎么样？我喜欢历史文化和老街巷，想轻松一点。",
+        "assistant": "南京很对你胃口，它本身就是一座把历史“穿在身上”的城市。喜欢历史文化的话，夫子庙—秦淮河一带的老街巷、老门东的青砖小巷和传统民居街区，都很适合慢慢逛、随手拍照；朝天宫一带的老街生活气息也很浓。想轻松一点，节奏可以安排得“一天只做一件事”：上午逛一个博物馆或历史街区，下午找家咖啡馆或书店坐坐，傍晚沿着秦淮河边散步看夜景，这种节奏一个人也不会累。拍照方面，老门东的窄巷、砖墙和灯笼白天顺光出片，傍晚华灯初上时拍秦淮河倒影最有味道；逛博物馆时记得关闪光灯，多用高窗自然光。总的来说，南京历史密度高、城市节奏不赶，很适合你这种想轻松看历史的玩法。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "explanation",
+          "confidence": 0.94,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "companion_explanation"
+          ]
+        },
+        "companion_result": {
+          "response_text": "南京很对你胃口，它本身就是一座把历史“穿在身上”的城市。喜欢历史文化的话，夫子庙—秦淮河一带的老街巷、老门东的青砖小巷和传统民居街区，都很适合慢慢逛、随手拍照；朝天宫一带的老街生活气息也很浓。想轻松一点，节奏可以安排得“一天只做一件事”：上午逛一个博物馆或历史街区，下午找家咖啡馆或书店坐坐，傍晚沿着秦淮河边散步看夜景，这种节奏一个人也不会累。拍照方面，老门东的窄巷、砖墙和灯笼白天顺光出片，傍晚华灯初上时拍秦淮河倒影最有味道；逛博物馆时记得关闪光灯，多用高窗自然光。总的来说，南京历史密度高、城市节奏不赶，很适合你这种想轻松看历史的玩法。",
+          "goal_type": "explanation",
+          "status": "completed",
+          "suggestions": [
+            {
+              "suggestion_id": "suggestion_5232d15dbf8656bba5ef6cba204b1d48",
+              "suggestion_type": "experience",
+              "title": "老门东街区慢逛",
+              "summary": "青砖小巷与传统民居集中的老街区，适合一个人慢慢走、随拍街景和生活气息。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "老门东街区慢逛"
+                }
+              ],
+              "destination": "南京",
+              "reasons": [
+                "契合历史文化与老街巷偏好",
+                "节奏轻松，无需赶行程",
+                "傍晚灯笼亮起后很适合拍照"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-08T00:29:47.275978Z",
+              "conversation_turn_id": "2efaf517-51d2-4927-ba95-1ab5483e469c",
+              "status": "suggested"
+            },
+            {
+              "suggestion_id": "suggestion_3f39a721e92e59099ee964c4443bb106",
+              "suggestion_type": "experience",
+              "title": "夫子庙—秦淮河傍晚散步",
+              "summary": "白天逛街区，傍晚沿秦淮河边散步看灯影夜景，动静结合的一日轻松安排。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "夫子庙—秦淮河傍晚散步"
+                }
+              ],
+              "destination": "南京",
+              "reasons": [
+                "历史氛围浓，夜景出片",
+                "步行即可，一个人也自在"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-08T00:29:47.275978Z",
+              "conversation_turn_id": "2efaf517-51d2-4927-ba95-1ab5483e469c",
+              "status": "suggested"
+            },
+            {
+              "suggestion_id": "suggestion_0440a3fb393e51c7a609388c785f77d9",
+              "suggestion_type": "strategy",
+              "title": "一天只安排一个主题",
+              "summary": "上午一个博物馆或历史街区，下午咖啡馆或书店，傍晚河边散步，保持轻松节奏。",
+              "entity_refs": [
+                {
+                  "kind": "raw_mention",
+                  "value": "一天只安排一个主题"
+                }
+              ],
+              "destination": "南京",
+              "reasons": [
+                "避免一个人赶路疲惫",
+                "留出时间写游记、消化所见"
+              ],
+              "evidence_refs": [],
+              "grounding": "unverified_proposal",
+              "created_at": "2026-10-08T00:29:47.275978Z",
+              "conversation_turn_id": "2efaf517-51d2-4927-ba95-1ab5483e469c",
+              "status": "suggested"
+            }
+          ],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_required": false,
+            "general_knowledge_allowed": true,
+            "knowledge_types": [],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "mixed",
+            "requested_fact_topics": [
+              "history_general"
+            ]
+          },
+          "information_gaps": [],
+          "planning_handoff": null,
+          "conversation_destination": "南京",
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "unverified_proposal",
+          "grounding_limitations": [
+            "model_general_knowledge_unverified"
+          ],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        }
+      },
+      "pending_action": null
+    },
+    {
+      "text": "请根据可靠资料介绍南京的历史文化和老街巷；如果资料不足就说明，不要猜。",
+      "http_status": 200,
+      "session_id": "cca66dc3-45ec-4c59-83d3-ba9248d73298",
+      "last": {
+        "id": "d278f6d9-614a-467e-ad50-204dedf4cab9",
+        "user": "请根据可靠资料介绍南京的历史文化和老街巷；如果资料不足就说明，不要猜。",
+        "assistant": "现有来源不足以核实这个问题。可以补充具体出处，或改为一般介绍。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "explanation",
+          "confidence": 0.94,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": false,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "companion_explanation"
+          ]
+        },
+        "companion_result": {
+          "response_text": "现有来源不足以核实这个问题。可以补充具体出处，或改为一般介绍。",
+          "goal_type": "explanation",
+          "status": "needs_information",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_required": true,
+            "general_knowledge_allowed": false,
+            "knowledge_types": [
+              "history_culture"
+            ],
+            "live_fact_required": false,
+            "forecast_required": false,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "factual",
+            "requested_fact_topics": [
+              "history_general"
+            ]
+          },
+          "information_gaps": [
+            {
+              "code": "knowledge_unsupported_query",
+              "message": "当前小型知识库不覆盖这个目的地或主题。"
+            }
+          ],
+          "planning_handoff": null,
+          "conversation_destination": "南京",
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": {
+            "status": "unavailable",
+            "outcome": "unsupported_query",
+            "advisory": null,
+            "retrieval_mode": null,
+            "retrieved_at": null,
+            "retrieved_document_refs": [],
+            "retrieved_chunk_refs": []
+          },
+          "grounding_status": "insufficient_evidence",
+          "grounding_limitations": [],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": null,
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        }
+      },
+      "pending_action": null
+    },
+    {
+      "text": "南京明天下午天气怎么样？",
+      "http_status": 200,
+      "session_id": "cca66dc3-45ec-4c59-83d3-ba9248d73298",
+      "last": {
+        "id": "5e3e34e9-3ed7-4104-86e4-12dbe0a22529",
+        "user": "南京明天下午天气怎么样？",
+        "assistant": "我现在没有拿到可靠的地点坐标，无法核实天气预报。",
+        "tool": "reply",
+        "run_id": null,
+        "goal_routing": {
+          "goal_type": "destination_exploration",
+          "confidence": 0.93,
+          "target_runtime": "companion",
+          "mutation_requested": false,
+          "trip_context_required": false,
+          "knowledge_required": true,
+          "live_fact_likely_required": true,
+          "referenced_entities": [],
+          "referenced_previous_decision": false,
+          "clarification_needed": false,
+          "signals": [
+            "companion_destination_exploration"
+          ]
+        },
+        "companion_result": {
+          "response_text": "我现在没有拿到可靠的地点坐标，无法核实天气预报。",
+          "goal_type": "destination_exploration",
+          "status": "needs_information",
+          "suggestions": [],
+          "resolved_suggestion_refs": [],
+          "interactions": [],
+          "comparison": null,
+          "explanation": null,
+          "information_need": {
+            "knowledge_required": false,
+            "general_knowledge_allowed": false,
+            "knowledge_types": [],
+            "live_fact_required": true,
+            "forecast_required": true,
+            "opening_hours_required": false,
+            "fact_requirements": [],
+            "fact_types": [
+              "weather"
+            ],
+            "search_required": false,
+            "decision_history_required": false,
+            "trip_context_required": false,
+            "preferences_required": false,
+            "itinerary_required": false,
+            "audience_tags": [],
+            "season_tags": [],
+            "experience_tags": [],
+            "filter_signals": [],
+            "answer_mode": "advisory",
+            "requested_fact_topics": []
+          },
+          "information_gaps": [
+            {
+              "code": "live_fact_unavailable",
+              "message": "我现在没有拿到可靠的地点坐标，无法核实天气预报。"
+            }
+          ],
+          "planning_handoff": null,
+          "conversation_destination": "南京",
+          "runtime_trace": [
+            "interpret_goal",
+            "resolve_conversation",
+            "determine_information_need",
+            "gather_read_only_context",
+            "generate_interaction",
+            "extract_interaction_outcome",
+            "planning_handoff_not_authorized",
+            "prepare_conversation_persistence"
+          ],
+          "knowledge_evidence": [],
+          "answer_evidence_refs": [],
+          "knowledge_retrieval": null,
+          "grounding_status": "live_verification_required",
+          "grounding_limitations": [],
+          "claims": [],
+          "claim_validation_issues": [],
+          "forecast_plan": {
+            "requirements": [],
+            "place_result": {
+              "contract_version": "travel-facts-v1",
+              "requirement": {
+                "contract_version": "travel-facts-v1",
+                "fact_type": "place.location",
+                "subject": {
+                  "kind": "place",
+                  "ref": "city-search:Nanjing",
+                  "name": "南京",
+                  "destination": "南京"
+                },
+                "time_scope": null,
+                "required_freshness_seconds": 86400,
+                "minimum_authority": "specialist",
+                "required": true,
+                "reason": "forecast internal location prerequisite",
+                "allow_stale": false
+              },
+              "resolution_status": "unavailable",
+              "freshness_status": "no_evidence",
+              "value": null,
+              "selected_fact": null,
+              "selected_evidence": [],
+              "conflicting_facts": [],
+              "conflicting_evidence": [],
+              "rejected_candidates": [],
+              "evidence": [],
+              "confidence": "none",
+              "usable_as_current": false,
+              "provider_failures": [
+                "open_meteo_geocoding:provider_unavailable"
+              ],
+              "reasons": [
+                "no_usable_evidence"
+              ],
+              "resolved_at": "2026-10-08T00:29:53.383038Z"
+            },
+            "location_label": "",
+            "timezone": null,
+            "message": "我现在没有拿到可靠的地点坐标，无法核实天气预报。",
+            "clarification": false
+          },
+          "opening_hours_plan": null,
+          "resolved_facts": []
+        }
+      },
+      "pending_action": null
+    }
+  ],
+  "observations": [],
+  "initial_trips": [],
+  "session_id": "cca66dc3-45ec-4c59-83d3-ba9248d73298",
+  "error": "\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m"
+}

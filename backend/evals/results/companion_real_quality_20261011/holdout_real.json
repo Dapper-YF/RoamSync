@@ -1,0 +1,3552 @@
+{
+  "version": "companion-independent-holdout-v1",
+  "fixture_sha256": "0092dc44a65452e3f1af6d741693afa51e3fec3aa5d5723783887c52c679f62d",
+  "fixture": "backend\\evals\\fixtures\\companion_quality_holdout_v1.json",
+  "selected_case_ids": [
+    "holdout_nanjing_wall",
+    "holdout_suzhou_gardens",
+    "holdout_craft_compare",
+    "holdout_personal",
+    "holdout_specialist_source",
+    "holdout_live",
+    "holdout_source_negation"
+  ],
+  "endpoint": {
+    "scheme": "https",
+    "host": "open.bigmodel.cn",
+    "port": null,
+    "path": "/api/paas/v4"
+  },
+  "proxy": {
+    "scheme": "http",
+    "host": "127.0.0.1",
+    "port": 7897,
+    "path": ""
+  },
+  "real_model": true,
+  "model": "glm-5.3-flash",
+  "provider": "glm",
+  "reasoning_effort": "low",
+  "max_output_tokens": 8000,
+  "format_repair_limit": 1,
+  "provider_retries": 0,
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "fact_tool": "absent; deliberately measures unavailable-information degradation",
+  "rules": {
+    "review": "Six dimensions 1-5; independently verify factual claims; do not rank incomplete real outputs. Frozen before real execution. No corpus expansion."
+  },
+  "rows": [
+    {
+      "case_id": "holdout_nanjing_wall",
+      "mode": "A",
+      "input": "南京明城墙体现了哪些明代城市建设特点？",
+      "goal": {
+        "goal_type": "travel_chat",
+        "confidence": 0.55,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": false,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "uncertain_no_mutation_authorization"
+        ]
+      },
+      "output": {
+        "response_text": "南京明城墙是研究明代都城建设的活标本，主要体现了这几个特点：\n\n1. **因地制宜、依山就水**：不同于传统方正都城规制，南京城墙顺应紫金山、玄武湖、秦淮河的地形布局，呈不规则形状，体现“得山川之利”的规划思想。\n\n2. **多重城垣体系**：由宫城、皇城、都城、外郭四层构成，层层护卫，反映严格的礼制等级和皇权至上的设计理念。\n\n3. **军事防御功能突出**：城墙高大厚重（都城墙高约14—21米），设有垛口、藏兵洞、瓮城（如中华门瓮城规模全国罕见），考虑实战防御需求。\n\n4. **工程质量标准严格**：城砖上有铭文责任制，烧制州府、工匠、监造官姓名俱在，便于追责，体现明代严密的质量管理制度。\n\n5. **礼制与实用结合**：城门方位、命名兼顾《周礼》都城理想格局，又根据实际防御和经济需要灵活调整。\n\n如果想实地感受，中华门（聚宝门）瓮城和台城段（可望玄武湖与紫金山）最有代表性，也是拍照的好地方——傍晚在中华门下拍光影质感，在台城拍城墙与鸡鸣寺同框非常出片。",
+        "goal_type": "travel_chat",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_e515d57b0e545efa9407d7934f08b37b",
+            "suggestion_type": "place",
+            "title": "中华门瓮城",
+            "summary": "规模罕见的城堡式瓮城，最能体现明代军事防御与质量责任制（城砖铭文）。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "中华门瓮城"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "明代城墙防御体系的代表性建筑",
+              "可近距离观察城砖铭文"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:05:05.655767Z",
+            "conversation_turn_id": "holdout_nanjing_wall",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_8659f81b456152aea0c3895a9ea3b52c",
+            "suggestion_type": "place",
+            "title": "台城段城墙",
+            "summary": "可拍摄城墙与鸡鸣寺、玄武湖、紫金山同框，体现依山就水的选址特点。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "台城段城墙"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "地形与城市景观结合的最佳观景点",
+              "傍晚光线佳适合摄影"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:05:05.655767Z",
+            "conversation_turn_id": "holdout_nanjing_wall",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "general_knowledge",
+          "knowledge_strategy": "general_only",
+          "knowledge_reasons": [
+            "stable_model_knowledge_no_retrieval"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "南京",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 11.90208100000018,
+      "model_calls": 1,
+      "usage": [
+        {
+          "completion_tokens": 434,
+          "prompt_tokens": 1202,
+          "total_tokens": 1636,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      ],
+      "total_tokens": 1636,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 434,
+            "prompt_tokens": 1202,
+            "total_tokens": 1636,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0
+            }
+          },
+          "duration_seconds": 11.537511900000027,
+          "finish_reason": "stop"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_nanjing_wall",
+      "mode": "B",
+      "input": "南京明城墙体现了哪些明代城市建设特点？",
+      "goal": {
+        "goal_type": "travel_chat",
+        "confidence": 0.55,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": false,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "uncertain_no_mutation_authorization"
+        ]
+      },
+      "output": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+        "goal_type": "travel_chat",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "rag_candidate",
+          "knowledge_strategy": "forced_rag",
+          "knowledge_reasons": [
+            "forced_rag_baseline"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "destination_profile",
+            "history_culture",
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unsupported_query",
+            "message": "当前小型知识库不覆盖这个目的地或主题。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "南京",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "unavailable",
+          "outcome": "unsupported_query",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 1,
+      "retrieval_seconds": 1.4599999758502236e-05,
+      "latency_seconds": 0.0727286000001186,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_nanjing_wall",
+      "mode": "C",
+      "input": "南京明城墙体现了哪些明代城市建设特点？",
+      "goal": {
+        "goal_type": "travel_chat",
+        "confidence": 0.55,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": false,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "uncertain_no_mutation_authorization"
+        ]
+      },
+      "output": {
+        "response_text": "南京明城墙是明代都城建设的杰出代表，主要体现了以下特点：\n\n1. **因地制宜、依山就势**：城墙没有采用规整的方形格局，而是顺应南京的山水地形，把钟山、秦淮河、玄武湖、雨花台等自然要素纳入城内，形成了不规则的多边形布局，体现\"得山川之利、控江湖之势\"的规划思想。\n\n2. **多重城垣的防御体系**：由宫城、皇城、都城、外郭四重城垣层层拱卫，都城墙约35公里，是世界现存最长的砖石城墙之一，体现了明代都城严密等级化的军事防御理念。\n\n3. **严格的材料管理制度**：城砖由长江中下游各府县烧制，砖侧铭刻府县、工匠、监造官姓名（\"物勒工名\"），便于追责，保证质量，反映了明代高度组织化的工程管理。\n\n4. **都城礼制与功能分区**：遵循《周礼·考工记》的传统都城理想（前朝后市、左祖右社的变体），同时突破礼制的方正规范，是礼制传统与实际地理条件妥协融合的典范。\n\n5. **水利与军事兼顾**：设有通济门、东水关等水关涵闸，兼顾航运、排水与防御；城门普遍设瓮城，如中华门瓮城有多重藏兵洞，防御设计极为精巧。\n\n总体来说，南京明城墙展现了明代城市建设\"重防御、重工程管理、因地制宜又兼顾礼制\"的综合特点。",
+        "goal_type": "travel_chat",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_e515d57b0e545efa9407d7934f08b37b",
+            "suggestion_type": "place",
+            "title": "中华门瓮城",
+            "summary": "现存规模最大的瓮城城堡，可直观感受多重城门、藏兵洞的防御设计。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "中华门瓮城"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "体现城墙军事防御精华",
+              "登城可拍城墙纵深与老门东街景"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:05:17.844567Z",
+            "conversation_turn_id": "holdout_nanjing_wall",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_8659f81b456152aea0c3895a9ea3b52c",
+            "suggestion_type": "place",
+            "title": "台城段（解放门）",
+            "summary": "城墙与玄武湖、鸡鸣寺同框的经典机位。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "台城段（解放门）"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "体现依山就水布局的最佳观感",
+              "傍晚光线适合拍摄城砖质感"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:05:17.844567Z",
+            "conversation_turn_id": "holdout_nanjing_wall",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "general_knowledge",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "stable_model_knowledge_no_retrieval"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "南京",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 12.104507200000171,
+      "model_calls": 1,
+      "usage": [
+        {
+          "completion_tokens": 515,
+          "prompt_tokens": 1202,
+          "total_tokens": 1717,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      ],
+      "total_tokens": 1717,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 515,
+            "prompt_tokens": 1202,
+            "total_tokens": 1717,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0
+            }
+          },
+          "duration_seconds": 11.972479800000201,
+          "finish_reason": "stop"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_suzhou_gardens",
+      "mode": "A",
+      "input": "苏州古典园林的借景是什么意思？用容易理解的例子解释。",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "借景，简单说就是“把园子外面的风景借进来当自己的”。园林设计者故意开一扇窗、留一处缺口，让远处的塔、山或古树仿佛长在自己的院子里，使有限的小园子显得更深、更大。\n\n最经典的例子是拙政园“借”远处的北寺塔：你站在园中，隔着水面和亭台望过去，塔好像就建在园内一样，但其实它在园外一两公里外。这就是《园冶》里说的“巧于因借”。\n\n再打个生活化的比方：你坐在小公寓里，正对着一扇大落地窗，窗外是一棵漂亮的樱花树——虽然树不是你的，但每天的“樱花窗景”就是你家的一部分。苏州园林做的正是这件事，用门窗当“画框”，把园外的山、水、塔裁成一幅画挂进院子。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_9e6bfaa900c35e6aa28907b8269729c0",
+            "suggestion_type": "place",
+            "title": "拙政园看北寺塔借景",
+            "summary": "拙政园内透过亭台水面远借园外北寺塔，是苏州园林借景最著名的实例。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "拙政园看北寺塔借景"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "借景手法最经典直观",
+              "拍照时可用门洞或亭檐作画框"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:05:27.833221Z",
+            "conversation_turn_id": "holdout_suzhou_gardens",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_0ac44c52b8345fb98ecd1a5e275a929d",
+            "suggestion_type": "strategy",
+            "title": "游园时留意漏窗与门洞取景",
+            "summary": "借景常见于漏窗、月洞门，站在框后回头望，最容易看出设计者“借”来的画面。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "游园时留意漏窗与门洞取景"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "帮助理解借景概念",
+              "构图出片"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:05:27.833221Z",
+            "conversation_turn_id": "holdout_suzhou_gardens",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "general_knowledge",
+          "knowledge_strategy": "general_only",
+          "knowledge_reasons": [
+            "stable_model_knowledge_no_retrieval"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 9.985705499999767,
+      "model_calls": 1,
+      "usage": [
+        {
+          "completion_tokens": 336,
+          "prompt_tokens": 1205,
+          "total_tokens": 1541,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 3,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      ],
+      "total_tokens": 1541,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 336,
+            "prompt_tokens": 1205,
+            "total_tokens": 1541,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 3,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0
+            }
+          },
+          "duration_seconds": 9.809877600000164,
+          "finish_reason": "stop"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_suzhou_gardens",
+      "mode": "B",
+      "input": "苏州古典园林的借景是什么意思？用容易理解的例子解释。",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+        "goal_type": "explanation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "rag_candidate",
+          "knowledge_strategy": "forced_rag",
+          "knowledge_reasons": [
+            "forced_rag_baseline"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "destination_profile",
+            "history_culture",
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unsupported_query",
+            "message": "当前小型知识库不覆盖这个目的地或主题。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "unavailable",
+          "outcome": "unsupported_query",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 1,
+      "retrieval_seconds": 1.3800000033370452e-05,
+      "latency_seconds": 0.08080639999980122,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_suzhou_gardens",
+      "mode": "C",
+      "input": "苏州古典园林的借景是什么意思？用容易理解的例子解释。",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "借景是苏州古典园林的一个重要造园手法：园林本身空间有限，造园者就把园子外面的自然景色\"借\"进来，作为园林画面的一部分，让有限的园子显得无限深远。\n\n最经典的例子是拙政园\"借景\"北寺塔：站在拙政园里向西远望，能看到园墙外北寺塔的塔身，仿佛这座塔就建在园中一样。塔其实在园外很远的地方，但造园者刻意让视线通廊对准它，把千年古塔\"借\"成了自家园林的远景。\n\n用生活化的方式理解：你家客厅窗外正对一座山，你特意装修时留一扇大落地窗不加遮挡，这扇窗就把山\"借\"进了你家——山不用花你一分钱，却成了你家每天变化的水墨画。\n\n游园小贴士：在拙政园远眺北寺塔的最佳位置是中部山上的亭子附近，建议用长焦镜头压缩空间，把塔和园内亭台框进同一画面，最有\"借景\"的味道。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_9e6bfaa900c35e6aa28907b8269729c0",
+            "suggestion_type": "place",
+            "title": "拙政园借景北寺塔观景点",
+            "summary": "在拙政园中部山上亭子附近西望，可将园外北寺塔纳入画面，是理解借景手法的最佳现场案例。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "拙政园借景北寺塔观景点"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "借景手法最经典实例",
+              "适合长焦拍摄塔与园林同框"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:05:40.883823Z",
+            "conversation_turn_id": "holdout_suzhou_gardens",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "general_knowledge",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "stable_model_knowledge_no_retrieval"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 12.967334500000106,
+      "model_calls": 2,
+      "usage": [
+        {
+          "completion_tokens": 326,
+          "prompt_tokens": 1205,
+          "total_tokens": 1531,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 768
+          }
+        },
+        {
+          "completion_tokens": 339,
+          "prompt_tokens": 1616,
+          "total_tokens": 1955,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 13,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      ],
+      "total_tokens": 3486,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 326,
+            "prompt_tokens": 1205,
+            "total_tokens": 1531,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 768
+            }
+          },
+          "duration_seconds": 8.71069579999994,
+          "finish_reason": "stop"
+        },
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 2,
+          "usage": {
+            "completion_tokens": 339,
+            "prompt_tokens": 1616,
+            "total_tokens": 1955,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 13,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0
+            }
+          },
+          "duration_seconds": 4.090224499999749,
+          "finish_reason": "stop"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_craft_compare",
+      "mode": "A",
+      "input": "昆曲和南京云锦分别能让我体验到什么文化特色？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "昆曲和南京云锦能带给你两种不同维度的江南文化体验。\n\n昆曲是“百戏之祖”，距今六百多年，2001年被列入联合国教科文组织首批人类口述与非物质遗产代表作。看一场昆曲，你能体验到：\n- 中国古典文人审美：唱词源自明清传奇，如《牡丹亭》《长生殿》，曲词典雅，讲究意境；\n- 独特的表演美学：水磨腔婉转细腻，配合水袖、身段和“一桌二椅”的极简舞台，重在写意抒情；\n- 慢节奏的沉浸感：一唱三叹，适合静下心来品味古代文人的情感世界。\n\n南京云锦则代表皇家织造工艺的巅峰，有约1600年历史，同样入选人类非遗，传承人常称其织造技艺“寸锦寸金”。观览云锦，你能体验到：\n- 宫廷文化的华贵：云锦曾专供皇家御用，用金线、孔雀羽织造，色彩灿烂、纹样庄重，体现“锦上添花”的帝王气派；\n- 大花楼木织机的震撼：需要两名织工配合，一天往往只能织几厘米，是中国古代手工织造的活化石；\n- 民俗吉祥寓意：龙凤、祥云、缠枝莲等纹样承载着传统祈福文化。\n\n简单说：昆曲是“听与看”的时间艺术，让你感受江南的雅致与抒情；云锦是“触摸与凝视”的空间艺术，让你见识皇家工艺的极致奢华。在南京，你可以去兰苑剧场听昆曲，到江宁织造博物馆或南京云锦博物馆看云锦，一动一静正好互补。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_8ed33580b30c53e7ae1f0136166f453e",
+            "suggestion_type": "experience",
+            "title": "兰苑剧场听昆曲",
+            "summary": "江苏省昆剧院的兰苑剧场常有常规昆曲演出，规模适中，适合近距离感受水磨腔与身段之美。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "兰苑剧场听昆曲"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "近距离体验非遗表演",
+              "南京本地昆曲文化代表场所"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:05:53.518654Z",
+            "conversation_turn_id": "holdout_craft_compare",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_1aa99533efd154b2bea0ab9dd6613a18",
+            "suggestion_type": "place",
+            "title": "南京云锦博物馆",
+            "summary": "可观看大花楼木织机的现场织造演示，了解云锦的历史与工艺，直观感受“寸锦寸金”。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "南京云锦博物馆"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "有织机现场演示",
+              "系统了解皇家织造文化"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:05:53.518654Z",
+            "conversation_turn_id": "holdout_craft_compare",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "general_knowledge",
+          "knowledge_strategy": "general_only",
+          "knowledge_reasons": [
+            "stable_model_knowledge_no_retrieval"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "mixed",
+          "requested_fact_topics": [
+            "history_general"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "南京",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 12.633381900000131,
+      "model_calls": 1,
+      "usage": [
+        {
+          "completion_tokens": 545,
+          "prompt_tokens": 1205,
+          "total_tokens": 1750,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 768
+          }
+        }
+      ],
+      "total_tokens": 1750,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 545,
+            "prompt_tokens": 1205,
+            "total_tokens": 1750,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 768
+            }
+          },
+          "duration_seconds": 12.492783199999849,
+          "finish_reason": "stop"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_craft_compare",
+      "mode": "B",
+      "input": "昆曲和南京云锦分别能让我体验到什么文化特色？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+        "goal_type": "explanation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "rag_candidate",
+          "knowledge_strategy": "forced_rag",
+          "knowledge_reasons": [
+            "forced_rag_baseline"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "destination_profile",
+            "history_culture",
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "mixed",
+          "requested_fact_topics": [
+            "history_general"
+          ]
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unsupported_query",
+            "message": "当前小型知识库不覆盖这个目的地或主题。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "南京",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "unavailable",
+          "outcome": "unsupported_query",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 1,
+      "retrieval_seconds": 9.700000191514846e-06,
+      "latency_seconds": 0.12406719999989946,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_craft_compare",
+      "mode": "C",
+      "input": "昆曲和南京云锦分别能让我体验到什么文化特色？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "昆曲和南京云锦代表的是两种不同维度的江南文化体验。\n\n**昆曲——听觉与表演的雅致**：昆曲发源于苏州昆山一带，有六百多年历史，被誉为“百戏之祖”，是联合国教科文组织认定的非物质文化遗产。它能让你体验到的文化特色是明清文人的审美情趣：婉转的水磨腔、细腻的身段、诗意的唱词（如《牡丹亭》中的“良辰美景奈何天”）。在南京，你可以去兰苑剧场等地方看折子戏，感受慢节奏、重意境的古典之美。\n\n**南京云锦——视觉与工艺的华贵**：云锦有一千五百多年历史，因纹样瑰丽如天上云彩而得名，曾是皇家御用织品，“寸锦寸金”。它体现的是南京作为六朝古都的宫廷气派：用真金线、孔雀羽线织造，老式大花楼木织机需两人配合，一天只能织几厘米。去江宁织造博物馆或南京云锦博物馆，能现场看到织造演示，直观理解“锦上添花”背后的匠心。\n\n简单说：昆曲给你的是流动的时间之美——声音、表演与文学；云锦给你的是凝固的空间之美——色彩、纹样与技艺。两者一柔一丽，正好构成南京“雅”与“贵”的两面。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_8ed33580b30c53e7ae1f0136166f453e",
+            "suggestion_type": "experience",
+            "title": "观看昆曲折子戏演出",
+            "summary": "在南京的小剧场观看昆曲折子戏，体验水磨腔与古典身段的雅致之美。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "观看昆曲折子戏演出"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "现场感受非遗表演艺术",
+              "适合作为晚间文化体验"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:06:04.550130Z",
+            "conversation_turn_id": "holdout_craft_compare",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_1aa99533efd154b2bea0ab9dd6613a18",
+            "suggestion_type": "place",
+            "title": "江宁织造博物馆",
+            "summary": "了解云锦历史与织造工艺，可能看到大花楼木织机的现场演示。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "江宁织造博物馆"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "直观理解寸锦寸金的织造技艺",
+              "兼具红楼文化与织造历史背景"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:06:04.550130Z",
+            "conversation_turn_id": "holdout_craft_compare",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_6d4efc853f885cd795eb0c65ec956c92",
+            "suggestion_type": "place",
+            "title": "南京云锦博物馆",
+            "summary": "专类博物馆，展示云锦纹样、材料和传统织机。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "南京云锦博物馆"
+              }
+            ],
+            "destination": "南京",
+            "reasons": [
+              "云锦主题最全面的展示场所",
+              "可近距离观赏真金线织造的华贵织物"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:06:04.550130Z",
+            "conversation_turn_id": "holdout_craft_compare",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "general_knowledge",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "stable_model_knowledge_no_retrieval"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "mixed",
+          "requested_fact_topics": [
+            "history_general"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "南京",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 10.902831500000048,
+      "model_calls": 1,
+      "usage": [
+        {
+          "completion_tokens": 514,
+          "prompt_tokens": 1205,
+          "total_tokens": 1719,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 768
+          }
+        }
+      ],
+      "total_tokens": 1719,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 514,
+            "prompt_tokens": 1205,
+            "total_tokens": 1719,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 768
+            }
+          },
+          "duration_seconds": 10.730347000000165,
+          "finish_reason": "stop"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_personal",
+      "mode": "A",
+      "input": "按我之前的偏好，在苏州有哪些适合我的文化体验方向？不需要具体行程。",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": true,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": true,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "结合你偏好园林与传统戏曲、避开商业打卡和热门街区，可以考虑这些方向：\n\n1. 小众园林深度游：艺圃、耦园、沧浪亭一带相对安静，适合慢慢看造园细节（花窗、叠石、匾额楹联）。艺圃尤其游客少，本地人多去喝茶。摄影上，清晨光线斜射时拍花窗投影和水面倒影最佳，用长焦压缩廊道层次。\n2. 昆曲清赏而非演出打卡：关注山塘街之外的昆曲馆或评弹书场的非热门场次，如平江路深巷里的老书场或社区评弹，感受本地人日常听书氛围。拍照尽量低调，捕捉演员水袖与灯光的瞬间，用高感光度和较快快门。\n3. 园林×戏曲结合：一些园林偶有夜游或堂会式小型演出（如网师园夜花园），比大型景区演出更贴近传统厅堂展演传统；可留意官方渠道确认场次。\n4. 手作与雅集：苏扇、缂丝、核雕等非遗工作室的小班体验，多在十全街、平江路外围的小巷，比景点店铺更真实。\n\n方向上建议以“小园林+书场+手作雅集”为主线，避开拙政园、狮子林等高峰时段人流。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_e31441e7250753dbb1e21fe5cea922dd",
+            "suggestion_type": "experience",
+            "title": "艺圃、耦园等小众园林深度游",
+            "summary": "游客较少的苏州园林，适合安静欣赏造园细节并拍摄花窗、叠石与倒影。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "艺圃、耦园等小众园林深度游"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "符合避开热门街区和打卡的偏好",
+              "园林主题契合兴趣",
+              "清晨光线利于摄影"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:06:24.388251Z",
+            "conversation_turn_id": "holdout_personal",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_703b956209475a3e85bfd96eee4c97a8",
+            "suggestion_type": "experience",
+            "title": "本地评弹书场与昆曲清赏",
+            "summary": "选择社区书场或老书场的日常场次，感受本地人听书听曲的氛围。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "本地评弹书场与昆曲清赏"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "契合传统戏曲兴趣",
+              "非商业化场景",
+              "适合低调人文摄影"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:06:24.388251Z",
+            "conversation_turn_id": "holdout_personal",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_af5d5eee3d4a5e6690238ce0c7be3484",
+            "suggestion_type": "experience",
+            "title": "苏扇、缂丝等非遗手作雅集",
+            "summary": "小巷中的非遗工作室小班体验，比景点店铺更真实。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "苏扇、缂丝等非遗手作雅集"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "深度文化体验",
+              "远离热门街区",
+              "可结合园林与文人情趣"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:06:24.388251Z",
+            "conversation_turn_id": "holdout_personal",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_c86b0a2e3c9d5299858ae17450b08c14",
+            "suggestion_type": "strategy",
+            "title": "以小园林+书场+手作雅集为主线",
+            "summary": "整体策略：避开拙政园等高峰人流，组合安静深度体验。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "以小园林+书场+手作雅集为主线"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "匹配全部既有偏好",
+              "可灵活安排不设固定行程"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:06:24.388251Z",
+            "conversation_turn_id": "holdout_personal",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "context_required",
+          "knowledge_strategy": "general_only",
+          "knowledge_reasons": [
+            "saved_context_read_only"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "mixed",
+          "requested_fact_topics": [
+            "history_general"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [
+        {
+          "id": "h-pref",
+          "user": "我喜欢园林和传统戏曲，不喜欢商业化打卡，也不想挤在热门街区。",
+          "assistant": "可以先讨论文化体验的类型。"
+        }
+      ],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 19.835706800000025,
+      "model_calls": 1,
+      "usage": [
+        {
+          "completion_tokens": 1102,
+          "prompt_tokens": 1320,
+          "total_tokens": 2422,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 546,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 768
+          }
+        }
+      ],
+      "total_tokens": 2422,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 1102,
+            "prompt_tokens": 1320,
+            "total_tokens": 2422,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 546,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 768
+            }
+          },
+          "duration_seconds": 19.66977760000009,
+          "finish_reason": "stop"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_personal",
+      "mode": "B",
+      "input": "按我之前的偏好，在苏州有哪些适合我的文化体验方向？不需要具体行程。",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": true,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": true,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+        "goal_type": "explanation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "mixed",
+          "knowledge_strategy": "forced_rag",
+          "knowledge_reasons": [
+            "saved_context_read_only",
+            "forced_rag_baseline"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "destination_profile",
+            "history_culture",
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "mixed",
+          "requested_fact_topics": [
+            "history_general"
+          ]
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unsupported_query",
+            "message": "当前小型知识库不覆盖这个目的地或主题。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "unavailable",
+          "outcome": "unsupported_query",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [
+        {
+          "id": "h-pref",
+          "user": "我喜欢园林和传统戏曲，不喜欢商业化打卡，也不想挤在热门街区。",
+          "assistant": "可以先讨论文化体验的类型。"
+        }
+      ],
+      "rag_calls": 1,
+      "retrieval_seconds": 1.970000039364095e-05,
+      "latency_seconds": 0.18594080000002577,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_personal",
+      "mode": "C",
+      "input": "按我之前的偏好，在苏州有哪些适合我的文化体验方向？不需要具体行程。",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": true,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": true,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "结合你喜欢园林、传统戏曲，又避开商业化和拥挤人群，苏州可以考虑这几个方向：\n\n1. 冷门园林深度游：除了拙政园、留园，可以去艺圃、耦园、沧浪亭。艺圃小而静，老苏州茶室氛围浓；耦园地处平江路深处一隅却相对清幽，前身与清代文人生活关系密切，适合慢慢看造园细节。\n2. 书场听评弹：不去观前街一带的旅游化场所，找本地社区老书场（如一些街道文化站书场），下午场多是本地老听客，几元一杯茶的茶位费，听长篇弹词，是更原生态的评弹体验。\n3. 园林夜游与雅集类活动：部分小型园林（如网师园）有夜花园传统，以曲会、昆曲片段点缀，形式比白天的观光更贴近旧时文人雅集，但需留意具体安排以现场为准。\n4. 昆曲深度体验：除山塘街一带的商业演出外，可关注中国昆曲博物馆（全晋会馆内，古戏台本身就很值得看）的演出信息，以及专业院团的公开排演或讲座类活动。\n\n建议把重点放在艺圃＋老书场这个组合上，最贴合你的口味。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_e31441e7250753dbb1e21fe5cea922dd",
+            "suggestion_type": "place",
+            "title": "艺圃",
+            "summary": "小而清静的明代园林，有老茶室，远离热门园林的人流。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "艺圃"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "符合避开商业化打卡的偏好",
+              "适合细看造园细节与静坐喝茶"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:06:38.521414Z",
+            "conversation_turn_id": "holdout_personal",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_703b956209475a3e85bfd96eee4c97a8",
+            "suggestion_type": "place",
+            "title": "耦园",
+            "summary": "深藏小巷的园林，相对清幽，与文人生活史关联密切。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "耦园"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "位置偏但游人较少",
+              "园林与夫妻隐居故事有文化趣味"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:06:38.521414Z",
+            "conversation_turn_id": "holdout_personal",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_af5d5eee3d4a5e6690238ce0c7be3484",
+            "suggestion_type": "experience",
+            "title": "本地社区老书场听评弹",
+            "summary": "避开旅游化书场，去社区书场与本地老听客同坐，体验原生态评弹。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "本地社区老书场听评弹"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "最贴近真实听书氛围",
+              "成本低、时间长篇更完整"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:06:38.521414Z",
+            "conversation_turn_id": "holdout_personal",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_c86b0a2e3c9d5299858ae17450b08c14",
+            "suggestion_type": "place",
+            "title": "中国昆曲博物馆（全晋会馆）",
+            "summary": "古戏台建筑本身即看点，可关注院团演出与讲座。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "中国昆曲博物馆（全晋会馆）"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "契合传统戏曲兴趣",
+              "建筑与戏曲文化结合紧密"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:06:38.521414Z",
+            "conversation_turn_id": "holdout_personal",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_bd1bf9df67bb53908b5674be1b9b1449",
+            "suggestion_type": "experience",
+            "title": "网师园夜花园雅集",
+            "summary": "以曲会、昆曲片段为主的园林夜游，形式接近旧时雅集。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "网师园夜花园雅集"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "比白天观光更贴近园林生活传统",
+              "人少氛围好"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:06:38.521414Z",
+            "conversation_turn_id": "holdout_personal",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "context_required",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "saved_context_read_only"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "mixed",
+          "requested_fact_topics": [
+            "history_general"
+          ]
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [
+        {
+          "id": "h-pref",
+          "user": "我喜欢园林和传统戏曲，不喜欢商业化打卡，也不想挤在热门街区。",
+          "assistant": "可以先讨论文化体验的类型。"
+        }
+      ],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 13.9460981000002,
+      "model_calls": 1,
+      "usage": [
+        {
+          "completion_tokens": 589,
+          "prompt_tokens": 1320,
+          "total_tokens": 1909,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 768
+          }
+        }
+      ],
+      "total_tokens": 1909,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 589,
+            "prompt_tokens": 1320,
+            "total_tokens": 1909,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 768
+            }
+          },
+          "duration_seconds": 13.761368500000117,
+          "finish_reason": "stop"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_specialist_source",
+      "mode": "A",
+      "input": "请根据可靠文献解释苏州虎丘碑文的版本差异，材料不足请说明。",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前没有可用的知识检索证据，检索服务不可用。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+        "goal_type": "explanation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "rag_candidate",
+          "knowledge_strategy": "general_only",
+          "knowledge_reasons": [
+            "explicit_source_request",
+            "general_only_cannot_supply_sources"
+          ],
+          "source_required": true,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unavailable",
+            "message": "当前没有可用的知识检索证据，检索服务不可用。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "unavailable",
+          "outcome": "retriever_unavailable",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 0.16892509999979666,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_specialist_source",
+      "mode": "B",
+      "input": "请根据可靠文献解释苏州虎丘碑文的版本差异，材料不足请说明。",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+        "goal_type": "explanation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "rag_candidate",
+          "knowledge_strategy": "forced_rag",
+          "knowledge_reasons": [
+            "explicit_source_request"
+          ],
+          "source_required": true,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unsupported_query",
+            "message": "当前小型知识库不覆盖这个目的地或主题。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "unavailable",
+          "outcome": "unsupported_query",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 1,
+      "retrieval_seconds": 1.6899999991437653e-05,
+      "latency_seconds": 0.3011701999998877,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_specialist_source",
+      "mode": "C",
+      "input": "请根据可靠文献解释苏州虎丘碑文的版本差异，材料不足请说明。",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+        "goal_type": "explanation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "rag_candidate",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "explicit_source_request"
+          ],
+          "source_required": true,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unsupported_query",
+            "message": "当前小型知识库不覆盖这个目的地或主题。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "unavailable",
+          "outcome": "unsupported_query",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 1,
+      "retrieval_seconds": 1.5699999948992627e-05,
+      "latency_seconds": 0.18329240000002756,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_live",
+      "mode": "A",
+      "input": "苏州博物馆明天还有预约名额吗？",
+      "goal": {
+        "goal_type": "travel_advice",
+        "confidence": 0.92,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_travel_advice"
+        ]
+      },
+      "output": {
+        "response_text": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+        "goal_type": "travel_advice",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "live_fact_required",
+          "knowledge_strategy": "general_only",
+          "knowledge_reasons": [
+            "dynamic_fact_requires_provider"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [],
+          "live_fact_required": true,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [
+            "price"
+          ],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "live_fact_unavailable",
+            "message": "实时部分目前无法核实；当天开放、天气、花况、价格或交通请以官方最新信息为准。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "live_verification_required",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 0.18837650000023132,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_live",
+      "mode": "B",
+      "input": "苏州博物馆明天还有预约名额吗？",
+      "goal": {
+        "goal_type": "travel_advice",
+        "confidence": 0.92,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_travel_advice"
+        ]
+      },
+      "output": {
+        "response_text": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+        "goal_type": "travel_advice",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "live_fact_required",
+          "knowledge_strategy": "forced_rag",
+          "knowledge_reasons": [
+            "dynamic_fact_requires_provider"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [],
+          "live_fact_required": true,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [
+            "price"
+          ],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "live_fact_unavailable",
+            "message": "实时部分目前无法核实；当天开放、天气、花况、价格或交通请以官方最新信息为准。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "live_verification_required",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 0.31624280000005456,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_live",
+      "mode": "C",
+      "input": "苏州博物馆明天还有预约名额吗？",
+      "goal": {
+        "goal_type": "travel_advice",
+        "confidence": 0.92,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_travel_advice"
+        ]
+      },
+      "output": {
+        "response_text": "当前没有可用的实时事实工具，我无法核实今天的天气、开放时间、票价或交通情况。请以官方当天信息为准。",
+        "goal_type": "travel_advice",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "live_fact_required",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "dynamic_fact_requires_provider"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [],
+          "live_fact_required": true,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [
+            "price"
+          ],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "live_fact_unavailable",
+            "message": "实时部分目前无法核实；当天开放、天气、花况、价格或交通请以官方最新信息为准。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "live_verification_required",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 0.24600439999994705,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_source_negation",
+      "mode": "A",
+      "input": "不用提供出处，介绍苏州园林为什么值得慢慢看。",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "苏州园林值得慢慢看，核心在于它不是“景点”，而是一种需要细读的空间艺术。首先，园林讲究移步换景——一条曲廊、一扇漏窗、一块湖石，角度稍有不同，画面就完全变化，走马观花只能看到假山亭子，慢慢走才能体会造园者如何用借景、框景、对景把有限空间做出无限层次。其次，园林充满文化细节：拙政园的题名、留园的铺地纹样、网师园的匾额楹联，都藏着文人隐逸的志趣与典故，速度一快就全部错过。再者，光影与时间也是造园的一部分——清晨的雾气、午后穿过花窗的光斑、雨打芭蕉，同一处景致在不同时辰完全不同，这正是“慢慢看”的回报。建议挑一两座园林（如拙政园加网师园）深入看，而不是一天赶遍所有名园；网师园面积小而精致，最适合安静体会。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_e2515a56c8e15ff8a9373ab13c340b75",
+            "suggestion_type": "place",
+            "title": "网师园",
+            "summary": "苏州小型园林的代表，面积紧凑但造景极精，适合慢慢体会。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "网师园"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "游人相对较少，氛围安静",
+              "空间小巧，一两个小时即可细细品味",
+              "夜游项目有传统曲乐表演（具体情况以现场为准）"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:06:50.205158Z",
+            "conversation_turn_id": "holdout_source_negation",
+            "status": "suggested"
+          },
+          {
+            "suggestion_id": "suggestion_181c6ef77d075dedb555b329b5adddbf",
+            "suggestion_type": "strategy",
+            "title": "园林慢游法：一次只看一两座",
+            "summary": "深入拙政园、留园等一至两座园林，比赶场更能体会造园细节。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "园林慢游法：一次只看一两座"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "移步换景需要时间消化",
+              "题名匾额与铺地细节值得驻足",
+              "不同时辰光影效果差异大"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:06:50.205158Z",
+            "conversation_turn_id": "holdout_source_negation",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "general_knowledge",
+          "knowledge_strategy": "general_only",
+          "knowledge_reasons": [
+            "stable_model_knowledge_no_retrieval"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 10.24718329999996,
+      "model_calls": 1,
+      "usage": [
+        {
+          "completion_tokens": 383,
+          "prompt_tokens": 1202,
+          "total_tokens": 1585,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 768
+          }
+        }
+      ],
+      "total_tokens": 1585,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 383,
+            "prompt_tokens": 1202,
+            "total_tokens": 1585,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 768
+            }
+          },
+          "duration_seconds": 9.798625400000219,
+          "finish_reason": "stop"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_source_negation",
+      "mode": "B",
+      "input": "不用提供出处，介绍苏州园林为什么值得慢慢看。",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "以下是待核实的讨论建议，不是正式规划决定。\n当前小型知识库不覆盖这个目的地或主题。我不能给出有来源的确定回答，可以缩小或换一个主题再查询。",
+        "goal_type": "explanation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "rag_candidate",
+          "knowledge_strategy": "forced_rag",
+          "knowledge_reasons": [
+            "forced_rag_baseline"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": true,
+          "general_knowledge_allowed": false,
+          "knowledge_types": [
+            "destination_profile",
+            "history_culture",
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_unsupported_query",
+            "message": "当前小型知识库不覆盖这个目的地或主题。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": {
+          "quality_rejections": [],
+          "accepted_evidence_count": 0,
+          "status": "unavailable",
+          "outcome": "unsupported_query",
+          "advisory": null,
+          "retrieval_mode": null,
+          "retrieved_at": null,
+          "retrieved_document_refs": [],
+          "retrieved_chunk_refs": []
+        },
+        "grounding_status": "insufficient_evidence",
+        "grounding_limitations": [],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 1,
+      "retrieval_seconds": 1.9600000086938962e-05,
+      "latency_seconds": 0.12499830000024303,
+      "model_calls": 0,
+      "usage": [],
+      "total_tokens": null,
+      "model_observations": [],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    },
+    {
+      "case_id": "holdout_source_negation",
+      "mode": "C",
+      "input": "不用提供出处，介绍苏州园林为什么值得慢慢看。",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "output": {
+        "response_text": "苏州园林值得慢慢看，核心在于它是“可居可游”的空间艺术，而非一眼望尽的风景。第一，看布局：拙政园、留园等以廊、墙、门洞分割空间，曲径通幽、欲扬先抑，走快了就感受不到步移景异的节奏。第二，看细节：花窗的纹样、铺地的图案、匾额楹联的典故，都是造园者的巧思与文人趣味。第三，看意境：借景、对景、框景处处精心，比如从特定窗框看出去，远处塔影或一枝斜梅恰好入画，这些视角需要在园中慢慢停驻才能发现。第四，看时间变化：清晨薄雾、雨打芭蕉、午后光影穿过漏窗，园林之美随光线和天气流动，赶场式游览只能看到皮毛。建议选一两座园子（如拙政园或网师园），留出大半天，坐下来、绕回去、换个角度再看，收获远胜一天打卡五园。",
+        "goal_type": "explanation",
+        "status": "completed",
+        "suggestions": [
+          {
+            "suggestion_id": "suggestion_e2515a56c8e15ff8a9373ab13c340b75",
+            "suggestion_type": "experience",
+            "title": "慢游拙政园或网师园",
+            "summary": "选一两座园林深度游览，体验步移景异、框景借景的造园艺术。",
+            "entity_refs": [
+              {
+                "kind": "raw_mention",
+                "value": "慢游拙政园或网师园"
+              }
+            ],
+            "destination": "苏州",
+            "reasons": [
+              "拙政园布局经典，网师园小巧精致、人少",
+              "慢慢看能发现漏窗、匾额与光影变化的细节"
+            ],
+            "evidence_refs": [],
+            "grounding": "unverified_proposal",
+            "created_at": "2026-10-11T01:06:59.459416Z",
+            "conversation_turn_id": "holdout_source_negation",
+            "status": "suggested"
+          }
+        ],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_decision": "general_knowledge",
+          "knowledge_strategy": "selective",
+          "knowledge_reasons": [
+            "stable_model_knowledge_no_retrieval"
+          ],
+          "source_required": false,
+          "optional_rag": false,
+          "knowledge_required": false,
+          "general_knowledge_allowed": true,
+          "knowledge_types": [],
+          "live_fact_required": false,
+          "forecast_required": false,
+          "opening_hours_required": false,
+          "fact_requirements": [],
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": false,
+          "itinerary_required": false,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [],
+          "answer_mode": "advisory",
+          "requested_fact_topics": []
+        },
+        "information_gaps": [],
+        "planning_handoff": null,
+        "conversation_destination": "苏州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "unverified_proposal",
+        "grounding_limitations": [
+          "model_general_knowledge_unverified"
+        ],
+        "claims": [],
+        "claim_validation_issues": [],
+        "forecast_plan": null,
+        "opening_hours_plan": null,
+        "resolved_facts": []
+      },
+      "error": null,
+      "error_code": null,
+      "failure": null,
+      "history": [],
+      "rag_calls": 0,
+      "retrieval_seconds": 0.0,
+      "latency_seconds": 9.121234100000038,
+      "model_calls": 1,
+      "usage": [
+        {
+          "completion_tokens": 313,
+          "prompt_tokens": 1202,
+          "total_tokens": 1515,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 768
+          }
+        }
+      ],
+      "total_tokens": 1515,
+      "model_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "format_attempt": 1,
+          "usage": {
+            "completion_tokens": 313,
+            "prompt_tokens": 1202,
+            "total_tokens": 1515,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 768
+            }
+          },
+          "duration_seconds": 8.891789599999811,
+          "finish_reason": "stop"
+        }
+      ],
+      "manual_scores": {
+        "accuracy": null,
+        "relevance_completeness": null,
+        "naturalness": null,
+        "personalization": null,
+        "source_support": null,
+        "uncertainty_safety": null
+      },
+      "checks": {
+        "citation_refs_valid": true,
+        "no_handoff": true,
+        "live_not_generated": true,
+        "untrusted_discarded": true,
+        "decision_expected": true
+      }
+    }
+  ],
+  "complete": true,
+  "summary": {
+    "A": {
+      "cases": 7,
+      "companion_cases": 7,
+      "rag_calls": 0,
+      "rag_rate": 0.0,
+      "model_calls": 5,
+      "provider_reported_tokens": 8934,
+      "usage_missing_model_rows": 0,
+      "mean_latency_seconds": 9.280194300000014,
+      "retrieval_seconds": 0.0,
+      "automatic_checks_passed": 7,
+      "quality_scores": "manual review pending; no synthetic quality ranking"
+    },
+    "B": {
+      "cases": 7,
+      "companion_cases": 7,
+      "rag_calls": 6,
+      "rag_rate": 0.8571428571428571,
+      "model_calls": 0,
+      "provider_reported_tokens": null,
+      "usage_missing_model_rows": 0,
+      "mean_latency_seconds": 0.17227918571429005,
+      "retrieval_seconds": 9.43000004554051e-05,
+      "automatic_checks_passed": 7,
+      "quality_scores": "manual review pending; no synthetic quality ranking"
+    },
+    "C": {
+      "cases": 7,
+      "companion_cases": 7,
+      "rag_calls": 1,
+      "rag_rate": 0.14285714285714285,
+      "model_calls": 6,
+      "provider_reported_tokens": 10346,
+      "usage_missing_model_rows": 0,
+      "mean_latency_seconds": 8.495900314285791,
+      "retrieval_seconds": 1.5699999948992627e-05,
+      "automatic_checks_passed": 7,
+      "quality_scores": "manual review pending; no synthetic quality ranking"
+    }
+  }
+}

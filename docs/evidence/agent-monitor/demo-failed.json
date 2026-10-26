@@ -1,0 +1,127 @@
+{
+  "run": {
+    "id": "117886ad-1355-47e2-9394-425b57d6de77",
+    "trip_id": "00000000-0000-4000-8000-000000000002",
+    "trip_title": "Goal-Aware Demo · 杭州从容一日游",
+    "status": "failed",
+    "run_type": "replan",
+    "base_trip_version": 1,
+    "current_trip_version": 1,
+    "model": null,
+    "provider": null,
+    "created_at": "2026-09-29T15:19:42.628935+00:00",
+    "started_at": "2026-09-29T15:20:24.966405+00:00",
+    "completed_at": "2026-09-29T15:20:40.693592+00:00",
+    "intent": "modify_day",
+    "error_code": "planner_research_unavailable",
+    "planning_finished_at": "2026-09-29T15:20:40.693592+00:00"
+  },
+  "stages": [
+    {
+      "id": "message",
+      "status": "completed",
+      "duration_ms": null,
+      "attempts": 0,
+      "source": "revision / checkpoint / run"
+    },
+    {
+      "id": "intent",
+      "status": "failed",
+      "duration_ms": 15721,
+      "attempts": 1,
+      "source": "progress.events"
+    },
+    {
+      "id": "goal",
+      "status": "unavailable",
+      "duration_ms": null,
+      "attempts": 0,
+      "source": "unavailable"
+    },
+    {
+      "id": "context",
+      "status": "unavailable",
+      "duration_ms": null,
+      "attempts": 0,
+      "source": "unavailable"
+    },
+    {
+      "id": "research",
+      "status": "failed",
+      "duration_ms": 0,
+      "attempts": 1,
+      "source": "progress.events"
+    },
+    {
+      "id": "poi",
+      "status": "unavailable",
+      "duration_ms": null,
+      "attempts": 0,
+      "source": "unavailable"
+    },
+    {
+      "id": "planner",
+      "status": "unavailable",
+      "duration_ms": null,
+      "attempts": 0,
+      "source": "unavailable"
+    },
+    {
+      "id": "route",
+      "status": "unavailable",
+      "duration_ms": null,
+      "attempts": 0,
+      "source": "unavailable"
+    },
+    {
+      "id": "validator",
+      "status": "unavailable",
+      "duration_ms": null,
+      "attempts": 0,
+      "source": "unavailable"
+    },
+    {
+      "id": "revision",
+      "status": "unavailable",
+      "duration_ms": null,
+      "attempts": 0,
+      "source": "unavailable"
+    },
+    {
+      "id": "user_decision",
+      "status": "unavailable",
+      "duration_ms": null,
+      "attempts": 0,
+      "source": "unavailable"
+    }
+  ],
+  "tools": [
+    {
+      "stage": "search",
+      "provider": "Tavily",
+      "purpose": "Destination Research",
+      "status": "failed",
+      "duration_ms": 10548
+    },
+    {
+      "stage": "weather",
+      "provider": "Open-Meteo",
+      "purpose": "Travel-date weather",
+      "status": "failed",
+      "duration_ms": 5019
+    },
+    {
+      "stage": "research",
+      "provider": null,
+      "purpose": "Resolve sourced destination candidates",
+      "status": "failed",
+      "duration_ms": 0
+    }
+  ],
+  "event_count": 9,
+  "error": {
+    "code": "planner_research_unavailable",
+    "message": "目的地网页检索暂不可用，无法提供有来源的景点选择，请稍后重试。",
+    "stage": "research"
+  }
+}

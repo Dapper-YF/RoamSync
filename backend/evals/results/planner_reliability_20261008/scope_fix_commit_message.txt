@@ -1,0 +1,7 @@
+fix(planning): retain execution-reference days as immutable context
+
+Keep global execution pointers grounded when a request targets a different day.
+Protect all non-requested activities in the added context; editable scope stays requested.
+Strict context invariant, Candidate Validator and Planning Graph unchanged.
+Four new regressions plus actual read-only context replay; preceding failures retained.
+Human approved exact two existing source/test paths and four existing reports.

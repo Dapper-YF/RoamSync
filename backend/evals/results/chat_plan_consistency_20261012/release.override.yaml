@@ -1,0 +1,9 @@
+services:
+  api:
+    image: roamsync-chat-api-hotfix:20261012
+    build:
+      context: ./backend/evals/results/chat_plan_consistency_20261012/release
+      target: production
+    command: ["uv", "run", "--no-sync", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+  web:
+    image: roamsync-chat-web-hotfix:20261012

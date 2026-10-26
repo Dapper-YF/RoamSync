@@ -1,0 +1,94 @@
+TAP version 13
+# Subtest: T01 knowledge and tentative exploration create no intention or candidate
+ok 1 - T01 knowledge and tentative exploration create no intention or candidate
+  ---
+  duration_ms: 5.0778
+  type: 'test'
+  ...
+# Subtest: T02 explicit intention anchors date without clock, duration or Trip creation
+ok 2 - T02 explicit intention anchors date without clock, duration or Trip creation
+  ---
+  duration_ms: 0.8144
+  type: 'test'
+  ...
+# Subtest: T03 duplicate message and repeated expression do not duplicate records
+ok 3 - T03 duplicate message and repeated expression do not duplicate records
+  ---
+  duration_ms: 0.5482
+  type: 'test'
+  ...
+# Subtest: T04 failed save is not acknowledged as saved, retry retains identity
+ok 4 - T04 failed save is not acknowledged as saved, retry retains identity
+  ---
+  duration_ms: 0.699
+  type: 'test'
+  ...
+# Subtest: T05 reload serialization and new conversation retain saved records and clear focus
+ok 5 - T05 reload serialization and new conversation retain saved records and clear focus
+  ---
+  duration_ms: 1.4912
+  type: 'test'
+  ...
+# Subtest: T06 proposing affects only candidate, accept preserves booking and free time
+ok 6 - T06 proposing affects only candidate, accept preserves booking and free time
+  ---
+  duration_ms: 2.6921
+  type: 'test'
+  ...
+# Subtest: T07 continuing discussion retains exact candidate, rejection only removes suggestion
+ok 7 - T07 continuing discussion retains exact candidate, rejection only removes suggestion
+  ---
+  duration_ms: 0.7473
+  type: 'test'
+  ...
+# Subtest: T08 stale accept cannot overwrite a later version
+ok 8 - T08 stale accept cannot overwrite a later version
+  ---
+  duration_ms: 0.613
+  type: 'test'
+  ...
+# Subtest: T09 browsing does not silently change discussing place, ambiguous reference clarifies
+ok 9 - T09 browsing does not silently change discussing place, ambiguous reference clarifies
+  ---
+  duration_ms: 0.8288
+  type: 'test'
+  ...
+# Subtest: T10 weather and route failures make no factual claims or itinerary writes
+ok 10 - T10 weather and route failures make no factual claims or itinerary writes
+  ---
+  duration_ms: 0.8163
+  type: 'test'
+  ...
+# Subtest: T12 undated explicit intention remains undated and can be revoked
+ok 11 - T12 undated explicit intention remains undated and can be revoked
+  ---
+  duration_ms: 1.4913
+  type: 'test'
+  ...
+# Subtest: T13 direct edit protects bookings and deliberate free time
+ok 12 - T13 direct edit protects bookings and deliberate free time
+  ---
+  duration_ms: 0.7381
+  type: 'test'
+  ...
+# Subtest: unscoped planning asks for a target and never silently selects a Trip
+ok 13 - unscoped planning asks for a target and never silently selects a Trip
+  ---
+  duration_ms: 0.1944
+  type: 'test'
+  ...
+# Subtest: proposal respects the selected date instead of hardcoding the second day
+ok 14 - proposal respects the selected date instead of hardcoding the second day
+  ---
+  duration_ms: 0.3446
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 216.6688

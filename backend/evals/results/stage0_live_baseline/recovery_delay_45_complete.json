@@ -1,0 +1,107 @@
+{
+  "scenario": "recovery-delay-45",
+  "trip_id": "36166e13-db0c-46ef-a172-80d87f334d65",
+  "date": "2026-10-15",
+  "execution_id": "79a3c716-d684-45f9-8cfe-7dd259690335",
+  "navigation_session_id": "95eccf38-3365-49b3-8fb9-092c13be6a48",
+  "disruption_event_id": "4a3afabf-e004-469b-8890-0eee964524af",
+  "recovery_run_id": "ee903775-77c0-42ae-829d-7e9f9181ec06",
+  "formal_fixture": {
+    "activity_count": 5,
+    "coordinates_complete": true,
+    "formal_routes_complete": true,
+    "route_provider": "AMap Route 2.0",
+    "route_facts_estimated": false,
+    "schedule_locked_activity": {"name": "西湖博物馆", "start": "12:40", "duration_minutes": 45},
+    "activities": [
+      {"name": "浙江省博物馆(孤山馆区)", "start": "09:00", "duration_minutes": 45, "execution_state": "completed"},
+      {"name": "中国印学博物馆", "start": "09:55", "duration_minutes": 45, "execution_state": "in_progress"},
+      {"name": "楼外楼(杭州西湖风景名胜区店)", "start": "10:45", "duration_minutes": 40, "execution_state": "pending"},
+      {"name": "西湖博物馆", "start": "12:40", "duration_minutes": 45, "execution_state": "pending", "schedule_locked": true},
+      {"name": "中国丝绸博物馆", "start": "14:02", "duration_minutes": 50, "execution_state": "pending"}
+    ],
+    "route_legs": [
+      {"from": "浙江省博物馆(孤山馆区)", "to": "中国印学博物馆", "mode": "walk", "minutes": 10, "meters": 708},
+      {"from": "中国印学博物馆", "to": "楼外楼(杭州西湖风景名胜区店)", "mode": "walk", "minutes": 5, "meters": 352},
+      {"from": "楼外楼(杭州西湖风景名胜区店)", "to": "西湖博物馆", "mode": "walk", "minutes": 64, "meters": 4752},
+      {"from": "西湖博物馆", "to": "中国丝绸博物馆", "mode": "walk", "minutes": 37, "meters": 2705}
+    ]
+  },
+  "deterministic_baseline": {
+    "observation_accepted": true,
+    "eta": "2026-10-15T10:45:00+08:00",
+    "minimum_downstream_slack_minutes": 11,
+    "first_impacted_activity": "楼外楼(杭州西湖风景名胜区店)",
+    "disruption_created": false
+  },
+  "delay_injection": {
+    "production_path": "NavigationObservation -> delay propagation -> execution projection -> risk detection -> TripDisruptionEvent -> Recovery PlanningRun",
+    "observation_accepted": true,
+    "eta_before": "2026-10-15T10:45:00+08:00",
+    "eta_after": "2026-10-15T11:30:00+08:00",
+    "delay_minutes": 45,
+    "risk_level": "infeasible",
+    "minimum_downstream_slack_minutes": -34,
+    "first_impacted_activity": "楼外楼(杭州西湖风景名胜区店)",
+    "event_type": "missed_time_window",
+    "event_impacted_activity": "西湖博物馆",
+    "disruption_created": true,
+    "recovery_run_created": true
+  },
+  "planner_context_provenance": {
+    "completed_a": {"available_in_state": true, "included_in_context": true, "visible_to_planner": true},
+    "current_b": {"available_in_state": true, "included_in_context": true, "visible_to_planner": true},
+    "navigation_target_c": {"available_in_state": true, "included_in_context": true, "visible_to_planner": true, "prompt_classification": "current_editable_activities", "execution_recovery_protected": true},
+    "fixed_d": {"available_in_state": true, "included_in_context": true, "visible_to_planner": true},
+    "delay_minutes": {"available_in_state": true, "included_in_context": true, "visible_to_planner": true},
+    "minimum_downstream_slack_minutes": {"available_in_state": true, "included_in_context": true, "visible_to_planner": true},
+    "active_disruption": {"available_in_state": true, "included_in_context": true, "visible_to_planner": true},
+    "formal_route_legs": {"available_in_state": true, "included_in_context": true, "visible_to_planner": false},
+    "current_eta": {"available_in_state": true, "included_in_context": false, "visible_to_planner": false}
+  },
+  "candidate": {
+    "produced": true,
+    "plan_revision_produced": false,
+    "attempt_count": 2,
+    "planner_attempted_changes": [
+      {"activity": "楼外楼(杭州西湖风景名胜区店)", "from": "10:45", "to": "12:00", "status": "navigation_target_protected"},
+      {"activity": "灵隐寺", "action": "added", "start": "14:27", "duration_minutes": 90},
+      {"activity": "中国丝绸博物馆", "from": "14:02", "to": "17:00"}
+    ],
+    "candidate_explanation_claimed_fixed_preservation": true
+  },
+  "validator": {
+    "reached": true,
+    "valid": false,
+    "review_count": 1,
+    "errors": ["execution_activity_changed", "route_travel_time_conflict"],
+    "deterministic_safety_boundary": "PASS"
+  },
+  "recovery_result": {
+    "disruption_detected": true,
+    "recovery_run_created": true,
+    "completed_activity_changed": false,
+    "fixed_activity_changed": false,
+    "candidate_valid": false,
+    "candidate_revision_status": "not_produced",
+    "recovery_improved": "not_evaluable",
+    "recovery_solved": false,
+    "explanation_faithfulness": "partially_grounded"
+  },
+  "weaknesses": {
+    "agent_recovery": [
+      "尝试改动当前导航目标 C，尽管 execution_recovery 已将其列为 protected。",
+      "候选路由仍与真实查询结果冲突，未形成可执行恢复方案。"
+    ],
+    "decision_context": [
+      "正式 route legs 在系统和 planning context 中存在，但 build_planner_input 的最终结构中缺失。",
+      "deterministic slack -34 可见，但 current ETA 本身未进入 Planner；Planner 仍没有正式下游路线事实。"
+    ]
+  },
+  "token_usage": {
+    "destination_research_tokens": 31048,
+    "planner_tokens": 17721,
+    "total_tokens": 48769
+  },
+  "production_code_changed": false
+}

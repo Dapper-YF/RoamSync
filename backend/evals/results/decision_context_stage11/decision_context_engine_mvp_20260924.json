@@ -1,0 +1,51 @@
+{
+  "stage": "Stage 1.1 — Decision Context Engine MVP",
+  "normal_planning": {
+    "trip_id": "00000000-0000-4000-8000-000000000002",
+    "run_id": "cd7c6df1-cc26-4dd1-9379-0d99a806ee21",
+    "revision_id": "5252074b-36f6-4807-bbec-69ebc76b03db",
+    "status": "awaiting_confirmation",
+    "provider": "deepseek-flash",
+    "validator_valid": true,
+    "goal_check": {
+      "end_before": "17:40 <= 18:00",
+      "walking": "61 <= 80 minutes"
+    },
+    "context_assertions": {
+      "goal_context": true,
+      "formal_route_context": true,
+      "plan_revision_pending": true
+    }
+  },
+  "recovery_context": {
+    "source_stage0_trip_id": "36166e13-db0c-46ef-a172-80d87f334d65",
+    "independent_eval_trip_id": "e12a0e34-1001-47fc-b266-6dc5eef3ea5e",
+    "run_id": "3ed17781-4175-49c4-8310-79645e51c1a7",
+    "delay_minutes": 45,
+    "minimum_downstream_slack_minutes": -34,
+    "context_summary": {
+      "formal_activity_count": 5,
+      "route_fact_status": "available",
+      "current_activity_visible": true,
+      "navigation_target_visible": true,
+      "current_eta_visible": true,
+      "delay_visible": true,
+      "minimum_slack_visible": true,
+      "protected_count": 4,
+      "editable_count": 1,
+      "protected_editable_overlap": false,
+      "provenance": {
+        "route_context": "persisted_amap_route",
+        "execution_context": "execution_and_navigation_projection"
+      }
+    },
+    "planner_result": {
+      "reached": true,
+      "validator_reached": true,
+      "status": "failed",
+      "failure_code": "planner_constraints_unsatisfied",
+      "validation_code": "candidate_route_set_mismatch",
+      "classification": "trade_off_or_candidate_quality_weakness_not_context_missing"
+    }
+  }
+}

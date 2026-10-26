@@ -1,0 +1,373 @@
+{
+  "measured_at": "2026-09-29T03:58:12.556231+00:00",
+  "mode": "live",
+  "model_configuration": {
+    "provider": "glm",
+    "model": "glm-5.3-flash",
+    "reasoning_effort": "max"
+  },
+  "corpus": "hangzhou_reviewed_v1_real_source_paraphrases",
+  "database_access": false,
+  "mutation_evidence": "No DB and no mutation port in this eval; formal snapshots measured separately in PostgreSQL tests",
+  "claim_entailment": "manual review required; valid refs are not sentence verification",
+  "results": [
+    {
+      "id": "parents",
+      "message": "杭州适合带父母玩吗？",
+      "goal": {
+        "goal_type": "recommendation",
+        "confidence": 0.93,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_recommendation"
+        ]
+      },
+      "knowledge_tool_required": true,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "现有资料只有长辈出游的一般原则，不能据此确认这个目的地是否适合你的父母。\n国家旅游局公布的老年旅游服务规范强调按身体条件选择活动，避免高风险和高强度项目，选择无障碍设施较完善的景点并保持舒缓节奏、安排休息。这是用于杭州旅行讨论的一般长辈出游原则，不是某个杭州景点无障碍现状或个人健康适宜性的证明。\n长辈出游的一般服务原则包括舒缓游览节奏、给予充裕游览时间，并合理安排途中休息。用于杭州慢游时，可先讨论体力、休息需求及活动强度；具体路段与设施仍须另行核实。本文不提供正式日程。",
+        "goal_type": "recommendation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": null,
+        "information_need": {
+          "knowledge_required": true,
+          "knowledge_types": [
+            "audience_strategy",
+            "travel_strategy"
+          ],
+          "live_fact_required": false,
+          "fact_types": [],
+          "search_required": false,
+          "decision_history_required": false,
+          "trip_context_required": false,
+          "preferences_required": true,
+          "itinerary_required": false,
+          "audience_tags": [
+            "senior"
+          ],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": [
+            "parent_word_to_senior_filter_not_age_fact"
+          ]
+        },
+        "information_gaps": [
+          {
+            "code": "knowledge_insufficient",
+            "message": "缺少目的地实际条件与个人适宜性的证据。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": "杭州",
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [
+          {
+            "evidence_ref": "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8",
+            "text": "国家旅游局公布的老年旅游服务规范强调按身体条件选择活动，避免高风险和高强度项目，选择无障碍设施较完善的景点并保持舒缓节奏、安排休息。这是用于杭州旅行讨论的一般长辈出游原则，不是某个杭州景点无障碍现状或个人健康适宜性的证明。",
+            "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+            "knowledge_type": "audience_strategy",
+            "scope": "stable",
+            "document_id": "hz-senior-strategy",
+            "chunk_id": "27c9242da2d8c76b45cce22e607f1ca81f45315967949297a2450f48a9af5263",
+            "document_title": "带父母杭州慢游：长辈出游一般原则",
+            "source_name": "国家旅游局 / 北京市政府门户转载",
+            "source_type": "web",
+            "source_authority": "official_government",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": null,
+            "place_name": null,
+            "applicability": "general_strategy"
+          },
+          {
+            "evidence_ref": "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8",
+            "text": "长辈出游的一般服务原则包括舒缓游览节奏、给予充裕游览时间，并合理安排途中休息。用于杭州慢游时，可先讨论体力、休息需求及活动强度；具体路段与设施仍须另行核实。本文不提供正式日程。",
+            "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+            "knowledge_type": "travel_strategy",
+            "scope": "stable",
+            "document_id": "hz-slow-travel-strategy",
+            "chunk_id": "8c919d6231a97b531a9ebcbc56922af87e56c66b716f5fafb598d9dd430feb4e",
+            "document_title": "杭州轻松慢游：节奏与休息",
+            "source_name": "国家旅游局 / 北京市政府门户转载",
+            "source_type": "web",
+            "source_authority": "official_government",
+            "reviewed_at": "2026-09-29T03:36:00.603499Z",
+            "ingested_at": "2026-09-29T03:36:00.603499Z",
+            "valid_until": null,
+            "external_place_ref": null,
+            "place_name": null,
+            "applicability": "general_strategy"
+          }
+        ],
+        "answer_evidence_refs": [
+          "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8",
+          "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8"
+        ],
+        "knowledge_retrieval": {
+          "status": "available",
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:58:12.573632Z",
+          "retrieved_document_refs": [
+            "hz-senior-strategy",
+            "hz-slow-travel-strategy"
+          ],
+          "retrieved_chunk_refs": [
+            "27c9242da2d8c76b45cce22e607f1ca81f45315967949297a2450f48a9af5263",
+            "8c919d6231a97b531a9ebcbc56922af87e56c66b716f5fafb598d9dd430feb4e"
+          ]
+        },
+        "grounding_status": "citations_validated",
+        "grounding_limitations": [
+          "claim_entailment_not_verified",
+          "tourism_knowledge_not_live_verified"
+        ]
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": null,
+      "latency_seconds": 100.597,
+      "knowledge_tool_called": true,
+      "knowledge_tool_calls": 1,
+      "provider_attempts": 1,
+      "provider_observations": [
+        {
+          "provider": "glm",
+          "model": "glm-5.3-flash",
+          "status": "completed",
+          "finish_reason": "stop",
+          "usage": {
+            "completion_tokens": 3391,
+            "prompt_tokens": 1964,
+            "total_tokens": 5355,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2552,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 64
+            }
+          }
+        }
+      ],
+      "knowledge_requests": [
+        {
+          "query": "杭州适合带父母玩吗？",
+          "destination": "杭州",
+          "knowledge_types": [
+            "audience_strategy",
+            "travel_strategy"
+          ],
+          "max_results": 5,
+          "audience_tags": [
+            "senior"
+          ],
+          "season_tags": [],
+          "experience_tags": []
+        }
+      ],
+      "retrieval_results": [
+        {
+          "status": "available",
+          "evidence": [
+            {
+              "evidence_ref": "knowledge_8defe40fd353e74d_27c9242da2d8c76b45cce22e607f1ca8",
+              "text": "国家旅游局公布的老年旅游服务规范强调按身体条件选择活动，避免高风险和高强度项目，选择无障碍设施较完善的景点并保持舒缓节奏、安排休息。这是用于杭州旅行讨论的一般长辈出游原则，不是某个杭州景点无障碍现状或个人健康适宜性的证明。",
+              "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+              "knowledge_type": "audience_strategy",
+              "scope": "stable",
+              "document_id": "hz-senior-strategy",
+              "chunk_id": "27c9242da2d8c76b45cce22e607f1ca81f45315967949297a2450f48a9af5263",
+              "document_title": "带父母杭州慢游：长辈出游一般原则",
+              "source_name": "国家旅游局 / 北京市政府门户转载",
+              "source_type": "web",
+              "source_authority": "official_government",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": null,
+              "place_name": null,
+              "applicability": "general_strategy"
+            },
+            {
+              "evidence_ref": "knowledge_607a0b51c69006d3_8c919d6231a97b531a9ebcbc56922af8",
+              "text": "长辈出游的一般服务原则包括舒缓游览节奏、给予充裕游览时间，并合理安排途中休息。用于杭州慢游时，可先讨论体力、休息需求及活动强度；具体路段与设施仍须另行核实。本文不提供正式日程。",
+              "source_reference": "https://www.beijing.gov.cn/zhengce/zhengcefagui/201905/t20190522_58955.html",
+              "knowledge_type": "travel_strategy",
+              "scope": "stable",
+              "document_id": "hz-slow-travel-strategy",
+              "chunk_id": "8c919d6231a97b531a9ebcbc56922af87e56c66b716f5fafb598d9dd430feb4e",
+              "document_title": "杭州轻松慢游：节奏与休息",
+              "source_name": "国家旅游局 / 北京市政府门户转载",
+              "source_type": "web",
+              "source_authority": "official_government",
+              "reviewed_at": "2026-09-29T03:36:00.603499Z",
+              "ingested_at": "2026-09-29T03:36:00.603499Z",
+              "valid_until": null,
+              "external_place_ref": null,
+              "place_name": null,
+              "applicability": "general_strategy"
+            }
+          ],
+          "outcome": "available",
+          "advisory": {
+            "knowledge_sufficient": true,
+            "live_fact_verification_required": false,
+            "planning_decision_context_required": false,
+            "reasons": [],
+            "warnings": [],
+            "evidence_kind": "tourism_knowledge_not_live_verified"
+          },
+          "retrieval_mode": "lexical",
+          "retrieved_at": "2026-09-29T03:58:12.573632Z"
+        }
+      ]
+    },
+    {
+      "id": "original_reason",
+      "message": "为什么你推荐18点去西湖？",
+      "goal": {
+        "goal_type": "explanation",
+        "confidence": 0.94,
+        "target_runtime": "companion",
+        "mutation_requested": false,
+        "trip_context_required": false,
+        "knowledge_required": true,
+        "live_fact_likely_required": false,
+        "referenced_entities": [],
+        "referenced_previous_decision": false,
+        "clarification_needed": false,
+        "signals": [
+          "companion_explanation"
+        ]
+      },
+      "knowledge_tool_required": false,
+      "mutation_tools_available": 0,
+      "result": {
+        "response_text": "当前没有保存可验证的原始理由，我不能把重新推测的解释说成当时的理由。旅游背景知识不能代替原始决定，也不能证明实时条件。",
+        "goal_type": "explanation",
+        "status": "needs_information",
+        "suggestions": [],
+        "resolved_suggestion_refs": [],
+        "interactions": [],
+        "comparison": null,
+        "explanation": {
+          "subject_ref": null,
+          "explanation_type": "rationale_unavailable",
+          "reasons": [],
+          "evidence_refs": [],
+          "based_on_prior_decision": false,
+          "source_turn_ref": null,
+          "source_decision_ref": null,
+          "fact_freshness_warning": "无法证明任何重建解释是原始规划理由。",
+          "missing_evidence": [
+            "persisted_original_rationale"
+          ]
+        },
+        "information_need": {
+          "knowledge_required": false,
+          "knowledge_types": [],
+          "live_fact_required": true,
+          "fact_types": [
+            "timing_conditions"
+          ],
+          "search_required": false,
+          "decision_history_required": true,
+          "trip_context_required": true,
+          "preferences_required": false,
+          "itinerary_required": true,
+          "audience_tags": [],
+          "season_tags": [],
+          "experience_tags": [],
+          "filter_signals": []
+        },
+        "information_gaps": [
+          {
+            "code": "live_fact_unavailable",
+            "message": "当前无法实时核实天气、开放、票价或交通等事实。"
+          },
+          {
+            "code": "rationale_unavailable",
+            "message": "没有找到可验证的原始理由记录。"
+          }
+        ],
+        "planning_handoff": null,
+        "conversation_destination": null,
+        "runtime_trace": [
+          "interpret_goal",
+          "resolve_conversation",
+          "determine_information_need",
+          "gather_read_only_context",
+          "generate_interaction",
+          "extract_interaction_outcome",
+          "planning_handoff_not_authorized",
+          "prepare_conversation_persistence"
+        ],
+        "knowledge_evidence": [],
+        "answer_evidence_refs": [],
+        "knowledge_retrieval": null,
+        "grounding_status": "live_verification_required",
+        "grounding_limitations": []
+      },
+      "invalid_refs": [],
+      "error": null,
+      "live_fact_violation": null,
+      "original_rationale_violation": false,
+      "latency_seconds": 0.011,
+      "knowledge_tool_called": false,
+      "knowledge_tool_calls": 0,
+      "provider_attempts": 0,
+      "provider_observations": [],
+      "knowledge_requests": [],
+      "retrieval_results": []
+    }
+  ],
+  "complete": true,
+  "case_count": 2,
+  "real_provider_attempts": 1,
+  "fake_provider_calls": 0,
+  "knowledge_tool_precision": 1.0,
+  "knowledge_tool_recall": 1.0,
+  "tool_confusion": {
+    "true_positive": 1,
+    "false_positive": 0,
+    "false_negative": 0
+  },
+  "errors": 0,
+  "live_fact_violations": 0,
+  "original_rationale_violations": 0
+}

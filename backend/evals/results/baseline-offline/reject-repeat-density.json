@@ -1,0 +1,113 @@
+{
+  "scenario_id": "reject-repeat-density",
+  "artifact": {
+    "validation": {
+      "valid": true,
+      "errors": []
+    },
+    "candidate": {
+      "activities": [],
+      "explanation": ""
+    },
+    "tool_calls": [],
+    "changed_activity_ids": [],
+    "preserved_activity_ids": [],
+    "explanation_claims": [],
+    "explanation_evidence": [],
+    "repeat_error": true,
+    "final_outcome": "rejection_not_in_planner_context"
+  },
+  "metrics": {
+    "intent_routing_accuracy": null,
+    "constraint_violation_rate": 0.0,
+    "goal_satisfaction": 1.0,
+    "preference_preservation": 1.0,
+    "unnecessary_change_rate": 0.0,
+    "tool_precision": 1.0,
+    "tool_recall": 1.0,
+    "forbidden_tool_calls": [],
+    "explanation_faithfulness": null,
+    "repeat_error": true,
+    "bad_but_valid_detected": false,
+    "validation_error_codes": []
+  },
+  "trace": {
+    "schema_version": "travel-agent-trace-v1",
+    "scenario_id": "reject-repeat-density",
+    "run_id": "offline:reject-repeat-density",
+    "started_at": "2026-09-23T01:40:18.163277+00:00",
+    "completed_at": "2026-09-23T01:40:18.163289+00:00",
+    "events": [
+      {
+        "graph_step": "fixture_baseline",
+        "kind": "context",
+        "input_fact_refs": [
+          "rejected_revision",
+          "current_itinerary"
+        ],
+        "data": {
+          "mode": "offline"
+        },
+        "elapsed_ms": null
+      },
+      {
+        "graph_step": "final_outcome",
+        "kind": "decision",
+        "input_fact_refs": [],
+        "data": {
+          "outcome": "rejection_not_in_planner_context"
+        },
+        "elapsed_ms": null
+      }
+    ]
+  },
+  "semantic_review": {
+    "schema_version": "travel-agent-semantic-rubric-v1",
+    "scenario": {
+      "id": "reject-repeat-density",
+      "kind": "user_reject",
+      "title": "拒绝太赶方案后再规划",
+      "input": {
+        "request": "上一方案太赶，请再规划",
+        "facts": [
+          "rejected_revision",
+          "current_itinerary"
+        ]
+      },
+      "expected": {},
+      "required_tools": [],
+      "forbidden_tools": []
+    },
+    "artifact": {
+      "validation": {
+        "valid": true,
+        "errors": []
+      },
+      "candidate": {
+        "activities": [],
+        "explanation": ""
+      },
+      "tool_calls": [],
+      "changed_activity_ids": [],
+      "preserved_activity_ids": [],
+      "explanation_claims": [],
+      "explanation_evidence": [],
+      "repeat_error": true,
+      "final_outcome": "rejection_not_in_planner_context"
+    },
+    "rubric": {
+      "relaxed_pace": "Does the proposal avoid implausibly short meals/visits and excessive consecutive stops?",
+      "tradeoff_grounding": "Does it link each major compromise to a supplied fact, constraint, or explicit preference?",
+      "uncertainty_honesty": "Does it avoid presenting unavailable provider facts as known?"
+    },
+    "required_output": {
+      "scores": {
+        "relaxed_pace": "0..2",
+        "tradeoff_grounding": "0..2",
+        "uncertainty_honesty": "0..2"
+      },
+      "evidence": "fact references and concise explanation",
+      "verdict": "pass|fail|unknown"
+    }
+  }
+}

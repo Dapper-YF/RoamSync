@@ -1,0 +1,81 @@
+diff --git a/backend/app/decision_context.py b/backend/app/decision_context.py
+--- a/backend/app/decision_context.py
++++ b/backend/app/decision_context.py
+@@ -14,16 +14,27 @@
+     """Select the target-day facts and establish one activity authority split."""
+     grounded = resolution.get("grounded_intent") or {}
+     target_ids = set(grounded.get("target_day_ids") or [])
++    recovery = context.get("execution_recovery") or {}
++    execution = recovery.get("execution_state") or {}
++    execution_reference_ids = {str(execution[key]) for key in (
++        "current_activity_id", "navigation_target_activity_id", "first_impacted_activity_id",
++    ) if execution.get(key)}
++    # Keep referenced execution days as immutable context, even for a request
++    # targeting a different day. Never hide global execution pointers.
+     target_days = [
+         day for day in context.get("days", [])
+         if not target_ids or str(day.get("id")) in target_ids
++        or any(str(activity["id"]) in execution_reference_ids for activity in day.get("activities", []))
+     ]
+     activities = [activity for day in target_days for activity in day.get("activities", [])]
+     activity_ids = {str(activity["id"]) for activity in activities}
+-    recovery = context.get("execution_recovery") or {}
+ 
+     frozen = set(recovery.get("frozen_activity_ids") or [])
+     protected_sources: dict[str, set[str]] = defaultdict(set)
++    for day in target_days:
++        if target_ids and str(day.get("id")) not in target_ids:
++            for activity in day.get("activities", []):
++                protected_sources[str(activity["id"])].add("outside_requested_scope")
+     for activity_id in frozen:
+         protected_sources[activity_id].add("execution_completed_or_skipped")
+     for activity_id in recovery.get("protected_activity_ids") or []:
+diff --git a/backend/tests/test_decision_context.py b/backend/tests/test_decision_context.py
+--- a/backend/tests/test_decision_context.py
++++ b/backend/tests/test_decision_context.py
+@@ -115,3 +115,45 @@
+             "protected_constraints": {"protected_activity_ids": ["A"], "editable_activity_ids": ["A"]},
+         })
+     assert set(exc_info.value.codes) == {"protected_editable_overlap", "route_leg_references_unknown_activity"}
++
++
++def _cross_day_context():
++    from copy import deepcopy
++    context, goals, resolution = _context()
++    extra = deepcopy(context["days"][0]["activities"][-1])
++    extra.update(id="future-editable", status="planned", schedule_locked=False)
++    context["days"].append({"id": "day-2", "date": "2026-10-21", "route_legs": [], "activities": [extra]})
++    unrelated = deepcopy(extra)
++    unrelated["id"] = "unrelated-editable"
++    context["days"].append({"id": "day-3", "date": "2026-10-22", "route_legs": [], "activities": [unrelated]})
++    goals["target_days"] = ["2026-10-21"]
++    resolution["grounded_intent"]["target_day_ids"] = ["day-2"]
++    return context, goals, resolution
++
++
++def test_other_day_request_keeps_execution_references_as_readonly_context():
++    from copy import deepcopy
++    context, goals, resolution = _cross_day_context()
++    before = deepcopy(context)
++    result = build_decision_context(context=context, goals=goals, resolution=resolution)
++    assert context == before
++    assert result["goal_context"]["target_days"] == ["2026-10-21"]
++    assert {day["day_id"] for day in result["formal_itinerary"]["days"]} == {"day-1", "day-2"}
++    assert result["protected_constraints"]["editable_activity_ids"] == ["future-editable"]
++    execution_ids = {activity["id"] for activity in context["days"][0]["activities"]}
++    assert execution_ids <= set(result["protected_constraints"]["protected_activity_ids"])
++    for activity_id in execution_ids:
++        assert "outside_requested_scope" in result["protected_constraints"]["provenance"][activity_id]
++    assert result["execution_context"]["current_activity"]["name"] == "当前活动"
++    assert result["execution_context"]["navigation_target"]["name"] == "导航目标"
++    assert result["execution_context"]["first_impacted_activity_id"] == "activity-target"
++    assert_decision_context_invariants(result)
++
++
++@pytest.mark.parametrize("reference", ["current_activity_id", "navigation_target_activity_id", "first_impacted_activity_id"])
++def test_other_day_request_still_rejects_truly_unknown_execution_references(reference):
++    context, goals, resolution = _cross_day_context()
++    context["execution_recovery"]["execution_state"][reference] = "unknown-activity"
++    with pytest.raises(DecisionContextInvariantError) as error:
++        build_decision_context(context=context, goals=goals, resolution=resolution)
++    assert "execution_references_unknown_activity" in error.value.codes

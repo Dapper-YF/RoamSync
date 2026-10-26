@@ -1,0 +1,131 @@
+diff --git a/backend/app/planning_intent_service.py b/backend/app/planning_intent_service.py
+index 28d28cc..36a3ed8 100644
+--- a/backend/app/planning_intent_service.py
++++ b/backend/app/planning_intent_service.py
+@@ -664,6 +664,15 @@ def _is_plan_meta_activity_reference(value: str) -> bool:
+     if re.fullmatch(r"(?:已完成|已经完成|正在进行|执行中)(?:的)?活动", value):
+         # Persisted execution state owns these groups; they are not venue names.
+         return True
++    # Whole plan properties are not venue names. This runs only after real
++    # activity aliases have been matched; unknown named venues still clarify.
++    if value == "其他日期不变":
++        return True
++    if re.fullmatch(
++        r"整体[一二三四五六七八九十两\d]+天[（(]\d{4}-\d{2}-\d{2}(?:至|到)\d{4}-\d{2}-\d{2}[）)]框架",
++        value,
++    ):
++        return True
+     if value in {"顺序", "时长", "时间", "交通", "交通衔接", "安排", "内容", "要求", "上述要求"}:
+         return True
+     if re.fullmatch(r"(?:用户)?(?:整体)?偏好[:：][\d一二三四五六七八九十两]+(?:个)?人(?:出行|旅行)", value):
+diff --git a/backend/tests/test_planning_intents.py b/backend/tests/test_planning_intents.py
+index 21c10d7..846ea9f 100644
+--- a/backend/tests/test_planning_intents.py
++++ b/backend/tests/test_planning_intents.py
+@@ -586,3 +586,36 @@ def test_place_mention_prefers_unique_scoped_formal_activity_and_clarifies_ambig
+     result=ground([entity,duplicate])
+     assert "activity_not_unique:杭州大剧院" in result.ambiguities
+     assert result.candidate_place_ids==[]
++
++
++@pytest.mark.parametrize("preservation", [
++    "保留整体三天（2026-10-09至2026-10-11）框架与其他日期不变",
++    "保留整体三天(2026-10-09至2026-10-11)框架与其他日期不变",
++    "保留其他日期不变",
++])
++def test_day_candidate_edit_plan_frame_is_not_a_missing_activity(preservation):
++    with TestClient(app) as client:
++        trip = client.post("/api/v1/trips", json={
++            "title": "南京候选编辑回归", "destination": "南京",
++            "start_date": "2026-10-09", "end_date": "2026-10-11",
++            "total_budget_fen": 300000, "daily_budget_fen": 100000,
++        }).json()
++        before = client.get(f"/api/v1/trips/{trip['id']}/days").json()
++        message = f"请调整当前行程：把2026年10月10日的安排放轻松一些，减少当天活动密度和赶场，{preservation}，仅给出新的候选方案，不直接保存为正式行程。"
++        result = client.post(f"/api/v1/trips/{trip['id']}/planning-intent/resolve", json={"message": message}).json()
++        assert not result["requires_clarification"], result
++        assert result["grounded_intent"]["target_day_ids"] == [before[1]["id"]]
++        assert result["grounded_intent"]["target_activity_ids"] == []
++        assert client.get(f"/api/v1/trips/{trip['id']}/days").json() == before
++        assert client.get(f"/api/v1/trips/{trip['id']}").json()["version"] == trip["version"]
++
++
++def test_plan_frame_meta_does_not_hide_known_or_unknown_venue_references():
++    from datetime import date
++    from app.planning_intent_service import _ActivityEntity, _resolve_protected_activities
++    activity, day = uuid.uuid4(), uuid.uuid4()
++    entities = [_ActivityEntity(activity, day, date(2026, 10, 10), ("框架博物馆",))]
++    ambiguities = []
++    protected = _resolve_protected_activities("请调整第二天，保留框架博物馆与不存在的三天博物馆与其他日期不变", entities, None, ambiguities, target_day_id=day)
++    assert protected == [activity]
++    assert ambiguities == ["activity_not_found:不存在的三天博物馆"]
+diff --git a/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md b/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md
+index e3b51d6..e256459 100644
+--- a/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md
++++ b/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md
+@@ -1,3 +1,5 @@
++> Current checkpoint2026-10-08: Provider fixed6/6 health and unchanged-release initial Candidate8activities passed. Full clean E2E is blocked by confirmed plan-property/activity misclassification during day2 edit; one normal clarification did not clear it. Proposed2path minimal patch passed858 Linux/PG17 tests in an independent archive; not committed/applied. Human approved the exact six-path candidate scope; clean-ref lifecycle verification is next. See backend/evals/results/planner_reliability_20261008/PLANNER_RELIABILITY_GATE_20261008.md. Prior contents below are historical checkpoints. Production unchanged; no online authorization.
++
+ # Repository Reproducibility Acceptance — 2026-10-08
+ 
+ Status: VERIFIED clean Git checkout / locked build / regression; NOT READY for release because real-provider lifecycle acceptance failed. Production deployment, main merge and production database changes are not authorized.
+diff --git a/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md b/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md
+index e34bca9..ecfb873 100644
+--- a/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md
++++ b/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md
+@@ -1,3 +1,5 @@
++> Current checkpoint2026-10-08: Provider fixed6/6 health and unchanged-release initial Candidate8activities passed. Full clean E2E is blocked by confirmed plan-property/activity misclassification during day2 edit; one normal clarification did not clear it. Proposed2path minimal patch passed858 Linux/PG17 tests in an independent archive; not committed/applied. Human approved the exact six-path candidate scope; clean-ref lifecycle verification is next. See backend/evals/results/planner_reliability_20261008/PLANNER_RELIABILITY_GATE_20261008.md. Prior contents below are historical checkpoints. Production unchanged; no online authorization.
++
+ # RoamSync Demo Acceptance — 2026-10-08
+ 
+ Status: NOT READY — clean Git source builds and regression passes, but the fresh real-provider Candidate gate failed. Long-term goal remains ACTIVE. Production unchanged; deployment/main merge/production DB changes are not authorized.
+diff --git a/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md b/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md
+index b3ca5b4..c04413d 100644
+--- a/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md
++++ b/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md
+@@ -1,3 +1,5 @@
++> Current checkpoint2026-10-08: Provider fixed6/6 health and unchanged-release initial Candidate8activities passed. Full clean E2E is blocked by confirmed plan-property/activity misclassification during day2 edit; one normal clarification did not clear it. Proposed2path minimal patch passed858 Linux/PG17 tests in an independent archive; not committed/applied. Human approved the exact six-path candidate scope; clean-ref lifecycle verification is next. See backend/evals/results/planner_reliability_20261008/PLANNER_RELIABILITY_GATE_20261008.md. Prior contents below are historical checkpoints. Production unchanged; no online authorization.
++
+ # RoamSync Long-Term Progress
+ 
+ ## Goal
+diff --git a/docs/handoff/LATEST_HANDOFF.md b/docs/handoff/LATEST_HANDOFF.md
+index 155b1fc..3e7009b 100644
+--- a/docs/handoff/LATEST_HANDOFF.md
++++ b/docs/handoff/LATEST_HANDOFF.md
+@@ -2,28 +2,28 @@
+ 
+ ## Snapshot
+ 
+-2026-10-08. Goal ACTIVE. Git release preparation verified; real clean-ref Demo NOT READY. No production deployment, main merge or production DB changes authorized.
++2026-10-08. Goal ACTIVE. Provider health and unchanged-release initial Candidate PASSED; full lifecycle BLOCKED by confirmed day2 intent parser defect. Human approved the exact six-path candidate branch/commit scope; production not authorized.
+ 
+ ## Current Freeze / Rehearsal Status
+ 
+-VERIFIED: branch codex/roamsync-demo-release-20261007 from main5572849. Human approved363→366 exact packaging amendment. Group SHAs Backend fbd65f2, Web93118dc, operator/docs8ee7dbf. Two explicit deletions; all366 blob hashes match. Historical work captured honestly; Android/raw/private/unrelated work excluded and retained. No blanket add/reset/clean/stash/rebase/push.
++Application8ee7dbf/documentation0b5010fe unchanged. Clean source e7e22849869443bb73f96bce736fb86a1c4b3745f2a48f6f32da3273176622a6;366 hashes/175 API+Worker source files exact; built Nginx3001/API8001/isolatedPG17, no source mounts. Independent approved candidate branch records only six reviewed existing paths; original release retained.
+ 
+ ## Latest shadow-mode evidence
+ 
+-Clean checkout E:/Study/RoamSync-release-20261008, initial git clean. Source e7e22849869443bb73f96bce736fb86a1c4b3745f2a48f6f32da3273176622a6. API/Worker built images, no source mounts,175 runtime files exact. Built Nginx3001/isolated API8001/PG17 with real providers. Final documentation-only checkpoint SHA/manifests in git_release_20261008/release_final_binding.json.
++MEASURED fixed6 real GLM calls,0retry,serial:6/6completed/stop, two strict Research calls17.313/23.214s, connection reuse passes. JSON and transport are separate categories; historical raw/finish reason missing, exact original roots UNLOCATED. No guessed source/config fix. Real timeout probe maps ConnectTimeout→planner_timeout.
+ 
+ ## Prior milestone baseline (before shadow split)
+ 
+-Production accepted fc3a06ba… remains. Formal seven tables/Trip versions exactly unchanged. Previous isolated dirty-tree chain versions1→2→3, Recovery costs19000fen aligned, current reject/feedback and honest Explanation verified; those are historical evidence, not substitute for this clean-ref chain. Source Repair PARTIAL/NOT READY; date-specific published facts frozen. Ledger2.2 OPEN.
++New normal browser Nanjing3days candidate has8activities, valid=true,pending Revision; formalactivities0/version1. Three older failed Runs retained. Productionfc3 remains; no production/database/main/image replacement. Earlier dirty-tree full lifecycle is historical, not new clean-ref proof.
+ 
+ ## Prior verification
+ 
+-MEASURED clean locked Linux/Python3.11/new empty PG17: migrations0→0034;854 passed,0fail/error/skip,2warnings. Web125/typecheck/build. Frozen clean-checkout controlled Knowledge60 and holdout50 summary unchanged; labels intact. Remove automatic demo reset; add three approved frozen inputs, keep raw result metadata outside Git.
++Release locked Linux full854/Web125/typecheck/build remains. New independent patch changes only planning_intent_service.py and test_planning_intents.py: nine source lines classify exact plan-property forms after real activity matches, unknown named venues still clarify. Four regressions red→green; patched full858/0fail/error/skip,2warnings on emptyPG17. Initial wrong test launch flags97missing-map-key failures retained; corrected run uses existing compose.test.yaml flags. Real E2E config unchanged. Proposed source6d0257506c8ae65cbfc640cbdbfd3376b23bac2cf9623306432513f48ddca1eb.
+ 
+ ## Prior blockers (historical)
+ 
+-Current blocker: first geocoding outage failed safely; second real conversation passed facts and explicit create. Research failed json_invalid; two normal UI retries failed planner_unavailable, last log RemoteProtocolError; direct model connectivity also failed. All failures retained. New fixture version1/formal activities0; Candidate/Accept/Reject/Execution/Disruption/Recovery/Explanation not passed on clean release.
++Current concrete blocker: day2 request's “整体三天…框架”/“其他日期不变” misread as activities; same Run remains awaiting_clarification after a normal supplemental answer. Candidate not accepted. Execution/Disruption/Recovery/reject/Explanation downstream unverified. Graph/Validator/time/budget/route/approval unchanged. No Mock/cleared failures/lowered assertion.
+ 
+ ## Interview framing
+ 
+-NOT READY, not product complete. Evidence: backend/evals/results/git_release_20261008/clean_rehearsal_verdict.json and reports REPOSITORY_REPRODUCIBILITY_20261007.md / ROAMSYNC_DEMO_ACCEPTANCE_20261007.md. Next gate: stable actual model transport, unchanged complete clean-ref lifecycle, image/source bindings. Only after success report production differences and await final online confirmation. No new ordinary functionality/source expansion selected. Production rollback image/config references preserved; data/schema operations need separate approval. Goal stays ACTIVE.
++Patch: backend/evals/results/planner_reliability_20261008/proposed_intent_meta_fix.patch; report and XML/manifests alongside. New proposed branch codex/roamsync-planner-reliability-20261008 from0b5010fe; exact2code/test+4existing report paths. Current human explicitly approved this six-path candidate branch and commits. Form approved new clean candidate; repeat required provider/full real lifecycle/runtime bindings. Original Release preserved. No production deployment or DB changes; final online approval only after all gates pass. Goal ACTIVE/NOT READY.

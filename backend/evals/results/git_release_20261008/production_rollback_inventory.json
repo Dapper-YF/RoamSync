@@ -1,0 +1,61 @@
+[
+  {
+    "name": "roamsync-api",
+    "image_id": "sha256:60723c02c240875e3956744440ab19ea609dcf8ca31b6668a00845b57c2ef7a5",
+    "image_ref": "roamsync-api",
+    "running": true,
+    "ports": {
+      "8000/tcp": [
+        {
+          "HostIp": "",
+          "HostPort": "8000"
+        }
+      ]
+    },
+    "mounts": []
+  },
+  {
+    "name": "roamsync-agent-worker-1",
+    "image_id": "sha256:5a219e84f4a6a873316609425bbf5b22075f13ec16607dd097ce32e63ef52c6a",
+    "image_ref": "roamsync-agent-worker",
+    "running": true,
+    "ports": {},
+    "mounts": []
+  },
+  {
+    "name": "roamsync-web",
+    "image_id": "sha256:9794c7029f6ca25800174e7072d701065df2b6bbff6110dd168f4c6b614f99b8",
+    "image_ref": "roamsync-web",
+    "running": true,
+    "ports": {
+      "80/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "3000"
+        }
+      ]
+    },
+    "mounts": []
+  },
+  {
+    "name": "roamsync-postgres",
+    "image_id": "sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73",
+    "image_ref": "postgres:17-alpine",
+    "running": true,
+    "ports": {
+      "5432/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "54329"
+        }
+      ]
+    },
+    "mounts": [
+      {
+        "type": "volume",
+        "destination": "/var/lib/postgresql/data",
+        "source": "roamsync_postgres_data"
+      }
+    ]
+  }
+]

@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-21",
+  "timezone": "Asia/Shanghai",
+  "scope": "Standalone synthetic prototype and current source audit; not production feature acceptance",
+  "model_tests": {
+    "command": "node --test docs/ux/natural-assistant-20261021/prototype/model.test.mjs",
+    "passed": 14,
+    "failed": 0,
+    "output": "model-tests.tap",
+    "coverage": ["T01", "T02", "T03", "T04", "T05", "T06", "T07", "T08", "T09", "T10", "T12 partial", "T13 partial", "unscoped planning", "selected date"],
+    "limitation": "Pure reducer fixtures test prototype state transitions, not natural-language generalization, real persistence, service authorization or production Validator. T11 and full T14 not implemented."
+  },
+  "syntax": {
+    "command": "node --check docs/ux/natural-assistant-20261021/prototype/app.mjs",
+    "exit_code": 0
+  },
+  "browser": {
+    "url": "http://localhost:3087/prototype/",
+    "method": "CUA browser UI actions and observable rendered state; no app-state injection",
+    "passed_walkthroughs": [
+      "Explicit tomorrow-afternoon intention appears as 2026-10-22 afternoon without a required clock or duration",
+      "Reload retains saved intention; new conversation clears focus and retains independently visible saved item",
+      "Plan-day button creates an unadopted 2026-11-03 suggestion and preserves booking and 15:00-16:00 free time",
+      "Continue discussion retains same visible pending suggestion and focuses input",
+      "Simulated external version change marks suggestion stale and disables adopt",
+      "Regenerate then adopt inserts park activity; existing booking and free window remain visible",
+      "Failed save shows unsaved state and retry; retry adds exactly one second intention",
+      "Discuss alley then browse park and ask here yields explicit choice of two places",
+      "Route query without origin asks for origin; route-failure toggle with selected origin reports unavailable without ETA",
+      "Desktop layout screenshot inspected; mobile layout screenshot inspected and narrow viewports checked for horizontal overflow"
+    ],
+    "viewport_checks": [
+      {"requested_width": 390, "requested_height": 844, "document_client_width": 375, "document_scroll_width": 375},
+      {"requested_width": 320, "requested_height": 700, "document_client_width": 305, "document_scroll_width": 305},
+      {"viewport": "default desktop", "document_client_width": 1265, "document_scroll_width": 1265}
+    ],
+    "viewport_reset": true,
+    "screenshots": ["prototype-desktop.png", "prototype-mobile.png"],
+    "bugs_found_and_fixed": [
+      "Windows Python MIME registry served .mjs as text/plain; serve.py now explicitly maps .mjs to text/javascript, and module URL version invalidates the stale MIME cache",
+      "Delegated click handler mistook workspace data-page state for navigation, intercepting dynamic buttons; restrict navigation matching to button[data-page], then rerun browser paths"
+    ],
+    "not_verified": ["real model responses", "real maps/weather/routes", "production database writes", "real appointment or order", "screen-reader audit", "IME on a physical keyboard", "real-user task success"]
+  },
+  "existing_runtime": {
+    "page": "http://localhost:3000/trips",
+    "host_http_status": 200,
+    "observed_ui": "草稿服务暂不可用，请重试。请求失败（HTTP 502）",
+    "conclusion": "Page shell accessible; data path unavailable during inspection. Zero displayed cards do not establish an empty database. Deployed image equivalence to dirty source not established.",
+    "service_restart_or_deploy": false,
+    "production_write": false
+  },
+  "engineering_plan": "IMPLEMENTATION_PLAN.md: M1 frontend context/continue fixes; M2 default AI action and day-view composition; M3 bounded independent intention persistence. No runtime business code or schema was changed."
+}

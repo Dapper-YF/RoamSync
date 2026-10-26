@@ -1,0 +1,147 @@
+{
+  "batch_complete": false,
+  "attempted_cases": 2,
+  "successful_pending_revisions": 1,
+  "failed_cases": 1,
+  "unexecuted": [
+    {
+      "pair": "weather",
+      "variant": "sun",
+      "repetition": 0
+    },
+    {
+      "pair": "weather",
+      "variant": "rain",
+      "repetition": 0
+    },
+    {
+      "pair": "festival_date",
+      "variant": "in_window",
+      "repetition": 0
+    },
+    {
+      "pair": "festival_date",
+      "variant": "out_of_window",
+      "repetition": 0
+    },
+    {
+      "pair": "news_validity",
+      "variant": "valid",
+      "repetition": 0
+    },
+    {
+      "pair": "news_validity",
+      "variant": "expired",
+      "repetition": 0
+    },
+    {
+      "pair": "interest",
+      "variant": "shopping",
+      "repetition": 1
+    },
+    {
+      "pair": "interest",
+      "variant": "culture",
+      "repetition": 1
+    },
+    {
+      "pair": "weather",
+      "variant": "rain",
+      "repetition": 1
+    },
+    {
+      "pair": "weather",
+      "variant": "sun",
+      "repetition": 1
+    },
+    {
+      "pair": "festival_date",
+      "variant": "out_of_window",
+      "repetition": 1
+    },
+    {
+      "pair": "festival_date",
+      "variant": "in_window",
+      "repetition": 1
+    },
+    {
+      "pair": "news_validity",
+      "variant": "expired",
+      "repetition": 1
+    },
+    {
+      "pair": "news_validity",
+      "variant": "valid",
+      "repetition": 1
+    },
+    {
+      "pair": "interest",
+      "variant": "culture",
+      "repetition": 2
+    },
+    {
+      "pair": "interest",
+      "variant": "shopping",
+      "repetition": 2
+    },
+    {
+      "pair": "weather",
+      "variant": "sun",
+      "repetition": 2
+    },
+    {
+      "pair": "weather",
+      "variant": "rain",
+      "repetition": 2
+    },
+    {
+      "pair": "festival_date",
+      "variant": "in_window",
+      "repetition": 2
+    },
+    {
+      "pair": "festival_date",
+      "variant": "out_of_window",
+      "repetition": 2
+    },
+    {
+      "pair": "news_validity",
+      "variant": "valid",
+      "repetition": 2
+    },
+    {
+      "pair": "news_validity",
+      "variant": "expired",
+      "repetition": 2
+    }
+  ],
+  "formal_state_unchanged_in_attempted_cases": true,
+  "stop_policy": "first failure; no additional network/model probes or repeated batch",
+  "transport": {
+    "process_local_proxy": "http://127.0.0.1:7897",
+    "production_config_changed": false,
+    "sdk_retries": 0,
+    "provider_failure_stage_observed": "await original Planner._create_response via production model_client",
+    "failure_chain": [
+      "PlannerProviderError",
+      "RemoteProtocolError",
+      "RemoteProtocolError"
+    ],
+    "failure_elapsed_seconds": 3.114,
+    "batch_http_status": "not captured",
+    "stream_interruption": "inference from raw RemoteProtocolError and production streaming code; not independently timestamped",
+    "remote_root_cause": "unlocated; no evidence separating proxy/upstream/server interruption"
+  },
+  "proposal": {
+    "applied": false,
+    "patch_sha256": "f7b2838f56a4f05e360ef27c868dbdbd03906db73207f499953e5cbb6da02b7f",
+    "files": [
+      "backend/app/decision_context.py",
+      "backend/app/planning_intent_service.py",
+      "backend/tests/test_decision_context.py",
+      "backend/tests/test_planning_intents.py"
+    ],
+    "merged_regression": "not executed; 863/891/909 not inherited"
+  },
+  "real_artifact_sha256": "d068822758f7905fe503b82bada8cb7ee5dafe163d258ecb768c624a023ea6ba"
+}

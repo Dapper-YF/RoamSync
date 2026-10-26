@@ -1,0 +1,110 @@
+{
+  "date": "2026-10-11",
+  "status": "IMPLEMENTED_REGRESSION_VERIFIED_REAL_QUALITY_OPEN",
+  "git_head": "0b5010fe5a7b06dcec1ab7b159b5b337244247ae",
+  "working_tree": true,
+  "source_sha256": {
+    "backend/app/companion_context.py": "47161f9c3593a5c43e68972908cb8db01d4b674061c86878e4fe4943f820d87e",
+    "backend/app/companion_contracts.py": "cabb54896b698e9f0404d76205c80888c4f7cf26805e0a9ca9360163e7bdfdaa",
+    "backend/app/companion_graph.py": "b4be73b22142d9fb7df47d12d7dfaec7325cdf7037f5612a7d66baa83b7fe306",
+    "backend/app/companion_information.py": "5c434ffca6853570a0a540fe23e7280f7a36decf2ee207a28ef7bab0da8ef566",
+    "backend/app/companion_provider.py": "3501f255cbf9110f1e4f0c55fec9bfbbbe213ae938ee06ef289bce1f7ea9cb04",
+    "backend/app/companion_runtime.py": "329e82067bcb2610ad7c904019df50d8c30bf838aff1c391780305c0b037d889",
+    "backend/app/config.py": "0ff8d317cd5bd4a578d0f3495832b6fa938fa9390454f96cc771551b5161b0f1",
+    "backend/app/travel_goal_router.py": "76143cfa4e22370a8f7796c1dfdf732d0695cd89bced7895f20dc793ca587b5e",
+    "backend/app/companion_evidence_quality.py": "555856b4f0051d38d3c24c174f9fd05dc19e53470dfe31dace87b937221e2a68",
+    "backend/tests/test_companion_knowledge_strategy.py": "c2d311f9ade885392b9072c904f30b99cc807d535bcea6dba3c8632341b600fb",
+    "backend/evals/companion_knowledge_strategy.py": "0c7817350bbf33fd8f915ebdd42c280a8a49cddd366a4fd1305f2eb17624b06b",
+    "backend/evals/fixtures/companion_knowledge_strategy_v1.json": "50a640606966e6dbc48385502b0e34d1fadec8dd1e7e8cc597a81be0222cfab7",
+    "backend/app/knowledge_corpus/hangzhou_reviewed_v1.json": "e51f336394fdc420aaf2d3efe63b85737ac3b48f5261010c6a395ef6be4f6374"
+  },
+  "backend": {
+    "command": "docker compose -p roamsync-knowledge-test -f compose.test.yaml up --build --abort-on-container-exit --exit-code-from api-test",
+    "isolated_database": true,
+    "python": "3.11",
+    "postgres": "17.11",
+    "migration": "empty to 20260924_0034",
+    "passed": 891,
+    "failed": 0,
+    "skipped": 0,
+    "warnings": 2,
+    "seconds": 66.31,
+    "log": "backend_final.log"
+  },
+  "intermediate_backend": {
+    "passed": 882,
+    "failed": 5,
+    "cause": "optional planner_provider missing on test SimpleNamespace; fixed with getattr",
+    "log": "backend_intermediate.log"
+  },
+  "web": {
+    "test_command": "pnpm test",
+    "passed": 125,
+    "test_files": 20,
+    "typecheck_command": "pnpm typecheck",
+    "typecheck": "PASS",
+    "build_command": "pnpm build",
+    "build": "PASS",
+    "warnings": "React act warnings in existing tests"
+  },
+  "controlled_evaluation": {
+    "A": {
+      "cases": 18,
+      "companion_cases": 16,
+      "rag_calls": 0,
+      "rag_rate": 0.0,
+      "model_calls": 0,
+      "provider_reported_tokens": null,
+      "usage_missing_model_rows": 0,
+      "mean_latency_seconds": 0.07405613749997997,
+      "retrieval_seconds": 0.0,
+      "automatic_checks_passed": 18,
+      "quality_scores": "manual review pending; no synthetic quality ranking"
+    },
+    "B": {
+      "cases": 18,
+      "companion_cases": 16,
+      "rag_calls": 12,
+      "rag_rate": 0.75,
+      "model_calls": 0,
+      "provider_reported_tokens": null,
+      "usage_missing_model_rows": 0,
+      "mean_latency_seconds": 0.07960886250003796,
+      "retrieval_seconds": 0.012583899999754067,
+      "automatic_checks_passed": 18,
+      "quality_scores": "manual review pending; no synthetic quality ranking"
+    },
+    "C": {
+      "cases": 18,
+      "companion_cases": 16,
+      "rag_calls": 5,
+      "rag_rate": 0.3125,
+      "model_calls": 0,
+      "provider_reported_tokens": null,
+      "usage_missing_model_rows": 0,
+      "mean_latency_seconds": 0.0754297062499063,
+      "retrieval_seconds": 0.002944100000149774,
+      "automatic_checks_passed": 18,
+      "quality_scores": "manual review pending; no synthetic quality ranking"
+    }
+  },
+  "real_evaluation": {
+    "complete": false,
+    "first_error": "PlannerProviderError",
+    "error_subcode": "not captured in initial runner",
+    "first_attempt_wall_seconds": 7.529423999999835,
+    "reported_usage": null,
+    "model_completed_responses": 0,
+    "attempted_runtime_requests": 1,
+    "no_quality_ranking": true,
+    "artifact": "real.json"
+  },
+  "not_performed": [
+    "deployment",
+    "production database mutations",
+    "browser E2E",
+    "real model A/B/C completion",
+    "human answer quality scoring"
+  ],
+  "test_containers_removed": true
+}

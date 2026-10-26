@@ -1,0 +1,114 @@
+{
+  "stage": "2.1",
+  "scenario": "activity_semantics_tradeoff_hangzhou",
+  "trip_id": "7fc0911f-9d66-4e27-8109-9a497de5d7f4",
+  "target_day": "2026-10-20",
+  "formal_activity_count": 5,
+  "formal_route_source": "persisted AMap Route 2.0 legs",
+  "formal_route_leg_count": 4,
+  "semantics": {
+    "museum": {
+      "activity_id": "0ee18baa-1c5a-4eee-8b5a-70110df8fa11",
+      "importance": "must_do",
+      "can_skip": false,
+      "minimum_duration_minutes": 60,
+      "schedule_locked": false,
+      "provenance": "user_explicit"
+    },
+    "restaurant": {
+      "activity_id": "5c9a8ef0-ae31-4f87-8096-905259d15dd0",
+      "importance": "low",
+      "can_skip": true
+    },
+    "pagoda": {
+      "activity_id": "a7b034fe-d9c2-4d59-90e1-4866e57f14fd",
+      "importance": "high",
+      "schedule_locked": true
+    }
+  },
+  "runs": [
+    {
+      "run_id": "f819e4e9-728e-4450-8b77-985e656bebd6",
+      "status": "failed",
+      "classification": "external_provider_availability_failure",
+      "error_code": "planner_research_unavailable",
+      "planner_reached": false
+    },
+    {
+      "run_id": "50e92070-f4ba-4396-928a-da54ef096232",
+      "status": "rejected",
+      "revision_id": "206fdcd6-33a9-4170-a6c4-b1f0434d3d8e",
+      "rejection_reason_code": "too_much_walking",
+      "validation_valid": true,
+      "hard_end_before_satisfied": true,
+      "walking_minutes_before": 174,
+      "walking_minutes_after": 122
+    },
+    {
+      "run_id": "285da322-ab92-4792-a39c-484f5b628aa8",
+      "status": "failed",
+      "classification": "hard_goal_unsatisfied",
+      "error_code": "goal_constraints_unsatisfied",
+      "candidate_end": "18:19",
+      "required_end_before": "18:00",
+      "memory_count": 1,
+      "revision_produced": false
+    },
+    {
+      "run_id": "3daf3514-de2c-42b1-81ca-6c03f9231901",
+      "status": "awaiting_confirmation",
+      "revision_id": "80e9b43b-04cc-4c48-9e6d-b1dbb1181378",
+      "note": "Before the implicit-protected-activity Goal Check fix; its after-count evidence is known to be understated. Artifact retained, not used as final count evidence."
+    },
+    {
+      "run_id": "4e0c6eb1-5f46-4421-84e6-76bb94dda71d",
+      "status": "failed",
+      "error_code": "planner_research_invalid_output",
+      "planner_reached": false
+    },
+    {
+      "run_id": "4d7ea3d3-e390-4d20-8be0-f7198ed78736",
+      "status": "awaiting_confirmation",
+      "revision_id": "4d812876-a325-4dad-be6e-acb62cc396ce",
+      "revision_status": "pending",
+      "model_provider": "deepseek",
+      "model_name": "deepseek-flash",
+      "token_usage": 36266,
+      "memory_count": 1,
+      "memory_source_revision_id": "206fdcd6-33a9-4170-a6c4-b1f0434d3d8e",
+      "goal": "pace=relaxed (soft)",
+      "goal_status": "not_evaluable",
+      "validator_valid": true,
+      "candidate_explicit_activity_count": 4,
+      "protected_implicitly_retained_count": 1,
+      "actual_activity_count_before": 5,
+      "actual_activity_count_after": 5,
+      "walking_minutes_before": 174,
+      "walking_minutes_after": 174,
+      "day_end_before": "18:12",
+      "day_end_after": "18:37",
+      "must_do_preserved": true,
+      "must_do_duration_minutes": 90,
+      "must_do_minimum_duration_minutes": 60,
+      "non_skippable_preserved": true,
+      "low_priority_removed": false,
+      "semantic_tradeoff_improvement_observed": false,
+      "agent_weakness": "The candidate did not reduce walking after too_much_walking feedback; its explanation suggests controlling walking burden without a supporting route diff."
+    }
+  ],
+  "recovery_smoke": {
+    "trip_id": "6a8f28f7-de67-4629-bc26-dca006f5e53a",
+    "execution_status": "in_progress",
+    "planner_input_semantic_count": 5,
+    "planner_input_must_do_visible": true,
+    "planner_input_minimum_duration_visible": true,
+    "planner_input_execution_state_visible": true,
+    "validator_enforce_execution_invariants": true,
+    "omitted_must_do_error": "activity_must_do_removed"
+  },
+  "regression": {
+    "backend_linux_postgresql": "337 passed, 2 warnings",
+    "frontend_vitest": "92 passed",
+    "frontend_typecheck": "passed"
+  }
+}

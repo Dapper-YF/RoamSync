@@ -1,0 +1,36 @@
+{
+  "scenario": "must_do_show_conflict_generic_refs",
+  "run_id": "b3ef0f11-1fb0-423c-86fc-2596513ea4ed",
+  "input": "博物馆和晚上19点的演出都必须保留，帮我调整今天下午的行程。",
+  "fixture_precondition": {
+    "status": "PASS",
+    "museum": "浙江省博物馆(孤山馆区)",
+    "museum_schedule": "15:00-18:10",
+    "museum_schedule_locked": true,
+    "show": "杭州大剧院",
+    "show_schedule": "19:00-20:30",
+    "show_schedule_locked": true,
+    "available_transfer_minutes": 50,
+    "amap_transit_minutes": 77,
+    "route_conflict_exists": true
+  },
+  "pipeline": {
+    "intent": "reached",
+    "context": "reached",
+    "destination_research": "failed",
+    "tavily": "not_reached",
+    "amap_poi": "failed",
+    "clarification": "not_reached",
+    "deepseek": "not_reached",
+    "candidate": "not_reached",
+    "validator": "not_reached",
+    "plan_revision": "not_produced"
+  },
+  "failure": {
+    "error_code": "planner_map_unavailable",
+    "map_error": "map_network_error",
+    "classification": "transient_external_provider_or_network_failure",
+    "token_usage": 0
+  },
+  "stage0_interpretation": "This run does not evaluate must-do handling, planner reasoning, context passing, or validation."
+}

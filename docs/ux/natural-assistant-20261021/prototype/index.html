@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RoamSync · 自然助手交互原型</title><link rel="stylesheet" href="style.css"></head>
+<body>
+  <div class="prototype-note">交互原型 · 合成示例 · 回复按场景模拟 · 仅保存在本浏览器 <a href="../INTERACTION_CONTRACT.md">查看交互契约</a></div>
+  <header class="top"><a class="brand" href="#assistant"><span class="brand-symbol">◉</span><span>RoamSync<small>TRAVEL, AT YOUR PACE</small></span></a><nav aria-label="主导航"><button data-page="assistant">AI 助手</button><button data-page="arrangements">我的安排</button><button data-page="explore">探索</button></nav><button id="new-chat" class="quiet">新对话</button></header>
+  <main>
+    <div class="page-intro"><div><p class="eyebrow">MAKE ROOM FOR THE JOURNEY</p><h1>想去哪里，慢慢商量。</h1><p>有些已经决定，有些可以以后再想。</p></div><span class="demo-date">示例日期 · 2026年10月21日</span></div>
+    <div id="storage-warning" class="alert" hidden></div><div id="feedback" role="status" aria-live="polite"></div><div id="errors" role="alert"></div>
+    <div class="workspace">
+      <section class="conversation" aria-label="与旅行助手交流"><div class="panel-title"><h2>和你一起想想</h2><span>随时可以换个话题</span></div><div id="context" class="context"></div><div id="messages" class="messages" aria-live="polite"></div><div id="decisions"></div><form id="composer"><label for="message">说说你的旅行想法</label><div class="compose-row"><textarea id="message" placeholder="想了解什么，或已经决定了什么？" rows="2" maxlength="3000"></textarea><button class="primary" type="submit">发送</button></div></form><details class="examples"><summary>试试这些话</summary><div id="samples"></div></details></section>
+      <aside class="workspace-panel" aria-label="旅行内容"><div class="workspace-tabs" role="tablist" aria-label="旅行视图"><button id="tab-arrangements" role="tab" aria-controls="arrangements" data-page="arrangements">我的安排</button><button id="tab-explore" role="tab" aria-controls="explore" data-page="explore">地点与地图</button></div>
+      <section id="arrangements" role="tabpanel" aria-labelledby="tab-arrangements"></section>
+      <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden></section></aside>
+    </div>
+    <details class="test-controls"><summary>原型测试：失败、冲突与恢复</summary><p>只影响这个合成原型。按场景演示行为，不调用业务服务或真实模型。</p><div class="test-row"><label><input id="fail-save" type="checkbox">下一次保存失败</label><label><input id="fail-weather" type="checkbox">天气不可用</label><label><input id="fail-route" type="checkbox">路线不可用</label></div><div class="actions"><button id="external-change">模拟别处修改日程</button><button id="reset">重置合成示例</button></div><p id="debug" class="muted"></p></details>
+  </main><footer>让已经决定的事容易找回，让未定的事保留余地。</footer>
+  <script type="module" src="app.mjs?v=2"></script>
+</body></html>

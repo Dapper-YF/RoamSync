@@ -1,0 +1,200 @@
+{
+  "recorded_at": "2026-09-29T12:57:17.539243+00:00",
+  "measurement_date": "2026-09-29",
+  "repository_head": "5572849209c943c5f5ad1579db4cef0ba2fb5b25",
+  "baseline_linux_postgresql": {
+    "tests": 429,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 50.537
+  },
+  "final_linux_postgresql": {
+    "tests": 542,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 52.256
+  },
+  "existing_backend_warnings": 2,
+  "new_collected_tests": {
+    "imported_phase_a": 82,
+    "companion_phase2": 31,
+    "total_delta": 113
+  },
+  "web": {
+    "tests": 101,
+    "files": 18,
+    "failed": 0,
+    "typecheck": "pass",
+    "build": "pass",
+    "existing_act_warning_blocks": 3,
+    "artifacts": [
+      "web_test.log",
+      "web_typecheck.log",
+      "web_build.log"
+    ]
+  },
+  "android": {
+    "tests": 35,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "offline_tool_precision": {
+    "case_count": 20,
+    "fake_provider_calls": 14,
+    "real_provider_attempts": 0,
+    "knowledge_tool_precision": 1.0,
+    "knowledge_tool_recall": 1.0,
+    "tool_confusion": {
+      "true_positive": 15,
+      "false_positive": 0,
+      "false_negative": 0
+    },
+    "errors": 0
+  },
+  "curated_lexical_benchmark": {
+    "cases": 8,
+    "passed": 8,
+    "holdout": false,
+    "model_calls": 0
+  },
+  "phase_a_benchmark": [
+    {
+      "mode": "lexical",
+      "cases": 27,
+      "recall_at_3": {
+        "numerator": 12.0,
+        "denominator": 12,
+        "rate": 1.0
+      },
+      "embedding": "none"
+    },
+    {
+      "mode": "semantic",
+      "cases": 27,
+      "recall_at_3": {
+        "numerator": 13.0,
+        "denominator": 13,
+        "rate": 1.0
+      },
+      "embedding": "deterministic_fake_not_real_semantic_quality"
+    },
+    {
+      "mode": "hybrid",
+      "cases": 27,
+      "recall_at_3": {
+        "numerator": 13.0,
+        "denominator": 13,
+        "rate": 1.0
+      },
+      "embedding": "deterministic_fake_not_real_semantic_quality"
+    }
+  ],
+  "phase1_runtime": {
+    "checks": 21,
+    "passed": 21,
+    "fake_provider_calls": 3,
+    "real_provider_calls": 0
+  },
+  "travel_goal": {
+    "cases": 60,
+    "runtime_correct": 60,
+    "goal_correct": 60,
+    "error_a": 0,
+    "error_b": 0,
+    "provider_calls": 0
+  },
+  "real_model_configuration": {
+    "provider": "glm",
+    "model": "glm-5.3-flash",
+    "reasoning_effort": "max"
+  },
+  "real_main": {
+    "case_count": 20,
+    "real_provider_attempts": 14,
+    "fake_provider_calls": 0,
+    "errors": 0,
+    "knowledge_tool_precision": 1.0,
+    "knowledge_tool_recall": 1.0,
+    "live_fact_violations": 0,
+    "original_rationale_violations": 0,
+    "completed_model_responses": 14,
+    "invalid_refs": 0,
+    "latency_seconds": {
+      "median": 43.309,
+      "min": 6.696,
+      "max": 87.907
+    },
+    "usage": {
+      "prompt_tokens": 21350,
+      "completion_tokens": 21684,
+      "total_tokens": 43034
+    }
+  },
+  "real_followup": {
+    "case_count": 2,
+    "real_provider_attempts": 1,
+    "fake_provider_calls": 0,
+    "errors": 0,
+    "knowledge_tool_precision": 1.0,
+    "knowledge_tool_recall": 1.0,
+    "live_fact_violations": 0,
+    "original_rationale_violations": 0,
+    "completed_model_responses": 1,
+    "invalid_refs": 0,
+    "latency_seconds": {
+      "median": 100.597,
+      "min": 100.597,
+      "max": 100.597
+    },
+    "usage": {
+      "prompt_tokens": 1964,
+      "completion_tokens": 3391,
+      "total_tokens": 5355
+    }
+  },
+  "real_transport_failures": {
+    "initial_eval_logical_attempts": 6,
+    "diagnostic_logical_attempts": 1,
+    "completed_responses": 0,
+    "cause": "Windows transport to configured Docker proxy host; Docker live batch succeeded",
+    "exact_wire_requests": "not_measured; SDK retries possible"
+  },
+  "formal_mutation_evidence": "Actual PostgreSQL snapshot/count tests; no DB in real eval, so real eval does not measure formal mutations",
+  "source_audit": {
+    "protected_unchanged": true,
+    "imported_phase_a_unchanged": true
+  },
+  "chronology": "Final full regression covers final business code; repeatable eval --case-id CLI and final documentation added afterward. Real main batch predates applicability/timing guard; current-code targeted followup records both fixes.",
+  "quality_review": "live_answer_review.json; no 20/20 fully-grounded claim",
+  "deployment": false,
+  "demo_rehearsal": "NOT READY",
+  "ledger_stage_2_2": "OPEN",
+  "current_delivery_sha256": {
+    "backend/app/companion_information.py": "2a993bc5278c94294da37b4f33a3ab1fd0ce7a18b5bee85fb2cdf92ca81acfb0",
+    "backend/app/tourism_knowledge_adapter.py": "d34c319acc7f278099ccc460ae139a73f747f1e6d336cc0d11efdc82e06efdcd",
+    "backend/app/companion_knowledge.py": "c167e959627d88ae8396dad2da08cbc2f996af0eaa057917ebf776747b89d3b5",
+    "backend/app/knowledge_corpus/hangzhou_reviewed_v1.json": "b3a05a49694d8382ea2af33af56335f8e16cb57b7038d895ce6c7211674ec8b2",
+    "backend/app/companion_contracts.py": "4cef736ba4cf13b047894fde535c09d9d533adcb20e4393022f89dab327d1866",
+    "backend/app/companion_graph.py": "493c5eb38a2877187a839abd1717dd89c23ca81380ba2fa3fc95459751116fa7",
+    "backend/app/companion_provider.py": "59830e3432774d46261ec2e729a6167fb249c656772682bde5928bfa8a67e4dd",
+    "backend/app/assistant_service.py": "8ba0e937a856a06c2047f0943807790cd54b3383fc7ea88fbb35b2b138d96c8f",
+    "backend/tests/test_companion_knowledge.py": "2f6094714f132d26d4cb03101cae61521c716bab8bbccfa0d8bf70e65fed0b97",
+    "backend/evals/companion_phase2/run.py": "daaa99e31a0d60e84762141d40a3cb88147f4a5706f7eb7a25cae0159c0d6e05",
+    "backend/evals/companion_phase2/__init__.py": "c0c95a78e5073e405493d7a00324465b3a1fada97e174bfef41a97dc3b18d6ce",
+    "web/src/domain/types.ts": "30f0ebde2703bf9ee26ae5d6402a49f0c94e9770e4b5baa792a7dda2a39c0d7e",
+    "web/src/components/AiPlannerPanel.test.tsx": "36afbb8e033a2a4602e680762be9c489b908cb601d684312f2c35497ae625b54",
+    "android/app/src/test/java/com/roamsync/app/ui/PlanningWorkflowTest.kt": "8d928c67c4e074b67f573778eb994c017d6bae9e8e0efd393ba8a3ab45dca298",
+    "docs/AGENT_ARCHITECTURE.md": "a7e33fd09c84448718f2be7dbc684430234ce716ee1e56da54315f6c5a08b274",
+    "docs/agent/TRAVEL_COMPANION_PHASE2_20260929.md": "9068f786f5434debe09c83921acb185e0c34fa39cbcaf7b4f4a16a1aa1ed3d13",
+    "docs/handoff/PROJECT_STATE.md": "d7c0daee8de55faa430cae2022d5a9b58ccf58e4c6851728b8399136db353d51",
+    "docs/handoff/LATEST_HANDOFF.md": "7de20d78cee9c7ff59bb6c87ec98b6fcd00cae277588d85d2463f762054df222"
+  },
+  "current_delivery_sha256_note": "Hashes recorded at delivery for future reproducibility; not retroactive hashes captured inside the pytest image.",
+  "collected_test_classes": {
+    "tests.test_companion_knowledge": 31,
+    "tests.test_tourism_knowledge": 82
+  }
+}

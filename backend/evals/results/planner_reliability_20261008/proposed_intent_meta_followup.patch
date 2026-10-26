@@ -1,0 +1,32 @@
+diff --git a/backend/app/planning_intent_service.py b/backend/app/planning_intent_service.py
+--- a/backend/app/planning_intent_service.py
++++ b/backend/app/planning_intent_service.py
+@@ -666,7 +666,7 @@
+         return True
+     # Whole plan properties are not venue names. This runs only after real
+     # activity aliases have been matched; unknown named venues still clarify.
+-    if value == "其他日期不变":
++    if re.fullmatch(r"其他日期(?:安排)?不变", value):
+         return True
+     if re.fullmatch(
+         r"整体[一二三四五六七八九十两\d]+天[（(]\d{4}-\d{2}-\d{2}(?:至|到)\d{4}-\d{2}-\d{2}[）)]框架",
+diff --git a/backend/tests/test_planning_intents.py b/backend/tests/test_planning_intents.py
+--- a/backend/tests/test_planning_intents.py
++++ b/backend/tests/test_planning_intents.py
+@@ -592,6 +592,7 @@
+     "保留整体三天（2026-10-09至2026-10-11）框架与其他日期不变",
+     "保留整体三天(2026-10-09至2026-10-11)框架与其他日期不变",
+     "保留其他日期不变",
++    "保留其他日期安排不变",
+ ])
+ def test_day_candidate_edit_plan_frame_is_not_a_missing_activity(preservation):
+     with TestClient(app) as client:
+@@ -619,3 +620,8 @@
+     protected = _resolve_protected_activities("请调整第二天，保留框架博物馆与不存在的三天博物馆与其他日期不变", entities, None, ambiguities, target_day_id=day)
+     assert protected == [activity]
+     assert ambiguities == ["activity_not_found:不存在的三天博物馆"]
++
++    # A real alias wins before plan-meta filtering, even when it equals a label.
++    assert _resolve_protected_activities("保留其他日期安排不变", [_ActivityEntity(activity, day, date(2026, 10, 10), ("其他日期安排不变",))], None, [], target_day_id=day) == [activity]
++    from app.planning_intent_service import _is_plan_meta_activity_reference
++    assert not _is_plan_meta_activity_reference("其他日期安排不变博物馆")

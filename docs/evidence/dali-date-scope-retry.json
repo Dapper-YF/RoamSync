@@ -1,0 +1,125 @@
+{
+  "id": "f85e4be7-44c5-40ea-b304-98b1f8902714",
+  "trip_id": "5b05edbe-7693-409e-a2ca-aee275b22ea3",
+  "run_type": "replan",
+  "status": "failed",
+  "user_request": "请调整大理三天两晚（2026-09-10 至 2026-09-12）的行程，确保包含苍洱大道、龙龛码头、最美S湾等著名景点。",
+  "response_text": null,
+  "progress": {
+    "stage": "routes",
+    "message": "候选活动已生成，正在查询实际交通路线…",
+    "updated_at": "2026-09-10T09:15:49.857678+08:00"
+  },
+  "heartbeat_at": "2026-09-10T01:15:51.34874Z",
+  "entry_point": "trip_planner",
+  "selected_day_id": "298ee520-20bf-416f-bc43-9f34f4b65a38",
+  "selected_activity_id": null,
+  "intent_resolution": {
+    "request": {
+      "trip_id": "5b05edbe-7693-409e-a2ca-aee275b22ea3",
+      "user_request": "请调整大理三天两晚（2026-09-10 至 2026-09-12）的行程，确保包含苍洱大道、龙龛码头、最美S湾等著名景点。",
+      "intent": {
+        "intent_type": "create_plan",
+        "source_text": "请调整大理三天两晚（2026-09-10 至 2026-09-12）的行程，确保包含苍洱大道、龙龛码头、最美S湾等著名景点。",
+        "time_scope": null,
+        "protected_activity_ids": [],
+        "requested_place_queries": [],
+        "requested_pace": null,
+        "missing_fields": [],
+        "ambiguities": []
+      },
+      "entry_point": "trip_planner",
+      "selected_day_id": "298ee520-20bf-416f-bc43-9f34f4b65a38",
+      "selected_activity_id": null,
+      "target_day_id": null
+    },
+    "requires_clarification": false,
+    "clarification_questions": [],
+    "parser_version": "rules-v1",
+    "semantic_draft": {
+      "primary_intent": "create_plan",
+      "operations": [
+        {
+          "operation": "create_plan",
+          "raw_text": "请调整大理三天两晚（2026-09-10 至 2026-09-12）的行程，确保包含苍洱大道、龙龛码头、最美S湾等著名景点。",
+          "date_expression": null,
+          "period": null,
+          "activity_mentions": [],
+          "place_mentions": [],
+          "constraints": {
+            "budget_must_not_increase": false,
+            "max_additional_cost_fen": null,
+            "preferred_environment": null,
+            "max_walking_minutes": null,
+            "requested_pace": null,
+            "weather_sensitive": false,
+            "preserve_completed": true
+          }
+        }
+      ],
+      "confidence": 0.98,
+      "missing_fields": [],
+      "ambiguities": [],
+      "parser": "rules",
+      "parser_version": "rules-envelope-v1"
+    },
+    "grounded_intent": {
+      "trip_id": "5b05edbe-7693-409e-a2ca-aee275b22ea3",
+      "primary_intent": "create_plan",
+      "operation_types": [
+        "create_plan"
+      ],
+      "target_day_ids": [],
+      "target_activity_ids": [],
+      "candidate_place_ids": [],
+      "unresolved_activity_mentions": [],
+      "unresolved_place_mentions": [],
+      "constraints": {
+        "budget_must_not_increase": false,
+        "max_additional_cost_fen": null,
+        "preferred_environment": null,
+        "max_walking_minutes": null,
+        "requested_pace": null,
+        "weather_sensitive": false,
+        "preserve_completed": true
+      },
+      "missing_fields": [],
+      "ambiguities": []
+    },
+    "policy_decision": {
+      "operation_mode": "preview_change",
+      "risk_level": "medium",
+      "requires_confirmation": true,
+      "reasons": [
+        "formal_plan_change"
+      ],
+      "route": "plan_preview"
+    }
+  },
+  "base_trip_version": 1,
+  "model_provider": "deepseek",
+  "model_name": "deepseek-flash",
+  "token_usage": 75858,
+  "error_code": "planner_constraints_unsatisfied",
+  "error_message": "candidate plan still violates constraints: route_unavailable",
+  "error_details": {
+    "validation_errors": [
+      {
+        "code": "route_unavailable",
+        "message": "2026-09-12：双廊古镇 → 理想邦，高德未返回可用的公共交通路线。需要更换可达地点或确认其他交通方式。",
+        "details": {
+          "day_date": "2026-09-12",
+          "from_place": "双廊古镇",
+          "to_place": "理想邦",
+          "from_activity_ref": "candidate:7:95fa23e5-3fde-4c59-aced-f69951cf9510",
+          "to_activity_ref": "candidate:8:a867872c-bce0-4fa4-a7b9-3dbbee2002bc",
+          "mode": "transit"
+        }
+      }
+    ]
+  },
+  "pending_interrupt": null,
+  "created_at": "2026-09-10T01:08:27.327312Z",
+  "started_at": "2026-09-10T01:08:29.547743Z",
+  "completed_at": "2026-09-10T01:15:54.10512Z"
+}

@@ -1,0 +1,2233 @@
+{
+  "schema": "planning-quality-phase0-v1",
+  "fixture_sha256": "60b971145c93ce378e3a985d604d7e06f71de349201944c6d77c0dbb3042cf7b",
+  "source_manifest": {
+    "backend/app/__init__.py": "43fc64bed7d05ad1a6fb744f8794f68d89a7ab107de8d4a8c5bf2122a4e124f3",
+    "backend/app/activity_experience_impact.py": "b37ec90abb5a259509e0c33178b85f40c9c91214e8c97f5bba57efe81e4b3650",
+    "backend/app/agent_monitor.py": "2855ab72b16e0ad31b33bfeedfed504722009fd1c33524a3d3f27b8e602e6d7f",
+    "backend/app/agent_observation.py": "d22bf295a67223951825972ce209a711109ddd405ebaefbada8fa3dbc48d94f2",
+    "backend/app/agent_worker.py": "eadc3329ea8987345e9ad302dcfa7b31626cae4ea01631dfa485e15f035bdcce",
+    "backend/app/assistant_routes.py": "75f8802de4d7e2fa7d09ded9bfbffc8bb548eb7f753527ab6847ccda8a549b47",
+    "backend/app/assistant_service.py": "dc7ffe27fa7af65a09388d4fb07a05176e05dd92902749b69ec9eeb19001432a",
+    "backend/app/candidate_edit.py": "e7177e54750a9293b0678c50845b949b98d2e529eb13de50bd35ba0762736f4a",
+    "backend/app/candidate_route_service.py": "db16c43bbd108e92daee5791a867dcbd04eb578f067a3b3520befade33ab6440",
+    "backend/app/candidate_schedule.py": "a0ccf514415c665c49b58de574218a1d852a9664ed0d6201a8c0608dfd5fb69e",
+    "backend/app/companion_context.py": "47161f9c3593a5c43e68972908cb8db01d4b674061c86878e4fe4943f820d87e",
+    "backend/app/companion_contracts.py": "cabb54896b698e9f0404d76205c80888c4f7cf26805e0a9ca9360163e7bdfdaa",
+    "backend/app/companion_evidence_quality.py": "555856b4f0051d38d3c24c174f9fd05dc19e53470dfe31dace87b937221e2a68",
+    "backend/app/companion_facts.py": "d923b810ff338998be804ab1405550319c67ee144ca07b071954b1138f793f6d",
+    "backend/app/companion_graph.py": "b4be73b22142d9fb7df47d12d7dfaec7325cdf7037f5612a7d66baa83b7fe306",
+    "backend/app/companion_grounding.py": "3a872ca8a6d0c4b210cbc337e5014418b2a9812a80807d5d3f8ba773c828992e",
+    "backend/app/companion_information.py": "5c434ffca6853570a0a540fe23e7280f7a36decf2ee207a28ef7bab0da8ef566",
+    "backend/app/companion_knowledge.py": "c167e959627d88ae8396dad2da08cbc2f996af0eaa057917ebf776747b89d3b5",
+    "backend/app/companion_provider.py": "3501f255cbf9110f1e4f0c55fec9bfbbbe213ae938ee06ef289bce1f7ea9cb04",
+    "backend/app/companion_runtime.py": "329e82067bcb2610ad7c904019df50d8c30bf838aff1c391780305c0b037d889",
+    "backend/app/companion_state.py": "b0ce40e94eca4a227ecd2baa63aa00dc79b149c9c5deae8fc689f876bb48c33b",
+    "backend/app/config.py": "0ff8d317cd5bd4a578d0f3495832b6fa938fa9390454f96cc771551b5161b0f1",
+    "backend/app/database.py": "46bc1783bae5d0feaeb3fffa49823064f3de73e6d8c5eee761cfaf41306d6aa4",
+    "backend/app/decision_context.py": "0f1fc805648c2d60f97e04077c747be317d5e336dc9f739c0f2a156e0296cd3d",
+    "backend/app/decision_ledger.py": "0badd3b59a0d3b0b6fe4c21beed0d0a39c806c8a303d30eeeb1f9d9a5f196c7e",
+    "backend/app/decision_memory.py": "be703a1558ef9913363fad27cc9998695a2083b75544676efce28c34f7294355",
+    "backend/app/demo_preflight.py": "bd33c0c1b4eabb044566207aee44a5f46b294de4234bba67eb4fdcde0d106b9e",
+    "backend/app/demo_seed.py": "9fe6efd9f68476eafdd69cc34c3e3a848d380d1fa6af4f7e0c19f65d0cb989eb",
+    "backend/app/destination_research.py": "f04fdc53e6a0f1564957970f96066dcdab40ec8bf7f5a712dde8e340f69581ca",
+    "backend/app/dialogue_observation.py": "ec915b9f771ade31e8e1abfff66353ce194d91539dd7154673461aa0907c8eb6",
+    "backend/app/experience_replanning_service.py": "495f839ecbb08b2a1072ecd14600131e8da70ae3f0a29664cf9b6e2e60b97125",
+    "backend/app/external_facts.py": "27916b84e45a55dfa73536f021e6797d4da7817fbe450f2c1d73b8633b356ce3",
+    "backend/app/goal_aware_demo.py": "8cae6edea9679a91f608f5e6791a44dc92d50d9295fcb845b808102a84f81319",
+    "backend/app/init_checkpoints.py": "1156b1cc9fb262dbdabd2e2a77d58dc844f610be8c0d72ab8af608821588e346",
+    "backend/app/initial_places_service.py": "8cfcb11408df19c47d3fa2dc043ce11e731fd8d8dd13ae921be2f5dfb9094fcf",
+    "backend/app/knowledge_corpus/hangzhou_reviewed_v1.json": "e51f336394fdc420aaf2d3efe63b85737ac3b48f5261010c6a395ef6be4f6374",
+    "backend/app/main.py": "5debd9ce28a7593ef2d362a00cc6e7fb08e8156535e87f0c85cb20879686aa42",
+    "backend/app/maps_service.py": "f1f2366682aacb2185287121ed338bf3c723722b21b9dc07775c039bd752de54",
+    "backend/app/model_client.py": "0b3d835de02e972ca68f45268511fce7b0ff5158fae011c33069fd3a48106191",
+    "backend/app/navigation/__init__.py": "4260ecb33c4674ec5945b90a0e2fcb65514a245bc4b5ea7411ba4d0e80023885",
+    "backend/app/navigation/delay_impact.py": "b6395c8eb029fc8fa68ba908c52c443044a7c85798175e15ee7504394ea45370",
+    "backend/app/navigation/disruption_service.py": "656da992d083a0f9588c02385c1174371e338b64e5b25ec7dd350aa333af1ba1",
+    "backend/app/navigation/event_detector.py": "87051ef362093dadc7cfd33baa80afe4cc94f87711b4ef220d1ac913d15ff7e4",
+    "backend/app/navigation/execution_context.py": "4ddcd5bad2f6f2f3969c38ab35920d75c7c791808fbd90f7d69dee529154c9e3",
+    "backend/app/navigation/execution_projection.py": "e11fc9bda8e371f96b82d37d7665c57b92d8f4fe30f02c44a3b094e2e417ef2a",
+    "backend/app/navigation/execution_read_model.py": "49a3b2c063961f1eab11beabab1661d9833bf2c8682262ed299f5e550feaada3",
+    "backend/app/navigation/fake_routing_provider.py": "d068da626fe3ea0ae9139c1df1e106f03fc6c5e08b75573ac68cc32677b2bf08",
+    "backend/app/navigation/observation_ingestion.py": "d3a98ab50ef56d4e6bfb85bc28496aa4cca42da3d0fc6ca8046e2cdd71793a34",
+    "backend/app/navigation/providers.py": "40fdbcd4aef6f5a9b76718006cdaebf087ed4bbade03605f1b6822fab20d872e",
+    "backend/app/navigation/recovery.py": "44139fbb19ab77275458778b37ee31ed254fac70cb7ff470fec38cd46ced67db",
+    "backend/app/navigation/session_service.py": "badc675dfe24544c2d69bd1b009c186739291451f35f3e44cbbe52aab79e3e3c",
+    "backend/app/navigation/start_navigation.py": "36a7629b8e5fc60c56b516db4a68f5610b639731d5bcd2235b16086dd8d68bcf",
+    "backend/app/openai_intent_parser.py": "bb86e42fc98bfc02fa3d16db628a5604ce6d209c5394886d45a7cf4467da79c8",
+    "backend/app/openai_planner.py": "3fa7f88e720810ca141716bd6389c382bb701943948fb3b76b1e30a294728adb",
+    "backend/app/plan_revision_service.py": "808d223c0aa21743b433bdbd32558c92aae0b703d52f3474acd815818ee64ad2",
+    "backend/app/planner_entity_resolution.py": "09cad6e73e551a882a56e279c8e925bfbe9102d18c6776d6f6b920fc83cb4e12",
+    "backend/app/planner_references.py": "c15147a08fe3c01e0a3794a3ac1503e0e8ba91b9d41b7abb4c083367e57460bd",
+    "backend/app/planner_repository.py": "2fef90d0b1513bf8d1d03747b09108073ea906ec09908e6e5ffeb48e3f289025",
+    "backend/app/planning_context.py": "a05661808b9a37fe97025c6d95b1d2f2866949a871de20093f008b432df992d3",
+    "backend/app/planning_errors.py": "5780fc8c6be2cd420e46224082afa8817fdd1e9b4b1bf032cfc7349b23303842",
+    "backend/app/planning_explanation.py": "c830c25751d6cc369cd0f5298bd77970fd800856d727e0fd1c49e3be3b775eab",
+    "backend/app/planning_goals.py": "23bff56fdbe4e9be3b1493051176094ff37747b9e2267edefc2c4e653fd0b517",
+    "backend/app/planning_graph.py": "8789a2588d765d5f6fcdb53f4aa2d6828d6ae65e98f3b24a1491720a58fe0f28",
+    "backend/app/planning_graph_runtime.py": "6d60b8c339a8569203a53f1ad0d2168653ca54e6eb646da738339c0159543a9f",
+    "backend/app/planning_intent_service.py": "101f4d04abc2fe8505adcb21cf4b4083e18cebb518bb3d836779bb5e1f9b5442",
+    "backend/app/planning_progress.py": "de70eb364d7c9b3004dda9e5e74a75fc3d476967975f0fb1b3aea995a7aa3bc2",
+    "backend/app/planning_run_repository.py": "2f5b14b892a90945cedf8e0117d06bcb4c3c5d5d27ab4da3a31022bc707c646e",
+    "backend/app/repository.py": "61d4e8f96e4b1f23905a3d9ec399dfb4f815dcff7e8803b7681b99cd626af65a",
+    "backend/app/schemas.py": "92c0a69718c44c9e7b5e3a3e0408300b67474ed6d7ed3a72714a8a280c5c8147",
+    "backend/app/seed_demo.py": "b5a824b6708885d8ee3ff7bac4a41b4a59dcaa18f6808b6594acf2ce2f132b50",
+    "backend/app/timeline_impact.py": "a139351251068dd1321700a1442103191d90e65e35bdceb1433280197cf71045",
+    "backend/app/tourism_knowledge/__init__.py": "0074d856db72334b7f4f1d67685a4c19490915a09c0bfb7d2f7cf58912d6d39e",
+    "backend/app/tourism_knowledge/boundary.py": "0577d13f3c41402fb6db7421ca16079fda2c2b3d49a28b0c50df360bb03935f5",
+    "backend/app/tourism_knowledge/ingestion.py": "1805f99f0e97d48e3acb3efe281b2350cdffd808d44ca193a3d396f87759adf4",
+    "backend/app/tourism_knowledge/interfaces.py": "4b3564e27adb0ac8bbb228ec58d319fd9cb13dba15d1a1947ab06ea6f13854e6",
+    "backend/app/tourism_knowledge/models.py": "8b8e16c682e0f16b6cdd2701d4dc636ec53cbb8d479f05d86a34855ddc434ba7",
+    "backend/app/tourism_knowledge/ranking.py": "e1bd5dccf30cf23166b1de24f7e821faee7d56f269395d8946ee2934ecb39210",
+    "backend/app/tourism_knowledge/repository.py": "e9fdaba1d3261d6c88fe10d2eac2729dbdaade8ee42b19e29301909f2089de05",
+    "backend/app/tourism_knowledge/service.py": "c4ecb9cbe38ba6dbdae24a2f44a0efc95e5c3be1b6b54494921095f03bae5ce3",
+    "backend/app/tourism_knowledge_adapter.py": "715d0c597da3ac49608547d508c0ac83a768e30f87026b4cea64af53a82df49f",
+    "backend/app/travel_decision_demo.py": "12d1b93aa0c8b5337ade2b8104dc39383b8455f605c30b2dc70de5b6d7229c1a",
+    "backend/app/travel_facts/__init__.py": "e1ad6d991bed4e304deeaf6dc9db7508bc894704b395f54319a8d6fcf5410067",
+    "backend/app/travel_facts/adapters.py": "9afecd76de45911707074d5a128e2fc326dc7f879847f20a6785f96ec39cf1a6",
+    "backend/app/travel_facts/execution.py": "7394c0957e8109e385c0802848b71171afb9b55d8920d62c942966d26cd899ac",
+    "backend/app/travel_facts/interfaces.py": "46ec97f298b77ce33615f7bf4da3e7a0c2d6135b0e2188cfa13321ce631c4b62",
+    "backend/app/travel_facts/models.py": "ccaa6767229c70452e6e1e9ea571c444d0ef63025de1e4a3281ba809f65b6202",
+    "backend/app/travel_facts/normalization.py": "7ed0c454ff84352d1f39d5fc19ea555207e99597e0c132da16e0f592a0e6c7a1",
+    "backend/app/travel_facts/official_collector.py": "beea13c91bf24fa68f94f02d375fb9d1c53fe381071f595bc9f2b6c995101e22",
+    "backend/app/travel_facts/opening_hours.py": "762fdf10cefad7577928b6a8efc80cccb3d8aa9009b5f60e8af7f2b43a5ee67d",
+    "backend/app/travel_facts/policies.py": "2483a58614b76986449bbc501a836f83242bc54d1e24eb0cbc719cfee73fa17b",
+    "backend/app/travel_facts/repository.py": "d4c6356ea2e7e93608f315c32e6a75cd4e4841fa980146cc527c89552f286385",
+    "backend/app/travel_facts/resolution.py": "f7ec047729ee032cfaa94d4aef797a395220783ba6f9f567ace2f345b1057846",
+    "backend/app/travel_facts/search_evidence.py": "b47fb7697078a428e539fcfcb69499789cca986cb24dcbc515753f4b4c3b6b0f",
+    "backend/app/travel_facts/service.py": "597bbe58e76655e51d4bb5a65405cf1895a4d4538d60cb34841ebfc61c4b0d34",
+    "backend/app/travel_facts/source_review.py": "faf9c66b8afbfee7cbbbadcdf9a79000699cee4fc0673d7b3f5a9faf4472bd06",
+    "backend/app/travel_goal_router.py": "76143cfa4e22370a8f7796c1dfdf732d0695cd89bced7895f20dc793ca587b5e",
+    "backend/app/travel_language.py": "72868b068a0ab49e00ced0a3ec9b528b705d343f16f4cd96496a42b5e545adde",
+    "backend/app/trip_execution_service.py": "a610ec27f8dd5bfae9ba7b08c5607c28de8596074f46b27cb4285551727ee0de",
+    "backend/tests/fixtures/opening_hours/nanjing.json": "edc9a0bc00821ae26903f514ff7ca1129987ebdd1383f77ae051cbe5baaad56a",
+    "backend/tests/fixtures/opening_hours/zhejiang.json": "696747f41d422c286e4405ae924e47baf307a2c56c45bb1ed2d77c06e967be2c",
+    "backend/tests/test_activity_decision_semantics.py": "ed0bf47d60e8baf96b87519beb6017a239ee2f1c9340780575f2b5ce0367d4d2",
+    "backend/tests/test_activity_experience_recovery.py": "c92705160e60dd2e2cd542edf0765c941d8031fdf5d732ebf38a09ee07be957c",
+    "backend/tests/test_agent_monitor.py": "07f0bd0ab2b056c69e51c2dea7c0e7eb4879ca15ec648aaa61afde56370e0334",
+    "backend/tests/test_agent_reliability_metrics.py": "07df3c55ebadf97464a5eb4c37979f18ccb1e13e411a54759ceddc384674e055",
+    "backend/tests/test_agent_worker.py": "57ba85fa67526fa011980cb9a239a0e8cdf856e25b04bc52809d2a2ccaab3d60",
+    "backend/tests/test_assistant_answers.py": "0f1777c4868850a6f4bc5d53a7e83b901f5ecc0c6137465bc7afab31d985a6dd",
+    "backend/tests/test_assistant_tools.py": "60854dab665fdc2f5b924e00ff7e479a2bd601ee1dbfff76117bfc37745bb5ad",
+    "backend/tests/test_candidate_edit.py": "b4601e2f62e51c64c924ed762a0c6e5d2fcf8e6ff63eeae71355d6a1d01e4dec",
+    "backend/tests/test_candidate_schedule.py": "17cf5c3ac7edab2155739859120885b8a2124c437a8917d3749b0032e8140806",
+    "backend/tests/test_companion_conversation_policy.py": "378ac746f678a4cf8ac7ceb496cfa3fdbb7a30c69e395ddb922ec8ade2150950",
+    "backend/tests/test_companion_fact_safety.py": "72e8cbaf6daf025aa353b85fa63ab442a65f93f365d5e7cfeaaccd15552456db",
+    "backend/tests/test_companion_facts.py": "dc42d43387dd7179eeb19f6fd8796e0afa2a71aa8c1034fc92621136f1e5d62b",
+    "backend/tests/test_companion_knowledge.py": "d4b24ab426424a037d23c37e25e6728f07d06f5c4f3efcbb526342eb56cf4bd9",
+    "backend/tests/test_companion_knowledge_strategy.py": "c2d311f9ade885392b9072c904f30b99cc807d535bcea6dba3c8632341b600fb",
+    "backend/tests/test_companion_runtime.py": "38eb6237c5be865bfdfb4ece12f23221f1760fff49db9777abb3c0d5eedaacd6",
+    "backend/tests/test_conversation_regressions.py": "a30b1598df955c3f48172639675f3768c494a72115665230dbb172b5948bc6c5",
+    "backend/tests/test_decision_context.py": "5ba43b39b7c5131ab97cad6d00b72c6c08dc62333b4e6086d8808d19f0e966d9",
+    "backend/tests/test_decision_ledger.py": "b6a2c8bab565848282cf6c0d3203d18f9c55db5a0aed5983ac4a283d0f476766",
+    "backend/tests/test_decision_memory.py": "84ca341e2b112b5f7935bdaa9247f2776eefaa8b19f924b200efc617c7a1a6c7",
+    "backend/tests/test_delay_impact.py": "0b93f70b89cfb3cd42d96304af9b4e63a5046534794bb81fc3dd3d50e8645881",
+    "backend/tests/test_destination_research.py": "d52327ea64b14c53e3bee0526dda6b4e89e0958e11a6c8dda448b7012a08c3db",
+    "backend/tests/test_dialogue_observation.py": "c788934a59bc0fd7295b18eb76e325202daa0934c932ba1569fd993e2cd1a022",
+    "backend/tests/test_external_facts.py": "8e96bb6b78c7ed27366335891872be1f993c813d3e84ff07072b6f45ba95ca95",
+    "backend/tests/test_health.py": "35c2361418f20a2a8c9a95e04ed0679b1a81c9b7ee358a0c0e6bcf0ef00b7352",
+    "backend/tests/test_initial_places.py": "c6073ecb323e6d8073c063df79d862793ce08dae1d034fa71fb1c583a10ef331",
+    "backend/tests/test_intent_eval_dataset.py": "9970af0cd4e038233515441135d194cc8d55e889107586b839bdfbda7d2a3739",
+    "backend/tests/test_knowledge_coverage.py": "cc6c04d3b41ae2afac6dade9b2250cc2bd4e2e220a1f20562519d5d43e7c442c",
+    "backend/tests/test_map_network.py": "74d67066143c1d09060ab3a19cca7a575d32dcedcb4461329be7c1f05a238154",
+    "backend/tests/test_mobile_error_contract.py": "964c4d70b8c687233fd2d95343bff6a3af4c8a3f639d69f8cfae5c30ef631bd3",
+    "backend/tests/test_model_client.py": "a9b25c28f37dd773f12c456a1ea13ab94a7f48a066f40027c2c32b96086ea1f3",
+    "backend/tests/test_navigation_event_detector.py": "c900f05a1e27c2199b4c33564f43a854bbd422e2e614a1a46a9c80f452ae0649",
+    "backend/tests/test_navigation_observation_ingestion.py": "09aab113a749f7e6cde6b9b79ef896fc119ed1de5ce3ec6a97651bdac400a6a7",
+    "backend/tests/test_navigation_sessions.py": "fbc7a8e845504d470a3a5b0999f4924a27ac0b95c184d96ebb385099871b4c78",
+    "backend/tests/test_navigation_start.py": "9931fe1f069be32a8018ad05a1fecfb1cf885381fa2977b5a7f74f9923ff493f",
+    "backend/tests/test_official_collector.py": "a704e03fe3f61d796c9294a63339167157f9ad306d95a7e48081d38ea543af08",
+    "backend/tests/test_openai_planner.py": "92502bb2f7cabee195fcff2b9977502591cb9c17f9044fefc0461b527d1a7a8d",
+    "backend/tests/test_opening_hours.py": "b3381d1afdfcead669fdc0151a6d1f0d83d35d844c4b4dd4a351ddcb555b7374",
+    "backend/tests/test_phase25_final.py": "4edb759b983c8a3f7bdbc7bce91ee30fab0794f0f84af62203a41d0404625ea9",
+    "backend/tests/test_planner.py": "85a5165779b3f1cd82cdc8e0a2e57a5e1ebaec2956a0458fc79341db34e35710",
+    "backend/tests/test_planner_entity_resolution.py": "88498d2dc431c03a526561509c5e5130f06d1bfee4073d317b6ec75bb3b7b695",
+    "backend/tests/test_planner_references.py": "b4014b9d3415e4f03ca6c609b3a76a1f1d17dba1c923bcaea43fe2212180f28b",
+    "backend/tests/test_planning_explanation.py": "5a3f77838acd254cdb3615defe98d3741347e057d6749af59bfdb0fabd5d3f3c",
+    "backend/tests/test_planning_goals.py": "7250d14887e02ae06ddd48cde65b88553ca1a5104fdb49525f48f722fd8aac98",
+    "backend/tests/test_planning_graph.py": "e8dc58c3f8de73fc9929e1346ca30daf1ff549c9f841e92cca652ded28502819",
+    "backend/tests/test_planning_intents.py": "754d20113a74bab24edf2c306109fc4bfc72a0223f6f26adb51c1e7795482d72",
+    "backend/tests/test_planning_quality_eval.py": "cb5cf3ac3c95feee8ffd054d54a3cebcd763d2207ecc0abfb4920ea84f9d4f74",
+    "backend/tests/test_planning_runs.py": "2af1741812bf3b5de97a8f4ea19c85879694eb597e5dedfc26f80b451a4d06a3",
+    "backend/tests/test_planning_setting_references.py": "1825fb096a2694b97a9399064863822276105806d85eb60d6a2c9d7b9dfb380f",
+    "backend/tests/test_recovery_options.py": "2c5c702c128cdda54e467160ee05fedd58ba6e1f3a6c4cc6615cae2ba51c3d49",
+    "backend/tests/test_recovery_route_enrichment.py": "b2be1ab74ef21fb5cdcae0b592502ec3d456859ac26a2bb27b66b101665a9f80",
+    "backend/tests/test_source_review.py": "875c4e5a30e6baaf356f75966a7ed9b6eb5390bfb7914b46689de00063b2aeed",
+    "backend/tests/test_timeline_impact.py": "8d790502ba7a4dd0758b4781632e015cb4864260578138b54032d8052808e791",
+    "backend/tests/test_tourism_knowledge.py": "589c85bc6bdedd2baf7d3ce88ec4aba8ec57c8342b7781cf8dccc27eea6e980b",
+    "backend/tests/test_travel_benchmark.py": "1232e01b62fd48843071fcf98ae9189da6340b15e682c9d71f9aea444da49f08",
+    "backend/tests/test_travel_decision_demo.py": "94cf22238329bd7228290ad38f692c5cd6054fc290bc5cde5c204869f901f387",
+    "backend/tests/test_travel_facts.py": "b39d902cab35248f9735d507c781612dd7678916ce65d9356c2f3f1dfd6ba2c4",
+    "backend/tests/test_travel_facts_eval.py": "cc1c9814417576ac3b44522755d77f04517cd7850596f45fcf5e2306fac209b2",
+    "backend/tests/test_travel_facts_execution.py": "cdfec40db70b7306c24f77daeea5e8bc397dfbb0da046ebf4275044382c89fcf",
+    "backend/tests/test_travel_goal_routing.py": "63c1482e5e0a81081be77b611d50d1665d5403330a792933ff9e6e1b5626b054",
+    "backend/tests/test_trip_execution.py": "e3f60a90da469e6145e15f9757f0f00cedc5cb4bdd7d73a982d147cf61716f3e",
+    "backend/tests/test_trips.py": "20bf33228cd0f1ecd2366c5df185b8060d713522752c303a290df9c3f8cfd78b"
+  },
+  "python": "3.14.3 (main, Mar  3 2026, 15:00:44) [MSC v.1944 64 bit (AMD64)]",
+  "mode": "deterministic",
+  "requested_repetitions": 1,
+  "ui_e2e": "not_executed",
+  "complete": true,
+  "rows": [
+    {
+      "pair": "interest",
+      "variant": "culture",
+      "variable": "interest_categories",
+      "expectation": "The selected culture/shopping share follows the sole changed preference; each choice has a matching user basis.",
+      "input": {
+        "task": "produce_candidate_itinerary",
+        "user_request": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+        "intent": {
+          "intent_type": "create_plan",
+          "source_text": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+          "protected_activity_refs": [],
+          "requested_place_queries": []
+        },
+        "grounded_intent": {},
+        "user_goals": {
+          "target_days": [
+            "2026-11-01"
+          ],
+          "hard_goals": {},
+          "soft_goals": {}
+        },
+        "route_facts": {
+          "days": [
+            {
+              "date": "2026-11-01",
+              "route_fact_status": "unavailable",
+              "route_legs": []
+            }
+          ]
+        },
+        "execution_state": {
+          "remaining_activity_refs": []
+        },
+        "protected_constraints": {
+          "frozen_activity_refs": [],
+          "protected_activity_refs": [],
+          "editable_activity_refs": [],
+          "provenance": {}
+        },
+        "context_provenance": {
+          "goals": "user_goal_and_grounded_intent",
+          "formal_itinerary": "persisted_formal_itinerary",
+          "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+          "route_context": "persisted_amap_route",
+          "execution_context": "execution_and_navigation_projection",
+          "active_disruption": "persisted_disruption_projection",
+          "user_preferences": "persisted_trip_preferences",
+          "provider_facts": "planning_provider_facts",
+          "decision_memory": "same_trip_same_target_day_rejected_revisions"
+        },
+        "previous_user_feedback": [],
+        "destination_research": {},
+        "trip": {
+          "destination": "杭州市",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-01",
+          "accommodation": "controlled-zone",
+          "total_budget_fen": 100000,
+          "daily_budget_fen": 100000,
+          "currency": "CNY",
+          "timezone": "Asia/Shanghai"
+        },
+        "budget_state": {
+          "budget_constrained": true,
+          "actual_spent_fen": 0,
+          "remaining_fen": 100000,
+          "today_spent_fen": 0,
+          "today_remaining_fen": 100000,
+          "planned_total_fen": 0
+        },
+        "external_facts": {
+          "status": "available",
+          "fixture_only": true,
+          "weather": {
+            "status": "available",
+            "provider": "synthetic_open_meteo",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "hourly": {
+                "time": [
+                  "2026-11-01T10:00"
+                ],
+                "temperature_2m": [
+                  22
+                ],
+                "precipitation_probability": [
+                  0
+                ],
+                "weather_code": [
+                  0
+                ]
+              }
+            }
+          },
+          "search": {
+            "status": "available",
+            "provider": "synthetic_tavily",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "results": [
+                {
+                  "title": "评测节庆广场活动",
+                  "url": "https://example.org/phase0/festival",
+                  "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。",
+                  "published_date": "2026-10-10",
+                  "effective_from": "2026-11-01",
+                  "effective_until": "2026-11-02"
+                }
+              ]
+            }
+          }
+        },
+        "execution_recovery": null,
+        "experience_constraint": null,
+        "preferences": {
+          "pace": "balanced",
+          "interest_categories": [
+            "culture"
+          ],
+          "transport_modes": [
+            "walk",
+            "transit"
+          ],
+          "daily_start_time": "09:00:00",
+          "daily_end_time": "18:00:00",
+          "meal_preferences": "",
+          "avoid_categories": [],
+          "max_walking_minutes": 90,
+          "free_text_requirements": ""
+        },
+        "allowed_dates": [
+          "2026-11-01"
+        ],
+        "trip_days": [
+          {
+            "date": "2026-11-01",
+            "label": "第一天",
+            "theme": "",
+            "route_mode": "transit"
+          }
+        ],
+        "out_of_scope_activities": [],
+        "unaccepted_candidate_context": null,
+        "protected_activities": [],
+        "existing_activities": [],
+        "new_place_candidates": [
+          {
+            "candidate_ref": "candidate_1",
+            "name": "评测文化馆",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "室内文化展陈，适合文化兴趣。",
+            "longitude": 120.15,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.9,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_2",
+            "name": "评测购物中心",
+            "category": "shopping",
+            "neighborhood": "controlled-zone",
+            "description": "室内购物体验，适合购物兴趣。",
+            "longitude": 120.15100000000001,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.8,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_3",
+            "name": "评测露天公园",
+            "category": "nature",
+            "neighborhood": "controlled-zone",
+            "description": "露天步道，雨天体验受影响。",
+            "longitude": 120.152,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.7,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_4",
+            "name": "评测节庆广场",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "活动场所；活动是否有效须查看外部资讯，POI存在不证明活动举行。",
+            "longitude": 120.153,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.6,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          }
+        ],
+        "allowed_activity_refs": [],
+        "allowed_candidate_refs": [
+          "candidate_1",
+          "candidate_2",
+          "candidate_3",
+          "candidate_4"
+        ]
+      },
+      "input_sha256": "75f1ebe2d7f74eac88988dff3e720217144e328bb468cd4291ffc695c3d06c42",
+      "candidate_order": [
+        "评测文化馆",
+        "评测购物中心",
+        "评测露天公园",
+        "评测节庆广场"
+      ],
+      "discovery_queries": [
+        "杭州市 旅游 代表性热门景点 特色 预约 开放 注意事项 culture",
+        "杭州市 请根据已保存的日期 预算和旅行偏好生成完整行程  景点名称 官方 交通限制"
+      ],
+      "research_source_projection": [
+        {
+          "title": "评测节庆广场活动",
+          "url": "https://example.org/phase0/festival",
+          "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。"
+        }
+      ],
+      "brief_and_raw_history_directly_change_prompt": false,
+      "final_generation": null,
+      "validator": null,
+      "decision_basis": "not_generated"
+    },
+    {
+      "pair": "interest",
+      "variant": "shopping",
+      "variable": "interest_categories",
+      "expectation": "The selected culture/shopping share follows the sole changed preference; each choice has a matching user basis.",
+      "input": {
+        "task": "produce_candidate_itinerary",
+        "user_request": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+        "intent": {
+          "intent_type": "create_plan",
+          "source_text": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+          "protected_activity_refs": [],
+          "requested_place_queries": []
+        },
+        "grounded_intent": {},
+        "user_goals": {
+          "target_days": [
+            "2026-11-01"
+          ],
+          "hard_goals": {},
+          "soft_goals": {}
+        },
+        "route_facts": {
+          "days": [
+            {
+              "date": "2026-11-01",
+              "route_fact_status": "unavailable",
+              "route_legs": []
+            }
+          ]
+        },
+        "execution_state": {
+          "remaining_activity_refs": []
+        },
+        "protected_constraints": {
+          "frozen_activity_refs": [],
+          "protected_activity_refs": [],
+          "editable_activity_refs": [],
+          "provenance": {}
+        },
+        "context_provenance": {
+          "goals": "user_goal_and_grounded_intent",
+          "formal_itinerary": "persisted_formal_itinerary",
+          "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+          "route_context": "persisted_amap_route",
+          "execution_context": "execution_and_navigation_projection",
+          "active_disruption": "persisted_disruption_projection",
+          "user_preferences": "persisted_trip_preferences",
+          "provider_facts": "planning_provider_facts",
+          "decision_memory": "same_trip_same_target_day_rejected_revisions"
+        },
+        "previous_user_feedback": [],
+        "destination_research": {},
+        "trip": {
+          "destination": "杭州市",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-01",
+          "accommodation": "controlled-zone",
+          "total_budget_fen": 100000,
+          "daily_budget_fen": 100000,
+          "currency": "CNY",
+          "timezone": "Asia/Shanghai"
+        },
+        "budget_state": {
+          "budget_constrained": true,
+          "actual_spent_fen": 0,
+          "remaining_fen": 100000,
+          "today_spent_fen": 0,
+          "today_remaining_fen": 100000,
+          "planned_total_fen": 0
+        },
+        "external_facts": {
+          "status": "available",
+          "fixture_only": true,
+          "weather": {
+            "status": "available",
+            "provider": "synthetic_open_meteo",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "hourly": {
+                "time": [
+                  "2026-11-01T10:00"
+                ],
+                "temperature_2m": [
+                  22
+                ],
+                "precipitation_probability": [
+                  0
+                ],
+                "weather_code": [
+                  0
+                ]
+              }
+            }
+          },
+          "search": {
+            "status": "available",
+            "provider": "synthetic_tavily",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "results": [
+                {
+                  "title": "评测节庆广场活动",
+                  "url": "https://example.org/phase0/festival",
+                  "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。",
+                  "published_date": "2026-10-10",
+                  "effective_from": "2026-11-01",
+                  "effective_until": "2026-11-02"
+                }
+              ]
+            }
+          }
+        },
+        "execution_recovery": null,
+        "experience_constraint": null,
+        "preferences": {
+          "pace": "balanced",
+          "interest_categories": [
+            "shopping"
+          ],
+          "transport_modes": [
+            "walk",
+            "transit"
+          ],
+          "daily_start_time": "09:00:00",
+          "daily_end_time": "18:00:00",
+          "meal_preferences": "",
+          "avoid_categories": [],
+          "max_walking_minutes": 90,
+          "free_text_requirements": ""
+        },
+        "allowed_dates": [
+          "2026-11-01"
+        ],
+        "trip_days": [
+          {
+            "date": "2026-11-01",
+            "label": "第一天",
+            "theme": "",
+            "route_mode": "transit"
+          }
+        ],
+        "out_of_scope_activities": [],
+        "unaccepted_candidate_context": null,
+        "protected_activities": [],
+        "existing_activities": [],
+        "new_place_candidates": [
+          {
+            "candidate_ref": "candidate_1",
+            "name": "评测文化馆",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "室内文化展陈，适合文化兴趣。",
+            "longitude": 120.15,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.9,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_2",
+            "name": "评测购物中心",
+            "category": "shopping",
+            "neighborhood": "controlled-zone",
+            "description": "室内购物体验，适合购物兴趣。",
+            "longitude": 120.15100000000001,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.8,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_3",
+            "name": "评测露天公园",
+            "category": "nature",
+            "neighborhood": "controlled-zone",
+            "description": "露天步道，雨天体验受影响。",
+            "longitude": 120.152,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.7,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_4",
+            "name": "评测节庆广场",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "活动场所；活动是否有效须查看外部资讯，POI存在不证明活动举行。",
+            "longitude": 120.153,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.6,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          }
+        ],
+        "allowed_activity_refs": [],
+        "allowed_candidate_refs": [
+          "candidate_1",
+          "candidate_2",
+          "candidate_3",
+          "candidate_4"
+        ]
+      },
+      "input_sha256": "3d92bb8abbc2f5db47747d8dc680c00d48818f131a92d38de59a63bfa5365a00",
+      "candidate_order": [
+        "评测文化馆",
+        "评测购物中心",
+        "评测露天公园",
+        "评测节庆广场"
+      ],
+      "discovery_queries": [
+        "杭州市 旅游 代表性热门景点 特色 预约 开放 注意事项 shopping",
+        "杭州市 请根据已保存的日期 预算和旅行偏好生成完整行程  景点名称 官方 交通限制"
+      ],
+      "research_source_projection": [
+        {
+          "title": "评测节庆广场活动",
+          "url": "https://example.org/phase0/festival",
+          "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。"
+        }
+      ],
+      "brief_and_raw_history_directly_change_prompt": false,
+      "final_generation": null,
+      "validator": null,
+      "decision_basis": "not_generated"
+    },
+    {
+      "pair": "weather",
+      "variant": "sun",
+      "variable": "hourly_weather",
+      "expectation": "Rain reduces unsuitable outdoor exposure while preserving feasible goals; rationale refers to the supplied forecast slot.",
+      "input": {
+        "task": "produce_candidate_itinerary",
+        "user_request": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+        "intent": {
+          "intent_type": "create_plan",
+          "source_text": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+          "protected_activity_refs": [],
+          "requested_place_queries": []
+        },
+        "grounded_intent": {},
+        "user_goals": {
+          "target_days": [
+            "2026-11-01"
+          ],
+          "hard_goals": {},
+          "soft_goals": {}
+        },
+        "route_facts": {
+          "days": [
+            {
+              "date": "2026-11-01",
+              "route_fact_status": "unavailable",
+              "route_legs": []
+            }
+          ]
+        },
+        "execution_state": {
+          "remaining_activity_refs": []
+        },
+        "protected_constraints": {
+          "frozen_activity_refs": [],
+          "protected_activity_refs": [],
+          "editable_activity_refs": [],
+          "provenance": {}
+        },
+        "context_provenance": {
+          "goals": "user_goal_and_grounded_intent",
+          "formal_itinerary": "persisted_formal_itinerary",
+          "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+          "route_context": "persisted_amap_route",
+          "execution_context": "execution_and_navigation_projection",
+          "active_disruption": "persisted_disruption_projection",
+          "user_preferences": "persisted_trip_preferences",
+          "provider_facts": "planning_provider_facts",
+          "decision_memory": "same_trip_same_target_day_rejected_revisions"
+        },
+        "previous_user_feedback": [],
+        "destination_research": {},
+        "trip": {
+          "destination": "杭州市",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-01",
+          "accommodation": "controlled-zone",
+          "total_budget_fen": 100000,
+          "daily_budget_fen": 100000,
+          "currency": "CNY",
+          "timezone": "Asia/Shanghai"
+        },
+        "budget_state": {
+          "budget_constrained": true,
+          "actual_spent_fen": 0,
+          "remaining_fen": 100000,
+          "today_spent_fen": 0,
+          "today_remaining_fen": 100000,
+          "planned_total_fen": 0
+        },
+        "external_facts": {
+          "status": "available",
+          "fixture_only": true,
+          "weather": {
+            "status": "available",
+            "provider": "synthetic_open_meteo",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "hourly": {
+                "time": [
+                  "2026-11-01T10:00"
+                ],
+                "temperature_2m": [
+                  22
+                ],
+                "precipitation_probability": [
+                  0
+                ],
+                "weather_code": [
+                  0
+                ]
+              }
+            }
+          },
+          "search": {
+            "status": "available",
+            "provider": "synthetic_tavily",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "results": [
+                {
+                  "title": "评测节庆广场活动",
+                  "url": "https://example.org/phase0/festival",
+                  "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。",
+                  "published_date": "2026-10-10",
+                  "effective_from": "2026-11-01",
+                  "effective_until": "2026-11-02"
+                }
+              ]
+            }
+          }
+        },
+        "execution_recovery": null,
+        "experience_constraint": null,
+        "preferences": {
+          "pace": "balanced",
+          "interest_categories": [
+            "culture"
+          ],
+          "transport_modes": [
+            "walk",
+            "transit"
+          ],
+          "daily_start_time": "09:00:00",
+          "daily_end_time": "18:00:00",
+          "meal_preferences": "",
+          "avoid_categories": [],
+          "max_walking_minutes": 90,
+          "free_text_requirements": ""
+        },
+        "allowed_dates": [
+          "2026-11-01"
+        ],
+        "trip_days": [
+          {
+            "date": "2026-11-01",
+            "label": "第一天",
+            "theme": "",
+            "route_mode": "transit"
+          }
+        ],
+        "out_of_scope_activities": [],
+        "unaccepted_candidate_context": null,
+        "protected_activities": [],
+        "existing_activities": [],
+        "new_place_candidates": [
+          {
+            "candidate_ref": "candidate_1",
+            "name": "评测文化馆",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "室内文化展陈，适合文化兴趣。",
+            "longitude": 120.15,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.9,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_2",
+            "name": "评测购物中心",
+            "category": "shopping",
+            "neighborhood": "controlled-zone",
+            "description": "室内购物体验，适合购物兴趣。",
+            "longitude": 120.15100000000001,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.8,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_3",
+            "name": "评测露天公园",
+            "category": "nature",
+            "neighborhood": "controlled-zone",
+            "description": "露天步道，雨天体验受影响。",
+            "longitude": 120.152,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.7,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_4",
+            "name": "评测节庆广场",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "活动场所；活动是否有效须查看外部资讯，POI存在不证明活动举行。",
+            "longitude": 120.153,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.6,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          }
+        ],
+        "allowed_activity_refs": [],
+        "allowed_candidate_refs": [
+          "candidate_1",
+          "candidate_2",
+          "candidate_3",
+          "candidate_4"
+        ]
+      },
+      "input_sha256": "75f1ebe2d7f74eac88988dff3e720217144e328bb468cd4291ffc695c3d06c42",
+      "candidate_order": [
+        "评测文化馆",
+        "评测购物中心",
+        "评测露天公园",
+        "评测节庆广场"
+      ],
+      "discovery_queries": [
+        "杭州市 旅游 代表性热门景点 特色 预约 开放 注意事项 culture",
+        "杭州市 请根据已保存的日期 预算和旅行偏好生成完整行程  景点名称 官方 交通限制"
+      ],
+      "research_source_projection": [
+        {
+          "title": "评测节庆广场活动",
+          "url": "https://example.org/phase0/festival",
+          "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。"
+        }
+      ],
+      "brief_and_raw_history_directly_change_prompt": false,
+      "final_generation": null,
+      "validator": null,
+      "decision_basis": "not_generated"
+    },
+    {
+      "pair": "weather",
+      "variant": "rain",
+      "variable": "hourly_weather",
+      "expectation": "Rain reduces unsuitable outdoor exposure while preserving feasible goals; rationale refers to the supplied forecast slot.",
+      "input": {
+        "task": "produce_candidate_itinerary",
+        "user_request": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+        "intent": {
+          "intent_type": "create_plan",
+          "source_text": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+          "protected_activity_refs": [],
+          "requested_place_queries": []
+        },
+        "grounded_intent": {},
+        "user_goals": {
+          "target_days": [
+            "2026-11-01"
+          ],
+          "hard_goals": {},
+          "soft_goals": {}
+        },
+        "route_facts": {
+          "days": [
+            {
+              "date": "2026-11-01",
+              "route_fact_status": "unavailable",
+              "route_legs": []
+            }
+          ]
+        },
+        "execution_state": {
+          "remaining_activity_refs": []
+        },
+        "protected_constraints": {
+          "frozen_activity_refs": [],
+          "protected_activity_refs": [],
+          "editable_activity_refs": [],
+          "provenance": {}
+        },
+        "context_provenance": {
+          "goals": "user_goal_and_grounded_intent",
+          "formal_itinerary": "persisted_formal_itinerary",
+          "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+          "route_context": "persisted_amap_route",
+          "execution_context": "execution_and_navigation_projection",
+          "active_disruption": "persisted_disruption_projection",
+          "user_preferences": "persisted_trip_preferences",
+          "provider_facts": "planning_provider_facts",
+          "decision_memory": "same_trip_same_target_day_rejected_revisions"
+        },
+        "previous_user_feedback": [],
+        "destination_research": {},
+        "trip": {
+          "destination": "杭州市",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-01",
+          "accommodation": "controlled-zone",
+          "total_budget_fen": 100000,
+          "daily_budget_fen": 100000,
+          "currency": "CNY",
+          "timezone": "Asia/Shanghai"
+        },
+        "budget_state": {
+          "budget_constrained": true,
+          "actual_spent_fen": 0,
+          "remaining_fen": 100000,
+          "today_spent_fen": 0,
+          "today_remaining_fen": 100000,
+          "planned_total_fen": 0
+        },
+        "external_facts": {
+          "status": "available",
+          "fixture_only": true,
+          "weather": {
+            "status": "available",
+            "provider": "synthetic_open_meteo",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "hourly": {
+                "time": [
+                  "2026-11-01T10:00"
+                ],
+                "temperature_2m": [
+                  22
+                ],
+                "precipitation_probability": [
+                  95
+                ],
+                "weather_code": [
+                  63
+                ]
+              }
+            }
+          },
+          "search": {
+            "status": "available",
+            "provider": "synthetic_tavily",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "results": [
+                {
+                  "title": "评测节庆广场活动",
+                  "url": "https://example.org/phase0/festival",
+                  "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。",
+                  "published_date": "2026-10-10",
+                  "effective_from": "2026-11-01",
+                  "effective_until": "2026-11-02"
+                }
+              ]
+            }
+          }
+        },
+        "execution_recovery": null,
+        "experience_constraint": null,
+        "preferences": {
+          "pace": "balanced",
+          "interest_categories": [
+            "culture"
+          ],
+          "transport_modes": [
+            "walk",
+            "transit"
+          ],
+          "daily_start_time": "09:00:00",
+          "daily_end_time": "18:00:00",
+          "meal_preferences": "",
+          "avoid_categories": [],
+          "max_walking_minutes": 90,
+          "free_text_requirements": ""
+        },
+        "allowed_dates": [
+          "2026-11-01"
+        ],
+        "trip_days": [
+          {
+            "date": "2026-11-01",
+            "label": "第一天",
+            "theme": "",
+            "route_mode": "transit"
+          }
+        ],
+        "out_of_scope_activities": [],
+        "unaccepted_candidate_context": null,
+        "protected_activities": [],
+        "existing_activities": [],
+        "new_place_candidates": [
+          {
+            "candidate_ref": "candidate_1",
+            "name": "评测文化馆",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "室内文化展陈，适合文化兴趣。",
+            "longitude": 120.15,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.9,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_2",
+            "name": "评测购物中心",
+            "category": "shopping",
+            "neighborhood": "controlled-zone",
+            "description": "室内购物体验，适合购物兴趣。",
+            "longitude": 120.15100000000001,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.8,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_3",
+            "name": "评测露天公园",
+            "category": "nature",
+            "neighborhood": "controlled-zone",
+            "description": "露天步道，雨天体验受影响。",
+            "longitude": 120.152,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.7,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_4",
+            "name": "评测节庆广场",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "活动场所；活动是否有效须查看外部资讯，POI存在不证明活动举行。",
+            "longitude": 120.153,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.6,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          }
+        ],
+        "allowed_activity_refs": [],
+        "allowed_candidate_refs": [
+          "candidate_1",
+          "candidate_2",
+          "candidate_3",
+          "candidate_4"
+        ]
+      },
+      "input_sha256": "478a27ef0a2cf846465028ca643cbaa8860a3e4f960941a8e3e019132d7b6108",
+      "candidate_order": [
+        "评测文化馆",
+        "评测购物中心",
+        "评测露天公园",
+        "评测节庆广场"
+      ],
+      "discovery_queries": [
+        "杭州市 旅游 代表性热门景点 特色 预约 开放 注意事项 culture",
+        "杭州市 请根据已保存的日期 预算和旅行偏好生成完整行程  景点名称 官方 交通限制"
+      ],
+      "research_source_projection": [
+        {
+          "title": "评测节庆广场活动",
+          "url": "https://example.org/phase0/festival",
+          "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。"
+        }
+      ],
+      "brief_and_raw_history_directly_change_prompt": false,
+      "final_generation": null,
+      "validator": null,
+      "decision_basis": "not_generated"
+    },
+    {
+      "pair": "festival_date",
+      "variant": "in_window",
+      "variable": "trip_date",
+      "expectation": "The Nov 1 festival is not recommended as an occurring event outside its effective interval; ordinary use of the same POI is not automatically an error.",
+      "input": {
+        "task": "produce_candidate_itinerary",
+        "user_request": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+        "intent": {
+          "intent_type": "create_plan",
+          "source_text": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+          "protected_activity_refs": [],
+          "requested_place_queries": []
+        },
+        "grounded_intent": {},
+        "user_goals": {
+          "target_days": [
+            "2026-11-01"
+          ],
+          "hard_goals": {},
+          "soft_goals": {}
+        },
+        "route_facts": {
+          "days": [
+            {
+              "date": "2026-11-01",
+              "route_fact_status": "unavailable",
+              "route_legs": []
+            }
+          ]
+        },
+        "execution_state": {
+          "remaining_activity_refs": []
+        },
+        "protected_constraints": {
+          "frozen_activity_refs": [],
+          "protected_activity_refs": [],
+          "editable_activity_refs": [],
+          "provenance": {}
+        },
+        "context_provenance": {
+          "goals": "user_goal_and_grounded_intent",
+          "formal_itinerary": "persisted_formal_itinerary",
+          "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+          "route_context": "persisted_amap_route",
+          "execution_context": "execution_and_navigation_projection",
+          "active_disruption": "persisted_disruption_projection",
+          "user_preferences": "persisted_trip_preferences",
+          "provider_facts": "planning_provider_facts",
+          "decision_memory": "same_trip_same_target_day_rejected_revisions"
+        },
+        "previous_user_feedback": [],
+        "destination_research": {},
+        "trip": {
+          "destination": "杭州市",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-01",
+          "accommodation": "controlled-zone",
+          "total_budget_fen": 100000,
+          "daily_budget_fen": 100000,
+          "currency": "CNY",
+          "timezone": "Asia/Shanghai"
+        },
+        "budget_state": {
+          "budget_constrained": true,
+          "actual_spent_fen": 0,
+          "remaining_fen": 100000,
+          "today_spent_fen": 0,
+          "today_remaining_fen": 100000,
+          "planned_total_fen": 0
+        },
+        "external_facts": {
+          "status": "available",
+          "fixture_only": true,
+          "weather": {
+            "status": "available",
+            "provider": "synthetic_open_meteo",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "hourly": {
+                "time": [
+                  "2026-11-01T10:00"
+                ],
+                "temperature_2m": [
+                  22
+                ],
+                "precipitation_probability": [
+                  0
+                ],
+                "weather_code": [
+                  0
+                ]
+              }
+            }
+          },
+          "search": {
+            "status": "available",
+            "provider": "synthetic_tavily",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "results": [
+                {
+                  "title": "评测节庆广场活动",
+                  "url": "https://example.org/phase0/festival",
+                  "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。",
+                  "published_date": "2026-10-10",
+                  "effective_from": "2026-11-01",
+                  "effective_until": "2026-11-02"
+                }
+              ]
+            }
+          }
+        },
+        "execution_recovery": null,
+        "experience_constraint": null,
+        "preferences": {
+          "pace": "balanced",
+          "interest_categories": [
+            "culture"
+          ],
+          "transport_modes": [
+            "walk",
+            "transit"
+          ],
+          "daily_start_time": "09:00:00",
+          "daily_end_time": "18:00:00",
+          "meal_preferences": "",
+          "avoid_categories": [],
+          "max_walking_minutes": 90,
+          "free_text_requirements": ""
+        },
+        "allowed_dates": [
+          "2026-11-01"
+        ],
+        "trip_days": [
+          {
+            "date": "2026-11-01",
+            "label": "第一天",
+            "theme": "",
+            "route_mode": "transit"
+          }
+        ],
+        "out_of_scope_activities": [],
+        "unaccepted_candidate_context": null,
+        "protected_activities": [],
+        "existing_activities": [],
+        "new_place_candidates": [
+          {
+            "candidate_ref": "candidate_1",
+            "name": "评测文化馆",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "室内文化展陈，适合文化兴趣。",
+            "longitude": 120.15,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.9,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_2",
+            "name": "评测购物中心",
+            "category": "shopping",
+            "neighborhood": "controlled-zone",
+            "description": "室内购物体验，适合购物兴趣。",
+            "longitude": 120.15100000000001,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.8,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_3",
+            "name": "评测露天公园",
+            "category": "nature",
+            "neighborhood": "controlled-zone",
+            "description": "露天步道，雨天体验受影响。",
+            "longitude": 120.152,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.7,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_4",
+            "name": "评测节庆广场",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "活动场所；活动是否有效须查看外部资讯，POI存在不证明活动举行。",
+            "longitude": 120.153,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.6,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          }
+        ],
+        "allowed_activity_refs": [],
+        "allowed_candidate_refs": [
+          "candidate_1",
+          "candidate_2",
+          "candidate_3",
+          "candidate_4"
+        ]
+      },
+      "input_sha256": "75f1ebe2d7f74eac88988dff3e720217144e328bb468cd4291ffc695c3d06c42",
+      "candidate_order": [
+        "评测文化馆",
+        "评测购物中心",
+        "评测露天公园",
+        "评测节庆广场"
+      ],
+      "discovery_queries": [
+        "杭州市 旅游 代表性热门景点 特色 预约 开放 注意事项 culture",
+        "杭州市 请根据已保存的日期 预算和旅行偏好生成完整行程  景点名称 官方 交通限制"
+      ],
+      "research_source_projection": [
+        {
+          "title": "评测节庆广场活动",
+          "url": "https://example.org/phase0/festival",
+          "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。"
+        }
+      ],
+      "brief_and_raw_history_directly_change_prompt": false,
+      "final_generation": null,
+      "validator": null,
+      "decision_basis": "not_generated"
+    },
+    {
+      "pair": "festival_date",
+      "variant": "out_of_window",
+      "variable": "trip_date",
+      "expectation": "The Nov 1 festival is not recommended as an occurring event outside its effective interval; ordinary use of the same POI is not automatically an error.",
+      "input": {
+        "task": "produce_candidate_itinerary",
+        "user_request": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+        "intent": {
+          "intent_type": "create_plan",
+          "source_text": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+          "protected_activity_refs": [],
+          "requested_place_queries": []
+        },
+        "grounded_intent": {},
+        "user_goals": {
+          "target_days": [
+            "2026-11-08"
+          ],
+          "hard_goals": {},
+          "soft_goals": {}
+        },
+        "route_facts": {
+          "days": [
+            {
+              "date": "2026-11-08",
+              "route_fact_status": "unavailable",
+              "route_legs": []
+            }
+          ]
+        },
+        "execution_state": {
+          "remaining_activity_refs": []
+        },
+        "protected_constraints": {
+          "frozen_activity_refs": [],
+          "protected_activity_refs": [],
+          "editable_activity_refs": [],
+          "provenance": {}
+        },
+        "context_provenance": {
+          "goals": "user_goal_and_grounded_intent",
+          "formal_itinerary": "persisted_formal_itinerary",
+          "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+          "route_context": "persisted_amap_route",
+          "execution_context": "execution_and_navigation_projection",
+          "active_disruption": "persisted_disruption_projection",
+          "user_preferences": "persisted_trip_preferences",
+          "provider_facts": "planning_provider_facts",
+          "decision_memory": "same_trip_same_target_day_rejected_revisions"
+        },
+        "previous_user_feedback": [],
+        "destination_research": {},
+        "trip": {
+          "destination": "杭州市",
+          "start_date": "2026-11-08",
+          "end_date": "2026-11-08",
+          "accommodation": "controlled-zone",
+          "total_budget_fen": 100000,
+          "daily_budget_fen": 100000,
+          "currency": "CNY",
+          "timezone": "Asia/Shanghai"
+        },
+        "budget_state": {
+          "budget_constrained": true,
+          "actual_spent_fen": 0,
+          "remaining_fen": 100000,
+          "today_spent_fen": 0,
+          "today_remaining_fen": 100000,
+          "planned_total_fen": 0
+        },
+        "external_facts": {
+          "status": "available",
+          "fixture_only": true,
+          "weather": {
+            "status": "available",
+            "provider": "synthetic_open_meteo",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "hourly": {
+                "time": [
+                  "2026-11-08T10:00"
+                ],
+                "temperature_2m": [
+                  22
+                ],
+                "precipitation_probability": [
+                  0
+                ],
+                "weather_code": [
+                  0
+                ]
+              }
+            }
+          },
+          "search": {
+            "status": "available",
+            "provider": "synthetic_tavily",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "results": [
+                {
+                  "title": "评测节庆广场活动",
+                  "url": "https://example.org/phase0/festival",
+                  "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。",
+                  "published_date": "2026-10-10",
+                  "effective_from": "2026-11-01",
+                  "effective_until": "2026-11-02"
+                }
+              ]
+            }
+          }
+        },
+        "execution_recovery": null,
+        "experience_constraint": null,
+        "preferences": {
+          "pace": "balanced",
+          "interest_categories": [
+            "culture"
+          ],
+          "transport_modes": [
+            "walk",
+            "transit"
+          ],
+          "daily_start_time": "09:00:00",
+          "daily_end_time": "18:00:00",
+          "meal_preferences": "",
+          "avoid_categories": [],
+          "max_walking_minutes": 90,
+          "free_text_requirements": ""
+        },
+        "allowed_dates": [
+          "2026-11-08"
+        ],
+        "trip_days": [
+          {
+            "date": "2026-11-08",
+            "label": "第一天",
+            "theme": "",
+            "route_mode": "transit"
+          }
+        ],
+        "out_of_scope_activities": [],
+        "unaccepted_candidate_context": null,
+        "protected_activities": [],
+        "existing_activities": [],
+        "new_place_candidates": [
+          {
+            "candidate_ref": "candidate_1",
+            "name": "评测文化馆",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "室内文化展陈，适合文化兴趣。",
+            "longitude": 120.15,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.9,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_2",
+            "name": "评测购物中心",
+            "category": "shopping",
+            "neighborhood": "controlled-zone",
+            "description": "室内购物体验，适合购物兴趣。",
+            "longitude": 120.15100000000001,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.8,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_3",
+            "name": "评测露天公园",
+            "category": "nature",
+            "neighborhood": "controlled-zone",
+            "description": "露天步道，雨天体验受影响。",
+            "longitude": 120.152,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.7,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_4",
+            "name": "评测节庆广场",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "活动场所；活动是否有效须查看外部资讯，POI存在不证明活动举行。",
+            "longitude": 120.153,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.6,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          }
+        ],
+        "allowed_activity_refs": [],
+        "allowed_candidate_refs": [
+          "candidate_1",
+          "candidate_2",
+          "candidate_3",
+          "candidate_4"
+        ]
+      },
+      "input_sha256": "338d37978998906d690ad3b81a931bafc4e746da61a7afc8f31ab62d09d24ecb",
+      "candidate_order": [
+        "评测文化馆",
+        "评测购物中心",
+        "评测露天公园",
+        "评测节庆广场"
+      ],
+      "discovery_queries": [
+        "杭州市 旅游 代表性热门景点 特色 预约 开放 注意事项 culture",
+        "杭州市 请根据已保存的日期 预算和旅行偏好生成完整行程  景点名称 官方 交通限制"
+      ],
+      "research_source_projection": [
+        {
+          "title": "评测节庆广场活动",
+          "url": "https://example.org/phase0/festival",
+          "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。"
+        }
+      ],
+      "brief_and_raw_history_directly_change_prompt": false,
+      "final_generation": null,
+      "validator": null,
+      "decision_basis": "not_generated"
+    },
+    {
+      "pair": "news_validity",
+      "variant": "valid",
+      "variable": "publication_and_effective_dates",
+      "expectation": "An expired event is excluded as an event basis; its persistent venue identity alone cannot establish current activity validity.",
+      "input": {
+        "task": "produce_candidate_itinerary",
+        "user_request": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+        "intent": {
+          "intent_type": "create_plan",
+          "source_text": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+          "protected_activity_refs": [],
+          "requested_place_queries": []
+        },
+        "grounded_intent": {},
+        "user_goals": {
+          "target_days": [
+            "2026-11-01"
+          ],
+          "hard_goals": {},
+          "soft_goals": {}
+        },
+        "route_facts": {
+          "days": [
+            {
+              "date": "2026-11-01",
+              "route_fact_status": "unavailable",
+              "route_legs": []
+            }
+          ]
+        },
+        "execution_state": {
+          "remaining_activity_refs": []
+        },
+        "protected_constraints": {
+          "frozen_activity_refs": [],
+          "protected_activity_refs": [],
+          "editable_activity_refs": [],
+          "provenance": {}
+        },
+        "context_provenance": {
+          "goals": "user_goal_and_grounded_intent",
+          "formal_itinerary": "persisted_formal_itinerary",
+          "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+          "route_context": "persisted_amap_route",
+          "execution_context": "execution_and_navigation_projection",
+          "active_disruption": "persisted_disruption_projection",
+          "user_preferences": "persisted_trip_preferences",
+          "provider_facts": "planning_provider_facts",
+          "decision_memory": "same_trip_same_target_day_rejected_revisions"
+        },
+        "previous_user_feedback": [],
+        "destination_research": {},
+        "trip": {
+          "destination": "杭州市",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-01",
+          "accommodation": "controlled-zone",
+          "total_budget_fen": 100000,
+          "daily_budget_fen": 100000,
+          "currency": "CNY",
+          "timezone": "Asia/Shanghai"
+        },
+        "budget_state": {
+          "budget_constrained": true,
+          "actual_spent_fen": 0,
+          "remaining_fen": 100000,
+          "today_spent_fen": 0,
+          "today_remaining_fen": 100000,
+          "planned_total_fen": 0
+        },
+        "external_facts": {
+          "status": "available",
+          "fixture_only": true,
+          "weather": {
+            "status": "available",
+            "provider": "synthetic_open_meteo",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "hourly": {
+                "time": [
+                  "2026-11-01T10:00"
+                ],
+                "temperature_2m": [
+                  22
+                ],
+                "precipitation_probability": [
+                  0
+                ],
+                "weather_code": [
+                  0
+                ]
+              }
+            }
+          },
+          "search": {
+            "status": "available",
+            "provider": "synthetic_tavily",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "results": [
+                {
+                  "title": "评测节庆广场活动",
+                  "url": "https://example.org/phase0/festival",
+                  "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。",
+                  "published_date": "2026-10-10",
+                  "effective_from": "2026-11-01",
+                  "effective_until": "2026-11-02"
+                }
+              ]
+            }
+          }
+        },
+        "execution_recovery": null,
+        "experience_constraint": null,
+        "preferences": {
+          "pace": "balanced",
+          "interest_categories": [
+            "culture"
+          ],
+          "transport_modes": [
+            "walk",
+            "transit"
+          ],
+          "daily_start_time": "09:00:00",
+          "daily_end_time": "18:00:00",
+          "meal_preferences": "",
+          "avoid_categories": [],
+          "max_walking_minutes": 90,
+          "free_text_requirements": ""
+        },
+        "allowed_dates": [
+          "2026-11-01"
+        ],
+        "trip_days": [
+          {
+            "date": "2026-11-01",
+            "label": "第一天",
+            "theme": "",
+            "route_mode": "transit"
+          }
+        ],
+        "out_of_scope_activities": [],
+        "unaccepted_candidate_context": null,
+        "protected_activities": [],
+        "existing_activities": [],
+        "new_place_candidates": [
+          {
+            "candidate_ref": "candidate_1",
+            "name": "评测文化馆",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "室内文化展陈，适合文化兴趣。",
+            "longitude": 120.15,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.9,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_2",
+            "name": "评测购物中心",
+            "category": "shopping",
+            "neighborhood": "controlled-zone",
+            "description": "室内购物体验，适合购物兴趣。",
+            "longitude": 120.15100000000001,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.8,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_3",
+            "name": "评测露天公园",
+            "category": "nature",
+            "neighborhood": "controlled-zone",
+            "description": "露天步道，雨天体验受影响。",
+            "longitude": 120.152,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.7,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_4",
+            "name": "评测节庆广场",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "活动场所；活动是否有效须查看外部资讯，POI存在不证明活动举行。",
+            "longitude": 120.153,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.6,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          }
+        ],
+        "allowed_activity_refs": [],
+        "allowed_candidate_refs": [
+          "candidate_1",
+          "candidate_2",
+          "candidate_3",
+          "candidate_4"
+        ]
+      },
+      "input_sha256": "75f1ebe2d7f74eac88988dff3e720217144e328bb468cd4291ffc695c3d06c42",
+      "candidate_order": [
+        "评测文化馆",
+        "评测购物中心",
+        "评测露天公园",
+        "评测节庆广场"
+      ],
+      "discovery_queries": [
+        "杭州市 旅游 代表性热门景点 特色 预约 开放 注意事项 culture",
+        "杭州市 请根据已保存的日期 预算和旅行偏好生成完整行程  景点名称 官方 交通限制"
+      ],
+      "research_source_projection": [
+        {
+          "title": "评测节庆广场活动",
+          "url": "https://example.org/phase0/festival",
+          "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。"
+        }
+      ],
+      "brief_and_raw_history_directly_change_prompt": false,
+      "final_generation": null,
+      "validator": null,
+      "decision_basis": "not_generated"
+    },
+    {
+      "pair": "news_validity",
+      "variant": "expired",
+      "variable": "publication_and_effective_dates",
+      "expectation": "An expired event is excluded as an event basis; its persistent venue identity alone cannot establish current activity validity.",
+      "input": {
+        "task": "produce_candidate_itinerary",
+        "user_request": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+        "intent": {
+          "intent_type": "create_plan",
+          "source_text": "请根据已保存的日期、预算和旅行偏好生成完整行程。",
+          "protected_activity_refs": [],
+          "requested_place_queries": []
+        },
+        "grounded_intent": {},
+        "user_goals": {
+          "target_days": [
+            "2026-11-01"
+          ],
+          "hard_goals": {},
+          "soft_goals": {}
+        },
+        "route_facts": {
+          "days": [
+            {
+              "date": "2026-11-01",
+              "route_fact_status": "unavailable",
+              "route_legs": []
+            }
+          ]
+        },
+        "execution_state": {
+          "remaining_activity_refs": []
+        },
+        "protected_constraints": {
+          "frozen_activity_refs": [],
+          "protected_activity_refs": [],
+          "editable_activity_refs": [],
+          "provenance": {}
+        },
+        "context_provenance": {
+          "goals": "user_goal_and_grounded_intent",
+          "formal_itinerary": "persisted_formal_itinerary",
+          "activity_decision_semantics": "persisted_activity_fields_with_field_provenance",
+          "route_context": "persisted_amap_route",
+          "execution_context": "execution_and_navigation_projection",
+          "active_disruption": "persisted_disruption_projection",
+          "user_preferences": "persisted_trip_preferences",
+          "provider_facts": "planning_provider_facts",
+          "decision_memory": "same_trip_same_target_day_rejected_revisions"
+        },
+        "previous_user_feedback": [],
+        "destination_research": {},
+        "trip": {
+          "destination": "杭州市",
+          "start_date": "2026-11-01",
+          "end_date": "2026-11-01",
+          "accommodation": "controlled-zone",
+          "total_budget_fen": 100000,
+          "daily_budget_fen": 100000,
+          "currency": "CNY",
+          "timezone": "Asia/Shanghai"
+        },
+        "budget_state": {
+          "budget_constrained": true,
+          "actual_spent_fen": 0,
+          "remaining_fen": 100000,
+          "today_spent_fen": 0,
+          "today_remaining_fen": 100000,
+          "planned_total_fen": 0
+        },
+        "external_facts": {
+          "status": "available",
+          "fixture_only": true,
+          "weather": {
+            "status": "available",
+            "provider": "synthetic_open_meteo",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "hourly": {
+                "time": [
+                  "2026-11-01T10:00"
+                ],
+                "temperature_2m": [
+                  22
+                ],
+                "precipitation_probability": [
+                  0
+                ],
+                "weather_code": [
+                  0
+                ]
+              }
+            }
+          },
+          "search": {
+            "status": "available",
+            "provider": "synthetic_tavily",
+            "queried_at": "2026-10-11T00:00:00Z",
+            "payload": {
+              "results": [
+                {
+                  "title": "评测节庆广场活动",
+                  "url": "https://example.org/phase0/festival",
+                  "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。",
+                  "published_date": "2024-10-10",
+                  "effective_from": "2024-11-01",
+                  "effective_until": "2024-11-02"
+                }
+              ]
+            }
+          }
+        },
+        "execution_recovery": null,
+        "experience_constraint": null,
+        "preferences": {
+          "pace": "balanced",
+          "interest_categories": [
+            "culture"
+          ],
+          "transport_modes": [
+            "walk",
+            "transit"
+          ],
+          "daily_start_time": "09:00:00",
+          "daily_end_time": "18:00:00",
+          "meal_preferences": "",
+          "avoid_categories": [],
+          "max_walking_minutes": 90,
+          "free_text_requirements": ""
+        },
+        "allowed_dates": [
+          "2026-11-01"
+        ],
+        "trip_days": [
+          {
+            "date": "2026-11-01",
+            "label": "第一天",
+            "theme": "",
+            "route_mode": "transit"
+          }
+        ],
+        "out_of_scope_activities": [],
+        "unaccepted_candidate_context": null,
+        "protected_activities": [],
+        "existing_activities": [],
+        "new_place_candidates": [
+          {
+            "candidate_ref": "candidate_1",
+            "name": "评测文化馆",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "室内文化展陈，适合文化兴趣。",
+            "longitude": 120.15,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.9,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_2",
+            "name": "评测购物中心",
+            "category": "shopping",
+            "neighborhood": "controlled-zone",
+            "description": "室内购物体验，适合购物兴趣。",
+            "longitude": 120.15100000000001,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.8,
+            "tags": [
+              "indoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_3",
+            "name": "评测露天公园",
+            "category": "nature",
+            "neighborhood": "controlled-zone",
+            "description": "露天步道，雨天体验受影响。",
+            "longitude": 120.152,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.7,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          },
+          {
+            "candidate_ref": "candidate_4",
+            "name": "评测节庆广场",
+            "category": "culture",
+            "neighborhood": "controlled-zone",
+            "description": "活动场所；活动是否有效须查看外部资讯，POI存在不证明活动举行。",
+            "longitude": 120.153,
+            "latitude": 30.27,
+            "suggested_duration_minutes": 60,
+            "estimated_cost_fen": 1000,
+            "rating": 4.6,
+            "tags": [
+              "outdoor",
+              "synthetic_fixture"
+            ],
+            "source_provider": "Phase0 synthetic POI",
+            "source_confidence": "low"
+          }
+        ],
+        "allowed_activity_refs": [],
+        "allowed_candidate_refs": [
+          "candidate_1",
+          "candidate_2",
+          "candidate_3",
+          "candidate_4"
+        ]
+      },
+      "input_sha256": "c38149ddaf449a2d56ecfe3fafb9888695d709be05449582fb1311f3831ae6f7",
+      "candidate_order": [
+        "评测文化馆",
+        "评测购物中心",
+        "评测露天公园",
+        "评测节庆广场"
+      ],
+      "discovery_queries": [
+        "杭州市 旅游 代表性热门景点 特色 预约 开放 注意事项 culture",
+        "杭州市 请根据已保存的日期 预算和旅行偏好生成完整行程  景点名称 官方 交通限制"
+      ],
+      "research_source_projection": [
+        {
+          "title": "评测节庆广场活动",
+          "url": "https://example.org/phase0/festival",
+          "content": "评测节庆广场举行文化节活动；活动是否有效应依据日期元数据核对。"
+        }
+      ],
+      "brief_and_raw_history_directly_change_prompt": false,
+      "final_generation": null,
+      "validator": null,
+      "decision_basis": "not_generated"
+    }
+  ],
+  "pairs": [
+    {
+      "pair": "interest",
+      "input_changed": true,
+      "candidate_order_changed": false,
+      "discovery_query_changed": true,
+      "research_source_projection_changed": false,
+      "final_generation_changed": null,
+      "decision_basis_changed": null,
+      "quality_verdict": "not_measured_by_deterministic_input_test"
+    },
+    {
+      "pair": "weather",
+      "input_changed": true,
+      "candidate_order_changed": false,
+      "discovery_query_changed": false,
+      "research_source_projection_changed": false,
+      "final_generation_changed": null,
+      "decision_basis_changed": null,
+      "quality_verdict": "not_measured_by_deterministic_input_test"
+    },
+    {
+      "pair": "festival_date",
+      "input_changed": true,
+      "candidate_order_changed": false,
+      "discovery_query_changed": false,
+      "research_source_projection_changed": false,
+      "final_generation_changed": null,
+      "decision_basis_changed": null,
+      "quality_verdict": "not_measured_by_deterministic_input_test"
+    },
+    {
+      "pair": "news_validity",
+      "input_changed": true,
+      "candidate_order_changed": false,
+      "discovery_query_changed": false,
+      "research_source_projection_changed": false,
+      "final_generation_changed": null,
+      "decision_basis_changed": null,
+      "quality_verdict": "not_measured_by_deterministic_input_test"
+    }
+  ],
+  "real_model_calls": 0,
+  "changed_source_files_during_run": [],
+  "eval_manifest": {
+    "isolate.py": "2f36a0ae8e05a9d29bb7fcecd94b3955b0d3aa4d6c86f4550dfc9436a08f8c8c",
+    "run.py": "6165acd7cdb7b2f544be82074e5d2d881c34650b221e3bee3a5a3465fc7a052a",
+    "version_audit.py": "2b9493577ed1061ef17bb2f4ae6f2b9ec42f459f7e5f8f48a47770a17238bdf8",
+    "__init__.py": "cd25b22966fa73f70fb8b39685fbb8bbf21a01ddae0244628687daac9d197bd9",
+    "fixtures.json": "d9cd01747f5c0539c5ca630b162d8c8a9570f760e4318fccdb93f31ec0d8ef8b"
+  }
+}

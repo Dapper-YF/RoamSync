@@ -1,0 +1,57 @@
+{
+  "stage": "2.2",
+  "pass": "decision_ledger_closure",
+  "date": "2026-09-27",
+  "status": "remains_open",
+  "stop_rule_triggered": true,
+  "normal_live_runs": [
+    {
+      "run_id": "25ffb4c1-fe9e-437e-9c35-849b2c5c7c7f",
+      "trip_id": "7fc0911f-9d66-4e27-8109-9a497de5d7f4",
+      "target_day": "2026-10-20",
+      "memory_count": 1,
+      "intent": "optimize_route",
+      "planner_reached": true,
+      "status": "failed",
+      "error_code": "planner_invalid_output",
+      "failure_boundary": "candidate_structured_output",
+      "evidence": "Second structured attempt still referenced a place_candidate_id outside allowed_places.",
+      "ledger_validation_reached": false,
+      "plan_revision_produced": false
+    },
+    {
+      "run_id": "93215d31-fffe-47bc-9870-f06cc4289561",
+      "trip_id": "7fc0911f-9d66-4e27-8109-9a497de5d7f4",
+      "target_day": "2026-10-20",
+      "memory_count": 1,
+      "intent": "remove_activity",
+      "target_activity_id": "5c9a8ef0-ae31-4f87-8096-905259d15dd0",
+      "planner_reached": true,
+      "candidate_reached": true,
+      "amap_route_reached": true,
+      "ledger_entries": 5,
+      "status": "failed",
+      "error_code": "planner_constraints_unsatisfied",
+      "ledger_validation": "failed",
+      "ledger_error": "decision_goal_basis_missing",
+      "ledger_evidence": "remove-lvcha used primary_reason=satisfy_hard_goal but referenced only soft goals minimize_walking and pace; the available hard max_walking_minutes goal was not referenced.",
+      "other_validator_errors": ["intent_scope_activity_changed", "time_overlap", "route_travel_time_conflict"],
+      "plan_revision_produced": false
+    }
+  ],
+  "route_repair_reconciliation": {
+    "implementation": "deterministic_route_repair source with verified schedule_adjustments",
+    "unit_tests": ["test_route_repair_reconciles_planner_move_with_system_provenance", "test_route_repair_drops_a_move_that_it_fully_reverted"],
+    "production_observed": false
+  },
+  "recovery_live_run": {
+    "started": false,
+    "reason": "Normal validated Ledger to pending PlanRevision did not pass; Recovery is ordered after it."
+  },
+  "regression": {
+    "linux_postgresql": "349 passed, 2 warnings",
+    "web": "94 passed",
+    "typescript": "passed"
+  },
+  "final_status": "Decision Ledger MVP REMAINS OPEN"
+}

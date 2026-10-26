@@ -1,0 +1,620 @@
+{
+  "kind": "production",
+  "cases": [
+    {
+      "user": "第一次去成都，想了解城市气质和慢慢体验的事情。",
+      "answer": "成都的气质可以用“松弛”概括：节奏慢，吃喝、喝茶、聊天本身就是正经事，街边麻将声和茶馆里的盖碗茶都是日常的一部分。第一次来，与其赶景点，不如留出整块时间泡进这种生活。\n\n几个适合慢慢体验的事：一是坐茶馆，人民公园鹤鸣茶社这类老茶馆点一杯盖碗茶，可以坐一下午，还能顺便看当地人掏耳朵、摆龙门阵；二是逛老街区，宽窄巷子人多但适合初见成都，想安静些可以去镋钯街、望平街一带的小店和咖啡馆；三是吃，从清晨的一碗面、街头的钟水饺、糖油果子，到晚上一顿火锅或串串，成都的吃是分时段铺开的，不必顿顿正餐；四是傍晚沿锦江边或小通巷散步，看本地人下班后的样子。\n\n如果想带点文化味，武侯祠旁边就是锦里，杜甫草堂和金沙遗址也都能待上半天。建议一天只安排一个“正事”，其余时间随意闲逛，成都的乐趣多半在计划之外。",
+      "summary": {
+        "version": 1,
+        "correlation_id": "88f6046a-0039-4c78-9740-e0ee2e22010d",
+        "answer_status": "complete",
+        "answer_attempts": 2,
+        "duration_ms": 28304,
+        "selection": {
+          "intent": "direct",
+          "capabilities": [],
+          "reason_code": "stable_knowledge",
+          "argument_source": "current_user_scoped_history_or_selected_place"
+        },
+        "events": [
+          {
+            "stage": "selection",
+            "status": "running",
+            "elapsed_ms": 133
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 4504,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 4367
+          },
+          {
+            "stage": "selection",
+            "status": "completed",
+            "elapsed_ms": 4504
+          },
+          {
+            "stage": "context",
+            "status": "completed",
+            "elapsed_ms": 4513,
+            "fields": [
+              "city"
+            ]
+          },
+          {
+            "stage": "companion",
+            "status": "running",
+            "elapsed_ms": 4596
+          },
+          {
+            "stage": "answer",
+            "status": "running",
+            "elapsed_ms": 4735
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 12032,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 7296
+          },
+          {
+            "stage": "answer",
+            "status": "completed",
+            "elapsed_ms": 12032
+          },
+          {
+            "stage": "answer",
+            "status": "failed",
+            "elapsed_ms": 12034,
+            "code": "schema_failure",
+            "category": "schema_failure",
+            "exception_chain": [
+              "ValidationError"
+            ],
+            "http_status": null,
+            "finish_reason": null,
+            "validation": [
+              {
+                "field": "suggestions.0.reasons",
+                "type": "list_type"
+              },
+              {
+                "field": "suggestions.1",
+                "type": "model_type"
+              },
+              {
+                "field": "reasons",
+                "type": "extra_forbidden"
+              },
+              {
+                "field": "summary",
+                "type": "extra_forbidden"
+              },
+              {
+                "field": "suggestion_type",
+                "type": "extra_forbidden"
+              },
+              {
+                "field": "title",
+                "type": "extra_forbidden"
+              }
+            ]
+          },
+          {
+            "stage": "answer",
+            "status": "running",
+            "elapsed_ms": 12035
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 24989,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 12954
+          },
+          {
+            "stage": "answer",
+            "status": "completed",
+            "elapsed_ms": 24989
+          },
+          {
+            "stage": "companion",
+            "status": "completed",
+            "elapsed_ms": 25011
+          },
+          {
+            "stage": "images",
+            "status": "running",
+            "elapsed_ms": 25015
+          },
+          {
+            "stage": "images",
+            "status": "running",
+            "elapsed_ms": 25015
+          },
+          {
+            "stage": "images",
+            "status": "completed",
+            "elapsed_ms": 26587
+          },
+          {
+            "stage": "images",
+            "status": "completed",
+            "elapsed_ms": 28304
+          }
+        ]
+      },
+      "memory": {
+        "version": 1,
+        "epoch": "",
+        "slots": {
+          "city": {
+            "value": "成都",
+            "source_quote": "第一次去成都",
+            "message_id": "88f6046a-0039-4c78-9740-e0ee2e22010d",
+            "scope": "destination"
+          }
+        },
+        "preferences": [],
+        "requirements": []
+      },
+      "visuals": {
+        "status": "available",
+        "images": [
+          {
+            "url": "https://imgcdn.scol.com.cn/media/2025/09/29/213543730289.jpg",
+            "description": "A white porcelain gaiwan with the characters “成都” in blue sits on a dark wooden table, its lid resting beside it, with a woven bamboo thermos and other tea sets softly blurred in the background.",
+            "source_url": "https://imgcdn.scol.com.cn/media/2025/09/29/213543730289.jpg",
+            "topic": "盖碗茶",
+            "usage_basis": "search_reference",
+            "illustration_kind": "food"
+          },
+          {
+            "url": "https://p4.itc.cn/q_70/images01/20230419/edbb9387d60b470cae2fa4ec90ea72e7.jpeg",
+            "description": "A pile of glossy, golden-brown Chengdu sugar oil balls, generously sprinkled with white sesame seeds, rests invitingly on a dark plate.",
+            "source_url": "https://p4.itc.cn/q_70/images01/20230419/edbb9387d60b470cae2fa4ec90ea72e7.jpeg",
+            "topic": "糖油果子",
+            "usage_basis": "search_reference",
+            "illustration_kind": "food"
+          }
+        ],
+        "requested": false,
+        "semantics": "optional_topic_illustrations_not_factual_evidence"
+      }
+    },
+    {
+      "user": "介绍成都牛油火锅与串串香的区别。",
+      "answer": "牛油火锅和串串香在成都常常被当成两回事来吃，区别主要在三个方面。\n\n锅底和口感：牛油火锅以牛油为底，配大量豆瓣、辣椒、花椒熬制，油厚味重，烫出来的菜挂油多、香气冲，越煮越辣越浓。串串香的锅底也常见红油，但整体偏轻一些，很多店还会提供清油或鸳鸯锅，辣度更好控制。\n\n食材形式：火锅是点菜制，毛肚、鸭肠、黄喉、嫩牛肉按盘上，适合几个人围着慢慢烫、慢慢聊。串串香则是把荤素菜穿在竹签上，冰柜里自取，拿到锅里现烫，吃完按签子数量或重量结账，一个人吃两三个人的量都自由。\n\n吃的节奏：火锅更像一顿正式的聚餐，锅底一开就要守着吃；串串香更随意，随拿随烫，适合边吃边加，很多店营业到深夜，宵夜属性强。\n\n简单说：想要味道厚重、体验经典川味火锅，选牛油火锅；想吃得多而杂、轻松灵活不拘形式，选串串香。第一次去，两家各试一顿比纠结哪个正宗更划算——不过各家配方差异很大，辣度能不能调、有没有不辣的锅底，点单前直接问店里最稳妥。",
+      "summary": {
+        "version": 1,
+        "correlation_id": "7118acf9-7712-45eb-97e8-a4218a46ab92",
+        "answer_status": "complete",
+        "answer_attempts": 1,
+        "duration_ms": 21535,
+        "selection": {
+          "intent": "direct",
+          "capabilities": [],
+          "reason_code": "stable_knowledge",
+          "argument_source": "current_user_scoped_history_or_selected_place"
+        },
+        "events": [
+          {
+            "stage": "selection",
+            "status": "running",
+            "elapsed_ms": 22
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 3043,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 3016
+          },
+          {
+            "stage": "selection",
+            "status": "completed",
+            "elapsed_ms": 3043
+          },
+          {
+            "stage": "companion",
+            "status": "running",
+            "elapsed_ms": 3090
+          },
+          {
+            "stage": "answer",
+            "status": "running",
+            "elapsed_ms": 3118
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 16741,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 13623
+          },
+          {
+            "stage": "answer",
+            "status": "completed",
+            "elapsed_ms": 16741
+          },
+          {
+            "stage": "companion",
+            "status": "completed",
+            "elapsed_ms": 16746
+          },
+          {
+            "stage": "images",
+            "status": "running",
+            "elapsed_ms": 16747
+          },
+          {
+            "stage": "images",
+            "status": "running",
+            "elapsed_ms": 16747
+          },
+          {
+            "stage": "images",
+            "status": "completed",
+            "elapsed_ms": 20586
+          },
+          {
+            "stage": "images",
+            "status": "completed",
+            "elapsed_ms": 21535
+          }
+        ]
+      },
+      "memory": {
+        "version": 1,
+        "epoch": "",
+        "slots": {
+          "city": {
+            "value": "成都",
+            "source_quote": "第一次去成都",
+            "message_id": "88f6046a-0039-4c78-9740-e0ee2e22010d",
+            "scope": "destination"
+          }
+        },
+        "preferences": [],
+        "requirements": []
+      },
+      "visuals": {
+        "status": "available",
+        "images": [
+          {
+            "url": "https://p2.itc.cn/images01/20230611/8a65075ec3e04401a6b03f3b0f83d614.jpeg",
+            "description": "A hot pot filled with spicy, red broth surrounded by plates of various raw meats and vegetables ready for grilling or cooking.",
+            "source_url": "https://p2.itc.cn/images01/20230611/8a65075ec3e04401a6b03f3b0f83d614.jpeg",
+            "topic": "牛油火锅",
+            "usage_basis": "search_reference",
+            "illustration_kind": "food"
+          },
+          {
+            "url": "https://iriseating.com/wp-content/uploads/2024/12/S__68165674_0.jpg",
+            "description": "Fruits skewers are being cooked in a hot pot surrounded by plates of sliced meats, vegetables, and dipping sauces.",
+            "source_url": "https://iriseating.com/wp-content/uploads/2024/12/S__68165674_0.jpg",
+            "topic": "串串香",
+            "usage_basis": "search_reference",
+            "illustration_kind": "food"
+          }
+        ],
+        "requested": false,
+        "semantics": "optional_topic_illustrations_not_factual_evidence"
+      }
+    },
+    {
+      "user": "我去成都，2026-11-02出发，玩四天，不吃辣。",
+      "answer": "已更新这次聊天的条件：目的地：成都；出发日期：2026-11-02；游玩天数：4。",
+      "summary": {
+        "version": 1,
+        "correlation_id": "e23433f0-9b4b-450c-8558-b83673ea0365",
+        "answer_status": "complete",
+        "answer_attempts": 0,
+        "duration_ms": 4237,
+        "selection": {
+          "intent": "direct",
+          "capabilities": [],
+          "reason_code": "stable_knowledge",
+          "argument_source": "current_user_scoped_history_or_selected_place"
+        },
+        "events": [
+          {
+            "stage": "selection",
+            "status": "running",
+            "elapsed_ms": 20
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 4236,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 4212
+          },
+          {
+            "stage": "selection",
+            "status": "completed",
+            "elapsed_ms": 4236
+          },
+          {
+            "stage": "context",
+            "status": "completed",
+            "elapsed_ms": 4236,
+            "fields": [
+              "city",
+              "start_date",
+              "duration_days"
+            ]
+          }
+        ]
+      },
+      "memory": {
+        "version": 1,
+        "epoch": "",
+        "slots": {
+          "city": {
+            "value": "成都",
+            "source_quote": "成都",
+            "message_id": "e23433f0-9b4b-450c-8558-b83673ea0365",
+            "scope": "personal"
+          },
+          "start_date": {
+            "value": "2026-11-02",
+            "source_quote": "2026-11-02出发",
+            "message_id": "e23433f0-9b4b-450c-8558-b83673ea0365",
+            "scope": "personal"
+          },
+          "duration_days": {
+            "value": 4,
+            "source_quote": "玩四天",
+            "message_id": "e23433f0-9b4b-450c-8558-b83673ea0365",
+            "scope": "personal"
+          }
+        },
+        "preferences": [],
+        "requirements": []
+      }
+    },
+    {
+      "user": "改成11月5日出发，只玩三天。",
+      "answer": "已更新这次聊天的条件：出发日期：2026-11-05；游玩天数：3。",
+      "summary": {
+        "version": 1,
+        "correlation_id": "a943d065-6650-4e1e-be6c-814d4dce92b5",
+        "answer_status": "complete",
+        "answer_attempts": 0,
+        "duration_ms": 5779,
+        "selection": {
+          "intent": "direct",
+          "capabilities": [],
+          "reason_code": "stable_knowledge",
+          "argument_source": "current_user_scoped_history_or_selected_place"
+        },
+        "events": [
+          {
+            "stage": "selection",
+            "status": "running",
+            "elapsed_ms": 25
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 5778,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 5748
+          },
+          {
+            "stage": "selection",
+            "status": "completed",
+            "elapsed_ms": 5778
+          },
+          {
+            "stage": "context",
+            "status": "completed",
+            "elapsed_ms": 5778,
+            "fields": [
+              "start_date",
+              "duration_days"
+            ]
+          }
+        ]
+      },
+      "memory": {
+        "version": 1,
+        "epoch": "",
+        "slots": {
+          "city": {
+            "value": "成都",
+            "source_quote": "成都",
+            "message_id": "e23433f0-9b4b-450c-8558-b83673ea0365",
+            "scope": "personal"
+          },
+          "start_date": {
+            "value": "2026-11-05",
+            "source_quote": "改成11月5日出发",
+            "message_id": "a943d065-6650-4e1e-be6c-814d4dce92b5",
+            "scope": "personal"
+          },
+          "duration_days": {
+            "value": 3,
+            "source_quote": "只玩三天",
+            "message_id": "a943d065-6650-4e1e-be6c-814d4dce92b5",
+            "scope": "personal"
+          }
+        },
+        "preferences": [],
+        "requirements": []
+      }
+    },
+    {
+      "user": "我的出发日期、天数和忌口是什么？",
+      "answer": "目前保存的条件是：目的地成都，11月5日出发，玩三天。\n\n忌口方面，你之前提过不吃辣，但这条似乎没有存进本次的有效条件里。如果确实全程严格不吃辣，建议告诉我一声，我记下来；也提醒一下，后面推荐吃的时候我会按“点单前先确认有不辣的锅底和蘸料”来把握。",
+      "summary": {
+        "version": 1,
+        "correlation_id": "c99a583c-6ca0-473e-bf03-5e1dcffa68c4",
+        "answer_status": "complete",
+        "answer_attempts": 1,
+        "duration_ms": 10440,
+        "selection": {
+          "intent": "direct",
+          "capabilities": [],
+          "reason_code": "stable_knowledge",
+          "argument_source": "current_user_scoped_history_or_selected_place"
+        },
+        "events": [
+          {
+            "stage": "selection",
+            "status": "running",
+            "elapsed_ms": 23
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 2105,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 2078
+          },
+          {
+            "stage": "selection",
+            "status": "completed",
+            "elapsed_ms": 2105
+          },
+          {
+            "stage": "companion",
+            "status": "running",
+            "elapsed_ms": 2156
+          },
+          {
+            "stage": "answer",
+            "status": "running",
+            "elapsed_ms": 2179
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 10436,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 8257
+          },
+          {
+            "stage": "answer",
+            "status": "completed",
+            "elapsed_ms": 10436
+          },
+          {
+            "stage": "companion",
+            "status": "completed",
+            "elapsed_ms": 10440
+          }
+        ]
+      },
+      "memory": {
+        "version": 1,
+        "epoch": "",
+        "slots": {
+          "city": {
+            "value": "成都",
+            "source_quote": "成都",
+            "message_id": "e23433f0-9b4b-450c-8558-b83673ea0365",
+            "scope": "personal"
+          },
+          "start_date": {
+            "value": "2026-11-05",
+            "source_quote": "改成11月5日出发",
+            "message_id": "a943d065-6650-4e1e-be6c-814d4dce92b5",
+            "scope": "personal"
+          },
+          "duration_days": {
+            "value": 3,
+            "source_quote": "只玩三天",
+            "message_id": "a943d065-6650-4e1e-be6c-814d4dce92b5",
+            "scope": "personal"
+          }
+        },
+        "preferences": [],
+        "requirements": []
+      }
+    },
+    {
+      "user": "我这次的出发日期和忌口确定了吗？",
+      "answer": "目前没有记录您的出发日期和忌口，您可以告诉我这两项信息。",
+      "summary": {
+        "version": 1,
+        "correlation_id": "64fbadd5-fd38-4efb-8d7c-56e1f7035c0e",
+        "answer_status": "complete",
+        "answer_attempts": 0,
+        "duration_ms": 3690,
+        "selection": {
+          "intent": "direct",
+          "capabilities": [],
+          "reason_code": "stable_knowledge",
+          "argument_source": "current_user_scoped_history_or_selected_place"
+        },
+        "events": [
+          {
+            "stage": "selection",
+            "status": "running",
+            "elapsed_ms": 20
+          },
+          {
+            "stage": "model",
+            "status": "completed",
+            "elapsed_ms": 3689,
+            "provider": "glm",
+            "model": "glm-5.3-flash",
+            "finish_reason": "stop",
+            "duration_ms": 3666
+          },
+          {
+            "stage": "selection",
+            "status": "completed",
+            "elapsed_ms": 3689
+          }
+        ]
+      },
+      "memory": {
+        "version": 1,
+        "epoch": "",
+        "slots": {},
+        "preferences": [],
+        "requirements": []
+      }
+    }
+  ],
+  "errors": [],
+  "loaded_images": 1,
+  "photo_layout": [
+    {
+      "float": "right",
+      "width": 190,
+      "parent_width": 926,
+      "height": 126.65625,
+      "paragraph_top_delta": 2
+    }
+  ],
+  "refresh_restored": true,
+  "mobile_overflow": false,
+  "new_chat_isolated": true,
+  "passed": false,
+  "harness_reported_passed": true,
+  "failure": "Transcript inspection: explicit no-chili preference missing from persisted effective memory; old text-only assertion was insufficient."
+}

@@ -1,0 +1,398 @@
+diff --git a/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md b/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md
+index 15bddd7..e3b51d6 100644
+--- a/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md
++++ b/docs/agent/REPOSITORY_REPRODUCIBILITY_20261007.md
+@@ -1,31 +1,41 @@
+-# Repository Reproducibility Proposal — 2026-10-07
++# Repository Reproducibility Acceptance — 2026-10-08
+ 
+-Current HEAD5572849 is not a complete system baseline. Dirty/untracked runtime, migration, test, Web and documentation files must not be committed as an unattributed bulk git add. No Git history changes are authorized or executed by this document.
++Status: VERIFIED clean Git checkout / locked build / regression; NOT READY for release because real-provider lifecycle acceptance failed. Production deployment, main merge and production database changes are not authorized.
+ 
+-## Concrete safe release procedure (requires explicit user approval before execution)
++## Authorized scope and history
+ 
+-1. Retain main and all local files. Record current HEAD, porcelain inventory, backend source manifest and Web build-file manifest. Preserve existing file hashes and accepted production image digests. No reset/clean/stash/rebase.
+-2. Build a reviewed allowlist from runtime directories: backend/app, backend/migrations, backend/evals excluding results, backend/tests/fixtures/tests, Dockerfile/pyproject/uv.lock/alembic; Web src/public/package and lock/build configs; compose files; narrowly selected operator scripts and contract/handoff documents. Include tracked deletions intentionally. Exclude .env/secrets, test-results, browser profiles, unrelated assets, raw DB dumps, screenshots and private records. List every proposed path and origin before staging.
+-3. Separate provenance groups: accepted prior backend/runtime foundation; accepted prior Web and tests; source lifecycle offline additions; this current Demo acceptance work. Distinguish unknown/unaccepted dirty changes explicitly. Do not retroactively claim historical ownership or exact author attribution from a dirty tree alone.
+-4. After approval, create a codex/release-acceptance branch from current HEAD without discarding working tree. Stage only exact reviewed paths, inspect staged diff and secret checks, then make attributed grouped commits with manifests and acceptance evidence references. Do not stage all files with git add . and do not merge into main automatically.
+-5. Create a clean checkout from approved release ref, supply credentials externally, install exact locks, migrate isolated PG17, run required focused/full/Web/provider/rehearsal gates and compare manifests. Only then claim Git reproducibility and candidate release readiness. A build from the present dirty checkout cannot prove this gate.
+-6. Deploy only ready runtime changes after final gates and bind API/worker/Web to release manifests. Preserve data, keep existing production images/config references for rollback. Schema migration/data deletion requires separate decision.
++Base main: 5572849209c943c5f5ad1579db4cef0ba2fb5b25. Branch: codex/roamsync-demo-release-20261007. The human authorized exact grouped release commits and isolated acceptance, then explicitly approved the dependency amendment: remove the launcher's automatic reset invocation; add three frozen evaluation inputs; update two evaluation input paths. Reviewed scope is 366 existing files plus the two existing deletions web/.env.test and web/src/components/TripBriefingDrawer.tsx. Original 330 dirty/untracked paths and the three added inputs were accounted for. Android, raw results, private data, credentials and unrelated files remain outside the release.
+ 
+-## Current concrete evidence
++|Group|Commit|Changed paths|
++|---|---|---|
++|Backend / Travel Facts / Planning / Execution|fbd65f28f3fe5ee1ed99ba8182976a717c0018bc|219|
++|Web / UI / Tests|93118dc6f1370c7be78e167ffb7adb640375573a|66 including two deletions|
++|Operator Scripts / Contracts / historical Documentation|8ee7dbf0ddc27fdb8fd55bc20fad9777ec4bf209|48|
+ 
+-Source Repair baseline d982, final ec632. Exactly3 offline added source files and no prior manifest hash changes, with reversible overlay zip and verification.json. Production API167 files still match fc3. Existing historical dirty work is inventoried but cannot yet be safely attributed/committed. Demo starts with isolated acceptance runtime, not a production reset.
++These commits capture previously developed, reviewed functionality. They do not attribute all historical code to this release-preparation round. A final documentation-only checkpoint updates the four explicitly requested reports within the same allowlist; its exact SHA is recorded in release_final_binding.json and the final handoff response. Application source remains identical to 8ee7dbf.
+ 
+-## Decision required later
++Each group used an exact NUL-delimited pathspec, staged diff review and manifest/commit record. No blanket add, reset, clean, stash, rebase, history rewrite, push or main merge. The 366 candidate Git blobs match audited SHA256 values; both deletions and empty index were verified. Literal secret scans and full-file classification found no identified real credentials/private artifacts in the candidate. This is a bounded release audit, not a claim of exhaustive security certification. Browser map configuration is externally supplied public client configuration; server keys remain external.
+ 
+-Explicit permission is required to execute the exact release-branch/staging/commit procedure after the final path allowlist and gates are ready for review. No permission is needed to continue read-only audits, manifests, isolated acceptance evaluation or bounded fixes. Until approval and clean-ref verification, Repository Reproducible remains RISK and Product Milestone completion is unproven.
+-
+-
+-## Concrete release approval proposal — 2026-10-08
+-
+-Pre-release gates: latest Linux/Python3.11/PG17 full854, Web125/typecheck/build, isolated real lifecycle/Recovery and final scoped Knowledge/facts/rejection followups. Latest source1acc754b9122b2aded24612947f74f3c23ea7017ee388c8a4412bd4c6cddb2e5. Raw source/test/evidence hashes are in backend/evals/results/demo_acceptance_20261007/verification.json; exact file list in release_allowlist.txt/JSON.
+-
+-Proposed authorization: create codex/roamsync-demo-release-20261007 from current5572849; stage only the363 existing allowlisted paths and two already-existing deletions (web/.env.test and web/src/components/TripBriefingDrawer.tsx), then make grouped commits for backend baseline/facts/corrections, Web baseline/lifecycle tests, and operator/docs contracts. 330 paths are currently dirty/untracked within that reviewed scope; unchanged allowlisted files need no commit delta. Existing baseline ownership is historical, not attributed wholesale to this slice. No Android changes, .env/real keys, raw eval results/private data, unrelated attachments or unverified branding artifacts. No reset/rebase/merge/force push or blanket add. Git index is empty; history operations remain unexecuted.
+-
+-After authorization: verify source hashes immediately before staging, inspect staged exact allowlist, commit groups, create a clean Git checkout of final release ref, install/build using locked dependencies, run isolated PG regression and complete live browser rehearsal on the clean source, then deploy API/worker/Web from that ref only when all release gates pass. Bind image/runtime/clean-ref manifests, verify readiness/provider smoke and production formal-state safety; preserve previous images/config for rollback and never reset real trips. Production currently remains the accepted v1 snapshot; deployment reproducibility and clean-ref rehearsal are still unproven.
+-
+-User goal section22 explicitly states: “任何 Git history 操作：需要用户明确允许。” This is the approval boundary; do not infer approval from continuation or a preselected option. No approval has yet been received. Goal remains ACTIVE pending that decision; no three-turn blocker threshold has occurred.
++## Clean source and build evidence
++
++Application checkout: E:/Study/RoamSync-release-20261008, detached 8ee7dbf; initially clean, all 366 hashes exact. Backend source manifest: e7e22849869443bb73f96bce736fb86a1c4b3745f2a48f6f32da3273176622a6. Runtime API and Worker are built images with no source mounts; 175 shipped source/config files match the checkout exactly and both runtime manifests are identical. Web is the built Nginx image on 127.0.0.1:3001, not a development server. Build artifact hashes and actual image IDs are recorded separately.
++
++Backend/Worker build uses uv 0.11.15 and uv.lock with uv sync --frozen --no-dev; the test target uses the same lock including test dependencies. Web installs pnpm 11.19.0 with --frozen-lockfile. Python3.11, Node24, Nginx1.27 and PG17 resolved image digests are captured in build/runtime records. Dependencies are locked; upstream base tags remain mutable, so reuse recorded digests for future release reconstruction. Bit-for-bit rebuild identity across arbitrary dates/platforms is not claimed.
++
++MEASURED: an independent empty PostgreSQL17 test instance migrated 0→0034, then full Backend 854 passed, zero failures/errors/skips, two existing warnings. Web 125 tests, typecheck and production build passed. Controlled frozen evaluation from clean checkout: Knowledge60 runtime/authority60, need34, assertions35/44, mixed7/10; Phase2.5 holdout50 routing/authorization50, need38, expected assertions35, unsupported claims0. Frozen labels and original input bytes are unchanged. The controlled evaluation used the existing Windows Python tool; locked Linux full regression is separate evidence. A production-image evaluation attempt lacked source-only Dockerfile needed by the manifest helper; this instrumentation failure is retained and is not reported as a successful image evaluation.
++
++## Real-provider release gate
++
++Real Chrome UI / GLM / AMap / Tavily / Open-Meteo, isolated PG17, API8001/Worker/Nginx3001. First weather query failed safely because Open-Meteo geocoding was unavailable; second conversation verified current forecast and official published-date opening facts. Explicit create preview/confirmation created an isolated Trip. Its initial research failed planner_research_invalid_output (json_invalid). Two normal UI retries kept the same request/Trip and terminated planner_unavailable; the last Worker log records RemoteProtocolError. A direct no-proxy model diagnostic returned APIConnectionError/ConnectError.
++
++All failures are preserved. Trip stays version1 with zero formal activities. No validated Candidate exists for this fresh release attempt. Accept/Reject, Execution, Disruption, Recovery and Explanation downstream gates remain UNVERIFIED on the clean release; older successful dirty-tree fixtures are historical evidence only. No mock, weakened assertion, fabricated candidate or silent fallback was introduced. Release status is NOT READY.
++
++## Production differences, deployment plan and rollback
++
++Production remains the accepted fc3a06ba3cf95aaa6317f95f3b3cc300d2dd582299ac24ac7b91dce995f3bdfb capability snapshot on API8000/Web3000 and the existing PG volume. Seven formal-table snapshots plus Trip versions remain exactly equal to the pre-release baseline. Candidate contains the previously reviewed Demo authority/UI/Knowledge fixes and reproducible input packaging; they are not deployed. Existing migration0034 is the isolated test target; this round applied no production migration.
++
++Next gate: restore reliable model transport, rerun the unchanged clean-ref full real lifecycle and bind all evidence to the release/source manifests. Only after every isolated gate passes, report production differences and request final online authorization. A subsequent approved deployment must preserve previous API/Worker/Web image IDs/configuration, take and verify an authorized database backup, check readiness and read-only source/formal-state bindings, and prohibit reset/user-data deletion. Any required production database change needs separate approval; do not invoke the image's automatic migration entrypoint against production without resolving this boundary.
++
++Rollback plan (not executed): stop only newly deployed API/Worker/Web after approval, restore recorded prior image IDs and external configuration, retain the existing PG volume and verify readiness/formal-state hashes. No down migration, volume removal or data restoration over newer user records without a separate recovery decision. Current isolated runtime can be stopped independently; preserve its failure artifacts first.
++
++Evidence: backend/evals/results/git_release_20261008 contains allowlist_366, group staged patches/commit records, clean checkout binding, full test XML/logs, frozen evaluation reports, actual image/runtime/artifact manifests, failed browser attempts, clean_rehearsal_verdict.json, production safety and rollback inventory. Raw evidence is intentionally excluded from Git. Main and unrelated local work remain intact.
+diff --git a/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md b/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md
+index b558677..e34bca9 100644
+--- a/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md
++++ b/docs/agent/ROAMSYNC_DEMO_ACCEPTANCE_20261007.md
+@@ -1,81 +1,55 @@
+-# RoamSync Demo Acceptance — 2026-10-08
+-
+-Status: PARTIAL / PRE-RELEASE ACCEPTANCE. The bounded real-system lifecycle and subsequent P0 corrections are verified in isolation. Product milestone remains unproven: Git reproducibility, clean-ref rehearsal and production binding/deployment are not achieved.
+-
+-## Reality and runtime
+-
+-Repository E:\Study\RoamSync; main HEAD5572849209c943c5f5ad1579db4cef0ba2fb5b25; historical dirty/untracked work preserved. Source Repair closed PARTIAL, regular+exception NOT READY. Production API/worker retain accepted source fc3a06ba3cf95aaa6317f95f3b3cc300d2dd582299ac24ac7b91dce995f3bdfb; no Demo deployment or Git writes.
+-
+-Real-provider acceptance uses a separate PG17/tmpfs database, API127.0.0.1:8001, worker and Vite3001. Actual GLM, AMap, Tavily and Open-Meteo are used, with no request/model/provider mocks. Existing production and earlier isolated trips were preserved. Assistant/Planning calls and confirmations use normal UI/API contracts. Credentials remain external and raw evidence is excluded from the proposed release.
+-
+-## Requirement-by-requirement audit
+-
+-|Goal gate|Authoritative evidence|Result and limit|
+-|---|---|---|
+-|1 Natural exploration|conversation.json turns1–3, visible screenshots, real provider outputs|Bounded flow passed; no formal mutation; general advice is unverified model prose|
+-|2 Trustworthy Knowledge|knowledge-scope.json + frozen60 current rerun|Passed bounded scope: Nanjing honestly unavailable; Hangzhou sourced claims. Original Nanjing→West Lake answer was a defect, retained and corrected|
+-|3 Verifiable dynamic facts|knowledge-scope.json turns3–4, native ResolvedFacts and visible provenance|Fresh Oct8 fetch: Nanjing Oct9 forecast; Zhejiang Oct8 closed official schedule. No operational/admission guarantee|
+-|4 Explicit handoff|conversation.json turn7/creation/PlanningBrief|Create preview and explicit confirmation required; no Trip changes during exploration|
+-|5 Candidate/Validator|conversation/lifecycle Revision validation and actual model/route observations|Passed; initial candidate kept formal activities empty; bounded repeat evidence, not universal stability|
+-|6 Accept/reject|lifecycle acceptance; current-review.json fresh valid-version candidate/rejection; older review.json|Passed normal UI: rejection persisted feedback without changing formal Trip/days/version. Resumed clarification history retained separately|
+-|7 Correct version|lifecycle before/after; execution before/after|Formal version1→2 on user acceptance;2→3 on Recovery acceptance; rejection retains3|
+-|8 Execution|execution.json started/experience/accelerated_execution and visible UI|Persisted start/arrive/play/complete state verified in synthetic fixture|
+-|9 Experience affects time|execution.json experience_before/after|Explicit extend30 projects end+30 and records time impact; no automatic itinerary replan|
+-|10 Disruption detected|execution.json observations/disruption and detector state|Real ingestion/detector; labeled simulation navigation input, not physical GPS|
+-|11 Recovery generated|execution.json recovery and real worker/model progress|Validated pending candidate generated from actual persisted disruption|
+-|12 Confirmation updates state|execution.json after and protected field checks|Explicit UI approval resolves disruption, preserves completed/current activities, version+1; summary19000fen equals formal costs19000fen|
+-|13 Honest explanation|explanation.json|rationale_unavailable, based_on_prior_decision=false, explicit missing original reasons; Ledger2.2 remains OPEN|
+-|14 Real E2E|conversation→lifecycle→execution→explanation, current-review and knowledge-scope followups|Real system segments passed; latest fixes covered by full regression and targeted live segments. Initial conversation's Knowledge error invalidated its original full-pass claim|
+-|15 Reproducible production|REPOSITORY_REPRODUCIBILITY_20261007.md + exact release allowlist|NOT ACHIEVED. Git authorization, clean-ref build/rehearsal and production deployment/binding/smoke remain|
+-|16 Demo rehearsal|screenshots, actual visible candidate/confirmation/disruption/recovery/reject/explanation|Isolated staged rehearsal passed with corrections. Clean-ref complete rehearsal still pending; global Demo Ready not declared|
+-|17 Explicit limits|this report, frozen outputs, failed histories, Source Repair report|Documented; update again after release proof|
+-
+-## Bounded changes and actual defects
+-
+-- Restore only the session-associated same-trip PlanningRun when the newly created Trip mounts; previous UI hid a real pending candidate.
+-- Distinguish preserved dates/budget/party/preferences and completed-activity groups from actual venue names; unknown venue references still clarify.
+-- Bind the exact initial pending Revision/hash/version for day edits, supply separate draft context, preserve untouched dates exactly and recheck source eligibility at approval. The earlier day2-only formalized trip is retained as a failed attempt.
+-- Align route enrichment, validation and acceptance with canonical frozen/protected Execution IDs. In-progress/paused trips enforce invariants even for ordinary Planning, including pending current/navigation target. The acceptance integration test now proves those activities survive actual approval; route-time/daily-window checks were retained.
+-- Include implicitly retained activities in candidate cost totals without double charging represented replacements. Earlier real failed route recovery and21000-vs24000 summary mismatch remain failed history.
+-- Bind explicit Nanjing to Knowledge destination filtering; the finite Hangzhou corpus cannot answer a Nanjing reliable-source question. Exact-city correction does not expand Knowledge corpus or frozen labels. Browser assertions now inspect the requested destination and visible content.
+-- Exclude evals/results from backend Docker build context; raw acceptance data is not runtime package content.
+-
+-No DB/public schema/migration/new Agent/Fact type/Memory redesign. All current fixes are working-tree/isolated runtime changes; production is unchanged.
+-
+-## Verification
+-
+-MEASURED: latest Linux/Python3.11/PG17 full 854 passed,0failed/error/skipped (backend_scope_final.xml),2 existing Starlette warnings. It uses the existing isolated test DB at migration0034; the earlier empty-PG full is separate history. Authority focused47 and followup21; Knowledge scope Linux48. Windows Knowledge run had one existing Proactor DB integration failure; Linux48 closes that environment-dependent check. Web125/typecheck/build previously passed and current Web runtime source remained unchanged; new Playwright drivers ran against real API/model/providers.
+-
+-Frozen Knowledge60 rerun retains need34/60, assertions35/44, mixed7/10 and exact summary; original labels/results not overwritten. Foundation28 remains Source Repair evidence. Current-review fresh run passes without clarification; its earlier clarification/resume is separately retained. Knowledge scope live4 turns passes. Production seven formal tables/counts/full-row hashes and Trip versions exactly match baseline (formal_current_final.json).
+-
+-Final verification.json, final_source.json, slice_source_overlay.zip and refreshed release_allowlist.json bind exact reviewed files and test artifact hashes. Git index remains empty. Historical/backend checkpoints are explicitly distinguished from the latest source.
+-
+-## Limitations and rollback
+-
+-Navigation input source=simulation; activity progression was compressed through normal actions and the future-dated synthetic Trip was deliberately started early. These are labeled acceptance inputs, not evidence of physical travel/device GPS or actual duration learning. A positive-slack20min delay correctly did not produce disruption; later infeasible inputs did. Provider availability/model output vary; one scripted pass cannot prove universal quality. Nanjing curated Knowledge coverage is unavailable; Hangzhou coverage is finite with known frozen gaps. Opening Hours remains official published-date-only for two venues; no regular/exception completeness/current status. Original accepted Recovery rationale is unavailable; honest fallback is tested, not Ledger2.2 completion.
+-
+-Baseline Source Repair manifest ec632e11594c179402b09eecdb10cce8adeed0228cdd58f608d343aab522383c. Source-specific backups/overlay identify this slice; rollback restores only identified paths after preserving later user edits. Never reset/clean the dirty worktree. Isolated containers can be stopped independently; production images/config/database were untouched. Production release must retain existing images/config for rollback and must not reset user trips.
+-
+-## Next slice candidates
+-
+-|Candidate|Product impact|Risk/dependency|Demo impact|Cost|
+-|---|---|---|---|---|
+-|Git reproducible release + clean-ref rehearsal|High; closes gate15 and source identity|Explicit user history approval, then locked dependencies/current providers|Highest remaining blocker|Bounded build/rehearsal/deployment|
+-|Decision provenance2.2|Moderate; richer original reasons|Honest fallback works; original recording remains unavailable|Below reproducibility|Medium|
+-|Additional source promotion/coverage|Low immediate lifecycle value|Official completeness still NOT READY|Low|Potentially unbounded; deferred|
+-
+-Select reproducible release. Proposed branch codex/roamsync-demo-release-20261007, exact allowlisted backend/Web/operator/docs files plus two explicit existing deletions. Exclude Android changes, credentials, raw acceptance/private data and unrelated artifacts. No history operations executed. After explicit approval: grouped commits, clean Git checkout, locked builds/PG regression/live complete rehearsal, then production deploy/binding/smoke and formal-state safety. Do not claim product complete before these gates.
+-
+-# CHATGPT HANDOFF SUMMARY
+-
+-CURRENT GOAL: Stable trustworthy lifecycle Travel Agent System.
+-CURRENT SLICE: End-to-End Demo Acceptance.
+-RESULT: PARTIAL — isolated real chain and P0 followups verified; release gate pending.
+-WHAT CHANGED: Candidate UI restore/edit preservation; intent metadata; protected execution route/approval/cost alignment; Knowledge city scope; real review/fact/explanation tests.
+-PRODUCT IMPACT: Formal changes remain explicit-confirmation gated; ordinary Planning cannot silently remove current/navigation-target activities; wrong-city sourced answers fail closed.
+-TESTS: Latest Linux full854; Web125/typecheck/build; Knowledge frozen60 unchanged; actual UI lifecycle/recovery/reject/scope/Explanation.
+-PRODUCTION: Prior accepted source retained; formal seven-table snapshot unchanged; no Demo deployment.
+-KNOWN LIMITATIONS: Simulation/compressed synthetic execution; finite Knowledge/date-specific facts; Ledger2.2 OPEN; dirty Git cannot reproduce release.
+-NEXT SLICE: Git-reproducible release and clean-ref rehearsal.
+-WHY NEXT: Highest remaining product milestone blocker; reviewed implementation is ready for exact release audit.
+-USER DECISION REQUIRED: YES before proposed Git branch/stage/grouped commits, per user goal section22. Goal remains ACTIVE.
++# RoamSync Demo Acceptance — 2026-10-08
++
++Status: NOT READY — clean Git source builds and regression passes, but the fresh real-provider Candidate gate failed. Long-term goal remains ACTIVE. Production unchanged; deployment/main merge/production DB changes are not authorized.
++
++## Current release identity and evidence
++
++Branch codex/roamsync-demo-release-20261007 from main5572849. Application release 8ee7dbf0ddc27fdb8fd55bc20fad9777ec4bf209; final documentation checkpoint is recorded in release_final_binding.json. Source e7e22849869443bb73f96bce736fb86a1c4b3745f2a48f6f32da3273176622a6. Independent initial-clean checkout E:/Study/RoamSync-release-20261008 has all366 approved hashes and two deletions. Runtime API/Worker have no source mounts;175 shipped files match. Nginx production Web3001 proxies isolated API8001; separate PostgreSQL17 and actual GLM/AMap/Tavily/Open-Meteo, no mocks.
++
++|Gate|Current clean-ref result|
++|---|---|
++|Exploration / routing safety|VERIFIED real UI: no Trip mutation/Run during conversation; explicit Nanjing reliable-source gap disclosed|
++|Knowledge coverage|Controlled frozen60 preserves known need34/60, assertions35/44, mixed7/10; finite coverage, not universal correctness|
++|Dynamic facts|Second conversation verified usable forecast and official published-date hours; first geocoding outage retained|
++|Explicit Planning|Preview + user confirmation creates the isolated Trip and initial Run|
++|Candidate / Validator|FAILED: research invalid JSON; two UI retries fail provider transport; no valid Candidate|
++|Candidate modification / Accept / Reject / Feedback|UNVERIFIED in this fresh release chain; earlier isolated evidence is historical|
++|Formal version progression|Trip version1, zero formal activities; no unauthorized mutation after failure|
++|Execution / experience / Disruption / Recovery|NOT EXECUTED because Candidate prerequisite failed|
++|Recovery explicit acceptance / protection / costs|NOT EXECUTED on clean release|
++|Honest Explanation|Earlier isolated rationale_unavailable evidence retained; fresh clean chain not reached; Ledger2.2 OPEN|
++|Repository reconstruction|VERIFIED exact clean Git source, locked builds and isolated full regression|
++|Complete real E2E / Demo rehearsal|NOT PASSED; no substitution of older dirty-tree results|
++|Reproducible production deployment|NOT ACHIEVED / NOT AUTHORIZED|
++
++## Actual failures and preservation
++
++First Chrome run stopped at Open-Meteo geocoding provider_unavailable; application honestly said location/weather could not be verified. Direct later geocoding probe returned200. Second complete conversation passed weather and opening checks and confirmed creation. Initial Run failed planner_research_invalid_output; original failure and screenshots/traces remain. Two retries used the normal UI “重试本次需求”, the same Trip and original request, after each prior Run had terminal failed status. They failed planner_unavailable; final log reports RemoteProtocolError. Direct model diagnostic without proxy also failed APIConnectionError/ConnectError. These are actual observed failures, not proven attribution to a specific upstream component.
++
++The fixture remains version1 with zero formal activities. All three failed Runs are retained. Source bytes, labels and assertions were unchanged. No fabricated candidate, provider mock, automatic reset or production mutation. Lifecycle driver's prerequisite failure is not an independent product defect and is not counted as executed downstream acceptance.
++
++## Regression and manifest verification
++
++Clean locked Linux/Python3.11/empty PG17 migrated0→0034:854 passed,0failed/error/skip,2 existing warnings. Web locked install/typecheck/125tests/build passed. Controlled clean-checkout Knowledge60 and Phase2.5 holdout50 results unchanged. Backend/Worker175 source hashes exact; Web built artifacts/image IDs retained. Production seven formal tables and Trip versions exactly match the preceding baseline. Final documentation-only checkpoint leaves application source unchanged and is independently rebound before final reporting.
++
++## Historical successful rehearsal — not current clean-ref proof
++
++Previous dirty-tree isolated Trip verified real Candidate→day2 lighter edit→explicit acceptance→Execution/extend30→simulated delay→Disruption→Recovery→explicit acceptance, versions1→2→3. Candidate costs aligned with formal costs19000fen. Fresh current-version candidate rejection saved feedback without formal change; Knowledge scope and missing-original-rationale Explanation passed targeted live tests. Source corrections captured in application release preserve pending candidate UI, untouched days, settings intent, canonical Execution protection and implicit retained cost totals, plus explicit-city Knowledge filtering. No new functionality was developed in this release-preparation round apart from the approved packaging/reset amendment.
++
++Keep historical wrong-city Knowledge, incomplete day2-only formal itinerary, route mismatch and cost mismatch failures distinct from later corrected results. Published opening dates are not operational guarantees. Simulated navigation and compressed normal activity actions are acceptance inputs, not physical GPS/travel-duration evidence. Nanjing curated corpus unavailable; Hangzhou corpus finite. Source Repair bounded slice remains PARTIAL, regular/exception NOT READY; no new source promotion.
++
++## Next gate and rollback
++
++NOT READY for online confirmation. Restore stable actual model transport, then continue unchanged clean-ref browser lifecycle through validated Candidate/modification/Accept/Reject/Execution/Disruption/Recovery/Explanation/Feedback. Preserve failures and inspect authoritative Run status before retry. Rebind final clean checkout, images and runtime manifests. Only after success report production differences and await final human online authorization. Rollback/deployment plan and retained production image IDs are in Repository Reproducibility report / production_rollback_inventory.json. Production schema changes need separate approval; existing data must never be reset.
++
++Raw current evidence: backend/evals/results/git_release_20261008; clean_rehearsal_attempt1, attempt2, retry1, final_failed; clean_rehearsal_verdict.json; clean_backend_full.xml and clean checkout/image/runtime/production manifests. No raw chats/screenshots/private artifacts were committed.
++
++## CHATGPT HANDOFF SUMMARY
++
++CURRENT SLICE: Git reproducible release preparation and isolated acceptance.
++RESULT: Git capture/clean builds/regression VERIFIED; complete real lifecycle NOT READY.
++RELEASE: Application8ee7dbf; final documentation SHA recorded in release_final_binding.json / final response.
++TESTS: Backend854; Web125/typecheck/build; unchanged frozen60/holdout50.
++PRODUCTION: Existing accepted snapshot retained; formal baseline exact; no deployment/merge/DB changes.
++NEXT: Provider transport gate, then unchanged full clean-ref real lifecycle; final online approval only after success.
++GOAL: ACTIVE; no claim of product completion.
+diff --git a/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md b/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md
+index bd367be..b3ca5b4 100644
+--- a/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md
++++ b/docs/agent/ROAMSYNC_LONG_TERM_PROGRESS.md
+@@ -1,72 +1,45 @@
+-# RoamSync Long-Term Progress
+-
+-## Goal
+-
+-Stable, trustworthy, demonstrable and explainable Goal-centric Travel Agent System across exploration, planning, confirmation, execution, adaptation and feedback. Formal mutation remains Candidate/Validator/user-confirmation gated. No unnecessary new Agents or provider expansion.
+-
+-## Milestones / status / evidence
+-
+-|Milestone|Status|Evidence|
+-|---|---|---|
+-|Travel Companion / Router / Brief|DONE bounded|Phase2.5 report; current source manifest matches accepted baseline|
+-|Planning Agent|Bounded real lifecycle verified; production release pending|Existing graph/revision/validator tests and prior reports|
+-|Tourism Knowledge|DONE / PARTIAL coverage|Frozen60 need34/60/assertions35/44/mixed7/10; prior evidence retained|
+-|Travel Facts Foundation|DONE|Source Repair current benchmark28/28|
+-|Forecast|DONE bounded|Prior deployed v1; Oct8 isolated live forecast verified|
+-|Opening Hours v1|DONE bounded|Published2026 notice dates only; no current-operation/regular truth|
+-|Official Collector / Source Repair|PARTIAL / bounded slice closed|OFFICIAL_COLLECTOR_SOURCE_REPAIR_20261007.md; live gates reject promotion|
+-|Demo Acceptance|IN PROGRESS / NOT READY|Web125 and real chain/P0 followups passed; clean-ref release pending|
+-|Decision Ledger2.2|OPEN|Prior real Run failures; advance only if Demo explanation exposes blocker|
+-|Repository Reproducibility|RISK|Dirty main5572849; safe proposal required before Demo; no Git operations authorized|
+-|Experience Learning|DEFERRED|Existing duration/impact core; no data/value case for learning system yet|
+-
+-## Current blockers
+-
+-- Opening source lacks historical body and reviewed complete exception scan; freeze date-specific capability, do not consume further unbounded collector work.
+-- Isolated real-model/provider/UI chain passed with targeted P0 corrections; complete clean-ref rehearsal and production release remain pending.
+-- Git HEAD cannot reconstruct dirty/untracked runtime. Explicit user approval required before commit/release history changes.
+-- Ledger explanation must distinguish recorded rationale/current inference; do not claim historical reasons when provenance is absent.
+-
+-## Current slice
+-
+-End-to-End Demo Acceptance. Re-audit runtime, frontend gates, existing protocols and provider readiness; use isolated acceptance data and preserve user production itinerary state.
+-
+-## Next candidates
+-
+-1. Demo Acceptance — selected: highest user-visible lifecycle impact; dependencies exist.
+-2. Reviewed source authentication/promotion — deferred while official completeness lacks evidence.
+-3. Decision provenance closure — defer until actual Demo explanation blocker.
+-
+-## Demo readiness
+-
+-PRE-RELEASE / NOT GLOBALLY READY. Isolated real chain, current-version reject, honest explanation and scoped facts passed. Latest Linux full854; Web125. Clean Git-ref rehearsal and reproducible deployment unproven.
+-
+-## Production snapshot
+-
+-Docker engine restored2026-10-07. API current167 files verified against fc3a06ba3cf95aaa6317f95f3b3cc300d2dd582299ac24ac7b91dce995f3bdfb. No source-repair deployment. Offline accepted source ec632e11594c179402b09eecdb10cce8adeed0228cdd58f608d343aab522383c; exact3 additions/overlay tracked separately.
+-
+-## Architecture debts
+-
+-Dirty/untracked reproducibility; finite rule-based interpretation; bounded Knowledge coverage; official source completeness; Ledger2.2 OPEN; actual end-to-end acceptance absent. Preserve authority boundaries, no schema/Agent/Memory expansion without product evidence.
+-
+-## Completed slice record
+-
+-2026-10-07 Source Repair & Reviewed Promotion Gate: PARTIAL. Official detail confirms39496 null content and empty alternatives; triage and registry governance implemented; both live promotion gates fail closed; regular+exception NOT READY. Linux77/Windows77/Foundation28. No user decision needed to continue to Demo Acceptance. Evidence: backend/evals/results/source_repair_20261007/verification.json and live/live_acceptance.json. Next selection compares product/risk/dependency/demo/cost in source-repair report.
+-
+-
+-## Current Demo progress / 2026-10-07
+-
+-Three measured blockers: session Run restoration, retained settings misclassified
+-as Activity references, and pending-candidate day edit dropping untouched dates.
+-First two fixed with component25/intent117 focused evidence. Third now has
+-bound/hash/validate initial-candidate context plus focused75; live browser
+-rehearsal is running on a new isolated fixture. Existing failed2-activity formal
+-Trip retained as evidence, not counted as successful three-day acceptance.
+-Execution/Recovery/Explanation and reproducible production still unproven.
+-
+-
+-## Demo acceptance checkpoint — 2026-10-08
+-
+-MEASURED: Full854 Linux/PG passed; isolated real Candidate→day edit→accept→experience30→simulated delay/disruption→Recovery→accept verified. Formal versions1→2→3, costs19000fen align. Ordinary Planning during Execution protects current/navigation target; fresh candidate reject/feedback leaves formal state exact. Honest original-reason-unavailable Explanation verified. Actual Nanjing Knowledge question originally returned West Lake; explicit-city filter and live scoped recheck now return honest unavailable, Hangzhou sources remain valid. Frozen60 exact summary preserved; historical failed outputs retained.
+-
+-Production fc3 remains; full formal baseline unchanged. No Git history/index writes. Exact release allowlist prepared; select Git-reproducible release/clean-ref rehearsal next (approval required by goal section22). Compare Ledger2.2 and source coverage in current Demo report; both deferred. Milestone not complete.
++# RoamSync Long-Term Progress
++
++## Goal
++
++Stable trustworthy Goal-centric Travel Agent lifecycle: exploration, explicit Planning, validated Candidate, confirmation, execution, disruption/recovery and honest explanation/feedback. Goal ACTIVE; current release gate incomplete.
++
++## Milestones / status / evidence
++
++|Milestone|Status|Evidence|
++|---|---|---|
++|Companion / Router / Brief|DONE bounded|Prior Phase2.5 and release regression|
++|Planning / confirmation authority|Prior bounded rehearsal verified; fresh clean-release real gate FAILED|Three failed actual Runs; no formal activity writes|
++|Tourism Knowledge|DONE bounded / PARTIAL coverage|Frozen60 need34/60, assertions35/44, mixed7/10 unchanged|
++|Travel Facts / Forecast|DONE bounded|Prior v1 plus second fresh conversation usable forecast|
++|Opening Hours|DONE published-date-only|Second fresh conversation usable official dated facts; no regular/current-operation claim|
++|Collector / Source Repair|PARTIAL / bounded slice closed|Official completeness NOT READY, no promotion|
++|Repository reconstruction|VERIFIED source/build/regression|Approved366 files, three groups, clean checkout, locked Backend/Web/Worker builds|
++|Clean-ref complete Demo|NOT READY|Real Provider research/json and transport failures; downstream chain unexecuted|
++|Production reproducible deployment|PENDING / NOT AUTHORIZED|Production unchanged; final online decision after isolated gates|
++|Decision Ledger2.2|OPEN|Honest missing-original-rationale fallback historically verified|
++|Experience Learning|DEFERRED|No new learning/memory/provider/agent scope|
++
++## Current slice / 2026-10-08
++
++Git release preparation on codex/roamsync-demo-release-20261007 from main5572849. Human authorized exact grouping and approved363→366 dependency amendment. Backend fbd65f28f3fe5ee1ed99ba8182976a717c0018bc; Web93118dc6f1370c7be78e167ffb7adb640375573a; operator/docs application candidate8ee7dbf0ddc27fdb8fd55bc20fad9777ec4bf209. Final documentation-only checkpoint exact SHA in release_final_binding.json. Historical code is captured, not falsely attributed to this round. Unrelated dirty work retained; no destructive/history rewrite commands.
++
++Clean source e7e22849869443bb73f96bce736fb86a1c4b3745f2a48f6f32da3273176622a6. Initial clean checkout366 hashes exact;175 API/Worker shipped source hashes exact, no source mounts; Web built Nginx on3001. Locked Linux full854 on newly migrated empty PG17, Web125/typecheck/build; controlled frozen Knowledge60 and holdout50 unchanged.
++
++## Current blocker / actual acceptance
++
++First live weather location query unavailable; recovered on second conversation. Explicit create succeeds. Initial research invalid JSON; two normal UI retries fail planner_unavailable; final Worker log RemoteProtocolError. Direct no-proxy model diagnostic fails APIConnectionError/ConnectError. Root upstream component attribution unproven. Fixture Trip version1, zero formal activities. Failed evidence retained; no mocked pass/relaxed assertion/old result substitution. Complete Candidate→Accept/Reject→Execution→Disruption→Recovery→Explanation still unverified on this release.
++
++## Production / rollback
++
++Accepted production source fc3a06ba… on API8000/Web3000 unchanged. Formal seven-table snapshot/Trip versions exact. Old images/configuration and PG volume recorded for future approved rollback. No deployment/main merge/production migration/data deletion. Do not run migration entrypoint against production without resolving separate DB authorization.
++
++## Next selected work / release gates
++
++Continue current acceptance after actual provider transport is stable; no new ordinary feature development. Rerun unchanged clean-ref lifecycle, inspect every Candidate/Validator/explicit decision, protect Execution state and verify Recovery costs, honest rationale and feedback. Compare final checkout/build/runtime manifests. Then report production differences and request final online approval. Repository Reproducibility and Demo Acceptance reports contain concrete deployment/rollback plan. Additional corpus/source promotion and Ledger2.2 redesign remain deferred.
++
++## Historical context
++
++Earlier dirty-tree isolated lifecycle passed versions1→2→3 and Recovery19000fen; current-version reject/feedback, city-scoped Knowledge/facts and honest Explanation passed targeted live checks. Older failed city/day/route/cost attempts remain historical evidence. These successes do not close the current clean-ref/production gates. Source Repair3-file bounded slice was PARTIAL; regular/exception NOT READY. Never claim full product completion based only on Git commits or unit tests.
++
++Evidence: backend/evals/results/git_release_20261008 includes all audit/staged/commit manifests, full regression, clean source/runtime/images, failed browser attempts, production safety and release_final_binding.json. Raw artifacts excluded from Git; no Obsidian recording.
+diff --git a/docs/handoff/LATEST_HANDOFF.md b/docs/handoff/LATEST_HANDOFF.md
+index bf3db5c..155b1fc 100644
+--- a/docs/handoff/LATEST_HANDOFF.md
++++ b/docs/handoff/LATEST_HANDOFF.md
+@@ -1,31 +1,29 @@
+-# RoamSync Handoff
+-
+-## Snapshot
+-
+-2026-10-08. Long-term goal ACTIVE; Demo acceptance PARTIAL/pre-release. Isolated real lifecycle and P0 followups verified. Product milestone incomplete; reproducible Git release/clean-ref rehearsal/production binding pending.
+-
+-## Current Freeze / Rehearsal Status
+-
+-VERIFIED: main5572849, historical dirty work preserved; Git index empty/no history operations. Source Repair ec632e1 closed PARTIAL; regular+exception NOT READY, published-date facts frozen. Production retains fc3a06ba…; no Demo deployment. Seven formal-table hashes/counts and Trip versions exactly unchanged.
+-
+-MEASURED: Real browser/model/provider exploration→create candidate→day2 lighter→explicit accept→Execution/extend30→simulated delay/disruption→Recovery→explicit accept; versions1→2→3; Recovery total19000fen equals formal activity costs. Positive slack correctly produced no disruption; later infeasible inputs did. Navigation source simulation and compressed activity actions are acceptance fixtures, not real physical travel.
+-
+-## Latest shadow-mode evidence
+-
+-Demo evidence: backend/evals/results/demo_acceptance_20261007. conversation/lifecycle/execution/explanation plus fresh current-review and knowledge-scope. Ledger2.2 OPEN: original rationale unavailable is explicitly disclosed; no retrospective original-reason invention. Current candidate rejection records feedback and leaves formal rows/version exact.
+-
+-## Prior milestone baseline (before shadow split)
+-
+-Companion/Knowledge/Forecast/Opening Hours v1 bounded production capabilities preserved. Current fixes restore pending session candidate UI, preserve outside-date drafts, classify setting/completed-state references, protect Execution IDs across ordinary Planning and align retained costs. No DB/public schema/new Agent/Fact/Memory redesign.
+-
+-## Prior verification
+-
+-Latest Linux/Python3.11/PG17 full854 passed,0fail/error/skip,2 existing warnings. Web125/typecheck/build passed; current frontend runtime unchanged. Authority47+21; Knowledge Linux48. Frozen Knowledge60 exact summary unchanged. Windows Knowledge DB integration hit existing Proactor restriction; Linux closes it. Older full824/852/853 remain historical. Final source/verification/overlay and precise release allowlist bind current reviewed files.
+-
+-## Prior blockers (historical)
+-
+-Retained failed histories: wrong-city Knowledge answer, incomplete day2-only itinerary, mislabeled settings clarification, Recovery route mismatch, cost21000vs24000. Corrected with stronger assertions; do not count old shallow passes as complete. Nanjing curated Knowledge unavailable; current live response honest. Provider/finite scope/physical GPS and original rationale limits remain.
+-
+-## Interview framing
+-
+-Next selected slice: Git-reproducible release and clean-ref rehearsal. Proposal branch codex/roamsync-demo-release-20261007; exact backend/Web/operator/docs allowlist and two existing deletions, no Android/private artifacts/keys/raw results. User goal section22 requires explicit Git history authorization; none received. After approval, grouped commits/clean checkout/build/regression/live full rehearsal precede production deploy/binding/smoke. No reset/clean/user-data deletion. Report: ROAMSYNC_DEMO_ACCEPTANCE_20261007.md; progress board updated. Goal remains ACTIVE; no blocked threshold met.
++# RoamSync Handoff
++
++## Snapshot
++
++2026-10-08. Goal ACTIVE. Git release preparation verified; real clean-ref Demo NOT READY. No production deployment, main merge or production DB changes authorized.
++
++## Current Freeze / Rehearsal Status
++
++VERIFIED: branch codex/roamsync-demo-release-20261007 from main5572849. Human approved363→366 exact packaging amendment. Group SHAs Backend fbd65f2, Web93118dc, operator/docs8ee7dbf. Two explicit deletions; all366 blob hashes match. Historical work captured honestly; Android/raw/private/unrelated work excluded and retained. No blanket add/reset/clean/stash/rebase/push.
++
++## Latest shadow-mode evidence
++
++Clean checkout E:/Study/RoamSync-release-20261008, initial git clean. Source e7e22849869443bb73f96bce736fb86a1c4b3745f2a48f6f32da3273176622a6. API/Worker built images, no source mounts,175 runtime files exact. Built Nginx3001/isolated API8001/PG17 with real providers. Final documentation-only checkpoint SHA/manifests in git_release_20261008/release_final_binding.json.
++
++## Prior milestone baseline (before shadow split)
++
++Production accepted fc3a06ba… remains. Formal seven tables/Trip versions exactly unchanged. Previous isolated dirty-tree chain versions1→2→3, Recovery costs19000fen aligned, current reject/feedback and honest Explanation verified; those are historical evidence, not substitute for this clean-ref chain. Source Repair PARTIAL/NOT READY; date-specific published facts frozen. Ledger2.2 OPEN.
++
++## Prior verification
++
++MEASURED clean locked Linux/Python3.11/new empty PG17: migrations0→0034;854 passed,0fail/error/skip,2warnings. Web125/typecheck/build. Frozen clean-checkout controlled Knowledge60 and holdout50 summary unchanged; labels intact. Remove automatic demo reset; add three approved frozen inputs, keep raw result metadata outside Git.
++
++## Prior blockers (historical)
++
++Current blocker: first geocoding outage failed safely; second real conversation passed facts and explicit create. Research failed json_invalid; two normal UI retries failed planner_unavailable, last log RemoteProtocolError; direct model connectivity also failed. All failures retained. New fixture version1/formal activities0; Candidate/Accept/Reject/Execution/Disruption/Recovery/Explanation not passed on clean release.
++
++## Interview framing
++
++NOT READY, not product complete. Evidence: backend/evals/results/git_release_20261008/clean_rehearsal_verdict.json and reports REPOSITORY_REPRODUCIBILITY_20261007.md / ROAMSYNC_DEMO_ACCEPTANCE_20261007.md. Next gate: stable actual model transport, unchanged complete clean-ref lifecycle, image/source bindings. Only after success report production differences and await final online confirmation. No new ordinary functionality/source expansion selected. Production rollback image/config references preserved; data/schema operations need separate approval. Goal stays ACTIVE.

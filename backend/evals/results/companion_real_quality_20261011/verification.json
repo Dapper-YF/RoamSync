@@ -1,0 +1,74 @@
+  {
+    "baseline": "0b5010fe5a7b06dcec1ab7b159b5b337244247ae",
+    "production_deployed": false,
+    "production_database_modified": false,
+    "real_eval_database_used": false,
+    "provider_smoke": {
+      "original_proxy": "transport failed",
+      "loopback_proxy": "completed",
+      "config_persisted": false
+    },
+    "real_batches": {
+      "fixed18_real.json": {
+        "runner_complete": true,
+        "rows": 54,
+        "errors": 1
+      },
+      "holdout_real.json": {
+        "runner_complete": true,
+        "rows": 21,
+        "errors": 0
+      },
+      "dialogue_real.json": {
+        "runner_complete": true,
+        "rows": 12,
+        "errors": 0
+      },
+      "representative.json": {
+        "runner_complete": true,
+        "rows": 15,
+        "errors": 0
+      },
+      "solo_repeat.json": {
+        "runner_complete": true,
+        "rows": 3,
+        "errors": 1
+      }
+    },
+    "blind_answer_ratings": 68,
+    "matched_quality_triplets_fixed": 15,
+    "matched_quality_triplets_holdout": 7,
+    "original_dialogue_destination_checks_failed": 3,
+    "handoff_replay_after_fix_all_pass": true,
+    "backend": {
+      "passed": 909,
+      "failed": 0,
+      "warnings": 2,
+      "seconds": 77.1,
+      "exit_code": 0,
+      "environment": "isolated Linux/Python3.11/PG17 tmpfs, fresh migration0->0034",
+      "log": "backend_regression_clean_exit.log",
+      "bound_files": 161,
+      "app_tests_dependencies_differences": [],
+      "test_image_id": "dfcf00d565d463d18baf7df858ed94fff960b85d272a609148e5ba64f786d2f8"
+    },
+    "web": {
+      "passed": 125,
+      "test_exit": 0,
+      "typecheck_exit": 0,
+      "build_exit": 0
+    },
+    "local_targeted": {
+      "passed": 42,
+      "exit_code": 0,
+      "database_endpoint": "unreachable isolated endpoint; tests pure/mocked"
+    },
+    "failed_attempts_preserved": [
+      "targeted_regression.log: invalid evidence fixture corrected",
+      "Windows DB-containing test selection interrupted; isolated diagnostic reproduced Psycopg Proactor pre-connect failure",
+      "backend_regression_final.log: 909 assertions passed but wrapper failed after image diagnostic inherited Compose labels; rerun clean exit"
+    ],
+    "cleanup": "only roamsync-real-quality-test project removed",
+    "quality_gate": "PARTIAL / OPEN",
+    "default_recommendation": "retain selective C; not evidence of universal superiority or release approval"
+  }
